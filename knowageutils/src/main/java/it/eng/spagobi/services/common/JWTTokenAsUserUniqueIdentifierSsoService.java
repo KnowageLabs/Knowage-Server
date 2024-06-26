@@ -73,7 +73,6 @@ public class JWTTokenAsUserUniqueIdentifierSsoService implements SsoServiceInter
 		}
 	}
 	
-	@Override
 	public String readUserIdentifier(HttpServletRequest request) {
 		try {
 			String jwtToken = request.getParameter(SsoServiceInterface.USER_ID);
@@ -91,13 +90,11 @@ public class JWTTokenAsUserUniqueIdentifierSsoService implements SsoServiceInter
 		}
 	}
 
-	@Override
 	public String readUserIdentifier(PortletSession session) {
 		logger.debug("NOT Implemented");
 		return "";
 	}
 
-	@Override
 	public String readTicket(HttpSession session) throws IOException {
 		Calendar date = Calendar.getInstance();
 		long t = date.getTimeInMillis();
@@ -109,7 +106,6 @@ public class JWTTokenAsUserUniqueIdentifierSsoService implements SsoServiceInter
 		return token;
 	}
 
-	@Override
 	public void validateTicket(String ticket, String userId) throws SecurityException {
 		try {
 			String jwtToken = ticket;

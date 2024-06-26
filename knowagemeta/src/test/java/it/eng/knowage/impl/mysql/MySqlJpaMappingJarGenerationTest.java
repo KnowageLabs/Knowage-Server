@@ -152,9 +152,9 @@ public class MySqlJpaMappingJarGenerationTest extends AbstractKnowageMetaTest {
 		PhysicalTable destination = filteredPhysicalModel.getTable("product_class");
 		BusinessTable businessTable = filteredBusinessModel.getBusinessTableByPhysicalTable(source).get(0);
 
-		List<PhysicalColumn> sourceCol = new ArrayList<>();
+		List<PhysicalColumn> sourceCol = new ArrayList<PhysicalColumn>();
 		sourceCol.add(source.getColumn("product_class_id"));
-		List<PhysicalColumn> destinationCol = new ArrayList<>();
+		List<PhysicalColumn> destinationCol = new ArrayList<PhysicalColumn>();
 		destinationCol.add(destination.getColumn("product_class_id"));
 		int cardinality = 0;
 		String relationshipName = "inner_join_test";

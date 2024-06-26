@@ -45,8 +45,8 @@ public class MetaModelUpdater {
 		EList<PhysicalTable> cwmTables = modelFromCWM.getTables();
 
 		// 1 - Find new tables and columns not present in the original Model
-		List<PhysicalTable> tablesToAdd = new ArrayList<>();
-		List<PhysicalForeignKey> foreignKeysToAdd = new ArrayList<>();
+		List<PhysicalTable> tablesToAdd = new ArrayList<PhysicalTable>();
+		List<PhysicalForeignKey> foreignKeysToAdd = new ArrayList<PhysicalForeignKey>();
 		for (PhysicalTable cwmTable : cwmTables) {
 			String cwmTableName = cwmTable.getName();
 			PhysicalTable tableFound = findTable(cwmTableName, originalTables);
@@ -99,7 +99,7 @@ public class MetaModelUpdater {
 					physicalForeignKey.setSourceTable(searchedSourceTable);
 
 					EList<PhysicalColumn> sourceColumns = physicalForeignKey.getSourceColumns();
-					List<PhysicalColumn> searchedSourceColumns = new ArrayList<>();
+					List<PhysicalColumn> searchedSourceColumns = new ArrayList<PhysicalColumn>();
 					for (PhysicalColumn sourceColumn : sourceColumns) {
 						PhysicalColumn searchedColumn = findColumn(sourceColumn.getName(), searchedSourceTable.getColumns());
 						searchedSourceColumns.add(searchedColumn);
@@ -111,7 +111,7 @@ public class MetaModelUpdater {
 					physicalForeignKey.setDestinationTable(searchedDestinationTable);
 
 					EList<PhysicalColumn> destinationColumns = physicalForeignKey.getDestinationColumns();
-					List<PhysicalColumn> searchedDestinationColumns = new ArrayList<>();
+					List<PhysicalColumn> searchedDestinationColumns = new ArrayList<PhysicalColumn>();
 					for (PhysicalColumn destinationColumn : destinationColumns) {
 						PhysicalColumn searchedColumn = findColumn(destinationColumn.getName(), searchedDestinationTable.getColumns());
 						searchedDestinationColumns.add(searchedColumn);

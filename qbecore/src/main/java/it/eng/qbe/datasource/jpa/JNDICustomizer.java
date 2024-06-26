@@ -24,7 +24,6 @@ import org.eclipse.persistence.sessions.Session;
 
 public class JNDICustomizer implements SessionCustomizer {
 
-	@Override
 	public void customize(Session session) throws Exception {
 		Connector connector = session.getLogin().getConnector();
 		if(connector instanceof JNDIConnector) {

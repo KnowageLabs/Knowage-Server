@@ -33,11 +33,11 @@ public class JPQLStatementAliasesSequence {
 	
 	
 	protected JPQLStatementAliasesSequence() {
-		entityAliasesMaps = new HashMap<>();
+		entityAliasesMaps = new HashMap<String, Map<String, String>>();
 	}
 	
 	public void clear() {
-		entityAliasesMaps = new HashMap<>();
+		entityAliasesMaps = new HashMap<String, Map<String, String>>();
 	}
 	
 	public String getNextAlias() {
@@ -45,7 +45,7 @@ public class JPQLStatementAliasesSequence {
 		Iterator it = entityAliasesMaps.keySet().iterator();
 		while(it.hasNext()) {
 			String key = (String)it.next();
-			Map entityAliases = entityAliasesMaps.get(key);
+			Map entityAliases = (Map)entityAliasesMaps.get(key);
 			aliasesCount += entityAliases.keySet().size();
 		}
 		

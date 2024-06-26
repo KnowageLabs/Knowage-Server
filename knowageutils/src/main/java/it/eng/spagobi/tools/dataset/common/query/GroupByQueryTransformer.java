@@ -46,7 +46,6 @@ public class GroupByQueryTransformer extends AbstractQueryTransformer{
 		aggregateColumnAliases = new ArrayList();
 	}
 	
-	@Override
 	public Object execTransformation(Object statement) {
 	
 		String transformedStatment = null;

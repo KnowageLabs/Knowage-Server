@@ -34,8 +34,10 @@ import org.eclipse.emf.ecore.InternalEObject;
 
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 
+import org.eclipse.emf.ecore.util.EObjectContainmentEList;
 import org.eclipse.emf.ecore.util.EObjectContainmentWithInverseEList;
 import org.eclipse.emf.ecore.util.EObjectResolvingEList;
+import org.eclipse.emf.ecore.util.EObjectWithInverseResolvingEList;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.ecore.util.InternalEList;
 
@@ -132,7 +134,6 @@ public class CubeImpl extends ModelObjectImpl implements Cube {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public OlapModel getModel() {
 		if (eContainerFeatureID() != OlapModelPackage.CUBE__MODEL) return null;
 		return (OlapModel)eContainer();
@@ -153,7 +154,6 @@ public class CubeImpl extends ModelObjectImpl implements Cube {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public void setModel(OlapModel newModel) {
 		if (newModel != eInternalContainer() || (eContainerFeatureID() != OlapModelPackage.CUBE__MODEL && newModel != null)) {
 			if (EcoreUtil.isAncestor(this, newModel))
@@ -175,7 +175,6 @@ public class CubeImpl extends ModelObjectImpl implements Cube {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public BusinessColumnSet getTable() {
 		if (table != null && table.eIsProxy()) {
 			InternalEObject oldTable = (InternalEObject)table;
@@ -202,7 +201,6 @@ public class CubeImpl extends ModelObjectImpl implements Cube {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public void setTable(BusinessColumnSet newTable) {
 		BusinessColumnSet oldTable = table;
 		table = newTable;
@@ -215,10 +213,9 @@ public class CubeImpl extends ModelObjectImpl implements Cube {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public EList<Dimension> getDimensions() {
 		if (dimensions == null) {
-			dimensions = new EObjectResolvingEList<>(Dimension.class, this, OlapModelPackage.CUBE__DIMENSIONS);
+			dimensions = new EObjectResolvingEList<Dimension>(Dimension.class, this, OlapModelPackage.CUBE__DIMENSIONS);
 		}
 		return dimensions;
 	}
@@ -228,10 +225,9 @@ public class CubeImpl extends ModelObjectImpl implements Cube {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public EList<Measure> getMeasures() {
 		if (measures == null) {
-			measures = new EObjectContainmentWithInverseEList<>(Measure.class, this, OlapModelPackage.CUBE__MEASURES, OlapModelPackage.MEASURE__CUBE);
+			measures = new EObjectContainmentWithInverseEList<Measure>(Measure.class, this, OlapModelPackage.CUBE__MEASURES, OlapModelPackage.MEASURE__CUBE);
 		}
 		return measures;
 	}
@@ -241,7 +237,6 @@ public class CubeImpl extends ModelObjectImpl implements Cube {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public CalculatedMember getCalculatedMembers() {
 		if (calculatedMembers != null && calculatedMembers.eIsProxy()) {
 			InternalEObject oldCalculatedMembers = (InternalEObject)calculatedMembers;
@@ -283,7 +278,6 @@ public class CubeImpl extends ModelObjectImpl implements Cube {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public void setCalculatedMembers(CalculatedMember newCalculatedMembers) {
 		if (newCalculatedMembers != calculatedMembers) {
 			NotificationChain msgs = null;
@@ -303,10 +297,9 @@ public class CubeImpl extends ModelObjectImpl implements Cube {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public EList<NamedSet> getNamedSets() {
 		if (namedSets == null) {
-			namedSets = new EObjectContainmentWithInverseEList<>(NamedSet.class, this, OlapModelPackage.CUBE__NAMED_SETS, OlapModelPackage.NAMED_SET__CUBE);
+			namedSets = new EObjectContainmentWithInverseEList<NamedSet>(NamedSet.class, this, OlapModelPackage.CUBE__NAMED_SETS, OlapModelPackage.NAMED_SET__CUBE);
 		}
 		return namedSets;
 	}

@@ -59,7 +59,6 @@ public class ContextManager extends AbstractContainer implements IBeanContainer 
 	 *            The key of the object in context
 	 * @return The object in context with the given key
 	 */
-	@Override
 	public Object get(String key) {
 		logger.debug("IN: input key = [" + key + "]");
 		if (key == null) {
@@ -92,7 +91,6 @@ public class ContextManager extends AbstractContainer implements IBeanContainer 
 	 * @param key
 	 *            The key to be used to store object in context
 	 */
-	@Override
 	public void set(String key, Object object) {
 		logger.debug("IN: input key = [" + key + "], object = [" + object + "]");
 		if (key == null || object == null) {
@@ -122,7 +120,6 @@ public class ContextManager extends AbstractContainer implements IBeanContainer 
 	 * @param key
 	 *            The key of the object on context.
 	 */
-	@Override
 	public void remove(String key) {
 		logger.debug("IN: input key = [" + key + "]");
 		if (key == null) {
@@ -174,7 +171,6 @@ public class ContextManager extends AbstractContainer implements IBeanContainer 
 	/**
 	 * Returns a List of all the String keys of the objects stored on context.
 	 */
-	@Override
 	public List getKeys() {
 		logger.debug("IN");
 		List toReturn = new ArrayList();

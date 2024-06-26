@@ -152,7 +152,6 @@ public class PhysicalForeignKeyImpl extends ModelObjectImpl implements PhysicalF
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public String getSourceName() {
 		return sourceName;
 	}
@@ -162,7 +161,6 @@ public class PhysicalForeignKeyImpl extends ModelObjectImpl implements PhysicalF
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public void setSourceName(String newSourceName) {
 		String oldSourceName = sourceName;
 		sourceName = newSourceName;
@@ -175,7 +173,6 @@ public class PhysicalForeignKeyImpl extends ModelObjectImpl implements PhysicalF
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public PhysicalTable getSourceTable() {
 		if (sourceTable != null && sourceTable.eIsProxy()) {
 			InternalEObject oldSourceTable = (InternalEObject)sourceTable;
@@ -202,7 +199,6 @@ public class PhysicalForeignKeyImpl extends ModelObjectImpl implements PhysicalF
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public void setSourceTable(PhysicalTable newSourceTable) {
 		PhysicalTable oldSourceTable = sourceTable;
 		sourceTable = newSourceTable;
@@ -215,10 +211,9 @@ public class PhysicalForeignKeyImpl extends ModelObjectImpl implements PhysicalF
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public EList<PhysicalColumn> getSourceColumns() {
 		if (sourceColumns == null) {
-			sourceColumns = new EObjectResolvingEList<>(PhysicalColumn.class, this, PhysicalModelPackage.PHYSICAL_FOREIGN_KEY__SOURCE_COLUMNS);
+			sourceColumns = new EObjectResolvingEList<PhysicalColumn>(PhysicalColumn.class, this, PhysicalModelPackage.PHYSICAL_FOREIGN_KEY__SOURCE_COLUMNS);
 		}
 		return sourceColumns;
 	}
@@ -228,7 +223,6 @@ public class PhysicalForeignKeyImpl extends ModelObjectImpl implements PhysicalF
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public String getDestinationName() {
 		return destinationName;
 	}
@@ -238,7 +232,6 @@ public class PhysicalForeignKeyImpl extends ModelObjectImpl implements PhysicalF
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public void setDestinationName(String newDestinationName) {
 		String oldDestinationName = destinationName;
 		destinationName = newDestinationName;
@@ -251,7 +244,6 @@ public class PhysicalForeignKeyImpl extends ModelObjectImpl implements PhysicalF
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public PhysicalTable getDestinationTable() {
 		if (destinationTable != null && destinationTable.eIsProxy()) {
 			InternalEObject oldDestinationTable = (InternalEObject)destinationTable;
@@ -278,7 +270,6 @@ public class PhysicalForeignKeyImpl extends ModelObjectImpl implements PhysicalF
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public void setDestinationTable(PhysicalTable newDestinationTable) {
 		PhysicalTable oldDestinationTable = destinationTable;
 		destinationTable = newDestinationTable;
@@ -291,10 +282,9 @@ public class PhysicalForeignKeyImpl extends ModelObjectImpl implements PhysicalF
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public EList<PhysicalColumn> getDestinationColumns() {
 		if (destinationColumns == null) {
-			destinationColumns = new EObjectResolvingEList<>(PhysicalColumn.class, this, PhysicalModelPackage.PHYSICAL_FOREIGN_KEY__DESTINATION_COLUMNS);
+			destinationColumns = new EObjectResolvingEList<PhysicalColumn>(PhysicalColumn.class, this, PhysicalModelPackage.PHYSICAL_FOREIGN_KEY__DESTINATION_COLUMNS);
 		}
 		return destinationColumns;
 	}
@@ -304,7 +294,6 @@ public class PhysicalForeignKeyImpl extends ModelObjectImpl implements PhysicalF
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public PhysicalModel getModel() {
 		if (eContainerFeatureID() != PhysicalModelPackage.PHYSICAL_FOREIGN_KEY__MODEL) return null;
 		return (PhysicalModel)eContainer();
@@ -325,7 +314,6 @@ public class PhysicalForeignKeyImpl extends ModelObjectImpl implements PhysicalF
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public void setModel(PhysicalModel newModel) {
 		if (newModel != eInternalContainer() || (eContainerFeatureID() != PhysicalModelPackage.PHYSICAL_FOREIGN_KEY__MODEL && newModel != null)) {
 			if (EcoreUtil.isAncestor(this, newModel))

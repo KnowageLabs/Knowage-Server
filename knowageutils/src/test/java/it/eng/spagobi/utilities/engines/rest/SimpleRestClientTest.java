@@ -24,6 +24,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.httpclient.HttpClient;
+import org.jboss.resteasy.client.ClientResponse;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Before;
@@ -56,7 +57,7 @@ public class SimpleRestClientTest {
 	@Test
 	public void testExecuteGetService() throws Exception {
 		SimpleRestClient client = getSimpleRestClient();
-		Map<String, Object> parameters = new HashMap<>();
+		Map<String, Object> parameters = new HashMap<String, Object>();
 		parameters.put("a", "b");
 		parameters.put("c", "d");
 		Response resp = client.executeGetService(parameters, "http://localhost:8080/hmac", "biadmin");
@@ -67,7 +68,7 @@ public class SimpleRestClientTest {
 	@Test
 	public void testExecuteGetServiceFail() throws Exception {
 		SimpleRestClient client = getSimpleRestClientFail();
-		Map<String, Object> parameters = new HashMap<>();
+		Map<String, Object> parameters = new HashMap<String, Object>();
 		parameters.put("a", "b");
 		parameters.put("c", "d");
 		boolean done = false;
@@ -104,7 +105,7 @@ public class SimpleRestClientTest {
 	@Test
 	public void testExecutePostService() throws Exception {
 		SimpleRestClient client = getSimpleRestClient();
-		Map<String, Object> parameters = new HashMap<>();
+		Map<String, Object> parameters = new HashMap<String, Object>();
 		parameters.put("a", "b");
 		parameters.put("c", "d");
 		Response resp = client.executePostService(parameters, "http://localhost:8080/hmac", "biadmin", MediaType.TEXT_PLAIN_TYPE.getType(), "etc.17");
@@ -115,7 +116,7 @@ public class SimpleRestClientTest {
 	@Test
 	public void testExecutePostServiceFail() throws Exception {
 		SimpleRestClient client = getSimpleRestClientFail();
-		Map<String, Object> parameters = new HashMap<>();
+		Map<String, Object> parameters = new HashMap<String, Object>();
 		parameters.put("a", "b");
 		parameters.put("c", "d");
 		boolean done = false;

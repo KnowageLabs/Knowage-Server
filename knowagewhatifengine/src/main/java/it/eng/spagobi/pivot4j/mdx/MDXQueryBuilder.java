@@ -39,7 +39,7 @@ public class MDXQueryBuilder {
 		try {
 
 			Member measure = null;
-			List<Member> dimensions = new ArrayList<>();
+			List<Member> dimensions = new ArrayList<Member>();
 			for (int i = 0; i < members.length; i++) {
 				Member member = members[i];
 				// if member is an all member or a formula, we skip it since we

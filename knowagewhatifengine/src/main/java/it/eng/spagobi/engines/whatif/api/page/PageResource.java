@@ -56,8 +56,8 @@ public class PageResource extends AbstractRestService {
 	 *
 	 */
 	static {
-		pages = new HashMap<>();
-		urls = new HashMap<>();
+		pages = new HashMap<String, JSONObject>();
+		urls = new HashMap<String, String>();
 
 		try {
 			pages.put("execute", new JSONObject("{name: 'execute', description: 'the Olap execution page', parameters: []}"));

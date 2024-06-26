@@ -23,8 +23,7 @@ public interface IResourceLocator extends ResourceLocator {
 	   * Returns the URL from which all resources are based.
 	   * @return the URL from which all resources are based.
 	   */
-	  @Override
-	URL getBaseURL();
+	  URL getBaseURL();
 	  
 	  File getFile(String fileRelativePath);
 
@@ -36,8 +35,7 @@ public interface IResourceLocator extends ResourceLocator {
 	   * @param key the key of the image resource.
 	   * @return the description on the image resource.
 	   */
-	  @Override
-	Object getImage(String key);
+	  Object getImage(String key);
 	  
 	  /**
 	   * Return the property value associated with the key. The type of the value is typically a String
@@ -60,8 +58,7 @@ public interface IResourceLocator extends ResourceLocator {
 	   * @param key the key of the string resource.
 	   * @return the string resource associated with the key.
 	   */
-	  @Override
-	String getString(String key);
+	  String getString(String key);
 
 
 	  /**
@@ -74,6 +71,5 @@ public interface IResourceLocator extends ResourceLocator {
 	   * @see #getString(String)
 	   * @see java.text.MessageFormat#format(String, Object[])
 	   */
-	  @Override
-	String getString(String key, Object [] substitutions);
+	  String getString(String key, Object [] substitutions);
 }

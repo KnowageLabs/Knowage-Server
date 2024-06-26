@@ -28,6 +28,7 @@ import it.eng.spagobi.tools.dataset.common.datawriter.JSONDataWriter;
 
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.google.caliper.memory.ObjectGraphMeasurer;
@@ -74,7 +75,7 @@ public abstract class AbstractSQLDBCacheMetadatTest extends AbstractCacheTest {
 
 		try {
 			start = System.currentTimeMillis();
-			Map<String, Object> properties = new HashMap<>();
+			Map<String, Object> properties = new HashMap<String, Object>();
 			JSONArray fieldOptions = null;
 			fieldOptions = new JSONArray("[{id: 1, options: {measureScaleFactor: 0.5}}]");
 			properties.put(JSONDataWriter.PROPERTY_FIELD_OPTION, fieldOptions);
@@ -107,7 +108,6 @@ public abstract class AbstractSQLDBCacheMetadatTest extends AbstractCacheTest {
 	* ----------------------------------------------------
 	*/
 	
-	@Override
 	public JDBCDataSet createJDBCDataset(){
 		//Create JDBCDataSet
 		sqlDataset = new JDBCDataSet();

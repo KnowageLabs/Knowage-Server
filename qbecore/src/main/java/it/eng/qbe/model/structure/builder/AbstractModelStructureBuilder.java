@@ -44,7 +44,7 @@ public abstract class AbstractModelStructureBuilder implements IModelStructureBu
 		// add relationship between rootEntities
 		RootEntitiesGraph rootEntitiesGraph = modelStructure.getRootEntitiesGraph(modelName, false);
 		List<IModelRelationshipDescriptor> relationships = dataSource.getConfiguration().loadRelationships();
-		Map<String, DeserializedRelation> mergedRelations = new HashMap<>();
+		Map<String, DeserializedRelation> mergedRelations = new HashMap<String, DeserializedRelation>();
 
 		// take all the relations that have same source and target and merge in the same relation
 		// so if we have 2 relation like this:
@@ -53,10 +53,10 @@ public abstract class AbstractModelStructureBuilder implements IModelStructureBu
 		// we merge these 2 relations in Entity A (field a, field a1)--> Entity B (field b, field b1)
 		for (IModelRelationshipDescriptor relationship : relationships) {
 			IModelEntity sourceEntity = rootEntitiesGraph.getRootEntityByName(relationship.getSourceEntityUniqueName());
-			List<IModelField> sourceFields = new ArrayList<>();
+			List<IModelField> sourceFields = new ArrayList<IModelField>();
 			List<String> sourceFieldNames = relationship.getSourceFieldUniqueNames();
 			IModelEntity destinationEntity = rootEntitiesGraph.getRootEntityByName(relationship.getDestinationEntityUniqueName());
-			List<IModelField> destinationFields = new ArrayList<>();
+			List<IModelField> destinationFields = new ArrayList<IModelField>();
 			List<String> destinationFieldNames = relationship.getDestinationFieldUniqueNames();
 			if (sourceEntity == null)
 				throw new RuntimeException("Impossibe to find source entity whose name is equal to [" + relationship.getSourceEntityUniqueName() + "]");
@@ -144,7 +144,7 @@ public abstract class AbstractModelStructureBuilder implements IModelStructureBu
 	 * @return
 	 */
 	private List<String> sortRelations(Set<String> relationNames) {
-		List<String> relationNamesList = new ArrayList<>();
+		List<String> relationNamesList = new ArrayList<String>();
 		for (String relationshipName : relationNames) {
 			if (relationshipName.endsWith("many-to-one")) {
 				relationNamesList.add(relationshipName);

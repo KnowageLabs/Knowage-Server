@@ -38,7 +38,7 @@ public class ModelCalculatedField extends ModelField {
 		setType(type);
 		setExpression(expression);
 		inLine = false;
-		slots = new ArrayList<>();
+		slots = new ArrayList<Slot>();
 		initProperties();
 	}
 
@@ -47,14 +47,14 @@ public class ModelCalculatedField extends ModelField {
 		setType(type);
 		setExpression(expression);
 		this.inLine = inLine;
-		slots = new ArrayList<>();
+		slots = new ArrayList<Slot>();
 	}
 
 	public ModelCalculatedField(String name, IModelEntity parent, String type, String expression) {
 		super(name, parent);
 		setType(type);
 		setExpression(expression);
-		slots = new ArrayList<>();
+		slots = new ArrayList<Slot>();
 	}
 
 	public String getNature() {
@@ -187,7 +187,7 @@ public class ModelCalculatedField extends ModelField {
 
 		public Slot(String value) {
 			this.name = value;
-			mappedValues = new ArrayList<>();
+			mappedValues = new ArrayList<IMappedValuesDescriptor>();
 		}
 
 		public void addMappedValuesDescriptors(IMappedValuesDescriptor descriptor) {

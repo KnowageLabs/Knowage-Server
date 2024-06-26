@@ -51,7 +51,6 @@ public abstract class ComposableQbeTreeEntityFilter implements IQbeTreeEntityFil
 	/* (non-Javadoc)
 	 * @see it.eng.spagobi.qbe.tree.filter.IQbeTreeEntityFilter#filterEntities(it.eng.qbe.model.IDataMartModel, java.util.List)
 	 */
-	@Override
 	public List filterEntities(IDataSource dataSource, List entities) {
 		
 		if( getParentFilter() != null) {

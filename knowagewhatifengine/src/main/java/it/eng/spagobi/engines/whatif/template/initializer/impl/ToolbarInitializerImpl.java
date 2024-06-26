@@ -54,9 +54,9 @@ public class ToolbarInitializerImpl extends AbstractInitializer {
 		SourceBean toolbarSB = (SourceBean) template.getAttribute(TAG_TOOLBAR);
 		if (toolbarSB != null) {
 
-			List<String> toolbarVisibleButtons = new ArrayList<>();
-			List<String> toolbarMenuButtons = new ArrayList<>();
-			List<String> toolbarClickedButtons = new ArrayList<>();
+			List<String> toolbarVisibleButtons = new ArrayList<String>();
+			List<String> toolbarMenuButtons = new ArrayList<String>();
+			List<String> toolbarClickedButtons = new ArrayList<String>();
 
 			logger.debug(TAG_TOOLBAR + ": " + toolbarSB);
 			toolbarButtons = toolbarSB.getContainedAttributes();

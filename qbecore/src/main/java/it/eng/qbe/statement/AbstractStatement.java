@@ -130,9 +130,9 @@ public abstract class AbstractStatement implements IStatement {
 	private HashSet<IModelEntity> getEntites() {
 		HashSet<IModelEntity> modifiableEntities;
 		if (GraphManager.getGraphEntities(dataSource, query).size() > 0) {
-			modifiableEntities = new HashSet<>(GraphManager.getGraphEntities(dataSource, query));
+			modifiableEntities = new HashSet<IModelEntity>(GraphManager.getGraphEntities(dataSource, query));
 		} else {
-			modifiableEntities = new HashSet<>(query.getQueryEntities(dataSource));
+			modifiableEntities = new HashSet<IModelEntity>(query.getQueryEntities(dataSource));
 		}
 		return modifiableEntities;
 	}
@@ -347,7 +347,7 @@ public abstract class AbstractStatement implements IStatement {
 	@Override
 	public List<String> getFieldAliasWithRolesList(IModelField datamartField, Map entityAliases, Map entityAliasesMaps) {
 
-		List<String> toReturn = new ArrayList<>();
+		List<String> toReturn = new ArrayList<String>();
 
 		IModelEntity rootEntity;
 

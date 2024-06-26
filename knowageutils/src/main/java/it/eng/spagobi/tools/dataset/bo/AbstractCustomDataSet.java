@@ -92,12 +92,10 @@ public abstract class AbstractCustomDataSet extends AbstractDataSet implements I
 		super.setParamsMap(toSet);
 	}
 
-	@Override
 	public IMetaData getMetadata() {
 		return this.metadata;
 	}
 
-	@Override
 	public void setMetadata(IMetaData metadata){
 		this.metadata = metadata;
 	}
@@ -122,53 +120,41 @@ public abstract class AbstractCustomDataSet extends AbstractDataSet implements I
 
 
 	// no implement
-	@Override
 	public abstract IDataStore test();
-	@Override
 	public abstract String getSignature();
-	@Override
 	public abstract IDataStore getDomainValues(String attributeName, Integer start, Integer limit, IDataStoreFilter filter);
 	public abstract Map<String, List<String>> getDomainDescriptions(Map<String, List<String>> codes); 
-	@Override
 	public abstract IDataSetTableDescriptor persist(String tableName, IDataSource dataSource);
 
-	@Override
 	public Map getUserProfileAttributes() {
 		return userAttributes;
 	}
 
-	@Override
 	public void setUserProfileAttributes(Map attributes) {
 		this.userAttributes = attributes;
 
 	}
 
-	@Override
 	public IDataStore getDataStore() {
 		throw new RuntimeException("This method is not implemented. It should not be invoked");
 	}
 
-	@Override
 	public Object getQuery() {
 		throw new RuntimeException("This method is not implemented. It should not be invoked");
 	}
 
-	@Override
 	public void setQuery(Object query) {
 		throw new RuntimeException("This method is not implemented. It should not be invoked");
 	}
 
-	@Override
 	public void setAbortOnOverflow(boolean abortOnOverflow) {
 		throw new RuntimeException("This method is not implemented. It should not be invoked");
 	}
 
-	@Override
 	public void addBinding(String bindingName, Object bindingValue) {
 		throw new RuntimeException("This method is not implemented. It should not be invoked");
 	}
 
-	@Override
 	public IDataStore decode(IDataStore datastore) {
 		Map<String, List<String>> codes = this.getCodes(datastore);
 		LogMF.debug(logger, "Codes : {0}", codes);
@@ -240,7 +226,7 @@ public abstract class AbstractCustomDataSet extends AbstractDataSet implements I
 		IMetaData metadata = datastore.getMetaData();
 		int count = metadata.getFieldCount();
 		
-		Map<String, List<String>> codes = new HashMap<>();
+		Map<String, List<String>> codes = new HashMap<String, List<String>>();
 		
 		for (int i = 0 ; i < count ; i++) {
 			IFieldMetaData fieldMetadata = metadata.getFieldMeta(i);
@@ -258,7 +244,7 @@ public abstract class AbstractCustomDataSet extends AbstractDataSet implements I
 			
 			String key = fieldMetadata.getName();
 			Set value = datastore.getFieldDistinctValues(i);
-			List<String> strings = new ArrayList<>();
+			List<String> strings = new ArrayList<String>();
 			Iterator it = value.iterator();
 			while (it.hasNext()) {
 				Object aValue = it.next();
@@ -270,12 +256,10 @@ public abstract class AbstractCustomDataSet extends AbstractDataSet implements I
 		return codes;
 	}
 	
-	@Override
 	public boolean isCalculateResultNumberOnLoadEnabled() {
 		return true;
 	}
 
-	@Override
 	public void setCalculateResultNumberOnLoad(boolean enabled) {
 		
 	}

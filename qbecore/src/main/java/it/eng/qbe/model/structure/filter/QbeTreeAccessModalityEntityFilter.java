@@ -46,7 +46,6 @@ public class QbeTreeAccessModalityEntityFilter extends ComposableQbeTreeEntityFi
 		super(parentFilter);
 	}
 	
-	@Override
 	public List filter(IDataSource dataSource, List entities) {
 		List list = null;
 		IModelEntity entity;

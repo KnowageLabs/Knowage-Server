@@ -34,7 +34,7 @@ public class AssociationGroup {
 	Map<String, Association> associations;
 
 	public AssociationGroup() {
-		associations = new HashMap<>();
+		associations = new HashMap<String, Association>();
 	}
 
 	public Collection<Association> getAssociations() {
@@ -56,7 +56,7 @@ public class AssociationGroup {
 	}
 
 	public Set<String> getDataSetLabels() {
-		Set<String> dataSetLabels = new HashSet<>();
+		Set<String> dataSetLabels = new HashSet<String>();
 		Collection<Association> values = associations.values();
 		for (Association asssociation : values) {
 			for (Association.Field field : asssociation.getFields()) {

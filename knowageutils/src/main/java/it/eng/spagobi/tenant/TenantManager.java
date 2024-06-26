@@ -25,7 +25,7 @@ import org.apache.logging.log4j.ThreadContext;
  */
 public class TenantManager {
 
-	private static final ThreadLocal<Tenant> _tenant = new ThreadLocal<>();
+	private static final ThreadLocal<Tenant> _tenant = new ThreadLocal<Tenant>();
 
 	public static void setTenant(Tenant tenant) {
 		ThreadContext.put("tenant", tenant.getName());

@@ -48,7 +48,6 @@ public class SimpleKeyJpaDataSourceTestCase extends AbstractKeyJpaDataSourceTest
 		doTests() ;
 	}
 	
-	@Override
 	public void doTests() {
 		super.doTests();
 		// add custom tests here

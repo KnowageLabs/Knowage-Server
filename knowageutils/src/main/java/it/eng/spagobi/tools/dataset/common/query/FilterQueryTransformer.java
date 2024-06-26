@@ -45,7 +45,6 @@ public class FilterQueryTransformer extends AbstractQueryTransformer{
 		filters = new ArrayList();
 	}
 	
-	@Override
 	public Object execTransformation(Object statement) {
 	
 		if (filters.size() == 0) {

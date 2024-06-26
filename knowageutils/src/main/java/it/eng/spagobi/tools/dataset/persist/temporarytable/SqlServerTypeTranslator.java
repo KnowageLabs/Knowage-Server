@@ -36,7 +36,7 @@ public class SqlServerTypeTranslator implements INativeDBTypeable{
 	
 	private static Map<String, String> sqlServerTypeMapping;
 	static{
-		sqlServerTypeMapping = new HashMap<>();
+		sqlServerTypeMapping = new HashMap<String, String>();
 		sqlServerTypeMapping.put("java.lang.Integer", "int");//no param
 		sqlServerTypeMapping.put("java.lang.String", "char");//  oppure varchar  [ ( n | max ) ]  Dati di tipo carattere a lunghezza variabile non Unicode. n può essere un valore compreso tra 1 e 8.000. max indica che le dimensioni massime dello spazio di archiviazione sono 2^31-1 byte.
 		//sqlServerTypeMapping("java.lang.String4001", "CLOB");
@@ -49,7 +49,6 @@ public class SqlServerTypeTranslator implements INativeDBTypeable{
 		sqlServerTypeMapping.put("java.math.BigDecimal", "decimal");// facoltativi (p,s) p (precisione) Numero massimo totale di cifre decimali che è possibile archiviare, sia a destra che a sinistra del separatore decimale.s (scala) Numero massimo di cifre decimali che è possibile archiviare a destra del separatore decimale. La scala deve essere un valore compreso tra 0 e p.
 	}
 	
-	@Override
 	@SuppressWarnings("rawtypes")
 	public String getNativeTypeString(String typeJavaName, Map properties) {
 		logger.debug("Translating java type "+typeJavaName+" with properties "+properties);

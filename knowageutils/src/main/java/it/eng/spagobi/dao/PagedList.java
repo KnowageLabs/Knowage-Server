@@ -40,7 +40,7 @@ public class PagedList<T> {
 	private int start;
 
 	public PagedList() {
-		this.results = new ArrayList<>();
+		this.results = new ArrayList<T>();
 		this.total = 0;
 		this.start = 0;
 	}
@@ -76,7 +76,7 @@ public class PagedList<T> {
 	}
 
 	public static <T> PagedList<T> emptyList(Class<T> type) {
-		return new PagedList<>(new ArrayList<>(), 0, 0);
+		return new PagedList<T>(new ArrayList<T>(), 0, 0);
 	}
 
 }

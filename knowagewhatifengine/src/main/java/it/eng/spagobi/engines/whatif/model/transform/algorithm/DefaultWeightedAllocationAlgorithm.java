@@ -52,7 +52,6 @@ public class DefaultWeightedAllocationAlgorithm extends AbstractAllocationAlgori
 		persister.setUseInClause(useInClause);
 	}
 
-	@Override
 	public String getName() {
 		return NAME;
 	}
@@ -76,7 +75,6 @@ public class DefaultWeightedAllocationAlgorithm extends AbstractAllocationAlgori
 		return wrappedCell.getDoubleValue() * (newValue / oldValue);
 	}
 
-	@Override
 	public void setProperties(Map<String, Object> properties) {
 		if (properties != null) {
 			this.ei = (WhatIfEngineInstance) properties.get(ENGINEINSTANCE_PROPERTY);
@@ -102,17 +100,14 @@ public class DefaultWeightedAllocationAlgorithm extends AbstractAllocationAlgori
 		return "SpagoBIWhatIfEngine/it.eng.spagobi.engines.whatif.model.transform.DefaultWeightedAllocationAlgorithm";
 	}
 
-	@Override
 	public boolean canOverridePrevious() {
 		return false;
 	}
 
-	@Override
 	public boolean isInMemory() {
 		return true;
 	}
 
-	@Override
 	public boolean isPersistent() {
 		return true;
 	}

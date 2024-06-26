@@ -61,7 +61,7 @@ public class AbstractGraphTestCase extends AbstractDataSourceTestCase{
 		configuration = new FileDataSourceConfiguration(modelName, file);
 		configuration.loadDataSourceProperties().put("datasource", connection);
 		dataSource = DriverManager.getDataSource(JPADriver.DRIVER_ID, configuration);
-		relationShips = new ArrayList<>();
+		relationShips = new ArrayList<Relationship>();
 		modelStructure = dataSource.getModelStructure();
 		setUpGraph();
 	}
@@ -87,10 +87,10 @@ public class AbstractGraphTestCase extends AbstractDataSourceTestCase{
 	 * 
 	 */
 	protected void setUpGraph0() {
-		graph = new DirectedMultigraph<>(Relationship.class);
+		graph = new DirectedMultigraph<IModelEntity, Relationship>(Relationship.class);
 		 
 		Iterator<IModelEntity> meIter = modelStructure.getRootEntityIterator("foodmart");
-		entities = new ArrayList<>();
+		entities = new ArrayList<IModelEntity>();
 		
 		for (int i = 0; i < 4; i++) {
 			entities.add( meIter.next());
@@ -125,28 +125,28 @@ public class AbstractGraphTestCase extends AbstractDataSourceTestCase{
 		relationShips.add(r2);
 		relationShips.add(r3);
 		relationShips.add(r4);
-		mappaths = new HashMap<>();
+		mappaths = new HashMap<IModelEntity, Set<GraphPath<IModelEntity,Relationship>>>();
 		
 		//pathts from entity 1
 		for(int i=0; i<4; i++){
 			IModelEntity me = entities.get(i);
-			Set<GraphPath<IModelEntity, Relationship>> graphPaths = new HashSet<>();
+			Set<GraphPath<IModelEntity, Relationship>> graphPaths = new HashSet<GraphPath<IModelEntity,Relationship>>();
 			
-			KShortestPaths<IModelEntity, Relationship> kshortestPath = new KShortestPaths<>(graph,me,10000 );
+			KShortestPaths<IModelEntity, Relationship> kshortestPath = new KShortestPaths<IModelEntity, Relationship>(graph,me,10000 );
 			for(int j=0; j<4; j++){
 				if(j!=i){
 					List<GraphPath<IModelEntity, Relationship>> graphPathsTemp = kshortestPath.getPaths(entities.get(j));
 					if(graphPathsTemp!=null){
 						graphPaths.addAll(graphPathsTemp);//add paths from i to j
 						if(mappaths.get(entities.get(j))==null){//add paths fro j to i
-							mappaths.put(entities.get(j),  new HashSet<>());
+							mappaths.put(entities.get(j),  new HashSet<GraphPath<IModelEntity,Relationship>>());
 						}
 						mappaths.get(entities.get(j)).addAll(graphPathsTemp);
 					}
 				}
 			}
 			if(mappaths.get(me)==null){//add paths fro j to i
-				mappaths.put(me,  new HashSet<>());
+				mappaths.put(me,  new HashSet<GraphPath<IModelEntity,Relationship>>());
 			}
 			mappaths.get(me).addAll(graphPaths);
 
@@ -173,10 +173,10 @@ public class AbstractGraphTestCase extends AbstractDataSourceTestCase{
 	 * 
 	 */
 	protected void setUpGraph1() {
-		graph = new Multigraph<>(Relationship.class);
+		graph = new Multigraph<IModelEntity, Relationship>(Relationship.class);
 		 
 		Iterator<IModelEntity> meIter = modelStructure.getRootEntityIterator("foodmart");
-		entities = new ArrayList<>();
+		entities = new ArrayList<IModelEntity>();
 		
 		for (int i = 0; i < 4; i++) {
 			entities.add( meIter.next());
@@ -211,28 +211,28 @@ public class AbstractGraphTestCase extends AbstractDataSourceTestCase{
 		relationShips.add(r2);
 		relationShips.add(r3);
 		relationShips.add(r4);
-		mappaths = new HashMap<>();
+		mappaths = new HashMap<IModelEntity, Set<GraphPath<IModelEntity,Relationship>>>();
 		
 		//pathts from entity 1
 		for(int i=0; i<4; i++){
 			IModelEntity me = entities.get(i);
-			Set<GraphPath<IModelEntity, Relationship>> graphPaths = new HashSet<>();
+			Set<GraphPath<IModelEntity, Relationship>> graphPaths = new HashSet<GraphPath<IModelEntity,Relationship>>();
 			
-			KShortestPaths<IModelEntity, Relationship> kshortestPath = new KShortestPaths<>(graph,me,10000 );
+			KShortestPaths<IModelEntity, Relationship> kshortestPath = new KShortestPaths<IModelEntity, Relationship>(graph,me,10000 );
 			for(int j=0; j<4; j++){
 				if(j!=i){
 					List<GraphPath<IModelEntity, Relationship>> graphPathsTemp = kshortestPath.getPaths(entities.get(j));
 					if(graphPathsTemp!=null){
 						graphPaths.addAll(graphPathsTemp);//add paths from i to j
 						if(mappaths.get(entities.get(j))==null){//add paths fro j to i
-							mappaths.put(entities.get(j),  new HashSet<>());
+							mappaths.put(entities.get(j),  new HashSet<GraphPath<IModelEntity,Relationship>>());
 						}
 						mappaths.get(entities.get(j)).addAll(graphPathsTemp);
 					}
 				}
 			}
 			if(mappaths.get(me)==null){//add paths fro j to i
-				mappaths.put(me,  new HashSet<>());
+				mappaths.put(me,  new HashSet<GraphPath<IModelEntity,Relationship>>());
 			}
 			mappaths.get(me).addAll(graphPaths);
 

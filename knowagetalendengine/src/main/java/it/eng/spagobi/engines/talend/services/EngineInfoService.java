@@ -13,6 +13,9 @@ import it.eng.spagobi.utilities.engines.EngineStartServletIOManager;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineException;
 
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.log4j.Logger;
 
 /**
@@ -31,7 +34,6 @@ public class EngineInfoService extends AbstractEngineStartServlet {
 	private static final Logger logger = Logger.getLogger(EngineInfoService.class);
 	
 	
-	@Override
 	public void doService(EngineStartServletIOManager servletIOManager) throws SpagoBIEngineException {
 		
 		String infoType;

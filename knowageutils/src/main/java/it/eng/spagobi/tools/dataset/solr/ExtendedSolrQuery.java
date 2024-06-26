@@ -151,7 +151,7 @@ public class ExtendedSolrQuery extends SolrQuery {
 	}
 
 	public SolrQuery jsonFacets(List<AbstractSelectionField> projectionsAbs, List<AbstractSelectionField> groups, List<Sorting> sortings) throws JSONException {
-		List<AbstractSelectionField> projections = new ArrayList<>();
+		List<AbstractSelectionField> projections = new ArrayList<AbstractSelectionField>();
 		for (AbstractSelectionField projection : projectionsAbs) {
 			projections.add(projection);
 		}

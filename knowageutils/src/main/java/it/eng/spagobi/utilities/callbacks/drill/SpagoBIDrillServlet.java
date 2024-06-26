@@ -38,8 +38,7 @@ public class SpagoBIDrillServlet extends HttpServlet {
     /* (non-Javadoc)
      * @see javax.servlet.http.HttpServlet#service(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
      */
-    @Override
-	public void service(HttpServletRequest request, HttpServletResponse response) {
+    public void service(HttpServletRequest request, HttpServletResponse response) {
 	HttpSession session = request.getSession();
 
 	IEngUserProfile profile = (IEngUserProfile) session

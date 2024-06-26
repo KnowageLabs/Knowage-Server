@@ -37,7 +37,7 @@ public class CustomizedFunction {
 
 	protected static Logger logger = Logger.getLogger(CustomizedFunction.class);
 
-	List<CustomizedFunctionParameter> parameters = new ArrayList<>();
+	List<CustomizedFunctionParameter> parameters = new ArrayList<CustomizedFunctionParameter>();
 
 	public CustomizedFunction(JSONObject json) {
 		logger.debug("IN");

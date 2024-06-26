@@ -89,7 +89,7 @@ public class HMACFilterTest {
 
 	@Test
 	public void testDoFilter() throws IOException, NoSuchAlgorithmException, HMACSecurityException {
-		Map<String, String> headers = new HashMap<>();
+		Map<String, String> headers = new HashMap<String, String>();
 
 		// test success get
 		String token = "" + System.currentTimeMillis();
@@ -129,7 +129,7 @@ public class HMACFilterTest {
 
 	@Test
 	public void testDoFilterDelete() throws IOException, NoSuchAlgorithmException, HMACSecurityException {
-		Map<String, String> headers = new HashMap<>();
+		Map<String, String> headers = new HashMap<String, String>();
 		String token = "" + System.currentTimeMillis();
 		headers.put(HMACUtils.HMAC_TOKEN_HEADER, token);
 
@@ -143,7 +143,7 @@ public class HMACFilterTest {
 
 	@Test
 	public void testDoFilterDeleteFailToken() throws IOException, NoSuchAlgorithmException, HMACSecurityException {
-		Map<String, String> headers = new HashMap<>();
+		Map<String, String> headers = new HashMap<String, String>();
 		// plus an hour
 		String token = "" + (System.currentTimeMillis() + 3600000);
 		headers.put(HMACUtils.HMAC_TOKEN_HEADER, token);

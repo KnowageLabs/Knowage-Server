@@ -41,8 +41,7 @@ public class GenericSavingException extends Exception {
     /* (non-Javadoc)
      * @see java.lang.Throwable#getLocalizedMessage()
      */
-    @Override
-	public String getLocalizedMessage() {
+    public String getLocalizedMessage() {
         return description;
     }
     

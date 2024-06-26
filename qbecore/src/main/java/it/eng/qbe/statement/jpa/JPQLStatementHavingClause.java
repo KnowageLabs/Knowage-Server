@@ -45,9 +45,8 @@ public class JPQLStatementHavingClause extends AbstractStatementHavingClause {
 	}
 	
 	
-	@Override
 	public IConditionalOperator getOperator(String operator){
-		return JPQLStatementConditionalOperators.getOperator( operator );
+		return (IConditionalOperator)JPQLStatementConditionalOperators.getOperator( operator );
 	}
 
 	

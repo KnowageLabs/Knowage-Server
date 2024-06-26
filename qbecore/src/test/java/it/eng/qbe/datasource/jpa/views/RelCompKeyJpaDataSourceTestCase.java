@@ -48,7 +48,6 @@ public class RelCompKeyJpaDataSourceTestCase extends AbstractViewJpaDataSourceTe
 		doTests() ;
 	}
 	
-	@Override
 	public void doTests() {
 		super.doTests();
 		// add custom tests here

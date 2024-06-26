@@ -107,7 +107,7 @@ public class CellTransformationsAnalyzer {
 	public CellTransformationsStack cleanOverriddenTransformations(CellTransformationsStack stack) {
 		logger.debug("IN");
 		CellTransformationsStack toReturn = new CellTransformationsStack();
-		List<Integer> modificationToRemove = new ArrayList<>();
+		List<Integer> modificationToRemove = new ArrayList<Integer>();
 
 		for (int i = stack.size() - 1; i > 0; i--) {
 			CellTransformation former = stack.get(i);

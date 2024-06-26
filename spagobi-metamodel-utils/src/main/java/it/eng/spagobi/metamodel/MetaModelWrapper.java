@@ -49,7 +49,7 @@ public class MetaModelWrapper {
 	 * Build the list of hierarchies
 	 */
 	private void buildHierarchies(){
-		hierarchies = new ArrayList<>();
+		hierarchies = new ArrayList<HierarchyWrapper>();
 		if(model!=null && model.getOlapModels()!=null && model.getOlapModels().size()>0 && model.getOlapModels().get(0)!=null && model.getOlapModels().get(0).getDimensions()!=null){
 			EList<Dimension> dimension = model.getOlapModels().get(0).getDimensions();
 			for(int i=0; i<dimension.size(); i++){

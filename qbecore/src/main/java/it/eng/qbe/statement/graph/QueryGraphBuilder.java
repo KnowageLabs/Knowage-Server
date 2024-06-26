@@ -50,7 +50,7 @@ public class QueryGraphBuilder {
 
 
 	public QueryGraphBuilder(){
-		vertexes = new ArrayList<>();
+		vertexes = new ArrayList<IModelEntity>();
 	}
 
 	
@@ -227,7 +227,7 @@ public class QueryGraphBuilder {
 		Assert.assertNotNull(paths, "The list of paths is null. Impossbile to create a graph");
 		LOGGER.debug("The number of paths is "+paths.size());
 
-		UndirectedGraph<IModelEntity, Relationship> graph = new Multigraph<>(Relationship.class);
+		UndirectedGraph<IModelEntity, Relationship> graph = new Multigraph<IModelEntity, Relationship>(Relationship.class);
 		
 		if(paths!=null){
 			Iterator<GraphPath<IModelEntity, Relationship>> pathIter = paths.iterator();
@@ -246,7 +246,7 @@ public class QueryGraphBuilder {
 		List<Relationship> edges = path.getEdgeList();
 		if(edges!=null){
 			for(int i=0; i<edges.size(); i++){
-				Relationship edge = edges.get(i);
+				Relationship edge = (Relationship)edges.get(i);
 				addEdgeToGraph(graph, edge);
 			}
 		}

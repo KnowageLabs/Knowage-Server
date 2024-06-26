@@ -315,7 +315,7 @@ public class PhysicalModelImpl extends ModelObjectImpl implements PhysicalModel 
 	@Override
 	public EList<PhysicalTable> getTables() {
 		if (tables == null) {
-			tables = new EObjectContainmentWithInverseEList<>(PhysicalTable.class, this, PhysicalModelPackage.PHYSICAL_MODEL__TABLES,
+			tables = new EObjectContainmentWithInverseEList<PhysicalTable>(PhysicalTable.class, this, PhysicalModelPackage.PHYSICAL_MODEL__TABLES,
 					PhysicalModelPackage.PHYSICAL_TABLE__MODEL);
 		}
 		return tables;
@@ -329,7 +329,7 @@ public class PhysicalModelImpl extends ModelObjectImpl implements PhysicalModel 
 	@Override
 	public EList<PhysicalPrimaryKey> getPrimaryKeys() {
 		if (primaryKeys == null) {
-			primaryKeys = new EObjectContainmentWithInverseEList<>(PhysicalPrimaryKey.class, this,
+			primaryKeys = new EObjectContainmentWithInverseEList<PhysicalPrimaryKey>(PhysicalPrimaryKey.class, this,
 					PhysicalModelPackage.PHYSICAL_MODEL__PRIMARY_KEYS, PhysicalModelPackage.PHYSICAL_PRIMARY_KEY__MODEL);
 		}
 		return primaryKeys;
@@ -343,7 +343,7 @@ public class PhysicalModelImpl extends ModelObjectImpl implements PhysicalModel 
 	@Override
 	public EList<PhysicalForeignKey> getForeignKeys() {
 		if (foreignKeys == null) {
-			foreignKeys = new EObjectContainmentWithInverseEList<>(PhysicalForeignKey.class, this,
+			foreignKeys = new EObjectContainmentWithInverseEList<PhysicalForeignKey>(PhysicalForeignKey.class, this,
 					PhysicalModelPackage.PHYSICAL_MODEL__FOREIGN_KEYS, PhysicalModelPackage.PHYSICAL_FOREIGN_KEY__MODEL);
 		}
 		return foreignKeys;
@@ -568,7 +568,7 @@ public class PhysicalModelImpl extends ModelObjectImpl implements PhysicalModel 
 	@Override
 	public List<PhysicalForeignKey> getForeignKeys(PhysicalTable table) {
 		EList<PhysicalForeignKey> foreignKeys = getForeignKeys();
-		List<PhysicalForeignKey> outputForeignKeys = new ArrayList<>();
+		List<PhysicalForeignKey> outputForeignKeys = new ArrayList<PhysicalForeignKey>();
 		for (PhysicalForeignKey fk : foreignKeys) {
 			if (fk.getSourceTable() == table) {
 				outputForeignKeys.add(fk);
@@ -580,7 +580,7 @@ public class PhysicalModelImpl extends ModelObjectImpl implements PhysicalModel 
 	@Override
 	public List<PhysicalForeignKey> getForeignKeysInvolvingTable(PhysicalTable table) {
 		EList<PhysicalForeignKey> foreignKeys = getForeignKeys();
-		List<PhysicalForeignKey> outputForeignKeys = new ArrayList<>();
+		List<PhysicalForeignKey> outputForeignKeys = new ArrayList<PhysicalForeignKey>();
 		for (PhysicalForeignKey fk : foreignKeys) {
 			if (fk.getSourceTable() == table || fk.getDestinationTable() == table) {
 				outputForeignKeys.add(fk);

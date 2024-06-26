@@ -110,7 +110,6 @@ public class BusinessViewInnerJoinRelationshipImpl extends ModelObjectImpl imple
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public BusinessModel getModel() {
 		if (eContainerFeatureID() != BusinessModelPackage.BUSINESS_VIEW_INNER_JOIN_RELATIONSHIP__MODEL) return null;
 		return (BusinessModel)eContainer();
@@ -131,7 +130,6 @@ public class BusinessViewInnerJoinRelationshipImpl extends ModelObjectImpl imple
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public void setModel(BusinessModel newModel) {
 		if (newModel != eInternalContainer() || (eContainerFeatureID() != BusinessModelPackage.BUSINESS_VIEW_INNER_JOIN_RELATIONSHIP__MODEL && newModel != null)) {
 			if (EcoreUtil.isAncestor(this, newModel))
@@ -153,7 +151,6 @@ public class BusinessViewInnerJoinRelationshipImpl extends ModelObjectImpl imple
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public PhysicalTable getSourceTable() {
 		if (sourceTable != null && sourceTable.eIsProxy()) {
 			InternalEObject oldSourceTable = (InternalEObject)sourceTable;
@@ -180,7 +177,6 @@ public class BusinessViewInnerJoinRelationshipImpl extends ModelObjectImpl imple
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public void setSourceTable(PhysicalTable newSourceTable) {
 		PhysicalTable oldSourceTable = sourceTable;
 		sourceTable = newSourceTable;
@@ -193,7 +189,6 @@ public class BusinessViewInnerJoinRelationshipImpl extends ModelObjectImpl imple
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public PhysicalTable getDestinationTable() {
 		if (destinationTable != null && destinationTable.eIsProxy()) {
 			InternalEObject oldDestinationTable = (InternalEObject)destinationTable;
@@ -220,7 +215,6 @@ public class BusinessViewInnerJoinRelationshipImpl extends ModelObjectImpl imple
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public void setDestinationTable(PhysicalTable newDestinationTable) {
 		PhysicalTable oldDestinationTable = destinationTable;
 		destinationTable = newDestinationTable;
@@ -233,10 +227,9 @@ public class BusinessViewInnerJoinRelationshipImpl extends ModelObjectImpl imple
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public EList<PhysicalColumn> getSourceColumns() {
 		if (sourceColumns == null) {
-			sourceColumns = new EObjectResolvingEList<>(PhysicalColumn.class, this, BusinessModelPackage.BUSINESS_VIEW_INNER_JOIN_RELATIONSHIP__SOURCE_COLUMNS);
+			sourceColumns = new EObjectResolvingEList<PhysicalColumn>(PhysicalColumn.class, this, BusinessModelPackage.BUSINESS_VIEW_INNER_JOIN_RELATIONSHIP__SOURCE_COLUMNS);
 		}
 		return sourceColumns;
 	}
@@ -246,10 +239,9 @@ public class BusinessViewInnerJoinRelationshipImpl extends ModelObjectImpl imple
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public EList<PhysicalColumn> getDestinationColumns() {
 		if (destinationColumns == null) {
-			destinationColumns = new EObjectResolvingEList<>(PhysicalColumn.class, this, BusinessModelPackage.BUSINESS_VIEW_INNER_JOIN_RELATIONSHIP__DESTINATION_COLUMNS);
+			destinationColumns = new EObjectResolvingEList<PhysicalColumn>(PhysicalColumn.class, this, BusinessModelPackage.BUSINESS_VIEW_INNER_JOIN_RELATIONSHIP__DESTINATION_COLUMNS);
 		}
 		return destinationColumns;
 	}

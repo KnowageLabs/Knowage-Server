@@ -58,9 +58,9 @@ public class ModelPropertiesMeta {
 	static Map<String, ModelPropertyMeta> fieldPropertiesMap;
 
 	static {
-		globalPropertiesMap = new HashMap<>();
-		entityPropertiesMap = new HashMap<>();
-		fieldPropertiesMap = new HashMap<>();
+		globalPropertiesMap = new HashMap<String, ModelPropertyMeta>();
+		entityPropertiesMap = new HashMap<String, ModelPropertyMeta>();
+		fieldPropertiesMap = new HashMap<String, ModelPropertyMeta>();
 
 		for (int i = 0; i < globalProperties.length; i++)
 			globalPropertiesMap.put(globalProperties[i].getName(), globalProperties[i]);

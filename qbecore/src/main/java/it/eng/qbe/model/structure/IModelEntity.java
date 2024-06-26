@@ -45,7 +45,6 @@ public interface IModelEntity extends IModelNode {
 
 
 		public List<IModelField> getAllFieldOccurencesOnSubEntity(String entityName, String fieldName);
-		@Override
 		public String toString();
 		public String getPath();
 		public int getDepth();

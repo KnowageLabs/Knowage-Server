@@ -48,7 +48,6 @@ public class SimpleModelStructurePropertiesInitializer implements IModelStructur
 	}
 	
 
-	@Override
 	public void addProperties(IModelObject item) {
 		if(item instanceof IModelEntity) {
 			addModelEntityProperties( (IModelEntity)item );

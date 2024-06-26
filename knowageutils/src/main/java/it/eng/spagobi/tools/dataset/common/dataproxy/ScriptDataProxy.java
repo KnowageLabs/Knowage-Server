@@ -66,18 +66,18 @@ public class ScriptDataProxy extends AbstractDataProxy {
 
 			List<File> imports = null;
 			if ("groovy".equals(language)) {
-				imports = new ArrayList<>();
+				imports = new ArrayList<File>();
 				URL url = Thread.currentThread().getContextClassLoader().getResource("predefinedGroovyScript.groovy");
 				File scriptFile = new File(url.toURI());
 				imports.add(scriptFile);
 			} else if ("ECMAScript".equals(language)) {
-				imports = new ArrayList<>();
+				imports = new ArrayList<File>();
 				URL url = Thread.currentThread().getContextClassLoader().getResource("predefinedJavascriptScript.js");
 				File scriptFile = new File(url.toURI());
 				imports.add(scriptFile);
 			}
 
-			Map<String, Object> bindings = new HashMap<>();
+			Map<String, Object> bindings = new HashMap<String, Object>();
 			bindings.put("attributes", getProfile());
 			bindings.put("parameters", getParameters());
 			Object o = scriptManager.runScript(statement, language, bindings, imports);

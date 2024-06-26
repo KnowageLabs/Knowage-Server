@@ -37,37 +37,30 @@ public class AbstractModelAccessModality implements IModelAccessModality {
 
 	public static final String ATTR_RECURSIVE_FILTERING = "recursiveFiltering";
 
-	@Override
 	public boolean isEntityAccessible(IModelEntity entity) {
 		return true;
 	}
 
-	@Override
 	public boolean isFieldAccessible(IModelField field) {
 		return true;
 	}
 
-	@Override
 	public List getEntityFilterConditions(String entityName) {
 		return new ArrayList();
 	}
 
-	@Override
 	public List getEntityFilterConditions(String entityName, Properties parameters) {
 		return new ArrayList();
 	}
 
-	@Override
 	public Boolean getRecursiveFiltering() {
 		return recursiveFiltering;
 	}
 
-	@Override
 	public void setRecursiveFiltering(Boolean recursiveFiltering) {
 		this.recursiveFiltering = recursiveFiltering;
 	}
 
-	@Override
 	public Query getFilteredStatement(Query query, IDataSource iDataSource, Map userProfileAttributes) {
 		return query;
 	}

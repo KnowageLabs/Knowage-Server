@@ -51,7 +51,6 @@ public abstract class ComposableQbeTreeFieldFilter implements IQbeTreeFieldFilte
 	/* (non-Javadoc)
 	 * @see it.eng.spagobi.qbe.tree.filter.IQbeTreeFieldFilter#filterFields(it.eng.qbe.model.IDataMartModel, java.util.List)
 	 */
-	@Override
 	public List filterFields(IDataSource dataSource, List fields) {
 		if( getParentFilter() != null) {
 			fields = getParentFilter().filterFields(dataSource, fields);

@@ -66,7 +66,6 @@ public class SimpleBusinessColumnImpl extends BusinessColumnImpl implements Simp
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public PhysicalColumn getPhysicalColumn() {
 		if (physicalColumn != null && physicalColumn.eIsProxy()) {
 			InternalEObject oldPhysicalColumn = (InternalEObject)physicalColumn;
@@ -93,7 +92,6 @@ public class SimpleBusinessColumnImpl extends BusinessColumnImpl implements Simp
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public void setPhysicalColumn(PhysicalColumn newPhysicalColumn) {
 		PhysicalColumn oldPhysicalColumn = physicalColumn;
 		physicalColumn = newPhysicalColumn;

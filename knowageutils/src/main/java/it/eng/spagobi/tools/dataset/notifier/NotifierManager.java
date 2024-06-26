@@ -31,7 +31,7 @@ public class NotifierManager {
 
 	private static final Logger log = Logger.getLogger(NotifierManager.class);
 
-	private final ConcurrentMap<Object, INotifierOperator> operators = new ConcurrentHashMap<>();
+	private final ConcurrentMap<Object, INotifierOperator> operators = new ConcurrentHashMap<Object, INotifierOperator>();
 
 	public void addOperatorIfAbsent(Object id, INotifierOperator op) {
 		operators.putIfAbsent(id, op);

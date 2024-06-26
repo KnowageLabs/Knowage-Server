@@ -26,7 +26,6 @@ public class DatasetCalculatedField extends AbstractCalculatedField {
 		this(aggregationFunction, dataSet, columnName, null);
 	}
 
-	@Override
 	public void setName(String name) {
 		this.name = name;
 	}
@@ -62,12 +61,10 @@ public class DatasetCalculatedField extends AbstractCalculatedField {
 		return aggregationFunction;
 	}
 
-	@Override
 	public String getName() {
 		return name;
 	}
 
-	@Override
 	public String getAlias() {
 		return alias;
 	}

@@ -17,6 +17,8 @@
  */
 package it.eng.spagobi.tools.dataset.dao;
 
+import java.math.BigDecimal;
+
 
 /**
  * @author Marco Cortella (marco.cortella@eng.it)

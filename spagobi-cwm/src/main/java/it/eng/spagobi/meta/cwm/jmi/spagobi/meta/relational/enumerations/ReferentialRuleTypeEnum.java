@@ -61,8 +61,7 @@ public final class ReferentialRuleTypeEnum
 
 
 
-  @Override
-public List refTypeName()
+  public List refTypeName()
   {
     return typeName;
   }
@@ -70,8 +69,7 @@ public List refTypeName()
 
 
 
-  @Override
-public String toString()
+  public String toString()
   {
     return literalName;
   }
@@ -79,8 +77,7 @@ public String toString()
 
 
 
-  @Override
-public int hashCode()
+  public int hashCode()
   {
     return literalName.hashCode();
   }
@@ -90,8 +87,7 @@ public int hashCode()
 
 
 
-  @Override
-public boolean equals(Object o)
+  public boolean equals(Object o)
   {
     if ((o instanceof ReferentialRuleTypeEnum)) return o == this;
     if ((o instanceof ReferentialRuleType)) return o.toString().equals(literalName);

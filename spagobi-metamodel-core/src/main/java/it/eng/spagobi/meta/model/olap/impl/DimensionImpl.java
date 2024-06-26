@@ -9,17 +9,24 @@
 **/
 package it.eng.spagobi.meta.model.olap.impl;
 
+import it.eng.spagobi.meta.model.Model;
 import it.eng.spagobi.meta.model.ModelPropertyType;
+import it.eng.spagobi.meta.model.business.BusinessColumn;
 import it.eng.spagobi.meta.model.business.BusinessColumnSet;
 
 import it.eng.spagobi.meta.model.impl.ModelObjectImpl;
 
+import it.eng.spagobi.meta.model.olap.Cube;
 import it.eng.spagobi.meta.model.olap.Dimension;
 import it.eng.spagobi.meta.model.olap.Hierarchy;
+import it.eng.spagobi.meta.model.olap.Measure;
 import it.eng.spagobi.meta.model.olap.OlapModel;
 import it.eng.spagobi.meta.model.olap.OlapModelPackage;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
+
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.NotificationChain;
 
@@ -31,6 +38,7 @@ import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 
 import org.eclipse.emf.ecore.util.EObjectContainmentWithInverseEList;
+import org.eclipse.emf.ecore.util.EObjectWithInverseResolvingEList;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.ecore.util.InternalEList;
 
@@ -94,7 +102,6 @@ public class DimensionImpl extends ModelObjectImpl implements Dimension {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public BusinessColumnSet getTable() {
 		if (table != null && table.eIsProxy()) {
 			InternalEObject oldTable = (InternalEObject)table;
@@ -121,7 +128,6 @@ public class DimensionImpl extends ModelObjectImpl implements Dimension {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public void setTable(BusinessColumnSet newTable) {
 		BusinessColumnSet oldTable = table;
 		table = newTable;
@@ -134,10 +140,9 @@ public class DimensionImpl extends ModelObjectImpl implements Dimension {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public EList<Hierarchy> getHierarchies() {
 		if (hierarchies == null) {
-			hierarchies = new EObjectContainmentWithInverseEList<>(Hierarchy.class, this, OlapModelPackage.DIMENSION__HIERARCHIES, OlapModelPackage.HIERARCHY__DIMENSION);
+			hierarchies = new EObjectContainmentWithInverseEList<Hierarchy>(Hierarchy.class, this, OlapModelPackage.DIMENSION__HIERARCHIES, OlapModelPackage.HIERARCHY__DIMENSION);
 		}
 		return hierarchies;
 	}
@@ -147,7 +152,6 @@ public class DimensionImpl extends ModelObjectImpl implements Dimension {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public OlapModel getModel() {
 		if (eContainerFeatureID() != OlapModelPackage.DIMENSION__MODEL) return null;
 		return (OlapModel)eContainer();
@@ -168,7 +172,6 @@ public class DimensionImpl extends ModelObjectImpl implements Dimension {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public void setModel(OlapModel newModel) {
 		if (newModel != eInternalContainer() || (eContainerFeatureID() != OlapModelPackage.DIMENSION__MODEL && newModel != null)) {
 			if (EcoreUtil.isAncestor(this, newModel))

@@ -31,8 +31,7 @@ import it.eng.spagobi.services.common.JWTSsoService;
 public class CasSsoService5 extends JWTSsoService {
 	private static Logger logger = Logger.getLogger(CasSsoService5.class);
 
-    @Override
-	public String readUserIdentifier(HttpServletRequest request){
+    public String readUserIdentifier(HttpServletRequest request){
 	    HttpSession session=request.getSession();
 	    Assertion assertion = (Assertion) session.getAttribute(AbstractCasFilter.CONST_CAS_ASSERTION);
 	    if (assertion == null) {

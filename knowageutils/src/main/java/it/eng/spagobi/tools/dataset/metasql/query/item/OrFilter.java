@@ -32,7 +32,7 @@ public class OrFilter extends CompoundFilter {
 
 	public OrFilter(List<? extends Filter> filters) {
 		this.compositionOperator = CompoundFilterOperator.OR;
-		this.filters = new ArrayList<>(filters);
+		this.filters = new ArrayList<Filter>(filters);
 	}
 
 	public OrFilter or(Filter... filters) {

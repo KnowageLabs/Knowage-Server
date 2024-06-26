@@ -109,7 +109,7 @@ public class InMemoryMaterializerTest  {
 		
 
 		
-		List<MeasureCatalogueMeasure> measures= new ArrayList<>();
+		List<MeasureCatalogueMeasure> measures= new ArrayList<MeasureCatalogueMeasure>();
 		measures.add(measure1);
 		measures.add(measure2);
 		

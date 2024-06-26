@@ -88,7 +88,6 @@ public class PhysicalPrimaryKeyImpl extends ModelObjectImpl implements PhysicalP
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public PhysicalModel getModel() {
 		if (eContainerFeatureID() != PhysicalModelPackage.PHYSICAL_PRIMARY_KEY__MODEL) return null;
 		return (PhysicalModel)eContainer();
@@ -109,7 +108,6 @@ public class PhysicalPrimaryKeyImpl extends ModelObjectImpl implements PhysicalP
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public void setModel(PhysicalModel newModel) {
 		if (newModel != eInternalContainer() || (eContainerFeatureID() != PhysicalModelPackage.PHYSICAL_PRIMARY_KEY__MODEL && newModel != null)) {
 			if (EcoreUtil.isAncestor(this, newModel))
@@ -131,7 +129,6 @@ public class PhysicalPrimaryKeyImpl extends ModelObjectImpl implements PhysicalP
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public PhysicalTable getTable() {
 		if (table != null && table.eIsProxy()) {
 			InternalEObject oldTable = (InternalEObject)table;
@@ -158,7 +155,6 @@ public class PhysicalPrimaryKeyImpl extends ModelObjectImpl implements PhysicalP
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public void setTable(PhysicalTable newTable) {
 		PhysicalTable oldTable = table;
 		table = newTable;
@@ -171,10 +167,9 @@ public class PhysicalPrimaryKeyImpl extends ModelObjectImpl implements PhysicalP
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public EList<PhysicalColumn> getColumns() {
 		if (columns == null) {
-			columns = new EObjectResolvingEList<>(PhysicalColumn.class, this, PhysicalModelPackage.PHYSICAL_PRIMARY_KEY__COLUMNS);
+			columns = new EObjectResolvingEList<PhysicalColumn>(PhysicalColumn.class, this, PhysicalModelPackage.PHYSICAL_PRIMARY_KEY__COLUMNS);
 		}
 		return columns;
 	}

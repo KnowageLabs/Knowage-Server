@@ -35,7 +35,6 @@ public class SpagoBIPrincipal implements Principal {
 	/* (non-Javadoc)
 	 * @see java.security.Principal#getName()
 	 */
-	@Override
 	public String getName() {
 		return this.userName;
 	}

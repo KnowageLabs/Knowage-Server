@@ -36,7 +36,6 @@ public abstract class AbstractQueryTransformer implements IQueryTransformer {
 		return previousTransformer;
 	}
 
-	@Override
 	public void setPreviousTransformer(IQueryTransformer previousTransformer) {
 		this.previousTransformer = previousTransformer;
 	}
@@ -46,7 +45,6 @@ public abstract class AbstractQueryTransformer implements IQueryTransformer {
 	}
 
 
-	@Override
 	public Object transformQuery(Object query) {
 		if( hasPreviousTransformer() ) {
 			query = getPreviousTransformer().transformQuery(query);

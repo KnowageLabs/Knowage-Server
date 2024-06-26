@@ -9,6 +9,7 @@
 **/
 package it.eng.spagobi.meta.model.analytical.util;
 
+import it.eng.spagobi.meta.model.analytical.*;
 import it.eng.spagobi.meta.model.analytical.AnalyticalModel;
 import it.eng.spagobi.meta.model.analytical.AnalyticalModelPackage;
 

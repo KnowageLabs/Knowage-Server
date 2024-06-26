@@ -44,7 +44,6 @@ public class PivotJsonSerializer implements ISerializer {
 		mapper.registerModule(simpleModule);
 	}
 
-	@Override
 	public String serialize(Object object) throws SerializationException {
 		try {
 			return mapper.writeValueAsString(object);
@@ -54,7 +53,6 @@ public class PivotJsonSerializer implements ISerializer {
 		}
 	}
 
-	@Override
 	public Object deserialize(String toDeserialize, Class object) throws SerializationException {
 		try {
 			return mapper.readValue(toDeserialize, object);
@@ -64,7 +62,6 @@ public class PivotJsonSerializer implements ISerializer {
 		}
 	}
 
-	@Override
 	public Object deserialize(String toDeserialize, TypeReference object) throws SerializationException {
 		try {
 			return mapper.readValue(toDeserialize, object);
@@ -74,7 +71,6 @@ public class PivotJsonSerializer implements ISerializer {
 		}
 	}
 
-	@Override
 	public String getVersion() {
 		return SerializationManager.DEFAULT_VERSION;
 	}
@@ -85,7 +81,6 @@ public class PivotJsonSerializer implements ISerializer {
 	 * @see
 	 * it.eng.spagobi.engines.whatif.services.serializer.ISerializer#getFormat()
 	 */
-	@Override
 	public String getFormat() {
 		return mimeType;
 	}

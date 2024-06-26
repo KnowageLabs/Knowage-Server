@@ -49,7 +49,6 @@ public class NoKeyJpaDataSourceTestCase extends AbstractKeyJpaDataSourceTestCase
 		doTests() ;
 	}
 	
-	@Override
 	public void doTests() {
 		super.doTests();
 		// add custom tests here

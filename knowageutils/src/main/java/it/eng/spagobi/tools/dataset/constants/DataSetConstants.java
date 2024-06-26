@@ -165,7 +165,7 @@ public class DataSetConstants {
 	public static final Map<String, String> name2Code;
 
 	static {
-		name2Code = new HashMap<>();
+		name2Code = new HashMap<String, String>();
 		name2Code.put("File", DataSetConstants.DS_FILE);
 		name2Code.put("Ckan", DataSetConstants.DS_CKAN);
 		name2Code.put("Java Class", DataSetConstants.DS_JCLASS);
@@ -206,7 +206,7 @@ public class DataSetConstants {
 	public static final Map<String, String> code2name;
 
 	static {
-		code2name = new HashMap<>();
+		code2name = new HashMap<String, String>();
 		code2name.put(DataSetConstants.DS_FILE, "File");
 		code2name.put(DataSetConstants.DS_CKAN, "Ckan");
 		code2name.put(DataSetConstants.DS_JCLASS, "Java Class");

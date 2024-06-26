@@ -36,24 +36,20 @@ public class HttpRequestContainer implements IContainer{
 		this.request =request;  
 	}
 
-	@Override
 	public boolean isNull(String key) {
 		Object o = request.getParameter(key);
 		return o==null;
 	}
 
-	@Override
 	public boolean isBlankOrNull(String key) {
 		Object o = request.getParameter(key);
 		return o==null || (o instanceof String && ((String)o).trim().equals(""));
 	}
 
-	@Override
 	public Object get(String key) {
 		return request.getParameter(key);
 	}
 
-	@Override
 	public String getString(String key) {
 		Object o = request.getParameter(key);
 		if(o!=null){
@@ -62,7 +58,6 @@ public class HttpRequestContainer implements IContainer{
 		return null;
 	}
 
-	@Override
 	public Boolean getBoolean(String key) {
 		Object o = request.getParameter(key);
 		if(o!=null){
@@ -71,7 +66,6 @@ public class HttpRequestContainer implements IContainer{
 		return null;
 	}
 
-	@Override
 	public Integer getInteger(String key) {
 		Object o = request.getParameter(key);
 		if(o!=null){
@@ -80,7 +74,6 @@ public class HttpRequestContainer implements IContainer{
 		return null;
 	}
 
-	@Override
 	public List getList(String key) {
 		Object o = request.getParameter(key);
 		if(o!=null){
@@ -89,7 +82,6 @@ public class HttpRequestContainer implements IContainer{
 		return null;
 	}
 
-	@Override
 	public List toCsvList(String key) {
 		Object o = request.getParameter(key);
 		if(o!=null){
@@ -98,7 +90,6 @@ public class HttpRequestContainer implements IContainer{
 		return null;
 	}
 
-	@Override
 	public JSONObject toJSONObject(String key) {
 		Object o = request.getParameter(key);
 		if(o!=null){
@@ -107,12 +98,11 @@ public class HttpRequestContainer implements IContainer{
 		return null;
 	}
 
-	@Override
 	public List getKeys() {
 		if(request.getParameterMap()!=null && request.getParameterMap().keySet()!=null){
 			return Arrays.asList(request.getParameterMap().keySet().toArray());
 		}
-		return new ArrayList<>();
+		return new ArrayList<Object>();
 	}
 	
 	public JSONArray toJSONArray(String key) {
@@ -124,9 +114,7 @@ public class HttpRequestContainer implements IContainer{
 		return ObjectUtils.toList( get(key) );
 	}
 
-	@Override
 	public void set(String key, Object value) {}
 
-	@Override
 	public void remove(String key) {}
 }

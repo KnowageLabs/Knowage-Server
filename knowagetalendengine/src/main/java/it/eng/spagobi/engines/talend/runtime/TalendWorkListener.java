@@ -35,18 +35,15 @@ public class TalendWorkListener implements WorkListener {
     }
     
     
-    @Override
-	public void workAccepted(WorkEvent event) {
+    public void workAccepted(WorkEvent event) {
     	logger.info("IN");
     }
 
-    @Override
-	public void workRejected(WorkEvent event) {
+    public void workRejected(WorkEvent event) {
     	logger.info("IN");
     }
     
-    @Override
-	public void workCompleted(WorkEvent event) {
+    public void workCompleted(WorkEvent event) {
 		
     	WorkException workException;
     	TalendWork talendWork;
@@ -82,8 +79,7 @@ public class TalendWorkListener implements WorkListener {
 
     }
 
-    @Override
-	public void workStarted(WorkEvent event) {
+    public void workStarted(WorkEvent event) {
     	
     	if(auditServiceProxy != null) {
     		auditServiceProxy.notifyServiceStartEvent();

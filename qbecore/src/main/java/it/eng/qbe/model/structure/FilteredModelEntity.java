@@ -42,25 +42,21 @@ public class FilteredModelEntity implements IModelEntity{
 
 	}
 
-	@Override
 	public List<IModelField> getKeyFields() {
 		return qbeTreeFilter.filterFields(dataSource, wrappedModelEntity.getKeyFields());
 	}
 
-	@Override
 	public List<IModelField> getNormalFields() {
 		return qbeTreeFilter.filterFields(dataSource, wrappedModelEntity.getNormalFields());
 	}
 
-	@Override
 	public List<ModelCalculatedField>  getCalculatedFields() {
 		return qbeTreeFilter.filterFields(dataSource, wrappedModelEntity.getCalculatedFields());
 	}
 
-	@Override
 	public List<IModelEntity> getSubEntities() {
 		List<IModelEntity> modelEntities = qbeTreeFilter.filterEntities(getDataSource(), wrappedModelEntity.getSubEntities());
-		List<IModelEntity> filteredModelEntities = new ArrayList<>();
+		List<IModelEntity> filteredModelEntities = new ArrayList<IModelEntity>();
 		for(int i=0; i<modelEntities.size(); i++){
 			FilteredModelEntity filteredModelEntity;
 			if(modelEntities.get(i) instanceof FilteredModelEntity){
@@ -92,55 +88,45 @@ public class FilteredModelEntity implements IModelEntity{
 		this.dataSource = dataSource;
 	}
 
-	@Override
 	public long getId() {
 		return wrappedModelEntity.getId();
 	}
 
-	@Override
 	public String getName() {
 		return wrappedModelEntity.getName();
 	}
 
-	@Override
 	public void setName(String name) {
 		wrappedModelEntity.setName(name);
 
 	}
 
-	@Override
 	public Map<String, Object> getProperties() {
 		return wrappedModelEntity.getProperties();
 	}
 
-	@Override
 	public void setProperties(Map<String, Object> properties) {
 		wrappedModelEntity.setProperties(properties);
 	}
 
-	@Override
 	public String getUniqueName() {
 		return wrappedModelEntity.getUniqueName();
 	}
 
-	@Override
 	public String getUniqueType() {
 		return wrappedModelEntity.getUniqueType();
 	}
 
-	@Override
 	public IModelField addNormalField(String fieldName) {
 		return wrappedModelEntity.addNormalField(fieldName);
 	}
 
-	@Override
 	public IModelField addKeyField(String fieldName) {
 		return wrappedModelEntity.addKeyField(fieldName);
 	}
 
-	@Override
 	public IModelField getField(String fieldUniqueName) {
-		List<IModelField> list = new ArrayList<>();
+		List<IModelField> list = new ArrayList<IModelField>();
 		List<IModelField> filteredList;
 		IModelField field = wrappedModelEntity.getField(fieldUniqueName);
 		if(field==null){
@@ -154,9 +140,8 @@ public class FilteredModelEntity implements IModelEntity{
 		return filteredList.get(0);
 	}
 
-	@Override
 	public IModelField getFieldByName(String fieldName) {
-		List<IModelField> list = new ArrayList<>();
+		List<IModelField> list = new ArrayList<IModelField>();
 		List<IModelField> filteredList;
 		IModelField field = wrappedModelEntity.getFieldByName(fieldName);
 		if(field==null){
@@ -170,19 +155,16 @@ public class FilteredModelEntity implements IModelEntity{
 		return filteredList.get(0);
 	}
 
-	@Override
 	public void addCalculatedField(ModelCalculatedField calculatedField) {
 		wrappedModelEntity.addCalculatedField(calculatedField);
 	}
 
-	@Override
 	public void deleteCalculatedField(String fieldName) {
 		wrappedModelEntity.deleteCalculatedField(fieldName);
 	}
 
-	@Override
 	public HierarchicalDimensionField getHierarchicalDimensionByEntity(String entity) {
-		ArrayList<HierarchicalDimensionField> list = new ArrayList<>();
+		ArrayList<HierarchicalDimensionField> list = new ArrayList<HierarchicalDimensionField>();
 		HierarchicalDimensionField dimension = wrappedModelEntity.getHierarchicalDimensionByEntity(entity);
 		if(dimension != null){
 			list.add(dimension);
@@ -192,41 +174,34 @@ public class FilteredModelEntity implements IModelEntity{
 		}
 	}
 
-	@Override
 	public void addHierarchicalDimension(HierarchicalDimensionField hierarchicalDimensionField){
 		wrappedModelEntity.addHierarchicalDimension(hierarchicalDimensionField);
 	}
 
-	@Override
 	public List<IModelField> getAllFields() {
 		return qbeTreeFilter.filterFields(dataSource, wrappedModelEntity.getAllFields());
 	}
 
-	@Override
 	public Iterator<IModelField> getKeyFieldIterator() {
 		return getKeyFields().iterator();
 	}
 
-	@Override
 	public Iterator<IModelField> getNormalFieldIterator() {
 		return getNormalFields().iterator();
 	}
 
-	@Override
 	public IModelEntity addSubEntity(String subEntityName,
 			String subEntityRole, String subEntityType) {
 		return wrappedModelEntity.addSubEntity(subEntityName, subEntityRole, subEntityType);
 	}
 
-	@Override
 	public void addSubEntity(IModelEntity entity) {
 		wrappedModelEntity.addSubEntity(entity);
 
 	}
 
-	@Override
 	public IModelEntity getSubEntity(String entityUniqueName) {
-		List<IModelEntity> list = new ArrayList<>();
+		List<IModelEntity> list = new ArrayList<IModelEntity>();
 		List<IModelEntity> filteredList;
 		IModelEntity entityn =  wrappedModelEntity.getSubEntity(entityUniqueName);
 		if(entityn==null){
@@ -240,57 +215,47 @@ public class FilteredModelEntity implements IModelEntity{
 		return filteredList.get(0);
 	}
 
-	@Override
 	public List<IModelEntity> getAllSubEntities() {
 		return qbeTreeFilter.filterEntities(getDataSource(), wrappedModelEntity.getAllSubEntities());
 	}
 
-	@Override
 	public List<IModelEntity> getAllSubEntities(String entityName) {
 		return qbeTreeFilter.filterEntities(getDataSource(),wrappedModelEntity.getAllSubEntities(entityName));
 	}
 
-	@Override
 	public List<IModelField> getAllFieldOccurencesOnSubEntity(String entityName,
 			String fieldName) {
 		return qbeTreeFilter.filterFields(dataSource, wrappedModelEntity.getAllFieldOccurencesOnSubEntity(entityName, fieldName));
 	}
 
-	@Override
 	public String getPath() {
 		return wrappedModelEntity.getPath();
 	}
 
-	@Override
 	public void setPath(String path) {
 		wrappedModelEntity.setPath(path);
 
 	}
 
-	@Override
 	public String getRole() {
 		return wrappedModelEntity.getRole();
 	}
 
-	@Override
 	public void setRole(String role) {
 		wrappedModelEntity.setRole(role);
 
 	}
 
-	@Override
 	public String getType() {
 		return wrappedModelEntity.getType();
 	}
 
-	@Override
 	public void setType(String type) {
 		wrappedModelEntity.setType(type);
 	}
 
-	@Override
 	public IModelEntity getRoot() {
-		List<IModelEntity> list = new ArrayList<>();
+		List<IModelEntity> list = new ArrayList<IModelEntity>();
 		List<IModelEntity> filteredList;
 		IModelEntity entityn =  wrappedModelEntity.getRoot();
 		if(entityn==null){
@@ -304,14 +269,12 @@ public class FilteredModelEntity implements IModelEntity{
 		return filteredList.get(0);
 	}
 
-	@Override
 	public IModelStructure getStructure() {
 		return wrappedModelEntity.getStructure();
 	}
 
-	@Override
 	public IModelEntity getParent() {
-		List<IModelEntity> list = new ArrayList<>();
+		List<IModelEntity> list = new ArrayList<IModelEntity>();
 		List<IModelEntity> filteredList;
 		IModelEntity entityn =  wrappedModelEntity.getParent();
 		if(entityn==null){
@@ -325,7 +288,6 @@ public class FilteredModelEntity implements IModelEntity{
 		return filteredList.get(0);
 	}
 
-	@Override
 	public void setParent(IModelEntity parent) {
 		wrappedModelEntity.setParent(parent);
 	}
@@ -338,27 +300,22 @@ public class FilteredModelEntity implements IModelEntity{
 		this.wrappedModelEntity = wrappedModelEntity;
 	}
 
-	@Override
 	public Object getProperty(String name) {
 		return wrappedModelEntity.getProperty(name);
 	}
 
-	@Override
 	public String getPropertyAsString(String name) {
 		return wrappedModelEntity.getPropertyAsString(name);
 	}
 
-	@Override
 	public boolean getPropertyAsBoolean(String name) {
 		return wrappedModelEntity.getPropertyAsBoolean(name);
 	}
 
-	@Override
 	public int getPropertyAsInt(String name) {
 		return wrappedModelEntity.getPropertyAsInt(name);
 	}
 
-	@Override
 	public List<IModelField> getFieldsByType(boolean isKey) {
 		return qbeTreeFilter.filterFields(dataSource, wrappedModelEntity.getFieldsByType(isKey));
 	}
@@ -366,7 +323,6 @@ public class FilteredModelEntity implements IModelEntity{
 	/* (non-Javadoc)
 	 * @see it.eng.qbe.model.structure.IModelNode#getPathParent()
 	 */
-	@Override
 	public IModelEntity getLogicalParent() {
 		return wrappedModelEntity.getLogicalParent();
 	}
@@ -374,7 +330,6 @@ public class FilteredModelEntity implements IModelEntity{
 	/* (non-Javadoc)
 	 * @see it.eng.qbe.model.structure.IModelEntity#addField(it.eng.qbe.model.structure.IModelField)
 	 */
-	@Override
 	public void addField(IModelField field) {
 		wrappedModelEntity.addField(field);
 
@@ -383,7 +338,6 @@ public class FilteredModelEntity implements IModelEntity{
 	/* (non-Javadoc)
 	 * @see it.eng.qbe.model.structure.IModelEntity#setRoot(it.eng.qbe.model.structure.IModelEntity)
 	 */
-	@Override
 	public void setRoot(IModelEntity root) {
 		wrappedModelEntity.setRoot(root);
 
@@ -392,7 +346,6 @@ public class FilteredModelEntity implements IModelEntity{
 	/* (non-Javadoc)
 	 * @see it.eng.qbe.model.structure.IModelEntity#clone(it.eng.qbe.model.structure.IModelEntity)
 	 */
-	@Override
 	public IModelEntity clone(IModelEntity newParent, String parentView) {
 		IModelEntity clonedWrapp = wrappedModelEntity.clone(newParent, parentView);
 		return new FilteredModelEntity(clonedWrapp, dataSource, qbeTreeFilter);
@@ -401,7 +354,6 @@ public class FilteredModelEntity implements IModelEntity{
 	/* (non-Javadoc)
 	 * @see it.eng.qbe.model.structure.IModelNode#getParentViews()
 	 */
-	@Override
 	public List<ModelViewEntity> getParentViews() {
 		return wrappedModelEntity.getParentViews();
 	}
@@ -409,7 +361,6 @@ public class FilteredModelEntity implements IModelEntity{
 	/* (non-Javadoc)
 	 * @see it.eng.qbe.model.structure.IModelNode#getModelName()
 	 */
-	@Override
 	public String getModelName() {
 		return wrappedModelEntity.getModelName();
 	}
@@ -417,12 +368,10 @@ public class FilteredModelEntity implements IModelEntity{
 	/* (non-Javadoc)
 	 * @see it.eng.qbe.model.structure.IModelNode#setModelName(java.lang.String)
 	 */
-	@Override
 	public void setModelName(String modelName) {
 		wrappedModelEntity.setModelName(modelName);
 	}
 
-	@Override
 	public int getDepth() {
 		if (this.getParent() != null) {
 			return 1 + this.getParent().getDepth();

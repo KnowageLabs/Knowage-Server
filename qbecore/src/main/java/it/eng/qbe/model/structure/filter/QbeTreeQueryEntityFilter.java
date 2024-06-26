@@ -46,7 +46,6 @@ public class QbeTreeQueryEntityFilter extends QbeTreeWhiteListEntityFilter {
 		this.setQuery( query );
 	}
 	
-	@Override
 	public List filter(IDataSource dataSource, List entities) {
 		List list = null;
 		

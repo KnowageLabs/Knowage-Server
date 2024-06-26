@@ -139,7 +139,7 @@ public class TestModelFactory {
 				TestConstants.MYSQL_USER, TestConstants.MYSQL_PWD, DATABASE_NAME, TestConnectionFactory.getDefaultCatalogue(TestConstants.DatabaseType.MYSQL),
 				TestConnectionFactory.getDefaultSchema(TestConstants.DatabaseType.MYSQL), selectedTables);
 
-		List<PhysicalTable> physicalTableToIncludeInBusinessModel = new ArrayList<>();
+		List<PhysicalTable> physicalTableToIncludeInBusinessModel = new ArrayList<PhysicalTable>();
 		for (int i = 0; i < TestConstants.MYSQL_FILTERED_TABLES_FOR_BMODEL.length; i++) {
 			physicalTableToIncludeInBusinessModel.add(physicalModel.getTable(TestConstants.MYSQL_FILTERED_TABLES_FOR_BMODEL[i]));
 		}
@@ -203,7 +203,7 @@ public class TestModelFactory {
 				TestConstants.POSTGRES_URL, TestConstants.POSTGRES_USER, TestConstants.POSTGRES_PWD, DATABASE_NAME, TestConstants.POSTGRES_DEFAULT_CATALOG,
 				TestConstants.POSTGRES_DEFAULT_SCHEMA, selectedTables);
 
-		List<PhysicalTable> physicalTableToIncludeInBusinessModel = new ArrayList<>();
+		List<PhysicalTable> physicalTableToIncludeInBusinessModel = new ArrayList<PhysicalTable>();
 		for (int i = 0; i < TestConstants.POSTGRES_FILTERED_TABLES_FOR_BMODEL.length; i++) {
 			physicalTableToIncludeInBusinessModel.add(physicalModel.getTable(TestConstants.POSTGRES_FILTERED_TABLES_FOR_BMODEL[i]));
 		}
@@ -267,7 +267,7 @@ public class TestModelFactory {
 				TestConstants.ORACLE_URL, TestConstants.ORACLE_USER, TestConstants.ORACLE_PWD, DATABASE_NAME, TestConstants.ORACLE_DEFAULT_CATALOGUE,
 				TestConstants.ORACLE_DEFAULT_SCHEMA, selectedTables);
 
-		List<PhysicalTable> physicalTableToIncludeInBusinessModel = new ArrayList<>();
+		List<PhysicalTable> physicalTableToIncludeInBusinessModel = new ArrayList<PhysicalTable>();
 		for (int i = 0; i < TestConstants.ORACLE_FILTERED_TABLES_FOR_BMODEL.length; i++) {
 			physicalTableToIncludeInBusinessModel.add(physicalModel.getTable(TestConstants.ORACLE_FILTERED_TABLES_FOR_BMODEL[i]));
 		}

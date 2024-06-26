@@ -103,7 +103,7 @@ public class PythonDataSet extends ConfigurableDataSet {
 
 	public void initConf(JSONObject jsonConf) {
 		initDataProxy(jsonConf);
-		setDataReader(new JSONPathDataReader("$[*]", new ArrayList<>(), true, false));
+		setDataReader(new JSONPathDataReader("$[*]", new ArrayList<JSONPathAttribute>(), true, false));
 	}
 
 	private void initDataProxy(JSONObject jsonConf) {
@@ -162,7 +162,7 @@ public class PythonDataSet extends ConfigurableDataSet {
 		}
 		Assert.assertNotNull(sub, "property is null");
 		JSONArray subs = (JSONArray) sub;
-		List<JSONPathAttribute> res = new ArrayList<>(subs.length());
+		List<JSONPathAttribute> res = new ArrayList<JSONPathDataReader.JSONPathAttribute>(subs.length());
 		for (int i = 0; i < subs.length(); i++) {
 			Object o = subs.get(i);
 			if (!(o instanceof JSONObject)) {
@@ -189,7 +189,7 @@ public class PythonDataSet extends ConfigurableDataSet {
 		}
 		Assert.assertNotNull(c, "property is null");
 		JSONObject r = (JSONObject) c;
-		Map<String, String> res = new HashMap<>(r.length());
+		Map<String, String> res = new HashMap<String, String>(r.length());
 		Iterator<String> it = r.keys();
 		while (it.hasNext()) {
 			String key = it.next();
@@ -312,7 +312,7 @@ public class PythonDataSet extends ConfigurableDataSet {
 		String paramValue = paramValues.get(paramName);
 		String[] values = null;
 		if (isMultiValue) {
-			List<String> list = new ArrayList<>();
+			List<String> list = new ArrayList<String>();
 			boolean paramValueConsumed = false;
 			try {
 				JSONArray jsonArray = new JSONArray(paramValue);

@@ -61,7 +61,7 @@ public class SQLStatement extends AbstractStatement {
 
 		// one map of entity aliases for each queries (master query + subqueries)
 		// each map is indexed by the query id
-		Map<String, Map<String, String>> entityAliasesMaps = new HashMap<>();
+		Map<String, Map<String, String>> entityAliasesMaps = new HashMap<String, Map<String, String>>();
 
 		queryStr = compose(getQuery(), entityAliasesMaps);
 
@@ -95,7 +95,7 @@ public class SQLStatement extends AbstractStatement {
 		Assert.assertTrue(!query.isEmpty(), "Input query cannot be empty (i.e. with no selected fields)");
 
 		// let's start with the query at hand
-		entityAliasesMaps.put(query.getId(), new HashMap<>());
+		entityAliasesMaps.put(query.getId(), new HashMap<String, String>());
 
 		selectClause = SQLStatementSelectClause.build(this, query, entityAliasesMaps, true);
 		whereClause = SQLStatementWhereClause.build(this, query, entityAliasesMaps);
@@ -143,10 +143,10 @@ public class SQLStatement extends AbstractStatement {
 
 		// one map of entity aliases for each queries (master query + subqueries)
 		// each map is indexed by the query id
-		entityAliasesMaps = new HashMap<>();
+		entityAliasesMaps = new HashMap<String, Map<String, String>>();
 
 		// let's start with the query at hand
-		entityAliasesMaps.put(getQuery().getId(), new HashMap<>());
+		entityAliasesMaps.put(getQuery().getId(), new HashMap<String, String>());
 
 		SQLStatementGroupByClause.build(this, getQuery(), entityAliasesMaps);
 

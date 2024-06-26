@@ -44,12 +44,10 @@ public class SimpleModelProperties implements IModelProperties {
 		properties.putAll(modelProperties.getProperties());
 	}
 	
-	@Override
 	public Properties getProperties() {
 		return properties;
 	}
 	
-	@Override
 	public String getProperty(IModelObject item, String propertyName) {
 		String propertyQualifiedName;
 		String propertyValue;

@@ -9,6 +9,7 @@
 **/
 package it.eng.spagobi.meta.model.impl;
 
+import it.eng.spagobi.meta.model.*;
 import it.eng.spagobi.meta.model.Model;
 import it.eng.spagobi.meta.model.ModelFactory;
 import it.eng.spagobi.meta.model.ModelPackage;
@@ -83,7 +84,6 @@ public class ModelFactoryImpl extends EFactoryImpl implements ModelFactory {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public ModelPropertyType createModelPropertyType() {
 		ModelPropertyTypeImpl modelPropertyType = new ModelPropertyTypeImpl();
 		return modelPropertyType;
@@ -94,7 +94,6 @@ public class ModelFactoryImpl extends EFactoryImpl implements ModelFactory {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public ModelPropertyCategory createModelPropertyCategory() {
 		ModelPropertyCategoryImpl modelPropertyCategory = new ModelPropertyCategoryImpl();
 		return modelPropertyCategory;
@@ -105,7 +104,6 @@ public class ModelFactoryImpl extends EFactoryImpl implements ModelFactory {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public ModelProperty createModelProperty() {
 		ModelPropertyImpl modelProperty = new ModelPropertyImpl();
 		return modelProperty;
@@ -126,7 +124,6 @@ public class ModelFactoryImpl extends EFactoryImpl implements ModelFactory {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public Model createModel() {
 		ModelImpl model = new ModelImpl();
 		return model;
@@ -137,7 +134,6 @@ public class ModelFactoryImpl extends EFactoryImpl implements ModelFactory {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public ModelPackage getModelPackage() {
 		return (ModelPackage)getEPackage();
 	}

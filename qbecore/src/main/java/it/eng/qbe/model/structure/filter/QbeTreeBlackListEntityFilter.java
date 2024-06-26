@@ -43,7 +43,6 @@ public class QbeTreeBlackListEntityFilter extends ComposableQbeTreeEntityFilter{
 		this.setBlackList( blackList );
 	}
 	
-	@Override
 	public List filter(IDataSource dataSource, List entities) {
 		List list = null;
 		IModelEntity entity;

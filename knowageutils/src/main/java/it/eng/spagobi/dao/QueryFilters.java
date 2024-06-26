@@ -27,7 +27,7 @@ public class QueryFilters {
 	private List<QueryFilter> filters = null;
 	
 	public QueryFilters() {
-		this.filters = new ArrayList<>();
+		this.filters = new ArrayList<QueryFilter>();
 	}
 	
 	public QueryFilters add(QueryFilter filter) {

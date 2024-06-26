@@ -88,12 +88,10 @@ public class Table implements RelationalModel, Serializable {
 			}
 		}
 
-		@Override
 		public int hashCode() {
 			return columns.hashCode() + referencedColumns.hashCode();
 		}
 
-		@Override
 		public boolean equals(Object other) {
 			ForeignKeyKey fkk = (ForeignKeyKey) other;
 			return fkk.columns.equals( columns ) &&
@@ -213,7 +211,7 @@ public class Table implements RelationalModel, Serializable {
 	}
 
 	public void addColumn(Column column) {
-		Column old = getColumn( column );
+		Column old = (Column) getColumn( column );
 		if ( old == null ) {
 			columns.put( column.getCanonicalName(), column );
 			column.uniqueInteger = columns.size();
@@ -393,7 +391,6 @@ public class Table implements RelationalModel, Serializable {
 		return buffer.toString();
 	}
 
-	@Override
 	public String sqlCreateString(Dialect dialect, Mapping p, String defaultCatalog, String defaultSchema) {
 		StringBuffer buf = new StringBuffer( hasPrimaryKey() ? dialect.getCreateTableString() : dialect.getCreateMultisetTableString() )
 				.append( ' ' )
@@ -508,7 +505,6 @@ public class Table implements RelationalModel, Serializable {
 		return buf.append( dialect.getTableTypeString() ).toString();
 	}
 
-	@Override
 	public String sqlDropString(Dialect dialect, String defaultCatalog, String defaultSchema) {
 		StringBuffer buf = new StringBuffer( "drop table " );
 		if ( dialect.supportsIfExistsBeforeTableName() ) {
@@ -712,7 +708,6 @@ public class Table implements RelationalModel, Serializable {
 		this.rowId = rowId;
 	}
 
-	@Override
 	public String toString() {
 		StringBuffer buf = new StringBuffer().append( getClass().getName() )
 				.append( '(' );

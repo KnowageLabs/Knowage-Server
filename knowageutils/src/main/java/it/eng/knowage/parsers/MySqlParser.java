@@ -5266,9 +5266,9 @@ public class MySqlParser extends Parser {
 	public static class IntervalScheduleContext extends ScheduleExpressionContext {
 		public TimestampValueContext startTimestamp;
 		public IntervalExprContext intervalExpr;
-		public List<IntervalExprContext> startIntervals = new ArrayList<>();
+		public List<IntervalExprContext> startIntervals = new ArrayList<IntervalExprContext>();
 		public TimestampValueContext endTimestamp;
-		public List<IntervalExprContext> endIntervals = new ArrayList<>();
+		public List<IntervalExprContext> endIntervals = new ArrayList<IntervalExprContext>();
 		public TerminalNode EVERY() { return getToken(MySqlParser.EVERY, 0); }
 		public IntervalTypeContext intervalType() {
 			return getRuleContext(IntervalTypeContext.class,0);
@@ -22659,9 +22659,9 @@ public class MySqlParser extends Parser {
 		public UidListContext columns;
 		public UpdatedElementContext setFirst;
 		public UpdatedElementContext updatedElement;
-		public List<UpdatedElementContext> setElements = new ArrayList<>();
+		public List<UpdatedElementContext> setElements = new ArrayList<UpdatedElementContext>();
 		public UpdatedElementContext duplicatedFirst;
-		public List<UpdatedElementContext> duplicatedElements = new ArrayList<>();
+		public List<UpdatedElementContext> duplicatedElements = new ArrayList<UpdatedElementContext>();
 		public TerminalNode INSERT() { return getToken(MySqlParser.INSERT, 0); }
 		public TableNameContext tableName() {
 			return getRuleContext(TableNameContext.class,0);
@@ -23529,7 +23529,7 @@ public class MySqlParser extends Parser {
 		public UidListContext columns;
 		public UpdatedElementContext setFirst;
 		public UpdatedElementContext updatedElement;
-		public List<UpdatedElementContext> setElements = new ArrayList<>();
+		public List<UpdatedElementContext> setElements = new ArrayList<UpdatedElementContext>();
 		public TerminalNode REPLACE() { return getToken(MySqlParser.REPLACE, 0); }
 		public TableNameContext tableName() {
 			return getRuleContext(TableNameContext.class,0);
@@ -35511,8 +35511,8 @@ public class MySqlParser extends Parser {
 
 	public static class IfStatementContext extends ParserRuleContext {
 		public ProcedureSqlStatementContext procedureSqlStatement;
-		public List<ProcedureSqlStatementContext> thenStatements = new ArrayList<>();
-		public List<ProcedureSqlStatementContext> elseStatements = new ArrayList<>();
+		public List<ProcedureSqlStatementContext> thenStatements = new ArrayList<ProcedureSqlStatementContext>();
+		public List<ProcedureSqlStatementContext> elseStatements = new ArrayList<ProcedureSqlStatementContext>();
 		public List<TerminalNode> IF() { return getTokens(MySqlParser.IF); }
 		public TerminalNode IF(int i) {
 			return getToken(MySqlParser.IF, i);
@@ -38682,7 +38682,7 @@ public class MySqlParser extends Parser {
 		public UserNameContext fromFirst;
 		public UserNameContext toFirst;
 		public UserNameContext userName;
-		public List<UserNameContext> toOther = new ArrayList<>();
+		public List<UserNameContext> toOther = new ArrayList<UserNameContext>();
 		public List<TerminalNode> GRANT() { return getTokens(MySqlParser.GRANT); }
 		public TerminalNode GRANT(int i) {
 			return getToken(MySqlParser.GRANT, i);
@@ -39084,7 +39084,7 @@ public class MySqlParser extends Parser {
 		public UserNameContext onUser;
 		public UserNameContext fromFirst;
 		public UserNameContext userName;
-		public List<UserNameContext> fromOther = new ArrayList<>();
+		public List<UserNameContext> fromOther = new ArrayList<UserNameContext>();
 		public TerminalNode REVOKE() { return getToken(MySqlParser.REVOKE, 0); }
 		public TerminalNode PROXY() { return getToken(MySqlParser.PROXY, 0); }
 		public TerminalNode ON() { return getToken(MySqlParser.ON, 0); }

@@ -74,12 +74,11 @@ public class HierarchiesDAOFileImpl implements IHierarchiesDAO {
 	// =============================================================================
 	// LOAD
 	// =============================================================================
-	@Override
 	public Map<String, HierarchicalDimensionField> loadHierarchicalDimensions() {
 		File hierarchiesFile;
 		Map<String, HierarchicalDimensionField> hierarchiesMap;
 
-		hierarchiesMap = new HashMap<>();
+		hierarchiesMap = new HashMap<String, HierarchicalDimensionField>();
 
 		hierarchiesFile = getMetaHierarchiesFile();
 		loadHierarchicalDimensionsFromFile(hierarchiesFile, hierarchiesMap);
@@ -157,7 +156,7 @@ public class HierarchiesDAOFileImpl implements IHierarchiesDAO {
 	}
 
 	private List<Hierarchy> loadHierarchies(Node dimensionNode) {
-		List<Hierarchy> hierarchies = new ArrayList<>();
+		List<Hierarchy> hierarchies = new ArrayList<Hierarchy>();
 
 		Node hierarchiesBlock = dimensionNode.selectSingleNode(HIERARCHIES_TAG);
 		if (hierarchiesBlock != null) {
@@ -178,7 +177,7 @@ public class HierarchiesDAOFileImpl implements IHierarchiesDAO {
 		Hierarchy hierarchy = new Hierarchy(name, isDefault);
 		List<?> levelNodes = hierarchyNode.selectNodes(LEVEL_TAG);
 
-		LinkedList<HierarchyLevel> levels = new LinkedList<>();
+		LinkedList<HierarchyLevel> levels = new LinkedList<HierarchyLevel>();
 		for (Object levelObj : levelNodes) {
 			Node levelNode = (Node) levelObj;
 			String levelName = levelNode.valueOf("@name");

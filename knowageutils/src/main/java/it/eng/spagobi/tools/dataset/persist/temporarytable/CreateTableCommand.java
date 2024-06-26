@@ -68,7 +68,7 @@ public class CreateTableCommand {
 	public void addColumn(IFieldMetaData fieldMeta) {
 		logger.debug("IN");
 		logger.debug("Adding the column with name = "+fieldMeta.getName()+" with alias = "+fieldMeta.getAlias()+" type="+fieldMeta.getType());
-		if (columns == null) columns = new ArrayList<>();
+		if (columns == null) columns = new ArrayList<ColumnMeta>();
 
 		Class fieldClass = fieldMeta.getType();
 		String name = fieldMeta.getName();

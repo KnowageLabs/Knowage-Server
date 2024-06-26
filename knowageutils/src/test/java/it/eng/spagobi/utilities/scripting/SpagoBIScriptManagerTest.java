@@ -18,10 +18,14 @@
 package it.eng.spagobi.utilities.scripting;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import it.eng.spagobi.services.dataset.bo.SpagoBiDataSet;
 import it.eng.spagobi.test.AbstractSpagoBITestCase;
+import it.eng.spagobi.test.TestDataSetFactory;
+import it.eng.spagobi.tools.dataset.bo.JDBCDataSet;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
@@ -31,13 +35,11 @@ public class SpagoBIScriptManagerTest extends AbstractSpagoBITestCase {
 	
 	SpagoBIScriptManager scriptManager;
 	
-	@Override
 	public void setUp() throws Exception {
 		super.setUp();
 		scriptManager = new SpagoBIScriptManager();
 	}
 	
-	@Override
 	public void tearDown() throws Exception {
 		super.tearDown();
 		scriptManager = null;
@@ -163,11 +165,11 @@ public class SpagoBIScriptManagerTest extends AbstractSpagoBITestCase {
 	public void testJavascriptBindings() {
 		Object results;
 		
-		Map<String, Object> bindings = new HashMap<>();
-		Map<String, String> profileAttributes = new HashMap<>();
+		Map<String, Object> bindings = new HashMap<String, Object>();
+		Map<String, String> profileAttributes = new HashMap<String, String>();
 		profileAttributes.put("name", "andrea");
 		profileAttributes.put("surname", "gioia");
-		Map<String, String> parameters = new HashMap<>();
+		Map<String, String> parameters = new HashMap<String, String>();
 		parameters.put("family", "food");
 		parameters.put("brand", "barilla");
 		

@@ -22,11 +22,9 @@ import javax.validation.ConstraintValidatorContext;
 
 public class XssValidator implements ConstraintValidator<Xss, String> {
 
-	@Override
 	public void initialize(Xss arg0) {
 	}
 
-	@Override
 	public boolean isValid(String toValidate, ConstraintValidatorContext constraintContext) {
 		if (toValidate == null)
 			return true;

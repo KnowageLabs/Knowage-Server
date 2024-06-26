@@ -39,7 +39,7 @@ public class HibernateDriver implements IDriver {
 	
 	
 	public static final String DRIVER_ID = "hibernate";
-	protected static final Map<String, IDataSource> cache = new HashMap<>();
+	protected static final Map<String, IDataSource> cache = new HashMap<String, IDataSource>();
 	protected static final SimpleDataSourceNamingStrategy namingStrategy = new SimpleDataSourceNamingStrategy();
 	
 	
@@ -49,12 +49,10 @@ public class HibernateDriver implements IDriver {
 		maxDataSource = -1;
 	}
 	
-	@Override
 	public String getName() {
 		return DRIVER_ID;
 	}
 
-	@Override
 	public IDataSource getDataSource(IDataSourceConfiguration configuration) {
 		IDataSource dataSource;
 		String dataSourceName;
@@ -79,22 +77,18 @@ public class HibernateDriver implements IDriver {
 		return dataSource;
 	}
 
-	@Override
 	public void setDataSourceCacheEnabled(boolean enabled) {
 		dataSourceCacheEnabled = enabled;	
 	}
 
-	@Override
 	public boolean isDataSourceCacheEnabled() {
 		return dataSourceCacheEnabled;
 	}
 
-	@Override
 	public void setMaxDataSource(int n) {
 		maxDataSource = n;		
 	}
 
-	@Override
 	public boolean acceptDataSourceConfiguration() {
 		// TODO Auto-generated method stub
 		return true;

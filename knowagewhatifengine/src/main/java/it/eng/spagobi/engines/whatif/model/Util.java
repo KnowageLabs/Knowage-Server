@@ -90,7 +90,7 @@ public class Util {
 		}
 	}
 
-	static List<FormulaInfo> formulaInfoList = new ArrayList<>();
+	static List<FormulaInfo> formulaInfoList = new ArrayList<FormulaInfo>();
 
 	public static void refreshFormula(XSSFWorkbook workbook) {
 		for (FormulaInfo formulaInfo : formulaInfoList) {
@@ -104,7 +104,7 @@ public class Util {
 		XSSFWorkbook destinationWorkbook = source;
 		XSSFSheet destinationSheet = destinationWorkbook.getSheetAt(0);
 
-		List<CellStyle> styleMap = new ArrayList<>();
+		List<CellStyle> styleMap = new ArrayList<CellStyle>();
 
 		for (short i = 0; i < destinationWorkbook.getNumCellStyles(); i++) {
 			styleMap.add(destinationWorkbook.getCellStyleAt(i));
@@ -170,7 +170,7 @@ public class Util {
 	 */
 	private static void copyRow(HSSFSheet source, XSSFSheet destSheet, HSSFRow srcRow, XSSFRow destRow, List<CellStyle> styleMap) {
 
-		Set<CellRangeAddressWrapper> mergedRegions = new TreeSet<>();
+		Set<CellRangeAddressWrapper> mergedRegions = new TreeSet<CellRangeAddressWrapper>();
 		short dh = source.getDefaultRowHeight();
 		if (srcRow.getHeight() != dh) {
 			destRow.setHeight(srcRow.getHeight());

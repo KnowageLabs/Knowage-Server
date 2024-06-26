@@ -375,9 +375,9 @@ public class PivotJsonHTMLSerializer extends JsonSerializer<PivotObjectForRender
 				if (withSlicers) {
 					List<Member> slicers = ph.getSlicer(hierarchy);
 					if (slicers != null && slicers.size() > 0) {
-						List<Map<String, String>> slicerMap = new ArrayList<>();
+						List<Map<String, String>> slicerMap = new ArrayList<Map<String, String>>();
 						for (int k = 0; k < slicers.size(); k++) {
-							Map<String, String> slicer = new HashMap<>();
+							Map<String, String> slicer = new HashMap<String, String>();
 							slicer.put(UNIQUE_NAME, slicers.get(k).getUniqueName());
 							slicer.put(NAME, slicers.get(k).getCaption());
 							slicerMap.add(slicer);
@@ -410,7 +410,7 @@ public class PivotJsonHTMLSerializer extends JsonSerializer<PivotObjectForRender
 		if (formulas != null) {
 			for (MDXFormula formula : formulas.getFormulas()) {
 
-				Map<String, Object> formulaObject = new HashMap<>();
+				Map<String, Object> formulaObject = new HashMap<String, Object>();
 
 				formulaObject.put("name", formula.getName());
 				formulaObject.put("syntax", formula.getSyntax());
@@ -471,7 +471,7 @@ public class PivotJsonHTMLSerializer extends JsonSerializer<PivotObjectForRender
 		modelConfig.setRowCount(model.getCellSet().getAxes().get(Axis.ROWS.axisOrdinal()).getPositionCount());
 		modelConfig.setColumnCount(model.getCellSet().getAxes().get(Axis.COLUMNS.axisOrdinal()).getPositionCount());
 
-		Map<Integer, String> tables = new HashMap<>();
+		Map<Integer, String> tables = new HashMap<Integer, String>();
 
 		// SimpleDateFormat format = new SimpleDateFormat("hh:mm:ss.SSS");
 

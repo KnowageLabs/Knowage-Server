@@ -39,7 +39,6 @@ public class AlwaysValidValidator extends AbstractGraphValidator {
 	/**
 	 * Returns always true
 	 */
-	@Override
 	public boolean validate(Graph G,  Set<IModelEntity> unjoinedEntities) {
 
 		return true;

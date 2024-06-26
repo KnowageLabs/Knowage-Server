@@ -43,7 +43,6 @@ public class ConnectionValidator extends AbstractGraphValidator {
 	/**
 	 * Check if the graph is connected
 	 */
-	@Override
 	public boolean validate(Graph G,  Set<IModelEntity> unjoinedEntities) {
 		if(unjoinedEntities==null || unjoinedEntities.size()<2){
 			return true;

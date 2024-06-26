@@ -79,7 +79,7 @@ public class GraphUtilities {
 		if (ambiguousModelField != null) {
 			Iterator<ModelFieldPaths> iter = ambiguousModelField.iterator();
 			while (iter.hasNext()) {
-				List<String> listRelations = new ArrayList<>();
+				List<String> listRelations = new ArrayList<String>();
 				ModelFieldPaths modelFieldPaths = iter.next();
 				Set<PathChoice> pathChoices = modelFieldPaths.getChoices();
 
@@ -90,7 +90,7 @@ public class GraphUtilities {
 						PathChoicePathTextLengthComparator pathChoiceComparator = new PathChoicePathTextLengthComparator(orderDirection);
 						pathChoicesFiltered = new TreeSet(pathChoiceComparator);
 					} else {
-						pathChoicesFiltered = new HashSet<>();
+						pathChoicesFiltered = new HashSet<PathChoice>();
 					}
 					Iterator<PathChoice> pathChoicesIter = pathChoices.iterator();
 
@@ -150,7 +150,7 @@ public class GraphUtilities {
 
 		String modelName = dataSource.getConfiguration().getModelName();
 		IModelStructure modelStructure = dataSource.getModelStructure();
-		Set<String> relationshipsNames = new HashSet<>();
+		Set<String> relationshipsNames = new HashSet<String>();
 		RootEntitiesGraph rootEntitiesGraph = modelStructure.getRootEntitiesGraph(modelName, true);
 		if (relationshipsJSON == null || relationshipsJSON.length() == 0) {
 			Set<Relationship> allRelationships = rootEntitiesGraph.getRelationships();
@@ -165,7 +165,7 @@ public class GraphUtilities {
 
 		Map<String, JoinType> joinTypeMapping = new HashMap<>();
 		Map<String, Boolean> isConsideredMapping = new HashMap<>();
-		Set<PathChoice> choices = new HashSet<>();
+		Set<PathChoice> choices = new HashSet<PathChoice>();
 		for (int i = 0; i < relationshipsJSON.length(); i++) {
 			JSONObject relationshipJSON = relationshipsJSON.getJSONObject(i);
 			String relationshipsName = relationshipJSON.getString(RELATIONSHIP_ID);
@@ -177,7 +177,7 @@ public class GraphUtilities {
 
 		}
 
-		List<Relationship> queryRelationships = new ArrayList<>();
+		List<Relationship> queryRelationships = new ArrayList<Relationship>();
 		Set<Relationship> allRelationships = rootEntitiesGraph.getRelationships();
 		Iterator<String> it = relationshipsNames.iterator();
 		while (it.hasNext()) {
@@ -219,7 +219,7 @@ public class GraphUtilities {
 	}
 
 	private static Set<String> getRelationsSet(GraphPath<IModelEntity, Relationship> path1) {
-		Set<String> relations = new HashSet<>();
+		Set<String> relations = new HashSet<String>();
 		List<Relationship> edges = path1.getEdgeList();
 		for (int i = 0; i < edges.size(); i++) {
 			relations.add(edges.get(i).getId());
@@ -352,7 +352,7 @@ public class GraphUtilities {
 	 */
 	public static Map<IModelEntity, List<Relationship>> getEdgeMap(Graph G, IModelEntity vertex) {
 
-		Map<IModelEntity, List<Relationship>> vertexRelationsMap = new HashMap<>();
+		Map<IModelEntity, List<Relationship>> vertexRelationsMap = new HashMap<IModelEntity, List<Relationship>>();
 
 		Set<Relationship> vertexConnection = G.edgesOf(vertex);
 		if (vertexConnection != null) {
@@ -370,7 +370,7 @@ public class GraphUtilities {
 					List<Relationship> relationsWithOther = vertexRelationsMap.get(otherEntity);
 
 					if (relationsWithOther == null) {
-						relationsWithOther = new ArrayList<>();
+						relationsWithOther = new ArrayList<Relationship>();
 						vertexRelationsMap.put(otherEntity, relationsWithOther);
 					}
 					relationsWithOther.add(relationship);

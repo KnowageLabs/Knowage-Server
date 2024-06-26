@@ -511,7 +511,7 @@ public class TestJSONObject extends TestCase
 //                    "[\n 2147483647,\n 2147483648,\n 9223372036854775807,\n \"9223372036854775808\"\n]",
 //                    jsonarray.toString(1));
 
-            List<String> expectedKeys = new ArrayList<>(6);
+            List<String> expectedKeys = new ArrayList<String>(6);
             expectedKeys.add("int");
             expectedKeys.add("string");
             expectedKeys.add("longer");
@@ -693,7 +693,7 @@ public class TestJSONObject extends TestCase
      */
     public void testConstructor_ArrayList()
     {
-        List<String> ar = new ArrayList<>();
+        List<String> ar = new ArrayList<String>();
         ar.add("test1");
         ar.add("test2");
 
@@ -1767,9 +1767,9 @@ public class TestJSONObject extends TestCase
 //            jsonobject.put("acd", new GoodJsonString());
 //            NullJsonString q = new NullJsonString();
 //            jsonobject.put("zzz", q);
-            Map<String, Object> map = new HashMap<>();
+            Map<String, Object> map = new HashMap<String, Object>();
             map.put("abc", "123");
-            Collection<String> stringCol = new Stack<>();
+            Collection<String> stringCol = new Stack<String>();
             stringCol.add("string1");
             jsonobject.put("de", map);
             jsonobject.put("e", stringCol);

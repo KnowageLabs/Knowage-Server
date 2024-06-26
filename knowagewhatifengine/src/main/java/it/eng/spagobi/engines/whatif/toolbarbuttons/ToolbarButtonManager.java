@@ -25,7 +25,7 @@ public class ToolbarButtonManager {
 	private static List<SbiToolbarButton> listOfToolbarButtons;
 
 	private static void init() {
-		listOfToolbarButtons = new ArrayList<>();
+		listOfToolbarButtons = new ArrayList<SbiToolbarButton>();
 		listOfToolbarButtons.add(new SbiToolbarButton("BUTTON_DRILL_THROUGH", true, false, false, ToolbarButtonCategory.DRILL_ON_DATA.toString()));
 		listOfToolbarButtons.add(new SbiToolbarButton("BUTTON_MDX", true, false, false, ToolbarButtonCategory.OLAP_FUNCTIONS.toString()));
 		// listOfToolbarButtons.add(new SbiToolbarButton("BUTTON_EDIT_MDX", false, false, false, ToolbarButtonCategory.OLAP_FUNCTIONS.toString()));

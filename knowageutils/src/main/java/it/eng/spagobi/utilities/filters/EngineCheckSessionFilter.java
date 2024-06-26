@@ -51,18 +51,15 @@ public class EngineCheckSessionFilter implements Filter {
 	
 	private static transient Logger logger = Logger.getLogger(EngineCheckSessionFilter.class);
 
-    @Override
-	public void init(FilterConfig config) throws ServletException {
+    public void init(FilterConfig config) throws ServletException {
     	// do nothing
     }
 	
-    @Override
-	public void destroy() {
+    public void destroy() {
     	// do nothing
     }
     
-    @Override
-	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) 
+    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) 
     	throws IOException, ServletException {
     	
     	logger.debug("IN");

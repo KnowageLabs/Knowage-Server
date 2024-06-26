@@ -56,7 +56,7 @@ public class AllocationAlgorithmResource extends AbstractWhatIfEngineService {
 		logger.debug("IN");
 
 		if (allocationAlgorithmDefinitions == null) {
-			allocationAlgorithmDefinitions = new ArrayList<>();
+			allocationAlgorithmDefinitions = new ArrayList<AllocationAlgorithmDefinition>();
 
 			Map<String, AllocationAlgorithmDefinition> allocationAlgorithms = AllocationAlgorithmSingleton.getInstance().getAllocationAlgorithms();
 

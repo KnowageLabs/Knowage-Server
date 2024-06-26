@@ -34,7 +34,7 @@ public class SerializationManager {
 	public static final String DEFAULT_VERSION = "-1";
 
 	static {
-		serializerFactoryMappings = new HashMap<>();
+		serializerFactoryMappings = new HashMap<String, Map<String, ISerializer>>();
 	}
 
 	/**
@@ -55,7 +55,7 @@ public class SerializationManager {
 
 		Map<String, ISerializer> outputTypeSerializerMap = serializerFactoryMappings.get(mimeType);
 		if (outputTypeSerializerMap == null) {
-			outputTypeSerializerMap = new HashMap<>();
+			outputTypeSerializerMap = new HashMap<String, ISerializer>();
 			serializerFactoryMappings.put(mimeType, outputTypeSerializerMap);
 		}
 

@@ -37,7 +37,7 @@ public class ModelStructure extends AbstractModelObject implements IModelStructu
 		protected Map<String, RootEntitiesGraph> modelRootEntitiesMap;
 
 		public ModelRootEntitiesMap() {
-			modelRootEntitiesMap = new HashMap<>();
+			modelRootEntitiesMap = new HashMap<String, RootEntitiesGraph>();
 		}
 
 		public Set<String> getModelNames() {
@@ -80,9 +80,9 @@ public class ModelStructure extends AbstractModelObject implements IModelStructu
 		// rootEntities = new HashMap<String, Map<String,IModelEntity>>();
 		modelRootEntitiesMap = new ModelRootEntitiesMap();
 
-		entities = new HashMap<>();
-		fields = new HashMap<>();
-		calculatedFields = new HashMap<>();
+		entities = new HashMap<String, IModelEntity>();
+		fields = new HashMap<String, IModelField>();
+		calculatedFields = new HashMap<String, List<ModelCalculatedField>>();
 		initProperties();
 
 	}
@@ -379,7 +379,7 @@ public class ModelStructure extends AbstractModelObject implements IModelStructu
 	public List<ModelCalculatedField> getCalculatedFieldsByEntity(String entityName) {
 		List<ModelCalculatedField> result;
 
-		result = new ArrayList<>();
+		result = new ArrayList<ModelCalculatedField>();
 		if (calculatedFields.containsKey(entityName)) {
 			result.addAll(calculatedFields.get(entityName));
 		}
@@ -406,10 +406,10 @@ public class ModelStructure extends AbstractModelObject implements IModelStructu
 	public void addCalculatedField(String entityName, ModelCalculatedField calculatedFiled) {
 		List<ModelCalculatedField> calculatedFiledsOnTargetEntity;
 		if (!calculatedFields.containsKey(entityName)) {
-			calculatedFields.put(entityName, new ArrayList<>());
+			calculatedFields.put(entityName, new ArrayList<ModelCalculatedField>());
 		}
 		calculatedFiledsOnTargetEntity = calculatedFields.get(entityName);
-		List<ModelCalculatedField> toRemove = new ArrayList<>();
+		List<ModelCalculatedField> toRemove = new ArrayList<ModelCalculatedField>();
 		for (int i = 0; i < calculatedFiledsOnTargetEntity.size(); i++) {
 			ModelCalculatedField f = calculatedFiledsOnTargetEntity.get(i);
 			if (f.getName().equals(calculatedFiled.getName())) {
@@ -463,13 +463,12 @@ public class ModelStructure extends AbstractModelObject implements IModelStructu
 		return this.maxRecursionLevel;
 	}
 
-	@Override
 	public Map<String, IModelEntity> getEntities() {
 		return this.entities;
 	}
 
 	public List<ModelViewEntity> getViewsEntities(String modelName) {
-		List<ModelViewEntity> toReturn = new ArrayList<>();
+		List<ModelViewEntity> toReturn = new ArrayList<ModelViewEntity>();
 		List<IModelEntity> entities = this.getRootEntities(modelName);
 		for (IModelEntity entity : entities) {
 			if (entity instanceof ModelViewEntity) {

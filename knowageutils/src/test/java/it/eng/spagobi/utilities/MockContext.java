@@ -31,7 +31,7 @@ import javax.naming.NamingException;
 
 public class MockContext implements Context {
 
-	private final Map<String, Object> objects = new HashMap<>();
+	private final Map<String, Object> objects = new HashMap<String, Object>();
 
 	@Override
 	public Object lookup(Name name) throws NamingException {

@@ -209,7 +209,7 @@ public class PhysicalTableImpl extends ModelObjectImpl implements PhysicalTable 
 	@Override
 	public EList<PhysicalColumn> getColumns() {
 		if (columns == null) {
-			columns = new EObjectContainmentWithInverseEList<>(PhysicalColumn.class, this, PhysicalModelPackage.PHYSICAL_TABLE__COLUMNS,
+			columns = new EObjectContainmentWithInverseEList<PhysicalColumn>(PhysicalColumn.class, this, PhysicalModelPackage.PHYSICAL_TABLE__COLUMNS,
 					PhysicalModelPackage.PHYSICAL_COLUMN__TABLE);
 		}
 		return columns;

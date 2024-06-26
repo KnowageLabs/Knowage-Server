@@ -38,7 +38,7 @@ public class DataSetDriver implements IDriver {
 	protected int maxDataSource;
 
 	public static final String DRIVER_ID = "dataset";
-	protected static final Map<String, IDataSource> cache = new HashMap<>();
+	protected static final Map<String, IDataSource> cache = new HashMap<String, IDataSource>();
 	protected static final SimpleDataSourceNamingStrategy namingStrategy = new SimpleDataSourceNamingStrategy();
 
 	public DataSetDriver() {

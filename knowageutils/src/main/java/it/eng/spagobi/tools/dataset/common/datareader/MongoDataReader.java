@@ -99,7 +99,7 @@ public class MongoDataReader extends AbstractDataReader {
 		logger.debug("Processing the result");
 		try {
 
-			Set<String> allFieldsNames = new LinkedHashSet<>();
+			Set<String> allFieldsNames = new LinkedHashSet<String>();
 			for (int i = start; i < end; i++) {
 				JSONObject document = resultArray.getJSONObject(i);
 				allFieldsNames.addAll(Arrays.asList(JSONObject.getNames(document)));
@@ -113,7 +113,7 @@ public class MongoDataReader extends AbstractDataReader {
 
 				IRecord record = new Record(dataStore);
 
-				List<IField> fieldsCollection = new ArrayList<>();
+				List<IField> fieldsCollection = new ArrayList<IField>();
 
 				JSONObject document = resultArray.getJSONObject(i);
 

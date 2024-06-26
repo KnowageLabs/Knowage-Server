@@ -159,12 +159,12 @@ public class SpagoBICellWrapper implements Cell {
 		NamedList<Hierarchy> allHierarchies = cellSet.getSpagoBIPivotModel().getCube().getHierarchies();
 		// since a virtual cube contains duplicated dimensions, we remove
 		// duplicates using a Set
-		Set<Hierarchy> hierarchies = new HashSet<>();
+		Set<Hierarchy> hierarchies = new HashSet<Hierarchy>();
 		hierarchies.addAll(allHierarchies);
 
 		// get members on axis
 		List<Integer> coordinates = this.getCoordinateList();
-		List<Member> members = new ArrayList<>();
+		List<Member> members = new ArrayList<Member>();
 		for (int i = 0; i < coordinates.size(); i++) {
 			Integer aCoordinate = coordinates.get(i);
 			CellSetAxis axis = this.getCellSet().getAxes().get(i);
@@ -182,7 +182,7 @@ public class SpagoBICellWrapper implements Cell {
 		}
 
 		// calculate the visited hierarchies
-		List<Hierarchy> visitedHierarchies = new ArrayList<>();
+		List<Hierarchy> visitedHierarchies = new ArrayList<Hierarchy>();
 		Iterator<Member> membersIt = members.iterator();
 		while (membersIt.hasNext()) {
 			Member member = membersIt.next();
@@ -264,7 +264,7 @@ public class SpagoBICellWrapper implements Cell {
 	}
 
 	public Member[] getContextMembers(Hierarchy hierarchy) {
-		List<Member> toReturn = new ArrayList<>();
+		List<Member> toReturn = new ArrayList<Member>();
 		Member[] members = this.getMembers();
 		for (int i = 0; i < members.length; i++) {
 			Member member = members[i];
@@ -314,7 +314,7 @@ public class SpagoBICellWrapper implements Cell {
 
 	public long visitMembers() throws OlapException, SpagoBIEngineException {
 
-		List<String> dimensionNames = new ArrayList<>();
+		List<String> dimensionNames = new ArrayList<String>();
 
 		long myLeafsNumeber = 1l;
 

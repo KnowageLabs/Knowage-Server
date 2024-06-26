@@ -61,7 +61,7 @@ public abstract class AbstractSqlSchemaManager {
 	}
 
 	protected Map<TableEntry, String> buildWhereConditions(IMemberCoordinates cordinates, Set<String> from, Integer version) {
-		Map<TableEntry, String> condition2Value = new HashMap<>();
+		Map<TableEntry, String> condition2Value = new HashMap<TableEntry, String>();
 		Map<TableEntry, Member> lelvel2Member = cordinates.getLevel2Member();
 
 		if (lelvel2Member != null && !cordinates.isAllMember()) {
@@ -200,7 +200,7 @@ public abstract class AbstractSqlSchemaManager {
 
 	public String buildFromAndWhereClauseForCell(Member[] members, Integer version, boolean useInClause) throws Exception {
 		// list of the coordinates for the members
-		List<IMemberCoordinates> memberCordinates = new ArrayList<>();
+		List<IMemberCoordinates> memberCordinates = new ArrayList<IMemberCoordinates>();
 
 		// init the query with the update set statement
 		StringBuffer query = new StringBuffer();
@@ -257,7 +257,7 @@ public abstract class AbstractSqlSchemaManager {
 		// List of joins
 		Set<EquiJoin> selectFields;
 
-		Set<EquiJoin> joinConditions = new HashSet<>();
+		Set<EquiJoin> joinConditions = new HashSet<EquiJoin>();
 
 		// List of form
 		Set<String> fromTables;
@@ -275,14 +275,14 @@ public abstract class AbstractSqlSchemaManager {
 				// dimension
 				subquery = new StringBuffer();
 				Map<TableEntry, String> where = buildWhereConditions(aIMemberCordinates, null, version);
-				Map<String, String> cubeTable2Alias = new HashMap<>();
+				Map<String, String> cubeTable2Alias = new HashMap<String, String>();
 				cubeTable2Alias.put(null, getCubeAlias());
 				addWhereCondition(subquery, where, cubeTable2Alias, null);
 			} else if (!aIMemberCordinates.isAllMember()) {
-				whereConditions = new HashMap<>();
-				selectFields = new HashSet<>();
-				fromTables = new HashSet<>();
-				joinConditions = new HashSet<>();
+				whereConditions = new HashMap<TableEntry, String>();
+				selectFields = new HashSet<EquiJoin>();
+				fromTables = new HashSet<String>();
+				joinConditions = new HashSet<EquiJoin>();
 
 				whereConditions.putAll(buildWhereConditions(aIMemberCordinates, fromTables, version));
 				addJoinConditions(fromTables, selectFields, aIMemberCordinates, false);
@@ -308,7 +308,7 @@ public abstract class AbstractSqlSchemaManager {
 
 	public StringBuffer buildSelectQueryForIn(Map<TableEntry, String> whereConditions, Set<EquiJoin> selectFields, Set<EquiJoin> joinConditions, Set<String> fromTables) {
 
-		Map<String, String> table2Alias = new HashMap<>();
+		Map<String, String> table2Alias = new HashMap<String, String>();
 		getTableAlias(table2Alias, getCubeAlias());
 
 		StringBuffer select = new StringBuffer();
@@ -405,13 +405,13 @@ public abstract class AbstractSqlSchemaManager {
 			throws Exception {
 
 		// List of where conditions
-		Map<TableEntry, String> whereConditions = new HashMap<>();
+		Map<TableEntry, String> whereConditions = new HashMap<TableEntry, String>();
 
 		// List of joins
-		Set<EquiJoin> joinConditions = new HashSet<>();
+		Set<EquiJoin> joinConditions = new HashSet<EquiJoin>();
 
 		// List of form
-		Set<String> fromTables = new HashSet<>();
+		Set<String> fromTables = new HashSet<String>();
 
 		query.append(" where exists ( ");
 
@@ -424,7 +424,7 @@ public abstract class AbstractSqlSchemaManager {
 				// create a where in the cube for each level of the degenerate
 				// dimension
 				Map<TableEntry, String> where = buildWhereConditions(aIMemberCordinates, null, version);
-				Map<String, String> cubeTable2Alias = new HashMap<>();
+				Map<String, String> cubeTable2Alias = new HashMap<String, String>();
 				cubeTable2Alias.put(null, getCubeAlias());
 				addWhereCondition(degenerateDimensionConditions, where, cubeTable2Alias, null);
 			} else {
@@ -445,7 +445,7 @@ public abstract class AbstractSqlSchemaManager {
 	public void buildSelectQuery(Map<TableEntry, String> whereConditions, StringBuffer degenerateDimensionConditions, Set<EquiJoin> joinConditions, Set<String> fromTables,
 			StringBuffer query) {
 
-		Map<String, String> table2Alias = new HashMap<>();
+		Map<String, String> table2Alias = new HashMap<String, String>();
 		getTableAlias(table2Alias, getCubeAlias());
 
 		StringBuffer from = new StringBuffer();

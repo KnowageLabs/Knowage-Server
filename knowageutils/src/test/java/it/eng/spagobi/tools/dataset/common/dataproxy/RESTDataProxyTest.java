@@ -68,7 +68,7 @@ public class RESTDataProxyTest extends TestCase {
 		server = new StubServer(8090).run();
 		List<JSONPathAttribute> jsonPathAttributes = getJsonPathAttributes();
 		reader = new JSONPathDataReader("$.a", jsonPathAttributes,false,false);
-		Map<String, String> requestHeaders = new HashMap<>();
+		Map<String, String> requestHeaders = new HashMap<String, String>();
 		requestHeaders.put("d", "e");
 		rdp = new RESTDataProxy("http://localhost:8090/c?q=p", HttpMethod.Post, "{\n" + 
 				"    \"id\": \"z\"\n" + 
@@ -83,7 +83,7 @@ public class RESTDataProxyTest extends TestCase {
 				"            \"id\": \".*\"\n" + 
 				"        }\n" + 
 				"    ]\n" + 
-				"}", new HashMap<>(),null,null,null,true);
+				"}", new HashMap<String, String>(),null,null,null,true);
 		
 		whenHttp(server).match(post("/v1/queryContext"), withPostBodyContaining("{\n" + 
 				"    \"entities\": [\n" + 
@@ -99,7 +99,7 @@ public class RESTDataProxyTest extends TestCase {
 	}
 
 	private static List<JSONPathAttribute> getJsonPathAttributes() {
-		List<JSONPathAttribute> res = new ArrayList<>();
+		List<JSONPathAttribute> res = new ArrayList<JSONPathDataReader.JSONPathAttribute>();
 		JSONPathAttribute jpa = new JSONPathAttribute("b", "$.b", "string");
 		res.add(jpa);
 
@@ -136,7 +136,6 @@ public class RESTDataProxyTest extends TestCase {
 		public Predicate<Call> getPredicate() {
 			return new Predicate<Call>() {
 
-				@Override
 				public boolean apply(Call c) {
 					System.out.println(c.getUri());
 					for (String param : c.getParameters().keySet()) {

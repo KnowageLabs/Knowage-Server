@@ -110,10 +110,10 @@ public class CachePerfTest extends AbstractCachePerfTest {
 		ICache aCacahe = this.getDefaultCacheConfiguration(writing);
 		caches.add(aCacahe);
 
-		datasetQueryes = new ArrayList<>();
+		datasetQueryes = new ArrayList<String>();
 		datasetQueryes.add("select * from sales_fact_1998");
 
-		List<String> tableNames = new ArrayList<>();
+		List<String> tableNames = new ArrayList<String>();
 
 		for (int i = 0; i < datasetQueryes.size(); i++) {
 			buffer.append("\n");

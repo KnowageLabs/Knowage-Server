@@ -21,6 +21,8 @@ import java.util.HashMap;
 
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
+import it.eng.spagobi.services.common.MapXmlJavaTypeAdater;
+
 public class ParametersWrapper {
 
 	private HashMap<String, ?> map = new HashMap<>();

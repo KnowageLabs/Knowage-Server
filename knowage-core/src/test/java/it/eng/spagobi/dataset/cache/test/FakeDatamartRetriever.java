@@ -35,7 +35,6 @@ public class FakeDatamartRetriever implements IQbeDataSetDatamartRetriever {
 	/* (non-Javadoc)
 	 * @see it.eng.spagobi.tools.dataset.utils.datamart.IQbeDataSetDatamartRetriever#retrieveDatamartFile(java.lang.String)
 	 */
-	@Override
 	public File retrieveDatamartFile(String modelName) {
 		File qbeDataMartDir;
 		File metamodelJarFile;

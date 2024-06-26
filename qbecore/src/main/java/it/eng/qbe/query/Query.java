@@ -123,7 +123,7 @@ public class Query implements IQuery {
 
 	public Map<IModelEntity, Map<String, List<String>>> getMapEntityRoleField(IDataSource datasource) {
 		if (mapEntityRoleField == null) {
-			mapEntityRoleField = new HashMap<>();
+			mapEntityRoleField = new HashMap<IModelEntity, Map<String, List<String>>>();
 			try {
 				initFieldsRolesMapInEntity(datasource);
 			} catch (Exception e) {
@@ -135,13 +135,13 @@ public class Query implements IQuery {
 
 	public Map<IModelEntity, List<String>> getEntityFieldFromRoleMap(IDataSource datasource) {
 		Map<IModelEntity, Map<String, List<String>>> mapEntityRoleField = getMapEntityRoleField(datasource);
-		Map<IModelEntity, List<String>> entityFieldFromRoleMap = new HashMap<>();
+		Map<IModelEntity, List<String>> entityFieldFromRoleMap = new HashMap<IModelEntity, List<String>>();
 
 		Iterator<IModelEntity> mapEntityRoleFieldIterator = mapEntityRoleField.keySet().iterator();
 
 		while (mapEntityRoleFieldIterator.hasNext()) {
 			IModelEntity iModelEntity = mapEntityRoleFieldIterator.next();
-			List<String> fieldsAliasList = new ArrayList<>();
+			List<String> fieldsAliasList = new ArrayList<String>();
 			Collection<List<String>> rolesFieldsMap = mapEntityRoleField.get(iModelEntity).values();
 			if (rolesFieldsMap != null) {
 				Iterator<List<String>> rolesFieldsMapIterator = rolesFieldsMap.iterator();
@@ -157,7 +157,7 @@ public class Query implements IQuery {
 	}
 
 	public static Set<IModelEntity> getQueryEntities(Set<IModelField> mf) {
-		Set<IModelEntity> me = new HashSet<>();
+		Set<IModelEntity> me = new HashSet<IModelEntity>();
 		Iterator<IModelField> mfi = mf.iterator();
 		while (mfi.hasNext()) {
 			IModelField iModelField = mfi.next();
@@ -203,10 +203,10 @@ public class Query implements IQuery {
 
 						Map<String, List<String>> mapRoleField = getMapEntityRoleField(datasource).get(me);
 						if (mapRoleField == null) {
-							mapRoleField = new HashMap<>();
+							mapRoleField = new HashMap<String, List<String>>();
 						}
 
-						List<String> fieldsForRole = new ArrayList<>();
+						List<String> fieldsForRole = new ArrayList<String>();
 
 						for (int j = 0; j < fields.length(); j++) {
 							JSONObject field = fields.getJSONObject(j);
@@ -382,9 +382,9 @@ public class Query implements IQuery {
 	public List<ISelectField> getSelectFields(boolean onlyIncluded) {
 		List<ISelectField> fields;
 		if (onlyIncluded == false) {
-			fields = new ArrayList<>(selectFields);
+			fields = new ArrayList<ISelectField>(selectFields);
 		} else {
-			fields = new ArrayList<>();
+			fields = new ArrayList<ISelectField>();
 			for (ISelectField field : selectFields) {
 				if (field.isIncluded()) {
 					fields.add(field);
@@ -397,7 +397,7 @@ public class Query implements IQuery {
 	public List getSelectSimpleFieldsByUniqueName(String uniqueName) {
 		List<SimpleSelectField> matchingSimpleSelectFields;
 
-		matchingSimpleSelectFields = new ArrayList<>();
+		matchingSimpleSelectFields = new ArrayList<SimpleSelectField>();
 		List<SimpleSelectField> simpleSelectFields = getSimpleSelectFields(false);
 		for (SimpleSelectField simpleSelectField : simpleSelectFields) {
 			if (simpleSelectField.getUniqueName().equalsIgnoreCase(uniqueName)) {
@@ -411,7 +411,7 @@ public class Query implements IQuery {
 	public List<SimpleSelectField> getSelectSimpleFieldsByAlias(String alias) {
 		List<SimpleSelectField> matchingSimpleSelectFields;
 
-		matchingSimpleSelectFields = new ArrayList<>();
+		matchingSimpleSelectFields = new ArrayList<SimpleSelectField>();
 		List<SimpleSelectField> simpleSelectFields = getSimpleSelectFields(false);
 		for (SimpleSelectField simpleSelectField : simpleSelectFields) {
 			if (simpleSelectField.getAlias().equalsIgnoreCase(alias)) {
@@ -485,7 +485,7 @@ public class Query implements IQuery {
 	public List<SimpleSelectField> getSimpleSelectFields(boolean onlyIncluded) {
 		List<SimpleSelectField> simpleSelectFields;
 
-		simpleSelectFields = new ArrayList<>();
+		simpleSelectFields = new ArrayList<SimpleSelectField>();
 		for (ISelectField selectField : selectFields) {
 			if (selectField.isSimpleField()) {
 				if (onlyIncluded == false || (onlyIncluded == true && selectField.isIncluded())) {
@@ -530,7 +530,7 @@ public class Query implements IQuery {
 		List<ISelectField> selectFields;
 
 		selectFields = getSelectFields(false);
-		inLineCalculatedSelectFields = new ArrayList<>();
+		inLineCalculatedSelectFields = new ArrayList<InLineCalculatedSelectField>();
 
 		for (ISelectField field : selectFields) {
 			if (field.isInLineCalculatedField()) {
@@ -569,8 +569,8 @@ public class Query implements IQuery {
 	 *         clause it will return an empty list.
 	 */
 	public List<ISelectField> getOrderByFields() {
-		List<ISelectField> orderByFields = new ArrayList<>();
-		List<ISelectField> selectFields = new ArrayList<>();
+		List<ISelectField> orderByFields = new ArrayList<ISelectField>();
+		List<ISelectField> selectFields = new ArrayList<ISelectField>();
 
 		List<SimpleSelectField> simpleSelectField = getSimpleSelectFields(false);
 		selectFields.addAll(simpleSelectField);
@@ -698,7 +698,7 @@ public class Query implements IQuery {
 	// }
 
 	public Map<IModelField, Set<IQueryField>> getQueryFields(IDataSource dataSource) {
-		Map<IModelField, Set<IQueryField>> modelFieldsInvolved = new HashMap<>();
+		Map<IModelField, Set<IQueryField>> modelFieldsInvolved = new HashMap<IModelField, Set<IQueryField>>();
 		getSelectIModelFields(modelFieldsInvolved, dataSource);
 		getWhereIModelFields(modelFieldsInvolved, dataSource);
 		return modelFieldsInvolved;
@@ -724,7 +724,7 @@ public class Query implements IQuery {
 	}
 
 	public boolean isAliasDefinedInSelectFields() {
-		List<String> checkedFields = new ArrayList<>();
+		List<String> checkedFields = new ArrayList<String>();
 		List<ISelectField> selectFields = this.getSelectFields(true);
 
 		for (ISelectField selectAbstractField : selectFields) {
@@ -815,7 +815,7 @@ public class Query implements IQuery {
 	private static void addFieldIntoMap(IQueryField queryField, IModelField datamartField, Map<IModelField, Set<IQueryField>> modelFieldsInvolved) {
 		Set<IQueryField> queryfields = modelFieldsInvolved.get(datamartField);
 		if (queryfields == null) {
-			queryfields = new HashSet<>();
+			queryfields = new HashSet<IQueryField>();
 			modelFieldsInvolved.put(datamartField, queryfields);
 		}
 		queryfields.add(queryField);
@@ -825,7 +825,7 @@ public class Query implements IQuery {
 	public Set<IModelEntity> getQueryEntities(IDataSource dataSource) {
 		Map<IModelField, Set<IQueryField>> modelFieldsMap = getQueryFields(dataSource);
 		Set<IModelField> mf = modelFieldsMap.keySet();
-		Set<IModelEntity> me = new HashSet<>();
+		Set<IModelEntity> me = new HashSet<IModelEntity>();
 		Iterator<IModelField> mfi = mf.iterator();
 		while (mfi.hasNext()) {
 			IModelField iModelField = mfi.next();
@@ -958,8 +958,8 @@ public class Query implements IQuery {
 		 *
 		 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 		 */
-		ArrayList<String> allCategoriesForOrdering = new ArrayList<>();
-		ArrayList<String> allSeriesForOrdering = new ArrayList<>();
+		ArrayList<String> allCategoriesForOrdering = new ArrayList<String>();
+		ArrayList<String> allSeriesForOrdering = new ArrayList<String>();
 		String keepCategoryForOrdering = "";
 		boolean columnAndCategoryAreTheSame = false;
 

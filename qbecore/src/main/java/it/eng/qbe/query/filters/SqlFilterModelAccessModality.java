@@ -52,7 +52,7 @@ public class SqlFilterModelAccessModality extends AbstractModelAccessModality {
 	public Set<IModelEntity> getSqlFilterEntities(IDataSource dataSource, Set<IModelEntity> queryEntitiesa) {
 		Set<IModelEntity> sqlFilterEntities = new HashSet<>();
 
-		Set<IModelEntity> queryEntities = new HashSet<>(queryEntitiesa);
+		Set<IModelEntity> queryEntities = new HashSet<IModelEntity>(queryEntitiesa);
 		IModelStructure modelStructure = dataSource.getModelStructure();
 
 		Map<String, IModelEntity> entity = modelStructure.getEntities();

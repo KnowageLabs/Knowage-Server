@@ -167,7 +167,6 @@ public class ModelPropertyTypeImpl extends EObjectImpl implements ModelPropertyT
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public String getId() {
 		return id;
 	}
@@ -177,7 +176,6 @@ public class ModelPropertyTypeImpl extends EObjectImpl implements ModelPropertyT
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public void setId(String newId) {
 		String oldId = id;
 		id = newId;
@@ -190,7 +188,6 @@ public class ModelPropertyTypeImpl extends EObjectImpl implements ModelPropertyT
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public String getName() {
 		return name;
 	}
@@ -200,7 +197,6 @@ public class ModelPropertyTypeImpl extends EObjectImpl implements ModelPropertyT
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public void setName(String newName) {
 		String oldName = name;
 		name = newName;
@@ -213,7 +209,6 @@ public class ModelPropertyTypeImpl extends EObjectImpl implements ModelPropertyT
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public String getDescription() {
 		return description;
 	}
@@ -223,7 +218,6 @@ public class ModelPropertyTypeImpl extends EObjectImpl implements ModelPropertyT
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public void setDescription(String newDescription) {
 		String oldDescription = description;
 		description = newDescription;
@@ -236,7 +230,6 @@ public class ModelPropertyTypeImpl extends EObjectImpl implements ModelPropertyT
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public ModelPropertyCategory getCategory() {
 		if (category != null && category.eIsProxy()) {
 			InternalEObject oldCategory = (InternalEObject)category;
@@ -278,7 +271,6 @@ public class ModelPropertyTypeImpl extends EObjectImpl implements ModelPropertyT
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public void setCategory(ModelPropertyCategory newCategory) {
 		if (newCategory != category) {
 			NotificationChain msgs = null;
@@ -298,7 +290,6 @@ public class ModelPropertyTypeImpl extends EObjectImpl implements ModelPropertyT
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public String getDefaultValue() {
 		return defaultValue;
 	}
@@ -308,7 +299,6 @@ public class ModelPropertyTypeImpl extends EObjectImpl implements ModelPropertyT
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public void setDefaultValue(String newDefaultValue) {
 		String oldDefaultValue = defaultValue;
 		defaultValue = newDefaultValue;
@@ -321,10 +311,9 @@ public class ModelPropertyTypeImpl extends EObjectImpl implements ModelPropertyT
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public EList<String> getAdmissibleValues() {
 		if (admissibleValues == null) {
-			admissibleValues = new EDataTypeUniqueEList<>(String.class, this, ModelPackage.MODEL_PROPERTY_TYPE__ADMISSIBLE_VALUES);
+			admissibleValues = new EDataTypeUniqueEList<String>(String.class, this, ModelPackage.MODEL_PROPERTY_TYPE__ADMISSIBLE_VALUES);
 		}
 		return admissibleValues;
 	}

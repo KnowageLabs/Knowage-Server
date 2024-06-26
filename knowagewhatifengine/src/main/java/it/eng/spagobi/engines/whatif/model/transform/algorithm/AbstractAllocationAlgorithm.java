@@ -37,7 +37,6 @@ public abstract class AbstractAllocationAlgorithm implements IAllocationAlgorith
 	public static final String ENGINEINSTANCE_PROPERTY = "EngineInstance";
 	public static final String USEINCLAUSE_PROPERTY = "UseInClause";
 
-	@Override
 	public void apply(SpagoBICellWrapper cell, Object oldValue,
 			Object newValue, SpagoBICellSetWrapper cellSetWrapper) {
 
@@ -166,7 +165,6 @@ public abstract class AbstractAllocationAlgorithm implements IAllocationAlgorith
 	protected abstract double applyBelow(SpagoBICellSetWrapper cellSetWrapper, SpagoBICellWrapper cell, SpagoBICellWrapper wrappedCell, double newValue, double oldValue)
 			throws Exception;
 
-	@Override
 	public void persist(SpagoBICellWrapper cell, Object oldValue, Object newValue, Connection connection, Integer version) throws Exception {
 
 		Monitor totalTimeMonitor = null;

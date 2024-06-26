@@ -32,7 +32,6 @@ public abstract class AbstractModelObject implements IModelObject {
 	protected String name;
 	protected Map<String,Object> properties;
 	
-	@Override
 	public long getId() {
 		return id;
 	}
@@ -41,38 +40,32 @@ public abstract class AbstractModelObject implements IModelObject {
 		this.id = id;
 	}
 	
-	@Override
 	public String getName() {
 		return name;
 	}
 	
-	@Override
 	public void setName(String name) {
 		this.name = name;
 	}
 	
 	protected void initProperties() {
 		if(properties == null) {
-			properties = new HashMap<>();
+			properties = new HashMap<String,Object>();
 		}
 	}
 	
-	@Override
 	public Map<String,Object> getProperties() {
 		return properties;
 	}
 	
-	@Override
 	public Object getProperty(String name) {
 		return properties.get(name);
 	}
 	
-	@Override
 	public String getPropertyAsString(String name) {
 		return (String)getProperty(name);
 	}
 	
-	@Override
 	public boolean getPropertyAsBoolean(String name) {
 		boolean booleanValue = true;
 		String stringValue = getPropertyAsString(name);
@@ -92,7 +85,6 @@ public abstract class AbstractModelObject implements IModelObject {
 		return booleanValue;
 	}
 	
-	@Override
 	public int getPropertyAsInt(String name) {
 		int intValue = 0;
 		String stringValue = getPropertyAsString(name);
@@ -106,7 +98,6 @@ public abstract class AbstractModelObject implements IModelObject {
 		return intValue;
 	}
 	
-	@Override
 	public void setProperties(Map<String,Object> properties) {
 		this.properties = properties;
 	}

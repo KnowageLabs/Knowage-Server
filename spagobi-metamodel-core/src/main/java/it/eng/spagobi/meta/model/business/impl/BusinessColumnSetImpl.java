@@ -87,7 +87,6 @@ public class BusinessColumnSetImpl extends ModelObjectImpl implements BusinessCo
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public BusinessModel getModel() {
 		if (eContainerFeatureID() != BusinessModelPackage.BUSINESS_COLUMN_SET__MODEL) return null;
 		return (BusinessModel)eContainer();
@@ -108,7 +107,6 @@ public class BusinessColumnSetImpl extends ModelObjectImpl implements BusinessCo
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public void setModel(BusinessModel newModel) {
 		if (newModel != eInternalContainer() || (eContainerFeatureID() != BusinessModelPackage.BUSINESS_COLUMN_SET__MODEL && newModel != null)) {
 			if (EcoreUtil.isAncestor(this, newModel))
@@ -130,10 +128,9 @@ public class BusinessColumnSetImpl extends ModelObjectImpl implements BusinessCo
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public EList<BusinessColumn> getColumns() {
 		if (columns == null) {
-			columns = new EObjectContainmentWithInverseEList<>(BusinessColumn.class, this, BusinessModelPackage.BUSINESS_COLUMN_SET__COLUMNS, BusinessModelPackage.BUSINESS_COLUMN__TABLE);
+			columns = new EObjectContainmentWithInverseEList<BusinessColumn>(BusinessColumn.class, this, BusinessModelPackage.BUSINESS_COLUMN_SET__COLUMNS, BusinessModelPackage.BUSINESS_COLUMN__TABLE);
 		}
 		return columns;
 	}
@@ -285,7 +282,7 @@ public class BusinessColumnSetImpl extends ModelObjectImpl implements BusinessCo
 	@Override
 	public List<SimpleBusinessColumn> getSimpleBusinessColumnsByName(String name) {
 		
-		List<SimpleBusinessColumn> columns = new ArrayList<>();
+		List<SimpleBusinessColumn> columns = new ArrayList<SimpleBusinessColumn>();
 		
 		if(name == null) {
 			return columns;
@@ -303,7 +300,7 @@ public class BusinessColumnSetImpl extends ModelObjectImpl implements BusinessCo
 	@Override
 	public List<SimpleBusinessColumn> getSimpleBusinessColumnsByPhysicalColumn(String physicalTableName, String physicalColumnName) {
 		
-		List<SimpleBusinessColumn> columns = new ArrayList<>();
+		List<SimpleBusinessColumn> columns = new ArrayList<SimpleBusinessColumn>();
 		
 		BusinessModel businessModel = getModel();
 		if(businessModel == null) return columns;
@@ -323,7 +320,7 @@ public class BusinessColumnSetImpl extends ModelObjectImpl implements BusinessCo
 	@Override
 	public List<SimpleBusinessColumn> getSimpleBusinessColumnsByPhysicalColumn(PhysicalColumn physicalColumn) {
 		
-		List<SimpleBusinessColumn> columns = new ArrayList<>();
+		List<SimpleBusinessColumn> columns = new ArrayList<SimpleBusinessColumn>();
 		
 		if(physicalColumn == null) {
 			return columns;
@@ -340,7 +337,7 @@ public class BusinessColumnSetImpl extends ModelObjectImpl implements BusinessCo
 	@Override
 	public List<SimpleBusinessColumn> getSimpleBusinessColumns() {
 		EList<BusinessColumn> businessColumns = getColumns();
-		List<SimpleBusinessColumn> simpleColumns = new ArrayList<>();
+		List<SimpleBusinessColumn> simpleColumns = new ArrayList<SimpleBusinessColumn>();
 		for (BusinessColumn column:businessColumns){
 			if (column instanceof SimpleBusinessColumn){
 				simpleColumns.add((SimpleBusinessColumn)column);
@@ -375,7 +372,6 @@ public class BusinessColumnSetImpl extends ModelObjectImpl implements BusinessCo
 	// -- deprecated  ---------
 	
 	
-	@Override
 	public CalculatedBusinessColumn getCalculatedBusinessColumn(String name){
 		for(int i = 0; i < getCalculatedBusinessColumns().size(); i++) {
 			if(getCalculatedBusinessColumns().get(i).getName().equals(name)) {
@@ -393,7 +389,7 @@ public class BusinessColumnSetImpl extends ModelObjectImpl implements BusinessCo
 
 	@Override
 	public List<BusinessRelationship> getRelationships() {
-		List<BusinessRelationship> relationships = new ArrayList<>();
+		List<BusinessRelationship> relationships = new ArrayList<BusinessRelationship>();
 		
 		Iterator<BusinessRelationship> it = getModel().getRelationships().iterator();
 		
@@ -416,7 +412,7 @@ public class BusinessColumnSetImpl extends ModelObjectImpl implements BusinessCo
 	@Override
 	public List<CalculatedBusinessColumn> getCalculatedBusinessColumns() {
 		EList<BusinessColumn> businessColumns = getColumns();
-		List<CalculatedBusinessColumn> calculatedColumns = new ArrayList<>();
+		List<CalculatedBusinessColumn> calculatedColumns = new ArrayList<CalculatedBusinessColumn>();
 		for (BusinessColumn column:businessColumns){
 			if (column instanceof CalculatedBusinessColumn){
 				calculatedColumns.add((CalculatedBusinessColumn)column);

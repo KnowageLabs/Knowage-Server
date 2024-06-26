@@ -47,7 +47,7 @@ public class TargetsClickableInitializerImpl extends AbstractInitializer {
 	public void init(SourceBean template, WhatIfTemplate toReturn) {
 		SourceBean mdxSB = (SourceBean) template.getAttribute(TAG_MDX_QUERY);
 		List clickableNodes = mdxSB.getAttributeAsList(TAG_MDX_CLICKABLE);
-		List<TargetClickable> targetsClickable = new ArrayList<>();
+		List<TargetClickable> targetsClickable = new ArrayList<TargetClickable>();
 		logger.debug(TAG_MDX_CLICKABLE + ": " + clickableNodes);
 		if (clickableNodes != null && !clickableNodes.isEmpty()) {
 			for (int i = 0; i < clickableNodes.size(); i++) {

@@ -48,9 +48,8 @@ public class SQLStatementHavingClause extends AbstractStatementHavingClause {
 		parentStatement = statement;
 	}
 
-	@Override
 	public IConditionalOperator getOperator(String operator){
-		return SQLStatementConditionalOperators.getOperator( operator );
+		return (IConditionalOperator)SQLStatementConditionalOperators.getOperator( operator );
 	}
 	
 }

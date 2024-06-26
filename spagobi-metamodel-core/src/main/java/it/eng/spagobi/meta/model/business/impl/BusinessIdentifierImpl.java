@@ -103,7 +103,6 @@ public class BusinessIdentifierImpl extends ModelObjectImpl implements BusinessI
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public BusinessModel getModel() {
 		if (eContainerFeatureID() != BusinessModelPackage.BUSINESS_IDENTIFIER__MODEL) return null;
 		return (BusinessModel)eContainer();
@@ -124,7 +123,6 @@ public class BusinessIdentifierImpl extends ModelObjectImpl implements BusinessI
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public void setModel(BusinessModel newModel) {
 		if (newModel != eInternalContainer() || (eContainerFeatureID() != BusinessModelPackage.BUSINESS_IDENTIFIER__MODEL && newModel != null)) {
 			if (EcoreUtil.isAncestor(this, newModel))
@@ -146,7 +144,6 @@ public class BusinessIdentifierImpl extends ModelObjectImpl implements BusinessI
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public BusinessColumnSet getTable() {
 		if (table != null && table.eIsProxy()) {
 			InternalEObject oldTable = (InternalEObject)table;
@@ -173,7 +170,6 @@ public class BusinessIdentifierImpl extends ModelObjectImpl implements BusinessI
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public void setTable(BusinessColumnSet newTable) {
 		BusinessColumnSet oldTable = table;
 		table = newTable;
@@ -186,10 +182,9 @@ public class BusinessIdentifierImpl extends ModelObjectImpl implements BusinessI
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public EList<BusinessColumn> getColumns() {
 		if (columns == null) {
-			columns = new EObjectResolvingEList<>(BusinessColumn.class, this, BusinessModelPackage.BUSINESS_IDENTIFIER__COLUMNS);
+			columns = new EObjectResolvingEList<BusinessColumn>(BusinessColumn.class, this, BusinessModelPackage.BUSINESS_IDENTIFIER__COLUMNS);
 		}
 		return columns;
 	}
@@ -199,7 +194,6 @@ public class BusinessIdentifierImpl extends ModelObjectImpl implements BusinessI
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public PhysicalPrimaryKey getPhysicalPrimaryKey() {
 		if (physicalPrimaryKey != null && physicalPrimaryKey.eIsProxy()) {
 			InternalEObject oldPhysicalPrimaryKey = (InternalEObject)physicalPrimaryKey;
@@ -226,7 +220,6 @@ public class BusinessIdentifierImpl extends ModelObjectImpl implements BusinessI
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public void setPhysicalPrimaryKey(PhysicalPrimaryKey newPhysicalPrimaryKey) {
 		PhysicalPrimaryKey oldPhysicalPrimaryKey = physicalPrimaryKey;
 		physicalPrimaryKey = newPhysicalPrimaryKey;
@@ -383,7 +376,7 @@ public class BusinessIdentifierImpl extends ModelObjectImpl implements BusinessI
 	@Override
 	public List<SimpleBusinessColumn> getSimpleBusinessColumns(){
 		EList<BusinessColumn> businessColumns = getColumns();
-		List<SimpleBusinessColumn> simpleColumns = new ArrayList<>();
+		List<SimpleBusinessColumn> simpleColumns = new ArrayList<SimpleBusinessColumn>();
 		
 		for(BusinessColumn column : businessColumns){
 			if (column instanceof SimpleBusinessColumn){

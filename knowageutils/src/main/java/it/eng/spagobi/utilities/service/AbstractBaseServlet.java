@@ -17,6 +17,10 @@
  */
 package it.eng.spagobi.utilities.service;
 
+import java.io.IOException;
+
+import it.eng.spagobi.utilities.container.HttpServletRequestContainer;
+import it.eng.spagobi.utilities.engines.AbstractEngineStartServlet;
 import it.eng.spagobi.utilities.engines.BaseServletIOManager;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineException;
 
@@ -25,6 +29,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
 import org.apache.log4j.Logger;
 
 /**
@@ -41,13 +47,11 @@ public abstract class AbstractBaseServlet extends HttpServlet {
     
 	
 
-    @Override
-	public void init(ServletConfig config) throws ServletException {
+    public void init(ServletConfig config) throws ServletException {
     	super.init(config);	
     }
     
-    @Override
-	public void service(HttpServletRequest request, HttpServletResponse response) {
+    public void service(HttpServletRequest request, HttpServletResponse response) {
     	BaseServletIOManager servletIOManager;
     	
     	servletIOManager = new BaseServletIOManager(request, response);

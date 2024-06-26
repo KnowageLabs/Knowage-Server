@@ -33,8 +33,7 @@ import javax.ws.rs.ext.Provider;
 @Provider
 public class DateConverterProvider implements ParamConverterProvider {
 
-    @Override
-	public <T> ParamConverter<T> getConverter(Class<T> rawType, Type genericType, Annotation[] annotations) {
+    public <T> ParamConverter<T> getConverter(Class<T> rawType, Type genericType, Annotation[] annotations) {
 		
     	if (!rawType.equals(Date.class)) return null;
     	

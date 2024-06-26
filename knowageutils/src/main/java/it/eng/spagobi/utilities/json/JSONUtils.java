@@ -163,7 +163,7 @@ public class JSONUtils {
 	 * @throws JSONException
 	 */
 	public static Map<String, Object> toMap(JSONObject object) throws JSONException {
-		Map<String, Object> toReturn = new HashMap<>();
+		Map<String, Object> toReturn = new HashMap<String, Object>();
 
 		if (object != null) {
 			String[] names = JSONObject.getNames(object);
@@ -185,11 +185,11 @@ public class JSONUtils {
 	 * @throws JSONException
 	 */
 	public static List<Map<String, Object>> toMap(JSONArray object) throws JSONException {
-		List<Map<String, Object>> toReturn = new ArrayList<>();
+		List<Map<String, Object>> toReturn = new ArrayList<Map<String, Object>>();
 
 		if (object != null) {
 			for (int o=0; o < object.length(); o++) {
-				HashMap<String, Object> map = new HashMap<>();
+				HashMap<String, Object> map = new HashMap<String, Object>();
 				JSONObject obj = (JSONObject)object.get(o);
 				String[] names = JSONObject.getNames(obj);
 				for (int i = 0; i < names.length; i++) {

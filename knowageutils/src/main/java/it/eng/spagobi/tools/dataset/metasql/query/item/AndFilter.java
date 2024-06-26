@@ -32,7 +32,7 @@ public class AndFilter extends CompoundFilter {
 
 	public AndFilter(List<? extends Filter> filters) {
 		this.compositionOperator = CompoundFilterOperator.AND;
-		this.filters = new ArrayList<>(filters);
+		this.filters = new ArrayList<Filter>(filters);
 	}
 
 	public AndFilter and(Filter... filters) {

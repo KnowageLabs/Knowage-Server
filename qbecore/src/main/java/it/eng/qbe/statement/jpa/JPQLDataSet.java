@@ -196,7 +196,7 @@ public class JPQLDataSet extends AbstractQbeDataSet {
 												valueAfterConversion);
 									}
 								} else if (valueList.size() > 1) {
-									List<Object> multivalueList = new ArrayList<>();
+									List<Object> multivalueList = new ArrayList<Object>();
 									for (int i = 0; i < valueList.size(); i++) {
 										Map<?, ?> valueDescriptionMap = (Map<?, ?>) valueList.get(i);
 										value = valueDescriptionMap.get("value");

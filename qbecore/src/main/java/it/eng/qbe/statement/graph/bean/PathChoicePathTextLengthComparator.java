@@ -38,7 +38,6 @@ public class PathChoicePathTextLengthComparator implements Comparator<PathChoice
 
 
 
-	@Override
 	public int compare(PathChoice arg1, PathChoice arg0) {
 		String arg0rel, arg1rel;
 

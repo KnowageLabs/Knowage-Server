@@ -40,7 +40,6 @@ public abstract class AbstractContainer implements IContainer {
 	 * @param key The input key
 	 * @return true if no objects are stored into the container with the input key, false otherwise
 	 */
-	@Override
 	public boolean isNull(String key) {
 		return get(key) == null;
 	}
@@ -52,7 +51,6 @@ public abstract class AbstractContainer implements IContainer {
 	 * @return true true if no objects are stored into the container with the input key or if the relevant 
 	 * object exists and its string representation is blank, false otherwise
 	 */
-	@Override
 	public boolean isBlankOrNull(String key) {
 		return isNull(key) || get(key).toString().trim().equals("");
 	}
@@ -62,7 +60,6 @@ public abstract class AbstractContainer implements IContainer {
 	 * @param key The input key
 	 * @return the string representation of the object with the given key; if the key has no objects associated, null is returned
 	 */
-	@Override
 	public String getString(String key) {
 		assertNotNull(key, "Input paramater [key] cannot be null");
 		if( isNull(key) ) return null;
@@ -77,7 +74,6 @@ public abstract class AbstractContainer implements IContainer {
 	 * @return If the key has no objects associated, null is returned. If a Integer object is associated to that key, this Integer is returned.
 	 * Otherwise the string representation of the object is parsed with <code>Integer.parseInt(string);<code> and the result is returned.
 	 */
-	@Override
 	public Integer getInteger(String key) {
 		assertNotNull(key, "Input paramater [key] cannot be null");
 		if( isNull(key) ) return null;
@@ -92,7 +88,6 @@ public abstract class AbstractContainer implements IContainer {
 	 * @return If the key has no objects associated, null is returned. If a Boolean object is associated to that key, this boolean is returned.
 	 * Otherwise the string representation of the object is parsed with <code>Boolean.parseBoolean(string);<code> and the result is returned.
 	 */
-	@Override
 	public Boolean getBoolean(String key) {
 		assertNotNull(key, "Input paramater [key] cannot be null");
 		if( isNull(key) ) return null;
@@ -105,14 +100,12 @@ public abstract class AbstractContainer implements IContainer {
 		return ObjectUtils.toList( get(key) );
 	}
 		
-	@Override
 	public List toCsvList(String key) {
 		assertNotNull(key, "Input paramater [key] cannot be null");
 		if( isNull(key) ) return null;
 		return ObjectUtils.toCsvList( get(key) );
 	}
 	
-	@Override
 	public JSONObject toJSONObject(String key) {
 		assertNotNull(key, "Input paramater [key] cannot be null");
 		if( isNull(key) ) return null;
@@ -145,7 +138,6 @@ public abstract class AbstractContainer implements IContainer {
 	 * @param key The input key
 	 * @return the List associated with the input key.
 	 */
-	@Override
 	public List getList(String key) {
 		logger.debug("IN");
 		List toReturn = null;

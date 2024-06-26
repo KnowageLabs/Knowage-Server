@@ -204,7 +204,7 @@ public class ExecutionSession {
 		HashMap<String, Object> attributesMap;
 		Iterator it;
 
-		attributesMap = new HashMap<>();
+		attributesMap = new HashMap<String, Object>();
 		attributeNames = getSpagoBIRequestContainer().getKeys();
 
 		it = attributeNames.iterator();
@@ -225,7 +225,7 @@ public class ExecutionSession {
 		LinkedHashMap<String, Object> attributesMap;
 		Iterator it;
 
-		attributesMap = new LinkedHashMap<>();
+		attributesMap = new LinkedHashMap<String, Object>();
 		attributeNames = getSpagoBIRequestContainer().getKeys();
 
 		it = attributeNames.iterator();

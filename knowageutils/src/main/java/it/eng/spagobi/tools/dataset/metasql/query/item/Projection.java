@@ -52,12 +52,10 @@ public class Projection extends AbstractSelectionField {
 		return aggregationFunction;
 	}
 
-	@Override
 	public String getName() {
 		return name;
 	}
 
-	@Override
 	public String getAlias() {
 		return alias;
 	}

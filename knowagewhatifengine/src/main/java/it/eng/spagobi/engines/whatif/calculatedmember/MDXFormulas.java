@@ -26,7 +26,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement(name = "formulas")
 public class MDXFormulas {
 
-	List<MDXFormula> formulas = new ArrayList<>();
+	List<MDXFormula> formulas = new ArrayList<MDXFormula>();
 
 	@XmlElement(name = "formula")
 	public List<MDXFormula> getFormulas() {

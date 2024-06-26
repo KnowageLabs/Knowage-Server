@@ -31,8 +31,8 @@ public class SerializationManager {
 	static Map<Class<? extends Object>, IDeserializerFactory> deserializerFactoryMappings;
 	
 	static {
-		serializerFactoryMappings = new HashMap<>();
-		deserializerFactoryMappings = new HashMap<>();
+		serializerFactoryMappings = new HashMap<Class<? extends Object>, ISerializerFactory>();
+		deserializerFactoryMappings = new HashMap<Class<? extends Object>, IDeserializerFactory>();
 	}
 	
 	public static void registerSerializerFactory(Class<? extends Object> c, ISerializerFactory serializerFactory) {

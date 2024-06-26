@@ -9,6 +9,7 @@
 **/
 package it.eng.spagobi.meta.model.analytical.impl;
 
+import it.eng.spagobi.meta.model.analytical.*;
 import it.eng.spagobi.meta.model.analytical.AnalyticalModel;
 import it.eng.spagobi.meta.model.analytical.AnalyticalModelFactory;
 import it.eng.spagobi.meta.model.analytical.AnalyticalModelPackage;
@@ -74,7 +75,6 @@ public class AnalyticalModelFactoryImpl extends EFactoryImpl implements Analytic
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public AnalyticalModel createAnalyticalModel() {
 		AnalyticalModelImpl analyticalModel = new AnalyticalModelImpl();
 		return analyticalModel;
@@ -85,7 +85,6 @@ public class AnalyticalModelFactoryImpl extends EFactoryImpl implements Analytic
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public AnalyticalModelPackage getAnalyticalModelPackage() {
 		return (AnalyticalModelPackage)getEPackage();
 	}

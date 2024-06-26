@@ -38,11 +38,11 @@ public class PathInspectorTestCase  extends AbstractGraphTestCase {
 		Relationship r3 = new Relationship();
 		r3.setSourceFields(entities.get(0).getAllFields());
 		r3.setTargetFields(entities.get(2).getAllFields());
-		List<Relationship> edges = new ArrayList<>();
+		List<Relationship> edges = new ArrayList<Relationship>();
 		edges.add(r3);
 		
-		List<GraphPath<IModelEntity, Relationship>> paths = new ArrayList<>();
-		GraphPath<IModelEntity, Relationship> path = new GraphPathImpl<>(graph, entities.get(0), entities.get(2), edges, 9.0);
+		List<GraphPath<IModelEntity, Relationship>> paths = new ArrayList<GraphPath<IModelEntity, Relationship>>();
+		GraphPath<IModelEntity, Relationship> path = new GraphPathImpl<IModelEntity, Relationship>(graph, entities.get(0), entities.get(2), edges, 9.0);
 		paths.add(path);
 		
 		

@@ -45,7 +45,7 @@ public abstract class AbstractDAOTest extends TestCase {
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
-		Map<String, String> mappings = new HashMap<>();
+		Map<String, String> mappings = new HashMap<String, String>();
 		mappings.put("DataSetDAO", "it.eng.spagobi.tools.dataset.dao.DataSetDAOImpl");
 		mappings.put("SbiNewsDAO", "it.eng.spagobi.tools.news.dao.SbiNewsDAOImpl");
 		DAOConfig.setMappings(mappings);

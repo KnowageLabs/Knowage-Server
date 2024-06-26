@@ -237,7 +237,7 @@ public class VersionDAO {
 	}
 
 	private List<SbiVersion> fromResultSetToSbiVersions(ResultSet resulSet) throws SQLException {
-		List<SbiVersion> versions = new ArrayList<>();
+		List<SbiVersion> versions = new ArrayList<SbiVersion>();
 		while (resulSet.next()) {
 			Integer versionId = resulSet.getInt("versionIdColumn");
 			String versionName = resulSet.getString("version_name");

@@ -47,7 +47,7 @@ public class DataType {
 
 
 	public DataType(){
-		props = new ArrayList<>();
+		props = new ArrayList<Properties>();
 
 		addProperty("Object",Object_type_size);
 		addProperty("Float",Float_type_size);

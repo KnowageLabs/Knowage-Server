@@ -60,7 +60,6 @@ public class HibernateModelStructureBuilder implements IModelStructureBuilder {
 		propertiesInitializer = ModelStructurePropertiesInitializerFactory.getDataMartStructurePropertiesInitializer(dataSource);		
 	}
 	
-	@Override
 	public IModelStructure build() {
 		
 		IModelStructure dataMartStructure;

@@ -37,7 +37,6 @@ public class CellRangeAddressWrapper implements Comparable<CellRangeAddressWrapp
 	 * @return -1 the current instance is prior to the object in parameter, 0:
 	 *         equal, 1: after...
 	 */
-	@Override
 	public int compareTo(CellRangeAddressWrapper object) {
 
 		if (range.getFirstColumn() < object.range.getFirstColumn() && range.getFirstRow() < object.range.getFirstRow()) {

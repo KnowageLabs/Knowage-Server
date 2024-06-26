@@ -218,7 +218,7 @@ public class EditExcelStartAction extends WhatIfEngineAbstractStartAction {
 		IAllocationAlgorithm allocationAlgorithm;
 
 		try {
-			Map<String, Object> properties = new HashMap<>();
+			Map<String, Object> properties = new HashMap<String, Object>();
 			properties.put(DefaultWeightedAllocationAlgorithm.ENGINEINSTANCE_PROPERTY, ei);
 			allocationAlgorithm = AllocationAlgorithmFactory.getAllocationAlgorithm(algorithm, ei, properties);
 		} catch (SpagoBIEngineException e) {

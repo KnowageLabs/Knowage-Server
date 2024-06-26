@@ -64,7 +64,7 @@ public class MultiReadHttpServletRequestTest {
 		// test success post with params in URL
 
 		String b = "c=d";
-		HashMap<String, String> requestHeaders = new HashMap<>();
+		HashMap<String, String> requestHeaders = new HashMap<String, String>();
 		requestHeaders.put(RestUtilities.CONTENT_TYPE, "application/x-www-form-urlencoded");
 		RestUtilities.makeRequest(HttpMethod.Post, "http://localhost:8080/multi?g=h&y=i", requestHeaders, b);
 		Assert.assertTrue(arrived);

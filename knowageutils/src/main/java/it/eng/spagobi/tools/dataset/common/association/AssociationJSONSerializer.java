@@ -32,7 +32,7 @@ import org.json.JSONObject;
 public class AssociationJSONSerializer {
 
 	public List<Association> deserialize(JSONArray a) throws JSONException {
-		List<Association> associations = new ArrayList<>();
+		List<Association> associations = new ArrayList<Association>();
 		for (int i = 0; i < a.length(); i++) {
 			JSONObject o = a.getJSONObject(i);
 			associations.add(deserialize(o));
@@ -49,7 +49,7 @@ public class AssociationJSONSerializer {
 	}
 
 	public List<Association.Field> deserializeFields(JSONArray a) throws JSONException {
-		List<Association.Field> fields = new ArrayList<>();
+		List<Association.Field> fields = new ArrayList<Association.Field>();
 		for (int i = 0; i < a.length(); i++) {
 			JSONObject o = a.getJSONObject(i);
 			String name = o.getString("column");

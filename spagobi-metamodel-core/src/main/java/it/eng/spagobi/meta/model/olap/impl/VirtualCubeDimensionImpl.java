@@ -97,7 +97,6 @@ public class VirtualCubeDimensionImpl extends ModelObjectImpl implements Virtual
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public VirtualCube getVirtualCube() {
 		if (virtualCube != null && virtualCube.eIsProxy()) {
 			InternalEObject oldVirtualCube = (InternalEObject)virtualCube;
@@ -139,7 +138,6 @@ public class VirtualCubeDimensionImpl extends ModelObjectImpl implements Virtual
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public void setVirtualCube(VirtualCube newVirtualCube) {
 		if (newVirtualCube != virtualCube) {
 			NotificationChain msgs = null;
@@ -159,7 +157,6 @@ public class VirtualCubeDimensionImpl extends ModelObjectImpl implements Virtual
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public Cube getCube() {
 		if (cube != null && cube.eIsProxy()) {
 			InternalEObject oldCube = (InternalEObject)cube;
@@ -186,7 +183,6 @@ public class VirtualCubeDimensionImpl extends ModelObjectImpl implements Virtual
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public void setCube(Cube newCube) {
 		Cube oldCube = cube;
 		cube = newCube;
@@ -199,7 +195,6 @@ public class VirtualCubeDimensionImpl extends ModelObjectImpl implements Virtual
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public Dimension getDimension() {
 		if (dimension != null && dimension.eIsProxy()) {
 			InternalEObject oldDimension = (InternalEObject)dimension;
@@ -226,7 +221,6 @@ public class VirtualCubeDimensionImpl extends ModelObjectImpl implements Virtual
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public void setDimension(Dimension newDimension) {
 		Dimension oldDimension = dimension;
 		dimension = newDimension;

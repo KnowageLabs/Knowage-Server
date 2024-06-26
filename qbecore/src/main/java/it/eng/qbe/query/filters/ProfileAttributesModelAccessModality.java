@@ -92,7 +92,7 @@ public class ProfileAttributesModelAccessModality extends AbstractModelAccessMod
 	}
 
 	private List<Filter> getAppliableFilters(Query query, IDataSource dataSource) {
-		List<Filter> toReturn = new ArrayList<>();
+		List<Filter> toReturn = new ArrayList<Filter>();
 		Iterator<Filter> it = filtersOnProfileAttributes.iterator();
 		while (it.hasNext()) {
 			Filter filter = it.next();
@@ -135,7 +135,7 @@ public class ProfileAttributesModelAccessModality extends AbstractModelAccessMod
 	private Query applyFilter(Filter filter, Query query, IDataSource dataSource) {
 		Query toReturn = null;
 		try {
-			Map<String, List<String>> map = new HashMap<>();
+			Map<String, List<String>> map = new HashMap<String, List<String>>();
 			map.put(filter.getField().getUniqueName(), filter.getValues());
 			toReturn = QueryTransformer.transform(query, dataSource, null, map, filtersConditionsOnProfileAttributes);
 		} catch (Exception e) {
@@ -145,7 +145,7 @@ public class ProfileAttributesModelAccessModality extends AbstractModelAccessMod
 	}
 
 	private Map<String, List<String>> getFiltersMap(List<Filter> appliableFilters, Map userProfileAttributes) {
-		Map<String, List<String>> toReturn = new HashMap<>();
+		Map<String, List<String>> toReturn = new HashMap<String, List<String>>();
 		Iterator<Filter> it = appliableFilters.iterator();
 		while (it.hasNext()) {
 			Filter filter = it.next();

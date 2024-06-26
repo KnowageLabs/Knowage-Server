@@ -52,7 +52,7 @@ public class JSONPathDataReaderTest extends TestCase {
 
 	public void testReadDirectly() throws IOException, ParseException {
 		String json = HelperForTest.readFile("dataReader-test-directly.json", this.getClass());
-		List<JSONPathAttribute> jsonPathAttributes = new ArrayList<>();
+		List<JSONPathAttribute> jsonPathAttributes = new ArrayList<JSONPathDataReader.JSONPathAttribute>();
 		JSONPathDataReader reader = new JSONPathDataReader("$.contextResponses[*]", jsonPathAttributes, true, false);
 		IDataStore read = reader.read(json);
 		assertEquals(2, read.getRecordsCount());
@@ -279,12 +279,12 @@ public class JSONPathDataReaderTest extends TestCase {
 	}
 
 	public static JSONPathDataReader getJSONPathDataReaderNGSI() {
-		JSONPathDataReader reader = new JSONPathDataReader(null, new ArrayList<>(), false, true);
+		JSONPathDataReader reader = new JSONPathDataReader(null, new ArrayList<JSONPathDataReader.JSONPathAttribute>(), false, true);
 		return reader;
 	}
 
 	private static List<JSONPathAttribute> getJsonPathAttributes() {
-		List<JSONPathAttribute> res = new ArrayList<>();
+		List<JSONPathAttribute> res = new ArrayList<JSONPathDataReader.JSONPathAttribute>();
 		JSONPathAttribute jpa = new JSONPathAttribute("downstreamActivePower", "$.attributes[?(@.name==downstreamActivePower)].value",
 				"$.attributes[?(@.name==downstreamActivePower)].type");
 		res.add(jpa);
@@ -304,7 +304,7 @@ public class JSONPathDataReaderTest extends TestCase {
 	}
 
 	private static List<JSONPathAttribute> getJsonPathAttributesDates() {
-		List<JSONPathAttribute> res = new ArrayList<>();
+		List<JSONPathAttribute> res = new ArrayList<JSONPathDataReader.JSONPathAttribute>();
 		res.add(getJSONPathType("atTime"));
 		res.add(getJSONPathType("atDate"));
 		res.add(getJSONPathType("atTimestamp"));
@@ -318,7 +318,7 @@ public class JSONPathDataReaderTest extends TestCase {
 	}
 
 	private static List<JSONPathAttribute> getJsonPathAttributesDirectly() {
-		List<JSONPathAttribute> res = new ArrayList<>();
+		List<JSONPathAttribute> res = new ArrayList<JSONPathDataReader.JSONPathAttribute>();
 		JSONPathAttribute jpa = new JSONPathAttribute("downstreamActivePower", "$.attributes[?(@.name==downstreamActivePower)].value",
 				"$.attributes[?(@.name==downstreamActivePower)].type");
 		res.add(jpa);

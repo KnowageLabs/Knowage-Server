@@ -29,7 +29,6 @@ import org.olap4j.Position;
 
 public class FakeAllocatyionAlg implements IAllocationAlgorithm {
 
-	@Override
 	public void apply(SpagoBICellWrapper cell, Object oldValue,
 			Object newValue, SpagoBICellSetWrapper cellSetWrapper) {
 
@@ -71,35 +70,29 @@ public class FakeAllocatyionAlg implements IAllocationAlgorithm {
 		}
 	}
 
-	@Override
 	public String getName() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	@Override
 	public void persist(SpagoBICellWrapper cell, Object oldValue, Object newValue, Connection connection, Integer version) throws Exception {
 		// TODO Auto-generated method stub
 
 	}
 
-	@Override
 	public void setProperties(Map<String, Object> properties) {
 		// TODO Auto-generated method stub
 
 	}
 
-	@Override
 	public boolean canOverridePrevious() {
 		return true;
 	}
 
-	@Override
 	public boolean isInMemory() {
 		return true;
 	}
 
-	@Override
 	public boolean isPersistent() {
 		return true;
 	}

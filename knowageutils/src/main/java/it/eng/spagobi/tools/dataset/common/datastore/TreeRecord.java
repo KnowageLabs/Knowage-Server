@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TreeRecord {
-	private List<TreeRecord> childrenNodes = new ArrayList<>();
+	private List<TreeRecord> childrenNodes = new ArrayList<TreeRecord>();
 	private TreeRecord parentNode = null;
 	private Field field = null;
 

@@ -72,7 +72,7 @@ public class MySqlJpaModelTest extends AbstractKnowageMetaTest {
 
 	// @see SPAGOBI-831
 	public void testTableClassNames() {
-		Map<String, IJpaTable> classNames = new HashMap<>();
+		Map<String, IJpaTable> classNames = new HashMap<String, IJpaTable>();
 		Assert.assertEquals(businessModel.getBusinessTables().size(), jpaModel.getTables().size());
 
 		for (IJpaTable table : jpaModel.getTables()) {
@@ -113,7 +113,7 @@ public class MySqlJpaModelTest extends AbstractKnowageMetaTest {
 	// @see SPAGOBI-825 & SPAGOBI-831
 	public void testColumnPropertyNames() {
 		for (IJpaTable table : jpaModel.getTables()) {
-			Map<String, String> propertyNames = new HashMap<>();
+			Map<String, String> propertyNames = new HashMap<String, String>();
 			String propertyName = null;
 
 			for (IJpaColumn column : table.getSimpleColumns(true, true, false)) {

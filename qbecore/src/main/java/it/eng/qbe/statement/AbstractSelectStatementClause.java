@@ -62,7 +62,7 @@ public class AbstractSelectStatementClause extends AbstractStatementClause {
 	public String buildClause(Query query, Map<String, Map<String, String>> entityAliasesMaps, boolean useAliases) {
 		StringBuffer buffer;
 		List<ISelectField> selectFields;
-		List<InLineCalculatedSelectField> selectInLineCalculatedFields = new ArrayList<>();
+		List<InLineCalculatedSelectField> selectInLineCalculatedFields = new ArrayList<InLineCalculatedSelectField>();
 
 		logger.debug("IN");
 
@@ -93,7 +93,7 @@ public class AbstractSelectStatementClause extends AbstractStatementClause {
 			if (statementFiledsNo == 0) {
 				throw new RuntimeException("Impossible to execute a query that contains in the select statemet only (expert) calculated fields");
 			}
-			statementFields = (Couple<String, String>[]) Array.newInstance(new Couple<>("", "").getClass(),
+			statementFields = (Couple<String, String>[]) Array.newInstance(new Couple<String, String>("", "").getClass(),
 					selectFields.size() - calculatedFieldNumber);
 			index = 0;
 
@@ -167,7 +167,7 @@ public class AbstractSelectStatementClause extends AbstractStatementClause {
 			if (s == null || s.trim().length() == 0)
 				return expr;
 			JSONArray slotsJSON = new JSONArray(s);
-			List<Slot> slots = new ArrayList<>();
+			List<Slot> slots = new ArrayList<Slot>();
 			for (int i = 0; i < slotsJSON.length(); i++) {
 				Slot slot = (Slot) SerializationManager.deserialize(slotsJSON.get(i), "application/json", Slot.class);
 				slots.add(slot);

@@ -41,8 +41,7 @@ public class TamSsoService implements SsoServiceInterface {
      * 
      * @return String
      */
-    @Override
-	public String readUserIdentifier(HttpServletRequest request){
+    public String readUserIdentifier(HttpServletRequest request){
     	String user=request.getHeader("iv-user");
     	logger.debug("User in HttpHeader (TAM):"+user);
     	return user;
@@ -55,8 +54,7 @@ public class TamSsoService implements SsoServiceInterface {
      * 
      * @return String
      */
-    @Override
-	public String readUserIdentifier(PortletSession session){
+    public String readUserIdentifier(PortletSession session){
     	logger.warn("NOT Implemented");
     	return "";
     }
@@ -70,8 +68,7 @@ public class TamSsoService implements SsoServiceInterface {
      * 
      * @throws IOException Signals that an I/O exception has occurred.
      */
-    @Override
-	public String readTicket(HttpSession session) throws IOException{
+    public String readTicket(HttpSession session) throws IOException{
 	    return "NA";
     }
 
@@ -85,8 +82,7 @@ public class TamSsoService implements SsoServiceInterface {
      * 
      * @throws SecurityException the security exception
      */
-    @Override
-	public void validateTicket(String ticket, String userId)throws SecurityException {
+    public void validateTicket(String ticket, String userId)throws SecurityException {
     	
     }
 

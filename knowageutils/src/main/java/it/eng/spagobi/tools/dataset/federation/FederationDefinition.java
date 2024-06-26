@@ -158,13 +158,13 @@ public class FederationDefinition {
 	 */
 	@JsonIgnore
 	public JSONObject getDataSetRelationKeysMap() throws JSONException {
-		Map<String, Set<String>> datasetKeyColumnMap = new HashMap<>();
+		Map<String, Set<String>> datasetKeyColumnMap = new HashMap<String, Set<String>>();
 		JSONArray ja = getFlatReslationsShips();
 
 		if (ja.length() == 0) {
 			Iterator<IDataSet> datasetIter = sourceDatasets.iterator();
 			while (datasetIter.hasNext()) {
-				datasetKeyColumnMap.put(datasetIter.next().getLabel(), new HashSet<>());
+				datasetKeyColumnMap.put(datasetIter.next().getLabel(), new HashSet<String>());
 			}
 
 		} else {
@@ -178,7 +178,7 @@ public class FederationDefinition {
 				for (int j = 0; j < sourceColumns.length(); j++) {
 					Set<String> aDatasetKeyColumnSet = datasetKeyColumnMap.get(sourceTable);
 					if (aDatasetKeyColumnSet == null) {
-						aDatasetKeyColumnSet = new HashSet<>();
+						aDatasetKeyColumnSet = new HashSet<String>();
 						datasetKeyColumnMap.put(sourceTable, aDatasetKeyColumnSet);
 					}
 					aDatasetKeyColumnSet.add(sourceColumns.getString(j));
@@ -187,7 +187,7 @@ public class FederationDefinition {
 				for (int j = 0; j < destColumns.length(); j++) {
 					Set<String> aDatasetKeyColumnSet = datasetKeyColumnMap.get(destTable);
 					if (aDatasetKeyColumnSet == null) {
-						aDatasetKeyColumnSet = new HashSet<>();
+						aDatasetKeyColumnSet = new HashSet<String>();
 						datasetKeyColumnMap.put(destTable, aDatasetKeyColumnSet);
 					}
 					aDatasetKeyColumnSet.add(destColumns.getString(j));

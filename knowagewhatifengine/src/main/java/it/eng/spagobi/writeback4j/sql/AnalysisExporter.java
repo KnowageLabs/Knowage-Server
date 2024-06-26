@@ -202,7 +202,7 @@ public class AnalysisExporter extends AbstractSqlSchemaManager {
 		// get the coordinates of a cell (used only to get the involved
 		// dimensions)
 		SpagoBICellWrapper cellWrapper = (SpagoBICellWrapper) model.getCellSet().getCell(0);
-		List<IMemberCoordinates> memberCordinates = new ArrayList<>();
+		List<IMemberCoordinates> memberCordinates = new ArrayList<IMemberCoordinates>();
 		Member[] members = cellWrapper.getMembers();
 
 		// gets the measures and the coordinates of the dimension members
@@ -215,17 +215,17 @@ public class AnalysisExporter extends AbstractSqlSchemaManager {
 
 		logger.debug("The coordinates are " + memberCordinates);
 		// List of where conditions
-		Map<TableEntry, String> whereConditions = new HashMap<>();
+		Map<TableEntry, String> whereConditions = new HashMap<TableEntry, String>();
 
 		// List of joins
-		Set<EquiJoin> joinConditions = new HashSet<>();
+		Set<EquiJoin> joinConditions = new HashSet<EquiJoin>();
 
 		// List of form
-		Set<String> fromTables = new HashSet<>();
+		Set<String> fromTables = new HashSet<String>();
 
 		StringBuffer degenerateDimensionConditions = new StringBuffer();
 
-		Map<String, String> table2Alias = new HashMap<>();
+		Map<String, String> table2Alias = new HashMap<String, String>();
 		getTableAlias(table2Alias, getCubeAlias());
 
 		// for each dimension get the clauses
@@ -238,7 +238,7 @@ public class AnalysisExporter extends AbstractSqlSchemaManager {
 				// create a where in the cube for each level of the degenerate
 				// dimension
 				Map<TableEntry, String> where = buildWhereConditions(aIMemberCordinates, null, version);
-				Map<String, String> cubeTable2Alias = new HashMap<>();
+				Map<String, String> cubeTable2Alias = new HashMap<String, String>();
 				cubeTable2Alias.put(null, getCubeAlias());
 				addWhereCondition(degenerateDimensionConditions, where, cubeTable2Alias, null);
 			} else {
@@ -300,7 +300,7 @@ public class AnalysisExporter extends AbstractSqlSchemaManager {
 	 */
 	private void buildSelectClauseForExport(List<IMemberCoordinates> memberCordinates, Map<String, String> table2Alias, StringBuffer query) {
 		logger.debug("IN");
-		List<String> selects = new ArrayList<>();
+		List<String> selects = new ArrayList<String>();
 
 		// for each dimension get the columns of each level
 		for (Iterator<IMemberCoordinates> iterator = memberCordinates.iterator(); iterator.hasNext();) {

@@ -120,7 +120,7 @@ public class AggregationFunctions {
 
 	public static List<String> getAggregationsList() {
 
-		ArrayList<String> listToReturn = new ArrayList<>();
+		ArrayList<String> listToReturn = new ArrayList<String>();
 
 		listToReturn.add(NONE);
 		listToReturn.add(SUM);
@@ -135,7 +135,7 @@ public class AggregationFunctions {
 	}
 
 	static {
-		aggregationFunctions = new HashMap<>();
+		aggregationFunctions = new HashMap<String, IAggregationFunction>();
 		aggregationFunctions.put(NONE, NONE_FUNCTION);
 		aggregationFunctions.put(SUM, SUM_FUNCTION);
 		aggregationFunctions.put(AVG, AVG_FUNCTION);

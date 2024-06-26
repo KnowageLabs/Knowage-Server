@@ -101,7 +101,6 @@ public interface BusinessColumnSet extends ModelObject {
 	 * @param name
 	 * @return
 	 */
-	@Deprecated
 	SimpleBusinessColumn getSimpleBusinessColumn(String name);
 	
 	/**
@@ -109,7 +108,6 @@ public interface BusinessColumnSet extends ModelObject {
 	 * @param name
 	 * @return
 	 */
-	@Deprecated
 	SimpleBusinessColumn getSimpleBusinessColumn(PhysicalColumn physicalColumn);
 	
 	CalculatedBusinessColumn getCalculatedBusinessColumn(String name);

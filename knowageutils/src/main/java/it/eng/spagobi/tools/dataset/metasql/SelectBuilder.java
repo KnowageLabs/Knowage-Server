@@ -32,21 +32,21 @@ public class SelectBuilder {
 
 	protected boolean isWhereOrEnabled = false;
 
-	protected List<String> columns = new ArrayList<>();
+	protected List<String> columns = new ArrayList<String>();
 
-	protected List<String> tables = new ArrayList<>();
+	protected List<String> tables = new ArrayList<String>();
 
-	protected List<String> joins = new ArrayList<>();
+	protected List<String> joins = new ArrayList<String>();
 
-	protected List<String> leftJoins = new ArrayList<>();
+	protected List<String> leftJoins = new ArrayList<String>();
 
-	protected List<String> wheres = new ArrayList<>();
+	protected List<String> wheres = new ArrayList<String>();
 
-	protected List<String> orderBys = new ArrayList<>();
+	protected List<String> orderBys = new ArrayList<String>();
 
-	protected List<String> groupBys = new ArrayList<>();
+	protected List<String> groupBys = new ArrayList<String>();
 
-	protected List<String> havings = new ArrayList<>();
+	protected List<String> havings = new ArrayList<String>();
 
 	protected int limit = -1;
 

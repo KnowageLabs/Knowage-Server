@@ -59,7 +59,7 @@ public class DummyServlet extends HttpServlet {
 		arrived = true;
 		ServletInputStream stream = req.getInputStream();
 		int c;
-		List<Byte> bytes = new ArrayList<>();
+		List<Byte> bytes = new ArrayList<Byte>();
 		while ((c = stream.read()) != -1) {
 			bytes.add((byte) c);
 		}

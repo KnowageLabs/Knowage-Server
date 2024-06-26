@@ -82,7 +82,7 @@ public class SpagoBIPivotModel extends PivotModelImpl {
 	public static final String DIVISION_SIGN = new String("spagobi.operator.division");
 
 	public List<Member> getSortPosMembers1() {
-		sortPosMembers1 = new ArrayList<>();
+		sortPosMembers1 = new ArrayList<Member>();
 		if (isSorting() && getSortPosMembers() != null) {
 			List<Member> list = getSortPosMembers();
 			for (Member member : list)
@@ -214,7 +214,7 @@ public class SpagoBIPivotModel extends PivotModelImpl {
 
 	public SpagoBIPivotModel(OlapDataSource dataSource) {
 		super(dataSource);
-		this.calculatedFields = new ArrayList<>();
+		this.calculatedFields = new ArrayList<CalculatedMember>();
 
 	}
 
@@ -420,7 +420,7 @@ public class SpagoBIPivotModel extends PivotModelImpl {
 			Exp setForAx = qaRows.getExp();
 			// axis.getPositionCount();
 
-			List<Exp> args = new ArrayList<>(3);
+			List<Exp> args = new ArrayList<Exp>(3);
 
 			args.add(setForAx);
 			args.add(Literal.create(startRow));
@@ -436,7 +436,7 @@ public class SpagoBIPivotModel extends PivotModelImpl {
 			Exp setForAx = qaColumns.getExp();
 			// axis.getPositionCount();
 
-			List<Exp> args = new ArrayList<>(3);
+			List<Exp> args = new ArrayList<Exp>(3);
 
 			args.add(setForAx);
 			args.add(Literal.create(startColumn));

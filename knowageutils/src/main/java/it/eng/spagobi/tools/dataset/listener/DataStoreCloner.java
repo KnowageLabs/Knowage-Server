@@ -112,7 +112,7 @@ public class DataStoreCloner {
 	}
 
 	private static Map<Object, IRecord> getIds(List<IRecord> list, int idField) {
-		Map<Object, IRecord> res = new HashMap<>();
+		Map<Object, IRecord> res = new HashMap<Object, IRecord>();
 		for (IRecord rec : list) {
 			Assert.assertTrue(idField != -1, "idField!=-1");
 

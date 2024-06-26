@@ -122,9 +122,8 @@ public class MondrianSchemaRetriver implements ISchemaRetriver {
 		logger.debug("Cube for writing correctly loaded");
 	}
 
-	@Override
 	public List<String> getAllCubes() {
-		List<String> cubesList = new ArrayList<>();
+		List<String> cubesList = new ArrayList<String>();
 		MondrianDef.Cube[] cubes = schema.cubes;
 		MondrianDef.VirtualCube[] virtualCubes = schema.virtualCubes;
 		for (int i = 0; i < cubes.length; i++) {
@@ -138,7 +137,7 @@ public class MondrianSchemaRetriver implements ISchemaRetriver {
 	}
 	
 	public List<String> getCubes() {
-		List<String> cubesList = new ArrayList<>();
+		List<String> cubesList = new ArrayList<String>();
 		MondrianDef.Cube[] cubes = schema.cubes;
 		MondrianDef.VirtualCube[] virtualCubes = schema.virtualCubes;
 		for (int i = 0; i < cubes.length; i++) {
@@ -149,7 +148,6 @@ public class MondrianSchemaRetriver implements ISchemaRetriver {
 		return cubesList;
 	}
 
-	@Override
 	public String getFirstDimension(String cubeName) {
 
 		logger.debug("IN");
@@ -181,7 +179,6 @@ public class MondrianSchemaRetriver implements ISchemaRetriver {
 
 	}
 
-	@Override
 	public String getFirstMeasure(String cubeName) {
 
 		logger.debug("IN");
@@ -229,7 +226,7 @@ public class MondrianSchemaRetriver implements ISchemaRetriver {
 	}
 
 	public List<String> getAllMeasures(String cubeName) {
-		List<String> measuresList = new ArrayList<>();
+		List<String> measuresList = new ArrayList<String>();
 		logger.debug("IN");
 		String toReturn = null;
 		MondrianDef.Cube[] cubes = schema.cubes;
@@ -266,7 +263,6 @@ public class MondrianSchemaRetriver implements ISchemaRetriver {
 		return measuresList;
 	}
 
-	@Override
 	public IMemberCoordinates getMemberCordinates(Member member) {
 		logger.debug("IN");
 
@@ -348,7 +344,7 @@ public class MondrianSchemaRetriver implements ISchemaRetriver {
 
 		logger.debug("IN");
 
-		Map<TableEntry, Member> mapTableEntryValue = new HashMap<>();
+		Map<TableEntry, Member> mapTableEntryValue = new HashMap<TableEntry, Member>();
 		// int memberDepth = member.getDepth();
 		Level memberLevel = member.getLevel();
 
@@ -382,7 +378,7 @@ public class MondrianSchemaRetriver implements ISchemaRetriver {
 	 */
 	public List<MondrianDef.Level> getLevels(Level memberLevel, MondrianDef.Hierarchy aHierarchy) {
 		logger.debug("IN");
-		List<MondrianDef.Level> levelColumns = new ArrayList<>();
+		List<MondrianDef.Level> levelColumns = new ArrayList<MondrianDef.Level>();
 
 		if (memberLevel.getName().equals(ALL_MEMBER_NAME)) {
 			logger.debug("All member for Hierarchy " + aHierarchy.getName());
@@ -411,7 +407,6 @@ public class MondrianSchemaRetriver implements ISchemaRetriver {
 	 * @return
 	 * @throws SpagoBIEngineException
 	 */
-	@Override
 	public String getMeasureColumn(Member member) throws SpagoBIEngineException {
 		String measure = member.getName();
 		try {
@@ -435,11 +430,10 @@ public class MondrianSchemaRetriver implements ISchemaRetriver {
 	 *
 	 * @return
 	 */
-	@Override
 	public List<String> getMeasuresColumn() {
 
 		logger.debug("IN: loading the measure form the cube");
-		List<String> measures = new ArrayList<>();
+		List<String> measures = new ArrayList<String>();
 
 		for (int i = 0; i < editCube.measures.length; i++) {
 			measures.add(editCube.measures[i].column);
@@ -449,7 +443,6 @@ public class MondrianSchemaRetriver implements ISchemaRetriver {
 		return measures;
 	}
 
-	@Override
 	public String getEditCubeTableName() {
 		return editCube.fact.getAlias();
 	}
@@ -460,10 +453,9 @@ public class MondrianSchemaRetriver implements ISchemaRetriver {
 	 * @return columns names list
 	 */
 
-	@Override
 	public List<String> getColumnNamesList() {
 		logger.debug("IN");
-		List<String> toReturn = new ArrayList<>();
+		List<String> toReturn = new ArrayList<String>();
 
 		// add measures names
 		MondrianDef.Measure[] measures = editCube.measures;
@@ -487,7 +479,6 @@ public class MondrianSchemaRetriver implements ISchemaRetriver {
 		return toReturn;
 	}
 
-	@Override
 	public String getVersionColumnName() {
 		;
 		logger.debug("IN");
@@ -519,7 +510,6 @@ public class MondrianSchemaRetriver implements ISchemaRetriver {
 
 	}
 
-	@Override
 	public String getVersionTableName() {
 		;
 		logger.debug("IN");

@@ -47,7 +47,7 @@ public class SiblingsFileWrapper {
 	 */
 	public List<String> getLevelSiblings(String dimensionName, String hierarchyName, String levelName) {
 
-		List<String> siblingsNames = new ArrayList<>();
+		List<String> siblingsNames = new ArrayList<String>();
 
 		// <dimension> get dimensions elements
 		NodeList dimensions = getDimensions(document);
@@ -121,7 +121,7 @@ public class SiblingsFileWrapper {
 	 */
 	public List<String> getColumnsNames(Element level) {
 
-		List<String> columnsNames = new ArrayList<>();
+		List<String> columnsNames = new ArrayList<String>();
 
 		NodeList columnNodes = level.getElementsByTagName("column");
 		for (int i = 0; i < columnNodes.getLength(); i++) {

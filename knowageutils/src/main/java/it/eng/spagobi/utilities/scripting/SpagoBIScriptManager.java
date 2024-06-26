@@ -191,7 +191,7 @@ public class SpagoBIScriptManager {
 		ScriptEngineManager scriptEngineManager = new ScriptEngineManager();
 		List<ScriptEngineFactory> scriptEngineFactories = scriptEngineManager.getEngineFactories();
 
-		Set<String> languages = new HashSet<>();
+		Set<String> languages = new HashSet<String>();
 		for (ScriptEngineFactory scriptEngineFactory : scriptEngineFactories) {
 			languages.add(scriptEngineFactory.getLanguageName());
 		}
@@ -206,7 +206,7 @@ public class SpagoBIScriptManager {
 		ScriptEngineManager scriptEngineManager = new ScriptEngineManager();
 		List<ScriptEngineFactory> scriptEngineFactories = scriptEngineManager.getEngineFactories();
 
-		Set<String> engineNames = new HashSet<>();
+		Set<String> engineNames = new HashSet<String>();
 		for (ScriptEngineFactory scriptEngineFactory : scriptEngineFactories) {
 			engineNames.addAll(scriptEngineFactory.getNames());
 		}

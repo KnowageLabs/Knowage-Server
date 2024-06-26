@@ -81,7 +81,7 @@ public class JDBCOrientDbDataReader extends AbstractDataReader {
 		dataStore.setMetaData(dataStoreMeta);
 		rs = (ResultSet) data;
 
-		Map<String, Integer> fields2ColumnsMap = new HashMap<>();
+		Map<String, Integer> fields2ColumnsMap = new HashMap<String, Integer>();
 
 		try {
 			boolean ok = true;
@@ -110,7 +110,7 @@ public class JDBCOrientDbDataReader extends AbstractDataReader {
 				IRecord record = new Record(dataStore);
 				ResultSetMetaData meta = rs.getMetaData();
 
-				List<IField> fields = new ArrayList<>();
+				List<IField> fields = new ArrayList<IField>();
 				IField emptyField = new Field("");
 				for (int i = 0; i < fields2ColumnsMap.size(); i++) {
 					fields.add(emptyField);

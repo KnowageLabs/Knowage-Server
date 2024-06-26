@@ -46,7 +46,7 @@ public class SbiDimension {
 		this.caption = dimension.getCaption();
 		this.uniqueName = dimension.getUniqueName();
 		this.axis = axis;
-		this.hierarchies = new ArrayList<>();
+		this.hierarchies = new ArrayList<SbiHierarchy>();
 		this.positionInAxis = positionInAxis;
 
 		try {

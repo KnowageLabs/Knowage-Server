@@ -70,8 +70,8 @@ public class SQLStatementFromClause extends AbstractStatementFromClause {
 
 			buffer.append(" " + FROM + " ");
 
-			List<IModelEntity> cubes = new ArrayList<>();
-			List<IModelEntity> normalEntities = new ArrayList<>();
+			List<IModelEntity> cubes = new ArrayList<IModelEntity>();
+			List<IModelEntity> normalEntities = new ArrayList<IModelEntity>();
 
 			Iterator it = entityAliases.keySet().iterator();
 			while (it.hasNext()) {

@@ -50,7 +50,7 @@ import it.eng.knowage.mail.MailSessionBuilder.SessionFacade;
  */
 public class MailSessionBuilderTest {
 
-	private final List<Data> dataList = new ArrayList<>();
+	private final List<Data> dataList = new ArrayList<Data>();
 
 	private static class Data {
 		String user = null;

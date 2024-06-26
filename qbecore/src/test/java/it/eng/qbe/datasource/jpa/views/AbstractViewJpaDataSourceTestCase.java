@@ -32,7 +32,6 @@ import java.util.List;
  */
 public abstract class AbstractViewJpaDataSourceTestCase extends AbstractDataSourceTestCase {
 		
-	@Override
 	public void doTests() {
 		super.doTests();
 		// add custom tests here
@@ -63,8 +62,6 @@ public abstract class AbstractViewJpaDataSourceTestCase extends AbstractDataSour
 	}
 	
 	// disable localization tests
-	@Override
 	public void doTestLabelLocalization() {}
-	@Override
 	public void doTestTooltipLocalization() {}
 }

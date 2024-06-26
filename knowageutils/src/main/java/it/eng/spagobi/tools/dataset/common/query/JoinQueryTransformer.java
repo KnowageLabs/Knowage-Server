@@ -44,7 +44,6 @@ public class JoinQueryTransformer extends AbstractQueryTransformer {
 		selectColumnAlias = new ArrayList();
 	}
 	
-	@Override
 	public Object execTransformation(Object statement) {
 		String transformedStatment = null;
 		

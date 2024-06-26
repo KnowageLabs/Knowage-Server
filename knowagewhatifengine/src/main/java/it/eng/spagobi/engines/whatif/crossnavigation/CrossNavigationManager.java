@@ -100,7 +100,7 @@ public class CrossNavigationManager {
 	}
 
 	private static List<String> getLevelValues(Member[] members, String levelName) {
-		List<String> values = new ArrayList<>();
+		List<String> values = new ArrayList<String>();
 		for (Member member : members) {
 			String aValue = getLevelValue(member, levelName);
 			if (aValue != null) {
@@ -111,7 +111,7 @@ public class CrossNavigationManager {
 	}
 
 	private static List<String> getMemberPropertyValues(Member[] members, String levelName) {
-		List<String> values = new ArrayList<>();
+		List<String> values = new ArrayList<String>();
 		for (Member member : members) {
 			String aValue = getMemberPropertyValue(member, levelName);
 			if (aValue != null) {

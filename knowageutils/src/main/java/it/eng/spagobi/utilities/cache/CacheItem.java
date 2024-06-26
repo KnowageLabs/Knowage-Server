@@ -38,7 +38,7 @@ public class CacheItem {
 	private Map<String, Object> properties = null;
 
 	public CacheItem() {
-		properties = new HashMap<>();
+		properties = new HashMap<String, Object>();
 	}
 
 	public String getName() {

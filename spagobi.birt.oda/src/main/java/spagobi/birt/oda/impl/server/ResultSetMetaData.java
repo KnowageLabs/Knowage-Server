@@ -38,7 +38,6 @@ public class ResultSetMetaData implements IResultSetMetaData
 	/*
 	 * @see org.eclipse.datatools.connectivity.oda.IResultSetMetaData#getColumnCount()
 	 */
-	@Override
 	public int getColumnCount() throws OdaException
 	{
 		logger.debug("IN getColumnCount");
@@ -59,7 +58,6 @@ public class ResultSetMetaData implements IResultSetMetaData
 	/*
 	 * @see org.eclipse.datatools.connectivity.oda.IResultSetMetaData#getColumnName(int)
 	 */
-	@Override
 	public String getColumnName( int index ) throws OdaException
 	{
 		logger.debug("IN getColumnName");
@@ -77,7 +75,6 @@ public class ResultSetMetaData implements IResultSetMetaData
 	/*
 	 * @see org.eclipse.datatools.connectivity.oda.IResultSetMetaData#getColumnLabel(int)
 	 */
-	@Override
 	public String getColumnLabel( int index ) throws OdaException
 	{
 		logger.debug("IN getColumnLabel");
@@ -89,7 +86,6 @@ public class ResultSetMetaData implements IResultSetMetaData
 	/*
 	 * @see org.eclipse.datatools.connectivity.oda.IResultSetMetaData#getColumnType(int)
 	 */
-	@Override
 	public int getColumnType( int index ) throws OdaException
 	{
 		logger.debug("IN getColumnType");
@@ -105,7 +101,6 @@ public class ResultSetMetaData implements IResultSetMetaData
 	/*
 	 * @see org.eclipse.datatools.connectivity.oda.IResultSetMetaData#getColumnTypeName(int)
 	 */
-	@Override
 	public String getColumnTypeName( int index ) throws OdaException
 	{
 		logger.debug("IN getColumnTypeName");
@@ -118,7 +113,6 @@ public class ResultSetMetaData implements IResultSetMetaData
 	/*
 	 * @see org.eclipse.datatools.connectivity.oda.IResultSetMetaData#getColumnDisplayLength(int)
 	 */
-	@Override
 	public int getColumnDisplayLength( int index ) throws OdaException
 	{
 		logger.debug("IN getColumnDisplayLength");
@@ -129,7 +123,6 @@ public class ResultSetMetaData implements IResultSetMetaData
 	/*
 	 * @see org.eclipse.datatools.connectivity.oda.IResultSetMetaData#getPrecision(int)
 	 */
-	@Override
 	public int getPrecision( int index ) throws OdaException
 	{
 		logger.debug("IN getPrecision");
@@ -140,7 +133,6 @@ public class ResultSetMetaData implements IResultSetMetaData
 	/*
 	 * @see org.eclipse.datatools.connectivity.oda.IResultSetMetaData#getScale(int)
 	 */
-	@Override
 	public int getScale( int index ) throws OdaException
 	{
 		logger.debug("IN getScale");
@@ -151,7 +143,6 @@ public class ResultSetMetaData implements IResultSetMetaData
 	/*
 	 * @see org.eclipse.datatools.connectivity.oda.IResultSetMetaData#isNullable(int)
 	 */
-	@Override
 	public int isNullable( int index ) throws OdaException
 	{
 		logger.debug("IN isNullable");

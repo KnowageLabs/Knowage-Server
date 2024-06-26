@@ -82,8 +82,8 @@ public class MenuSerializerCommunity {
 		String jsonResponse = response.readEntity(String.class);
 		JSONObject json = null;
 		try {
-			Set<String> expectedMenu = new HashSet<>();
-			Set<String> currentMenu = new HashSet<>();
+			Set<String> expectedMenu = new HashSet<String>();
+			Set<String> currentMenu = new HashSet<String>();
 
 			org.json.simple.JSONObject expectedMenuJSON = getExpected();
 			org.json.simple.JSONArray expectedTechnical = (org.json.simple.JSONArray) expectedMenuJSON.get("technicalUserFunctionalities");

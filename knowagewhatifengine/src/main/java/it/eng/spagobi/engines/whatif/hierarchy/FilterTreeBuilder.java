@@ -113,7 +113,7 @@ public class FilterTreeBuilder {
 	 * @return
 	 */
 	public List<NodeFilter> build() {
-		List<NodeFilter> nodes = new ArrayList<>();
+		List<NodeFilter> nodes = new ArrayList<NodeFilter>();
 		try {
 			for (Member member : hierarchy.getRootMembers()) {
 				if (member.isVisible()) {

@@ -30,7 +30,7 @@ public class PreparedStatementData {
 		this.query = query;
 
 		if (values == null) {
-			this.parameters = new ArrayList<>(0);
+			this.parameters = new ArrayList<Object>(0);
 		} else {
 			this.parameters = values;
 		}

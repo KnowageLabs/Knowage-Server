@@ -44,7 +44,7 @@ public class TargetClickable implements Serializable {
 		List parameters = sb.getAttributeAsList(TargetsClickableInitializerImpl.TAG_CNC_PARAMETERS);
 		boolean hasParameters = parameters != null && !parameters.isEmpty();
 		if (hasParameters) {
-			parametersList = new TreeMap<>();
+			parametersList = new TreeMap<String, String>();
 			for (int i = 0; i < parameters.size(); i++) {
 				SourceBean temp = (SourceBean) parameters.get(i);
 				String clickParameterName = (String) temp.getAttribute(TargetsClickableInitializerImpl.TAG_CNC_NAME);

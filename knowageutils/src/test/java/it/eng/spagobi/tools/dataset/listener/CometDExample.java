@@ -36,7 +36,6 @@ public class CometDExample  {
 		//add the listener (if it's not present) to check when the dataSet changes
 		manager.addIDataSetListenerIfAbsent(uuid, dataSetLabel, new IDataSetListener() {
 
-			@Override
 			public void dataStoreChanged(DataStoreChangedEvent event) throws DataSetListenerException {
 				
 				//notify the frontend clients about the dataStore changes

@@ -205,7 +205,6 @@ public class BusinessModelPackageImpl extends EPackageImpl implements BusinessMo
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public EClass getBusinessModel() {
 		return businessModelEClass;
 	}
@@ -215,7 +214,6 @@ public class BusinessModelPackageImpl extends EPackageImpl implements BusinessMo
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public EReference getBusinessModel_ParentModel() {
 		return (EReference)businessModelEClass.getEStructuralFeatures().get(0);
 	}
@@ -225,7 +223,6 @@ public class BusinessModelPackageImpl extends EPackageImpl implements BusinessMo
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public EReference getBusinessModel_PhysicalModel() {
 		return (EReference)businessModelEClass.getEStructuralFeatures().get(1);
 	}
@@ -235,7 +232,6 @@ public class BusinessModelPackageImpl extends EPackageImpl implements BusinessMo
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public EReference getBusinessModel_Tables() {
 		return (EReference)businessModelEClass.getEStructuralFeatures().get(2);
 	}
@@ -245,7 +241,6 @@ public class BusinessModelPackageImpl extends EPackageImpl implements BusinessMo
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public EReference getBusinessModel_Relationships() {
 		return (EReference)businessModelEClass.getEStructuralFeatures().get(3);
 	}
@@ -255,7 +250,6 @@ public class BusinessModelPackageImpl extends EPackageImpl implements BusinessMo
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public EReference getBusinessModel_Identifiers() {
 		return (EReference)businessModelEClass.getEStructuralFeatures().get(4);
 	}
@@ -265,7 +259,6 @@ public class BusinessModelPackageImpl extends EPackageImpl implements BusinessMo
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public EReference getBusinessModel_Domains() {
 		return (EReference)businessModelEClass.getEStructuralFeatures().get(5);
 	}
@@ -275,7 +268,6 @@ public class BusinessModelPackageImpl extends EPackageImpl implements BusinessMo
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public EReference getBusinessModel_JoinRelationships() {
 		return (EReference)businessModelEClass.getEStructuralFeatures().get(6);
 	}
@@ -285,7 +277,6 @@ public class BusinessModelPackageImpl extends EPackageImpl implements BusinessMo
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public EClass getBusinessTable() {
 		return businessTableEClass;
 	}
@@ -295,7 +286,6 @@ public class BusinessModelPackageImpl extends EPackageImpl implements BusinessMo
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public EReference getBusinessTable_PhysicalTable() {
 		return (EReference)businessTableEClass.getEStructuralFeatures().get(0);
 	}
@@ -305,7 +295,6 @@ public class BusinessModelPackageImpl extends EPackageImpl implements BusinessMo
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public EClass getBusinessColumn() {
 		return businessColumnEClass;
 	}
@@ -315,7 +304,6 @@ public class BusinessModelPackageImpl extends EPackageImpl implements BusinessMo
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public EReference getBusinessColumn_Table() {
 		return (EReference)businessColumnEClass.getEStructuralFeatures().get(0);
 	}
@@ -325,7 +313,6 @@ public class BusinessModelPackageImpl extends EPackageImpl implements BusinessMo
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public EClass getBusinessColumnSet() {
 		return businessColumnSetEClass;
 	}
@@ -335,7 +322,6 @@ public class BusinessModelPackageImpl extends EPackageImpl implements BusinessMo
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public EReference getBusinessColumnSet_Model() {
 		return (EReference)businessColumnSetEClass.getEStructuralFeatures().get(0);
 	}
@@ -345,7 +331,6 @@ public class BusinessModelPackageImpl extends EPackageImpl implements BusinessMo
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public EReference getBusinessColumnSet_Columns() {
 		return (EReference)businessColumnSetEClass.getEStructuralFeatures().get(1);
 	}
@@ -355,7 +340,6 @@ public class BusinessModelPackageImpl extends EPackageImpl implements BusinessMo
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public EClass getBusinessRelationship() {
 		return businessRelationshipEClass;
 	}
@@ -365,7 +349,6 @@ public class BusinessModelPackageImpl extends EPackageImpl implements BusinessMo
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public EReference getBusinessRelationship_Model() {
 		return (EReference)businessRelationshipEClass.getEStructuralFeatures().get(0);
 	}
@@ -375,7 +358,6 @@ public class BusinessModelPackageImpl extends EPackageImpl implements BusinessMo
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public EReference getBusinessRelationship_SourceTable() {
 		return (EReference)businessRelationshipEClass.getEStructuralFeatures().get(1);
 	}
@@ -385,7 +367,6 @@ public class BusinessModelPackageImpl extends EPackageImpl implements BusinessMo
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public EReference getBusinessRelationship_DestinationTable() {
 		return (EReference)businessRelationshipEClass.getEStructuralFeatures().get(2);
 	}
@@ -395,7 +376,6 @@ public class BusinessModelPackageImpl extends EPackageImpl implements BusinessMo
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public EReference getBusinessRelationship_SourceColumns() {
 		return (EReference)businessRelationshipEClass.getEStructuralFeatures().get(3);
 	}
@@ -405,7 +385,6 @@ public class BusinessModelPackageImpl extends EPackageImpl implements BusinessMo
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public EReference getBusinessRelationship_DestinationColumns() {
 		return (EReference)businessRelationshipEClass.getEStructuralFeatures().get(4);
 	}
@@ -415,7 +394,6 @@ public class BusinessModelPackageImpl extends EPackageImpl implements BusinessMo
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public EReference getBusinessRelationship_PhysicalForeignKey() {
 		return (EReference)businessRelationshipEClass.getEStructuralFeatures().get(5);
 	}
@@ -425,7 +403,6 @@ public class BusinessModelPackageImpl extends EPackageImpl implements BusinessMo
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public EClass getBusinessView() {
 		return businessViewEClass;
 	}
@@ -435,7 +412,6 @@ public class BusinessModelPackageImpl extends EPackageImpl implements BusinessMo
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public EReference getBusinessView_JoinRelationships() {
 		return (EReference)businessViewEClass.getEStructuralFeatures().get(0);
 	}
@@ -445,7 +421,6 @@ public class BusinessModelPackageImpl extends EPackageImpl implements BusinessMo
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public EClass getBusinessDomain() {
 		return businessDomainEClass;
 	}
@@ -455,7 +430,6 @@ public class BusinessModelPackageImpl extends EPackageImpl implements BusinessMo
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public EReference getBusinessDomain_Model() {
 		return (EReference)businessDomainEClass.getEStructuralFeatures().get(0);
 	}
@@ -465,7 +439,6 @@ public class BusinessModelPackageImpl extends EPackageImpl implements BusinessMo
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public EReference getBusinessDomain_Tables() {
 		return (EReference)businessDomainEClass.getEStructuralFeatures().get(1);
 	}
@@ -475,7 +448,6 @@ public class BusinessModelPackageImpl extends EPackageImpl implements BusinessMo
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public EReference getBusinessDomain_Relationships() {
 		return (EReference)businessDomainEClass.getEStructuralFeatures().get(2);
 	}
@@ -485,7 +457,6 @@ public class BusinessModelPackageImpl extends EPackageImpl implements BusinessMo
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public EClass getBusinessIdentifier() {
 		return businessIdentifierEClass;
 	}
@@ -495,7 +466,6 @@ public class BusinessModelPackageImpl extends EPackageImpl implements BusinessMo
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public EReference getBusinessIdentifier_Model() {
 		return (EReference)businessIdentifierEClass.getEStructuralFeatures().get(0);
 	}
@@ -505,7 +475,6 @@ public class BusinessModelPackageImpl extends EPackageImpl implements BusinessMo
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public EReference getBusinessIdentifier_Table() {
 		return (EReference)businessIdentifierEClass.getEStructuralFeatures().get(1);
 	}
@@ -515,7 +484,6 @@ public class BusinessModelPackageImpl extends EPackageImpl implements BusinessMo
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public EReference getBusinessIdentifier_Columns() {
 		return (EReference)businessIdentifierEClass.getEStructuralFeatures().get(2);
 	}
@@ -525,7 +493,6 @@ public class BusinessModelPackageImpl extends EPackageImpl implements BusinessMo
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public EReference getBusinessIdentifier_PhysicalPrimaryKey() {
 		return (EReference)businessIdentifierEClass.getEStructuralFeatures().get(3);
 	}
@@ -535,7 +502,6 @@ public class BusinessModelPackageImpl extends EPackageImpl implements BusinessMo
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public EClass getBusinessViewInnerJoinRelationship() {
 		return businessViewInnerJoinRelationshipEClass;
 	}
@@ -545,7 +511,6 @@ public class BusinessModelPackageImpl extends EPackageImpl implements BusinessMo
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public EReference getBusinessViewInnerJoinRelationship_Model() {
 		return (EReference)businessViewInnerJoinRelationshipEClass.getEStructuralFeatures().get(0);
 	}
@@ -555,7 +520,6 @@ public class BusinessModelPackageImpl extends EPackageImpl implements BusinessMo
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public EReference getBusinessViewInnerJoinRelationship_SourceTable() {
 		return (EReference)businessViewInnerJoinRelationshipEClass.getEStructuralFeatures().get(1);
 	}
@@ -565,7 +529,6 @@ public class BusinessModelPackageImpl extends EPackageImpl implements BusinessMo
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public EReference getBusinessViewInnerJoinRelationship_DestinationTable() {
 		return (EReference)businessViewInnerJoinRelationshipEClass.getEStructuralFeatures().get(2);
 	}
@@ -575,7 +538,6 @@ public class BusinessModelPackageImpl extends EPackageImpl implements BusinessMo
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public EReference getBusinessViewInnerJoinRelationship_SourceColumns() {
 		return (EReference)businessViewInnerJoinRelationshipEClass.getEStructuralFeatures().get(3);
 	}
@@ -585,7 +547,6 @@ public class BusinessModelPackageImpl extends EPackageImpl implements BusinessMo
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public EReference getBusinessViewInnerJoinRelationship_DestinationColumns() {
 		return (EReference)businessViewInnerJoinRelationshipEClass.getEStructuralFeatures().get(4);
 	}
@@ -595,7 +556,6 @@ public class BusinessModelPackageImpl extends EPackageImpl implements BusinessMo
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public EClass getSimpleBusinessColumn() {
 		return simpleBusinessColumnEClass;
 	}
@@ -605,7 +565,6 @@ public class BusinessModelPackageImpl extends EPackageImpl implements BusinessMo
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public EReference getSimpleBusinessColumn_PhysicalColumn() {
 		return (EReference)simpleBusinessColumnEClass.getEStructuralFeatures().get(0);
 	}
@@ -615,7 +574,6 @@ public class BusinessModelPackageImpl extends EPackageImpl implements BusinessMo
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public EClass getCalculatedBusinessColumn() {
 		return calculatedBusinessColumnEClass;
 	}
@@ -625,7 +583,6 @@ public class BusinessModelPackageImpl extends EPackageImpl implements BusinessMo
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public BusinessModelFactory getBusinessModelFactory() {
 		return (BusinessModelFactory)getEFactoryInstance();
 	}

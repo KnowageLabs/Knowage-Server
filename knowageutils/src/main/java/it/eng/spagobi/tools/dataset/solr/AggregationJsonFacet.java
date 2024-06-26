@@ -47,12 +47,10 @@ public class AggregationJsonFacet extends JsonFacet {
     public String getSort() {
         return sort;
     }
-	@Override
 	public int getLimit() {
 		return limit;
 	}
 
-	@Override
 	public void setLimit(int limit) {
 		this.limit = limit;
 	}

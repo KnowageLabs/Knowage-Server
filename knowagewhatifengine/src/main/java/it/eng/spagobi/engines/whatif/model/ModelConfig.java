@@ -215,7 +215,7 @@ public class ModelConfig implements Serializable {
 		NonEmpty transformNonEmpty = pivotModel.getTransform(NonEmpty.class);
 		suppressEmpty = transformNonEmpty.isNonEmpty();
 
-		dimensionHierarchyMap = new HashMap<>();
+		dimensionHierarchyMap = new HashMap<String, String>();
 	}
 
 	public Boolean getEnableDrillThrough() {

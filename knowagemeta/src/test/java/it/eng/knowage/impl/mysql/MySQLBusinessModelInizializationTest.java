@@ -126,7 +126,7 @@ public class MySQLBusinessModelInizializationTest extends AbstractKnowageMetaTes
 	}
 
 	public void testBusinessModelTableUniqueNames() {
-		Map<String, String> tableUniqueNames = new HashMap<>();
+		Map<String, String> tableUniqueNames = new HashMap<String, String>();
 
 		for (BusinessTable table : businessModel.getBusinessTables()) {
 			String tableUniqueName = table.getUniqueName();
@@ -162,7 +162,7 @@ public class MySQLBusinessModelInizializationTest extends AbstractKnowageMetaTes
 	public void testBusinessModelColumnUniqueNames() {
 		for (BusinessTable table : businessModel.getBusinessTables()) {
 			String physicalTableName = table.getPhysicalTable().getName();
-			Map<String, String> columnUniqueNames = new HashMap<>();
+			Map<String, String> columnUniqueNames = new HashMap<String, String>();
 			for (SimpleBusinessColumn column : table.getSimpleBusinessColumns()) {
 				String columnUniqueName = column.getUniqueName();
 				String physicalColumnName = column.getPhysicalColumn().getName();

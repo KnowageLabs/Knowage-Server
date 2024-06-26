@@ -64,14 +64,14 @@ public class JPQLBusinessViewUtility {
 		String clauseToReturn;
 		
 		//get all referred entities
-		refferredFields = new HashSet<>();
+		refferredFields = new HashSet<IModelField>();
 		extractReferredEntitiesFromSelectClause(refferredFields, query);
 		extractReferredEntitiesFromWhereClause(refferredFields, query);
 		extractReferredEntitiesFromHavingClause(refferredFields, query);
 		extractReferredEntitiesFromOrderByClause(refferredFields, query);
 		extractReferredEntitiesFromGroupByClause(refferredFields, query);
 		
-		viewRelations = new HashSet<>();
+		viewRelations = new HashSet<ViewRalationClause>();
 		for (IModelField referredField : refferredFields) {
 			buildViewsRelationsBackVistitPath(referredField, referredField.getLogicalParent(), null, viewRelations, entityAliasesMaps, query);			
 		}
@@ -273,7 +273,7 @@ public class JPQLBusinessViewUtility {
 	 * @return
 	 */
 	private Set<ViewRalationClause> getJoinClauseBetweenFieldAndView(List<IModelField> sourceFields, IModelField leafField, Map entityAliasesMaps, Query query){
-		Set<ViewRalationClause> clauses = new HashSet<>();
+		Set<ViewRalationClause> clauses = new HashSet<ViewRalationClause>();
 		String queryNameS;
 		IModelEntity rootEntityL,rootEntityS;
 		Couple queryNameAndRootS, queryNameAndRootL;	
@@ -321,7 +321,7 @@ public class JPQLBusinessViewUtility {
 	 * @return
 	 */
 	private Set<ViewRalationClause> buildRelationConditionString(List<IModelField> sourceFields, List<IModelField> destFields, Map entityAliases, Query query){
-		Set<ViewRalationClause> clauses = new HashSet<>();
+		Set<ViewRalationClause> clauses = new HashSet<ViewRalationClause>();
 		IModelField sourceField, destField;
 		for(int i=0; i<sourceFields.size(); i++){
 			sourceField = sourceFields.get(i);
@@ -363,7 +363,6 @@ public class JPQLBusinessViewUtility {
 			this.field2 = field2;
 		}
 		
-		@Override
 		public String toString(){
 			return "(" +this.field1 +" = "+ this.field2+ ")";
 		}

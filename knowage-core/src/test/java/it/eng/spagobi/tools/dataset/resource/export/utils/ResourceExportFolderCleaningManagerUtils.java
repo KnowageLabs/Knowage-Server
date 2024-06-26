@@ -33,7 +33,7 @@ public class ResourceExportFolderCleaningManagerUtils {
 			new File(folderPath).mkdirs();
 		}
 
-		Map<String, Long> filesMap = new HashMap<>();
+		Map<String, Long> filesMap = new HashMap<String, Long>();
 
 		Long currentFolderSize = 0L;
 		int i = 0;

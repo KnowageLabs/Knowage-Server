@@ -48,9 +48,9 @@ public class ShortestPathsCoverGraph extends AbstractDefaultCover {
 			Set<IModelEntity> entities) {
 		Subgraph<IModelEntity, Relationship, Graph<IModelEntity, Relationship>> subGraph = null;
 		Iterator<IModelEntity> it = entities.iterator();
-		Set<Relationship> connectingRelatiosnhips = new HashSet<>();
+		Set<Relationship> connectingRelatiosnhips = new HashSet<Relationship>();
 
-		Set<IModelEntity> connectedEntities = new HashSet<>();
+		Set<IModelEntity> connectedEntities = new HashSet<IModelEntity>();
 		if (it.hasNext())
 			connectedEntities.add(it.next());
 
@@ -111,12 +111,12 @@ public class ShortestPathsCoverGraph extends AbstractDefaultCover {
 
 	@Override
 	public QueryGraph getCoverGraph(Graph<IModelEntity, Relationship> rootEntitiesGraph, Set<IModelEntity> entities) {
-		Set<Relationship> minimumRelatiosnhips = new HashSet<>();
+		Set<Relationship> minimumRelatiosnhips = new HashSet<Relationship>();
 
 		Subgraph<IModelEntity, Relationship, Graph<IModelEntity, Relationship>> subgraph = getCoverSubGraph(rootEntitiesGraph, entities);
 
 		logger.debug("Getting the minimum spaning tree on the subgraph");
-		KruskalMinimumSpanningTree<IModelEntity, Relationship> kruscal = new KruskalMinimumSpanningTree<>(subgraph);
+		KruskalMinimumSpanningTree<IModelEntity, Relationship> kruscal = new KruskalMinimumSpanningTree<IModelEntity, Relationship>(subgraph);
 		minimumRelatiosnhips = kruscal.getEdgeSet();
 		logger.debug("Finished to load the MST");
 

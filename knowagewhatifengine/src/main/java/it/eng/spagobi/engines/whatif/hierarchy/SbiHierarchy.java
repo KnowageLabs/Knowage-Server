@@ -38,8 +38,8 @@ public class SbiHierarchy {
 		this.uniqueName = hierarchy.getUniqueName();
 		this.caption = hierarchy.getCaption();
 		this.position = position;
-		slicers = new ArrayList<>();
-		levelNames = new ArrayList<>();
+		slicers = new ArrayList<Map<String, String>>();
+		levelNames = new ArrayList<String>();
 		List<Level> levels = hierarchy.getLevels();
 		if (levels != null) {
 			for (int i = 0; i < levels.size(); i++) {

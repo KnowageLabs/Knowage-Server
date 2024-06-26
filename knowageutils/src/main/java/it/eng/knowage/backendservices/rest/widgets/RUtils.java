@@ -46,7 +46,7 @@ public class RUtils extends MLEngineUtils {
 	}
 
 	static HashMap<String, String> createDriversMap(String driversString) {
-		HashMap<String, String> driversMap = new HashMap<>();
+		HashMap<String, String> driversMap = new HashMap<String, String>();
 		try {
 			JSONObject driversJSON = new JSONObject(driversString);
 			Iterator<String> keys = driversJSON.keys();

@@ -76,7 +76,7 @@ public class RESTDataSetTest extends TestCase {
 	}
 
 	private static Map<String, Object> getParamsMap() {
-		Map<String, Object> res = new HashMap<>();
+		Map<String, Object> res = new HashMap<String, Object>();
 		res.put("address", "addP");
 		res.put("entity", "entityP");
 		res.put("header_q", "headerP");
@@ -88,7 +88,7 @@ public class RESTDataSetTest extends TestCase {
 	}
 
 	private static Map<String, Object> getUserProfileAttributes() {
-		Map<String, Object> res = new HashMap<>();
+		Map<String, Object> res = new HashMap<String, Object>();
 		res.put("address", "addU");
 		res.put("entity", "entityU");
 		res.put("header_q", "headerU");

@@ -72,12 +72,10 @@ public class HavingField implements IQueryField{
 	}
 	
 	
-	@Override
 	public String getName() {
 		return name;
 	}
 
-	@Override
 	public String getAlias() {
 		return name;
 	}
