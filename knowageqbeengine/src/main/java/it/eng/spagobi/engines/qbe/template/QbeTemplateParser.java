@@ -47,7 +47,6 @@ public class QbeTemplateParser implements IQbeTemplateParser{
 	}
 	
 	
-	@Override
 	public QbeTemplate parse(Object template) {
 		QbeTemplate qbeTemplate;
 		IQbeTemplateParser parser;

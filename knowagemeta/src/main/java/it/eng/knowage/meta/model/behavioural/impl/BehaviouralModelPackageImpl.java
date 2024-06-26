@@ -132,7 +132,6 @@ public class BehaviouralModelPackageImpl extends EPackageImpl implements Behavio
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public EClass getBehaviouralModel() {
 		return behaviouralModelEClass;
 	}
@@ -142,7 +141,6 @@ public class BehaviouralModelPackageImpl extends EPackageImpl implements Behavio
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public BehaviouralModelFactory getBehaviouralModelFactory() {
 		return (BehaviouralModelFactory)getEFactoryInstance();
 	}

@@ -24,7 +24,7 @@ package it.eng.knowage.boot.interceptor;
  */
 public class TenantManager {
 
-	private static final ThreadLocal<Tenant> _tenant = new ThreadLocal<>();
+	private static final ThreadLocal<Tenant> _tenant = new ThreadLocal<Tenant>();
 
 	public static void setTenant(Tenant tenant) {
 		_tenant.set(tenant);

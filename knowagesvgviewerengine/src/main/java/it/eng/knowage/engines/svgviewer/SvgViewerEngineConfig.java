@@ -165,13 +165,13 @@ public class SvgViewerEngineConfig {
 
 	private Map<String, Map<String, String>> getWindowsGuiPropertiesInEmbeddedMode() {
 		if (windowsGuiPropertiesInEmbeddedMode == null) {
-			windowsGuiPropertiesInEmbeddedMode = new HashMap<>();
+			windowsGuiPropertiesInEmbeddedMode = new HashMap<String, Map<String, String>>();
 			List<SourceBean> windowsConfiguration = getConfigSourceBean().getAttributeAsList("EMBEDDED_MODE.WINDOW");
 
 			// parse properties
 			for (SourceBean windowConfiguration : windowsConfiguration) {
 				String name = (String) windowConfiguration.getAttribute("name");
-				Map<String, String> propertyMap = new HashMap<>();
+				Map<String, String> propertyMap = new HashMap<String, String>();
 				windowsGuiPropertiesInEmbeddedMode.put(name, propertyMap);
 				List<SourceBean> guiProperties = windowConfiguration.getAttributeAsList("PARAM");
 				for (SourceBean guiProperty : guiProperties) {

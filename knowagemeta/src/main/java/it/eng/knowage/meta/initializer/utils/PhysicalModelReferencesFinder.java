@@ -53,7 +53,7 @@ public class PhysicalModelReferencesFinder {
 	}
 
 	public Set<ModelObject> getDistinctBusinessObjects(ModelObject physicalObject) {
-		Set<ModelObject> businessObjects = new LinkedHashSet<>();
+		Set<ModelObject> businessObjects = new LinkedHashSet<ModelObject>();
 		Collection<Setting> settings = crossReferenceAdapter.getInverseReferences(physicalObject);
 		for (Setting setting : settings) {
 			EObject eobject = setting.getEObject();

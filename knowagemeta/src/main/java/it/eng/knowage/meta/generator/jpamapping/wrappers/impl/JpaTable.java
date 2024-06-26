@@ -48,7 +48,7 @@ import it.eng.knowage.meta.model.physical.PhysicalTable;
 public class JpaTable extends AbstractJpaTable {
 
 	BusinessTable businessTable;
-	List<IJpaSubEntity> allSubEntities = new ArrayList<>();
+	List<IJpaSubEntity> allSubEntities = new ArrayList<IJpaSubEntity>();
 	List<BusinessColumnSet> parents;
 	List<IJpaCalculatedColumn> jpaCalculatedColumns;
 
@@ -71,7 +71,7 @@ public class JpaTable extends AbstractJpaTable {
 
 	@Override
 	List<BusinessColumn> getBusinessColumns() {
-		List<BusinessColumn> businessColumns = new ArrayList<>();
+		List<BusinessColumn> businessColumns = new ArrayList<BusinessColumn>();
 		businessColumns.addAll(businessTable.getSimpleBusinessColumns());
 		return businessColumns;
 	}
@@ -101,7 +101,7 @@ public class JpaTable extends AbstractJpaTable {
 	@Override
 	public List<IJpaColumn> getColumns() {
 		if (jpaColumns == null) {
-			jpaColumns = new ArrayList<>();
+			jpaColumns = new ArrayList<IJpaColumn>();
 			for (SimpleBusinessColumn businessColumn : businessTable.getSimpleBusinessColumns()) {
 				JpaColumn jpaColumn = new JpaColumn(this, businessColumn);
 				jpaColumns.add(jpaColumn);
@@ -115,7 +115,7 @@ public class JpaTable extends AbstractJpaTable {
 	@Override
 	public List<IJpaCalculatedColumn> getCalculatedColumns() {
 		if (jpaCalculatedColumns == null) {
-			jpaCalculatedColumns = new ArrayList<>();
+			jpaCalculatedColumns = new ArrayList<IJpaCalculatedColumn>();
 			for (CalculatedBusinessColumn calculatedBusinessColumn : businessTable.getCalculatedBusinessColumns()) {
 				JpaCalculatedColumn jpaCalculatedColumn = new JpaCalculatedColumn(this, calculatedBusinessColumn);
 				jpaCalculatedColumns.add(jpaCalculatedColumn);
@@ -169,7 +169,7 @@ public class JpaTable extends AbstractJpaTable {
 
 		logger.trace("IN");
 
-		jpaRelationships = new ArrayList<>();
+		jpaRelationships = new ArrayList<IJpaRelationship>();
 		logger.debug("Business table [{}] have  [{}] relationships", businessTable.getName(), businessTable.getRelationships().size());
 
 		for (BusinessRelationship relationship : businessTable.getRelationships()) {
@@ -252,7 +252,7 @@ public class JpaTable extends AbstractJpaTable {
 				continue;
 
 			// List of parents to avoid cyclic exploration
-			parents = new ArrayList<>();
+			parents = new ArrayList<BusinessColumnSet>();
 
 			JpaSubEntity subEntity = new JpaSubEntity(businessTable, null, relationship);
 			// subEntities.add(subEntity);
@@ -261,7 +261,7 @@ public class JpaTable extends AbstractJpaTable {
 			parents.add(businessTable);
 			// System.out.println("Added "+businessTable.getName()+" to parents");
 
-			List<IJpaSubEntity> levelEntities = new ArrayList<>();
+			List<IJpaSubEntity> levelEntities = new ArrayList<IJpaSubEntity>();
 			levelEntities.addAll(subEntity.getChildren());
 			// System.out.println("Added children of "+subEntity.getName()+" to level Entities");
 
@@ -282,7 +282,7 @@ public class JpaTable extends AbstractJpaTable {
 	}
 
 	public List<IJpaSubEntity> getSubLevelEntities(List<IJpaSubEntity> entities) {
-		List<IJpaSubEntity> subEntities = new ArrayList<>();
+		List<IJpaSubEntity> subEntities = new ArrayList<IJpaSubEntity>();
 		for (IJpaSubEntity entity : entities) {
 			BusinessColumnSet businessColumnSet = ((JpaSubEntity) entity).getBusinessColumnSet();
 			if (!parents.contains(businessColumnSet)) {

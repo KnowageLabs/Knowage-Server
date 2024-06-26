@@ -118,7 +118,6 @@ public class StackedBarGroup extends BarCharts {// implements ILinkableChart {
 	 */
 
 	
-	@Override
 	public DatasetMap calculateValue() throws Exception {
 		logger.debug("IN");
 		String res = DataSetAccessFunctions.getDataSetResultFromId(profile, getData(), parametersObject);

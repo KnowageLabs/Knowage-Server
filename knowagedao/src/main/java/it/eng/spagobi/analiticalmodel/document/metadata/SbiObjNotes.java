@@ -20,6 +20,7 @@ package it.eng.spagobi.analiticalmodel.document.metadata;
 import java.util.Date;
 
 import it.eng.spagobi.commons.metadata.SbiBinContents;
+import it.eng.spagobi.commons.metadata.SbiCommonInfo;
 import it.eng.spagobi.commons.metadata.SbiHibernateModel;
 
 

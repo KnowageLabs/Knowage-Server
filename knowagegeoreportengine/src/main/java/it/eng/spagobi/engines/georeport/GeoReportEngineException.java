@@ -51,8 +51,7 @@ public class GeoReportEngineException extends SpagoBIEngineException {
     	super(message, ex);
     }
     
-    @Override
-	public GeoReportEngineInstance getEngineInstance() {
+    public GeoReportEngineInstance getEngineInstance() {
 		return engineInstance;
 	}
 

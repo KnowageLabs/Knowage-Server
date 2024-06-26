@@ -40,7 +40,7 @@ public class GeneratorFactory {
 			initGeneratorDescriptorsCache();
 		}
 
-		return new ArrayList<>(generatorDescriptorsCache);
+		return new ArrayList<GeneratorDescriptor>(generatorDescriptorsCache);
 	}
 
 	public static GeneratorDescriptor getGeneratorDescriptorById(String id) {
@@ -56,7 +56,7 @@ public class GeneratorFactory {
 	}
 
 	private static void initGeneratorDescriptorsCache() {
-		generatorDescriptorsCache = new ArrayList<>();
+		generatorDescriptorsCache = new ArrayList<GeneratorDescriptor>();
 
 		IExtension[] extensions = Platform.getExtensionRegistry().getExtensionPoint("it.eng.knowage.meta.generator", "generator").getExtensions();
 

@@ -89,7 +89,7 @@ public class WinLose extends TargetCharts{
 			else{
 				if(useTargets)mainTarget=mainThreshold;
 				else mainBaseline=mainThreshold;
-				nullValues=new Vector<>();
+				nullValues=new Vector<String>();
 
 				// run all the years defined
 				for (Iterator iterator = yearsDefined.iterator(); iterator.hasNext();) {
@@ -226,7 +226,6 @@ public class WinLose extends TargetCharts{
 			renderer.setBaseItemLabelFont(new Font(styleValueLabels.getFontName(), Font.PLAIN, styleValueLabels.getSize()));
 			renderer.setBaseItemLabelPaint(styleValueLabels.getColor());
 			renderer.setBaseItemLabelGenerator(new StandardCategoryItemLabelGenerator("{2}", new DecimalFormat("0.#")) {
-				@Override
 				public String generateLabel(CategoryDataset dataset, int row, int column) {
 					if(dataset.getValue(row, column) == null || dataset.getValue(row, column).doubleValue() == 0) return "";
 					String columnKey=(String)dataset.getColumnKey(column);

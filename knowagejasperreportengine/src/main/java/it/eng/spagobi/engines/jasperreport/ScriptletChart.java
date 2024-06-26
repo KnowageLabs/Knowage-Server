@@ -51,7 +51,6 @@ public class ScriptletChart extends JRDefaultScriptlet {
 	public static final String CHART_IMAGE="chart_image"; 
 	public static int iii=1;
 
-	@Override
 	public void afterReportInit() throws JRScriptletException {
 
 		logger.debug("IN");

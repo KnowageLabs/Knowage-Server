@@ -44,7 +44,7 @@ public class Block {
 	public Block(String code) {
 		super();
 		this.code = code;
-		activities=new ArrayList<>();
+		activities=new ArrayList<Activity>();
 	}
 
 

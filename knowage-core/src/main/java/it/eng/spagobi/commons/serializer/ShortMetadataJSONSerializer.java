@@ -35,7 +35,6 @@ public class ShortMetadataJSONSerializer implements Serializer {
 	public static final String NAME = "name";
 	public static final String DESCRIPTION = "description";
 	
-	@Override
 	public Object serialize(Object o, Locale locale) throws SerializationException {
 		logger.debug("IN");
 		JSONObject result = new JSONObject();

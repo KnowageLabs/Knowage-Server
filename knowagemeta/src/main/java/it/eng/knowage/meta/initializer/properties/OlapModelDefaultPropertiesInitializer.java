@@ -23,6 +23,11 @@ import it.eng.knowage.meta.model.ModelProperty;
 import it.eng.knowage.meta.model.ModelPropertyCategory;
 import it.eng.knowage.meta.model.ModelPropertyType;
 import it.eng.knowage.meta.model.olap.OlapModel;
+import it.eng.knowage.meta.model.physical.PhysicalColumn;
+import it.eng.knowage.meta.model.physical.PhysicalForeignKey;
+import it.eng.knowage.meta.model.physical.PhysicalModel;
+import it.eng.knowage.meta.model.physical.PhysicalPrimaryKey;
+import it.eng.knowage.meta.model.physical.PhysicalTable;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
@@ -46,7 +51,6 @@ public class OlapModelDefaultPropertiesInitializer implements IPropertiesInitial
 	
 	public static ModelFactory FACTORY = ModelFactory.eINSTANCE;
 	
-	@Override
 	public void addProperties(ModelObject o) {
 		/*
 		if(o instanceof PhysicalColumn) {

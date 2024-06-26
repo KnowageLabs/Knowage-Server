@@ -19,8 +19,10 @@ package it.eng.spagobi.security.init;
 
 import org.apache.log4j.Logger;
 
+import it.eng.spago.base.Constants;
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.init.InitializerIFace;
+import it.eng.spago.tracing.TracerSingleton;
 import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.security.RoleSynchronizer;
 
@@ -32,7 +34,6 @@ public class SecurityInitializer implements InitializerIFace {
 	/* (non-Javadoc)
 	 * @see it.eng.spago.init.InitializerIFace#getConfig()
 	 */
-	@Override
 	public SourceBean getConfig() {
 		return _config;
 	}
@@ -40,7 +41,6 @@ public class SecurityInitializer implements InitializerIFace {
 	/* (non-Javadoc)
 	 * @see it.eng.spago.init.InitializerIFace#init(it.eng.spago.base.SourceBean)
 	 */
-	@Override
 	public void init(SourceBean config) {
 		logger.debug("IN");
 

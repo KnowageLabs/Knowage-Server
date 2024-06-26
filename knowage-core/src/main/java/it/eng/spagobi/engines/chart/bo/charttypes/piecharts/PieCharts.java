@@ -46,7 +46,6 @@ public class PieCharts extends ChartImpl {
 	/* (non-Javadoc)
 	 * @see it.eng.spagobi.engines.chart.bo.ChartImpl#configureChart(it.eng.spago.base.SourceBean)
 	 */
-	@Override
 	public void configureChart(SourceBean content) {
 		logger.debug("IN");
 		super.configureChart(content);
@@ -70,7 +69,6 @@ public class PieCharts extends ChartImpl {
 	/* (non-Javadoc)
 	 * @see it.eng.spagobi.engines.chart.bo.ChartImpl#createChart(java.lang.String, org.jfree.data.general.Dataset)
 	 */
-	@Override
 	public JFreeChart createChart(DatasetMap dataset) {
 		// TODO Auto-generated method stub
 		return super.createChart(dataset);
@@ -82,7 +80,6 @@ public class PieCharts extends ChartImpl {
 	/* (non-Javadoc)
 	 * @see it.eng.spagobi.engines.chart.bo.ChartImpl#calculateValue()
 	 */
-	@Override
 	public DatasetMap calculateValue() throws Exception {
 		logger.debug("IN");
 		String res=DataSetAccessFunctions.getDataSetResultFromId(profile, getData(),parametersObject);

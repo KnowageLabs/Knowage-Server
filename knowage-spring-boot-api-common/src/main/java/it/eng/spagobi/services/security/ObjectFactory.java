@@ -125,7 +125,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://security.services.spagobi.eng.it/", name = "checkAuthorization")
 	public JAXBElement<CheckAuthorization> createCheckAuthorization(CheckAuthorization value) {
-		return new JAXBElement<>(_CheckAuthorization_QNAME, CheckAuthorization.class, null, value);
+		return new JAXBElement<CheckAuthorization>(_CheckAuthorization_QNAME, CheckAuthorization.class, null, value);
 	}
 
 	/**
@@ -134,7 +134,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://security.services.spagobi.eng.it/", name = "getUserProfile")
 	public JAXBElement<GetUserProfile> createGetUserProfile(GetUserProfile value) {
-		return new JAXBElement<>(_GetUserProfile_QNAME, GetUserProfile.class, null, value);
+		return new JAXBElement<GetUserProfile>(_GetUserProfile_QNAME, GetUserProfile.class, null, value);
 	}
 
 	/**
@@ -143,7 +143,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://security.services.spagobi.eng.it/", name = "getUserProfileResponse")
 	public JAXBElement<GetUserProfileResponse> createGetUserProfileResponse(GetUserProfileResponse value) {
-		return new JAXBElement<>(_GetUserProfileResponse_QNAME, GetUserProfileResponse.class, null, value);
+		return new JAXBElement<GetUserProfileResponse>(_GetUserProfileResponse_QNAME, GetUserProfileResponse.class, null, value);
 	}
 
 	/**
@@ -152,7 +152,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://security.services.spagobi.eng.it/", name = "isAuthorizedResponse")
 	public JAXBElement<IsAuthorizedResponse> createIsAuthorizedResponse(IsAuthorizedResponse value) {
-		return new JAXBElement<>(_IsAuthorizedResponse_QNAME, IsAuthorizedResponse.class, null, value);
+		return new JAXBElement<IsAuthorizedResponse>(_IsAuthorizedResponse_QNAME, IsAuthorizedResponse.class, null, value);
 	}
 
 	/**
@@ -161,7 +161,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://security.services.spagobi.eng.it/", name = "checkAuthorizationResponse")
 	public JAXBElement<CheckAuthorizationResponse> createCheckAuthorizationResponse(CheckAuthorizationResponse value) {
-		return new JAXBElement<>(_CheckAuthorizationResponse_QNAME, CheckAuthorizationResponse.class, null, value);
+		return new JAXBElement<CheckAuthorizationResponse>(_CheckAuthorizationResponse_QNAME, CheckAuthorizationResponse.class, null, value);
 	}
 
 	/**
@@ -170,7 +170,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://security.services.spagobi.eng.it/", name = "isAuthorized")
 	public JAXBElement<IsAuthorized> createIsAuthorized(IsAuthorized value) {
-		return new JAXBElement<>(_IsAuthorized_QNAME, IsAuthorized.class, null, value);
+		return new JAXBElement<IsAuthorized>(_IsAuthorized_QNAME, IsAuthorized.class, null, value);
 	}
 
 }

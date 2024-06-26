@@ -83,7 +83,6 @@ public class SBISpeedometer extends DialCharts{
 	 */
 
 
-	@Override
 	public void configureChart(SourceBean content) {
 
 		super.configureChart(content);
@@ -211,7 +210,6 @@ public class SBISpeedometer extends DialCharts{
 	 * @return A chart speedometer.
 	 */
 
-	@Override
 	public JFreeChart createChart(DatasetMap datasets) {
 		logger.debug("IN");
 		Dataset dataset=(Dataset)datasets.getDatasets().get("1");

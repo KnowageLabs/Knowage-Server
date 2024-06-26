@@ -60,7 +60,6 @@ public class BulletGraph  extends DialCharts{
 		intervals=new Vector();
 	}
 	
-	@Override
 	public void configureChart(SourceBean content) {
 		logger.debug("IN");
 		super.configureChart(content);
@@ -92,7 +91,6 @@ public class BulletGraph  extends DialCharts{
 	}
 	
 	
-	@Override
 	public JFreeChart createChart(DatasetMap datasets) {
 		
 		logger.debug("IN");

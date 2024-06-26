@@ -72,7 +72,6 @@ public class MarkerScatter extends ScatterCharts {
 	
 	private static transient Logger logger=Logger.getLogger(MarkerScatter.class);
 	
-	@Override
 	public void configureChart(SourceBean content) {
 		logger.debug("IN");
 		super.configureChart(content);
@@ -125,7 +124,6 @@ public class MarkerScatter extends ScatterCharts {
 	 * @throws Exception the exception
 	 */
 
-	@Override
 	public DatasetMap calculateValue() throws Exception {
 		logger.debug("IN");
 		String res=DataSetAccessFunctions.getDataSetResultFromId(profile, getData(),parametersObject);
@@ -265,7 +263,6 @@ public class MarkerScatter extends ScatterCharts {
 		return datasets;
 	}
 
-	@Override
 	public JFreeChart createChart(DatasetMap datasets) {
 
 		DefaultXYDataset dataset=(DefaultXYDataset)datasets.getDatasets().get("1");

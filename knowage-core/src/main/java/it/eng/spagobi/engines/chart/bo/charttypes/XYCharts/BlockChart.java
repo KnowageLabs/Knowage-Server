@@ -21,6 +21,8 @@ import it.eng.spago.base.SourceBean;
 import it.eng.spago.base.SourceBeanAttribute;
 import it.eng.spagobi.engines.chart.utils.DataSetAccessFunctions;
 import it.eng.spagobi.engines.chart.utils.DatasetMap;
+import it.eng.spagobi.engines.chart.utils.StyleLabel;
+
 import java.awt.Color;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -29,6 +31,8 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.NumberAxis;
+import org.jfree.chart.axis.NumberTick;
+import org.jfree.chart.axis.NumberTickUnit;
 import org.jfree.chart.axis.SymbolAxis;
 import org.jfree.chart.plot.PiePlot;
 import org.jfree.chart.plot.XYPlot;
@@ -40,6 +44,7 @@ import org.jfree.data.xy.DefaultXYZDataset;
 import org.jfree.data.xy.XYZDataset;
 import org.jfree.ui.RectangleEdge;
 import org.jfree.ui.RectangleInsets;
+import org.jfree.ui.TextAnchor;
 
 
 
@@ -64,7 +69,6 @@ public class BlockChart extends XYCharts {
 	private static transient Logger logger=Logger.getLogger(BlockChart.class);
 
 	
-	@Override
 	public void configureChart(SourceBean content) {
 		logger.debug("IN");
 		super.configureChart(content);
@@ -206,7 +210,6 @@ public class BlockChart extends XYCharts {
      * 
      * @return A chart instance.
      */
-	@Override
 	public JFreeChart createChart(DatasetMap datasets) {
     	XYZDataset dataset=(XYZDataset)datasets.getDatasets().get("1");
     	//Creates the xAxis with its label and style
@@ -322,7 +325,6 @@ public class BlockChart extends XYCharts {
 	
 	
 	
-	@Override
 	public DatasetMap calculateValue() throws Exception {
 		logger.debug("IN");
 		

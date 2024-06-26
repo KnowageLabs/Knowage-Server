@@ -95,7 +95,6 @@ public class SimpleDial extends DialCharts{
 
 
 
-	@Override
 	public void configureChart(SourceBean content) {
 		logger.debug("IN");
 		super.configureChart(content);
@@ -236,7 +235,6 @@ public class SimpleDial extends DialCharts{
 	 * @return A chart .
 	 */
 
-	@Override
 	public JFreeChart createChart(DatasetMap datasets) {
 		// get data for diagrams
 		logger.debug("IN");
@@ -404,7 +402,6 @@ public class SimpleDial extends DialCharts{
 	/* (non-Javadoc)
 	 * @see it.eng.spagobi.engines.chart.bo.ChartImpl#isChangeableView()
 	 */
-	@Override
 	public boolean isChangeableView() {
 		return true;
 	}
@@ -414,7 +411,6 @@ public class SimpleDial extends DialCharts{
 	/* (non-Javadoc)
 	 * @see it.eng.spagobi.engines.chart.bo.ChartImpl#getPossibleChangePars()
 	 */
-	@Override
 	public List getPossibleChangePars() {
 		List l=new Vector();
 		if(!horizontalViewConfigured){
@@ -427,7 +423,6 @@ public class SimpleDial extends DialCharts{
 	/* (non-Javadoc)
 	 * @see it.eng.spagobi.engines.chart.bo.ChartImpl#setChangeViewsParameter(java.lang.String, boolean)
 	 */
-	@Override
 	public void setChangeViewsParameter(String changePar, boolean how) {
 		if(changePar.equalsIgnoreCase(CHANGE_VIEW_HORIZONTAL)){
 			horizontalView=how;
@@ -438,7 +433,6 @@ public class SimpleDial extends DialCharts{
 	/* (non-Javadoc)
 	 * @see it.eng.spagobi.engines.chart.bo.ChartImpl#getChangeViewParameter(java.lang.String)
 	 */
-	@Override
 	public boolean getChangeViewParameter(String changePar) {
 		boolean ret=false;
 		if(changePar.equalsIgnoreCase(CHANGE_VIEW_HORIZONTAL)){
@@ -450,7 +444,6 @@ public class SimpleDial extends DialCharts{
 	/* (non-Javadoc)
 	 * @see it.eng.spagobi.engines.chart.bo.ChartImpl#getChangeViewParameterLabel(java.lang.String, int)
 	 */
-	@Override
 	public String getChangeViewParameterLabel(String changePar, int i) {
 		String ret="";
 		if(changePar.equalsIgnoreCase(CHANGE_VIEW_HORIZONTAL)){

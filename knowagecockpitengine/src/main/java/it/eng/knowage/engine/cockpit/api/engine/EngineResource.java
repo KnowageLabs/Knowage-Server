@@ -95,7 +95,7 @@ public class EngineResource extends AbstractCockpitEngineResource {
 
 	private JSONArray filterFolders(JSONArray foldersJSON) throws JSONException {
 		JSONArray toReturn = new JSONArray();
-		Set<Integer> folderIds = new HashSet<>();
+		Set<Integer> folderIds = new HashSet<Integer>();
 		for (int i = 0; i < foldersJSON.length(); i++) {
 			int id = foldersJSON.getInt(i);
 			Integer folderId = new Integer(id);
@@ -114,7 +114,7 @@ public class EngineResource extends AbstractCockpitEngineResource {
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	public List<Widget> getEngine() throws EMFInternalError {
 
-		List<Widget> ret = new ArrayList<>();
+		List<Widget> ret = new ArrayList<Widget>();
 		UserProfile profile = UserProfileManager.getProfile();
 		Collection functionalities = profile.getFunctionalities();
 
@@ -198,7 +198,7 @@ class Widget {
 	static class Builder {
 		private String name;
 		private String descKey;
-		private List<String> tags = new ArrayList<>();
+		private List<String> tags = new ArrayList<String>();
 		private String img;
 		private String cssClass;
 		private String type;
@@ -244,7 +244,7 @@ class Widget {
 
 	final String name;
 	final String descKey;
-	final List<String> tags = new ArrayList<>();
+	final List<String> tags = new ArrayList<String>();
 	final String img;
 	final String cssClass;
 	final String type;

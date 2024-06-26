@@ -122,10 +122,9 @@ public class VirtualCubeImpl extends ModelObjectImpl implements VirtualCube {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public EList<Cube> getCubes() {
 		if (cubes == null) {
-			cubes = new EObjectResolvingEList<>(Cube.class, this, OlapModelPackage.VIRTUAL_CUBE__CUBES);
+			cubes = new EObjectResolvingEList<Cube>(Cube.class, this, OlapModelPackage.VIRTUAL_CUBE__CUBES);
 		}
 		return cubes;
 	}
@@ -135,7 +134,6 @@ public class VirtualCubeImpl extends ModelObjectImpl implements VirtualCube {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public VirtualCubeDimension getDimensions() {
 		if (dimensions != null && dimensions.eIsProxy()) {
 			InternalEObject oldDimensions = (InternalEObject)dimensions;
@@ -177,7 +175,6 @@ public class VirtualCubeImpl extends ModelObjectImpl implements VirtualCube {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public void setDimensions(VirtualCubeDimension newDimensions) {
 		if (newDimensions != dimensions) {
 			NotificationChain msgs = null;
@@ -197,10 +194,9 @@ public class VirtualCubeImpl extends ModelObjectImpl implements VirtualCube {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public EList<VirtualCubeMeasure> getMeasures() {
 		if (measures == null) {
-			measures = new EObjectWithInverseResolvingEList<>(VirtualCubeMeasure.class, this, OlapModelPackage.VIRTUAL_CUBE__MEASURES, OlapModelPackage.VIRTUAL_CUBE_MEASURE__VIRTUAL_CUBE);
+			measures = new EObjectWithInverseResolvingEList<VirtualCubeMeasure>(VirtualCubeMeasure.class, this, OlapModelPackage.VIRTUAL_CUBE__MEASURES, OlapModelPackage.VIRTUAL_CUBE_MEASURE__VIRTUAL_CUBE);
 		}
 		return measures;
 	}
@@ -210,10 +206,9 @@ public class VirtualCubeImpl extends ModelObjectImpl implements VirtualCube {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public EList<CalculatedMember> getCalculatedMembers() {
 		if (calculatedMembers == null) {
-			calculatedMembers = new EObjectResolvingEList<>(CalculatedMember.class, this, OlapModelPackage.VIRTUAL_CUBE__CALCULATED_MEMBERS);
+			calculatedMembers = new EObjectResolvingEList<CalculatedMember>(CalculatedMember.class, this, OlapModelPackage.VIRTUAL_CUBE__CALCULATED_MEMBERS);
 		}
 		return calculatedMembers;
 	}
@@ -223,7 +218,6 @@ public class VirtualCubeImpl extends ModelObjectImpl implements VirtualCube {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public OlapModel getModel() {
 		if (eContainerFeatureID() != OlapModelPackage.VIRTUAL_CUBE__MODEL) return null;
 		return (OlapModel)eContainer();
@@ -244,7 +238,6 @@ public class VirtualCubeImpl extends ModelObjectImpl implements VirtualCube {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public void setModel(OlapModel newModel) {
 		if (newModel != eInternalContainer() || (eContainerFeatureID() != OlapModelPackage.VIRTUAL_CUBE__MODEL && newModel != null)) {
 			if (EcoreUtil.isAncestor(this, newModel))

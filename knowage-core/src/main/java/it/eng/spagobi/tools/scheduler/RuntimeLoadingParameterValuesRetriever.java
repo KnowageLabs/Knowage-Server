@@ -56,7 +56,7 @@ public class RuntimeLoadingParameterValuesRetriever extends ParameterValuesRetri
 	@Override
 	public List<String> retrieveValues(BIObjectParameter parameter) throws Exception {
 		logger.debug("IN");
-		List<String> toReturn = new ArrayList<>();
+		List<String> toReturn = new ArrayList<String>();
 		IParameterUseDAO parusedao;
 		try {
 			parusedao = DAOFactory.getParameterUseDAO();
@@ -80,7 +80,7 @@ public class RuntimeLoadingParameterValuesRetriever extends ParameterValuesRetri
 
 	private List<String> loadList(Integer parId) throws Exception {
 		logger.debug("IN");
-		List<String> toReturn = new ArrayList<>();
+		List<String> toReturn = new ArrayList<String>();
 		try {
 			IParameterDAO pardao = DAOFactory.getParameterDAO();
 			Parameter par = pardao.loadForExecutionByParameterIDandRoleName(parId, roleToBeUsed, false);

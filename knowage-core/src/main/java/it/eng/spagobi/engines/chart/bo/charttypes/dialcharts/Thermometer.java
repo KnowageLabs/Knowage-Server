@@ -87,7 +87,6 @@ public class Thermometer extends DialCharts{
 	 */
 
 
-	@Override
 	public JFreeChart createChart(DatasetMap datasets) {
 		logger.debug("IN");
 		Dataset dataset=(Dataset)datasets.getDatasets().get("1");
@@ -154,7 +153,6 @@ public class Thermometer extends DialCharts{
 	 */
 
 
-	@Override
 	public void configureChart(SourceBean content) {
 		logger.debug("IN");
 		super.configureChart(content);
@@ -273,7 +271,6 @@ public class Thermometer extends DialCharts{
 	 * 
 	 * @return the units
 	 */
-	@Override
 	public String getUnits() {
 		return units;
 	}
@@ -286,7 +283,6 @@ public class Thermometer extends DialCharts{
 	 * 
 	 * @param units the new units
 	 */
-	@Override
 	public void setUnits(String units) {
 		this.units = units;
 	}

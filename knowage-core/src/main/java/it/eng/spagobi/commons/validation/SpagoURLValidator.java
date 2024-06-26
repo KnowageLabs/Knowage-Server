@@ -141,7 +141,6 @@ public class SpagoURLValidator extends UrlValidator {
      * 
      * @return True if the string is a valid URL, else false.
      */
-	@Override
 	public boolean isValid(String value) {
 		if (value == null) {
             return false;
@@ -190,8 +189,7 @@ public class SpagoURLValidator extends UrlValidator {
 	 * @return True if the string represents a valid path, else false
 	 * 
 	 */
-	 @Override
-	protected boolean isValidPath(String path) {
+	 protected boolean isValidPath(String path) {
         if (path == null) {
             return false;
         }

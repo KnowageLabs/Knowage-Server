@@ -38,7 +38,6 @@ public class DataStoreJSONSerializer  implements Serializer {
 	public static final String ROOT = "rows";
 	
 	
-	@Override
 	public Object serialize(Object o, Locale locale) throws SerializationException {
 		JSONObject  result = null;
 		JSONObject metadata;

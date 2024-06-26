@@ -130,7 +130,7 @@ public class RegistryConfigurationXMLParser {
 	}
 
 	private List<Filter> parseFilters(SourceBean entitySB, RegistryConfiguration toReturn) {
-		List<RegistryConfiguration.Filter> list = new ArrayList<>();
+		List<RegistryConfiguration.Filter> list = new ArrayList<RegistryConfiguration.Filter>();
 		SourceBean filtersSB = (SourceBean) entitySB.getAttribute(TAG_FILTERS);
 		List filters = filtersSB == null ? null : filtersSB.getAttributeAsList(TAG_FILTER);
 		if (filters != null && filters.size() > 0) {
@@ -176,7 +176,7 @@ public class RegistryConfigurationXMLParser {
 	}
 
 	private List<Column> parseColumns(SourceBean entitySB, RegistryConfiguration toReturn) {
-		List<RegistryConfiguration.Column> list = new ArrayList<>();
+		List<RegistryConfiguration.Column> list = new ArrayList<RegistryConfiguration.Column>();
 		SourceBean filtersSB = (SourceBean) entitySB.getAttribute(TAG_COLUMNS);
 		// columns max size
 		String columnsMaxSize = (String) filtersSB.getAttribute(ATTRIBUTE_COLUMNS_MAX_SIZE);
@@ -323,7 +323,7 @@ public class RegistryConfigurationXMLParser {
 	}
 
 	private List<Configuration> parseConfigurations(SourceBean entitySB, RegistryConfiguration toReturn) {
-		List<RegistryConfiguration.Configuration> list = new ArrayList<>();
+		List<RegistryConfiguration.Configuration> list = new ArrayList<RegistryConfiguration.Configuration>();
 
 		SourceBean configurationsSB = (SourceBean) entitySB.getAttribute(TAG_CONFIGURATIONS);
 		List configurations = configurationsSB == null ? null : configurationsSB.getAttributeAsList(TAG_CONFIGURATION);

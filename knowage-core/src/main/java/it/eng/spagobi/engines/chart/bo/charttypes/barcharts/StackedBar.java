@@ -112,7 +112,6 @@ public class StackedBar extends BarCharts implements ILinkableChart {
 	 * @throws Exception the exception
 	 */
 
-	@Override
 	public DatasetMap calculateValue() throws Exception {
 		logger.debug("IN");
 		String res=DataSetAccessFunctions.getDataSetResultFromId(profile, getData(),parametersObject);
@@ -294,7 +293,6 @@ public class StackedBar extends BarCharts implements ILinkableChart {
 
 
 
-	@Override
 	public void configureChart(SourceBean content) {
 		logger.debug("IN");
 		super.configureChart(content);
@@ -372,7 +370,7 @@ public class StackedBar extends BarCharts implements ILinkableChart {
 
 			List parameters =drillSB.getAttributeAsList("PARAM");
 			if(parameters!=null){
-				drillParametersMap=new HashMap<>();
+				drillParametersMap=new HashMap<String, DrillParameter>();
 
 				for (Iterator iterator = parameters.iterator(); iterator.hasNext();) {
 					SourceBean att = (SourceBean) iterator.next();
@@ -463,7 +461,6 @@ public class StackedBar extends BarCharts implements ILinkableChart {
 
 
 
-	@Override
 	public JFreeChart createChart(DatasetMap datasets) {
 
 
@@ -719,7 +716,6 @@ public class StackedBar extends BarCharts implements ILinkableChart {
 	 * @return the document_ parameters
 	 */
 
-	@Override
 	public String getDocument_Parameters(HashMap<String, DrillParameter> drillParametersMap) {
 		String document_parameter="";
 		if (drillParametersMap != null){
@@ -742,7 +738,6 @@ public class StackedBar extends BarCharts implements ILinkableChart {
 	/* (non-Javadoc)
 	 * @see it.eng.spagobi.engines.chart.bo.charttypes.ILinkableChart#getRootUrl()
 	 */
-	@Override
 	public String getRootUrl() {
 		return rootUrl;
 	}
@@ -750,7 +745,6 @@ public class StackedBar extends BarCharts implements ILinkableChart {
 	/* (non-Javadoc)
 	 * @see it.eng.spagobi.engines.chart.bo.charttypes.ILinkableChart#setRootUrl(java.lang.String)
 	 */
-	@Override
 	public void setRootUrl(String rootUrl) {
 		this.rootUrl = rootUrl;
 	}
@@ -758,7 +752,6 @@ public class StackedBar extends BarCharts implements ILinkableChart {
 	/* (non-Javadoc)
 	 * @see it.eng.spagobi.engines.chart.bo.ChartImpl#isLinkable()
 	 */
-	@Override
 	public boolean isLinkable(){
 		return true;
 	}
@@ -767,7 +760,6 @@ public class StackedBar extends BarCharts implements ILinkableChart {
 	/* (non-Javadoc)
 	 * @see it.eng.spagobi.engines.chart.bo.charttypes.ILinkableChart#getMode()
 	 */
-	@Override
 	public String getMode() {
 		return mode;
 	}
@@ -776,7 +768,6 @@ public class StackedBar extends BarCharts implements ILinkableChart {
 	/* (non-Javadoc)
 	 * @see it.eng.spagobi.engines.chart.bo.charttypes.ILinkableChart#setMode(java.lang.String)
 	 */
-	@Override
 	public void setMode(String mode) {
 		this.mode = mode;
 	}
@@ -785,7 +776,6 @@ public class StackedBar extends BarCharts implements ILinkableChart {
 	/* (non-Javadoc)
 	 * @see it.eng.spagobi.engines.chart.bo.charttypes.ILinkableChart#getDrillLabel()
 	 */
-	@Override
 	public String getDrillLabel() {
 		return drillLabel;
 	}
@@ -794,7 +784,6 @@ public class StackedBar extends BarCharts implements ILinkableChart {
 	/* (non-Javadoc)
 	 * @see it.eng.spagobi.engines.chart.bo.charttypes.ILinkableChart#setDrillLabel(java.lang.String)
 	 */
-	@Override
 	public void setDrillLabel(String drillLabel) {
 		this.drillLabel = drillLabel;
 	}
@@ -803,7 +792,6 @@ public class StackedBar extends BarCharts implements ILinkableChart {
 
 
 
-	@Override
 	public HashMap<String, DrillParameter> getDrillParametersMap() {
 		return drillParametersMap;
 	}
@@ -811,7 +799,6 @@ public class StackedBar extends BarCharts implements ILinkableChart {
 
 
 
-	@Override
 	public void setDrillParametersMap(
 			HashMap<String, DrillParameter> drillParametersMap) {
 		this.drillParametersMap = drillParametersMap;
@@ -823,7 +810,6 @@ public class StackedBar extends BarCharts implements ILinkableChart {
 	/* (non-Javadoc)
 	 * @see it.eng.spagobi.engines.chart.bo.charttypes.ILinkableChart#getCategoryUrlName()
 	 */
-	@Override
 	public String getCategoryUrlName() {
 		return categoryUrlName;
 	}
@@ -832,7 +818,6 @@ public class StackedBar extends BarCharts implements ILinkableChart {
 	/* (non-Javadoc)
 	 * @see it.eng.spagobi.engines.chart.bo.charttypes.ILinkableChart#setCategoryUrlName(java.lang.String)
 	 */
-	@Override
 	public void setCategoryUrlName(String categoryUrlName) {
 		this.categoryUrlName = categoryUrlName;
 	}
@@ -841,7 +826,6 @@ public class StackedBar extends BarCharts implements ILinkableChart {
 	/* (non-Javadoc)
 	 * @see it.eng.spagobi.engines.chart.bo.charttypes.ILinkableChart#getSerieUrlname()
 	 */
-	@Override
 	public String getSerieUrlname() {
 		return serieUrlname;
 	}
@@ -850,7 +834,6 @@ public class StackedBar extends BarCharts implements ILinkableChart {
 	/* (non-Javadoc)
 	 * @see it.eng.spagobi.engines.chart.bo.charttypes.ILinkableChart#setSerieUrlname(java.lang.String)
 	 */
-	@Override
 	public void setSerieUrlname(String serieUrlname) {
 		this.serieUrlname = serieUrlname;
 	}
@@ -858,7 +841,6 @@ public class StackedBar extends BarCharts implements ILinkableChart {
 
 
 
-	@Override
 	public String getDrillDocTitle() {
 		return drillDocTitle;
 	}
@@ -866,7 +848,6 @@ public class StackedBar extends BarCharts implements ILinkableChart {
 
 
 
-	@Override
 	public void setDrillDocTitle(String drillDocTitle) {
 		this.drillDocTitle = drillDocTitle;
 	}
@@ -874,7 +855,6 @@ public class StackedBar extends BarCharts implements ILinkableChart {
 
 
 
-	@Override
 	public String getTarget() {
 		return target;
 	}
@@ -882,7 +862,6 @@ public class StackedBar extends BarCharts implements ILinkableChart {
 
 
 
-	@Override
 	public void setTarget(String target) {
 		this.target = target;
 	}

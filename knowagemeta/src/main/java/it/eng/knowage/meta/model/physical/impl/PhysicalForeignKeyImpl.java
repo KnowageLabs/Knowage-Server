@@ -220,7 +220,7 @@ public class PhysicalForeignKeyImpl extends ModelObjectImpl implements PhysicalF
 	@Override
 	public EList<PhysicalColumn> getSourceColumns() {
 		if (sourceColumns == null) {
-			sourceColumns = new EObjectResolvingEList<>(PhysicalColumn.class, this, PhysicalModelPackage.PHYSICAL_FOREIGN_KEY__SOURCE_COLUMNS);
+			sourceColumns = new EObjectResolvingEList<PhysicalColumn>(PhysicalColumn.class, this, PhysicalModelPackage.PHYSICAL_FOREIGN_KEY__SOURCE_COLUMNS);
 		}
 		return sourceColumns;
 	}
@@ -304,7 +304,7 @@ public class PhysicalForeignKeyImpl extends ModelObjectImpl implements PhysicalF
 	@Override
 	public EList<PhysicalColumn> getDestinationColumns() {
 		if (destinationColumns == null) {
-			destinationColumns = new EObjectResolvingEList<>(PhysicalColumn.class, this,
+			destinationColumns = new EObjectResolvingEList<PhysicalColumn>(PhysicalColumn.class, this,
 					PhysicalModelPackage.PHYSICAL_FOREIGN_KEY__DESTINATION_COLUMNS);
 		}
 		return destinationColumns;

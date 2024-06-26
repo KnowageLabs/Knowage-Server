@@ -42,7 +42,7 @@ public class MaxAggregator implements AggregatorDelegate {
 
 	@Override
 	public Double aggregate(List<ValueWithWeightPlaceholder> values) {
-		List<Double> altList = new ArrayList<>();
+		List<Double> altList = new ArrayList<Double>();
 		for (Placeholder currPlaceholder : values) {
 			altList.add(currPlaceholder.getValue());
 		}

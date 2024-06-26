@@ -30,7 +30,6 @@ public class SessionExpiredAction extends AbstractAction {
 	/* (non-Javadoc)
 	 * @see it.eng.spago.dispatching.service.ServiceIFace#service(it.eng.spago.base.SourceBean, it.eng.spago.base.SourceBean)
 	 */
-	@Override
 	public void service(SourceBean request, SourceBean response) throws Exception {
 		logger.debug("IN");
 		logger.debug("OUT");

@@ -42,7 +42,6 @@ import org.json.JSONArray;
 public class DeleteQueriesAction extends AbstractQbeEngineAction {	
 	
 	public static final String SERVICE_NAME = "DELETE_QUERIES_ACTION";
-	@Override
 	public String getActionName(){return SERVICE_NAME;}
 	
 	
@@ -54,7 +53,6 @@ public class DeleteQueriesAction extends AbstractQbeEngineAction {
    
     
 	
-	@Override
 	public void service(SourceBean request, SourceBean response)  {				
 				
 		JSONArray ids;

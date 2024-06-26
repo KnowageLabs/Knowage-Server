@@ -189,7 +189,7 @@ public class ValidateExpressionAction extends AbstractQbeEngineAction {
 				jsonResponse = new JSONFailure(validationException);
 			} else {
 
-				Map<String, Object> bindings = new HashMap<>();
+				Map<String, Object> bindings = new HashMap<String, Object>();
 
 				// bindings ...
 				bindings.put("attributes", attributes);

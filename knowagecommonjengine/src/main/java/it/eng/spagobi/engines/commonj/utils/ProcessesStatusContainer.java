@@ -36,7 +36,7 @@ public class ProcessesStatusContainer {
 	
 	private ProcessesStatusContainer()
 	{
-		pidContainerMap = new HashMap<>();
+		pidContainerMap = new HashMap<String, CommonjWorkContainer>();
 	}
 
 	public static synchronized ProcessesStatusContainer getInstance()

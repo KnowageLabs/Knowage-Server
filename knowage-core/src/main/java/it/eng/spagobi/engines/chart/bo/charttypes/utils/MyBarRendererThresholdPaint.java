@@ -17,10 +17,15 @@
  */
 package it.eng.spagobi.engines.chart.bo.charttypes.utils;
 
+import it.eng.spagobi.engines.chart.bo.charttypes.targetcharts.WinLose;
+
 import java.awt.Color;
 import java.awt.Paint;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
+import java.util.Set;
 import java.util.TreeSet;
 import java.util.Vector;
 
@@ -28,6 +33,7 @@ import org.apache.log4j.Logger;
 import org.jfree.chart.renderer.category.BarRenderer;
 import org.jfree.data.category.DefaultCategoryDataset;
 import org.jfree.data.time.Month;
+import org.jfree.data.time.RegularTimePeriod;
 import org.jfree.data.time.TimeSeries;
 import org.jfree.data.time.TimeSeriesDataItem;
 
@@ -68,7 +74,6 @@ public class MyBarRendererThresholdPaint extends BarRenderer {
 
 
 
-	@Override
 	public Paint getItemPaint(int row, int column) {
 		logger.debug("IN");
 		String columnKey=(String)dataset.getColumnKey(column);
@@ -90,7 +95,7 @@ public class MyBarRendererThresholdPaint extends BarRenderer {
 
 		Double currentValue=(Double)item.getValue();
 
-		TreeSet<Double> orderedThresholds=new TreeSet<>(thresholds.keySet());
+		TreeSet<Double> orderedThresholds=new TreeSet<Double>(thresholds.keySet());
 
 		Double thresholdGiveColor=null;		
 		// if dealing with targets, begin from first target and go to on till the current value is major

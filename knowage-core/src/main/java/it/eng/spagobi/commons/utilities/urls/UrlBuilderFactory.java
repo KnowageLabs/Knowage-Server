@@ -38,7 +38,7 @@ public class UrlBuilderFactory {
 		if(urlBuilder==null) {
 			SingletonConfig spagoconfig = SingletonConfig.getInstance();
 			// get mode of execution
-			String sbiMode = spagoconfig.getConfigValue("SPAGOBI.SPAGOBI-MODE.mode");   
+			String sbiMode = (String)spagoconfig.getConfigValue("SPAGOBI.SPAGOBI-MODE.mode");   
 			if (sbiMode==null) {
 				logger.error("SPAGOBI.SPAGOBI-MODE.mode IS NULL");
 				sbiMode="WEB";

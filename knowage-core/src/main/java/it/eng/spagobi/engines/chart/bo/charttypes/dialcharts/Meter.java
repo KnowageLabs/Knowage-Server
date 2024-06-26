@@ -69,7 +69,6 @@ public class Meter extends DialCharts{
 	 * @return A chart that displays a value as a dial.
 	 */
 
-	@Override
 	public void configureChart(SourceBean content) {
 		logger.info("IN");
 		super.configureChart(content);
@@ -167,7 +166,6 @@ public class Meter extends DialCharts{
 	 * @return A chart .
 	 */
 
-	@Override
 	public JFreeChart createChart(DatasetMap datasets) {
 
 		Dataset dataset=(Dataset)datasets.getDatasets().get("1");

@@ -17,6 +17,8 @@
  */
 package it.eng.spagobi.commons.dao;
 
+import org.hibernate.Session;
+
 import it.eng.spago.security.IEngUserProfile;
 
 public interface ISpagoBIDao {

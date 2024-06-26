@@ -40,28 +40,23 @@ public abstract class JRImageExporter implements JRExporter {
 	Map<JRExporterParameter, Object> parameters;
 	
 	public JRImageExporter() {
-		parameters = new HashMap<>();
+		parameters = new HashMap<JRExporterParameter, Object>();
 	}
 	
-	@Override
 	public abstract void exportReport() throws JRException;
 
-	@Override
 	public Object getParameter(JRExporterParameter parameter) {
 		return parameters.get(parameter);
 	}
 
-	@Override
 	public Map getParameters() {
 		return parameters;
 	}
 
-	@Override
 	public void setParameter(JRExporterParameter parameter, Object value) {
 		parameters.put(parameter, value);
 	}
 
-	@Override
 	public void setParameters(Map parameters) {
 		this.parameters = parameters;
 	}

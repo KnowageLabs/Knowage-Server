@@ -111,7 +111,6 @@ public class DefaultScrollableDataResult implements ScrollableDataResult {
 	 * @return true se l'oggetto ha altre righe in avanti rispetto alla posizione corrente in cui si è posizionati false altrimenti
 	 * @throws <B>EMFInternalError</B> - Se qualche errore si verifica
 	 */
-	@Override
 	public boolean hasRows() throws EMFInternalError {
 		try {
 			return _rs.getRow() == 0 ? false : true;
@@ -127,7 +126,6 @@ public class DefaultScrollableDataResult implements ScrollableDataResult {
 	 * @return <B>DataRow</B> - l'oggetto rappresentante la riga del resultset su cui il cursore è posizionato
 	 * @throws <B>EMFInternalError</B> - Se qualche errore si verifica
 	 */
-	@Override
 	public DataRow getDataRow() throws EMFInternalError {
 		Monitor monitor = MonitorFactory.start("model.data-access.default-scrollable-data-result.get-data-row");
 		try {
@@ -167,13 +165,11 @@ public class DefaultScrollableDataResult implements ScrollableDataResult {
 	 * @return <B>DataRow</B> - l'oggetto rappresentante la riga del resultset su cui il cursore è posizionato
 	 * @throws <B>EMFInternalError</B> - Se qualche errore si verifica
 	 */
-	@Override
 	public DataRow getDataRow(int position) throws EMFInternalError {
 		moveTo(position);
 		return getDataRow();
 	} // public DataRow getDataRow(int position) throws EMFInternalError
 
-	@Override
 	public int getColumnCount() {
 		return _columnCount;
 	} // public int getColumnCount()
@@ -183,12 +179,10 @@ public class DefaultScrollableDataResult implements ScrollableDataResult {
 	 * 
 	 * @return int[] - il vettore contenente i valori sql.Types delle colonne dell'oggetto ScrollableDataResult
 	 */
-	@Override
 	public int[] getColumnTypes() {
 		return _resultSetColumnsTypes;
 	} // public int[] getColumnTypes()
 
-	@Override
 	public String[] getColumnNames() {
 		return _resultSetColumnsNames;
 	} // public String[] getColumnNames()
@@ -198,7 +192,6 @@ public class DefaultScrollableDataResult implements ScrollableDataResult {
 	 * 
 	 * @return int - il numero di righe dell'oggetto
 	 */
-	@Override
 	public int getRowsNumber() throws EMFInternalError {
 		return _rowsNumber;
 	} // public int getRowsNumber() throws EMFInternalError
@@ -222,7 +215,6 @@ public class DefaultScrollableDataResult implements ScrollableDataResult {
 	 * 
 	 * @return <B>String</B> - Ritorna sempre DataResultInterface.SCROLLABLE_DATA_RESULT
 	 */
-	@Override
 	public String getDataResultType() {
 		return DataResultInterface.SCROLLABLE_DATA_RESULT;
 	} // public String getDataResultType()
@@ -233,7 +225,6 @@ public class DefaultScrollableDataResult implements ScrollableDataResult {
 	 * @param int position - il numero di riga sulla quale ci si vuole posizionare
 	 * @throws <B>EMFInternalError</B> - Se qualche errore si verifica
 	 */
-	@Override
 	public void moveTo(int position) throws EMFInternalError {
 		try {
 			if (position == 0)
@@ -250,7 +241,6 @@ public class DefaultScrollableDataResult implements ScrollableDataResult {
 	 * 
 	 * @return la rappresentazione dell'oggetto fi tipo <B>DataResultInterface</B> come <B>SourceBean</B>
 	 */
-	@Override
 	public SourceBean getSourceBean() throws EMFInternalError {
 		Monitor monitor = MonitorFactory.start("model.data-access.default-scrollable-data-result.get-source-bean");
 		try {
@@ -281,7 +271,6 @@ public class DefaultScrollableDataResult implements ScrollableDataResult {
 	 * 
 	 * @throws <B>EMFInternalError</B> - Se qualche errore si verifica
 	 */
-	@Override
 	public void refresh() throws EMFInternalError {
 		TracerSingleton.log(Constants.NOME_MODULO, TracerSingleton.DEBUG, "DefaultScrollableDataResult::refresh: invocato");
 		Monitor monitor = MonitorFactory.start("model.data-access.default-scrollable-data-result.refresh");
@@ -319,7 +308,6 @@ public class DefaultScrollableDataResult implements ScrollableDataResult {
 		} // finally
 	} // public void refresh() throws EMFInternalError
 
-	@Override
 	public ResultSet getResultSet() {
 		return _rs;
 	} // public ResultSet getResultSet()
@@ -329,7 +317,6 @@ public class DefaultScrollableDataResult implements ScrollableDataResult {
 	 * 
 	 * @throws <B>EMFInternalError</B> - Se qualche errore si verifica
 	 */
-	@Override
 	public void close() throws EMFInternalError {
 		try {
 			if ((_rs != null) && (!_closed)) {

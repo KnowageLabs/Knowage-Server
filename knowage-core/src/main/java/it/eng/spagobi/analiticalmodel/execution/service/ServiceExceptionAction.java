@@ -37,7 +37,6 @@ public class ServiceExceptionAction extends AbstractSpagoBIAction {
 	/** Logger component. */
     public static transient Logger logger = Logger.getLogger(ServiceExceptionAction.class);
     
-	@Override
 	public void doService()  {
 		logger.debug("IN");
 		try {

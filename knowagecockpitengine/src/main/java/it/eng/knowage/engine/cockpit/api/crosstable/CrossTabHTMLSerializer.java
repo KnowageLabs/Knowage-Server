@@ -80,7 +80,7 @@ public class CrossTabHTMLSerializer {
 	private static String DEFAULT_HEADER_STYLE = " color:#3b678c; font-weight: 600;";
 	private static String DEFAULT_CENTER_ALIGN = "text-align:center;";
 
-	private Map<String, String> customStylesMap = new HashMap<>();
+	private Map<String, String> customStylesMap = new HashMap<String, String>();
 
 	private Locale locale = null;
 	private final Integer myGlobalId;
@@ -213,7 +213,7 @@ public class CrossTabHTMLSerializer {
 		Boolean noSelectedColumn = crossTab.getCrosstabDefinition().getRows().isEmpty();
 		String labelTotal = (!config.optString("rowtotalLabel").equals("")) ? config.optString("rowtotalLabel") : CrossTab.TOTAL;
 
-		List<SourceBean> rows = new ArrayList<>();
+		List<SourceBean> rows = new ArrayList<SourceBean>();
 		int levels = crossTab.getRowsRoot().getDistanceFromLeaves();
 		if (crossTab.isMeasureOnRow()) {
 			levels--;
@@ -401,10 +401,10 @@ public class CrossTabHTMLSerializer {
 	}
 
 	private Map<String, String> getHierarchicalAttributes(CrossTab crossTab, Node aNode, boolean isSubtotal) {
-		Map<String, String> hierarchicalAttributes = new HashMap<>();
+		Map<String, String> hierarchicalAttributes = new HashMap<String, String>();
 		Node curNode = aNode;
 		if (isSubtotal) {
-			Map<String, String> toReturn = new HashMap<>();
+			Map<String, String> toReturn = new HashMap<String, String>();
 			toReturn.put(CrossTab.SUBTOTAL, "true");
 			Node parentNode = curNode.getParentNode();
 			boolean isParentSubtotal = parentNode.getValue().equals(CrossTab.SUBTOTAL);
@@ -442,7 +442,7 @@ public class CrossTabHTMLSerializer {
 		}
 
 		int measureNumber = crossTab.getCrosstabDefinition().getMeasures().size();
-		List<String> lastLevelValues = new ArrayList<>();
+		List<String> lastLevelValues = new ArrayList<String>();
 		int colSpanSubTot = 0;
 		for (int i = 0; i < levels; i++) {
 			boolean showHeader = true;
@@ -693,7 +693,7 @@ public class CrossTabHTMLSerializer {
 	}
 
 	private List<String> getCompleteCategoriesValues(int measuresNumber, List<String> levelValues) {
-		List<String> toReturn = new ArrayList<>();
+		List<String> toReturn = new ArrayList<String>();
 
 		if (levelValues == null)
 			return toReturn;
@@ -715,7 +715,7 @@ public class CrossTabHTMLSerializer {
 		SourceBean table = new SourceBean(TABLE_TAG);
 		String[][] data = crossTab.getDataMatrix();
 		List<MeasureInfo> measuresInfo = crossTab.getMeasures();
-		List<SourceBean> measureHeaders = new ArrayList<>();
+		List<SourceBean> measureHeaders = new ArrayList<SourceBean>();
 		List<String> columnsSpecification = crossTab.getColumnsSpecification();
 		boolean isDataNoStandardStyle = false;
 
@@ -730,7 +730,7 @@ public class CrossTabHTMLSerializer {
 			// defines columns specification with totals and subtotals if required (for action #7 selection function setting)
 			if (crossTab.isMeasureOnRow()) {
 				List<CellType> columnsTypes = crossTab.getCelltypeOfColumns();
-				List<String> columnsSpecificationWithTotals = new ArrayList<>();
+				List<String> columnsSpecificationWithTotals = new ArrayList<String>();
 				if (columnsTypes.size() > columnsSpecification.size()) {
 					int nTotal = 0;
 					for (int c = 0; c < columnsTypes.size(); c++) {
@@ -745,7 +745,7 @@ public class CrossTabHTMLSerializer {
 				}
 			} else {
 				List<CellType> columnsTypes = crossTab.getCelltypeOfColumns();
-				List<String> columnsSpecificationWithTotals = new ArrayList<>();
+				List<String> columnsSpecificationWithTotals = new ArrayList<String>();
 				if (columnsTypes.size() > columnsSpecification.size()) {
 					int nTotal = 0;
 					for (int c = 0; c < columnsTypes.size(); c = c + (measuresInfo.size())) {
@@ -1047,7 +1047,7 @@ public class CrossTabHTMLSerializer {
 	}
 
 	List<Measure> getSubtotalsMeasures(List<Measure> allMeasures) throws JSONException {
-		List<Measure> toReturn = new ArrayList<>();
+		List<Measure> toReturn = new ArrayList<Measure>();
 		for (int k = 0; k < allMeasures.size(); k++) {
 			if (!allMeasures.get(k).getConfig().has("excludeFromTotalAndSubtotal")
 					|| !allMeasures.get(k).getConfig().getBoolean("excludeFromTotalAndSubtotal")) {

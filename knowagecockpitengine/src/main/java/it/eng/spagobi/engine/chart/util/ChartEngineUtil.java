@@ -200,8 +200,8 @@ public class ChartEngineUtil {
 
 	private static Map<String, Object> changeDataByPrecision(Map<String, Object> resultToChange) {
 
-		LinkedHashMap<String, Object> result = new LinkedHashMap<>();
-		HashMap<String, Integer> precisionFields = new HashMap<>();
+		LinkedHashMap<String, Object> result = new LinkedHashMap<String, Object>();
+		HashMap<String, Integer> precisionFields = new HashMap<String, Integer>();
 		boolean found = false;
 		for (String key : resultToChange.keySet()) {
 			if (key.equalsIgnoreCase("metaData")) {
@@ -263,14 +263,14 @@ public class ChartEngineUtil {
 	 *
 	 * */
 	private static LinkedHashMap<String, Object> escapeMapStrings(Map<String, Object> mapElement2) {
-		LinkedHashMap<String, Object> result = new LinkedHashMap<>();
+		LinkedHashMap<String, Object> result = new LinkedHashMap<String, Object>();
 
 		for (String key : mapElement2.keySet()) {
 			if (mapElement2.get(key) instanceof List) { // if tag selected is an array
 				@SuppressWarnings("unchecked")
 				List<Map<String, Object>> mapsArray = (List<Map<String, Object>>) mapElement2.get(key);
 
-				ArrayList<LinkedHashMap<String, Object>> mapsArrayOut = new ArrayList<>();
+				ArrayList<LinkedHashMap<String, Object>> mapsArrayOut = new ArrayList<LinkedHashMap<String, Object>>();
 
 				for (Map<String, Object> mapElement : mapsArray) {
 					LinkedHashMap<String, Object> escapedArrayMapElement = escapeMapStrings(mapElement);
@@ -305,7 +305,7 @@ public class ChartEngineUtil {
 	}
 
 	private static LinkedHashMap<String, String> stylizeString(String value) {
-		LinkedHashMap<String, String> result = new LinkedHashMap<>();
+		LinkedHashMap<String, String> result = new LinkedHashMap<String, String>();
 
 		String[] styles = value.split(STYLES_SEPARATOR);
 
@@ -318,7 +318,7 @@ public class ChartEngineUtil {
 	}
 
 	public static LinkedHashMap<String, String> stylizeMapString(String value) {
-		LinkedHashMap<String, String> result = new LinkedHashMap<>();
+		LinkedHashMap<String, String> result = new LinkedHashMap<String, String>();
 
 		String[] styles = value.split(MAP_STYLES_SEPARATOR);
 
@@ -356,7 +356,7 @@ public class ChartEngineUtil {
 			Iterator<String> it = selectionsJSON.keys();
 			while (it.hasNext()) {
 				String associationName = it.next();
-				List<String> valuesList = new ArrayList<>();
+				List<String> valuesList = new ArrayList<String>();
 				// TODO to check why sometimes
 				// 'selectionsJSON.get(associationName)' is a json object
 				if (selectionsJSON.get(associationName) instanceof JSONObject) {

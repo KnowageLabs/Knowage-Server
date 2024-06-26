@@ -76,7 +76,7 @@ public class MondrianModel {
 		 List<IMondrianCube> mondrianCubes;
 		 
 			
-		 mondrianCubes = new ArrayList<>();
+		 mondrianCubes = new ArrayList<IMondrianCube>();
 		 for(Cube cube : cubes) {
 			 mondrianCubes.add( new MondrianCube(cube) );
 		 }
@@ -90,7 +90,7 @@ public class MondrianModel {
 		 List<IMondrianDimension> mondrianDimensions;
 		 
 			
-		 mondrianDimensions = new ArrayList<>();
+		 mondrianDimensions = new ArrayList<IMondrianDimension>();
 		 for(Dimension dimension : dimensions) {
 			 mondrianDimensions.add( new MondrianDimension(dimension) );
 		 }

@@ -17,7 +17,10 @@
  */
 package it.eng.spagobi.commons.serializer;
 
+import it.eng.spagobi.commons.bo.Role;
+import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.metadata.SbiExtRoles;
+import it.eng.spagobi.profiling.bean.SbiExtUserRoles;
 import it.eng.spagobi.profiling.bean.SbiUser;
 import it.eng.spagobi.profiling.bean.SbiUserAttributes;
 
@@ -41,7 +44,6 @@ public class SbiUserJSONSerializer implements Serializer {
 	public static final String PWD = "pwd";
 	public static final String ID = "id";
 
-	@Override
 	public Object serialize(Object o, Locale locale)
 			throws SerializationException {
 		logger.debug("IN");

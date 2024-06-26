@@ -133,7 +133,7 @@ public class SpagoBIUserProfile {
 	 */
 	public List<String> getFunctions() {
 		if (functions == null) {
-			functions = new ArrayList<>();
+			functions = new ArrayList<String>();
 		}
 		return this.functions;
 	}
@@ -200,7 +200,7 @@ public class SpagoBIUserProfile {
 	 */
 	public List<String> getRoles() {
 		if (roles == null) {
-			roles = new ArrayList<>();
+			roles = new ArrayList<String>();
 		}
 		return this.roles;
 	}
@@ -325,7 +325,7 @@ public class SpagoBIUserProfile {
 		 */
 		public List<SpagoBIUserProfile.Attributes.Entry> getEntry() {
 			if (entry == null) {
-				entry = new ArrayList<>();
+				entry = new ArrayList<SpagoBIUserProfile.Attributes.Entry>();
 			}
 			return this.entry;
 		}

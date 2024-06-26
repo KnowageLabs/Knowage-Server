@@ -106,7 +106,7 @@ public class DimensionService {
 
 		Dimension dimension = hierarchies.getDimension(dimensionLabel);
 
-		List<Field> metadataFields = new ArrayList<>(dimension.getMetadataFields());
+		List<Field> metadataFields = new ArrayList<Field>(dimension.getMetadataFields());
 
 		JSONObject result = new JSONObject();
 
@@ -150,7 +150,7 @@ public class DimensionService {
 
 		Dimension dimension = hierarchies.getDimension(dimensionLabel);
 
-		List<Filter> metadataFilters = new ArrayList<>(dimension.getMetadataFilters());
+		List<Filter> metadataFilters = new ArrayList<Filter>(dimension.getMetadataFilters());
 
 		JSONObject result = new JSONObject();
 
@@ -189,7 +189,7 @@ public class DimensionService {
 			String hierTableName = hierarchies.getHierarchyTableName(dimensionLabel);
 			String prefix = hierarchies.getPrefix(dimensionLabel);
 
-			List<Field> metadataFields = new ArrayList<>(dimension.getMetadataFields());
+			List<Field> metadataFields = new ArrayList<Field>(dimension.getMetadataFields());
 
 			IDataSource dataSource = HierarchyUtils.getDataSource(dimensionLabel);
 

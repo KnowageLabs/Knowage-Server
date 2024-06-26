@@ -48,7 +48,6 @@ public class JRSpagoBIDataStoreDataSource implements JRRewindableDataSource {
 		}
 	}
 	
-	@Override
 	public boolean next()
 	{
 		boolean hasNext = false;
@@ -65,7 +64,6 @@ public class JRSpagoBIDataStoreDataSource implements JRRewindableDataSource {
 		return hasNext;
 	}
 	
-	@Override
 	public Object getFieldValue(JRField field)
 	{
 		Object value = null;
@@ -85,7 +83,6 @@ public class JRSpagoBIDataStoreDataSource implements JRRewindableDataSource {
 	}
 
 	
-	@Override
 	public void moveFirst()
 	{
 		if (dataStore != null)

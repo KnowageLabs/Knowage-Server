@@ -81,7 +81,6 @@ public class MeasureImpl extends ModelObjectImpl implements Measure {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public Cube getCube() {
 		if (eContainerFeatureID() != OlapModelPackage.MEASURE__CUBE) return null;
 		return (Cube)eContainer();
@@ -102,7 +101,6 @@ public class MeasureImpl extends ModelObjectImpl implements Measure {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public void setCube(Cube newCube) {
 		if (newCube != eInternalContainer() || (eContainerFeatureID() != OlapModelPackage.MEASURE__CUBE && newCube != null)) {
 			if (EcoreUtil.isAncestor(this, newCube))
@@ -124,7 +122,6 @@ public class MeasureImpl extends ModelObjectImpl implements Measure {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public BusinessColumn getColumn() {
 		if (column != null && column.eIsProxy()) {
 			InternalEObject oldColumn = (InternalEObject)column;
@@ -151,7 +148,6 @@ public class MeasureImpl extends ModelObjectImpl implements Measure {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public void setColumn(BusinessColumn newColumn) {
 		BusinessColumn oldColumn = column;
 		column = newColumn;

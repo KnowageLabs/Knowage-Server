@@ -434,7 +434,7 @@ public class BusinessModelInitializer {
 	public List<BusinessColumn> getContainedBusinessColumn(List<PhysicalColumn> physicalColumns, BusinessColumnSet businessTable) {
 		List<BusinessColumn> businessColumns;
 
-		businessColumns = new ArrayList<>();
+		businessColumns = new ArrayList<BusinessColumn>();
 		for (int j = 0; j < physicalColumns.size(); j++) {
 			BusinessColumn businessColumn = businessTable.getSimpleBusinessColumn(physicalColumns.get(j));
 			if (businessColumn != null) {
@@ -742,7 +742,7 @@ public class BusinessModelInitializer {
 		BusinessTable businessTable;
 		PhysicalTable physicalTable;
 		BusinessModel businessModel = businessView.getModel();
-		Collection<BusinessColumn> businessColumns = new ArrayList<>();
+		Collection<BusinessColumn> businessColumns = new ArrayList<BusinessColumn>();
 
 		Collection<BusinessRelationship> businessRelationships = businessView.getRelationships();
 		BusinessIdentifier businessIdentifier;
@@ -927,7 +927,7 @@ public class BusinessModelInitializer {
 	 */
 	public List<Pair<BusinessRelationship, Integer>> checkRelationshipsConstraints(BusinessModel businessModel) {
 		List<BusinessRelationship> businessRelationships = businessModel.getRelationships();
-		List<Pair<BusinessRelationship, Integer>> incorrectBusinessRelationships = new ArrayList<>();
+		List<Pair<BusinessRelationship, Integer>> incorrectBusinessRelationships = new ArrayList<Pair<BusinessRelationship, Integer>>();
 		for (BusinessRelationship businessRelationship : businessRelationships) {
 			// Check that the relationship has (at least) the same number of source columns
 			// as the destination table's identifier if there isn't an identifier all the columns are used automatically in a default identifier)

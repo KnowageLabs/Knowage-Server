@@ -32,7 +32,6 @@ public class ArtifactJSONSerializer implements Serializer {
 	public static final String LOCKED = "locked";
 	public static final String LOCKER = "locker";
 	
-	@Override
 	public Object serialize(Object o, Locale locale) throws SerializationException {
 		JSONObject  result = null;
 		

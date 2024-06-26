@@ -19,6 +19,8 @@ package it.eng.spagobi.wapp.dao;
 
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.commons.dao.ISpagoBIDao;
+import it.eng.spagobi.wapp.bo.MenuRoles;
+
 import java.util.List;
 
 /**

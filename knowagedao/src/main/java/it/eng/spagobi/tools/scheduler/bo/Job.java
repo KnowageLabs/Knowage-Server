@@ -41,7 +41,7 @@ public class Job {
 
 	public Job() {
 		description = null;
-		parameters = new HashMap<>();
+		parameters = new HashMap<String, String>();
 		durable = true;
 		_volatile = false;
 		requestsRecovery = false;

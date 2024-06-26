@@ -85,7 +85,7 @@ public class PageResource {
 	private static Logger logger = Logger.getLogger(PageResource.class);
 
 	{
-		urls = new HashMap<>();
+		urls = new HashMap<String, String>();
 		urls.put("edit", "/WEB-INF/jsp/metaWeb.jsp");
 		urls.put("test", "/WEB-INF/jsp/test.jsp");
 		urls.put("error", "/WEB-INF/jsp/error.jsp");

@@ -23,6 +23,11 @@ import it.eng.spagobi.utilities.json.JSONUtils;
 
 import java.io.IOException;
 import java.net.URLDecoder;
+import java.net.URLEncoder;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.regex.Pattern;
+
 import javax.ws.rs.core.MultivaluedMap;
 
 import org.apache.log4j.Logger;
@@ -42,7 +47,6 @@ public class DatasetFieldsValidator implements IFieldsValidator {
 	
 	private static transient Logger logger = Logger.getLogger(DatasetFieldsValidator.class);
 
-	@Override
 	public JSONArray validateFields(MultivaluedMap<String, String> parameters) {
 		JSONArray validationErrors = new JSONArray();
 

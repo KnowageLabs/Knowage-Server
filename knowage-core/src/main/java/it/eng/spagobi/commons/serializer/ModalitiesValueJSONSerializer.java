@@ -36,7 +36,6 @@ public class ModalitiesValueJSONSerializer implements Serializer {
 	public static final String LABEL = "LABEL";
 	public static final String SELECTIONTYPE = "SELECTIONTYPE";
 
-	@Override
 	public Object serialize(Object o, Locale locale) throws SerializationException {
 
 		JSONObject result = null;

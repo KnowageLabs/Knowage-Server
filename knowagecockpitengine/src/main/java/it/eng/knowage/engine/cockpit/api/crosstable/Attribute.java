@@ -49,7 +49,7 @@ public class Attribute extends Field {
 	}
 
 	public List<String> getValuesAsList() {
-		List<String> toReturn = new ArrayList<>();
+		List<String> toReturn = new ArrayList<String>();
 		if (values == null) {
 			return toReturn;
 		}

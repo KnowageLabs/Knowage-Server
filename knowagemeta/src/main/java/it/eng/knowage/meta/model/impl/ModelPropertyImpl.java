@@ -96,7 +96,6 @@ public class ModelPropertyImpl extends EObjectImpl implements ModelProperty {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public ModelPropertyType getPropertyType() {
 		if (propertyType != null && propertyType.eIsProxy()) {
 			InternalEObject oldPropertyType = (InternalEObject)propertyType;
@@ -123,7 +122,6 @@ public class ModelPropertyImpl extends EObjectImpl implements ModelProperty {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public void setPropertyType(ModelPropertyType newPropertyType) {
 		ModelPropertyType oldPropertyType = propertyType;
 		propertyType = newPropertyType;
@@ -135,7 +133,6 @@ public class ModelPropertyImpl extends EObjectImpl implements ModelProperty {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 */
-	@Override
 	public String getValue() {
 		return value == null? this.getPropertyType().getDefaultValue(): value;
 	}
@@ -145,7 +142,6 @@ public class ModelPropertyImpl extends EObjectImpl implements ModelProperty {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public void setValue(String newValue) {
 		String oldValue = value;
 		value = newValue;

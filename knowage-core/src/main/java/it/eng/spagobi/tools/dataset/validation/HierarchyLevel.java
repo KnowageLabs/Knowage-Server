@@ -101,7 +101,6 @@ public class HierarchyLevel {
 		}
 	}
 	
-	@Override
 	public String toString(){
 		return this.hierarchy_name+" "+this.level_name;
 	}

@@ -77,7 +77,7 @@ public class ForecastEditService {
 				String accountName = req.getParameter("par_account_nm");
 
 				Enumeration paramNames = req.getParameterNames();
-				Map<String, ForecastValue> values = new HashMap<>();
+				Map<String, ForecastValue> values = new HashMap<String, ForecastValue>();
 				while (paramNames.hasMoreElements()) {
 					String paramName = (String) paramNames.nextElement();
 					// skip parameters values

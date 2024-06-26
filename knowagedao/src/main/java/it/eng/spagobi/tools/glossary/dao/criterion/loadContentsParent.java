@@ -19,9 +19,14 @@ package it.eng.spagobi.tools.glossary.dao.criterion;
 
 import it.eng.spagobi.commons.dao.ICriterion;
 import it.eng.spagobi.tools.glossary.metadata.SbiGlContents;
+import it.eng.spagobi.tools.glossary.metadata.SbiGlWlist;
+
 import org.hibernate.Criteria;
 import org.hibernate.Session;
+import org.hibernate.criterion.MatchMode;
+import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.transform.Transformers;
 
 public class loadContentsParent implements ICriterion<SbiGlContents> {
 

@@ -128,7 +128,6 @@ public class LevelImpl extends ModelObjectImpl implements Level {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public Hierarchy getHierarchy() {
 		if (eContainerFeatureID() != OlapModelPackage.LEVEL__HIERARCHY) return null;
 		return (Hierarchy)eContainer();
@@ -149,7 +148,6 @@ public class LevelImpl extends ModelObjectImpl implements Level {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public void setHierarchy(Hierarchy newHierarchy) {
 		if (newHierarchy != eInternalContainer() || (eContainerFeatureID() != OlapModelPackage.LEVEL__HIERARCHY && newHierarchy != null)) {
 			if (EcoreUtil.isAncestor(this, newHierarchy))
@@ -171,7 +169,6 @@ public class LevelImpl extends ModelObjectImpl implements Level {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public BusinessColumn getColumn() {
 		if (column != null && column.eIsProxy()) {
 			InternalEObject oldColumn = (InternalEObject)column;
@@ -198,7 +195,6 @@ public class LevelImpl extends ModelObjectImpl implements Level {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public void setColumn(BusinessColumn newColumn) {
 		BusinessColumn oldColumn = column;
 		column = newColumn;
@@ -211,7 +207,6 @@ public class LevelImpl extends ModelObjectImpl implements Level {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public BusinessColumn getOrdinalColumn() {
 		if (ordinalColumn != null && ordinalColumn.eIsProxy()) {
 			InternalEObject oldOrdinalColumn = (InternalEObject)ordinalColumn;
@@ -238,7 +233,6 @@ public class LevelImpl extends ModelObjectImpl implements Level {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public void setOrdinalColumn(BusinessColumn newOrdinalColumn) {
 		BusinessColumn oldOrdinalColumn = ordinalColumn;
 		ordinalColumn = newOrdinalColumn;
@@ -251,7 +245,6 @@ public class LevelImpl extends ModelObjectImpl implements Level {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public BusinessColumn getNameColumn() {
 		if (nameColumn != null && nameColumn.eIsProxy()) {
 			InternalEObject oldNameColumn = (InternalEObject)nameColumn;
@@ -278,7 +271,6 @@ public class LevelImpl extends ModelObjectImpl implements Level {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public void setNameColumn(BusinessColumn newNameColumn) {
 		BusinessColumn oldNameColumn = nameColumn;
 		nameColumn = newNameColumn;
@@ -291,7 +283,6 @@ public class LevelImpl extends ModelObjectImpl implements Level {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public BusinessColumn getCaptionColumn() {
 		if (captionColumn != null && captionColumn.eIsProxy()) {
 			InternalEObject oldCaptionColumn = (InternalEObject)captionColumn;
@@ -318,7 +309,6 @@ public class LevelImpl extends ModelObjectImpl implements Level {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public void setCaptionColumn(BusinessColumn newCaptionColumn) {
 		BusinessColumn oldCaptionColumn = captionColumn;
 		captionColumn = newCaptionColumn;
@@ -331,10 +321,9 @@ public class LevelImpl extends ModelObjectImpl implements Level {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public EList<BusinessColumn> getPropertyColumns() {
 		if (propertyColumns == null) {
-			propertyColumns = new EObjectResolvingEList<>(BusinessColumn.class, this, OlapModelPackage.LEVEL__PROPERTY_COLUMNS);
+			propertyColumns = new EObjectResolvingEList<BusinessColumn>(BusinessColumn.class, this, OlapModelPackage.LEVEL__PROPERTY_COLUMNS);
 		}
 		return propertyColumns;
 	}

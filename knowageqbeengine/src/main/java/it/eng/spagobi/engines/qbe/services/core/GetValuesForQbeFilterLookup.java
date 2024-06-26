@@ -233,7 +233,7 @@ public class GetValuesForQbeFilterLookup extends AbstractQbeEngineAction {
 			// serializer2 = new LookupStoreJSONSerializer();
 			// gridDataFeed = (JSONObject)serializer2.serialize(dataStore);
 
-			Map<String, Object> props = new HashMap<>();
+			Map<String, Object> props = new HashMap<String, Object>();
 			props.put(JSONDataWriter.PROPERTY_PUT_IDS, Boolean.FALSE);
 			serializer = new JSONDataWriter(props);
 			gridDataFeed = (JSONObject) serializer.write(dataStore);

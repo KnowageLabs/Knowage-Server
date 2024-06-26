@@ -23,6 +23,9 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
+
 public class FileUtilities {
 
 	public static void copyFile(File sourceFile, File destinationFolder) {

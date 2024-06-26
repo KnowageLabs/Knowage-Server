@@ -44,7 +44,7 @@ public class DataSetEvent {
 	private int code;
 	
 	protected DataSetEvent(int code){
-		dataSets = new ArrayList<>();
+		dataSets = new ArrayList<IDataSet>();
 		this.code = code;
 	}
 	

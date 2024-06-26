@@ -67,7 +67,7 @@ public class DataSetExecutorForBIObject {
 		Assert.assertNotNull(biObject, "The BIObject must be specified before the execution of this method");
 		Assert.assertNotNull(biObject, "The user profile  must be specified before the execution of this method");
 		
-		dataSet.setUserProfileAttributes(UserProfileUtils.getProfileAttributes( profile));
+		dataSet.setUserProfileAttributes(UserProfileUtils.getProfileAttributes( (UserProfile) profile));
 		dataSet.setParamsMap(getParameters());
 		dataSet.loadData();
 		IDataStore dataStore = dataSet.getDataStore();

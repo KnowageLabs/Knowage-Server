@@ -19,43 +19,38 @@
 package it.eng.spagobi.sdk.domains.stub;
 
 import it.eng.spagobi.sdk.domains.impl.DomainsServiceImpl;
+import it.eng.spagobi.sdk.engines.impl.EnginesServiceImpl;
 
 public class DomainsServiceSoapBindingImpl implements it.eng.spagobi.sdk.domains.stub.DomainsService{
 
-	@Override
 	public boolean insertDomain(it.eng.spagobi.sdk.domains.bo.SDKDomain in0) throws java.rmi.RemoteException, it.eng.spagobi.sdk.exceptions.SDKException {
        	DomainsServiceImpl supplier=new DomainsServiceImpl();
     	return supplier.insertDomain(in0);
     }
 
-    @Override
-	public boolean updateDomain(it.eng.spagobi.sdk.domains.bo.SDKDomain in0) throws java.rmi.RemoteException, it.eng.spagobi.sdk.exceptions.SDKException {
+    public boolean updateDomain(it.eng.spagobi.sdk.domains.bo.SDKDomain in0) throws java.rmi.RemoteException, it.eng.spagobi.sdk.exceptions.SDKException {
        	DomainsServiceImpl supplier=new DomainsServiceImpl();
     	return supplier.updateDomain(in0);
 
     }
 
-    @Override
-	public it.eng.spagobi.sdk.domains.bo.SDKDomain getDomainById(java.lang.Integer in0) throws java.rmi.RemoteException, it.eng.spagobi.sdk.exceptions.SDKException {
+    public it.eng.spagobi.sdk.domains.bo.SDKDomain getDomainById(java.lang.Integer in0) throws java.rmi.RemoteException, it.eng.spagobi.sdk.exceptions.SDKException {
        	DomainsServiceImpl supplier=new DomainsServiceImpl();
     	return supplier.getDomainById(in0);
     }
 
-    @Override
-	public it.eng.spagobi.sdk.domains.bo.SDKDomain getDomainByDomainAndValueCd(java.lang.String in0, java.lang.String in1) throws java.rmi.RemoteException, it.eng.spagobi.sdk.exceptions.SDKException {
+    public it.eng.spagobi.sdk.domains.bo.SDKDomain getDomainByDomainAndValueCd(java.lang.String in0, java.lang.String in1) throws java.rmi.RemoteException, it.eng.spagobi.sdk.exceptions.SDKException {
        	DomainsServiceImpl supplier=new DomainsServiceImpl();
     	return supplier.getDomainByDomainAndValueCd(in0, in1);
 
     }
 
-    @Override
-	public it.eng.spagobi.sdk.domains.bo.SDKDomain[] getAllDomains() throws java.rmi.RemoteException, it.eng.spagobi.sdk.exceptions.SDKException {
+    public it.eng.spagobi.sdk.domains.bo.SDKDomain[] getAllDomains() throws java.rmi.RemoteException, it.eng.spagobi.sdk.exceptions.SDKException {
        	DomainsServiceImpl supplier=new DomainsServiceImpl();
     	return supplier.getAllDomains();
     }
 
-    @Override
-	public it.eng.spagobi.sdk.domains.bo.SDKDomain[] getDomainsListByDomainCd(java.lang.String in0) throws java.rmi.RemoteException, it.eng.spagobi.sdk.exceptions.SDKException {
+    public it.eng.spagobi.sdk.domains.bo.SDKDomain[] getDomainsListByDomainCd(java.lang.String in0) throws java.rmi.RemoteException, it.eng.spagobi.sdk.exceptions.SDKException {
        	DomainsServiceImpl supplier=new DomainsServiceImpl();
     	return supplier.getDomainsListByDomainCd(in0);
     }

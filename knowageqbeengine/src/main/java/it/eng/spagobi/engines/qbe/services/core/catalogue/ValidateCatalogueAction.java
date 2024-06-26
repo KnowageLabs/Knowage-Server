@@ -38,7 +38,6 @@ import org.apache.log4j.Logger;
 public class ValidateCatalogueAction extends AbstractQbeEngineAction {
 	
 	public static final String SERVICE_NAME = "VALIDATE_CATALOGUE_ACTION";
-	@Override
 	public String getActionName(){return SERVICE_NAME;}
 	
 	// INPUT PARAMETERS
@@ -46,7 +45,6 @@ public class ValidateCatalogueAction extends AbstractQbeEngineAction {
 	
 	public static transient Logger logger = Logger.getLogger(ValidateCatalogueAction.class);
 	
-	@Override
 	public void service(SourceBean request, SourceBean response) {
 		Query query;
 		IStatement statement;

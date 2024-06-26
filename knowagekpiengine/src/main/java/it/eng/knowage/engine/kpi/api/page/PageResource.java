@@ -66,8 +66,8 @@ public class PageResource extends AbstractFullKpiEngineResource {
 	 *
 	 */
 	static {
-		pages = new HashMap<>();
-		urls = new HashMap<>();
+		pages = new HashMap<String, JSONObject>();
+		urls = new HashMap<String, String>();
 
 		try {
 			pages.put("edit", new JSONObject("{name: 'edit', description: 'the kpi edit page', parameters: []}"));

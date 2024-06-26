@@ -47,7 +47,6 @@ implements CategoryItemLabelGenerator  {
 	 * 
 	 */
 
-	@Override
 	public String generateLabel(CategoryDataset arg0, int arg1, int arg2) {
 		// TODO Auto-generated method stub
 		return null;

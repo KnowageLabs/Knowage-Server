@@ -96,7 +96,6 @@ public class BusinessDomainImpl extends ModelObjectImpl implements BusinessDomai
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public BusinessModel getModel() {
 		if (eContainerFeatureID() != BusinessModelPackage.BUSINESS_DOMAIN__MODEL) return null;
 		return (BusinessModel)eContainer();
@@ -117,7 +116,6 @@ public class BusinessDomainImpl extends ModelObjectImpl implements BusinessDomai
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public void setModel(BusinessModel newModel) {
 		if (newModel != eInternalContainer() || (eContainerFeatureID() != BusinessModelPackage.BUSINESS_DOMAIN__MODEL && newModel != null)) {
 			if (EcoreUtil.isAncestor(this, newModel))
@@ -139,10 +137,9 @@ public class BusinessDomainImpl extends ModelObjectImpl implements BusinessDomai
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public EList<BusinessColumnSet> getTables() {
 		if (tables == null) {
-			tables = new EObjectResolvingEList<>(BusinessColumnSet.class, this, BusinessModelPackage.BUSINESS_DOMAIN__TABLES);
+			tables = new EObjectResolvingEList<BusinessColumnSet>(BusinessColumnSet.class, this, BusinessModelPackage.BUSINESS_DOMAIN__TABLES);
 		}
 		return tables;
 	}
@@ -152,10 +149,9 @@ public class BusinessDomainImpl extends ModelObjectImpl implements BusinessDomai
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public EList<BusinessRelationship> getRelationships() {
 		if (relationships == null) {
-			relationships = new EObjectResolvingEList<>(BusinessRelationship.class, this, BusinessModelPackage.BUSINESS_DOMAIN__RELATIONSHIPS);
+			relationships = new EObjectResolvingEList<BusinessRelationship>(BusinessRelationship.class, this, BusinessModelPackage.BUSINESS_DOMAIN__RELATIONSHIPS);
 		}
 		return relationships;
 	}

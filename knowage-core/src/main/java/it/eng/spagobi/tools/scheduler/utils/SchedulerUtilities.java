@@ -210,7 +210,7 @@ public class SchedulerUtilities {
 						iterativeParameters.addAll(Arrays.asList(iterativeParametersArray));
 					}
 					SourceBean loadAtRuntimeSB = (SourceBean) jobParSB.getFilteredSourceBeanAttribute("JOB_PARAMETER", "name", biobjlbl + "_loadAtRuntime");
-					Map<String, String> loadAtRuntimeParameters = new HashMap<>();
+					Map<String, String> loadAtRuntimeParameters = new HashMap<String, String>();
 					if (loadAtRuntimeSB != null) {
 						String loadAtRuntimeStr = (String) loadAtRuntimeSB.getAttribute("value");
 						String[] loadAtRuntimeArray = loadAtRuntimeStr.split(";");
@@ -223,7 +223,7 @@ public class SchedulerUtilities {
 						}
 					}
 					SourceBean useFormulaSB = (SourceBean) jobParSB.getFilteredSourceBeanAttribute("JOB_PARAMETER", "name", biobjlbl + "_useFormula");
-					Map<String, String> useFormulaParameters = new HashMap<>();
+					Map<String, String> useFormulaParameters = new HashMap<String, String>();
 					if (useFormulaSB != null) {
 						String useFormulaStr = (String) useFormulaSB.getAttribute("value");
 						String[] useFormulaArray = useFormulaStr.split(";");
@@ -326,7 +326,7 @@ public class SchedulerUtilities {
 		JobInfo jobInfo = SchedulerUtilities.getJobInfoFromJobSourceBean(jobInfoSB);
 		triggerInfo.setJobInfo(jobInfo);
 
-		Map<String, DispatchContext> saveOptions = new HashMap<>();
+		Map<String, DispatchContext> saveOptions = new HashMap<String, DispatchContext>();
 		List<Integer> biobjIds = jobInfo.getDocumentIds();
 		int index = 0;
 		for (Integer biobjId : biobjIds) {

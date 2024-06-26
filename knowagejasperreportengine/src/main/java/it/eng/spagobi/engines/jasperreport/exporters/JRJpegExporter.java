@@ -117,37 +117,31 @@ public class JRJpegExporter extends JRImageExporter {
 		}
 	}
 
-	@Override
 	public ReportContext getReportContext() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	@Override
 	public void setConfiguration(ReportExportConfiguration arg0) {
 		// TODO Auto-generated method stub
 
 	}
 
-	@Override
 	public void setConfiguration(ExporterConfiguration arg0) {
 		// TODO Auto-generated method stub
 
 	}
 
-	@Override
 	public void setExporterInput(ExporterInput arg0) {
 		// TODO Auto-generated method stub
 
 	}
 
-	@Override
 	public void setExporterOutput(ExporterOutput arg0) {
 		// TODO Auto-generated method stub
 
 	}
 
-	@Override
 	public void setReportContext(ReportContext arg0) {
 		// TODO Auto-generated method stub
 

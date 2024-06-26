@@ -160,7 +160,6 @@ public abstract class ModelObjectImpl extends EObjectImpl implements ModelObject
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public String getId() {
 		return id;
 	}
@@ -170,7 +169,6 @@ public abstract class ModelObjectImpl extends EObjectImpl implements ModelObject
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public void setId(String newId) {
 		String oldId = id;
 		id = newId;
@@ -183,7 +181,6 @@ public abstract class ModelObjectImpl extends EObjectImpl implements ModelObject
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public String getName() {
 		return name;
 	}
@@ -193,7 +190,6 @@ public abstract class ModelObjectImpl extends EObjectImpl implements ModelObject
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public void setName(String newName) {
 		String oldName = name;
 		name = newName;
@@ -206,7 +202,6 @@ public abstract class ModelObjectImpl extends EObjectImpl implements ModelObject
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public String getUniqueName() {
 		return uniqueName;
 	}
@@ -216,7 +211,6 @@ public abstract class ModelObjectImpl extends EObjectImpl implements ModelObject
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public void setUniqueName(String newUniqueName) {
 		String oldUniqueName = uniqueName;
 		uniqueName = newUniqueName;
@@ -229,7 +223,6 @@ public abstract class ModelObjectImpl extends EObjectImpl implements ModelObject
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public String getDescription() {
 		return description;
 	}
@@ -239,7 +232,6 @@ public abstract class ModelObjectImpl extends EObjectImpl implements ModelObject
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public void setDescription(String newDescription) {
 		String oldDescription = description;
 		description = newDescription;
@@ -252,10 +244,9 @@ public abstract class ModelObjectImpl extends EObjectImpl implements ModelObject
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public EMap<String, ModelProperty> getProperties() {
 		if (properties == null) {
-			properties = new EcoreEMap<>(ModelPackage.Literals.MODEL_PROPERTY_MAP_ENTRY, ModelPropertyMapEntryImpl.class, this, ModelPackage.MODEL_OBJECT__PROPERTIES);
+			properties = new EcoreEMap<String,ModelProperty>(ModelPackage.Literals.MODEL_PROPERTY_MAP_ENTRY, ModelPropertyMapEntryImpl.class, this, ModelPackage.MODEL_OBJECT__PROPERTIES);
 		}
 		return properties;
 	}
@@ -434,7 +425,6 @@ public abstract class ModelObjectImpl extends EObjectImpl implements ModelObject
 		return oldValue;
 	}
 	
-	@Override
 	public String setProperty(String pname, String pvalue) {
 		String oldValue;
 		ModelPropertyType propertyType;

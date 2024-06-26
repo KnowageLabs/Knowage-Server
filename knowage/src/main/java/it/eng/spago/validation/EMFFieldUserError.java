@@ -118,8 +118,7 @@ public class EMFFieldUserError extends EMFUserError {
      * @param fieldName il nome del field che ha generato l'errore
      * @param code codice di errore.
      */
-    @Deprecated
-	public EMFFieldUserError(String severity, String fieldName, int code) {
+    public EMFFieldUserError(String severity, String fieldName, int code) {
         this(severity, fieldName, String.valueOf(code));
     } // public EMFUserError(String severity, int code)
 
@@ -130,8 +129,7 @@ public class EMFFieldUserError extends EMFUserError {
      * @param severity severity dell'errore.
      * @param code codice di errore.
      */
-    @Deprecated
-	public EMFFieldUserError(String severity, int code) {
+    public EMFFieldUserError(String severity, int code) {
         this(severity, (String)null, String.valueOf(code));
     } // public EMFUserError(String severity, int code)
 
@@ -145,8 +143,7 @@ public class EMFFieldUserError extends EMFUserError {
      * @parma fieldName il nome del field che ha generato l'errore
      * @param params vettore di parametri che  verranno inseriti nella stringa di descrizione.
      */
-    @Deprecated
-	public EMFFieldUserError(String severity, String fieldName, int code, List params) {
+    public EMFFieldUserError(String severity, String fieldName, int code, List params) {
         this(severity, fieldName, String.valueOf(code), params);
     } // public EMFUserError(String severity, int code, List params)
 
@@ -160,8 +157,7 @@ public class EMFFieldUserError extends EMFUserError {
      * @param code codice di errore.
      * @param params vettore di parametri che  verranno inseriti nella stringa di descrizione.
      */
-    @Deprecated
-	public EMFFieldUserError(String severity, int code, List params) {
+    public EMFFieldUserError(String severity, int code, List params) {
         this(severity, (String)null, String.valueOf(code), params);
     } // public EMFUserError(String severity, int code, List params)
     
@@ -175,8 +171,7 @@ public class EMFFieldUserError extends EMFUserError {
      * @param params vettore di parametri che  verranno inseriti nella stringa di descrizione.
      * @param additionalInfo oggetto di qualsiasi natura.
      */
-    @Deprecated
-	public EMFFieldUserError(String severity, int code, List params, Object additionalInfo) {
+    public EMFFieldUserError(String severity, int code, List params, Object additionalInfo) {
         super(severity, String.valueOf(code), params, additionalInfo);
     } // public EMFUserError(String severity, int code, List params, Object additionalInfo)
 
@@ -201,8 +196,7 @@ public class EMFFieldUserError extends EMFUserError {
     /* (non-Javadoc)
      * @see it.eng.spago.error.EMFAbstractError#getCategory()
      */
-    @Override
-	public String getCategory() {
+    public String getCategory() {
         return EMFErrorCategory.USER_ERROR;
     }
 
@@ -211,8 +205,7 @@ public class EMFFieldUserError extends EMFUserError {
      * @return CloneableObject  il clone dell'oggetto.
      * @see CloneableObject
      */
-    @Override
-	public CloneableObject cloneObject() {
+    public CloneableObject cloneObject() {
         return new EMFFieldUserError(this);
     } // public CloneableObject cloneObject()
 

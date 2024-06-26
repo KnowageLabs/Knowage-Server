@@ -22,7 +22,10 @@ import it.eng.spagobi.tools.glossary.metadata.SbiGlDataSetWlist;
 
 import org.hibernate.Criteria;
 import org.hibernate.Session;
+import org.hibernate.criterion.MatchMode;
+import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.transform.Transformers;
 
 public class loadDataSetWlistByDataset implements ICriterion<SbiGlDataSetWlist> {
 

@@ -65,7 +65,6 @@ public class MyCategoryUrlGenerator extends StandardCategoryURLGenerator{
 	/* (non-Javadoc)
 	 * @see org.jfree.chart.urls.StandardCategoryURLGenerator#generateURL(org.jfree.data.category.CategoryDataset, int, int)
 	 */
-	@Override
 	public String generateURL(CategoryDataset dataset, int series, int category) {
 		logger.debug("IN");
 		URL=new String();

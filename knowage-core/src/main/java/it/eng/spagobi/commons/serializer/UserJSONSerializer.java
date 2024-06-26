@@ -20,12 +20,16 @@ package it.eng.spagobi.commons.serializer;
 import it.eng.spagobi.commons.bo.Role;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.profiling.bean.SbiAttribute;
+import it.eng.spagobi.profiling.bean.SbiExtUserRoles;
+import it.eng.spagobi.profiling.bean.SbiUserAttributes;
 import it.eng.spagobi.profiling.bo.UserBO;
 
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
+
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -42,7 +46,6 @@ public class UserJSONSerializer implements Serializer {
 	public static final String ID = "id";
 	public static final String PWD = "pwd";
 
-	@Override
 	public Object serialize(Object o, Locale locale)
 			throws SerializationException {
 		logger.debug("IN");

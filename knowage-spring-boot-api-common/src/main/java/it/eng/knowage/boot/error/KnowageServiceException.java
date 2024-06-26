@@ -17,6 +17,8 @@
  */
 package it.eng.knowage.boot.error;
 
+import it.eng.knowage.boot.error.KnowageRuntimeException;
+
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
  *

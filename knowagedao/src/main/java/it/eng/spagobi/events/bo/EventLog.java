@@ -233,7 +233,7 @@ public class EventLog implements Serializable {
 	}
 
 	public Map<String, Object> getAdditionalInformation() {
-		Map<String, Object> map = new HashMap<>();
+		Map<String, Object> map = new HashMap<String, Object>();
 		try {
 			IBIObjectDAO biObjectDAO = DAOFactory.getBIObjectDAO();
 			String biobjectIdStr = (String) getParametesrMap().get("biobjectId");
@@ -246,14 +246,14 @@ public class EventLog implements Serializable {
 			map.put("engine", biObject.getEngineLabel());
 			map.put("subobject", biObject.getEngineLabel());
 
-			List<Map<String, String>> subobjects = new ArrayList<>();
+			List<Map<String, String>> subobjects = new ArrayList<Map<String, String>>();
 
 			SubreportDAOHibImpl subreportDAOHibImpl = new SubreportDAOHibImpl();
 			List list = subreportDAOHibImpl.loadSubreportsByMasterRptId(biObject.getId());
 			for (int i = 0; i < list.size(); i++) {
 				Subreport subreport = (Subreport) list.get(i);
 				BIObject biobj = biObjectDAO.loadBIObjectForDetail(subreport.getSub_rpt_id());
-				Map<String, String> subobject = new HashMap<>();
+				Map<String, String> subobject = new HashMap<String, String>();
 				subobject.put("label", biobj.getLabel());
 				subobject.put("name", biobj.getName());
 				subobjects.add(subobject);

@@ -118,7 +118,7 @@ public class JpaCalculatedColumn implements IJpaCalculatedColumn {
 	}
 
 	public Set<IJpaColumn> getReferencedColumns() {
-		Set<IJpaColumn> jpaColumns = new HashSet<>();
+		Set<IJpaColumn> jpaColumns = new HashSet<IJpaColumn>();
 
 		try {
 			Set<SimpleBusinessColumn> businessColumns = businessCalculatedColumn.getReferencedColumns();
@@ -139,7 +139,7 @@ public class JpaCalculatedColumn implements IJpaCalculatedColumn {
 	public String getExpressionWithUniqueNames() {
 		String expression = getExpression();
 		Set<IJpaColumn> jpaColumns = this.getReferencedColumns();
-		Set<String> operands = new HashSet<>();
+		Set<String> operands = new HashSet<String>();
 
 		if (!jpaColumns.isEmpty()) {
 			// retrieve operands from string

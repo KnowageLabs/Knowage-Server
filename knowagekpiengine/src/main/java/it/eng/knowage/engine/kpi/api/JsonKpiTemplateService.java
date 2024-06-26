@@ -134,7 +134,7 @@ public class JsonKpiTemplateService extends AbstractFullKpiEngineResource {
 	}
 
 	Map<String, String> buildAttributeValuesMap(JSONObject jsonTemplate, Calendar startDate) throws JSONException {
-		Map<String, String> attributesValues = new TreeMap<>();
+		Map<String, String> attributesValues = new TreeMap<String, String>();
 		if (jsonTemplate.getJSONObject("chart").getString("type").equals("kpi")) {
 			String historycalSeries = jsonTemplate.getJSONObject("chart").getJSONObject("options").getJSONObject("history").getString("units");
 			if (historycalSeries.equals("day")) {

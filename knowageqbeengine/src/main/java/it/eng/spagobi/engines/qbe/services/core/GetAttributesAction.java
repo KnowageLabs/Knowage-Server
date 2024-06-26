@@ -39,14 +39,12 @@ import org.json.JSONObject;
 public class GetAttributesAction extends AbstractQbeEngineAction {
 
 	public static final String SERVICE_NAME = "GET_ATTRIBUTES_ACTION";
-	@Override
 	public String getActionName(){return SERVICE_NAME;}
 	
 	/** Logger component. */
     public static transient Logger logger = Logger.getLogger(GetAttributesAction.class);
     
     
-	@Override
 	public void service(SourceBean request, SourceBean response) {
 		
 		Iterator it;

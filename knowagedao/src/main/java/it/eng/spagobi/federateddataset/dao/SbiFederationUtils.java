@@ -44,7 +44,7 @@ public class SbiFederationUtils {
 		FederationDefinition fd = toDatasetFederation(hibFd);
 		if (sourceDatasets == null) {
 			logger.debug("No dataset is added in the definition");
-			sourceDatasets = new HashSet<>();
+			sourceDatasets = new HashSet<IDataSet>();
 		} else {
 			logger.debug("Adding also the dataset to the federation definition");
 		}
@@ -113,7 +113,7 @@ public class SbiFederationUtils {
 
 	public static Set<SbiDataSet> toSbiDataSet(Set<IDataSet> dataSets) {
 
-		Set<SbiDataSet> ds = new java.util.HashSet<>();
+		Set<SbiDataSet> ds = new java.util.HashSet<SbiDataSet>();
 		for (IDataSet dataset : dataSets) {
 			int version = 1;
 			if (dataset instanceof VersionedDataSet) {

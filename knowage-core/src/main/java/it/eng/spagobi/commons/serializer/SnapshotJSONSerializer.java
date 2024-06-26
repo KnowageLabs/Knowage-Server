@@ -40,7 +40,6 @@ public class SnapshotJSONSerializer implements Serializer {
 	// dates are sent to the client using a fixed format, the one returned by GeneralUtilities.getServerDateFormat()
 	private static final SimpleDateFormat DATE_FORMATTER = new SimpleDateFormat( GeneralUtilities.getServerTimeStampFormat() );
 
-	@Override
 	public Object serialize(Object o, Locale locale) throws SerializationException {
 		JSONObject  result = null;
 		

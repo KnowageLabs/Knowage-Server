@@ -41,7 +41,6 @@ import org.json.JSONObject;
 public class AddQueryAction extends AbstractQbeEngineAction {	
 	
 	public static final String SERVICE_NAME = "ADD_QUERY_ACTION";
-	@Override
 	public String getActionName(){return SERVICE_NAME;}
 	
 	
@@ -54,7 +53,6 @@ public class AddQueryAction extends AbstractQbeEngineAction {
    
     
 	
-	@Override
 	public void service(SourceBean request, SourceBean response)  {				
 				
 		String name;

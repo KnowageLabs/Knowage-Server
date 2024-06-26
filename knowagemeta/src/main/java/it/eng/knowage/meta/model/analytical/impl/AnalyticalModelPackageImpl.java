@@ -132,7 +132,6 @@ public class AnalyticalModelPackageImpl extends EPackageImpl implements Analytic
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public EClass getAnalyticalModel() {
 		return analyticalModelEClass;
 	}
@@ -142,7 +141,6 @@ public class AnalyticalModelPackageImpl extends EPackageImpl implements Analytic
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public AnalyticalModelFactory getAnalyticalModelFactory() {
 		return (AnalyticalModelFactory)getEFactoryInstance();
 	}

@@ -83,7 +83,7 @@ public class BackupService {
 			Hierarchies hierarchies = HierarchiesSingleton.getInstance();
 			String hierarchyTable = hierarchies.getHierarchyTableName(dimension);
 			Hierarchy hierarchyFields = hierarchies.getHierarchy(dimension);
-			List<Field> generalMetadataFields = new ArrayList<>(hierarchyFields.getMetadataGeneralFields());
+			List<Field> generalMetadataFields = new ArrayList<Field>(hierarchyFields.getMetadataGeneralFields());
 
 			// 2 - get datasource label name
 			String dataSourceName = hierarchies.getDataSourceOfDimension(dimension);
@@ -94,7 +94,7 @@ public class BackupService {
 			}
 
 			// 3 - define update command getting values from the request
-			LinkedHashMap<String, String> lstFields = new LinkedHashMap<>();
+			LinkedHashMap<String, String> lstFields = new LinkedHashMap<String, String>();
 			StringBuffer columnsBuffer = new StringBuffer(" ");
 			// general fields:
 			for (int i = 0, l = generalMetadataFields.size(); i < l; i++) {

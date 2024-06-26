@@ -17,16 +17,31 @@
  */
 package it.eng.spagobi.engines.commonj.services;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
 import it.eng.spago.base.SourceBean;
+import it.eng.spagobi.engines.commonj.CommonjEngine;
+import it.eng.spagobi.engines.commonj.exception.WorkExecutionException;
+import it.eng.spagobi.engines.commonj.exception.WorkNotFoundException;
+import it.eng.spagobi.engines.commonj.runtime.CommonjWork;
+import it.eng.spagobi.engines.commonj.runtime.WorkConfiguration;
+import it.eng.spagobi.engines.commonj.runtime.WorksRepository;
+import it.eng.spagobi.engines.commonj.utils.ProcessesStatusContainer;
 import it.eng.spagobi.services.proxy.EventServiceProxy;
 import it.eng.spagobi.utilities.engines.AbstractEngineStartAction;
+import it.eng.spagobi.utilities.engines.AuditServiceProxy;
 import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineException;
+import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceException;
+import it.eng.spagobi.utilities.service.JSONFailure;
+
+import javax.servlet.http.HttpSession;
+
 import org.apache.log4j.Logger;
+import org.json.JSONException;
 
 public class CommonjEngineStartAction extends AbstractEngineStartAction {
 
@@ -54,7 +69,6 @@ public class CommonjEngineStartAction extends AbstractEngineStartAction {
 	}
 
 
-	@Override
 	public Map getEnv() {
 		Map env = new HashMap();
 
@@ -92,7 +106,6 @@ public class CommonjEngineStartAction extends AbstractEngineStartAction {
 	   }
 
 
-	@Override
 	public void service(SourceBean serviceRequest, SourceBean serviceResponse) throws SpagoBIEngineException {
 
 

@@ -43,7 +43,6 @@ public class EngineJSONSerializer implements Serializer {
 	public static final String URL = "url";
 	public static final String DRIVER = "driver";
 	
-	@Override
 	public Object serialize(Object o, Locale locale) throws SerializationException {
 		JSONObject  result = null;
 		

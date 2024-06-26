@@ -419,7 +419,7 @@ public class JavaClassDetail extends DependenciesPostProcessingLov implements IL
 
 	@Override
 	public Set<String> getParameterNames() throws Exception {
-		return new HashSet<>();
+		return new HashSet<String>();
 	}
 
 }

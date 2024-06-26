@@ -26,7 +26,7 @@ package it.eng.knowage.meta.initializer.utils;
 public class Pair<A, B> {
 
 	public static <P, Q> Pair<P, Q> makePair(P p, Q q) {
-		return new Pair<>(p, q);
+		return new Pair<P, Q>(p, q);
 	}
 
 	public final A a;

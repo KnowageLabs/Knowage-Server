@@ -35,7 +35,6 @@ public class TalendRolesHandler implements IRolesHandler {
 	/* (non-Javadoc)
 	 * @see it.eng.spagobi.engines.drivers.handlers.IRolesHandler#calculateRoles(java.lang.String)
 	 */
-	@Override
 	public List calculateRoles(String parameters) throws EMFInternalError, EMFUserError {
 		String[] splittedParameters = parameters.split("&");
 		if (splittedParameters == null || splittedParameters.length == 0) {

@@ -26,7 +26,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement(name = "formulas")
 public class Formulas {
 
-	List<Formula> formulas = new ArrayList<>();
+	List<Formula> formulas = new ArrayList<Formula>();
 
 	public void setFormulas(List<Formula> formulas) {
 		this.formulas = formulas;

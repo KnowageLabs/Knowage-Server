@@ -59,8 +59,8 @@ public class PageResource extends AbstractSvgViewerEngineResource {
 	 *
 	 */
 	static {
-		pages = new HashMap<>();
-		urls = new HashMap<>();
+		pages = new HashMap<String, JSONObject>();
+		urls = new HashMap<String, String>();
 
 		try {
 			pages.put("execute", new JSONObject("{name: 'execute', description: 'the svg viewer execution page', parameters: []}"));

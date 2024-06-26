@@ -27,6 +27,7 @@ import it.eng.spagobi.engines.chart.bo.charttypes.utils.TargetThreshold;
 
 import java.awt.Color;
 import java.awt.Rectangle;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -50,7 +51,7 @@ public class TargetCharts extends ChartImpl {
 
 	public boolean useTargets=true;
 	//public HashMap<Double, String> thresholds=new HashMap<Double, String>();
-	public HashMap<Double, TargetThreshold> thresholds=new HashMap<>();
+	public HashMap<Double, TargetThreshold> thresholds=new HashMap<Double, TargetThreshold>();
 	public TargetThreshold bottomThreshold=null;
 	// if it is a target the color is referring to what exceed , if its a baseline to what is under
 	//public HashMap<String, Color> thresholdColors=new HashMap<String, Color>();
@@ -95,14 +96,13 @@ public class TargetCharts extends ChartImpl {
 	public static final String VALUE_DS = "value";
 
 
-	@Override
 	public DatasetMap calculateValue() throws Exception {
 		logger.debug("IN");
 
 		String res=DataSetAccessFunctions.getDataSetResultFromId(profile, getData(),parametersObject);
 		SourceBean sbRows=SourceBean.fromXMLString(res);
 
-		yearsDefined=new TreeSet<>();
+		yearsDefined=new TreeSet<String>();
 
 		//timeSeries = new TimeSeries("TimeSerie", Month.class);
 		String name="";
@@ -182,7 +182,6 @@ public class TargetCharts extends ChartImpl {
 		return datasets;
 	}
 
-	@Override
 	public void configureChart(SourceBean content) {
 		logger.debug("IN");
 		super.configureChart(content);
@@ -203,8 +202,8 @@ public class TargetCharts extends ChartImpl {
 		boolean targets=false;
 		boolean baselines=false;
 		boolean parameterThresholdDefined=false;
-		Vector<String> targetNames=new Vector<>();
-		Vector<String> baselinesNames=new Vector<>();
+		Vector<String> targetNames=new Vector<String>();
+		Vector<String> baselinesNames=new Vector<String>();
 		for (Iterator iterator = parametersObject.keySet().iterator(); iterator.hasNext();) {
 			String name = (String) iterator.next();
 			Object value=parametersObject.get(name);
@@ -273,7 +272,7 @@ public class TargetCharts extends ChartImpl {
 				return;
 			}
 			else{
-				thresholds=new HashMap<>();
+				thresholds=new HashMap<Double, TargetThreshold>();
 				//thresholdColors=new HashMap<String, Color>();			
 				Iterator targetsAttrsIter = thresAttrsList.iterator();
 				while(targetsAttrsIter.hasNext()) {

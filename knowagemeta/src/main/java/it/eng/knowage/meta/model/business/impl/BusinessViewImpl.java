@@ -82,10 +82,9 @@ public class BusinessViewImpl extends BusinessColumnSetImpl implements BusinessV
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public EList<BusinessViewInnerJoinRelationship> getJoinRelationships() {
 		if (joinRelationships == null) {
-			joinRelationships = new EObjectResolvingEList<>(BusinessViewInnerJoinRelationship.class, this, BusinessModelPackage.BUSINESS_VIEW__JOIN_RELATIONSHIPS);
+			joinRelationships = new EObjectResolvingEList<BusinessViewInnerJoinRelationship>(BusinessViewInnerJoinRelationship.class, this, BusinessModelPackage.BUSINESS_VIEW__JOIN_RELATIONSHIPS);
 		}
 		return joinRelationships;
 	}
@@ -162,8 +161,8 @@ public class BusinessViewImpl extends BusinessColumnSetImpl implements BusinessV
 	@Override
 	public List<PhysicalTable> getPhysicalTables(){
 		
-		Set<PhysicalTable> physicalTableSet = new HashSet<>();
-		List<PhysicalTable> physicalTables = new ArrayList<>();
+		Set<PhysicalTable> physicalTableSet = new HashSet<PhysicalTable>();
+		List<PhysicalTable> physicalTables = new ArrayList<PhysicalTable>();
 		
 		List<SimpleBusinessColumn> businessColumns = this.getSimpleBusinessColumns();
 		for (SimpleBusinessColumn businessColumn : businessColumns){
@@ -192,7 +191,7 @@ public class BusinessViewImpl extends BusinessColumnSetImpl implements BusinessV
 	@Override
 	public List<PhysicalTable> getPhysicalTablesOccurrences(){
 		EList<BusinessViewInnerJoinRelationship> joinRelationships = this.getJoinRelationships();
-		List<PhysicalTable> physicalTablesOccurences = new ArrayList<>();
+		List<PhysicalTable> physicalTablesOccurences = new ArrayList<PhysicalTable>();
 		for (BusinessViewInnerJoinRelationship relationship: joinRelationships){
 			if (!physicalTablesOccurences.contains(relationship.getSourceTable())){
 				physicalTablesOccurences.add(relationship.getSourceTable());

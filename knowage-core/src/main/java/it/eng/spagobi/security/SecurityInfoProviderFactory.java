@@ -18,6 +18,7 @@
 
 package it.eng.spagobi.security;
 
+import it.eng.spago.base.SourceBean;
 import it.eng.spagobi.commons.SingletonConfig;
 
 import org.apache.log4j.Logger;

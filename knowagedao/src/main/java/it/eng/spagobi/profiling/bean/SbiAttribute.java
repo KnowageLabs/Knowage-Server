@@ -42,7 +42,7 @@ public class SbiAttribute extends SbiHibernateModel {
 	private String lovColumns;
 	private ProfileAttributesValueTypes value;
 
-	private Set<SbiUserAttributes> sbiUserAttributeses = new HashSet<>(0);
+	private Set<SbiUserAttributes> sbiUserAttributeses = new HashSet<SbiUserAttributes>(0);
 
 	public SbiAttribute() {
 	}

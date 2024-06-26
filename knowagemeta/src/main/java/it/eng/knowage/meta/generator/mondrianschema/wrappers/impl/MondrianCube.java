@@ -73,7 +73,7 @@ public class MondrianCube implements IMondrianCube {
 	@Override
 	public List<IMondrianCubeDimesion> getCubeDimensions() {
 		
-		List<IMondrianCubeDimesion> cubeDimensions = new ArrayList<>();
+		List<IMondrianCubeDimesion> cubeDimensions = new ArrayList<IMondrianCubeDimesion>();
 		//Get all the dimension linked to the cube
 		List<Dimension> dimensions = cube.getDimensions();
 		//Get all the relationships of the table corresponding to the cube
@@ -100,7 +100,7 @@ public class MondrianCube implements IMondrianCube {
 	 */
 	@Override
 	public List<IMondrianMeasure> getMeasures() {
-		List<IMondrianMeasure> mondrianMeasures = new ArrayList<>();
+		List<IMondrianMeasure> mondrianMeasures = new ArrayList<IMondrianMeasure>();
 		for (Measure measure: cube.getMeasures()){
 			MondrianMeasure mondrianMeasure = new MondrianMeasure(measure);
 			mondrianMeasures.add(mondrianMeasure);

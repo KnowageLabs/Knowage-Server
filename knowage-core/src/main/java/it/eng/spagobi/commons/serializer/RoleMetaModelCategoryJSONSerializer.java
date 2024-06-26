@@ -21,6 +21,7 @@ import java.util.Locale;
 
 import org.json.JSONObject;
 
+import it.eng.spagobi.commons.bo.Role;
 import it.eng.spagobi.commons.bo.RoleMetaModelCategory;
 
 /**
@@ -33,7 +34,6 @@ public class RoleMetaModelCategoryJSONSerializer implements Serializer {
 	
 
 	
-	@Override
 	public Object serialize(Object o, Locale locale) throws SerializationException {
 		JSONObject  result = null;
 		

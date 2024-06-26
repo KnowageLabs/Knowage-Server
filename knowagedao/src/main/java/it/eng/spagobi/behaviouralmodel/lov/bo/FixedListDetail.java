@@ -280,7 +280,7 @@ public class FixedListDetail extends DependenciesPostProcessingLov implements IL
 	 */
 	@Override
 	public Set<String> getParameterNames() throws Exception {
-		Set<String> names = new HashSet<>();
+		Set<String> names = new HashSet<String>();
 		String lovResult = this.toXML();
 		while (lovResult.indexOf(StringUtilities.START_PARAMETER) != -1) {
 			int startind = lovResult.indexOf(StringUtilities.START_PARAMETER);

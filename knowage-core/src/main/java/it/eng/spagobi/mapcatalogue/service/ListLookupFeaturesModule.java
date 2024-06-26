@@ -48,7 +48,6 @@ public class ListLookupFeaturesModule extends AbstractBasicListModule {
 	 * 
 	 * @throws Exception the exception
 	 */
-	@Override
 	public ListIFace getList(SourceBean request, SourceBean response) throws Exception {
 		response.setAttribute("MAP_ID", request.getAttribute("MAP_ID"));
 		return DelegatedHibernateConnectionListService.getList(this, request, response);

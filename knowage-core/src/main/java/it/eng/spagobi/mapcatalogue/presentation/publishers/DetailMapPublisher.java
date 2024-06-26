@@ -50,7 +50,6 @@ public class DetailMapPublisher implements PublisherDispatcherIFace {
 	 * @return A string representing the name of the correct publisher, which will
 	 * call the correct jsp reference.
 	 */
-	@Override
 	public String getPublisherName(RequestContainer requestContainer, ResponseContainer responseContainer) {
 	
 		EMFErrorHandler errorHandler = responseContainer.getErrorHandler();

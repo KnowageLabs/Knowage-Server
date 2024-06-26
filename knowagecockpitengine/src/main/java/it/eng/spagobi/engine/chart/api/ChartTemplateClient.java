@@ -42,7 +42,7 @@ public class ChartTemplateClient extends SimpleRestClient {
 
 		logger.debug("IN");
 
-		Map<String, Object> parameters = new java.util.HashMap<>();
+		Map<String, Object> parameters = new java.util.HashMap<String, Object>();
 		JSONObject jo = new JSONObject();
 		jo.put("jsonTemplate", jsonTemplate.toString());
 		jo.put("docLabel", docLabel);

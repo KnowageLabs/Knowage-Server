@@ -107,7 +107,7 @@ public class AssociativeLogicUtils {
 
 	public static Config buildConfig(String strategy, Pseudograph<String, LabeledEdge<String>> graph, Map<String, Map<String, String>> datasetToAssociations,
 			List<SimpleFilter> selections, Set<String> nearRealtimeDatasets, Map<String, Map<String, String>> datasetParameters, Set<String> documents) {
-		return buildConfig(strategy, graph, datasetToAssociations, selections, new ArrayList<>(), nearRealtimeDatasets, datasetParameters,
+		return buildConfig(strategy, graph, datasetToAssociations, selections, new ArrayList<SimpleFilter>(), nearRealtimeDatasets, datasetParameters,
 				documents);
 	}
 

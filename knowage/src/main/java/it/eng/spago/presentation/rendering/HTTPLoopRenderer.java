@@ -43,7 +43,6 @@ public class HTTPLoopRenderer extends AbstractServletModelRenderer implements Re
 	/* (non-Javadoc)
 	 * @see it.eng.spago.view.AbstractServletModelRenderer#prepareRender(it.eng.spago.dispatching.service.RequestContextIFace, it.eng.spago.presentation.PublisherConfiguration, java.lang.Object)
 	 */
-	@Override
 	public void prepareRender(RequestContextIFace requestContext, PublisherConfiguration publisher, Object additionalResources) throws Exception {
 		super.prepareRender(requestContext, publisher, additionalResources);
 
@@ -97,7 +96,6 @@ public class HTTPLoopRenderer extends AbstractServletModelRenderer implements Re
 	/* (non-Javadoc)
 	 * @see it.eng.spago.view.AbstractServletModelRenderer#render(it.eng.spago.dispatching.service.RequestContextIFace, it.eng.spago.presentation.PublisherConfiguration, java.lang.Object)
 	 */
-	@Override
 	public void render(RequestContextIFace requestContext, PublisherConfiguration publisher, Object additionalResources)
 			throws Exception {
 		RequestContainer requestContainer = requestContext.getRequestContainer();

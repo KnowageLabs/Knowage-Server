@@ -17,14 +17,22 @@
  */
 package it.eng.spagobi.sdk.domains.impl;
 
+import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.commons.bo.Domain;
+import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.engines.config.bo.Engine;
 import it.eng.spagobi.sdk.AbstractSDKService;
+import it.eng.spagobi.sdk.documents.bo.SDKDocument;
 import it.eng.spagobi.sdk.domains.DomainsService;
 import it.eng.spagobi.sdk.domains.bo.SDKDomain;
+import it.eng.spagobi.sdk.engines.EnginesService;
+import it.eng.spagobi.sdk.engines.bo.SDKEngine;
+import it.eng.spagobi.sdk.exceptions.NotAllowedOperationException;
 import it.eng.spagobi.sdk.exceptions.SDKException;
 import it.eng.spagobi.sdk.utilities.SDKObjectsConverter;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -34,40 +42,34 @@ public class DomainsServiceImpl extends AbstractSDKService implements DomainsSer
 
 	private static Logger logger = Logger.getLogger(DomainsServiceImpl.class);
 
-	@Override
 	public boolean insertDomain(SDKDomain sdkDomain) throws SDKException {
 		logger.error("Service not implemented");
 		return false;
 	}
 
-	@Override
 	public boolean updateDomain(SDKDomain sdkDomain) throws SDKException {
 		logger.error("Service not implemented");
 		return false;
 	}
 
-	@Override
 	public SDKDomain getDomainById(Integer valueId) throws SDKException {
 		logger.error("Service not implemented");
 		return null;
 
 	}
 
-	@Override
 	public SDKDomain getDomainByDomainAndValueCd(String domainCd, String valueCd)
 			throws SDKException {
 		logger.error("Service not implemented");
 		return null;
 	}
 
-	@Override
 	public SDKDomain[] getAllDomains() throws SDKException {
 		logger.error("Service not implemented");
 		return null;
 
 	}
 
-	@Override
 	public SDKDomain[] getDomainsListByDomainCd(String domainCd)
 			throws SDKException {
 		SDKDomain[] toReturn = null;

@@ -31,7 +31,7 @@ public class Monitor {
 	static Map<String, Long> activities;
 
 	static {
-		activities = new HashMap<>();
+		activities = new HashMap<String, Long>();
 	}
 
 	public static void start(String activityName) {

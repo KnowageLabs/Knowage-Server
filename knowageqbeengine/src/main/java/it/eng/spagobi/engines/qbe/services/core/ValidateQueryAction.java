@@ -44,7 +44,6 @@ public class ValidateQueryAction extends AbstractQbeEngineAction {
 	
 	public static transient Logger logger = Logger.getLogger(ValidateQueryAction.class);
 	
-	@Override
 	public void service(SourceBean request, SourceBean response) {
 		
 		logger.debug("IN");

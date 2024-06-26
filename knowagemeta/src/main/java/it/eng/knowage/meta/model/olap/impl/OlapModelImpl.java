@@ -36,8 +36,10 @@ import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.util.EObjectContainmentWithInverseEList;
+import org.eclipse.emf.ecore.util.EObjectWithInverseResolvingEList;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.ecore.util.InternalEList;
+import org.eclipse.emf.ecore.impl.EObjectImpl;
 
 /**
  * <!-- begin-user-doc -->
@@ -108,7 +110,6 @@ public class OlapModelImpl extends ModelObjectImpl implements OlapModel {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public Model getParentModel() {
 		if (eContainerFeatureID() != OlapModelPackage.OLAP_MODEL__PARENT_MODEL) return null;
 		return (Model)eContainer();
@@ -129,7 +130,6 @@ public class OlapModelImpl extends ModelObjectImpl implements OlapModel {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public void setParentModel(Model newParentModel) {
 		if (newParentModel != eInternalContainer() || (eContainerFeatureID() != OlapModelPackage.OLAP_MODEL__PARENT_MODEL && newParentModel != null)) {
 			if (EcoreUtil.isAncestor(this, newParentModel))
@@ -151,10 +151,9 @@ public class OlapModelImpl extends ModelObjectImpl implements OlapModel {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public EList<Cube> getCubes() {
 		if (cubes == null) {
-			cubes = new EObjectContainmentWithInverseEList<>(Cube.class, this, OlapModelPackage.OLAP_MODEL__CUBES, OlapModelPackage.CUBE__MODEL);
+			cubes = new EObjectContainmentWithInverseEList<Cube>(Cube.class, this, OlapModelPackage.OLAP_MODEL__CUBES, OlapModelPackage.CUBE__MODEL);
 		}
 		return cubes;
 	}
@@ -164,10 +163,9 @@ public class OlapModelImpl extends ModelObjectImpl implements OlapModel {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public EList<VirtualCube> getVirtualCubes() {
 		if (virtualCubes == null) {
-			virtualCubes = new EObjectContainmentWithInverseEList<>(VirtualCube.class, this, OlapModelPackage.OLAP_MODEL__VIRTUAL_CUBES, OlapModelPackage.VIRTUAL_CUBE__MODEL);
+			virtualCubes = new EObjectContainmentWithInverseEList<VirtualCube>(VirtualCube.class, this, OlapModelPackage.OLAP_MODEL__VIRTUAL_CUBES, OlapModelPackage.VIRTUAL_CUBE__MODEL);
 		}
 		return virtualCubes;
 	}
@@ -177,10 +175,9 @@ public class OlapModelImpl extends ModelObjectImpl implements OlapModel {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public EList<Dimension> getDimensions() {
 		if (dimensions == null) {
-			dimensions = new EObjectContainmentWithInverseEList<>(Dimension.class, this, OlapModelPackage.OLAP_MODEL__DIMENSIONS, OlapModelPackage.DIMENSION__MODEL);
+			dimensions = new EObjectContainmentWithInverseEList<Dimension>(Dimension.class, this, OlapModelPackage.OLAP_MODEL__DIMENSIONS, OlapModelPackage.DIMENSION__MODEL);
 		}
 		return dimensions;
 	}

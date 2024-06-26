@@ -75,7 +75,7 @@ public class AbstractDataMartProviderConfigurator {
 		}
 
 		if (confSB != null) {
-			Map<String, HierarchyMember> hierarchyMembers = new HashMap<>();
+			Map<String, HierarchyMember> hierarchyMembers = new HashMap<String, HierarchyMember>();
 
 			String selectedHierarchyName = null;
 			String selectedMemberName = null;
@@ -302,7 +302,7 @@ public class AbstractDataMartProviderConfigurator {
 	 */
 	private static Map<String, HierarchyMember> getHierarchyMembers(SourceBean confSB, Map env) {
 
-		Map<String, HierarchyMember> toReturn = new HashMap<>();
+		Map<String, HierarchyMember> toReturn = new HashMap<String, HierarchyMember>();
 		SourceBean hierarchySB = (SourceBean) confSB.getAttribute("HIERARCHY");
 		SourceBean memberSB = null;
 

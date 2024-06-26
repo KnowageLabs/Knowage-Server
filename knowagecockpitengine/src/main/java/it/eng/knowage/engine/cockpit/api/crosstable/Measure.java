@@ -39,7 +39,6 @@ public class Measure extends Field {
 		return function;
 	}
 	
-	@Override
 	public JSONObject getConfig () {
 		return config;
 	}

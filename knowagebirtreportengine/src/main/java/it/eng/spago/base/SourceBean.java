@@ -190,8 +190,7 @@ public class SourceBean
      * <p>
      * @return una copia <em>non profonda</em> del <code>SourceBean</code> stesso
      */
-    @Override
-	public CloneableObject cloneObject() {
+    public CloneableObject cloneObject() {
         SourceBean clonedObject = null;
         try {
             clonedObject = new SourceBean(this);
@@ -1431,8 +1430,7 @@ public class SourceBean
      * Ritorna un oggetto di tipo Element che verrࡵtilizzato nella rappresentazione in XML dell'oggetto.
      * @return <code>Document<code> un oggetto di tipo Document.
      */
-    @Override
-	public Element toElement(Document document, XMLSerializer serializer) {
+    public Element toElement(Document document, XMLSerializer serializer) {
     	if(_upperCase)
     		_sourceBeanName = _sourceBeanName.toUpperCase();
     	Element element = document.createElement(_sourceBeanName);

@@ -49,7 +49,7 @@ public class MondrianHierarchy implements IMondrianHierarchy {
 	 */
 	@Override
 	public List<IMondrianLevel> getLevels() {
-		List<IMondrianLevel> levels = new ArrayList<>();
+		List<IMondrianLevel> levels = new ArrayList<IMondrianLevel>();
 		
 		for(Level level: hierarchy.getLevels()){
 			IMondrianLevel mondrianLevel = new MondrianLevel(level);

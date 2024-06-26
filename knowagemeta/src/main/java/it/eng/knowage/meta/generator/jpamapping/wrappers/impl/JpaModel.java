@@ -71,7 +71,7 @@ public class JpaModel {
 	private List<IJpaTable> wrapTables(List<BusinessTable> tables) {
 		List<IJpaTable> jpaTables;
 		
-		jpaTables = new ArrayList<>();
+		jpaTables = new ArrayList<IJpaTable>();
 		for(BusinessTable table : tables) {
 			if (table.getPhysicalTable()!=null)
 				jpaTables.add( new JpaTable(table) );
@@ -83,7 +83,7 @@ public class JpaModel {
 	private List<IJpaView> wrapViews(List<BusinessView> views) {
 		List<IJpaView> jpaViews;
 		
-		jpaViews = new ArrayList<>();
+		jpaViews = new ArrayList<IJpaView>();
 		for(BusinessView view : views) {
 			jpaViews.add(  new JpaView(view) );
 		}

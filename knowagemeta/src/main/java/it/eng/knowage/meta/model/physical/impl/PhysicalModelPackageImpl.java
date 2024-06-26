@@ -166,7 +166,6 @@ public class PhysicalModelPackageImpl extends EPackageImpl implements PhysicalMo
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public EClass getPhysicalColumn() {
 		return physicalColumnEClass;
 	}
@@ -176,7 +175,6 @@ public class PhysicalModelPackageImpl extends EPackageImpl implements PhysicalMo
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public EAttribute getPhysicalColumn_Comment() {
 		return (EAttribute)physicalColumnEClass.getEStructuralFeatures().get(0);
 	}
@@ -186,7 +184,6 @@ public class PhysicalModelPackageImpl extends EPackageImpl implements PhysicalMo
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public EAttribute getPhysicalColumn_DataType() {
 		return (EAttribute)physicalColumnEClass.getEStructuralFeatures().get(1);
 	}
@@ -196,7 +193,6 @@ public class PhysicalModelPackageImpl extends EPackageImpl implements PhysicalMo
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public EAttribute getPhysicalColumn_TypeName() {
 		return (EAttribute)physicalColumnEClass.getEStructuralFeatures().get(2);
 	}
@@ -206,7 +202,6 @@ public class PhysicalModelPackageImpl extends EPackageImpl implements PhysicalMo
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public EAttribute getPhysicalColumn_Size() {
 		return (EAttribute)physicalColumnEClass.getEStructuralFeatures().get(3);
 	}
@@ -216,7 +211,6 @@ public class PhysicalModelPackageImpl extends EPackageImpl implements PhysicalMo
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public EAttribute getPhysicalColumn_OctectLength() {
 		return (EAttribute)physicalColumnEClass.getEStructuralFeatures().get(4);
 	}
@@ -226,7 +220,6 @@ public class PhysicalModelPackageImpl extends EPackageImpl implements PhysicalMo
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public EAttribute getPhysicalColumn_DecimalDigits() {
 		return (EAttribute)physicalColumnEClass.getEStructuralFeatures().get(5);
 	}
@@ -236,7 +229,6 @@ public class PhysicalModelPackageImpl extends EPackageImpl implements PhysicalMo
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public EAttribute getPhysicalColumn_Radix() {
 		return (EAttribute)physicalColumnEClass.getEStructuralFeatures().get(6);
 	}
@@ -246,7 +238,6 @@ public class PhysicalModelPackageImpl extends EPackageImpl implements PhysicalMo
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public EAttribute getPhysicalColumn_DefaultValue() {
 		return (EAttribute)physicalColumnEClass.getEStructuralFeatures().get(7);
 	}
@@ -256,7 +247,6 @@ public class PhysicalModelPackageImpl extends EPackageImpl implements PhysicalMo
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public EAttribute getPhysicalColumn_Nullable() {
 		return (EAttribute)physicalColumnEClass.getEStructuralFeatures().get(8);
 	}
@@ -266,7 +256,6 @@ public class PhysicalModelPackageImpl extends EPackageImpl implements PhysicalMo
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public EAttribute getPhysicalColumn_Position() {
 		return (EAttribute)physicalColumnEClass.getEStructuralFeatures().get(9);
 	}
@@ -276,7 +265,6 @@ public class PhysicalModelPackageImpl extends EPackageImpl implements PhysicalMo
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public EReference getPhysicalColumn_Table() {
 		return (EReference)physicalColumnEClass.getEStructuralFeatures().get(10);
 	}
@@ -286,7 +274,6 @@ public class PhysicalModelPackageImpl extends EPackageImpl implements PhysicalMo
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public EClass getPhysicalForeignKey() {
 		return physicalForeignKeyEClass;
 	}
@@ -296,7 +283,6 @@ public class PhysicalModelPackageImpl extends EPackageImpl implements PhysicalMo
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public EAttribute getPhysicalForeignKey_SourceName() {
 		return (EAttribute)physicalForeignKeyEClass.getEStructuralFeatures().get(2);
 	}
@@ -306,7 +292,6 @@ public class PhysicalModelPackageImpl extends EPackageImpl implements PhysicalMo
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public EReference getPhysicalForeignKey_SourceTable() {
 		return (EReference)physicalForeignKeyEClass.getEStructuralFeatures().get(0);
 	}
@@ -316,7 +301,6 @@ public class PhysicalModelPackageImpl extends EPackageImpl implements PhysicalMo
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public EReference getPhysicalForeignKey_SourceColumns() {
 		return (EReference)physicalForeignKeyEClass.getEStructuralFeatures().get(1);
 	}
@@ -326,7 +310,6 @@ public class PhysicalModelPackageImpl extends EPackageImpl implements PhysicalMo
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public EAttribute getPhysicalForeignKey_DestinationName() {
 		return (EAttribute)physicalForeignKeyEClass.getEStructuralFeatures().get(3);
 	}
@@ -336,7 +319,6 @@ public class PhysicalModelPackageImpl extends EPackageImpl implements PhysicalMo
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public EReference getPhysicalForeignKey_DestinationTable() {
 		return (EReference)physicalForeignKeyEClass.getEStructuralFeatures().get(4);
 	}
@@ -346,7 +328,6 @@ public class PhysicalModelPackageImpl extends EPackageImpl implements PhysicalMo
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public EReference getPhysicalForeignKey_DestinationColumns() {
 		return (EReference)physicalForeignKeyEClass.getEStructuralFeatures().get(5);
 	}
@@ -356,7 +337,6 @@ public class PhysicalModelPackageImpl extends EPackageImpl implements PhysicalMo
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public EReference getPhysicalForeignKey_Model() {
 		return (EReference)physicalForeignKeyEClass.getEStructuralFeatures().get(6);
 	}
@@ -366,7 +346,6 @@ public class PhysicalModelPackageImpl extends EPackageImpl implements PhysicalMo
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public EClass getPhysicalModel() {
 		return physicalModelEClass;
 	}
@@ -376,7 +355,6 @@ public class PhysicalModelPackageImpl extends EPackageImpl implements PhysicalMo
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public EAttribute getPhysicalModel_DatabaseName() {
 		return (EAttribute)physicalModelEClass.getEStructuralFeatures().get(0);
 	}
@@ -386,7 +364,6 @@ public class PhysicalModelPackageImpl extends EPackageImpl implements PhysicalMo
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public EAttribute getPhysicalModel_DatabaseVersion() {
 		return (EAttribute)physicalModelEClass.getEStructuralFeatures().get(1);
 	}
@@ -396,7 +373,6 @@ public class PhysicalModelPackageImpl extends EPackageImpl implements PhysicalMo
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public EAttribute getPhysicalModel_Catalog() {
 		return (EAttribute)physicalModelEClass.getEStructuralFeatures().get(2);
 	}
@@ -406,7 +382,6 @@ public class PhysicalModelPackageImpl extends EPackageImpl implements PhysicalMo
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public EAttribute getPhysicalModel_Schema() {
 		return (EAttribute)physicalModelEClass.getEStructuralFeatures().get(3);
 	}
@@ -416,7 +391,6 @@ public class PhysicalModelPackageImpl extends EPackageImpl implements PhysicalMo
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public EReference getPhysicalModel_ParentModel() {
 		return (EReference)physicalModelEClass.getEStructuralFeatures().get(4);
 	}
@@ -426,7 +400,6 @@ public class PhysicalModelPackageImpl extends EPackageImpl implements PhysicalMo
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public EReference getPhysicalModel_Tables() {
 		return (EReference)physicalModelEClass.getEStructuralFeatures().get(5);
 	}
@@ -436,7 +409,6 @@ public class PhysicalModelPackageImpl extends EPackageImpl implements PhysicalMo
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public EReference getPhysicalModel_PrimaryKeys() {
 		return (EReference)physicalModelEClass.getEStructuralFeatures().get(6);
 	}
@@ -446,7 +418,6 @@ public class PhysicalModelPackageImpl extends EPackageImpl implements PhysicalMo
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public EReference getPhysicalModel_ForeignKeys() {
 		return (EReference)physicalModelEClass.getEStructuralFeatures().get(7);
 	}
@@ -456,7 +427,6 @@ public class PhysicalModelPackageImpl extends EPackageImpl implements PhysicalMo
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public EClass getPhysicalPrimaryKey() {
 		return physicalPrimaryKeyEClass;
 	}
@@ -466,7 +436,6 @@ public class PhysicalModelPackageImpl extends EPackageImpl implements PhysicalMo
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public EReference getPhysicalPrimaryKey_Model() {
 		return (EReference)physicalPrimaryKeyEClass.getEStructuralFeatures().get(0);
 	}
@@ -476,7 +445,6 @@ public class PhysicalModelPackageImpl extends EPackageImpl implements PhysicalMo
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public EReference getPhysicalPrimaryKey_Table() {
 		return (EReference)physicalPrimaryKeyEClass.getEStructuralFeatures().get(1);
 	}
@@ -486,7 +454,6 @@ public class PhysicalModelPackageImpl extends EPackageImpl implements PhysicalMo
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public EReference getPhysicalPrimaryKey_Columns() {
 		return (EReference)physicalPrimaryKeyEClass.getEStructuralFeatures().get(2);
 	}
@@ -496,7 +463,6 @@ public class PhysicalModelPackageImpl extends EPackageImpl implements PhysicalMo
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public EClass getPhysicalTable() {
 		return physicalTableEClass;
 	}
@@ -506,7 +472,6 @@ public class PhysicalModelPackageImpl extends EPackageImpl implements PhysicalMo
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public EAttribute getPhysicalTable_Comment() {
 		return (EAttribute)physicalTableEClass.getEStructuralFeatures().get(0);
 	}
@@ -516,7 +481,6 @@ public class PhysicalModelPackageImpl extends EPackageImpl implements PhysicalMo
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public EAttribute getPhysicalTable_Type() {
 		return (EAttribute)physicalTableEClass.getEStructuralFeatures().get(1);
 	}
@@ -526,7 +490,6 @@ public class PhysicalModelPackageImpl extends EPackageImpl implements PhysicalMo
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public EReference getPhysicalTable_Model() {
 		return (EReference)physicalTableEClass.getEStructuralFeatures().get(2);
 	}
@@ -536,7 +499,6 @@ public class PhysicalModelPackageImpl extends EPackageImpl implements PhysicalMo
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public EReference getPhysicalTable_Columns() {
 		return (EReference)physicalTableEClass.getEStructuralFeatures().get(3);
 	}
@@ -546,7 +508,6 @@ public class PhysicalModelPackageImpl extends EPackageImpl implements PhysicalMo
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
 	public PhysicalModelFactory getPhysicalModelFactory() {
 		return (PhysicalModelFactory)getEFactoryInstance();
 	}

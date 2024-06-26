@@ -57,7 +57,7 @@ public class QbeExecutionClient extends SimpleRestClient {
 		logger.debug("IN");
 		Response clientResponse;
 		String jsonResponse = null;
-		Map<String, Object> queryParams = new HashMap<>();
+		Map<String, Object> queryParams = new HashMap<String, Object>();
 		queryParams.put("DOMAIN_TYPE", "DS_SCOPE");
 		try {
 			logger.debug("executing get service to get domain's scope");

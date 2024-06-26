@@ -34,13 +34,11 @@ import org.jfree.data.statistics.BoxAndWhiskerCategoryDataset;
 
 public class SimpleBox extends BoxCharts {
 
-	@Override
 	public DatasetMap calculateValue() throws Exception {
 		// TODO Auto-generated method stub
 		return super.calculateValue();
 	}
 
-	@Override
 	public void configureChart(SourceBean content) {
 		// TODO Auto-generated method stub
 		super.configureChart(content);
@@ -48,7 +46,6 @@ public class SimpleBox extends BoxCharts {
 
 
 
-	@Override
 	public JFreeChart createChart(DatasetMap datasetMap) {
 
 		BoxAndWhiskerCategoryDataset dataset=(BoxAndWhiskerCategoryDataset)datasetMap.getDatasets().get("1"); 
@@ -86,7 +83,6 @@ public class SimpleBox extends BoxCharts {
 
 
 
-	@Override
 	public Dataset filterDataset(Dataset dataset, HashMap categories,
 			int catSelected, int numberCatsVisualization) {
 		// TODO Auto-generated method stub

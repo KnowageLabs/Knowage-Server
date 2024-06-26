@@ -17,8 +17,19 @@
  */
 package it.eng.spagobi.commons.deserializer;
 
+import it.eng.spago.base.SourceBean;
+import it.eng.spago.base.SourceBeanAttribute;
+import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.engines.config.bo.Engine;
+import it.eng.spagobi.tools.scheduler.bo.Job;
 import it.eng.spagobi.utilities.assertion.Assert;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.log4j.Logger;
 import org.json.JSONObject;
 
@@ -49,7 +60,6 @@ public class EngineJSONDeserializer implements Deserializer {
 
 	private static Logger logger = Logger.getLogger(EngineJSONDeserializer.class);
 	  
-	@Override
 	public Object deserialize(Object o, Class clazz) throws DeserializationException {
 		
 		Engine engine;

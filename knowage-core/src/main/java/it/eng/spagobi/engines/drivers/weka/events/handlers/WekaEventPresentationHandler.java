@@ -28,6 +28,7 @@ import it.eng.spago.base.SourceBean;
 import it.eng.spago.base.SourceBeanException;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
+import it.eng.spagobi.analiticalmodel.document.dao.BIObjectDAOHibImpl;
 import it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO;
 import it.eng.spagobi.analiticalmodel.document.dao.SubreportDAOHibImpl;
 import it.eng.spagobi.commons.bo.Subreport;
@@ -53,7 +54,6 @@ public class WekaEventPresentationHandler implements IEventPresentationHandler {
 	private static transient Logger logger = Logger.getLogger(WekaEventPresentationHandler.class);
 	
 	
-	@Override
 	public void loadEventInfo(EventLog event, SourceBean response) throws SourceBeanException, EMFUserError {
 		Map eventParams;
 		String startEventId;

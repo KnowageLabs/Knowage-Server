@@ -83,7 +83,7 @@ public class QbeDataSourceManager {
 			
 		MetamodelServiceProxy metamodelProxy = (MetamodelServiceProxy)dataSourceProperties.get("metadataServiceProxy");
 		DefaultEngineDatamartRetriever jarFileRetriever = new DefaultEngineDatamartRetriever(metamodelProxy);
-		List<File> modelJarFiles = new ArrayList<>();
+		List<File> modelJarFiles = new ArrayList<File>();
 		for(int i = 0; i < dataMartNames.size(); i++) {
 			modelJarFile = jarFileRetriever.retrieveDatamartFile(dataMartNames.get(i));
 			modelJarFiles.add(modelJarFile);

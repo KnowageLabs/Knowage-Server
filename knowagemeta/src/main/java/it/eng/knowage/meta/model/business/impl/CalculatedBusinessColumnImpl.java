@@ -69,7 +69,7 @@ public class CalculatedBusinessColumnImpl extends BusinessColumnImpl implements 
 
 	@Override
 	public Set<SimpleBusinessColumn> getReferencedColumns() throws KnowageMetaException {
-		Set<SimpleBusinessColumn> columnsReferenced = new HashSet<>();
+		Set<SimpleBusinessColumn> columnsReferenced = new HashSet<SimpleBusinessColumn>();
 		BusinessColumnSet businessColumnSet = this.getTable();
 
 		// get Expression String

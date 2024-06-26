@@ -35,32 +35,26 @@ public abstract class AbstractJpaRelationship implements IJpaRelationship {
 	
 	
 	
-	@Override
 	public boolean isBidirectional() {
 		return bidirectional;
 	}
 
-	@Override
 	public String getCardinality() {
 		return cardinality;
 	}
 
-	@Override
 	public boolean isOneToMany() {
 		return JpaRelationship.ONE_TO_MANY.equals( cardinality ) || JpaRelationship.OPTIONAL_ONE_TO_MANY.equals( cardinality ) ||  JpaRelationship.ONE_TO_OPTIONAL_MANY.equals( cardinality );
 	}
 	
-	@Override
 	public boolean isOneToOne() {
 		return JpaRelationship.ONE_TO_ONE.equals( cardinality ) || JpaRelationship.OPTIONAL_ONE_TO_ONE.equals( cardinality ) ||  JpaRelationship.ONE_TO_OPTIONAL_ONE.equals( cardinality );
 	}
 	
-	@Override
 	public boolean isManyToMany() {
 		return JpaRelationship.MANY_TO_MANY.equals( cardinality );
 	}
 	
-	@Override
 	public String getDescription()  {
 		if (isBidirectional()){
 			return "Bidirectional " +  getCardinality() + " association to " + getReferencedTable().getClassName();	
@@ -69,7 +63,6 @@ public abstract class AbstractJpaRelationship implements IJpaRelationship {
 		}
 	}
 	
-	@Override
 	public AbstractJpaTable getJpaTable() {
 		return jpaTable;
 	}
@@ -77,14 +70,12 @@ public abstract class AbstractJpaRelationship implements IJpaRelationship {
 	/**
 	 * @return the name of the metod GETTER
 	 */
-	@Override
 	public String getGetter(String par) {
 		return "get"+StringUtils.initUpper(par);
 	}
 	/**
 	 * @return the name of the metod SETTER
 	 */
-	@Override
 	public String getSetter(String par) {
 		return "set"+StringUtils.initUpper(par);
 	}
@@ -97,7 +88,7 @@ public abstract class AbstractJpaRelationship implements IJpaRelationship {
 	private String genCascades() {
 		
         //List cascades = StringUtil.strToList(role.getCascade(), ',', true);
-		List<String> cascades = new ArrayList<>();
+		List<String> cascades = new ArrayList<String>();
 		cascades.add("all");
 
         StringBuffer buffer = new StringBuffer();
@@ -105,7 +96,7 @@ public abstract class AbstractJpaRelationship implements IJpaRelationship {
         int i = 0;
         for(int n = cascades.size(); i < n; i++)
         {
-            String cascade = cascades.get(i);
+            String cascade = (String)cascades.get(i);
             String enumStr;
             if(cascade.equals("all"))
                 enumStr = "CascadeType.ALL";
@@ -186,7 +177,6 @@ public abstract class AbstractJpaRelationship implements IJpaRelationship {
 	    /**
 		 * @return
 		 */
-		@Override
 		public String getCollectionType(){
 			
 			return "java.util.Set";
@@ -194,13 +184,11 @@ public abstract class AbstractJpaRelationship implements IJpaRelationship {
 		
 		//protected abstract String getOppositeRoleName();
 		
-		@Override
 		public String getOppositeWithAnnotation(){
 			return appendAnnotation("", "mappedBy", getOppositeRoleName(),true);
 
 		}
 		
-		@Override
 		public String getOppositeOneToOneWithAnnotation(){
 			return appendAnnotation("", "mappedBy", getBidirectionalPropertyName(),true);
 
