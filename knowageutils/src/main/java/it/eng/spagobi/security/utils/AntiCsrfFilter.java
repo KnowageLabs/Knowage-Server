@@ -50,11 +50,13 @@ public class AntiCsrfFilter  implements Filter{
 		  HttpServletRequest req =   ((HttpServletRequest)request);
 		  Cookie[] cookies= req.getCookies();
 		  boolean cFound = false;
-		  for(Cookie cookie : cookies) {
-			if(cookie.getName().equals(csrfTokenName)) {
-				cFound = true;
-				cookieVal = cookie.getValue();
-			}
+		  if(cookies != null) {
+			  for(Cookie cookie : cookies) {
+				if(cookie.getName().equals(csrfTokenName)) {
+					cFound = true;
+					cookieVal = cookie.getValue();
+				}
+			  }
 		  }
 		  paramVal = req.getHeader(csrfTokenName);
 		
