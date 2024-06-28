@@ -42,7 +42,7 @@ if(session.getAttribute(SpagoBIConstants.BACK_URL)!=null){
 	backUrlB=true;
 }
 
-IEngUserProfile profile = (IEngUserProfile) sesssion.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+IEngUserProfile profile = (IEngUserProfile) session.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 if (profile != null) {
 	HashMap<String, String> logParam = new HashMap<String, String>();
 	logParam.put("USER", profile.toString());
