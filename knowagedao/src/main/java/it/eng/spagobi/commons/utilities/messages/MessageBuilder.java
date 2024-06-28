@@ -21,6 +21,7 @@ import java.util.Locale;
 import java.util.Locale.Builder;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -212,7 +213,11 @@ public class MessageBuilder implements IMessageBuilder, IEngineMessageBuilder {
 	public Locale getLocale(HttpServletRequest request) {
 		logger.debug("IN");
 		String sbiMode = getSpagoBIMode(request);
-		UserProfile profile = (UserProfile) request.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+		UserProfile profile = null;
+		HttpSession session = request.getSession();
+		if (session != null) {
+			profile = (UserProfile) session.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+		}
 		Locale locale = null;
 		if (sbiMode.equalsIgnoreCase("WEB")) {
 			String language = null;
