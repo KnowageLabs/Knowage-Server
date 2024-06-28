@@ -30,10 +30,20 @@ public class KnowageCaptchaServlet extends HttpServlet {
 		int width = 200;
 		int height = 50;
 
-		if (getInitParameter("height") != null)
-			height = Integer.valueOf(getInitParameter("height")).intValue();
-		if (getInitParameter("width") != null)
-			width = Integer.valueOf(getInitParameter("width")).intValue();
+		if (getInitParameter("height") != null) {
+			try {
+				height = Integer.parseInt(getInitParameter("height"));
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		if (getInitParameter("width") != null) {
+			try {
+				width = Integer.parseInt(getInitParameter("width"));
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
 
 		ImageCaptcha imageCaptcha = new ImageCaptcha.Builder(width, height).addContent().addBackground().addFilter(new FishEyeImageFilter()).addBackground()
 				.build();
