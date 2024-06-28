@@ -81,7 +81,6 @@ public class LoggerSetupFilter implements Filter {
 
 	private void preDoFilterForCorrelationId(HttpServletRequest httpRequest, HttpServletResponse httpResponse) {
 
-		String jSessionId = String.valueOf(httpRequest.getRequestedSessionId());
 		String header1 = httpRequest.getHeader(HTTP_HEADER_NGINX_CORRELATION_ID);
 		String header2 = httpRequest.getHeader(HTTP_HEADER_X_KN_CORRELATION_ID);
 		String correlationId = null;
