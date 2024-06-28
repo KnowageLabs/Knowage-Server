@@ -164,7 +164,7 @@ commented by Davide Zerbetto on 12/10/2009: there are problems with MIF (Ext Man
 	}
 	}
 	
-	IEngUserProfile userProfile = (IEngUserProfile)permanentSession.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+	IEngUserProfile userProfile = (IEngUserProfile) session.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 	
 	String userUniqueIdentifier="";
 	String userId="";

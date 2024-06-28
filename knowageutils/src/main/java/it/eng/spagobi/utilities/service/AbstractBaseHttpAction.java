@@ -388,9 +388,8 @@ public abstract class AbstractBaseHttpAction extends AbstractHttpAction {
 		getSpagoBIHttpSessionContainer().set(attrName, attrValue);
 	}
 
-	protected void storeProfileInSession(UserProfile userProfile, SessionContainer permanentContainer, HttpSession httpSession) {
+	protected void storeProfileInSession(UserProfile userProfile, HttpSession httpSession) {
 		logger.debug("IN");
-		permanentContainer.setAttribute(IEngUserProfile.ENG_USER_PROFILE, userProfile);
 		httpSession.setAttribute(IEngUserProfile.ENG_USER_PROFILE, userProfile);
 		logger.debug("OUT");
 	}

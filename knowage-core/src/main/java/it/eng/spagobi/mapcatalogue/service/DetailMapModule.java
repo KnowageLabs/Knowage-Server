@@ -17,9 +17,20 @@
  */
 package it.eng.spagobi.mapcatalogue.service;
 
-import it.eng.spago.base.RequestContainer;
-import it.eng.spago.base.ResponseContainer;
-import it.eng.spago.base.SessionContainer;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Vector;
+
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.commons.fileupload.FileItem;
+import org.apache.log4j.Logger;
+
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.base.SourceBeanException;
 import it.eng.spago.dispatching.module.AbstractHttpModule;
@@ -43,24 +54,11 @@ import it.eng.spagobi.mapcatalogue.dao.ISbiGeoFeaturesDAO;
 import it.eng.spagobi.mapcatalogue.dao.ISbiGeoMapFeaturesDAO;
 import it.eng.spagobi.mapcatalogue.dao.ISbiGeoMapsDAO;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Vector;
-
-import javax.servlet.ServletOutputStream;
-import javax.servlet.http.HttpServletResponse;
-
-import org.apache.commons.fileupload.FileItem;
-import org.apache.log4j.Logger;
-
 /**
  * Spago Module which executes the map producing request
  */
 public class DetailMapModule extends AbstractHttpModule {
+
 	public static final String MODULE_PAGE = "DetailMapPage";
 	public static final String MOD_SAVE = "SAVE";
 	public static final String MOD_SAVEBACK = "SAVEBACK";
@@ -81,13 +79,10 @@ public class DetailMapModule extends AbstractHttpModule {
 	 * <li>message: a message which contains the type of the request</li>
 	 * </ul>
 	 *
-	 * @param serviceRequest
-	 *            the Spago request SourceBean
-	 * @param serviceResponse
-	 *            the Spago response SourceBean
+	 * @param serviceRequest  the Spago request SourceBean
+	 * @param serviceResponse the Spago response SourceBean
 	 *
-	 * @throws Exception
-	 *             the exception
+	 * @throws Exception the exception
 	 */
 	@Override
 	public void service(SourceBean serviceRequest, SourceBean serviceResponse) throws Exception {
@@ -142,8 +137,7 @@ public class DetailMapModule extends AbstractHttpModule {
 	/**
 	 * sends an error message to the client
 	 *
-	 * @param out
-	 *            The servlet output stream
+	 * @param out The servlet output stream
 	 */
 	private void sendError(ServletOutputStream out) {
 		try {
@@ -161,12 +155,9 @@ public class DetailMapModule extends AbstractHttpModule {
 	 * Gets the detail of an map choosed by the user from the maps list. It reaches the key from the request and asks to the DB all detail map information, by
 	 * calling the method <code>loadMapByID</code>.
 	 *
-	 * @param key
-	 *            The choosed map id key
-	 * @param response
-	 *            The response Source Bean
-	 * @throws EMFUserError
-	 *             If an exception occurs
+	 * @param key      The choosed map id key
+	 * @param response The response Source Bean
+	 * @throws EMFUserError If an exception occurs
 	 */
 	private void getDetailMap(SourceBean request, SourceBean response) throws EMFUserError {
 		try {
@@ -191,23 +182,14 @@ public class DetailMapModule extends AbstractHttpModule {
 	 * Inserts/Modifies the detail of an map according to the user request. When a map is modified, the <code>modifyMap</code> method is called; when a new map
 	 * is added, the <code>insertMap</code>method is called. These two cases are differentiated by the <code>mod</code> String input value .
 	 *
-	 * @param request
-	 *            The request information contained in a SourceBean Object
-	 * @param mod
-	 *            A request string used to differentiate insert/modify operations
-	 * @param response
-	 *            The response SourceBean
-	 * @throws EMFUserError
-	 *             If an exception occurs
-	 * @throws SourceBeanException
-	 *             If a SourceBean exception occurs
+	 * @param request  The request information contained in a SourceBean Object
+	 * @param mod      A request string used to differentiate insert/modify operations
+	 * @param response The response SourceBean
+	 * @throws EMFUserError        If an exception occurs
+	 * @throws SourceBeanException If a SourceBean exception occurs
 	 */
 	private void modDetailMap(SourceBean serviceRequest, String mod, SourceBean serviceResponse) throws EMFUserError, SourceBeanException {
-		RequestContainer requestContainer = this.getRequestContainer();
-		ResponseContainer responseContainer = this.getResponseContainer();
-		SessionContainer session = requestContainer.getSessionContainer();
-		SessionContainer permanentSession = session.getPermanentContainer();
-		IEngUserProfile profile = (IEngUserProfile) permanentSession.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+		IEngUserProfile profile = (IEngUserProfile) this.getHttpRequest().getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 		try {
 
 			ISbiGeoMapsDAO daoGeoMaps = DAOFactory.getSbiGeoMapsDAO();
@@ -346,22 +328,14 @@ public class DetailMapModule extends AbstractHttpModule {
 	/**
 	 * Deletes a map choosed by user from the maps list.
 	 *
-	 * @param request
-	 *            The request SourceBean
-	 * @param mod
-	 *            A request string used to differentiate delete operation
-	 * @param response
-	 *            The response SourceBean
-	 * @throws EMFUserError
-	 *             If an Exception occurs
-	 * @throws SourceBeanException
-	 *             If a SourceBean Exception occurs
+	 * @param request  The request SourceBean
+	 * @param mod      A request string used to differentiate delete operation
+	 * @param response The response SourceBean
+	 * @throws EMFUserError        If an Exception occurs
+	 * @throws SourceBeanException If a SourceBean Exception occurs
 	 */
 	private void delDetailMap(SourceBean request, String mod, SourceBean response) throws EMFUserError, SourceBeanException {
-		RequestContainer reqCont = getRequestContainer();
-		SessionContainer sessCont = reqCont.getSessionContainer();
-		SessionContainer permSess = sessCont.getPermanentContainer();
-		IEngUserProfile profile = (IEngUserProfile) permSess.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+		IEngUserProfile profile = (IEngUserProfile) this.getHttpRequest().getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 		HashMap<String, String> logParam = new HashMap();
 
 		try {
@@ -414,22 +388,14 @@ public class DetailMapModule extends AbstractHttpModule {
 	/**
 	 * Inserts a relation between the map and the feature selected
 	 *
-	 * @param request
-	 *            The request SourceBean
-	 * @param mod
-	 *            A request string used to differentiate delete operation
-	 * @param response
-	 *            The response SourceBean
-	 * @throws EMFUserError
-	 *             If an Exception occurs
-	 * @throws SourceBeanException
-	 *             If a SourceBean Exception occurs
+	 * @param request  The request SourceBean
+	 * @param mod      A request string used to differentiate delete operation
+	 * @param response The response SourceBean
+	 * @throws EMFUserError        If an Exception occurs
+	 * @throws SourceBeanException If a SourceBean Exception occurs
 	 */
 	private void insRelMapFeature(SourceBean request, SourceBean response) throws EMFUserError, SourceBeanException {
-		RequestContainer reqCont = getRequestContainer();
-		SessionContainer sessCont = reqCont.getSessionContainer();
-		SessionContainer permSess = sessCont.getPermanentContainer();
-		IEngUserProfile profile = (IEngUserProfile) permSess.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+		IEngUserProfile profile = (IEngUserProfile) this.getHttpRequest().getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 		HashMap<String, String> logParam = new HashMap();
 		try {
 			ISbiGeoMapFeaturesDAO dao = DAOFactory.getSbiGeoMapFeaturesDAO();
@@ -510,13 +476,10 @@ public class DetailMapModule extends AbstractHttpModule {
 	}
 
 	/**
-	 * Instantiates a new <code>map<code> object when a new map insertion is required, in order
-	 * to prepare the page for the insertion.
+	 * Instantiates a new <code>map<code> object when a new map insertion is required, in order to prepare the page for the insertion.
 	 *
-	 * @param response
-	 *            The response SourceBean
-	 * @throws EMFUserError
-	 *             If an Exception occurred
+	 * @param response The response SourceBean
+	 * @throws EMFUserError If an Exception occurred
 	 */
 
 	private void newDetailMap(SourceBean response) throws EMFUserError {
@@ -642,7 +605,7 @@ public class DetailMapModule extends AbstractHttpModule {
 					dao.setUserProfile(profile);
 					dao.insertMapFeatures(mapFeature);
 				}
-			}// for
+			} // for
 			return lstFeatures;
 		} catch (EMFUserError eu) {
 			throw new EMFUserError(eu);
@@ -655,18 +618,12 @@ public class DetailMapModule extends AbstractHttpModule {
 	/**
 	 * Gets and create a list of feature associated at the map. (for tab visualization) and puts them into response
 	 *
-	 * @param request
-	 *            The response Source Bean
-	 * @param response
-	 *            The response Source Bean
-	 * @throws EMFUserError
-	 *             If an exception occurs
+	 * @param request  The response Source Bean
+	 * @param response The response Source Bean
+	 * @throws EMFUserError If an exception occurs
 	 */
 	private void getTabDetails(SourceBean request, SourceBean response) throws EMFUserError {
-		RequestContainer reqCont = getRequestContainer();
-		SessionContainer sessCont = reqCont.getSessionContainer();
-		SessionContainer permSess = sessCont.getPermanentContainer();
-		IEngUserProfile profile = (IEngUserProfile) permSess.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+		IEngUserProfile profile = (IEngUserProfile) this.getHttpRequest().getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 		try {
 
 			// create a List of features for tabs features
@@ -704,12 +661,9 @@ public class DetailMapModule extends AbstractHttpModule {
 	/**
 	 * Deletes relations between maps and features
 	 *
-	 * @param request
-	 *            The response Source Bean
-	 * @param response
-	 *            The response Source Bean
-	 * @throws EMFUserError
-	 *             If an exception occurs
+	 * @param request  The response Source Bean
+	 * @param response The response Source Bean
+	 * @throws EMFUserError If an exception occurs
 	 */
 	private void delRelMapFeature(SourceBean request, SourceBean response) throws EMFUserError {
 		try {
@@ -749,10 +703,8 @@ public class DetailMapModule extends AbstractHttpModule {
 	/**
 	 * Handle a download request of a map file. Reads the file, sends it as an http response attachment. and in the end deletes the file.
 	 *
-	 * @param request
-	 *            the http request
-	 * @param response
-	 *            the http response
+	 * @param request  the http request
+	 * @param response the http response
 	 */
 	private void downloadFile(SourceBean request) throws EMFUserError, EMFInternalError {
 		String binId = (String) request.getAttribute("BIN_ID");

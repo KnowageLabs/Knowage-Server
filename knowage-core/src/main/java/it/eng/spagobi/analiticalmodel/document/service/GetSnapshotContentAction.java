@@ -83,7 +83,6 @@ public class GetSnapshotContentAction extends AbstractHttpAction {
 			} else {
 				contentMap = merge(objectIdStr);
 			}
-
 		}
 
 		byte[] content = (byte[]) contentMap.get("content");
@@ -117,8 +116,7 @@ public class GetSnapshotContentAction extends AbstractHttpAction {
 		String idSnapStr = (String) request.getAttribute(SpagoBIConstants.SNAPSHOT_ID);
 		Integer idSnap = new Integer(idSnapStr);
 		LOGGER.debug("Required snapshot with id = " + idSnap + " of document with id = " + objectId);
-		IEngUserProfile profile = (IEngUserProfile) this.getRequestContainer().getSessionContainer().getPermanentContainer()
-				.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+		IEngUserProfile profile = (IEngUserProfile) this.getHttpRequest().getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 		BIObject obj = DAOFactory.getBIObjectDAO().loadBIObjectById(objectId);
 		// check if the user is able to see the document
 		// TODO check if the user is able to execute the document (even if it does no make sense to be able to see the document but not to execute it...)

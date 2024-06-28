@@ -34,11 +34,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import it.eng.spago.base.Constants;
-import it.eng.spago.base.RequestContainer;
-import it.eng.spago.base.ResponseContainer;
-import it.eng.spago.base.SessionContainer;
-import it.eng.spago.base.SourceBean;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.bo.Config;
 import it.eng.spagobi.commons.bo.Role;
@@ -55,7 +50,6 @@ import it.eng.spagobi.services.security.bo.SpagoBIUserProfile;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 @Path("3.0/public-user")
-
 public class PublicUserResource {
 
 	private static final Logger LOGGER = LogManager.getLogger(PublicUserResource.class);
@@ -102,9 +96,8 @@ public class PublicUserResource {
 			Role role = publicRole.get();
 			// public role MUST be final user type; other role types are not permitted
 			if (!role.getRoleTypeCD().equalsIgnoreCase(SpagoBIConstants.ROLE_TYPE_USER)) {
-				LOGGER.error(
-						"Cannot create public user: public role [{}] in tenant [{}] is not regular user type!!! This is not allowed!!",
-						role.getName(), role.getOrganization());
+				LOGGER.error("Cannot create public user: public role [{}] in tenant [{}] is not regular user type!!! This is not allowed!!", role.getName(),
+						role.getOrganization());
 				return Response.status(Response.Status.BAD_REQUEST).build();
 			}
 
@@ -164,38 +157,16 @@ public class PublicUserResource {
 	private boolean publicUserIsDisabled() {
 		try {
 			IConfigDAO configDAO = DAOFactory.getSbiConfigDAO();
-			Optional<Config> usePublicUserConfig = configDAO
-					.loadConfigParametersByLabelIfExist(SpagoBIConstants.USE_PUBLIC_USER);
+			Optional<Config> usePublicUserConfig = configDAO.loadConfigParametersByLabelIfExist(SpagoBIConstants.USE_PUBLIC_USER);
 			return !usePublicUserConfig.isPresent() || !Boolean.parseBoolean(usePublicUserConfig.get().getValueCheck());
 		} catch (Exception e) {
-			throw new SpagoBIRuntimeException(
-					"An error occurred while getting configuration about public user functionality", e);
+			throw new SpagoBIRuntimeException("An error occurred while getting configuration about public user functionality", e);
 		}
 	}
 
 	private void storeProfileInSession(UserProfile userProfile) {
 		try {
 			HttpSession session = httpRequest.getSession(true);
-
-			RequestContainer requestContainer = (RequestContainer) session.getAttribute(Constants.REQUEST_CONTAINER);
-			if (requestContainer == null) {
-				requestContainer = new RequestContainer();
-				SessionContainer sessionContainer = new SessionContainer(true);
-				requestContainer.setSessionContainer(sessionContainer);
-				// TODO ML: session.setAttribute(Constants.REQUEST_CONTAINER, requestContainer);
-			}
-			ResponseContainer responseContainer = (ResponseContainer) session
-					.getAttribute(Constants.RESPONSE_CONTAINER);
-			if (responseContainer == null) {
-				responseContainer = new ResponseContainer();
-				SourceBean serviceResponse = new SourceBean(Constants.SERVICE_RESPONSE);
-				responseContainer.setServiceResponse(serviceResponse);
-				// TODO ML: session.setAttribute(Constants.RESPONSE_CONTAINER, responseContainer);
-			}
-			SessionContainer sessionContainer = requestContainer.getSessionContainer();
-			SessionContainer permanentSession = sessionContainer.getPermanentContainer();
-
-			permanentSession.setAttribute(IEngUserProfile.ENG_USER_PROFILE, userProfile);
 			session.setAttribute(IEngUserProfile.ENG_USER_PROFILE, userProfile);
 		} catch (Exception e) {
 			throw new SpagoBIRuntimeException("Cannot set user profile object in session", e);

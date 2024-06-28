@@ -39,26 +39,26 @@ import it.eng.spagobi.engines.InternalEngineIFace;
 import it.eng.spagobi.engines.drivers.exceptions.InvalidOperationRequest;
 import it.eng.spagobi.services.content.bo.Content;
 import it.eng.spagobi.services.content.service.ContentServiceImplSupplier;
+import it.eng.spagobi.user.UserProfileManager;
 import it.eng.spagobi.utilities.mime.MimeUtils;
 
 public class SpagoBIOfficeDocumentInternalEngine implements InternalEngineIFace {
 
 	public static final String messageBundle = "MessageFiles.component_spagobiofficedocIE_messages";
 
-	private static transient Logger logger=Logger.getLogger(SpagoBIOfficeDocumentInternalEngine.class);
+	private static Logger logger = Logger.getLogger(SpagoBIOfficeDocumentInternalEngine.class);
 
 	/**
 	 * Executes the document and populates the response.
 	 *
 	 * @param requestContainer The <code>RequestContainer</code> object (the session can be retrieved from this object)
-	 * @param obj The <code>BIObject</code> representing the document to be executed
-	 * @param response The response <code>SourceBean</code> to be populated
+	 * @param obj              The <code>BIObject</code> representing the document to be executed
+	 * @param response         The response <code>SourceBean</code> to be populated
 	 *
 	 * @throws EMFUserError the EMF user error
 	 */
 	@Override
-	public void execute(RequestContainer requestContainer, BIObject obj,
-			SourceBean response) throws EMFUserError {
+	public void execute(RequestContainer requestContainer, BIObject obj, SourceBean response) throws EMFUserError {
 
 		logger.debug("IN");
 
@@ -77,24 +77,24 @@ public class SpagoBIOfficeDocumentInternalEngine implements InternalEngineIFace 
 		}
 
 		try {
-			//defines the mime type to imposte correctly the response
-			IEngUserProfile profile = (IEngUserProfile) session.getPermanentContainer().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+			// defines the mime type to imposte correctly the response
+			IEngUserProfile profile = UserProfileManager.getProfile();
 			ContentServiceImplSupplier c = new ContentServiceImplSupplier();
 			Content template = c.readTemplate(profile.getUserUniqueIdentifier().toString(), obj.getId().toString(), null);
 			String templateFileName = template.getFileName();
 
 			logger.debug("Template Read");
 
-			if(templateFileName==null){
+			if (templateFileName == null) {
 				logger.warn("Template has no name");
-				templateFileName="";
+				templateFileName = "";
 			}
 			Locale locale = GeneralUtilities.getDefaultLocale();
 			response.setAttribute("LOCALE", locale);
 
 			String mimeType = MimeUtils.getMimeType(templateFileName);
 			logger.debug("Mime type is = " + mimeType);
-			if (mimeType.startsWith("image")){
+			if (mimeType.startsWith("image")) {
 				response.setAttribute("isImage", new Boolean(true));
 			}
 			response.setAttribute(ObjectsTreeConstants.SESSION_OBJ_ATTR, obj);
@@ -110,16 +110,14 @@ public class SpagoBIOfficeDocumentInternalEngine implements InternalEngineIFace 
 	 * The <code>SpagoBIOfficeDocumentInternalEngine</code> cannot manage subobjects so this method must not be invoked.
 	 *
 	 * @param requestContainer The <code>RequestContainer</code> object (the session can be retrieved from this object)
-	 * @param obj The <code>BIObject</code> representing the document
-	 * @param response The response <code>SourceBean</code> to be populated
-	 * @param subObjectInfo An object describing the subobject to be executed
+	 * @param obj              The <code>BIObject</code> representing the document
+	 * @param response         The response <code>SourceBean</code> to be populated
+	 * @param subObjectInfo    An object describing the subobject to be executed
 	 *
 	 * @throws EMFUserError the EMF user error
 	 */
 	@Override
-	public void executeSubObject(RequestContainer requestContainer,
-			BIObject obj, SourceBean response, Object subObjectInfo)
-			throws EMFUserError {
+	public void executeSubObject(RequestContainer requestContainer, BIObject obj, SourceBean response, Object subObjectInfo) throws EMFUserError {
 		// it cannot be invoked
 		logger.error("SpagoBIOfficeDocumentInternalEngine cannot exec subobjects");
 		throw new EMFUserError(EMFErrorSeverity.ERROR, "101", messageBundle);
@@ -129,15 +127,15 @@ public class SpagoBIOfficeDocumentInternalEngine implements InternalEngineIFace 
 	 * Function not implemented. Thid method should not be called
 	 *
 	 * @param requestContainer The <code>RequestContainer</code> object (the session can be retrieved from this object)
-	 * @param response The response <code>SourceBean</code> to be populated
-	 * @param obj the obj
+	 * @param response         The response <code>SourceBean</code> to be populated
+	 * @param obj              the obj
 	 *
 	 * @throws InvalidOperationRequest the invalid operation request
-	 * @throws EMFUserError the EMF user error
+	 * @throws EMFUserError            the EMF user error
 	 */
 	@Override
-	public void handleNewDocumentTemplateCreation(RequestContainer requestContainer,
-			BIObject obj, SourceBean response) throws EMFUserError, InvalidOperationRequest {
+	public void handleNewDocumentTemplateCreation(RequestContainer requestContainer, BIObject obj, SourceBean response)
+			throws EMFUserError, InvalidOperationRequest {
 		logger.error("SpagoBIOfficeDocumentInternalEngine cannot build document template");
 		throw new InvalidOperationRequest();
 
@@ -147,15 +145,14 @@ public class SpagoBIOfficeDocumentInternalEngine implements InternalEngineIFace 
 	 * Function not implemented. Thid method should not be called
 	 *
 	 * @param requestContainer The <code>RequestContainer</code> object (the session can be retrieved from this object)
-	 * @param response The response <code>SourceBean</code> to be populated
-	 * @param obj the obj
+	 * @param response         The response <code>SourceBean</code> to be populated
+	 * @param obj              the obj
 	 *
 	 * @throws InvalidOperationRequest the invalid operation request
-	 * @throws EMFUserError the EMF user error
+	 * @throws EMFUserError            the EMF user error
 	 */
 	@Override
-	public void handleDocumentTemplateEdit(RequestContainer requestContainer,
-			BIObject obj, SourceBean response) throws EMFUserError, InvalidOperationRequest {
+	public void handleDocumentTemplateEdit(RequestContainer requestContainer, BIObject obj, SourceBean response) throws EMFUserError, InvalidOperationRequest {
 		logger.error("SpagoBIOfficeDocumentInternalEngine cannot build document template");
 		throw new InvalidOperationRequest();
 	}

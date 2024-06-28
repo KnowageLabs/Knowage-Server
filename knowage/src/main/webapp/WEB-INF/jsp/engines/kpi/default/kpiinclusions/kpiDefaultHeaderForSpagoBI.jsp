@@ -64,10 +64,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	Integer executionAuditId_chart = null;
  	EMFErrorHandler errorHandler=aResponseContainer.getErrorHandler();
 	if(errorHandler.isOK()){    
-		SessionContainer permSession = aSessionContainer.getPermanentContainer();
-
 		if(userProfile==null){
-			userProfile = (IEngUserProfile) permSession.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+			userProfile = (IEngUserProfile) session.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 			userId=(String)((UserProfile)userProfile).getUserId();
 		}
 	}

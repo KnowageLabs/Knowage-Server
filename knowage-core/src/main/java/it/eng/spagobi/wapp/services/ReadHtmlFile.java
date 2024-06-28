@@ -31,11 +31,11 @@ import it.eng.spago.base.SourceBean;
 import it.eng.spago.dispatching.action.AbstractHttpAction;
 import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFUserError;
+import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.utilities.AuditLogUtilities;
 import it.eng.spagobi.commons.utilities.HibernateSessionManager;
 import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
-import it.eng.spagobi.commons.utilities.UserUtilities;
 import it.eng.spagobi.wapp.bo.Menu;
 
 public class ReadHtmlFile extends AbstractHttpAction {
@@ -47,12 +47,13 @@ public class ReadHtmlFile extends AbstractHttpAction {
 		LOGGER.debug("IN");
 		freezeHttpResponse();
 
+		IEngUserProfile profile = (IEngUserProfile) this.getHttpRequest().getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+
 		// Start writing log in the DB
 		Session aSession = null;
 		try {
 			aSession = HibernateSessionManager.getCurrentSession();
-
-			AuditLogUtilities.updateAudit(getHttpRequest(), UserUtilities.getUserProfile(), "HTML_MENU.OPEN_HTML_FILE", null, "OK");
+			AuditLogUtilities.updateAudit(getHttpRequest(), profile, "HTML_MENU.OPEN_HTML_FILE", null, "OK");
 		} catch (HibernateException he) {
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
@@ -71,7 +72,7 @@ public class ReadHtmlFile extends AbstractHttpAction {
 		LOGGER.debug("menuId=" + menuId);
 		if (menuId != null) {
 			Menu menu = DAOFactory.getMenuDAO().loadMenuByID(Integer.valueOf(menuId));
-			boolean accessible = new MenuManagementAPI(UserUtilities.getUserProfile()).isAccessibleMenu(menu);
+			boolean accessible = new MenuManagementAPI(profile).isAccessibleMenu(menu);
 			if (!accessible) {
 				LOGGER.error("No role found for menu with id = " + menu.getMenuId() + ". Not allowed menu.");
 				throw new Exception("No role found for menu with id = " + menu.getMenuId() + ". Not allowed menu.");
