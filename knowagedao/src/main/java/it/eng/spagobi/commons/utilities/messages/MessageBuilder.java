@@ -214,7 +214,10 @@ public class MessageBuilder implements IMessageBuilder, IEngineMessageBuilder {
 		logger.debug("IN");
 		String sbiMode = getSpagoBIMode(request);
 		UserProfile profile = null;
-		HttpSession session = request.getSession();
+		HttpSession session = null;
+		if (request != null) {
+			session = request.getSession();
+		}
 		if (session != null) {
 			profile = (UserProfile) session.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 		}
