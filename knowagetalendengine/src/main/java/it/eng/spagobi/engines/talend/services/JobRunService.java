@@ -43,14 +43,12 @@ public class JobRunService extends AbstractEngineStartServlet {
 
 		try {
 
-			// servletIOManager.auditServiceStartEvent();
-
-			super.doService(servletIOManager);
-
-			job = new Job(servletIOManager.getTemplateAsSourceBean());
-			runtimeRepository = TalendEngine.getRuntimeRepository();
-
+			// servletIOManager.auditServiceStartEvent() called before
+			
 			try {
+				super.doService(servletIOManager);
+				job = new Job(servletIOManager.getTemplateAsSourceBean());
+				runtimeRepository = TalendEngine.getRuntimeRepository();
 				runtimeRepository.runJob(job, servletIOManager.getEnv());
 			} catch (JobNotFoundException ex) {
 				logger.error(ex.getMessage());
@@ -89,7 +87,7 @@ public class JobRunService extends AbstractEngineStartServlet {
 				throw new SpagoBIEngineRuntimeException(e);
 			}
 
-			// servletIOManager.tryToWriteBackToClient(servletIOManager.getLocalizedMessage("etl.process.started"));
+			// servletIOManager.tryToWriteBackToClient(servletIOManager.getLocalizedMessage("etl.process.started")) called before
 
 		} finally {
 			logger.debug("OUT");
