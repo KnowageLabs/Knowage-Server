@@ -426,6 +426,8 @@ public class SbiGeoMapsDAOHibImpl extends AbstractHibernateDAO implements ISbiGe
 		// load a svg file
 		XMLInputFactory xmlIF = XMLInputFactory.newInstance();
 		xmlIF.setProperty(XMLInputFactory.IS_COALESCING, Boolean.TRUE);
+		xmlIF.setProperty(XMLInputFactory.IS_SUPPORTING_EXTERNAL_ENTITIES, Boolean.FALSE);
+		xmlIF.setProperty(XMLInputFactory.SUPPORT_DTD, Boolean.FALSE);
 
 		// create a temporary file for gets the features:
 		String javaIoTmpDir = System.getProperty("java.io.tmpdir");
@@ -510,6 +512,8 @@ public class SbiGeoMapsDAOHibImpl extends AbstractHibernateDAO implements ISbiGe
 					// }
 					break;
 				case XMLStreamConstants.END_DOCUMENT:
+					break;
+				default:
 					break;
 				}
 				if (!streamReader.hasNext())

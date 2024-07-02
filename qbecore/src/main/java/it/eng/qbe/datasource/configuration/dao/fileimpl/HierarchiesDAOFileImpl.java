@@ -65,7 +65,7 @@ public class HierarchiesDAOFileImpl implements IHierarchiesDAO {
 	public static final String FIELD_TAG_NATURE_ATTR = "nature";
 	public static final String FIELD_TAG_IN_LINE_ATTR = "isInLine";
 
-	public static transient Logger logger = Logger.getLogger(HierarchiesDAOFileImpl.class);
+	public static final Logger logger = Logger.getLogger(HierarchiesDAOFileImpl.class);
 
 	public HierarchiesDAOFileImpl(File modelJarFile) {
 		this.modelJarFile = modelJarFile;
@@ -139,10 +139,10 @@ public class HierarchiesDAOFileImpl implements IHierarchiesDAO {
 			} else {
 				logger.debug("File [" + hierarchicalDimensionsFile + "] does not exist. No calculated fields have been loaded.");
 			}
-		} catch (Throwable t) {
-			if (t instanceof DAOException)
-				throw (DAOException) t;
-			throw new DAOException("An unpredicted error occurred while loading calculated fields on file [" + hierarchicalDimensionsFile + "]", t);
+		} catch (Exception e) {
+			if (e instanceof DAOException)
+				throw (DAOException) e;
+			throw new DAOException("An unpredicted error occurred while loading calculated fields on file [" + hierarchicalDimensionsFile + "]", e);
 		} finally {
 			if (in != null) {
 				try {
@@ -239,13 +239,12 @@ public class HierarchiesDAOFileImpl implements IHierarchiesDAO {
 				in = new FileInputStream(file);
 			} else {
 
-				zipEntry = null;
 				jarFile = new JarFile(modelJarFile);
 				zipEntry = jarFile.getEntry(file.getName());
 
 				if (zipEntry != null) {
 					in = jarFile.getInputStream(zipEntry);
-					// jarFile.close();
+					// jarFile.close() here before
 				} else {
 					jarFile.close();
 					return null;
@@ -254,6 +253,8 @@ public class HierarchiesDAOFileImpl implements IHierarchiesDAO {
 				Assert.assertNotNull(in, "Input stream cannot be null");
 
 				reader = new SAXReader();
+				reader.setFeature("http://xml.org/sax/features/external-general-entities", false);	
+				reader.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
 				document = reader.read(in);
 
 				Assert.assertNotNull(document, "Document cannot be null");
@@ -269,9 +270,9 @@ public class HierarchiesDAOFileImpl implements IHierarchiesDAO {
 			throw e;
 		} catch (IOException ioe) {
 			throw new SpagoBIRuntimeException("Impossible to load properties from file [" + zipEntry + "]");
-		} catch (Throwable t) {
-			if (t instanceof DAOException)
-				throw (DAOException) t;
+		} catch (Exception e) {
+			if (e instanceof DAOException)
+				throw (DAOException) e;
 			throw new DAOException("An unpredicetd error occurred while writing on file [" + file + "]");
 		} finally {
 			if (in != null) {

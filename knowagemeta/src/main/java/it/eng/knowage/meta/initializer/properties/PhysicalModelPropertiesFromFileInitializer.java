@@ -19,6 +19,7 @@ package it.eng.knowage.meta.initializer.properties;
 
 import java.io.InputStream;
 
+import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.xpath.XPath;
@@ -64,8 +65,8 @@ public class PhysicalModelPropertiesFromFileInitializer implements IPropertiesIn
 
 	public static final String IS_DELETED = "structural.deleted";
 
-	public static ModelFactory FACTORY = ModelFactory.eINSTANCE;
-	// public static IResourceLocator RL = SpagoBIMetaInitializerPlugin.getInstance().getResourceLocator();
+	public static final ModelFactory FACTORY = ModelFactory.eINSTANCE;
+	// public static IResourceLocator RL = SpagoBIMetaInitializerPlugin.getInstance().getResourceLocator() here before
 
 	private static Logger logger = LoggerFactory.getLogger(PhysicalModelPropertiesFromFileInitializer.class);
 
@@ -76,13 +77,15 @@ public class PhysicalModelPropertiesFromFileInitializer implements IPropertiesIn
 			/**
 			 * TODO REVIEW FOR PORTING
 			 */
-			// File propertiesFile = RL.getFile("properties/customPhysicalProperties.xml");
+			// File propertiesFile = RL.getFile("properties/customPhysicalProperties.xml") here before
 			InputStream is = getClass().getClassLoader().getResourceAsStream("it/eng/knowage/meta/initializer/properties/custom/customPhysicalProperties.xml");
 			DocumentBuilderFactory domFactory = DocumentBuilderFactory.newInstance();
+			domFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
+			domFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_SCHEMA, "");
 			DocumentBuilder builder = domFactory.newDocumentBuilder();
 			document = builder.parse(is);
-		} catch (Throwable t) {
-			throw new InitializationException("Impossible to load properties from configuration file", t);
+		} catch (Exception e) {
+			throw new InitializationException("Impossible to load properties from configuration file", e);
 		} finally {
 			logger.trace("OUT");
 		}

@@ -82,7 +82,7 @@ public class CalculatedFieldsDAOFileImpl implements ICalculatedFieldsDAO {
 	public static final String TO_TAG = "TO";
 	public static final String VALUE_TAG = "VALUE";
 
-	public static transient Logger logger = Logger.getLogger(CalculatedFieldsDAOFileImpl.class);
+	public static final Logger logger = Logger.getLogger(CalculatedFieldsDAOFileImpl.class);
 
 	public CalculatedFieldsDAOFileImpl(File modelJarFile) {
 		this.modelJarFile = modelJarFile;
@@ -155,7 +155,7 @@ public class CalculatedFieldsDAOFileImpl implements ICalculatedFieldsDAO {
 					// parse slots
 					List<ModelCalculatedField.Slot> slots = loadSlots(calculatedFieldNode);
 					calculatedField.addSlots(slots);
-					if (slots.size() > 0) {
+					if (!slots.isEmpty()) {
 						String defaultSlotValue = loadDefaultSlotValue(calculatedFieldNode);
 						calculatedField.setDefaultSlotValue(defaultSlotValue);
 					}
@@ -184,10 +184,10 @@ public class CalculatedFieldsDAOFileImpl implements ICalculatedFieldsDAO {
 			} else {
 				logger.debug("File [" + calculatedFieldsFile + "] does not exist. No calculated fields have been loaded.");
 			}
-		} catch (Throwable t) {
-			if (t instanceof DAOException)
-				throw (DAOException) t;
-			throw new DAOException("An unpredicted error occurred while loading calculated fields on file [" + calculatedFieldsFile + "]", t);
+		} catch (Exception e) {
+			if (e instanceof DAOException)
+				throw (DAOException) e;
+			throw new DAOException("An unpredicted error occurred while loading calculated fields on file [" + calculatedFieldsFile + "]", e);
 		} finally {
 			if (in != null) {
 				try {
@@ -201,9 +201,7 @@ public class CalculatedFieldsDAOFileImpl implements ICalculatedFieldsDAO {
 	}
 
 	private String loadExpression(Node calculatedFieldNode) {
-		String expression;
-
-		expression = null;
+		String expression = null;
 
 		Node expressionNode = calculatedFieldNode.selectSingleNode(EXPRESSION_TAG);
 		if (expressionNode != null) {
@@ -362,7 +360,7 @@ public class CalculatedFieldsDAOFileImpl implements ICalculatedFieldsDAO {
 					fieldElement.addElement(EXPRESSION_TAG).addCDATA(modelCalculatedField.getExpression());
 
 					List<Slot> slots = modelCalculatedField.getSlots();
-					if (slots != null && slots.size() > 0) {
+					if (slots != null && !slots.isEmpty()) {
 						Element slotsElement = fieldElement.addElement(SLOTS_TAG);
 						if (modelCalculatedField.getDefaultSlotValue() != null) {
 							slotsElement.addAttribute("defaultSlotValue", modelCalculatedField.getDefaultSlotValue());
@@ -379,9 +377,9 @@ public class CalculatedFieldsDAOFileImpl implements ICalculatedFieldsDAO {
 
 			guardedWrite(document, calculatedFieldsFile);
 
-		} catch (Throwable t) {
-			if (t instanceof DAOException)
-				throw (DAOException) t;
+		} catch (Exception e) {
+			if (e instanceof DAOException)
+				throw (DAOException) e;
 			throw new DAOException("An unpredicetd error occurred while saving calculated fields on file [" + calculatedFieldsFile + "]");
 		} finally {
 			logger.debug("OUT");
@@ -493,6 +491,8 @@ public class CalculatedFieldsDAOFileImpl implements ICalculatedFieldsDAO {
 			Assert.assertNotNull(in, "Input stream cannot be null");
 
 			reader = new SAXReader();
+			reader.setFeature("http://xml.org/sax/features/external-general-entities", false);	
+			reader.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
 			try {
 				document = reader.read(in);
 			} catch (DocumentException de) {
@@ -501,9 +501,9 @@ public class CalculatedFieldsDAOFileImpl implements ICalculatedFieldsDAO {
 				throw e;
 			}
 			Assert.assertNotNull(document, "Document cannot be null");
-		} catch (Throwable t) {
-			if (t instanceof DAOException)
-				throw (DAOException) t;
+		} catch (Exception e) {
+			if (e instanceof DAOException)
+				throw (DAOException) e;
 			throw new DAOException("An unpredicetd error occurred while writing on file [" + file + "]");
 		} finally {
 			if (in != null) {
@@ -558,9 +558,9 @@ public class CalculatedFieldsDAOFileImpl implements ICalculatedFieldsDAO {
 			} catch (IOException e) {
 				throw new DAOException("Impossible to write to file [" + file + "]", e);
 			}
-		} catch (Throwable t) {
-			if (t instanceof DAOException)
-				throw (DAOException) t;
+		} catch (Exception e) {
+			if (e instanceof DAOException)
+				throw (DAOException) e;
 			throw new DAOException("An unpredicetd error occurred while writing on file [" + file + "]");
 		} finally {
 			if (writer != null) {

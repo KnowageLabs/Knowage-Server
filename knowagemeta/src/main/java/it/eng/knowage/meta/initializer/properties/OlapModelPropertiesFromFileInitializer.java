@@ -33,6 +33,7 @@ import it.eng.knowage.meta.model.olap.OlapModel;
 
 import java.io.InputStream;
 
+import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.xpath.XPath;
@@ -62,8 +63,8 @@ public class OlapModelPropertiesFromFileInitializer implements IPropertiesInitia
 	public static final String HIERARCHY_IS_DEFAULT = "structural.defaultHierarchy";
 	public static final String HIERARCHY_ALL_MEMBER_NAME = "structural.allmembername";
 
-	public static ModelFactory FACTORY = ModelFactory.eINSTANCE;
-	// public static IResourceLocator RL = SpagoBIMetaInitializerPlugin.getInstance().getResourceLocator();
+	public static final ModelFactory FACTORY = ModelFactory.eINSTANCE;
+	// public static IResourceLocator RL = SpagoBIMetaInitializerPlugin.getInstance().getResourceLocator() here before
 
 	private static Logger logger = LoggerFactory.getLogger(OlapModelPropertiesFromFileInitializer.class);
 
@@ -74,13 +75,15 @@ public class OlapModelPropertiesFromFileInitializer implements IPropertiesInitia
 			/**
 			 * TODO REVIEW FOR PORTING
 			 */
-			// File propertiesFile = RL.getFile("properties/customOlapProperties.xml");
+			// File propertiesFile = RL.getFile("properties/customOlapProperties.xml") here before
 			InputStream is = getClass().getClassLoader().getResourceAsStream("it/eng/knowage/meta/initializer/properties/custom/customOlapProperties.xml");
 			DocumentBuilderFactory domFactory = DocumentBuilderFactory.newInstance();
+			domFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
+			domFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_SCHEMA, "");
 			DocumentBuilder builder = domFactory.newDocumentBuilder();
 			document = builder.parse(is);
-		} catch (Throwable t) {
-			throw new InitializationException("Impossible to load properties from configuration file", t);
+		} catch (Exception e) {
+			throw new InitializationException("Impossible to load properties from configuration file", e);
 		} finally {
 			logger.trace("OUT");
 		}
@@ -121,8 +124,7 @@ public class OlapModelPropertiesFromFileInitializer implements IPropertiesInitia
 			nodes = readXMLNodes(document, "/properties/model/typesValues/admissibleValuesOf");
 			initModelAdmissibleValues(nodes, o.getParentModel());
 
-		} catch (Exception e) {
-			//e.printStackTrace();
+		} catch (Exception e) {			
 			logger.error("initModelProperties",e);
 		}
 
@@ -141,8 +143,7 @@ public class OlapModelPropertiesFromFileInitializer implements IPropertiesInitia
 			// 3- Search model admissible types values definitions
 			nodes = readXMLNodes(document, "/properties/cube/typesValues/admissibleValuesOf");
 			initModelAdmissibleValues(nodes, o.getModel().getParentModel());
-		} catch (Exception e) {
-			//e.printStackTrace();
+		} catch (Exception e) {			
 			logger.error("initCubeProperties",e);
 		}
 	}
@@ -160,8 +161,7 @@ public class OlapModelPropertiesFromFileInitializer implements IPropertiesInitia
 			// 3- Search model admissible types values definitions
 			nodes = readXMLNodes(document, "/properties/dimension/typesValues/admissibleValuesOf");
 			initModelAdmissibleValues(nodes, o.getModel().getParentModel());
-		} catch (Exception e) {
-			//e.printStackTrace();
+		} catch (Exception e) {			
 			logger.error("initDimensionProperties",e);
 		}
 	}
@@ -179,8 +179,7 @@ public class OlapModelPropertiesFromFileInitializer implements IPropertiesInitia
 			// 3- Search model admissible types values definitions
 			nodes = readXMLNodes(document, "/properties/hierarchy/typesValues/admissibleValuesOf");
 			initModelAdmissibleValues(nodes, o.getDimension().getModel().getParentModel());
-		} catch (Exception e) {
-			//e.printStackTrace();
+		} catch (Exception e) {			
 			logger.error("initHierarchyProperties",e);
 		}
 	}
@@ -198,8 +197,7 @@ public class OlapModelPropertiesFromFileInitializer implements IPropertiesInitia
 			// 3- Search model admissible types values definitions
 			nodes = readXMLNodes(document, "/properties/level/typesValues/admissibleValuesOf");
 			initModelAdmissibleValues(nodes, o.getHierarchy().getDimension().getModel().getParentModel());
-		} catch (Exception e) {
-			//e.printStackTrace();
+		} catch (Exception e) {			
 			logger.error("initLevelProperties",e);
 		}
 	}
@@ -217,8 +215,7 @@ public class OlapModelPropertiesFromFileInitializer implements IPropertiesInitia
 			// 3- Search model admissible types values definitions
 			nodes = readXMLNodes(document, "/properties/measure/typesValues/admissibleValuesOf");
 			initModelAdmissibleValues(nodes, o.getCube().getModel().getParentModel());
-		} catch (Exception e) {
-			//e.printStackTrace();
+		} catch (Exception e) {			
 			logger.error("initMeasureProperties",e);
 		}
 	}
