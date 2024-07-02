@@ -644,7 +644,7 @@ public class AdapterHTTP extends HttpServlet {
 		requestContainer.setAttribute(HTTP_REQUEST_REMOTE_ADDR, request.getRemoteAddr());
 		requestContainer.setAttribute(HTTP_REQUEST_REMOTE_HOST, request.getRemoteHost());
 		requestContainer.setAttribute(HTTP_REQUEST_REMOTE_USER, request.getRemoteUser());
-		requestContainer.setAttribute(HTTP_REQUEST_REQUESTED_SESSION_ID, request.getRequestedSessionId());
+//		requestContainer.setAttribute(HTTP_REQUEST_REQUESTED_SESSION_ID, request.getRequestedSessionId());
 		requestContainer.setAttribute(HTTP_REQUEST_REQUEST_URI, request.getRequestURI());
 		requestContainer.setAttribute(HTTP_REQUEST_SCHEME, request.getScheme());
 		requestContainer.setAttribute(HTTP_REQUEST_SERVER_NAME, request.getServerName());
