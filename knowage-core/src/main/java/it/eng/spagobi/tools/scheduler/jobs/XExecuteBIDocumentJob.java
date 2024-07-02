@@ -19,6 +19,7 @@ package it.eng.spagobi.tools.scheduler.jobs;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -906,19 +907,7 @@ public class XExecuteBIDocumentJob extends AbstractSpagoBIJob implements Job {
 	}
 
 	public static File createTempDirectory(String tempFolderName) throws IOException {
-		final File temp;
-
-		temp = File.createTempFile("temp", tempFolderName);
-
-		if (!(temp.delete())) {
-			throw new IOException("Could not delete temp file: " + temp.getAbsolutePath());
-		}
-
-		if (!(temp.mkdir())) {
-			throw new IOException("Could not create temp directory: " + temp.getAbsolutePath());
-		}
-
-		return (temp);
+		return Files.createTempDirectory(tempFolderName).toFile();
 	}
 
 }
