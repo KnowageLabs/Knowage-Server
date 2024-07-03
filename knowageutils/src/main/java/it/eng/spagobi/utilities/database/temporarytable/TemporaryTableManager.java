@@ -22,7 +22,6 @@ import java.sql.DatabaseMetaData;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -58,12 +57,12 @@ public class TemporaryTableManager {
 	 * Contains the definition of the existing temporary tables. The key is created by a fixed prefix and a suffix that depends on user profile (1 temporary
 	 * table for each user). The value relevant to a key is the SQL statement that defines the temporary table.
 	 */
-	private static Map<String, String> tables = new HashMap<String, String>();
+	private static Map<String, String> tables = new HashMap<>();
 
 	/**
 	 * Contains the descriptors of the existing temporary tables.
 	 */
-	private static Map<String, IDataSetTableDescriptor> tableDescriptors = new HashMap<String, IDataSetTableDescriptor>();
+	private static Map<String, IDataSetTableDescriptor> tableDescriptors = new HashMap<>();
 
 	public static IDataSetTableDescriptor createTable(List<String> fields, String sqlStatement, String tableName, IDataSource dataSource) throws Exception {
 		return createTable(fields, sqlStatement, tableName, dataSource, -1); // queryTimeout = -1 -> NO TIMEOUT

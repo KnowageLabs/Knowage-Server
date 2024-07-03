@@ -92,6 +92,7 @@ public class BoxCharts extends ChartImpl {
 	 * @throws Exception the exception
 	 */
 
+	@Override
 	public DatasetMap calculateValue() throws Exception {
 		logger.debug("IN");
 		String res=DataSetAccessFunctions.getDataSetResultFromId(profile, getData(),parametersObject);
@@ -220,6 +221,7 @@ public class BoxCharts extends ChartImpl {
 	 * @param content the content
 	 */
 
+	@Override
 	public void configureChart(SourceBean content) {
 		logger.debug("IN");
 		super.configureChart(content);
@@ -278,6 +280,7 @@ public class BoxCharts extends ChartImpl {
 	 * @return the dataset
 	 */
 
+	@Override
 	public Dataset filterDataset(Dataset dataset, HashMap categories, int catSelected, int numberCatsVisualization) {
 		logger.debug("IN");
 		DefaultCategoryDataset catDataset=(DefaultCategoryDataset)dataset;
@@ -369,6 +372,7 @@ public class BoxCharts extends ChartImpl {
 	/* (non-Javadoc)
 	 * @see it.eng.spagobi.engines.chart.bo.ChartImpl#createChart(java.lang.String, org.jfree.data.general.Dataset)
 	 */
+	@Override
 	public JFreeChart createChart(DatasetMap dataset) {
 		// TODO Auto-generated method stub
 		return super.createChart(dataset);

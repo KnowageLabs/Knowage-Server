@@ -93,6 +93,7 @@ public class JSONResponse implements IServiceResponse {
 		this.statusCode = statusCode;
 	}
 	
+	@Override
 	public int getStatusCode() {
 		return statusCode;
 	}
@@ -101,6 +102,7 @@ public class JSONResponse implements IServiceResponse {
 		this.content = content;
 	}
 	
+	@Override
 	public String getContent() throws IOException {
 		String str = "";
 		if(callback != null) str += callback + "(";
@@ -112,6 +114,7 @@ public class JSONResponse implements IServiceResponse {
 	
 
 	
+	@Override
 	public String getContentType() {		
 		String contentType;
 		
@@ -121,10 +124,12 @@ public class JSONResponse implements IServiceResponse {
 		return contentType;
 	}
 
+	@Override
 	public boolean isInline() {
 		return true;
 	}
 	
+	@Override
 	public String getFileName() {
 		return "response";
 	}

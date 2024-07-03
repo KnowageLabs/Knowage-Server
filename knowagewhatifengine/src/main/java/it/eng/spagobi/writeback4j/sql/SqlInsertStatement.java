@@ -21,8 +21,6 @@ import it.eng.spagobi.utilities.engines.SpagoBIEngineException;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.sql.Statement;
-
 import org.apache.log4j.Logger;
 
 public class SqlInsertStatement {

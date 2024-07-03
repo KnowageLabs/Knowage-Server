@@ -29,6 +29,6 @@ import org.geotools.feature.FeatureCollection;
 public class LayerCache {
 	public static Map<String, FeatureCollection> cache;
 	static {
-		cache = new HashMap<String, FeatureCollection>();
+		cache = new HashMap<>();
 	}
 }

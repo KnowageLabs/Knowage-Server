@@ -27,8 +27,6 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.ext.Provider;
 
 import org.apache.log4j.Logger;
-import org.owasp.esapi.HTTPUtilities;
-import org.owasp.esapi.reference.DefaultHTTPUtilities;
 
 /**
  * This interceptor injects into HTTP response headers information to disable browser cache, in case the response does not already contain any header about

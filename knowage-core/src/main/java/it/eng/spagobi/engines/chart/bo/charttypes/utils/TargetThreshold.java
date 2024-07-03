@@ -17,10 +17,7 @@
  */
 package it.eng.spagobi.engines.chart.bo.charttypes.utils;
 
-import it.eng.spagobi.services.execute.service.ServiceChartImpl;
-
 import java.awt.Color;
-import java.util.HashMap;
 import java.util.StringTokenizer;
 
 import org.apache.log4j.Logger;

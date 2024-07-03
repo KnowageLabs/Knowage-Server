@@ -50,7 +50,6 @@ import org.jfree.chart.renderer.category.BarRenderer;
 import org.jfree.chart.renderer.category.CategoryItemRenderer;
 import org.jfree.chart.renderer.category.LineAndShapeRenderer;
 import org.jfree.chart.renderer.category.StackedBarRenderer;
-import org.jfree.chart.title.LegendTitle;
 import org.jfree.chart.title.TextTitle;
 import org.jfree.data.category.DefaultCategoryDataset;
 import org.jfree.ui.TextAnchor;
@@ -90,13 +89,14 @@ public class OverlaidBarLine extends LinkableBar {
 	private static transient Logger logger=Logger.getLogger(OverlaidBarLine.class);
 
 
+	@Override
 	public DatasetMap calculateValue() throws Exception {
 		logger.debug("IN");
 
 		seriesNames=new Vector();
 		seriesCaptions=new LinkedHashMap();
-		categoriesTooltip=new HashMap<String, String>();
-		seriesTooltip=new HashMap<String, String>();
+		categoriesTooltip=new HashMap<>();
+		seriesTooltip=new HashMap<>();
 		lineNoShapeSeries1=new Vector<String>();
 		lineNoShapeSeries2=new Vector<String>();
 
@@ -309,6 +309,7 @@ public class OverlaidBarLine extends LinkableBar {
 
 	}
 
+	@Override
 	public void configureChart(SourceBean content) {
 		super.configureChart(content);
 		logger.debug("IN");
@@ -402,7 +403,7 @@ public class OverlaidBarLine extends LinkableBar {
 					}
 					catch (Exception e) {
 						logger.error("Not correct numebr scale; setting default 1");
-						serieScale=Integer.valueOf(1);
+						serieScale=1;
 					}
 
 					if(serieScale.equals(2)){
@@ -426,6 +427,7 @@ public class OverlaidBarLine extends LinkableBar {
 
 
 
+	@Override
 	public JFreeChart createChart(DatasetMap datasets) {
 		logger.debug("IN");
 

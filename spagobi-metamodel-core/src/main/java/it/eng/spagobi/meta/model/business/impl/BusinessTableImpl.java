@@ -66,6 +66,7 @@ public class BusinessTableImpl extends BusinessColumnSetImpl implements Business
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public PhysicalTable getPhysicalTable() {
 		if (physicalTable != null && physicalTable.eIsProxy()) {
 			InternalEObject oldPhysicalTable = (InternalEObject)physicalTable;
@@ -92,6 +93,7 @@ public class BusinessTableImpl extends BusinessColumnSetImpl implements Business
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void setPhysicalTable(PhysicalTable newPhysicalTable) {
 		PhysicalTable oldPhysicalTable = physicalTable;
 		physicalTable = newPhysicalTable;

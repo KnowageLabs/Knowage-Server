@@ -35,9 +35,6 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.net.ssl.TrustManager;
-import javax.net.ssl.X509TrustManager;
-
 import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;

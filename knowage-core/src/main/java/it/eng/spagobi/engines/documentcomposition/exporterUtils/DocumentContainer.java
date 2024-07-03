@@ -17,8 +17,6 @@
  */
 package it.eng.spagobi.engines.documentcomposition.exporterUtils;
 
-import java.io.File;
-
 public class DocumentContainer {
 
 	byte[] content;

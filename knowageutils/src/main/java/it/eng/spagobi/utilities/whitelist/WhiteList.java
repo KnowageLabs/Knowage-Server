@@ -29,8 +29,6 @@ import org.xml.sax.InputSource;
 
 import it.eng.knowage.commons.security.KnowageSystemConfiguration;
 import it.eng.spago.base.SourceBean;
-import it.eng.spagobi.commons.SingletonConfig;
-import it.eng.spagobi.commons.constants.ConfigurationConstants;
 import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
 
 public class WhiteList implements IWhiteList {
@@ -51,7 +49,7 @@ public class WhiteList implements IWhiteList {
 
 	private List<String> getProperties(String property) {
 		LOGGER.debug("IN");
-		List<String> services = new ArrayList<String>();
+		List<String> services = new ArrayList<>();
 		FileInputStream stream = null;
 		try {
 			String servicesWhitelist = SpagoBIUtilities.getRootResourcePath() + "/" + WHITELIST_FILE;

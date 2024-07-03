@@ -154,7 +154,7 @@ public class AbstractWhatIfEngineService extends AbstractEngineRestService {
 	public List<Member> getMembersFromBody() {
 		logger.debug("Getting the members from the request");
 		List<SbiMember> sbiMembers = null;
-		List<Member> members = new ArrayList<Member>();
+		List<Member> members = new ArrayList<>();
 		String membersString = null;
 
 		try {

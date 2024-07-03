@@ -22,7 +22,6 @@ import it.eng.spagobi.tools.glossary.metadata.SbiGlDocWlist;
 
 import org.hibernate.Criteria;
 import org.hibernate.Session;
-import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 
 public class SearchListDocWlist implements ICriterion<SbiGlDocWlist> {

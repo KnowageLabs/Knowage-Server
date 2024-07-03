@@ -40,7 +40,8 @@ import it.eng.spago.tracing.TracerSingleton;
 * @version 1.0
 */
 public class OracleSQLMapper implements SQLMapper {
-    public String getStringValue(int sqlType, Object objectValue) {
+    @Override
+	public String getStringValue(int sqlType, Object objectValue) {
         if (objectValue == null) {
             TracerSingleton.log(Constants.NOME_MODULO, TracerSingleton.WARNING,
                 "OracleSQLMapper::getStringValue: objectValue nullo");
@@ -69,7 +70,8 @@ public class OracleSQLMapper implements SQLMapper {
         return stringValue;
     } // public String getStringValue(int sqlType, Object objectValue)
 
-    public Object getObjectValue(int sqlType, String stringValue) {
+    @Override
+	public Object getObjectValue(int sqlType, String stringValue) {
         if (stringValue == null) {
             TracerSingleton.log(Constants.NOME_MODULO, TracerSingleton.WARNING,
                 "OracleSQLMapper::getObjectValue: stringValue nullo");
@@ -123,7 +125,8 @@ public class OracleSQLMapper implements SQLMapper {
     * @param <B>Object</B> objectTimeStampValue - L'oggetto rappresentante il timeStamp
     * @return <B>String}> il valore in un oggetto di tipo String
     */
-    public String getStringValueForTimeStamp(Object objectTimeStampValue) {
+    @Override
+	public String getStringValueForTimeStamp(Object objectTimeStampValue) {
         if (objectTimeStampValue == null) {
             TracerSingleton.log(Constants.NOME_MODULO, TracerSingleton.WARNING,
                 "OracleSQLMapper::getStringValueForTimeStamp: objectTimeStampValue nullo");
@@ -174,7 +177,8 @@ public class OracleSQLMapper implements SQLMapper {
     * @param <B>Object</B> objectDateValue - L'oggetto rappresentante la data
     * @return <B>String}> il valore in un oggetto di tipo String
     */
-    public String getStringValueForDate(Object objectDateValue) {
+    @Override
+	public String getStringValueForDate(Object objectDateValue) {
         if (objectDateValue == null) {
             TracerSingleton.log(Constants.NOME_MODULO, TracerSingleton.WARNING,
                 "OracleSQLMapper::getStringValueForDate: objectDateValue nullo");
@@ -215,7 +219,8 @@ public class OracleSQLMapper implements SQLMapper {
     * @param <B>String}> il valore di una data in una Stringa
     * @return <B>Object</B> L'oggetto rappresentante la data
     */
-    public Object getObjectValueForDate(String stringDateValue) {
+    @Override
+	public Object getObjectValueForDate(String stringDateValue) {
         if (stringDateValue == null) {
             TracerSingleton.log(Constants.NOME_MODULO, TracerSingleton.WARNING,
                 "OracleSQLMapper::getObjectValueForDate: stringDateValue nullo");
@@ -242,7 +247,8 @@ public class OracleSQLMapper implements SQLMapper {
     * @param stringTimeStampValue Il valore di un timestamp in una stringa
     * @return <B>Object</B> L'oggetto rappresentante il timeStamp
     */
-    public Object getObjectValueForTimeStamp(String stringTimeStampValue) {
+    @Override
+	public Object getObjectValueForTimeStamp(String stringTimeStampValue) {
         if (stringTimeStampValue == null) {
             TracerSingleton.log(Constants.NOME_MODULO, TracerSingleton.WARNING,
                 "OracleSQLMapper::getObjectValueForTimeStamp: stringTimeStampValue nullo");

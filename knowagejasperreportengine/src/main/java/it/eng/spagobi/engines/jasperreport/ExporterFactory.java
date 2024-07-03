@@ -27,6 +27,7 @@ import org.apache.log4j.Logger;
  * 
  * @deprecated
  */
+@Deprecated
 public class ExporterFactory {	
 	
 	/**

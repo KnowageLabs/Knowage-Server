@@ -39,6 +39,7 @@ public class ParametersUseJSONSerialize implements Serializer {
 	public static final String SELECTEDLAYER = "SELECTEDLAYER";
 	public static final String SELECTEDLAYERPROP = "SELECTEDLAYERPROP";
 
+	@Override
 	public Object serialize(Object o, Locale locale) throws SerializationException {
 
 		JSONObject result = null;

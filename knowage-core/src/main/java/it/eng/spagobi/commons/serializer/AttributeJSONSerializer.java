@@ -29,6 +29,7 @@ public class AttributeJSONSerializer implements Serializer{
 	public static final String NAME = "name";
 	public static final String DESCRIPTION = "description";
 	
+	@Override
 	public Object serialize(Object o, Locale locale)
 			throws SerializationException {
 		JSONObject  result = null;

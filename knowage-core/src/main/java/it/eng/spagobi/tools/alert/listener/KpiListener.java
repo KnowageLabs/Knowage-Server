@@ -34,7 +34,7 @@ public class KpiListener extends AbstractAlertListener {
 
     @Override
     public List<SbiHibernateModel> export(String jsonParameters) {
-        List<SbiHibernateModel> ret = new ArrayList<SbiHibernateModel>();
+        List<SbiHibernateModel> ret = new ArrayList<>();
         InputParameter par = (InputParameter) JsonConverter.jsonToObject(jsonParameters, InputParameter.class);
 
         SbiKpiKpi sbiKpiKpi = new SbiKpiKpi();
@@ -116,7 +116,7 @@ public class KpiListener extends AbstractAlertListener {
     private void addValueToThresholdMap(Integer thresholdId, KpiValue sbiKpiValue) {
         List<KpiValue> lst = valueMap.get(thresholdId);
         if (lst == null) {
-            valueMap.put(thresholdId, new ArrayList<KpiValue>());
+            valueMap.put(thresholdId, new ArrayList<>());
         }
         valueMap.get(thresholdId).add(sbiKpiValue);
     }

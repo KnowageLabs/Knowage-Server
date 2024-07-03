@@ -98,7 +98,7 @@ public class GeoLayerJSONDeserializer {
 						} else if (properties[i].equals(LAYERORDER)) {
 							layer.setLayerOrder(new Integer(serialized.getString(properties[i])));
 						} else if (properties[i].equals(PROPERTIES)) {
-							List<String> prop = new ArrayList<String>();
+							List<String> prop = new ArrayList<>();
 							JSONArray arr = serialized.getJSONArray(properties[i]);
 							for (int j = 0; j < arr.length(); j++) {
 								JSONObject obj = new JSONObject(arr.get(j).toString());

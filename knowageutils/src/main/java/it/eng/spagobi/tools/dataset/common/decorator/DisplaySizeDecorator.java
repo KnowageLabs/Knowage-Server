@@ -36,13 +36,14 @@ public class DisplaySizeDecorator extends AbstractDataStoreDecorator {
 		this.setNextDecoratr(nextDecorator);
 	}
 	
+	@Override
 	void doUpdateDecoration(IDataStore dataStore, IRecord record) {
 		IMetaData dataStoreMeta = dataStore.getMetaData();
 		int filedNo = dataStoreMeta.getFieldCount();
 		
 		for(int i = 0; i < filedNo; i++) {
 			IFieldMetaData fieldMeta = dataStoreMeta.getFieldMeta(i);
-			IField field = (IField)record.getFieldAt(i);
+			IField field = record.getFieldAt(i);
 			
 			Integer w = (Integer)fieldMeta.getProperty( PROPERTY_NAME );
 			if(w == null) {

@@ -10,7 +10,7 @@ public class Scorecard {
 	private Date creationDate;
 	private String author;
 
-	private List<ScorecardPerspective> perspectives = new ArrayList<ScorecardPerspective>();
+	private List<ScorecardPerspective> perspectives = new ArrayList<>();
 
 	/**
 	 * @return the id

@@ -44,7 +44,8 @@ public class PivotingTransformer implements IDataTransformer {
 	 * into dataset interface.
      * The dataset has a structure like: ROW | SER | VAL | other info
 	 */
-    public List transformData(List records, String pivotColumn, String pivotRow, String pivotValue){
+    @Override
+	public List transformData(List records, String pivotColumn, String pivotRow, String pivotValue){
     	logger.info("IN");
 	    
     	List newRecords = new ArrayList();
@@ -111,7 +112,8 @@ public class PivotingTransformer implements IDataTransformer {
     	return newRecords;
     }
     
-    public List transformData(List records){
+    @Override
+	public List transformData(List records){
     	logger.info("IN");
     	logger.debug("Method not implemented");
     	logger.info("OUT");

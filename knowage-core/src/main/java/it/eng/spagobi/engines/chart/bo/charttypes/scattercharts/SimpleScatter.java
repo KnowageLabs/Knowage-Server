@@ -34,6 +34,7 @@ import org.jfree.data.xy.DefaultXYDataset;
 
 public class SimpleScatter extends ScatterCharts {
 
+	@Override
 	public JFreeChart createChart(DatasetMap datasets) {
 
 		DefaultXYDataset dataset=(DefaultXYDataset)datasets.getDatasets().get("1");

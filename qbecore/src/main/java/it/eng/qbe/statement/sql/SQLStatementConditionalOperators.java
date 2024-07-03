@@ -40,7 +40,7 @@ public class SQLStatementConditionalOperators {
 	}
 
 	static {
-		conditionalOperators = new HashMap<String, IConditionalOperator>();
+		conditionalOperators = new HashMap<>();
 		conditionalOperators.put(CriteriaConstants.EQUALS_TO, new IConditionalOperator() {
 			public String getName() {
 				return CriteriaConstants.EQUALS_TO;

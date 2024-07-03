@@ -36,6 +36,7 @@ public class UdpJSONSerializer implements Serializer {
 	private static final String UDP_FAMILY = "family";
 	private static final String UDP_MULTIVALUE = "multivalue";
 	
+	@Override
 	public Object serialize(Object o, Locale locale) throws SerializationException {
 		JSONObject  result = null;
 		

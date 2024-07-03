@@ -260,6 +260,7 @@ public class ModelPropertyMapEntryImpl extends EObjectImpl implements BasicEMap.
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public int getHash() {
 		if (hash == -1) {
 			Object theKey = getKey();
@@ -273,6 +274,7 @@ public class ModelPropertyMapEntryImpl extends EObjectImpl implements BasicEMap.
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void setHash(int hash) {
 		this.hash = hash;
 	}
@@ -282,6 +284,7 @@ public class ModelPropertyMapEntryImpl extends EObjectImpl implements BasicEMap.
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public String getKey() {
 		return getTypedKey();
 	}
@@ -291,6 +294,7 @@ public class ModelPropertyMapEntryImpl extends EObjectImpl implements BasicEMap.
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void setKey(String key) {
 		setTypedKey(key);
 	}
@@ -300,6 +304,7 @@ public class ModelPropertyMapEntryImpl extends EObjectImpl implements BasicEMap.
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public ModelProperty getValue() {
 		return getTypedValue();
 	}
@@ -309,6 +314,7 @@ public class ModelPropertyMapEntryImpl extends EObjectImpl implements BasicEMap.
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public ModelProperty setValue(ModelProperty value) {
 		ModelProperty oldValue = getValue();
 		setTypedValue(value);

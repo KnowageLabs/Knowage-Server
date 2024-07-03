@@ -20,6 +20,7 @@ public class DataStoreCatalogFunctionField extends AbstractCatalogFunctionField 
 		this.catalogFunctionConfig = config;
 	}
 
+	@Override
 	public String getAlias() {
 		return alias;
 	}

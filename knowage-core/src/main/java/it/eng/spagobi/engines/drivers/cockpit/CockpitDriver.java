@@ -40,7 +40,7 @@ public class CockpitDriver extends GenericDriver {
 	public ArrayList<String> getDatasetAssociated(byte[] contentTemplate) throws JSONException {
 		logger.debug("IN");
 
-		ArrayList<String> datasetsLabels = new ArrayList<String>();
+		ArrayList<String> datasetsLabels = new ArrayList<>();
 		JSONObject templateContent = getTemplateAsJsonObject(contentTemplate);
 		if (templateContent == null) {
 			logger.error("Template content non returned. Impossible get associated dataset. Check the template!");
@@ -78,7 +78,7 @@ public class CockpitDriver extends GenericDriver {
 	public ArrayList<String> getFunctionsAssociated(byte[] contentTemplate) throws JSONException {
 		logger.debug("IN");
 
-		ArrayList<String> functionUuids = new ArrayList<String>();
+		ArrayList<String> functionUuids = new ArrayList<>();
 		JSONObject templateContent = getTemplateAsJsonObject(contentTemplate);
 		if (templateContent == null) {
 			logger.error("Template content non returned. Impossible get associated functions. Check the template!");

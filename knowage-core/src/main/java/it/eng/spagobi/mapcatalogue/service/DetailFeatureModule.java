@@ -70,6 +70,7 @@ public class DetailFeatureModule extends AbstractHttpModule {
 	 * 
 	 * @throws Exception the exception
 	 */
+	@Override
 	public void service(SourceBean serviceRequest, SourceBean serviceResponse) throws Exception {		
 
 		String message = (String) serviceRequest.getAttribute("MESSAGEDET");

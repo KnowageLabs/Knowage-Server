@@ -180,13 +180,13 @@ public class GeoReportEngineConfig {
 		logger.debug("IN");
 
 		try {
-			List<GeoLayer> geoLayers = new ArrayList<GeoLayer>();
+			List<GeoLayer> geoLayers = new ArrayList<>();
 
 			try {
 				ISbiGeoLayersDAO geoLayersDAO = DAOFactory.getSbiGeoLayerDao();
 				geoLayers = geoLayersDAO.loadAllLayers(null, UserUtilities.getUserProfile());
 				if (geoLayers != null) {
-					levels = new ArrayList<Properties>();
+					levels = new ArrayList<>();
 					for (int i = 0; i < geoLayers.size(); i++) {
 						GeoLayer level = geoLayers.get(i);
 						String name = level.getName();

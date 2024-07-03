@@ -17,11 +17,9 @@
  */
 package it.eng.spagobi.api.v2;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.stream.Collectors.toList;
 
 import java.net.URI;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -61,8 +59,7 @@ import it.eng.spagobi.commons.utilities.UserUtilities;
 import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
 import it.eng.spagobi.services.rest.annotations.UserConstraint;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
-import org.owasp.esapi.reference.DefaultEncoder;
-import org.owasp.esapi.errors.EncodingException; 
+import org.owasp.esapi.reference.DefaultEncoder; 
 
 @Path("/2.0/roles")
 @ManageAuthorization

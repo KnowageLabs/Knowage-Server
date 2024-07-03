@@ -54,6 +54,7 @@ public class TreeInitializer implements InitializerIFace {
 	 * @param config
 	 *            the config
 	 */
+	@Override
 	public void init(SourceBean config) {
 		logger.debug("IN");
 		_config = config;
@@ -67,6 +68,7 @@ public class TreeInitializer implements InitializerIFace {
 	 * 
 	 * @see it.eng.spago.init.InitializerIFace#getConfig()
 	 */
+	@Override
 	public SourceBean getConfig() {
 		return _config;
 	}

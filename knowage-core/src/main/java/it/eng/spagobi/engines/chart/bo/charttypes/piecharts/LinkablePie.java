@@ -78,6 +78,7 @@ public class LinkablePie extends PieCharts implements ILinkableChart{
 	/* (non-Javadoc)
 	 * @see it.eng.spagobi.engines.chart.bo.charttypes.piecharts.PieCharts#configureChart(it.eng.spago.base.SourceBean)
 	 */
+	@Override
 	public void configureChart(SourceBean content) {
 		// TODO Auto-generated method stub
 		super.configureChart(content);
@@ -118,7 +119,7 @@ public class LinkablePie extends PieCharts implements ILinkableChart{
 
 			List parameters =drillSB.getAttributeAsList("PARAM");
 			if(parameters!=null){
-				drillParametersMap=new HashMap<String, DrillParameter>();
+				drillParametersMap=new HashMap<>();
 
 				for (Iterator iterator = parameters.iterator(); iterator.hasNext();) {
 					SourceBean att = (SourceBean) iterator.next();
@@ -159,6 +160,7 @@ public class LinkablePie extends PieCharts implements ILinkableChart{
 	/* (non-Javadoc)
 	 * @see it.eng.spagobi.engines.chart.bo.charttypes.piecharts.PieCharts#createChart(java.lang.String, org.jfree.data.general.Dataset)
 	 */
+	@Override
 	public JFreeChart createChart(DatasetMap datasets) {
 		Dataset dataset=(Dataset)datasets.getDatasets().get("1");
 
@@ -285,6 +287,7 @@ public class LinkablePie extends PieCharts implements ILinkableChart{
 	/* (non-Javadoc)
 	 * @see it.eng.spagobi.engines.chart.bo.ChartImpl#isChangeableView()
 	 */
+	@Override
 	public boolean isChangeableView() {
 		return true;	
 	}
@@ -296,6 +299,7 @@ public class LinkablePie extends PieCharts implements ILinkableChart{
 	/* (non-Javadoc)
 	 * @see it.eng.spagobi.engines.chart.bo.ChartImpl#setChangeViewsParameter(java.lang.String, boolean)
 	 */
+	@Override
 	public void setChangeViewsParameter(String changePar, boolean how) {
 		if(changePar.equalsIgnoreCase(CHANGE_VIEW_3D)){
 			threeD=how;
@@ -310,6 +314,7 @@ public class LinkablePie extends PieCharts implements ILinkableChart{
 	/* (non-Javadoc)
 	 * @see it.eng.spagobi.engines.chart.bo.ChartImpl#getChangeViewParameter(java.lang.String)
 	 */
+	@Override
 	public boolean getChangeViewParameter(String changePar) {
 		boolean ret=false;
 		if(changePar.equalsIgnoreCase(CHANGE_VIEW_3D)){
@@ -324,6 +329,7 @@ public class LinkablePie extends PieCharts implements ILinkableChart{
 	/* (non-Javadoc)
 	 * @see it.eng.spagobi.engines.chart.bo.ChartImpl#getChangeViewParameterLabel(java.lang.String, int)
 	 */
+	@Override
 	public String getChangeViewParameterLabel(String changePar, int i) {
 		String ret="";
 		if(changePar.equalsIgnoreCase(CHANGE_VIEW_3D)){
@@ -344,6 +350,7 @@ public class LinkablePie extends PieCharts implements ILinkableChart{
 	/* (non-Javadoc)
 	 * @see it.eng.spagobi.engines.chart.bo.ChartImpl#getPossibleChangePars()
 	 */
+	@Override
 	public List getPossibleChangePars() {
 		List l=new Vector();
 		if(!isThreedViewConfigured)	{l.add(CHANGE_VIEW_3D); }
@@ -435,6 +442,7 @@ public class LinkablePie extends PieCharts implements ILinkableChart{
 	/* (non-Javadoc)
 	 * @see it.eng.spagobi.engines.chart.bo.charttypes.ILinkableChart#getRootUrl()
 	 */
+	@Override
 	public String getRootUrl() {
 		return rootUrl;
 	}
@@ -443,6 +451,7 @@ public class LinkablePie extends PieCharts implements ILinkableChart{
 	/* (non-Javadoc)
 	 * @see it.eng.spagobi.engines.chart.bo.charttypes.ILinkableChart#setRootUrl(java.lang.String)
 	 */
+	@Override
 	public void setRootUrl(String rootUrl) {
 		this.rootUrl = rootUrl;
 	}
@@ -451,6 +460,7 @@ public class LinkablePie extends PieCharts implements ILinkableChart{
 	/* (non-Javadoc)
 	 * @see it.eng.spagobi.engines.chart.bo.charttypes.ILinkableChart#getMode()
 	 */
+	@Override
 	public String getMode() {
 		return mode;
 	}
@@ -459,6 +469,7 @@ public class LinkablePie extends PieCharts implements ILinkableChart{
 	/* (non-Javadoc)
 	 * @see it.eng.spagobi.engines.chart.bo.charttypes.ILinkableChart#setMode(java.lang.String)
 	 */
+	@Override
 	public void setMode(String mode) {
 		this.mode = mode;
 	}
@@ -467,6 +478,7 @@ public class LinkablePie extends PieCharts implements ILinkableChart{
 	/* (non-Javadoc)
 	 * @see it.eng.spagobi.engines.chart.bo.charttypes.ILinkableChart#getDrillLabel()
 	 */
+	@Override
 	public String getDrillLabel() {
 		return drillLabel;
 	}
@@ -475,6 +487,7 @@ public class LinkablePie extends PieCharts implements ILinkableChart{
 	/* (non-Javadoc)
 	 * @see it.eng.spagobi.engines.chart.bo.charttypes.ILinkableChart#setDrillLabel(java.lang.String)
 	 */
+	@Override
 	public void setDrillLabel(String drillLabel) {
 		this.drillLabel = drillLabel;
 	}
@@ -483,11 +496,13 @@ public class LinkablePie extends PieCharts implements ILinkableChart{
 
 
 
+	@Override
 	public HashMap<String, DrillParameter> getDrillParametersMap() {
 		return drillParametersMap;
 	}
 
 
+	@Override
 	public void setDrillParametersMap(
 			HashMap<String, DrillParameter> drillParametersMap) {
 		this.drillParametersMap = drillParametersMap;
@@ -576,6 +591,7 @@ public class LinkablePie extends PieCharts implements ILinkableChart{
 	/* (non-Javadoc)
 	 * @see it.eng.spagobi.engines.chart.bo.ChartImpl#isLinkable()
 	 */
+	@Override
 	public boolean isLinkable(){
 		return true;
 	}
@@ -584,6 +600,7 @@ public class LinkablePie extends PieCharts implements ILinkableChart{
 	/* (non-Javadoc)
 	 * @see it.eng.spagobi.engines.chart.bo.charttypes.ILinkableChart#getCategoryUrlName()
 	 */
+	@Override
 	public String getCategoryUrlName() {
 		return categoryUrlName;
 	}
@@ -592,6 +609,7 @@ public class LinkablePie extends PieCharts implements ILinkableChart{
 	/* (non-Javadoc)
 	 * @see it.eng.spagobi.engines.chart.bo.charttypes.ILinkableChart#setCategoryUrlName(java.lang.String)
 	 */
+	@Override
 	public void setCategoryUrlName(String categoryUrlName) {
 		this.categoryUrlName = categoryUrlName;
 	}
@@ -599,11 +617,12 @@ public class LinkablePie extends PieCharts implements ILinkableChart{
 	/* (non-Javadoc)
 	 * @see it.eng.spagobi.engines.chart.bo.charttypes.ILinkableChart#getDocument_Parameters(java.util.HashMap)
 	 */
+	@Override
 	public String getDocument_Parameters(HashMap<String, DrillParameter> drillParametersMap) {
 		String document_parameter="";
 		for (Iterator iterator = drillParametersMap.keySet().iterator(); iterator.hasNext();) {
 			String name = (String) iterator.next();
-			DrillParameter drillPar=(DrillParameter)drillParametersMap.get(name);
+			DrillParameter drillPar=drillParametersMap.get(name);
 			String value=drillPar.getValue();
 			if(name!=null && !name.equals("") && value!=null && !value.equals("")){
 				document_parameter+="%26"+name+"%3D"+value;
@@ -618,6 +637,7 @@ public class LinkablePie extends PieCharts implements ILinkableChart{
 	/* (non-Javadoc)
 	 * @see it.eng.spagobi.engines.chart.bo.charttypes.ILinkableChart#getSerieUrlname()
 	 */
+	@Override
 	public String getSerieUrlname() {
 		// TODO Auto-generated method stub
 		return null;
@@ -627,27 +647,32 @@ public class LinkablePie extends PieCharts implements ILinkableChart{
 	/* (non-Javadoc)
 	 * @see it.eng.spagobi.engines.chart.bo.charttypes.ILinkableChart#setSerieUrlname(java.lang.String)
 	 */
+	@Override
 	public void setSerieUrlname(String serieUrlname) {
 		// TODO Auto-generated method stub
 		
 	}
 
 
+	@Override
 	public String getDrillDocTitle() {
 		return drillDocTitle;
 	}
 
 
+	@Override
 	public void setDrillDocTitle(String drillDocTitle) {
 		this.drillDocTitle = drillDocTitle;
 	}
 
 
+	@Override
 	public String getTarget() {
 		return target;
 	}
 
 
+	@Override
 	public void setTarget(String target) {
 		this.target = target;
 	}

@@ -204,6 +204,7 @@ public class OlapModelPackageImpl extends EPackageImpl implements OlapModelPacka
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EClass getOlapModel() {
 		return olapModelEClass;
 	}
@@ -213,6 +214,7 @@ public class OlapModelPackageImpl extends EPackageImpl implements OlapModelPacka
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EReference getOlapModel_ParentModel() {
 		return (EReference)olapModelEClass.getEStructuralFeatures().get(0);
 	}
@@ -222,6 +224,7 @@ public class OlapModelPackageImpl extends EPackageImpl implements OlapModelPacka
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EReference getOlapModel_Cubes() {
 		return (EReference)olapModelEClass.getEStructuralFeatures().get(1);
 	}
@@ -231,6 +234,7 @@ public class OlapModelPackageImpl extends EPackageImpl implements OlapModelPacka
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EReference getOlapModel_VirtualCubes() {
 		return (EReference)olapModelEClass.getEStructuralFeatures().get(2);
 	}
@@ -240,6 +244,7 @@ public class OlapModelPackageImpl extends EPackageImpl implements OlapModelPacka
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EReference getOlapModel_Dimensions() {
 		return (EReference)olapModelEClass.getEStructuralFeatures().get(3);
 	}
@@ -249,6 +254,7 @@ public class OlapModelPackageImpl extends EPackageImpl implements OlapModelPacka
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EClass getCube() {
 		return cubeEClass;
 	}
@@ -258,6 +264,7 @@ public class OlapModelPackageImpl extends EPackageImpl implements OlapModelPacka
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EReference getCube_Model() {
 		return (EReference)cubeEClass.getEStructuralFeatures().get(0);
 	}
@@ -267,6 +274,7 @@ public class OlapModelPackageImpl extends EPackageImpl implements OlapModelPacka
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EReference getCube_Table() {
 		return (EReference)cubeEClass.getEStructuralFeatures().get(1);
 	}
@@ -276,6 +284,7 @@ public class OlapModelPackageImpl extends EPackageImpl implements OlapModelPacka
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EReference getCube_Dimensions() {
 		return (EReference)cubeEClass.getEStructuralFeatures().get(2);
 	}
@@ -285,6 +294,7 @@ public class OlapModelPackageImpl extends EPackageImpl implements OlapModelPacka
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EReference getCube_Measures() {
 		return (EReference)cubeEClass.getEStructuralFeatures().get(3);
 	}
@@ -294,6 +304,7 @@ public class OlapModelPackageImpl extends EPackageImpl implements OlapModelPacka
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EReference getCube_CalculatedMembers() {
 		return (EReference)cubeEClass.getEStructuralFeatures().get(4);
 	}
@@ -303,6 +314,7 @@ public class OlapModelPackageImpl extends EPackageImpl implements OlapModelPacka
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EReference getCube_NamedSets() {
 		return (EReference)cubeEClass.getEStructuralFeatures().get(5);
 	}
@@ -312,6 +324,7 @@ public class OlapModelPackageImpl extends EPackageImpl implements OlapModelPacka
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EClass getDimension() {
 		return dimensionEClass;
 	}
@@ -321,6 +334,7 @@ public class OlapModelPackageImpl extends EPackageImpl implements OlapModelPacka
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EReference getDimension_Table() {
 		return (EReference)dimensionEClass.getEStructuralFeatures().get(0);
 	}
@@ -330,6 +344,7 @@ public class OlapModelPackageImpl extends EPackageImpl implements OlapModelPacka
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EReference getDimension_Hierarchies() {
 		return (EReference)dimensionEClass.getEStructuralFeatures().get(1);
 	}
@@ -339,6 +354,7 @@ public class OlapModelPackageImpl extends EPackageImpl implements OlapModelPacka
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EReference getDimension_Model() {
 		return (EReference)dimensionEClass.getEStructuralFeatures().get(2);
 	}
@@ -348,6 +364,7 @@ public class OlapModelPackageImpl extends EPackageImpl implements OlapModelPacka
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EClass getHierarchy() {
 		return hierarchyEClass;
 	}
@@ -357,6 +374,7 @@ public class OlapModelPackageImpl extends EPackageImpl implements OlapModelPacka
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EReference getHierarchy_Table() {
 		return (EReference)hierarchyEClass.getEStructuralFeatures().get(0);
 	}
@@ -366,6 +384,7 @@ public class OlapModelPackageImpl extends EPackageImpl implements OlapModelPacka
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EReference getHierarchy_Dimension() {
 		return (EReference)hierarchyEClass.getEStructuralFeatures().get(1);
 	}
@@ -375,6 +394,7 @@ public class OlapModelPackageImpl extends EPackageImpl implements OlapModelPacka
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EReference getHierarchy_Levels() {
 		return (EReference)hierarchyEClass.getEStructuralFeatures().get(2);
 	}
@@ -384,6 +404,7 @@ public class OlapModelPackageImpl extends EPackageImpl implements OlapModelPacka
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EClass getLevel() {
 		return levelEClass;
 	}
@@ -393,6 +414,7 @@ public class OlapModelPackageImpl extends EPackageImpl implements OlapModelPacka
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EReference getLevel_Hierarchy() {
 		return (EReference)levelEClass.getEStructuralFeatures().get(0);
 	}
@@ -402,6 +424,7 @@ public class OlapModelPackageImpl extends EPackageImpl implements OlapModelPacka
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EReference getLevel_Column() {
 		return (EReference)levelEClass.getEStructuralFeatures().get(1);
 	}
@@ -411,6 +434,7 @@ public class OlapModelPackageImpl extends EPackageImpl implements OlapModelPacka
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EReference getLevel_OrdinalColumn() {
 		return (EReference)levelEClass.getEStructuralFeatures().get(2);
 	}
@@ -420,6 +444,7 @@ public class OlapModelPackageImpl extends EPackageImpl implements OlapModelPacka
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EReference getLevel_NameColumn() {
 		return (EReference)levelEClass.getEStructuralFeatures().get(3);
 	}
@@ -429,6 +454,7 @@ public class OlapModelPackageImpl extends EPackageImpl implements OlapModelPacka
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EReference getLevel_CaptionColumn() {
 		return (EReference)levelEClass.getEStructuralFeatures().get(4);
 	}
@@ -438,6 +464,7 @@ public class OlapModelPackageImpl extends EPackageImpl implements OlapModelPacka
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EReference getLevel_PropertyColumns() {
 		return (EReference)levelEClass.getEStructuralFeatures().get(5);
 	}
@@ -447,6 +474,7 @@ public class OlapModelPackageImpl extends EPackageImpl implements OlapModelPacka
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EClass getMeasure() {
 		return measureEClass;
 	}
@@ -456,6 +484,7 @@ public class OlapModelPackageImpl extends EPackageImpl implements OlapModelPacka
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EReference getMeasure_Cube() {
 		return (EReference)measureEClass.getEStructuralFeatures().get(0);
 	}
@@ -465,6 +494,7 @@ public class OlapModelPackageImpl extends EPackageImpl implements OlapModelPacka
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EReference getMeasure_Column() {
 		return (EReference)measureEClass.getEStructuralFeatures().get(1);
 	}
@@ -474,6 +504,7 @@ public class OlapModelPackageImpl extends EPackageImpl implements OlapModelPacka
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EClass getCalculatedMember() {
 		return calculatedMemberEClass;
 	}
@@ -483,6 +514,7 @@ public class OlapModelPackageImpl extends EPackageImpl implements OlapModelPacka
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EReference getCalculatedMember_Cube() {
 		return (EReference)calculatedMemberEClass.getEStructuralFeatures().get(0);
 	}
@@ -492,6 +524,7 @@ public class OlapModelPackageImpl extends EPackageImpl implements OlapModelPacka
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EReference getCalculatedMember_Hierarchy() {
 		return (EReference)calculatedMemberEClass.getEStructuralFeatures().get(1);
 	}
@@ -501,6 +534,7 @@ public class OlapModelPackageImpl extends EPackageImpl implements OlapModelPacka
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EClass getNamedSet() {
 		return namedSetEClass;
 	}
@@ -510,6 +544,7 @@ public class OlapModelPackageImpl extends EPackageImpl implements OlapModelPacka
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EReference getNamedSet_Cube() {
 		return (EReference)namedSetEClass.getEStructuralFeatures().get(0);
 	}
@@ -519,6 +554,7 @@ public class OlapModelPackageImpl extends EPackageImpl implements OlapModelPacka
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EClass getVirtualCube() {
 		return virtualCubeEClass;
 	}
@@ -528,6 +564,7 @@ public class OlapModelPackageImpl extends EPackageImpl implements OlapModelPacka
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EReference getVirtualCube_Cubes() {
 		return (EReference)virtualCubeEClass.getEStructuralFeatures().get(0);
 	}
@@ -537,6 +574,7 @@ public class OlapModelPackageImpl extends EPackageImpl implements OlapModelPacka
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EReference getVirtualCube_Dimensions() {
 		return (EReference)virtualCubeEClass.getEStructuralFeatures().get(1);
 	}
@@ -546,6 +584,7 @@ public class OlapModelPackageImpl extends EPackageImpl implements OlapModelPacka
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EReference getVirtualCube_Measures() {
 		return (EReference)virtualCubeEClass.getEStructuralFeatures().get(2);
 	}
@@ -555,6 +594,7 @@ public class OlapModelPackageImpl extends EPackageImpl implements OlapModelPacka
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EReference getVirtualCube_CalculatedMembers() {
 		return (EReference)virtualCubeEClass.getEStructuralFeatures().get(3);
 	}
@@ -564,6 +604,7 @@ public class OlapModelPackageImpl extends EPackageImpl implements OlapModelPacka
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EReference getVirtualCube_Model() {
 		return (EReference)virtualCubeEClass.getEStructuralFeatures().get(4);
 	}
@@ -573,6 +614,7 @@ public class OlapModelPackageImpl extends EPackageImpl implements OlapModelPacka
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EClass getVirtualCubeDimension() {
 		return virtualCubeDimensionEClass;
 	}
@@ -582,6 +624,7 @@ public class OlapModelPackageImpl extends EPackageImpl implements OlapModelPacka
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EReference getVirtualCubeDimension_VirtualCube() {
 		return (EReference)virtualCubeDimensionEClass.getEStructuralFeatures().get(0);
 	}
@@ -591,6 +634,7 @@ public class OlapModelPackageImpl extends EPackageImpl implements OlapModelPacka
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EReference getVirtualCubeDimension_Cube() {
 		return (EReference)virtualCubeDimensionEClass.getEStructuralFeatures().get(1);
 	}
@@ -600,6 +644,7 @@ public class OlapModelPackageImpl extends EPackageImpl implements OlapModelPacka
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EReference getVirtualCubeDimension_Dimension() {
 		return (EReference)virtualCubeDimensionEClass.getEStructuralFeatures().get(2);
 	}
@@ -609,6 +654,7 @@ public class OlapModelPackageImpl extends EPackageImpl implements OlapModelPacka
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EClass getVirtualCubeMeasure() {
 		return virtualCubeMeasureEClass;
 	}
@@ -618,6 +664,7 @@ public class OlapModelPackageImpl extends EPackageImpl implements OlapModelPacka
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EReference getVirtualCubeMeasure_VirtualCube() {
 		return (EReference)virtualCubeMeasureEClass.getEStructuralFeatures().get(0);
 	}
@@ -627,6 +674,7 @@ public class OlapModelPackageImpl extends EPackageImpl implements OlapModelPacka
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EReference getVirtualCubeMeasure_Cube() {
 		return (EReference)virtualCubeMeasureEClass.getEStructuralFeatures().get(1);
 	}
@@ -636,6 +684,7 @@ public class OlapModelPackageImpl extends EPackageImpl implements OlapModelPacka
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EReference getVirtualCubeMeasure_Measure() {
 		return (EReference)virtualCubeMeasureEClass.getEStructuralFeatures().get(2);
 	}
@@ -645,6 +694,7 @@ public class OlapModelPackageImpl extends EPackageImpl implements OlapModelPacka
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public OlapModelFactory getOlapModelFactory() {
 		return (OlapModelFactory)getEFactoryInstance();
 	}

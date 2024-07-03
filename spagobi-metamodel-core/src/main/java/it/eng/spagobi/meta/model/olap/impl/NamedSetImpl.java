@@ -64,6 +64,7 @@ public class NamedSetImpl extends ModelObjectImpl implements NamedSet {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public Cube getCube() {
 		if (eContainerFeatureID() != OlapModelPackage.NAMED_SET__CUBE) return null;
 		return (Cube)eContainer();
@@ -84,6 +85,7 @@ public class NamedSetImpl extends ModelObjectImpl implements NamedSet {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void setCube(Cube newCube) {
 		if (newCube != eInternalContainer() || (eContainerFeatureID() != OlapModelPackage.NAMED_SET__CUBE && newCube != null)) {
 			if (EcoreUtil.isAncestor(this, newCube))

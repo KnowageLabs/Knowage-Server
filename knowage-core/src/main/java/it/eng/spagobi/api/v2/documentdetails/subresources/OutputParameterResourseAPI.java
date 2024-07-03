@@ -16,7 +16,7 @@ import it.eng.spagobi.commons.dao.DAOFactory;
 public class OutputParameterResourseAPI {
 
 	public boolean isUsedInCrossNavigations(OutputParameter outputParameter) {
-		List<OutputParameter> list = new ArrayList<OutputParameter>();
+		List<OutputParameter> list = new ArrayList<>();
 		list.add(outputParameter);
 		return foundRelatedCrossNavs(list);
 	}

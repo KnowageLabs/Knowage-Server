@@ -49,6 +49,7 @@ public class JRImageServlet extends HttpServlet {
 	 * javax.servlet.http.HttpServlet#service(javax.servlet.http.HttpServletRequest
 	 * , javax.servlet.http.HttpServletResponse)
 	 */
+	@Override
 	public void service(HttpServletRequest request, HttpServletResponse response)
 			throws IOException, ServletException {
 		logger.debug("IN");

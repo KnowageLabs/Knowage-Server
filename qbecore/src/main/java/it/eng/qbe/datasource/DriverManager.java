@@ -36,7 +36,7 @@ public class DriverManager {
 	private static Map<String, IDriver> drivers;
 	
 	static {
-		drivers = new HashMap<String, IDriver>();
+		drivers = new HashMap<>();
 		drivers.put(JPADriver.DRIVER_ID, new JPADriver());
 		drivers.put(HibernateDriver.DRIVER_ID, new HibernateDriver());
 		drivers.put(JPADriverWithClassLoader.DRIVER_ID, new JPADriverWithClassLoader());

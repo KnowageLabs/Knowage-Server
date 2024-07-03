@@ -42,7 +42,7 @@ public class Attribute extends Field {
 		this.values = values;
 	}
 	public List<String> getValuesAsList() {
-		List<String> toReturn = new ArrayList<String>();
+		List<String> toReturn = new ArrayList<>();
 		if (values == null) {
 			return toReturn;
 		}
@@ -58,6 +58,7 @@ public class Attribute extends Field {
 		}
 		return toReturn;
 	}
+	@Override
 	public Attribute clone() {
 		return new Attribute(entityId, alias, iconCls, nature, values);
 	}

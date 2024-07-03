@@ -76,7 +76,7 @@ public class ImportMetadata extends AbstractHibernateDAO {
 			// 2 - Retrieve rdbms data sources of the job
 			Set<ETLRDBMSSource> sources = etlMetadata.getRdbmsSources();
 			// get corresponding source record from db
-			HashMap<String, SbiMetaSource> sourcesMap = new HashMap<String, SbiMetaSource>();
+			HashMap<String, SbiMetaSource> sourcesMap = new HashMap<>();
 			for (ETLRDBMSSource source : sources) {
 				String sourceUniqueName = source.getUniqueName();
 				// get corresponding source name on SBI_META_SOURCE mapped by .properties file
@@ -204,8 +204,8 @@ public class ImportMetadata extends AbstractHibernateDAO {
 			aSession = getSession();
 			tx = aSession.beginTransaction();
 
-			HashMap<String, SbiMetaTable> tablesMap = new HashMap<String, SbiMetaTable>();
-			HashMap<String, SbiMetaTableColumn> columnsMap = new HashMap<String, SbiMetaTableColumn>();
+			HashMap<String, SbiMetaTable> tablesMap = new HashMap<>();
+			HashMap<String, SbiMetaTableColumn> columnsMap = new HashMap<>();
 
 			// get informations and call DAO insert methods
 			// SBI_META_SOURCE
@@ -616,7 +616,7 @@ public class ImportMetadata extends AbstractHibernateDAO {
 		logger.debug("IN");
 
 		ISbiMetaTableColumnDAO msDao = DAOFactory.getSbiMetaTableColumnDAO();
-		HashMap<String, SbiMetaTableColumn> toReturn = new HashMap<String, SbiMetaTableColumn>();
+		HashMap<String, SbiMetaTableColumn> toReturn = new HashMap<>();
 
 		try {
 			List<SbiMetaTableColumn> cols = msDao.loadTableColumnsFromTable(session, tableId);
@@ -671,7 +671,7 @@ public class ImportMetadata extends AbstractHibernateDAO {
 
 	private HashMap convertListBCInMap(List<SbiMetaBc> lstBCs) {
 		// convert the BC list in map
-		HashMap<String, SbiMetaBc> toReturn = new HashMap<String, SbiMetaBc>();
+		HashMap<String, SbiMetaBc> toReturn = new HashMap<>();
 
 		for (SbiMetaBc bc : lstBCs) {
 			toReturn.put(bc.getName(), bc);

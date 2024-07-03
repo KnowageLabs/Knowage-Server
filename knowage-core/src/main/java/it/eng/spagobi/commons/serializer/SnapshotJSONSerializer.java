@@ -45,6 +45,7 @@ public class SnapshotJSONSerializer implements Serializer {
 	private static final DateTimeFormatter DATE_FORMATTER_V2 = DateTimeFormatter.ofPattern(GeneralUtilities.getServerTimeStampFormat());
 
 	
+	@Override
 	public Object serialize(Object o, Locale locale) throws SerializationException {
 		JSONObject  result = null;
 		

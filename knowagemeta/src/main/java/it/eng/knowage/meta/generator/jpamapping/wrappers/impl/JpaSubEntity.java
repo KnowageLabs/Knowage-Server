@@ -70,7 +70,7 @@ public class JpaSubEntity implements IJpaSubEntity {
 		this.root = root;
 		this.parent = parent;
 		this.relationship = relationship;
-		this.children = new ArrayList<JpaSubEntity>();
+		this.children = new ArrayList<>();
 	}
 
 	public static String nameToJavaVariableName(String name) {
@@ -85,7 +85,7 @@ public class JpaSubEntity implements IJpaSubEntity {
 	}
 
 	public List<IJpaSubEntity> getChildren() {
-		List<IJpaSubEntity> subEntities = new ArrayList<IJpaSubEntity>();
+		List<IJpaSubEntity> subEntities = new ArrayList<>();
 
 		for (BusinessRelationship r : relationship.getDestinationTable().getRelationships()) {
 			if (r.getSourceTable() != relationship.getDestinationTable())
@@ -223,7 +223,7 @@ public class JpaSubEntity implements IJpaSubEntity {
 
 	@Override
 	public List<String> getColumnUniqueNames() {
-		List<String> uniqueNames = new ArrayList<String>();
+		List<String> uniqueNames = new ArrayList<>();
 
 		IJpaTable table = getTable();
 		for (IJpaColumn column : table.getColumns()) {
@@ -236,7 +236,7 @@ public class JpaSubEntity implements IJpaSubEntity {
 	public List<String> getColumnsNameWithPath() {
 		String subEntityUniqueName = this.getUniqueName();
 		List<IJpaColumn> columns = getColumns();
-		List<String> columnsNameWithPath = new ArrayList<String>();
+		List<String> columnsNameWithPath = new ArrayList<>();
 
 		for (IJpaColumn column : columns) {
 			columnsNameWithPath.add(subEntityUniqueName + "/" + column.getUnqualifiedUniqueName());
@@ -247,7 +247,7 @@ public class JpaSubEntity implements IJpaSubEntity {
 
 	@Override
 	public List<String> getColumnNames() {
-		List<String> columnsNames = new ArrayList<String>();
+		List<String> columnsNames = new ArrayList<>();
 
 		IJpaTable table = getTable();
 		for (IJpaColumn column : table.getColumns()) {

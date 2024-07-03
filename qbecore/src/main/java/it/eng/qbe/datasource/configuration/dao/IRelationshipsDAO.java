@@ -18,8 +18,6 @@
 package it.eng.qbe.datasource.configuration.dao;
 
 import it.eng.qbe.model.structure.IModelRelationshipDescriptor;
-import it.eng.qbe.model.structure.IModelViewEntityDescriptor;
-
 import java.util.List;
 
 import org.json.JSONObject;

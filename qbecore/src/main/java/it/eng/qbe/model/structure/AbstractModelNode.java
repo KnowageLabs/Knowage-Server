@@ -18,7 +18,6 @@
 package it.eng.qbe.model.structure;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 
 
@@ -31,14 +30,17 @@ public abstract class AbstractModelNode extends AbstractModelObject implements I
 	protected IModelEntity parent;	
 	protected String modelName;
 
+	@Override
 	public String getModelName() {
 		return modelName;
 	}
 
+	@Override
 	public void setModelName(String modelName) {
 		this.modelName = modelName;
 	}
 
+	@Override
 	public IModelStructure getStructure() {
 		return structure;
 	}
@@ -47,10 +49,12 @@ public abstract class AbstractModelNode extends AbstractModelObject implements I
 		this.structure = structure;
 	}
 	
+	@Override
 	public IModelEntity getParent() {
 		return parent;
 	}
 	
+	@Override
 	public void setParent(IModelEntity parent) {
 		this.parent = parent;
 	}
@@ -61,6 +65,7 @@ public abstract class AbstractModelNode extends AbstractModelObject implements I
 	 * entity is a ModelView: getPathParent() returns the view. 
 	 * getParent() returns the entity of the view that contains the node
 	 */
+	@Override
 	public IModelEntity getLogicalParent(){
 		if(parent==null){
 			return null;
@@ -75,7 +80,7 @@ public abstract class AbstractModelNode extends AbstractModelObject implements I
 	
 		
 	protected List<ModelViewEntity> getParentViews(IModelEntity entity){
-		List<ModelViewEntity> parentViews = new ArrayList<ModelViewEntity>();
+		List<ModelViewEntity> parentViews = new ArrayList<>();
 		IModelEntity nextEntity;
 		if(entity instanceof ModelViewEntity){
 			parentViews.add((ModelViewEntity)entity);

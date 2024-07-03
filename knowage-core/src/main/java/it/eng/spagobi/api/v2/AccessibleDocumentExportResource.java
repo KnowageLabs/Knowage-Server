@@ -1,16 +1,8 @@
 package it.eng.spagobi.api.v2;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-
-import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -23,7 +15,6 @@ import javax.ws.rs.core.Response.ResponseBuilder;
 
 import org.apache.clerezza.jaxrs.utils.form.FormFile;
 import org.apache.clerezza.jaxrs.utils.form.MultiPartBody;
-import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 
 
@@ -33,7 +24,6 @@ import it.eng.spagobi.commons.ADconverter.AccessibleDocumentConverterFactory;
 import it.eng.spagobi.commons.ADconverter.ConversionType;
 import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceException;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 @Path("/2.0/exportAccessibleDocument")
 @ManageAuthorization

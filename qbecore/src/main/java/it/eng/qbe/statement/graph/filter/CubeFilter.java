@@ -46,6 +46,7 @@ public class CubeFilter implements IPathsFilter{
 	public static String PROPERTY_ENTITIES = "PROPERTY_ENTITIES";
 	public static String PROPERTY_MODEL_STRUCTURE = "PROPERTY_ROOT_GRAPH";
 
+	@Override
 	public void filterPaths(Set<ModelFieldPaths> paths,	Map<String, Object> properties) {
 		
 		Set<IModelEntity> modelEntities = (Set<IModelEntity>)properties.get(PROPERTY_ENTITIES);
@@ -55,10 +56,10 @@ public class CubeFilter implements IPathsFilter{
 		Assert.assertNotNull(modelStructure, "For the cube validator need the model structure");
 		
 		//Get all the cubes of the model
-		List<String> modelEntityCubesList = new ArrayList<String>();
+		List<String> modelEntityCubesList = new ArrayList<>();
 		Iterator<IModelEntity> entitiesIter = modelEntities.iterator();
 		while (entitiesIter.hasNext()) {
-			IModelEntity iModelEntity = (IModelEntity) entitiesIter.next();
+			IModelEntity iModelEntity = entitiesIter.next();
 			String type = (String) iModelEntity.getProperty("type");
 			if ("cube".equalsIgnoreCase( type )) {
 				modelEntityCubesList.add(iModelEntity.getUniqueName());
@@ -68,13 +69,13 @@ public class CubeFilter implements IPathsFilter{
 		logger.debug("Filtering the paths");
 		Iterator<ModelFieldPaths> pathIter = paths.iterator();
 		while (pathIter.hasNext()) {
-			ModelFieldPaths modelFieldPaths = (ModelFieldPaths) pathIter.next();
+			ModelFieldPaths modelFieldPaths = pathIter.next();
 			Set<PathChoice> choices = modelFieldPaths.getChoices();
-			Set<PathChoice> filteredChoices = new HashSet<PathChoice>();
+			Set<PathChoice> filteredChoices = new HashSet<>();
 			if(choices!=null){
 				Iterator<PathChoice> choicesIter = choices.iterator();
 				while (choicesIter.hasNext()) {
-					PathChoice pathChoice = (PathChoice) choicesIter.next();
+					PathChoice pathChoice = choicesIter.next();
 					List<Relationship> relations = pathChoice.getRelations();
 					boolean choiceToFilter=false;
 					for(int i=0; i<relations.size(); i++){

@@ -54,7 +54,7 @@ public class DomainCRUDForFinalUser extends DomainCRUD {
 	@Path("/ds-categories")
 	@Produces(MediaType.APPLICATION_JSON + charset)
 	public String getDataSetCategoriesByUser(@Context HttpServletRequest req) {
-		Set<Domain> categories = new HashSet<Domain>();
+		Set<Domain> categories = new HashSet<>();
 		try {
 			categories = UserUtilities.getDataSetCategoriesByUser(getUserProfile());
 			return translate(categories, getLocale(req)).toString();
@@ -68,7 +68,7 @@ public class DomainCRUDForFinalUser extends DomainCRUD {
 	@Path("/bm-categories")
 	@Produces(MediaType.APPLICATION_JSON + charset)
 	public String getBusinessModelsCategoriesByUser(@Context HttpServletRequest req) {
-		Set<Domain> categories = new HashSet<Domain>();
+		Set<Domain> categories = new HashSet<>();
 		try {
 			categories = UserUtilities.getBusinessModelsCategoriesByUser(getUserProfile());
 			return translate(categories, getLocale(req)).toString();

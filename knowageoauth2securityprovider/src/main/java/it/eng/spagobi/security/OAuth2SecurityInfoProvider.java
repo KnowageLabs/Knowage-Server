@@ -39,7 +39,7 @@ public class OAuth2SecurityInfoProvider implements ISecurityInfoProvider {
 
 		List<SbiTenant> tenants = DAOFactory.getTenantsDAO().loadAllTenants();
 
-		List<Role> roles = new ArrayList<Role>();
+		List<Role> roles = new ArrayList<>();
 		try {
 
 			JSONObject jsonApplicationData = getRolesAsJson();
@@ -65,7 +65,7 @@ public class OAuth2SecurityInfoProvider implements ISecurityInfoProvider {
 
 	@Override
 	public List getAllProfileAttributesNames() {
-		List<String> attributes = new ArrayList<String>();
+		List<String> attributes = new ArrayList<>();
 		attributes.add("displayName");
 		attributes.add("email");
 		return attributes;

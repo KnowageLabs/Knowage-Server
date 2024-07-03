@@ -22,11 +22,11 @@ public final class Tuple {
 	private final List<Object> values;
 
 	public Tuple() {
-		values = new ArrayList<Object>();
+		values = new ArrayList<>();
 	}
 
 	public Tuple(int n) {
-		values = new ArrayList<Object>(n);
+		values = new ArrayList<>(n);
 	}
 
 	public Tuple(List<?> values) {

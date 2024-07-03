@@ -99,7 +99,8 @@ public class SbiObjectsRatingId  implements java.io.Serializable {
    /* (non-Javadoc)
     * @see java.lang.Object#equals(java.lang.Object)
     */
-   public boolean equals(Object other) {
+   @Override
+public boolean equals(Object other) {
          if ( (this == other ) ) return true;
 		 if ( (other == null ) ) return false;
 		 if ( !(other instanceof SbiObjectsRatingId) ) return false;
@@ -112,7 +113,8 @@ public class SbiObjectsRatingId  implements java.io.Serializable {
    /* (non-Javadoc)
     * @see java.lang.Object#hashCode()
     */
-   public int hashCode() {
+   @Override
+public int hashCode() {
          int result = 17;
          
          result = 37 * result + ( getObjId() == null ? 0 : this.getObjId().hashCode() );

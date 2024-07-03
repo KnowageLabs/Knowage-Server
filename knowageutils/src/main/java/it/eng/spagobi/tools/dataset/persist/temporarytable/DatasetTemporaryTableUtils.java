@@ -20,7 +20,6 @@ package it.eng.spagobi.tools.dataset.persist.temporarytable;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -57,7 +56,7 @@ public class DatasetTemporaryTableUtils {
 		String sqlQuery = null;
 
 		if (selectedFields == null) {
-			selectedFields = new ArrayList<String>();
+			selectedFields = new ArrayList<>();
 		}
 
 		try {

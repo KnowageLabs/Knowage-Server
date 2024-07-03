@@ -36,6 +36,7 @@ import org.apache.log4j.Logger;
  * 
  * @deprecated use JRImageServlet instead (for any questions contact andrea gioia)
  */
+@Deprecated
 public class JRImageServlet extends HttpServlet {
 
 	private static transient Logger logger = Logger.getLogger(JRImageServlet.class);
@@ -43,6 +44,7 @@ public class JRImageServlet extends HttpServlet {
 	/* (non-Javadoc)
 	 * @see javax.servlet.http.HttpServlet#service(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
 	 */
+	@Override
 	public void service(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
 		logger.debug("IN");
 		HttpSession session = request.getSession(true);

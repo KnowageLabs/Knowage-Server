@@ -50,6 +50,7 @@ public class MondrianMemberCoordinates implements IMemberCoordinates {
 		this.level2Member = level2Member;
 	}
 
+	@Override
 	public String getDimensionName() {
 		return getDimension().name;
 	}
@@ -70,6 +71,7 @@ public class MondrianMemberCoordinates implements IMemberCoordinates {
 		this.hieararchy = hieararchy;
 	}
 
+	@Override
 	public Map<TableEntry, Member> getLevel2Member() {
 		return level2Member;
 	}
@@ -78,22 +80,27 @@ public class MondrianMemberCoordinates implements IMemberCoordinates {
 		this.level2Member = level2Member;
 	}
 
+	@Override
 	public boolean isAllMember() {
 		return level2Member.size() == 0;
 	}
 
+	@Override
 	public String getTableName() {
 		return MondrianSchemaRetriver.getTableName(getHieararchy());
 	}
 
+	@Override
 	public String getPrimaryKey() {
 		return getHieararchy().primaryKey;
 	}
 
+	@Override
 	public String getForeignKey() {
 		return getDimension().foreignKey;
 	}
 
+	@Override
 	public EquiJoin getInnerDimensionJoinConditions() {
 		MondrianDef.RelationOrJoin relOrJoin = getHieararchy().relation;
 		if (relOrJoin instanceof MondrianDef.Join) {
@@ -113,9 +120,10 @@ public class MondrianMemberCoordinates implements IMemberCoordinates {
 				+ ", hieararchy=" + hieararchy.name + "]";
 	}
 
+	@Override
 	public List<TableEntry> getLevels() {
 		if (levels == null) {
-			levels = new ArrayList<TableEntry>();
+			levels = new ArrayList<>();
 			MondrianDef.Level[] schemaLevels = hieararchy.levels;
 
 			for (int i = 0; i < schemaLevels.length; i++) {

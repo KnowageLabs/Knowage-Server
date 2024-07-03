@@ -17,10 +17,7 @@
  */
 package it.eng.spagobi.api.v2;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
-
 import java.net.URI;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;

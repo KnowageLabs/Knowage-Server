@@ -38,6 +38,7 @@ public class EngineStartupExceptionTrapAction extends AbstractEngineAction {
     public static transient Logger logger = Logger.getLogger(EngineStartupExceptionTrapAction.class);
 	
    
+	@Override
 	public void service(SourceBean serviceRequest, SourceBean serviceResponse)  {
 		
 		EMFErrorHandler errorHandler;

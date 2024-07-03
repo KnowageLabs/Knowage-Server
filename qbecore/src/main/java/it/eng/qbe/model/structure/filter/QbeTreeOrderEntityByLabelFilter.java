@@ -54,6 +54,7 @@ public class QbeTreeOrderEntityByLabelFilter extends ComposableQbeTreeEntityFilt
 	/* (non-Javadoc)
 	 * @see it.eng.spagobi.qbe.tree.filter.ComposableQbeTreeEntityFilter#filter(it.eng.qbe.model.IDataMartModel, java.util.List)
 	 */
+	@Override
 	public List filter(IDataSource dataSource, List entities) {
 		List list = null;
 		
@@ -193,6 +194,7 @@ public class QbeTreeOrderEntityByLabelFilter extends ComposableQbeTreeEntityFilt
 		/* (non-Javadoc)
 		 * @see java.lang.Comparable#compareTo(java.lang.Object)
 		 */
+		@Override
 		public int compareTo(Object o) {
 			if (o == null) throw new NullPointerException();
 			if (!(o instanceof EntityWrapper)) throw new ClassCastException();

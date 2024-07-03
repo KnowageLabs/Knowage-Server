@@ -35,6 +35,7 @@ public class MyPieUrlGenerator extends StandardPieURLGenerator{
 	/* (non-Javadoc)
 	 * @see org.jfree.chart.urls.StandardPieURLGenerator#generateURL(org.jfree.data.general.PieDataset, java.lang.Comparable, int)
 	 */
+	@Override
 	public String generateURL(PieDataset dataset, Comparable key, int pieIndex) {
 		logger.debug("IN");
 		URL=new String();

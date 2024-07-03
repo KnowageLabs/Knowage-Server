@@ -31,7 +31,7 @@ public class ResourceExportFolderCleaningManager {
 	private String resourceExportPath = null;
 	private Long maxResourceFolderSize = DEFAULT_FOLDER_SIZE;
 	private Double cleaningPrecentage = DEFAULT_CLEANING_PERCENTAGE;
-	private List<String> allowedFilesNames = new ArrayList<String>();
+	private List<String> allowedFilesNames = new ArrayList<>();
 
 	public void executeCleaning(String resourceExportPath, Long maxResourceFolderSize, Double cleaningPrecentage) throws Exception {
 		this.resourceExportPath = resourceExportPath;
@@ -149,7 +149,7 @@ public class ResourceExportFolderCleaningManager {
 
 		/* Inside folders are one for every user. We have to bypass them to access to folders eligible for removal */
 		File[] files = folder.listFiles();
-		List<File> filesInUserFolders = new ArrayList<File>();
+		List<File> filesInUserFolders = new ArrayList<>();
 		for (File tmpFile1 : files) {
 			File[] tmpArray = tmpFile1.listFiles();
 			for (File tmpFile2 : tmpArray) {
@@ -163,7 +163,7 @@ public class ResourceExportFolderCleaningManager {
 
 		Long desiredFolderSize = Math.round(maxResourceFolderSize * (1 - (cleaningPrecentage / 100)));
 		Double toRemoveFilesSize = 0.0;
-		List<String> fileOrFolderToRemove = new ArrayList<String>();
+		List<String> fileOrFolderToRemove = new ArrayList<>();
 		if (listToArray != null) {
 			for (File f : listToArray) {
 				if (actualFolderSize - toRemoveFilesSize > desiredFolderSize) {
@@ -232,7 +232,7 @@ public class ResourceExportFolderCleaningManager {
 		logger.debug("IN - isPossibleToRemoveFolderOrFile");
 		boolean remove = true;
 
-		List<String> foundFilesList = new ArrayList<String>();
+		List<String> foundFilesList = new ArrayList<>();
 
 		if (fileOrFolder.isDirectory()) {
 			for (File fileInFolder : fileOrFolder.listFiles()) {

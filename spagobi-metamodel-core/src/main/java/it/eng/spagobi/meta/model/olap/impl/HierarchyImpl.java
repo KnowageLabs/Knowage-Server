@@ -9,10 +9,8 @@
 **/
 package it.eng.spagobi.meta.model.olap.impl;
 
-import it.eng.spagobi.meta.model.Model;
 import it.eng.spagobi.meta.model.ModelPropertyType;
 import it.eng.spagobi.meta.model.business.BusinessColumnSet;
-import it.eng.spagobi.meta.model.business.SimpleBusinessColumn;
 import it.eng.spagobi.meta.model.business.impl.BusinessTableImpl;
 
 import it.eng.spagobi.meta.model.impl.ModelObjectImpl;
@@ -20,17 +18,13 @@ import it.eng.spagobi.meta.model.impl.ModelObjectImpl;
 import it.eng.spagobi.meta.model.olap.Dimension;
 import it.eng.spagobi.meta.model.olap.Hierarchy;
 import it.eng.spagobi.meta.model.olap.Level;
-import it.eng.spagobi.meta.model.olap.OlapModel;
 import it.eng.spagobi.meta.model.olap.OlapModelPackage;
 import it.eng.spagobi.meta.model.physical.PhysicalTable;
 import it.eng.spagobi.tools.dataset.bo.JDBCDataSet;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
-import it.eng.spagobi.tools.datasource.bo.DataSource;
-
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 import org.eclipse.emf.common.notify.Notification;
@@ -45,7 +39,6 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
 
 import org.eclipse.emf.ecore.util.EObjectContainmentWithInverseEList;
 import org.eclipse.emf.ecore.util.EcoreUtil;
-import org.eclipse.emf.ecore.util.EObjectWithInverseResolvingEList;
 import org.eclipse.emf.ecore.util.InternalEList;
 
 /**
@@ -108,6 +101,7 @@ public class HierarchyImpl extends ModelObjectImpl implements Hierarchy {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public BusinessColumnSet getTable() {
 		if (table != null && table.eIsProxy()) {
 			InternalEObject oldTable = (InternalEObject)table;
@@ -134,6 +128,7 @@ public class HierarchyImpl extends ModelObjectImpl implements Hierarchy {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void setTable(BusinessColumnSet newTable) {
 		BusinessColumnSet oldTable = table;
 		table = newTable;
@@ -146,6 +141,7 @@ public class HierarchyImpl extends ModelObjectImpl implements Hierarchy {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public Dimension getDimension() {
 		if (eContainerFeatureID() != OlapModelPackage.HIERARCHY__DIMENSION) return null;
 		return (Dimension)eContainer();
@@ -166,6 +162,7 @@ public class HierarchyImpl extends ModelObjectImpl implements Hierarchy {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void setDimension(Dimension newDimension) {
 		if (newDimension != eInternalContainer() || (eContainerFeatureID() != OlapModelPackage.HIERARCHY__DIMENSION && newDimension != null)) {
 			if (EcoreUtil.isAncestor(this, newDimension))
@@ -187,9 +184,10 @@ public class HierarchyImpl extends ModelObjectImpl implements Hierarchy {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EList<Level> getLevels() {
 		if (levels == null) {
-			levels = new EObjectContainmentWithInverseEList<Level>(Level.class, this, OlapModelPackage.HIERARCHY__LEVELS, OlapModelPackage.LEVEL__HIERARCHY);
+			levels = new EObjectContainmentWithInverseEList<>(Level.class, this, OlapModelPackage.HIERARCHY__LEVELS, OlapModelPackage.LEVEL__HIERARCHY);
 		}
 		return levels;
 	}
@@ -334,6 +332,7 @@ public class HierarchyImpl extends ModelObjectImpl implements Hierarchy {
 	
 
 	
+	@Override
 	public IDataStore getMembers(String levelName){
 		BusinessColumnSet table;
 		PhysicalTable physicalTable;
@@ -365,11 +364,12 @@ public class HierarchyImpl extends ModelObjectImpl implements Hierarchy {
 	/**
 	 * columnName1 must is in a lower level of the hierarchy
 	 */
+	@Override
 	public Map<Object, Object> getMembersMapBetweenLevels(String columnName1, String columnName2){
 		BusinessColumnSet table;
 		PhysicalTable physicalTable;
 		String tableName,  query;
-		Map<Object, Object> toReturn= new HashMap<Object, Object> ();
+		Map<Object, Object> toReturn= new HashMap<> ();
 		
 		table = getTable();
 		physicalTable = ((BusinessTableImpl)table).getPhysicalTable();

@@ -38,6 +38,7 @@ public class SecurityException extends Exception {
 		/**
 		 * @deprecated add always a descriptive message to the exception
 		 */
+		@Deprecated
 		private SecurityException() {
 			super();
 		}

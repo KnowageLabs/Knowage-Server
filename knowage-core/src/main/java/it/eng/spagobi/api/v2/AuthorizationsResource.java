@@ -71,7 +71,7 @@ public class AuthorizationsResource extends AbstractSpagoBIResource {
 	@Produces(MediaType.APPLICATION_JSON + charset)
 	public Response getMetaModelCat(@PathParam("id") Integer id) {
 		IRoleDAO rolesDao = null;
-		List<RoleMetaModelCategory> categories = new ArrayList<RoleMetaModelCategory>();
+		List<RoleMetaModelCategory> categories = new ArrayList<>();
 
 		try {
 

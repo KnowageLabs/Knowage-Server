@@ -121,7 +121,7 @@ public class ModelImpl extends ModelObjectImpl implements Model {
 	@Override
 	public EList<PhysicalModel> getPhysicalModels() {
 		if (physicalModels == null) {
-			physicalModels = new EObjectContainmentWithInverseEList<PhysicalModel>(PhysicalModel.class, this, ModelPackage.MODEL__PHYSICAL_MODELS,
+			physicalModels = new EObjectContainmentWithInverseEList<>(PhysicalModel.class, this, ModelPackage.MODEL__PHYSICAL_MODELS,
 					PhysicalModelPackage.PHYSICAL_MODEL__PARENT_MODEL);
 		}
 		return physicalModels;
@@ -135,7 +135,7 @@ public class ModelImpl extends ModelObjectImpl implements Model {
 	@Override
 	public EList<BusinessModel> getBusinessModels() {
 		if (businessModels == null) {
-			businessModels = new EObjectContainmentWithInverseEList<BusinessModel>(BusinessModel.class, this, ModelPackage.MODEL__BUSINESS_MODELS,
+			businessModels = new EObjectContainmentWithInverseEList<>(BusinessModel.class, this, ModelPackage.MODEL__BUSINESS_MODELS,
 					BusinessModelPackage.BUSINESS_MODEL__PARENT_MODEL);
 		}
 		return businessModels;
@@ -149,7 +149,7 @@ public class ModelImpl extends ModelObjectImpl implements Model {
 	@Override
 	public EList<OlapModel> getOlapModels() {
 		if (olapModels == null) {
-			olapModels = new EObjectContainmentWithInverseEList<OlapModel>(OlapModel.class, this, ModelPackage.MODEL__OLAP_MODELS,
+			olapModels = new EObjectContainmentWithInverseEList<>(OlapModel.class, this, ModelPackage.MODEL__OLAP_MODELS,
 					OlapModelPackage.OLAP_MODEL__PARENT_MODEL);
 		}
 		return olapModels;
@@ -163,7 +163,7 @@ public class ModelImpl extends ModelObjectImpl implements Model {
 	@Override
 	public EList<ModelPropertyType> getPropertyTypes() {
 		if (propertyTypes == null) {
-			propertyTypes = new EObjectContainmentEList<ModelPropertyType>(ModelPropertyType.class, this, ModelPackage.MODEL__PROPERTY_TYPES);
+			propertyTypes = new EObjectContainmentEList<>(ModelPropertyType.class, this, ModelPackage.MODEL__PROPERTY_TYPES);
 		}
 		return propertyTypes;
 	}
@@ -176,7 +176,7 @@ public class ModelImpl extends ModelObjectImpl implements Model {
 	@Override
 	public EList<ModelPropertyCategory> getPropertyCategories() {
 		if (propertyCategories == null) {
-			propertyCategories = new EObjectContainmentEList<ModelPropertyCategory>(ModelPropertyCategory.class, this, ModelPackage.MODEL__PROPERTY_CATEGORIES);
+			propertyCategories = new EObjectContainmentEList<>(ModelPropertyCategory.class, this, ModelPackage.MODEL__PROPERTY_CATEGORIES);
 		}
 		return propertyCategories;
 	}

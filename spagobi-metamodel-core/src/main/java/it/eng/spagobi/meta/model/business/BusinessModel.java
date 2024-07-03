@@ -218,6 +218,7 @@ public interface BusinessModel extends ModelObject {
 	 * @param name the name of the table to look for
 	 * @return the first table whose name is equal to parameter name
 	 */
+	@Deprecated
 	BusinessColumnSet getTable(String name);
 	
 	// =========================================

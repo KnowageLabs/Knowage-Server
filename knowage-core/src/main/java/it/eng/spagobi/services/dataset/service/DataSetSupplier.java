@@ -203,7 +203,7 @@ public class DataSetSupplier {
 			ManageDatasets md = new ManageDatasets();
 			md.setProfile(profile);
 
-			md.insertPersistenceAndScheduling(dataSet, new HashMap<String, String>());
+			md.insertPersistenceAndScheduling(dataSet, new HashMap<>());
 
 			toReturn = dataSet.toSpagoBiDataSet();
 

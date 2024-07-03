@@ -27,7 +27,6 @@ import java.util.Set;
 
 import org.jgrapht.Graph;
 import org.jgrapht.GraphPath;
-import org.jgrapht.UndirectedGraph;
 
 public interface IDefaultCoverGraph {
 

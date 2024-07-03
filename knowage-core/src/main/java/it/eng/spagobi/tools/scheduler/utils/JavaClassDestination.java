@@ -25,6 +25,7 @@ public abstract class JavaClassDestination implements IJavaClassDestination {
 	BIObject biObj=null;
 	byte[] documentByte=null;
 	
+	@Override
 	public abstract void execute();
 	
 	public byte[] getDocumentByte() {

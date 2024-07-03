@@ -38,6 +38,7 @@ public class MapsSDKServiceImpl extends AbstractSDKService implements MapsSDKSer
 	private static Logger logger = Logger.getLogger(MapsSDKServiceImpl.class);
 
 
+	@Override
 	public SDKMap getMapById(Integer mapId) throws RemoteException,
 			NotAllowedOperationException {
 		SDKMap toReturn = null;
@@ -71,6 +72,7 @@ public class MapsSDKServiceImpl extends AbstractSDKService implements MapsSDKSer
 	}
 
 
+	@Override
 	public SDKMap[] getMaps() throws RemoteException,
 			NotAllowedOperationException {
 		SDKMap[] toReturn = null;
@@ -101,6 +103,7 @@ public class MapsSDKServiceImpl extends AbstractSDKService implements MapsSDKSer
 	}
 
 
+	@Override
 	public SDKFeature[] getFeatures() throws RemoteException, NotAllowedOperationException {
 		SDKFeature[] toReturn = null;
 		logger.debug("IN");
@@ -130,6 +133,7 @@ public class MapsSDKServiceImpl extends AbstractSDKService implements MapsSDKSer
 	}
 
 
+	@Override
 	public SDKFeature getFeatureById(Integer featureId) throws NotAllowedOperationException {
 		SDKFeature toReturn = null;
 		logger.debug("IN: dataSetId in input = " + featureId);
@@ -162,6 +166,7 @@ public class MapsSDKServiceImpl extends AbstractSDKService implements MapsSDKSer
 	}
 
 
+	@Override
 	public SDKFeature[] getMapFeatures(Integer mapId) throws RemoteException, NotAllowedOperationException {
 		SDKFeature[] toReturn = null;
 		logger.debug("IN");

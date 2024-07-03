@@ -309,7 +309,7 @@ public class TestJSONArray extends TestCase
      */
     public void testConstructor_Collection()
     {
-        Collection<String> stringCol = new Stack<String>();
+        Collection<String> stringCol = new Stack<>();
         stringCol.add("string1");
         stringCol.add("string2");
         stringCol.add("string3");
@@ -1069,7 +1069,7 @@ public class TestJSONArray extends TestCase
     public void testPut_Map() 
     {
     	try {
-	        Map<String, Object> map = new HashMap<String, Object>();
+	        Map<String, Object> map = new HashMap<>();
 	        map.put("abc", "123");
 	        jsonarray = new JSONArray();
 	        jsonarray.put(map);
@@ -1126,7 +1126,7 @@ public class TestJSONArray extends TestCase
      */
     public void testPut_Collection()
     {
-        Collection<Object> stringCol = new Stack<Object>();
+        Collection<Object> stringCol = new Stack<>();
         stringCol.add("string1");
         stringCol.add("string2");
         stringCol.add("string3");
@@ -1189,16 +1189,16 @@ public class TestJSONArray extends TestCase
     {
         try
         {
-            Collection<Object> a = new Stack<Object>();
+            Collection<Object> a = new Stack<>();
             a.add("string1");
             a.add("string4");
-            Collection<Object> b = new Stack<Object>();
+            Collection<Object> b = new Stack<>();
             b.add("string2");
             b.add("string3");
-            Collection<Object> c = new Stack<Object>();
+            Collection<Object> c = new Stack<>();
             c.add("string3");
             c.add("string4");
-            Collection<Object> d = new Stack<Object>();
+            Collection<Object> d = new Stack<>();
             d.add("string1");
             d.add("string2");
             jsonarray = new JSONArray();
@@ -1230,7 +1230,7 @@ public class TestJSONArray extends TestCase
     {
         try
         {
-            Collection<Object> a = new Stack<Object>();
+            Collection<Object> a = new Stack<>();
             a.add("string1");
             a.add("string4");
             jsonarray = new JSONArray();
@@ -1384,13 +1384,13 @@ public class TestJSONArray extends TestCase
     {
         try
         {
-            Map<String, Object> a = new HashMap<String, Object>();
+            Map<String, Object> a = new HashMap<>();
             a.put("abc", "123");
-            Map<String, Object> b = new HashMap<String, Object>();
+            Map<String, Object> b = new HashMap<>();
             b.put("abffc", "1253");
-            Map<String, Object> c = new HashMap<String, Object>();
+            Map<String, Object> c = new HashMap<>();
             c.put("addbc", "145623");
-            Map<String, Object> d = new HashMap<String, Object>();
+            Map<String, Object> d = new HashMap<>();
             d.put("abffdc", "122623");            
             jsonarray = new JSONArray();
             jsonarray.put(0, a);
@@ -1421,7 +1421,7 @@ public class TestJSONArray extends TestCase
     {
         try
         {
-            Map<String, Object> a = new HashMap<String, Object>();
+            Map<String, Object> a = new HashMap<>();
             a.put("abc", "123");
             jsonarray = new JSONArray();
             jsonarray.put(-1, a);

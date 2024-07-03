@@ -32,8 +32,6 @@ import it.eng.spagobi.commons.dao.dto.SbiCategory;
 import it.eng.spagobi.commons.metadata.SbiExtRoles;
 import it.eng.spagobi.mapcatalogue.metadata.SbiGeoLayers;
 
-import org.apache.log4j.Logger;
-
 public class GeoLayer {
 
 	private int layerId;

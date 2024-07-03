@@ -623,7 +623,7 @@ public class MySQLPhysicalModelInizializationTest extends AbstractKnowageMetaTes
 
 		Assert.assertTrue("PrimaryKey of table [customer] is composed by [" + pk.getColumns().size() + "] column(s) and not 1 as expected", pk.getColumns()
 				.size() == 1);
-		Set<String> pkColumnNames = new HashSet<String>();
+		Set<String> pkColumnNames = new HashSet<>();
 		pkColumnNames.add(pk.getColumns().get(0).getName());
 		Assert.assertTrue("Column [customer_id] of table [customer] is not part of the PK as expected", pkColumnNames.contains("customer_id"));
 
@@ -645,7 +645,7 @@ public class MySQLPhysicalModelInizializationTest extends AbstractKnowageMetaTes
 
 		Assert.assertTrue("PrimaryKey of table [currency] is composed by [" + pk.getColumns().size() + "] column(s) and not 2 as expected", pk.getColumns()
 				.size() == 2);
-		Set<String> pkColumnNames = new HashSet<String>();
+		Set<String> pkColumnNames = new HashSet<>();
 		pkColumnNames.add(pk.getColumns().get(0).getName());
 		pkColumnNames.add(pk.getColumns().get(1).getName());
 		Assert.assertTrue("Column [currency_id] of table [currency] is not part of the PK as expected", pkColumnNames.contains("currency_id"));

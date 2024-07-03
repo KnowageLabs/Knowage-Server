@@ -93,7 +93,7 @@ public class MeasureCatalogueCRUD {
 
 		IEngUserProfile profile = (IEngUserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 		List<String> labels = form.get("labels");
-		List<MeasureCatalogueMeasure> measures = new ArrayList<MeasureCatalogueMeasure>();
+		List<MeasureCatalogueMeasure> measures = new ArrayList<>();
 		for (int i = 0; i < labels.size(); i++) {
 			MeasureCatalogueMeasure aMeasure = catalogue.getMeasureByLabel(labels.get(i));
 			if (aMeasure != null) {
@@ -137,7 +137,7 @@ public class MeasureCatalogueCRUD {
 		try {
 			metaData = dataStroreJSON.getJSONObject("metaData");
 			JSONArray fieldsMetaJSON = metaData.getJSONArray("fields");
-			List<IFieldMetaData> geoRefFieldMeta = new ArrayList<IFieldMetaData>();
+			List<IFieldMetaData> geoRefFieldMeta = new ArrayList<>();
 			for (int i = 0; i < dataStore.getMetaData().getFieldCount(); i++) {
 				IFieldMetaData fieldMeta = dataStore.getMetaData().getFieldMeta(i);
 				JSONObject fieldMetaJSON = fieldsMetaJSON.getJSONObject(i + 1);

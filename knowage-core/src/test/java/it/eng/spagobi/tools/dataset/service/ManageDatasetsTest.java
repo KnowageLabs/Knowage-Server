@@ -30,10 +30,10 @@ public class ManageDatasetsTest {
 	public void testGetSingleValue() {
 		String[] types = new String[] { DataSetUtilities.GENERIC_TYPE, DataSetUtilities.NUMBER_TYPE, DataSetUtilities.RAW_TYPE, DataSetUtilities.STRING_TYPE };
 		String[] values = new String[] { "", "'", "''", "0", "'0", "0'", "'0'", "17", "abc", "'qcd'", "'qcd", "qcd'" };
-		Map<String, Map<String, String>> resByValueByType = new HashMap<String, Map<String, String>>();
+		Map<String, Map<String, String>> resByValueByType = new HashMap<>();
 		for (String type : types) {
 			if (!resByValueByType.containsKey(type)) {
-				resByValueByType.put(type, new HashMap<String, String>());
+				resByValueByType.put(type, new HashMap<>());
 			}
 			for (String value : values) {
 				String res;

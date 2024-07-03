@@ -26,7 +26,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
-import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.log4j.LogMF;
 import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
@@ -825,7 +824,7 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserD
 		try {
 			SbiUser user = getSbiUserByUserId(userId);
 			if (user != null) {
-				return Integer.valueOf(user.getId());
+				return user.getId();
 			}
 		} catch (HibernateException he) {
 			throw new SpagoBIRuntimeException("Error while checking if user identifier is already in use", he);

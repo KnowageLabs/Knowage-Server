@@ -217,7 +217,7 @@ public class XLSFileNormalizer {
 	 */
 	private void addColumnHeader(HSSFRow row) {
 		// Get all existing columns names
-		List<String> columnsNames = new ArrayList<String>();
+		List<String> columnsNames = new ArrayList<>();
 		int cells = row.getPhysicalNumberOfCells();
 		this.setNumberOfColumns(cells);
 

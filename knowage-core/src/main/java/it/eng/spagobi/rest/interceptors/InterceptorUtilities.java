@@ -37,7 +37,7 @@ public class InterceptorUtilities {
 	 * @return
 	 */
 	public static HashMap<String, String> fromMultivaluedMapToHashMap(MultivaluedMap<String, String> multiMap) {
-		HashMap<String, String> map = new HashMap<String, String>();
+		HashMap<String, String> map = new HashMap<>();
 		String key, value;
 
 		if (multiMap != null) {

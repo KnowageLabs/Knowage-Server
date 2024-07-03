@@ -20,7 +20,7 @@ public class FolderManagementAPI extends AbstractSpagoBIResource {
 
 	public List<LowFunctionality> getFolders(Boolean recoverBIObjects, String permissionOnFolder, String dateFilter, String status) {
 
-		List<LowFunctionality> folders = new ArrayList<LowFunctionality>();
+		List<LowFunctionality> folders = new ArrayList<>();
 		try {
 			UserProfile profile = getUserProfile();
 			ILowFunctionalityDAO dao = DAOFactory.getLowFunctionalityDAO();

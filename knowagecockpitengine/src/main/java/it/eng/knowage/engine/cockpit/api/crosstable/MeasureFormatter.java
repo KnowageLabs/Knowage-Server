@@ -50,7 +50,7 @@ public class MeasureFormatter {
 		this.pattern = pattern;
 		this.numberFormat = new DecimalFormat(pattern);	
 		if (measuresJSON != null) {
-			measuresInfo = new ArrayList<MeasureInfo>();
+			measuresInfo = new ArrayList<>();
 			for (int i = 0; i < measuresJSON.length(); i++) {
 				JSONObject obj = (JSONObject) measuresJSON.get(i);
 				MeasureInfo mi = new MeasureInfo(obj.getString("name"), "", obj.getString("type"), obj.getString("format"), obj.getString("format"),

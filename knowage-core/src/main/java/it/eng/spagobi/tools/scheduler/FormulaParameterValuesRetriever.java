@@ -41,7 +41,7 @@ public class FormulaParameterValuesRetriever extends
 	@Override
 	public List<String> retrieveValues(BIObjectParameter parameter) throws Exception {
 		logger.debug("IN");
-		List<String> toReturn = new ArrayList<String>();
+		List<String> toReturn = new ArrayList<>();
 		String result = formula.execute();
 		logger.debug("Result obtained from formula is [" + result + "]");
 		if (result != null) {

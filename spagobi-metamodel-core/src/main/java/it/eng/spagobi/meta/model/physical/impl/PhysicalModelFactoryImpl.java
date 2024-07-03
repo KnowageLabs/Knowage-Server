@@ -9,7 +9,6 @@
 **/
 package it.eng.spagobi.meta.model.physical.impl;
 
-import it.eng.spagobi.meta.model.physical.*;
 import it.eng.spagobi.meta.model.physical.PhysicalColumn;
 import it.eng.spagobi.meta.model.physical.PhysicalForeignKey;
 import it.eng.spagobi.meta.model.physical.PhysicalModel;
@@ -83,6 +82,7 @@ public class PhysicalModelFactoryImpl extends EFactoryImpl implements PhysicalMo
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public PhysicalColumn createPhysicalColumn() {
 		PhysicalColumnImpl physicalColumn = new PhysicalColumnImpl();
 		return physicalColumn;
@@ -93,6 +93,7 @@ public class PhysicalModelFactoryImpl extends EFactoryImpl implements PhysicalMo
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public PhysicalForeignKey createPhysicalForeignKey() {
 		PhysicalForeignKeyImpl physicalForeignKey = new PhysicalForeignKeyImpl();
 		return physicalForeignKey;
@@ -103,6 +104,7 @@ public class PhysicalModelFactoryImpl extends EFactoryImpl implements PhysicalMo
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public PhysicalModel createPhysicalModel() {
 		PhysicalModelImpl physicalModel = new PhysicalModelImpl();
 		return physicalModel;
@@ -113,6 +115,7 @@ public class PhysicalModelFactoryImpl extends EFactoryImpl implements PhysicalMo
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public PhysicalPrimaryKey createPhysicalPrimaryKey() {
 		PhysicalPrimaryKeyImpl physicalPrimaryKey = new PhysicalPrimaryKeyImpl();
 		return physicalPrimaryKey;
@@ -123,6 +126,7 @@ public class PhysicalModelFactoryImpl extends EFactoryImpl implements PhysicalMo
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public PhysicalTable createPhysicalTable() {
 		PhysicalTableImpl physicalTable = new PhysicalTableImpl();
 		return physicalTable;
@@ -133,6 +137,7 @@ public class PhysicalModelFactoryImpl extends EFactoryImpl implements PhysicalMo
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public PhysicalModelPackage getPhysicalModelPackage() {
 		return (PhysicalModelPackage)getEPackage();
 	}

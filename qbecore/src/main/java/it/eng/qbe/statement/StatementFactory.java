@@ -39,16 +39,16 @@ public class StatementFactory {
 		statement = null;
 		
 		if(dataSource instanceof IHibernateDataSource) {
-			statement = new HQLStatement((IHibernateDataSource)dataSource, query);
+			statement = new HQLStatement(dataSource, query);
 		} else if (dataSource instanceof JPADataSource) {
-			statement = new JPQLStatement((JPADataSource)dataSource, query);
+			statement = new JPQLStatement(dataSource, query);
 		} else if (dataSource instanceof DataSetDataSource) {
 			DataSetDataSource ds = (DataSetDataSource)dataSource;
 			Constructor c = null;
 			Object object = null;
 			try{
 				c = ds.getStatementType().getConstructor(IDataSource.class, Query.class);
-				object = c.newInstance( (DataSetDataSource)dataSource, query);
+				object = c.newInstance( dataSource, query);
 				statement = (IStatement) object;
 				//statement = new SQLStatement((DataSetDataSource)dataSource, query);
 			}catch(Exception e){

@@ -17,7 +17,6 @@
  */
 package it.eng.knowage.boot.factory;
 
-import it.eng.knowage.boot.factory.SecurityServiceFactory;
 import it.eng.spagobi.services.security.SecurityServiceService;
 import it.eng.spagobi.services.security.SpagoBIUserProfile;
 import it.eng.spagobi.services.security.SpagoBIUserProfile.Attributes;

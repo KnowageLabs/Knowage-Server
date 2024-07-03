@@ -60,6 +60,7 @@ public class SpagoBIDocumentCompositionInternalEngine implements InternalEngineI
 	 * 
 	 * @throws EMFUserError the EMF user error
 	 */
+	@Override
 	public void execute(RequestContainer requestContainer, BIObject obj,
 			SourceBean response) throws EMFUserError {
 		
@@ -129,6 +130,7 @@ public class SpagoBIDocumentCompositionInternalEngine implements InternalEngineI
 	 * 
 	 * @throws EMFUserError the EMF user error
 	 */
+	@Override
 	public void executeSubObject(RequestContainer requestContainer,
 			BIObject obj, SourceBean response, Object subObjectInfo)
 			throws EMFUserError {
@@ -148,6 +150,7 @@ public class SpagoBIDocumentCompositionInternalEngine implements InternalEngineI
 	 * @throws InvalidOperationRequest the invalid operation request
 	 * @throws EMFUserError the EMF user error
 	 */
+	@Override
 	public void handleNewDocumentTemplateCreation(RequestContainer requestContainer, 
 			BIObject obj, SourceBean response) throws EMFUserError, InvalidOperationRequest {
 		logger.error("SpagoBIDocumentCompositionInternalEngine cannot build document template");
@@ -165,6 +168,7 @@ public class SpagoBIDocumentCompositionInternalEngine implements InternalEngineI
 	 * @throws InvalidOperationRequest the invalid operation request
 	 * @throws EMFUserError the EMF user error
 	 */
+	@Override
 	public void handleDocumentTemplateEdit(RequestContainer requestContainer, 
 			BIObject obj, SourceBean response) throws EMFUserError, InvalidOperationRequest {
 		logger.error("SpagoBIDocumentCompositionInternalEngine cannot build document template");

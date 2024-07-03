@@ -80,6 +80,7 @@ public class CustomDataSet extends ConfigurableDataSet {
 	//	setJavaClassName( dataSetConfig.getJavaClassName() );
 	}
 
+	@Override
 	public SpagoBiDataSet toSpagoBiDataSet() {
 		SpagoBiDataSet sbd;
 
@@ -170,6 +171,7 @@ public class CustomDataSet extends ConfigurableDataSet {
 		return javaClassName;
 	}
 
+	@Override
 	public void loadData() {
 		logger.debug("IN");
 		if(classToLaunch == null)
@@ -180,6 +182,7 @@ public class CustomDataSet extends ConfigurableDataSet {
 
 
 
+	@Override
 	public void loadData(int offset, int fetchSize, int maxResults) {
 		logger.debug("IN");
 		if(classToLaunch == null)
@@ -189,6 +192,7 @@ public class CustomDataSet extends ConfigurableDataSet {
 
 	}
 
+	@Override
 	public IDataStore getDataStore() {
 
 		if(classToLaunch == null)
@@ -318,21 +322,25 @@ public class CustomDataSet extends ConfigurableDataSet {
 				dataSource) ;
 	}
 
+	@Override
 	public Integer getScopeId() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
+	@Override
 	public void setScopeId(Integer scopeId) {
 		// TODO Auto-generated method stub
 		
 	}
 
+	@Override
 	public String getScopeCd() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
+	@Override
 	public void setScopeCd(String scopeCd) {
 		// TODO Auto-generated method stub
 		

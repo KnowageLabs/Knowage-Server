@@ -22,7 +22,6 @@ import it.eng.spagobi.tools.scheduler.bo.Trigger;
 
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
@@ -43,6 +42,7 @@ public class XMLSerializer implements Serializer {
 		properties = new Properties();
 	}
 
+	@Override
 	public Object serialize(Object o, Locale locale) throws SerializationException {
 		Object result = null;	
 		

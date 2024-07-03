@@ -83,6 +83,7 @@ public class CombinedCategoryBar extends LinkableBar {
 
 
 
+	@Override
 	public DatasetMap calculateValue() throws Exception {
 		logger.debug("IN");
 
@@ -108,9 +109,9 @@ public class CombinedCategoryBar extends LinkableBar {
 
 		lineNoShapeSeries1=new Vector<String>();
 		lineNoShapeSeries2=new Vector<String>();
-		categoriesTooltip=new HashMap<String, String>();
-		seriesTooltip=new HashMap<String, String>();
-		seriesOrder=new ArrayList<String>();
+		categoriesTooltip=new HashMap<>();
+		seriesTooltip=new HashMap<>();
+		seriesOrder=new ArrayList<>();
 
 		boolean first=true;
 		//categories.put(new Integer(0), "All Categories");
@@ -304,6 +305,7 @@ public class CombinedCategoryBar extends LinkableBar {
 
 
 
+	@Override
 	public void configureChart(SourceBean content) {
 		super.configureChart(content);
 		logger.debug("IN");
@@ -398,7 +400,7 @@ public class CombinedCategoryBar extends LinkableBar {
 				}
 				catch (Exception e) {
 					logger.error("Not correct numebr scale; setting default 1");
-					serieScale=Integer.valueOf(1);
+					serieScale=1;
 				}
 
 				if(serieScale.equals(2)){
@@ -416,6 +418,7 @@ public class CombinedCategoryBar extends LinkableBar {
 
 
 
+	@Override
 	public JFreeChart createChart(DatasetMap datasets) {
 		logger.debug("IN");
 
@@ -437,7 +440,7 @@ public class CombinedCategoryBar extends LinkableBar {
 		subPlot2.setDataset(1,datasetLineSecondAxis);
 
 		// localize numbers on y axis
-        NumberFormat nf = (NumberFormat) NumberFormat.getNumberInstance(locale);
+        NumberFormat nf = NumberFormat.getNumberInstance(locale);
 
 		
 		// Range Axis 1
@@ -767,8 +770,8 @@ public class CombinedCategoryBar extends LinkableBar {
 //		I want to re order the legend
 		LegendItemCollection legends=plot.getLegendItems();
 		// legend Temp 
-		HashMap<String, LegendItem> legendTemp=new HashMap<String, LegendItem>();
-		Vector<String> alreadyInserted=new Vector<String>();
+		HashMap<String, LegendItem> legendTemp=new HashMap<>();
+		Vector<String> alreadyInserted=new Vector<>();
 		for (int i = 0; i<legends.getItemCount(); i++) {
 			LegendItem item=legends.get(i);
 			String label=item.getLabel();

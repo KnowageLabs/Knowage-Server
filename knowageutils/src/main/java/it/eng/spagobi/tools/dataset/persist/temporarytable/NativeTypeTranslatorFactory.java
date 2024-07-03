@@ -71,7 +71,7 @@ public class NativeTypeTranslatorFactory {
 		
 		sourceBeanConf = (SourceBean) engineConf.getConfig().getAttribute( propertName);
 		if(sourceBeanConf != null) {
-			propertyValue  = (String) sourceBeanConf.getCharacters();
+			propertyValue  = sourceBeanConf.getCharacters();
 		}
 		
 		return propertyValue;		

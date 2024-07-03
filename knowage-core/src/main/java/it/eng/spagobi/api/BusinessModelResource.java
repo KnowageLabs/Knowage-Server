@@ -19,11 +19,7 @@
 package it.eng.spagobi.api;
 
 import static it.eng.spagobi.analiticalmodel.document.DocumentExecutionUtils.createParameterValuesMap;
-import static java.nio.charset.StandardCharsets.UTF_8;
-
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;

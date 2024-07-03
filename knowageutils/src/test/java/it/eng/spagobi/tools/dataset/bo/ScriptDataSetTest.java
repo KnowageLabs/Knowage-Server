@@ -140,7 +140,7 @@ public class ScriptDataSetTest extends AbstractSpagoBITestCase {
 	}
 
 	public void testLoadWithProfiledScript() {
-		Map<String, Object> attributes = new HashMap<String, Object>();
+		Map<String, Object> attributes = new HashMap<>();
 		attributes.put("citta", "Milano");
 		dataset.setUserProfileAttributes(attributes);
 		dataset.setScriptLanguage("ECMAScript");
@@ -164,7 +164,7 @@ public class ScriptDataSetTest extends AbstractSpagoBITestCase {
 	}
 
 	public void testLoadWithParametricScript() {
-		Map<String, Object> parameters = new HashMap<String, Object>();
+		Map<String, Object> parameters = new HashMap<>();
 		parameters.put("citta", "Milano");
 		dataset.setParamsMap(parameters);
 		dataset.setScriptLanguage("ECMAScript");
@@ -188,10 +188,10 @@ public class ScriptDataSetTest extends AbstractSpagoBITestCase {
 	}
 
 	public void testLoadWithScriptThatUsesBindings() {
-		Map<String, Object> parameters = new HashMap<String, Object>();
+		Map<String, Object> parameters = new HashMap<>();
 		parameters.put("citta", "Milano");
 		dataset.setParamsMap(parameters);
-		Map<String, Object> attributes = new HashMap<String, Object>();
+		Map<String, Object> attributes = new HashMap<>();
 		attributes.put("regione", "Lombardia");
 		dataset.setUserProfileAttributes(attributes);
 

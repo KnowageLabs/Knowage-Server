@@ -23,16 +23,6 @@ import it.eng.qbe.model.structure.IModelEntity;
 import java.util.Set;
 
 import org.jgrapht.Graph;
-/**
- * This is the interface of the graph validators. In general a graph validator
- * should check if a Graph represent a valid query
- * 
- * 
- * @authors
- *  Alberto Ghedin (alberto.ghedin@eng.it)
- *
- */
-import org.jgrapht.UndirectedGraph;
 
 public interface IGraphValidator {
 

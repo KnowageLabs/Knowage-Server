@@ -39,7 +39,8 @@ public class JSONException extends Exception {
         this.cause = cause;
     }
 
-    public Throwable getCause() {
+    @Override
+	public Throwable getCause() {
         return this.cause;
     }
 }

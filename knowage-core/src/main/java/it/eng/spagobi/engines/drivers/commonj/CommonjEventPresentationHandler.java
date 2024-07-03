@@ -28,7 +28,6 @@ import it.eng.spago.base.SourceBean;
 import it.eng.spago.base.SourceBeanException;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
-import it.eng.spagobi.analiticalmodel.document.dao.BIObjectDAOHibImpl;
 import it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO;
 import it.eng.spagobi.analiticalmodel.document.dao.SubreportDAOHibImpl;
 import it.eng.spagobi.commons.bo.Subreport;
@@ -46,6 +45,7 @@ public class CommonjEventPresentationHandler implements IEventPresentationHandle
 	/* (non-Javadoc)
 	 * @see it.eng.spagobi.events.handlers.IEventPresentationHandler#loadEventInfo(it.eng.spagobi.events.bo.EventLog, it.eng.spago.base.SourceBean)
 	 */
+	@Override
 	public void loadEventInfo(EventLog event, SourceBean response) throws SourceBeanException, EMFUserError {
 		response.setAttribute("firedEvent", event);
 		Map eventParams = EventsManager.parseParamsStr(event.getParams());

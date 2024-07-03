@@ -43,7 +43,7 @@ public class Hierarchy {
 	 * @param name
 	 */
 	public Hierarchy(String name) {
-		this(name, "", "", "", "", "", "", 0, false, new ArrayList<Field>(), new ArrayList<Field>(), new ArrayList<Field>());
+		this(name, "", "", "", "", "", "", 0, false, new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
 	}
 
 	public Hierarchy(String name, String datasource, String dimensionTable, String fkName, String nodeStructure, String leafStructure, String primaryKey,

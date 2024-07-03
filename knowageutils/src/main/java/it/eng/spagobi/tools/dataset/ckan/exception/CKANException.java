@@ -31,7 +31,7 @@ import java.util.ArrayList;
  */
 public class CKANException extends Exception {
 
-    private ArrayList<String> messages = new ArrayList<String>();
+    private ArrayList<String> messages = new ArrayList<>();
 
     public CKANException( String message ) {
         messages.add( message );
@@ -45,7 +45,8 @@ public class CKANException extends Exception {
         return messages;
     }
 
-    public String toString() {
+    @Override
+	public String toString() {
         return messages.toString();
     }
 }

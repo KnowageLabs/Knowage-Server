@@ -85,7 +85,7 @@ public class UserFunctionalityDAO extends AbstractHibernateDAO implements IUserF
 
 			// ADDED
 			// Get corresponding Product Type Id for roles'tenants
-			Set<Integer> productTypesId = new HashSet<Integer>();
+			Set<Integer> productTypesId = new HashSet<>();
 			if (!roleTypesTenant.isEmpty()) {
 				for (String tenant : roleTypesTenant) {
 					String hql = "from SbiOrganizationProductType opt where opt.commonInfo.organization=?";

@@ -18,8 +18,6 @@
 package it.eng.spagobi.mapcatalogue.bo;
 
 import it.eng.spagobi.mapcatalogue.metadata.SbiGeoFeatures;
-import it.eng.spagobi.services.dataset.bo.SpagoBiDataSet;
-
 import java.io.Serializable;
 
 /**

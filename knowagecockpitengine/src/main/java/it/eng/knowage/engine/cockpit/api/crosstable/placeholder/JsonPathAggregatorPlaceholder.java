@@ -101,7 +101,7 @@ public class JsonPathAggregatorPlaceholder implements Placeholder {
 	}
 
 	private List<ValueWithWeightPlaceholder> selectValues() {
-		List<ValueWithWeightPlaceholder> ret = new ArrayList<ValueWithWeightPlaceholder>();
+		List<ValueWithWeightPlaceholder> ret = new ArrayList<>();
 		Object read = parsedValuesDataStore.read(path);
 		if (read instanceof net.minidev.json.JSONArray) {
 			net.minidev.json.JSONArray coll = (net.minidev.json.JSONArray) read;

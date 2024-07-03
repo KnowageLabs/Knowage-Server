@@ -98,7 +98,7 @@ public class TimeBlockChart extends BlockCharts {
 		DatasetMap datasetMap = new DatasetMap();
 		String res = DataSetAccessFunctions.getDataSetResultFromId(profile, getData(), parametersObject);
 
-		ArrayList<Activity> activities = new ArrayList<Activity>();
+		ArrayList<Activity> activities = new ArrayList<>();
 
 		RegularTimePeriod timePeriod = null;
 
@@ -144,11 +144,11 @@ public class TimeBlockChart extends BlockCharts {
 
 		DefaultXYZDataset dataset = new DefaultXYZDataset();
 
-		ArrayList<Long> xValuesList = new ArrayList<Long>();
-		ArrayList<Double> yValuesList = new ArrayList<Double>();
-		ArrayList<Double> zValuesList = new ArrayList<Double>();
+		ArrayList<Long> xValuesList = new ArrayList<>();
+		ArrayList<Double> yValuesList = new ArrayList<>();
+		ArrayList<Double> zValuesList = new ArrayList<>();
 
-		annotations = new HashMap<String, AnnotationBlock>();
+		annotations = new HashMap<>();
 		// run all the activities
 		for (Iterator iterator = activities.iterator(); iterator.hasNext();) {
 			Activity activity = (Activity) iterator.next();
@@ -164,9 +164,9 @@ public class TimeBlockChart extends BlockCharts {
 				Minute minute = activity.getMinutes();
 				for (int i = 0; i < activity.getDuration(); i++) {
 					// convert from hour to number axis (da sessantesimi a centesimi!)
-					Integer hour = Integer.valueOf(minute.getHourValue());
-					Integer minuteValue = Integer.valueOf(minute.getMinute());
-					Double doubleMinuteValue = Double.valueOf((minuteValue.intValue()));
+					Integer hour = minute.getHourValue();
+					Integer minuteValue = minute.getMinute();
+					Double doubleMinuteValue = (double) (minuteValue.intValue());
 					// minuteValue : 60 = x :100
 					double convertedMinuteValue = (doubleMinuteValue * 100) / 60.0;
 					double convertedMinuteValueCent = convertedMinuteValue / 100;
@@ -230,7 +230,7 @@ public class TimeBlockChart extends BlockCharts {
 		logger.debug("IN");
 		super.configureChart(content);
 
-		patternRangeIndex = new HashMap<String, Integer>();
+		patternRangeIndex = new HashMap<>();
 		for (int i = 0; i < ranges.size(); i++) {
 			RangeBlocks rangeBlocks = ranges.get(i);
 			patternRangeIndex.put(rangeBlocks.getPattern(), Integer.valueOf(i));

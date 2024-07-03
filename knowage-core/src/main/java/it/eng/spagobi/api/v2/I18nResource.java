@@ -17,10 +17,7 @@
  */
 package it.eng.spagobi.api.v2;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
-
 import java.net.URI;
-import java.net.URLEncoder;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
@@ -53,7 +50,6 @@ import it.eng.spagobi.i18n.metadata.SbiI18NMessageBody;
 import it.eng.spagobi.i18n.metadata.SbiI18NMessages;
 import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
-import org.owasp.esapi.errors.EncodingException;
 import org.owasp.esapi.reference.DefaultEncoder; 
 
 /**

@@ -42,7 +42,7 @@ public class ParametersInitializerImpl extends AbstractInitializer {
 	@Override
 	public void init(SourceBean template, WhatIfTemplate toReturn) {
 		SourceBean mdxSB = (SourceBean) template.getAttribute(TAG_MDX_QUERY);
-		List<WhatIfTemplate.Parameter> parameters = new ArrayList<WhatIfTemplate.Parameter>();
+		List<WhatIfTemplate.Parameter> parameters = new ArrayList<>();
 		List parametersSB = mdxSB.getAttributeAsList(TAG_PARAMETER);
 		Iterator it = parametersSB.iterator();
 		while (it.hasNext()) {

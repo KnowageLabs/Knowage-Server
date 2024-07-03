@@ -30,7 +30,7 @@ public class JobInfo implements Serializable {
 	private String jobDescription = "";
 	private boolean jobMergeAllSnapshots = false;
 	private boolean jobCollateSnapshots = false;
-	private List<BIObject> documents = new ArrayList<BIObject>();
+	private List<BIObject> documents = new ArrayList<>();
 
 	/**
 	 * Gets the job description.
@@ -95,7 +95,7 @@ public class JobInfo implements Serializable {
 	}
 
 	public List<Integer> getDocumentIds() {
-		List<Integer> documentIds = new ArrayList<Integer>();
+		List<Integer> documentIds = new ArrayList<>();
 		for (BIObject document : documents) {
 			Integer id = document.getId();
 			documentIds.add(id);

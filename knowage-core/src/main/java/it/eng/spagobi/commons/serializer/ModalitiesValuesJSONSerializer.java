@@ -39,6 +39,7 @@ public class ModalitiesValuesJSONSerializer implements Serializer {
 	// public static final String DATASETID = "DATASET_ID";
 	// public static final String MULTIVALUE = "MULTIVALUE";
 
+	@Override
 	public Object serialize(Object o, Locale locale) throws SerializationException {
 
 		JSONObject result = new JSONObject();

@@ -17,7 +17,6 @@
  */
 package it.eng.spagobi.analiticalmodel.functionalitytree.bo;
 
-import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.List;
 

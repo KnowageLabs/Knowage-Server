@@ -31,7 +31,8 @@ public abstract class AbstractDatasetValidator implements IDatasetValidator {
     IDatasetValidator childValidator = null;
     Locale locale = null;
 
-    public Locale getLocale() {
+    @Override
+	public Locale getLocale() {
     	Locale locale = this.locale;
     	if(locale == null && childValidator != null) {
     		locale = childValidator.getLocale();
@@ -39,10 +40,12 @@ public abstract class AbstractDatasetValidator implements IDatasetValidator {
 		return locale;
 	}
 
+	@Override
 	public void setLocale(Locale locale) {
 		this.locale = locale;
 	}
 
+	@Override
 	public ValidationErrors validateDataset(IDataStore dataStore, Map<String, HierarchyLevel> hierarchiesColumnsToCheck) {
     	ValidationErrors errors = new ValidationErrors();
         if(childValidator != null) {

@@ -129,7 +129,7 @@ public class SQLDBCache implements ICache {
 
 	@Override
 	public List<IDataSet> getNotContained(List<IDataSet> dataSets) {
-		List<IDataSet> notContainedDataSets = new ArrayList<IDataSet>();
+		List<IDataSet> notContainedDataSets = new ArrayList<>();
 		for (IDataSet dataSet : dataSets) {
 			if (!contains(dataSet)) {
 				notContainedDataSets.add(dataSet);
@@ -315,7 +315,7 @@ public class SQLDBCache implements ICache {
 							Iterator<String> it = indexes.iterator();
 							while (it.hasNext()) {
 								String currInd = it.next();
-								Set<String> currIndSet = new HashSet<String>();
+								Set<String> currIndSet = new HashSet<>();
 								currIndSet.add(currInd);
 
 								PersistedTableManager persistedTableManager = new PersistedTableManager();
@@ -495,7 +495,7 @@ public class SQLDBCache implements ICache {
 							long start = System.currentTimeMillis();
 							String tableName = persistStoreInCache(dataSet, dataStore);
 							timeSpent = System.currentTimeMillis() - start;
-							Map<String, Object> properties = new HashMap<String, Object>();
+							Map<String, Object> properties = new HashMap<>();
 							if (dataSet instanceof VersionedDataSet) {
 								dataSet = ((VersionedDataSet) dataSet).getWrappedDataset();
 							}

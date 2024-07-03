@@ -38,6 +38,7 @@ public class ParameterMetaData implements IParameterMetaData
 	/* 
 	 * @see org.eclipse.datatools.connectivity.oda.IParameterMetaData#getParameterCount()
 	 */
+	@Override
 	public int getParameterCount() throws OdaException 
 	{
 		logger.debug("IN");
@@ -56,6 +57,7 @@ public class ParameterMetaData implements IParameterMetaData
     /*
 	 * @see org.eclipse.datatools.connectivity.oda.IParameterMetaData#getParameterMode(int)
 	 */
+	@Override
 	public int getParameterMode( int param ) throws OdaException 
 	{
 		logger.debug("IN");
@@ -65,7 +67,8 @@ public class ParameterMetaData implements IParameterMetaData
     /* (non-Javadoc)
      * @see org.eclipse.datatools.connectivity.oda.IParameterMetaData#getParameterName(int)
      */
-    public String getParameterName( int param ) throws OdaException
+    @Override
+	public String getParameterName( int param ) throws OdaException
     {
     	logger.debug("IN");
        // return sdkParametersMeta[param-1].getName(); 
@@ -75,6 +78,7 @@ public class ParameterMetaData implements IParameterMetaData
 	/* 
 	 * @see org.eclipse.datatools.connectivity.oda.IParameterMetaData#getParameterType(int)
 	 */
+	@Override
 	public int getParameterType( int param ) throws OdaException 
 	{
 		logger.debug("IN");
@@ -87,6 +91,7 @@ public class ParameterMetaData implements IParameterMetaData
 	/* 
 	 * @see org.eclipse.datatools.connectivity.oda.IParameterMetaData#getParameterTypeName(int)
 	 */
+	@Override
 	public String getParameterTypeName( int param ) throws OdaException 
 	{
 		logger.debug("IN");
@@ -97,6 +102,7 @@ public class ParameterMetaData implements IParameterMetaData
 	/* 
 	 * @see org.eclipse.datatools.connectivity.oda.IParameterMetaData#getPrecision(int)
 	 */
+	@Override
 	public int getPrecision( int param ) throws OdaException 
 	{
 		logger.debug("IN");
@@ -106,6 +112,7 @@ public class ParameterMetaData implements IParameterMetaData
 	/* 
 	 * @see org.eclipse.datatools.connectivity.oda.IParameterMetaData#getScale(int)
 	 */
+	@Override
 	public int getScale( int param ) throws OdaException 
 	{
 		logger.debug("IN");
@@ -115,6 +122,7 @@ public class ParameterMetaData implements IParameterMetaData
 	/* 
 	 * @see org.eclipse.datatools.connectivity.oda.IParameterMetaData#isNullable(int)
 	 */
+	@Override
 	public int isNullable( int param ) throws OdaException 
 	{
 		logger.debug("IN");

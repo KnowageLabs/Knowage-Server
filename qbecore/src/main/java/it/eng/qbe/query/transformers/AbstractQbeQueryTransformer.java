@@ -29,6 +29,7 @@ public abstract class AbstractQbeQueryTransformer extends AbstractQueryTransform
 
 	public abstract Query execTransformation(Query query);
 	
+	@Override
 	public Object execTransformation(Object query) {		
 		Assert.assertTrue(query instanceof Query, "Unable to transform object of type [" + query.getClass().getName() + "]");
 		return execTransformation((Query)query);

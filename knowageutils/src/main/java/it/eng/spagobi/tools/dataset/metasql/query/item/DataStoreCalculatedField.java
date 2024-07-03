@@ -84,6 +84,7 @@ public class DataStoreCalculatedField extends AbstractCalculatedField {
 		this.name = name;
 	}
 
+	@Override
 	public String getAlias() {
 		return alias;
 	}

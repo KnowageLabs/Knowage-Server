@@ -17,7 +17,6 @@
  */
 package it.eng.spagobi.commons.serializer;
 
-import it.eng.spagobi.commons.metadata.SbiDomains;
 import it.eng.spagobi.tools.dataset.metadata.SbiDataSet;
 
 import java.util.Locale;
@@ -33,6 +32,7 @@ public class SbiDataSetJSONSerializer implements Serializer {
 	private static final String DATASET_LABEL = "label";
 	private static final String DATASET_CATEGORY = "catTypeVn";
 	
+	@Override
 	public Object serialize(Object o, Locale locale) throws SerializationException {
 		JSONObject  result = null;
 		

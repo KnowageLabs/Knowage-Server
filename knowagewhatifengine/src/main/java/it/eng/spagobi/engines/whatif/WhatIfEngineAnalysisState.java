@@ -140,7 +140,7 @@ public class WhatIfEngineAnalysisState extends EngineAnalysisState {
 	}
 
 	public Map<String, Object> getDriversValues() {
-		Map<String, Object> toReturn = new HashMap<String, Object>();
+		Map<String, Object> toReturn = new HashMap<>();
 		try {
 			JSONObject analysisStateJSON = (JSONObject) getProperty(WhatIfConstants.WHAT_IF_ANALYSIS_STATE);
 			JSONObject driversAsJSON = analysisStateJSON.optJSONObject(WhatIfConstants.DRIVERS);
@@ -225,7 +225,7 @@ public class WhatIfEngineAnalysisState extends EngineAnalysisState {
 	}
 
 	private void setCalculatedMember(String cc, WhatIfEngineInstance instance) throws JSONException {
-		List<CalculatedMember> toreturn = new ArrayList<CalculatedMember>();
+		List<CalculatedMember> toreturn = new ArrayList<>();
 
 		if (instance.getPivotModel() instanceof SpagoBIPivotModel) {
 			SpagoBIPivotModel model = (SpagoBIPivotModel) instance.getPivotModel();

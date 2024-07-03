@@ -34,7 +34,7 @@ public class PhysicalTableFilter implements IModelObjectFilter{
 	}
 	@Override
 	public boolean filter(ModelObject o) {
-		if (tablesTrue.contains((PhysicalTable)o))
+		if (tablesTrue.contains(o))
 			return false;
 		else
 			return true;

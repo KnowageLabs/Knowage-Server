@@ -29,7 +29,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.owasp.esapi.HTTPUtilities;
 import org.owasp.esapi.errors.AccessControlException;
-import org.owasp.esapi.reference.DefaultEncoder;
 import org.owasp.esapi.reference.DefaultHTTPUtilities;
 
 import it.eng.spago.base.Constants;

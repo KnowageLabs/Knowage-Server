@@ -17,8 +17,6 @@
  */
 package it.eng.spagobi.utilities.engines;
 
-import it.eng.spago.base.SourceBean;
-
 import java.io.IOException;
 
 import javax.servlet.ServletException;
@@ -35,7 +33,8 @@ public class EngineTestServlet extends HttpServlet {
      */
     private static transient Logger logger = Logger.getLogger(EngineTestServlet.class);
     
-    public void service(HttpServletRequest request, HttpServletResponse response)
+    @Override
+	public void service(HttpServletRequest request, HttpServletResponse response)
     throws IOException, ServletException {
     	
     	logger.debug("IN");

@@ -136,7 +136,7 @@ public class DataSetUtilities {
 				return null;
 			}
 
-			Map<String, ParamDefaultValue> res = new HashMap<String, ParamDefaultValue>();
+			Map<String, ParamDefaultValue> res = new HashMap<>();
 			DataSetParametersList dspl = DataSetParametersList.fromXML(params);
 			for (DataSetParameterItem item : (List<DataSetParameterItem>) dspl.getItems()) {
 				String defaultValue = item.getDefaultValue();
@@ -287,7 +287,7 @@ public class DataSetUtilities {
 			JSONObject jsonParameters = ObjectUtils.toJSONObject(parameters);
 			toReturn = getParametersMap(jsonParameters);
 		} else {
-			toReturn = new HashMap<String, String>();
+			toReturn = new HashMap<>();
 		}
 		return toReturn;
 	}
@@ -334,7 +334,7 @@ public class DataSetUtilities {
 	}
 
 	public static Map<String, String> getParametersMap(JSONObject jsonParameters) {
-		Map<String, String> toReturn = new HashMap<String, String>();
+		Map<String, String> toReturn = new HashMap<>();
 		if (jsonParameters != null) {
 			Iterator<String> keys = jsonParameters.keys();
 			try {
@@ -359,7 +359,7 @@ public class DataSetUtilities {
 
 	public static Map<String, Object> getDriversMap(JSONObject driversJson) {
 
-		Map<String, Object> ret = new HashMap<String, Object>();
+		Map<String, Object> ret = new HashMap<>();
 
 		try {
 			if (driversJson != null) {

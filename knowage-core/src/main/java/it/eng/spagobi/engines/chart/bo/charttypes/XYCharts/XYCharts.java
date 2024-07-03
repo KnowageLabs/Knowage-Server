@@ -18,10 +18,8 @@
 package it.eng.spagobi.engines.chart.bo.charttypes.XYCharts;
 
 import it.eng.spago.base.SourceBean;
-import it.eng.spago.base.SourceBeanAttribute;
 import it.eng.spagobi.engines.chart.bo.ChartImpl;
 import it.eng.spagobi.engines.chart.bo.charttypes.barcharts.BarCharts;
-import it.eng.spagobi.engines.chart.utils.DataSetAccessFunctions;
 import it.eng.spagobi.engines.chart.utils.DatasetMap;
 import it.eng.spagobi.engines.chart.utils.StyleLabel;
 
@@ -33,7 +31,6 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.jfree.chart.JFreeChart;
-import org.jfree.data.xy.DefaultXYZDataset;
 
 /**
  * @author chiarelli
@@ -94,6 +91,7 @@ public class XYCharts extends ChartImpl{
 		}
 	
 
+		@Override
 		public void configureChart(SourceBean content) {
 			logger.debug("IN");
 			super.configureChart(content);
@@ -186,6 +184,7 @@ public class XYCharts extends ChartImpl{
 	/* (non-Javadoc)
 	 * @see it.eng.spagobi.engines.chart.bo.ChartImpl#createChart(java.lang.String, org.jfree.data.general.Dataset)
 	 */
+	@Override
 	public JFreeChart createChart(DatasetMap dataset) {
 		// TODO Auto-generated method stub
 		return super.createChart(dataset);

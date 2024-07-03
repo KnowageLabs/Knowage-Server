@@ -17,18 +17,12 @@
  */
 package it.eng.spagobi.tools.dataset.common.dataproxy;
 
-import java.net.UnknownHostException;
-import java.util.Arrays;
-
 import org.apache.log4j.Logger;
 
 import com.mongodb.CommandResult;
 import com.mongodb.DB;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
-import com.mongodb.MongoCredential;
-import com.mongodb.ServerAddress;
-
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.tools.dataset.common.datareader.IDataReader;
 import it.eng.spagobi.tools.dataset.common.datareader.MongoDataReader;

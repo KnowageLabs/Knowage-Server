@@ -92,16 +92,16 @@ public class DerivedDataSet extends QbeDataSet {
 
 	@Override
 	public it.eng.qbe.datasource.IDataSource getQbeDataSource() {
-		Map<String, Object> dataSourceProperties = new HashMap<String, Object>();
+		Map<String, Object> dataSourceProperties = new HashMap<>();
 
 		String modelName = getDatamarts();
-		List<String> modelNames = new ArrayList<String>();
+		List<String> modelNames = new ArrayList<>();
 		modelNames.add(modelName);
 		dataSourceProperties.put("datasource", this.dataSource != null ? this.dataSource : super.dataSource);
 		dataSourceProperties.put("dblinkMap", new HashMap());
 
 		if (this.getSourceDataset() != null) {
-			List<IDataSet> dataSets = new ArrayList<IDataSet>();
+			List<IDataSet> dataSets = new ArrayList<>();
 			dataSets.add(this.getSourceDataset());
 			dataSourceProperties.put(EngineConstants.ENV_DATASETS, dataSets);
 		}

@@ -67,7 +67,7 @@ public class SpagoBIException extends Exception {
 
 	public List<String> getHints() {
 		if (hints == null) {
-			hints = new ArrayList<String>();
+			hints = new ArrayList<>();
 		}
 		return hints;
 	}

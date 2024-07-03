@@ -60,7 +60,7 @@ public class AttributesContainer {
 
 	public AttributesContainer(javax.servlet.http.HttpServletRequest request) {
 		super();
-		parameters = new HashMap<String, Object>();
+		parameters = new HashMap<>();
 
 		for (int i = 0; i < attributesToQuery.length; i++) {
 			String att = attributesToQuery[i];
@@ -87,7 +87,7 @@ public class AttributesContainer {
 		if (serviceResponse == null)
 			return;
 
-		parameters = new HashMap<String, Object>();
+		parameters = new HashMap<>();
 		List parameterNames = serviceResponse.getContainedAttributes();
 
 		for (Iterator iterator = parameterNames.iterator(); iterator.hasNext();) {
@@ -124,7 +124,7 @@ public class AttributesContainer {
 
 	public AttributesContainer(Map previousMap) {
 		super();
-		parameters = new HashMap<String, Object>();
+		parameters = new HashMap<>();
 		for (Iterator iterator = previousMap.keySet().iterator(); iterator.hasNext();) {
 			String name = (String) iterator.next();
 			Object value = previousMap.get(name);

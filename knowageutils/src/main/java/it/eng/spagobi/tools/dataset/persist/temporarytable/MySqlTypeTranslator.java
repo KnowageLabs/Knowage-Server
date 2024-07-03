@@ -34,7 +34,7 @@ public class MySqlTypeTranslator implements INativeDBTypeable{
 	
 	private static Map<String, String> mysqlTypeMapping;
 	static{
-		mysqlTypeMapping = new HashMap<String, String>();
+		mysqlTypeMapping = new HashMap<>();
 		mysqlTypeMapping.put("java.lang.Integer", "INT");
 		mysqlTypeMapping.put("java.lang.String", "VARCHAR");//se grande usare TEXT The length can be specified as a value from 0 to 255 before MySQL 5.0.3, and 0 to 65,535 in 5.0.3 and later versions.
 		mysqlTypeMapping.put("java.lang.Boolean", "BOOL");
@@ -48,6 +48,7 @@ public class MySqlTypeTranslator implements INativeDBTypeable{
 	}
 	
 
+	@Override
 	@SuppressWarnings("rawtypes")
 	public String getNativeTypeString(String typeJavaName, Map properties) {
 		logger.debug("Translating java type "+typeJavaName+" with properties "+properties);

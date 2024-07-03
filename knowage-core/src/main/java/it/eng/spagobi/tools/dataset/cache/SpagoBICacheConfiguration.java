@@ -25,7 +25,6 @@ import it.eng.spagobi.commons.dao.IConfigDAO;
 import it.eng.spagobi.tools.dataset.cache.impl.sqldbcache.SQLDBCacheConfiguration;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.tools.datasource.dao.IDataSourceDAO;
-import it.eng.spagobi.utilities.exceptions.ConfigurationException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import org.apache.log4j.Logger;
 
@@ -213,7 +212,7 @@ public class SpagoBICacheConfiguration {
 
 			logger.trace("Initializing types' default dimension");
 			logger.trace("Types' default dimension configuration block is equal to " + typesList.toString());
-			dimensionTypes = new ArrayList<Properties>();
+			dimensionTypes = new ArrayList<>();
 			for (SourceBean type : typesList) {
 				String name = (String) type.getAttribute("name");
 				String bytes = (String) type.getAttribute("bytes");

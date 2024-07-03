@@ -4,8 +4,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
-
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 
 // https://stackoverflow.com/questions/47037849/hive-connection-using-hibernate-in-spring-boot

@@ -273,7 +273,7 @@ public class JobUploadService extends AbstractEngineStartServlet {
 		String type = "ETL";
 		String state = "DEV";
 
-		 HashMap<String, Object> attributes = new HashMap<String, Object>();
+		 HashMap<String, Object> attributes = new HashMap<>();
 		attributes.put("TEMPLATE", templateBase64Coded);
 		attributes.put("LABEL", label);
 		attributes.put("NAME", name);

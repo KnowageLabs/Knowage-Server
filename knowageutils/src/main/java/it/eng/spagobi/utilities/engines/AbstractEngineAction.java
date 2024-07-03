@@ -48,10 +48,12 @@ public class AbstractEngineAction extends AbstractBaseHttpAction {
     private static transient Logger logger = Logger.getLogger(AbstractEngineAction.class);
     
     
+	@Override
 	public void init(SourceBean config) {
         super.init(config);
     } 
 	
+	@Override
 	public void service(SourceBean request, SourceBean response) {
 		setSpagoBIRequestContainer( request );
 		setSpagoBIResponseContainer( response );
@@ -72,11 +74,13 @@ public class AbstractEngineAction extends AbstractBaseHttpAction {
 	}
 	
 	
+	@Override
 	public IBeanContainer getSpagoBISessionContainer() {
 		return getSpagoBIHttpSessionContainer();
 	}
 	
 	
+	@Override
 	public IBeanContainer getSpagoBIHttpSessionContainer() {
 		return getConetxtManager();
 	}

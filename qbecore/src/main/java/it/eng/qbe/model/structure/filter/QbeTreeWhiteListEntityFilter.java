@@ -43,6 +43,7 @@ public class QbeTreeWhiteListEntityFilter extends ComposableQbeTreeEntityFilter{
 		this.setWhiteList( whiteList );
 	}
 	
+	@Override
 	public List filter(IDataSource dataSource, List entities) {
 		List list = null;
 		IModelEntity entity;

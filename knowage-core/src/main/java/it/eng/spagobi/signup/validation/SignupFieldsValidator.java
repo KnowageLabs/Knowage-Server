@@ -17,9 +17,6 @@
  */
 package it.eng.spagobi.signup.validation;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
-
-import java.net.URLDecoder;
 import java.util.Locale;
 
 import javax.ws.rs.core.MultivaluedMap;

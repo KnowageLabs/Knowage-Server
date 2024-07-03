@@ -65,7 +65,7 @@ public class CustomizedFunctionsReader {
 
 	public List<CustomizedFunction> getCustomDefinedFunctionListFromJSON(JSONObject jsonObj, String dbName) {
 		logger.debug("IN");
-		List<CustomizedFunction> toReturn = new ArrayList<CustomizedFunction>();
+		List<CustomizedFunction> toReturn = new ArrayList<>();
 
 		if (jsonObj != null && !jsonObj.toString().equals("{}")) {
 			// search for a key contained in current dbName (could be more than one for example (MySQL/MAria/DB)
@@ -102,7 +102,7 @@ public class CustomizedFunctionsReader {
 	public List<CustomizedFunction> getCustomDefinedFunctionList(String dbName, UserProfile userProfile) {
 		logger.debug("IN");
 
-		List<CustomizedFunction> toReturn = new ArrayList<CustomizedFunction>();
+		List<CustomizedFunction> toReturn = new ArrayList<>();
 
 		JSONObject jsonObj = getJSONCustomFunctionsVariable(userProfile);
 

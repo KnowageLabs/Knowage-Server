@@ -56,7 +56,8 @@ public class QbeJSONTemplateParser implements IQbeTemplateParser {
     public static String GROUPING_VARIABLE_PREFIX = "groupingVariable-";
     
 	
-    public QbeTemplate parse(Object template) {
+    @Override
+	public QbeTemplate parse(Object template) {
     	Assert.assertNotNull(template, "Input parameter [template] cannot be null");
     	Assert.assertTrue(template instanceof JSONObject, "Input parameter [template] cannot be of type [" + template.getClass().getName() + "]");
     	return parse((JSONObject)template);

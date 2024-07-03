@@ -1,8 +1,5 @@
 package it.eng.spagobi.analiticalmodel.document.handlers;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
-
-import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;

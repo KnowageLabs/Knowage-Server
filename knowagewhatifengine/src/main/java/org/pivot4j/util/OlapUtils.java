@@ -271,7 +271,7 @@ public class OlapUtils {
 			throw new NullArgumentException("members");
 		}
 
-		List<Member> wrappedMembers = new ArrayList<Member>(members.size());
+		List<Member> wrappedMembers = new ArrayList<>(members.size());
 
 		for (Member member : members) {
 			wrappedMembers.add(wrapRaggedIfNecessary(member));
@@ -384,10 +384,10 @@ public class OlapUtils {
 		RaggedMemberWrapper(Member member, Cube cube) {
 			this.baseMember = member;
 			this.level = member.getLevel();
-			this.ancestors = new LinkedList<Member>();
+			this.ancestors = new LinkedList<>();
 
 			List<IdentifierSegment> segments = Collections.unmodifiableList(IdentifierParser.parseIdentifier(member.getUniqueName()));
-			List<IdentifierSegment> resolvableSegments = new LinkedList<IdentifierSegment>();
+			List<IdentifierSegment> resolvableSegments = new LinkedList<>();
 
 			int i = 0;
 			int count = segments.size();
@@ -422,7 +422,7 @@ public class OlapUtils {
 				} else if (ancestor == null) {
 					String currentName = getUniqueName(segments.subList(0, i));
 
-					ancestor = new RaggedMemberWrapper(currentName, currentLevel, new LinkedList<Member>(ancestors), baseMember, topMember);
+					ancestor = new RaggedMemberWrapper(currentName, currentLevel, new LinkedList<>(ancestors), baseMember, topMember);
 					ancestors.add(0, ancestor);
 
 					resolvableSegments.remove(segment);
@@ -445,7 +445,7 @@ public class OlapUtils {
 			this.topMember = topMember;
 			this.ancestors = ancestors;
 
-			this.children = new NamedListImpl<RaggedMemberWrapper>();
+			this.children = new NamedListImpl<>();
 		}
 
 		private static String getUniqueName(List<IdentifierSegment> segments) {
@@ -487,6 +487,7 @@ public class OlapUtils {
 		/**
 		 * @see org.olap4j.metadata.MetadataElement#getName()
 		 */
+		@Override
 		public String getName() {
 			if (isBaseMember()) {
 				return baseMember.getName();
@@ -498,6 +499,7 @@ public class OlapUtils {
 		/**
 		 * @see org.olap4j.metadata.MetadataElement#getUniqueName()
 		 */
+		@Override
 		public String getUniqueName() {
 			return uniqueName;
 		}
@@ -505,6 +507,7 @@ public class OlapUtils {
 		/**
 		 * @see org.olap4j.metadata.MetadataElement#getCaption()
 		 */
+		@Override
 		public String getCaption() {
 			if (isBaseMember()) {
 				return baseMember.getCaption();
@@ -517,6 +520,7 @@ public class OlapUtils {
 		 * @see org.olap4j.metadata.MetadataElement#getDescription()
 		 */
 
+		@Override
 		public String getDescription() {
 			if (isBaseMember()) {
 				return baseMember.getDescription();
@@ -529,6 +533,7 @@ public class OlapUtils {
 		 * @see org.olap4j.metadata.Member#getChildMembers()
 		 */
 
+		@Override
 		public NamedList<? extends Member> getChildMembers() throws OlapException {
 			if (isBaseMember()) {
 				return baseMember.getChildMembers();
@@ -541,6 +546,7 @@ public class OlapUtils {
 		 * @see org.olap4j.metadata.Member#getChildMemberCount()
 		 */
 
+		@Override
 		public int getChildMemberCount() throws OlapException {
 			if (isBaseMember()) {
 				return baseMember.getChildMemberCount();
@@ -553,6 +559,7 @@ public class OlapUtils {
 		 * @see org.olap4j.metadata.Member#getParentMember()
 		 */
 
+		@Override
 		public Member getParentMember() {
 			if (ancestors.isEmpty()) {
 				return null;
@@ -564,6 +571,7 @@ public class OlapUtils {
 		/**
 		 * @see org.olap4j.metadata.Member#getAncestorMembers()
 		 */
+		@Override
 		public List<Member> getAncestorMembers() {
 			return ancestors;
 		}
@@ -572,6 +580,7 @@ public class OlapUtils {
 		 * @see org.olap4j.metadata.Member#getLevel()
 		 */
 
+		@Override
 		public Level getLevel() {
 			return level;
 		}
@@ -580,6 +589,7 @@ public class OlapUtils {
 		 * @see org.olap4j.metadata.Member#getHierarchy()
 		 */
 
+		@Override
 		public Hierarchy getHierarchy() {
 			return baseMember.getHierarchy();
 		}
@@ -588,6 +598,7 @@ public class OlapUtils {
 		 * @see org.olap4j.metadata.Member#getDimension()
 		 */
 
+		@Override
 		public Dimension getDimension() {
 			return baseMember.getDimension();
 		}
@@ -596,6 +607,7 @@ public class OlapUtils {
 		 * @see org.olap4j.metadata.Member#getMemberType()
 		 */
 
+		@Override
 		public Type getMemberType() {
 			if (isBaseMember()) {
 				return baseMember.getMemberType();
@@ -608,6 +620,7 @@ public class OlapUtils {
 		 * @see org.olap4j.metadata.Member#isAll()
 		 */
 
+		@Override
 		public boolean isAll() {
 			return false;
 		}
@@ -616,6 +629,7 @@ public class OlapUtils {
 		 * @see org.olap4j.metadata.Member#isChildOrEqualTo(org.olap4j.metadata.Member)
 		 */
 
+		@Override
 		public boolean isChildOrEqualTo(Member member) {
 			if (isBaseMember()) {
 				return baseMember.isChildOrEqualTo(member);
@@ -634,6 +648,7 @@ public class OlapUtils {
 		 * @see org.olap4j.metadata.Member#getExpression()
 		 */
 
+		@Override
 		public ParseTreeNode getExpression() {
 			if (isBaseMember()) {
 				return baseMember.getExpression();
@@ -646,6 +661,7 @@ public class OlapUtils {
 		 * @see org.olap4j.metadata.Member#isCalculated()
 		 */
 
+		@Override
 		public boolean isCalculated() {
 			return false;
 		}
@@ -654,10 +670,12 @@ public class OlapUtils {
 		 * @see org.olap4j.metadata.Member#isCalculatedInQuery()
 		 */
 
+		@Override
 		public boolean isCalculatedInQuery() {
 			return false;
 		}
 
+		@Override
 		public int getSolveOrder() {
 			if (isBaseMember()) {
 				return baseMember.getSolveOrder();
@@ -670,6 +688,7 @@ public class OlapUtils {
 		 * @see org.olap4j.metadata.Member#getPropertyValue(org.olap4j.metadata.Property)
 		 */
 
+		@Override
 		public Object getPropertyValue(Property property) throws OlapException {
 			if (isBaseMember()) {
 				return baseMember.getPropertyValue(property);
@@ -682,6 +701,7 @@ public class OlapUtils {
 		 * @see org.olap4j.metadata.Member#getPropertyFormattedValue(org.olap4j.metadata.Property)
 		 */
 
+		@Override
 		public String getPropertyFormattedValue(Property property) throws OlapException {
 			if (isBaseMember()) {
 				return baseMember.getPropertyFormattedValue(property);
@@ -695,6 +715,7 @@ public class OlapUtils {
 		 *      java.lang.Object)
 		 */
 
+		@Override
 		public void setProperty(Property property, Object value) throws OlapException {
 			if (isBaseMember()) {
 				baseMember.setProperty(property, value);
@@ -706,6 +727,7 @@ public class OlapUtils {
 		/**
 		 * @see org.olap4j.metadata.Member#getProperties()
 		 */
+		@Override
 		@SuppressWarnings({ "unchecked", "rawtypes" })
 
 		public NamedList<Property> getProperties() {
@@ -720,6 +742,7 @@ public class OlapUtils {
 		 * @see org.olap4j.metadata.Member#getOrdinal()
 		 */
 
+		@Override
 		public int getOrdinal() {
 			if (isBaseMember()) {
 				return baseMember.getOrdinal();
@@ -732,6 +755,7 @@ public class OlapUtils {
 		 * @see org.olap4j.metadata.MetadataElement#isVisible()
 		 */
 
+		@Override
 		public boolean isVisible() {
 			return baseMember.isVisible();
 		}
@@ -740,6 +764,7 @@ public class OlapUtils {
 		 * @see org.olap4j.metadata.Member#isHidden()
 		 */
 
+		@Override
 		public boolean isHidden() {
 			return baseMember.isHidden();
 		}
@@ -748,6 +773,7 @@ public class OlapUtils {
 		 * @see org.olap4j.metadata.Member#getDepth()
 		 */
 
+		@Override
 		public int getDepth() {
 			return level.getDepth();
 		}
@@ -756,6 +782,7 @@ public class OlapUtils {
 		 * @see org.olap4j.metadata.Member#getDataMember()
 		 */
 
+		@Override
 		public Member getDataMember() {
 			return this;
 		}
@@ -813,6 +840,7 @@ public class OlapUtils {
 		 * @see org.olap4j.metadata.MetadataElement#getUniqueName()
 		 */
 
+		@Override
 		public String getUniqueName() {
 			return uniqueName;
 		}
@@ -821,6 +849,7 @@ public class OlapUtils {
 		 * @see org.olap4j.metadata.MetadataElement#getName()
 		 */
 
+		@Override
 		public String getName() {
 			return property.getName();
 		}
@@ -829,6 +858,7 @@ public class OlapUtils {
 		 * @see org.olap4j.metadata.MetadataElement#getCaption()
 		 */
 
+		@Override
 		public String getCaption() {
 			return property.getCaption();
 		}
@@ -837,6 +867,7 @@ public class OlapUtils {
 		 * @see org.olap4j.metadata.MetadataElement#getDescription()
 		 */
 
+		@Override
 		public String getDescription() {
 			return property.getDescription();
 		}
@@ -845,6 +876,7 @@ public class OlapUtils {
 		 * @see org.olap4j.metadata.MetadataElement#isVisible()
 		 */
 
+		@Override
 		public boolean isVisible() {
 			return property.isVisible();
 		}
@@ -853,6 +885,7 @@ public class OlapUtils {
 		 * @see org.olap4j.metadata.Property#getContentType()
 		 */
 
+		@Override
 		public ContentType getContentType() {
 			return property.getContentType();
 		}
@@ -861,6 +894,7 @@ public class OlapUtils {
 		 * @see org.olap4j.metadata.Property#getDatatype()
 		 */
 
+		@Override
 		public Datatype getDatatype() {
 			return property.getDatatype();
 		}
@@ -869,6 +903,7 @@ public class OlapUtils {
 		 * @see org.olap4j.metadata.Property#getType()
 		 */
 
+		@Override
 		public Set<TypeFlag> getType() {
 			return property.getType();
 		}

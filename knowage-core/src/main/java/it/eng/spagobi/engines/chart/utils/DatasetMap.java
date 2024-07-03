@@ -29,7 +29,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
@@ -115,7 +114,7 @@ public class DatasetMap {
 			//e.printStackTrace();
 		}
 		try{
-			series=new TreeSet(((DefaultCategoryDataset)dataset).getRowKeys());
+			series=new TreeSet(dataset.getRowKeys());
 
 			//fill the serieNumber MAP by mapping each serie name to its position in the dataset, needed to recover right colors when redrawing
 			/*	for(int i=0;i<series.size();i++){
@@ -123,7 +122,7 @@ public class DatasetMap {
 			sbi.putSeriesNumber(s,(i+1));
 		}*/
 
-			categories=(HashMap)((BarCharts)sbi).getCategories();
+			categories=(HashMap)sbi.getCategories();
 			catsnum=new Integer(sbi.getCategoriesNumber());
 
 			//See if numberCatVisualization has to be updated
@@ -175,13 +174,13 @@ public class DatasetMap {
 			}
 
 			valueSlider=(new Integer(categoryCurrent)).toString();
-			HashMap cats=(HashMap)((BarCharts)sbi).getCategories();
+			HashMap cats=(HashMap)sbi.getCategories();
 
 
 			if(categoryCurrent!=0 ){   // attention
 				categoryCurrentName=(String)cats.get(new Integer(categoryCurrent));
 				logger.debug("current category "+categoryCurrentName);
-				copyDataset=(DefaultCategoryDataset)sbi.filterDataset(copyDataset,categories,categoryCurrent,numberCatVisualization.intValue());				
+				copyDataset=sbi.filterDataset(copyDataset,categories,categoryCurrent,numberCatVisualization.intValue());				
 			}
 			else{
 				logger.debug("current category is the first");
@@ -210,7 +209,7 @@ public class DatasetMap {
 				}
 				// if selectedSerie contains allseries 
 				if(selectedCatGroups.contains("allgroups")){
-					((BarCharts)sbi).setCurrentCatGroups(null);
+					sbi.setCurrentCatGroups(null);
 				}
 				else{	
 					copyDataset=sbi.filterDatasetCatGroups(copyDataset,selectedCatGroups);	
@@ -242,7 +241,7 @@ public class DatasetMap {
 
 				// if selectedSerie contains allseries 
 				if(selectedSeries.contains("allseries")){
-					((BarCharts)sbi).setCurrentSeries(null);
+					sbi.setCurrentSeries(null);
 				}
 				else{	
 					copyDataset=sbi.filterDatasetSeries(copyDataset,selectedSeries);	
@@ -326,7 +325,7 @@ public class DatasetMap {
 		DatasetMap newDatasetMap=new DatasetMap();
 		boolean notDisappearSlider=false;   // if n_visualization>=number total categories do not make slider disappear
 
-		series=new LinkedHashSet<String>();
+		series=new LinkedHashSet<>();
 		//series=new TreeSet<String>();
 
 
@@ -348,7 +347,7 @@ public class DatasetMap {
 			// add found series if the number is less then the max number of visualization
 			int contSer = 0;
 
-			for (Iterator iterator2 = (((DefaultCategoryDataset)dataset).getRowKeys()).iterator(); iterator2.hasNext();) {
+			for (Iterator iterator2 = (dataset.getRowKeys()).iterator(); iterator2.hasNext();) {
 				if (this.getNumberSerVisualization() > 0 && contSer < this.getNumberSerVisualization()){
 					String serie = (String) iterator2.next();
 					if(!series.contains(serie)){
@@ -365,7 +364,7 @@ public class DatasetMap {
 			}
 
 
-			categories=(HashMap)((BarCharts)sbi).getCategories();
+			categories=(HashMap)sbi.getCategories();
 			catsnum=new Integer(sbi.getCategoriesNumber());
 
 			//See if numberCatVisualization has to be updated
@@ -412,13 +411,13 @@ public class DatasetMap {
 			}
 
 			valueSlider=(new Integer(categoryCurrent)).toString();
-			HashMap cats=(HashMap)((BarCharts)sbi).getCategories();
+			HashMap cats=(HashMap)sbi.getCategories();
 
 
 			if(categoryCurrent!=0){
 				categoryCurrentName=(String)cats.get(new Integer(categoryCurrent));
 				logger.debug("current category "+categoryCurrentName);
-				copyDataset=(DefaultCategoryDataset)sbi.filterDataset(copyDataset,categories,categoryCurrent,numberCatVisualization.intValue());				
+				copyDataset=sbi.filterDataset(copyDataset,categories,categoryCurrent,numberCatVisualization.intValue());				
 			}
 			else{
 				categoryCurrentName="All";
@@ -442,7 +441,7 @@ public class DatasetMap {
 
 			// if selectedSerie contains allseries 
 			if(selectedSeries.contains("allseries")){
-				((BarCharts)sbi).setCurrentSeries(null);
+				sbi.setCurrentSeries(null);
 			}
 			else{	
 				copyDataset=sbi.filterDatasetSeries(copyDataset,selectedSeries);	
@@ -470,10 +469,10 @@ public class DatasetMap {
 		dynamicNVisualization=sbi.isDynamicNumberCatVisualization();		
 
 		// if seriesOrder is defined re-define the order!
-		if(((BarCharts)sbi).getSeriesOrder()!=null){
-			LinkedHashSet<String> newOrderedSet=new LinkedHashSet<String>();
-			LinkedHashSet<String> seriesTemp=new LinkedHashSet<String>(series);
-			ArrayList<String> order=((BarCharts)sbi).getSeriesOrder();
+		if(sbi.getSeriesOrder()!=null){
+			LinkedHashSet<String> newOrderedSet=new LinkedHashSet<>();
+			LinkedHashSet<String> seriesTemp=new LinkedHashSet<>(series);
+			ArrayList<String> order=sbi.getSeriesOrder();
 			for (Iterator iterator = order.iterator(); iterator.hasNext();) {
 				String element = (String) iterator.next();
 				if(seriesTemp.contains(element)){
@@ -606,7 +605,7 @@ public class DatasetMap {
 		//	series=new TreeSet(((DefaultCategoryDataset)dataset).getRowKeys());
 
 		int contSer = 0;
-		for (Iterator iterator2 = (((DefaultCategoryDataset)dataset).getRowKeys()).iterator(); iterator2.hasNext();) {
+		for (Iterator iterator2 = (dataset.getRowKeys()).iterator(); iterator2.hasNext();) {
 			if (this.getNumberSerVisualization() > 0 && contSer < this.getNumberSerVisualization()){
 				String serie = (String) iterator2.next();
 				if(!series.contains(serie)){
@@ -645,7 +644,7 @@ public class DatasetMap {
 		numberCatVisualization=sbi.getNumberCatVisualization();
 		numberSerVisualization=sbi.getNumberSerVisualization(); 
 
-		subCategories=(HashMap)((StackedBarGroup)sbi).getSubCategories();
+		subCategories=sbi.getSubCategories();
 
 
 		catTitle=sbi.getCategoryLabel();
@@ -688,7 +687,7 @@ public class DatasetMap {
 		if(categoryCurrent!=0){
 			categoryCurrentName=(String)cats.get(new Integer(categoryCurrent));
 			logger.debug("current category "+categoryCurrentName);
-			copyDataset=(DefaultCategoryDataset)sbi.filterDataset(copyDataset,categories,categoryCurrent,numberCatVisualization.intValue());				
+			copyDataset=sbi.filterDataset(copyDataset,categories,categoryCurrent,numberCatVisualization.intValue());				
 		}
 		else{
 			categoryCurrentName="All";

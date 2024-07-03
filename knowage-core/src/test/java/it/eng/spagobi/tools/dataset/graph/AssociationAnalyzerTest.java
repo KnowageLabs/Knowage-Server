@@ -49,10 +49,10 @@ public class AssociationAnalyzerTest {
 
 	@Before
 	public void setUp() {
-		oneAssociationMap = new HashMap<String, Association>();
+		oneAssociationMap = new HashMap<>();
 		oneAssociationMap.put(A1, buildAssociation(A1, new String[] { X, Y }));
 
-		fiveAssociationsMap = new HashMap<String, Association>();
+		fiveAssociationsMap = new HashMap<>();
 		fiveAssociationsMap.put(A1, buildAssociation(A1, new String[] { X, Y, Z }));
 		fiveAssociationsMap.put(A3, buildAssociation(A3, new String[] { K, Z }));
 		fiveAssociationsMap.put(A4, buildAssociation(A4, new String[] { W, Y }));
@@ -85,7 +85,7 @@ public class AssociationAnalyzerTest {
 		assertTrue(graph.containsVertex(Y));
 
 		assertEquals(1, graph.edgeSet().size());
-		assertTrue(graph.containsEdge(new LabeledEdge<String>(Y, X, A1)));
+		assertTrue(graph.containsEdge(new LabeledEdge<>(Y, X, A1)));
 	}
 
 	@Test
@@ -143,15 +143,15 @@ public class AssociationAnalyzerTest {
 		assertTrue(graph.containsVertex(Z));
 
 		assertEquals(9, graph.edgeSet().size());
-		assertTrue(graph.containsEdge(new LabeledEdge<String>(X, Y, A1)));
-		assertTrue(graph.containsEdge(new LabeledEdge<String>(Y, Z, A1)));
-		assertTrue(graph.containsEdge(new LabeledEdge<String>(Z, X, A1)));
-		assertTrue(graph.containsEdge(new LabeledEdge<String>(K, Z, A3)));
-		assertTrue(graph.containsEdge(new LabeledEdge<String>(W, Y, A4)));
-		assertTrue(graph.containsEdge(new LabeledEdge<String>(X, Y, A5)));
-		assertTrue(graph.containsEdge(new LabeledEdge<String>(Y, Z, A5)));
-		assertTrue(graph.containsEdge(new LabeledEdge<String>(X, Z, A5)));
-		assertTrue(graph.containsEdge(new LabeledEdge<String>(Z, X, A6)));
+		assertTrue(graph.containsEdge(new LabeledEdge<>(X, Y, A1)));
+		assertTrue(graph.containsEdge(new LabeledEdge<>(Y, Z, A1)));
+		assertTrue(graph.containsEdge(new LabeledEdge<>(Z, X, A1)));
+		assertTrue(graph.containsEdge(new LabeledEdge<>(K, Z, A3)));
+		assertTrue(graph.containsEdge(new LabeledEdge<>(W, Y, A4)));
+		assertTrue(graph.containsEdge(new LabeledEdge<>(X, Y, A5)));
+		assertTrue(graph.containsEdge(new LabeledEdge<>(Y, Z, A5)));
+		assertTrue(graph.containsEdge(new LabeledEdge<>(X, Z, A5)));
+		assertTrue(graph.containsEdge(new LabeledEdge<>(Z, X, A6)));
 	}
 
 	@Test
@@ -168,20 +168,20 @@ public class AssociationAnalyzerTest {
 		Set<Tuple> valuesA4 = new HashSet<>();
 		valuesA4.add(new Tuple(Arrays.asList(11)));
 
-		Set<LabeledEdge<String>> edgesA1A5 = new HashSet<LabeledEdge<String>>();
-		edgesA1A5.add(new LabeledEdge<String>(X, Y, A1));
-		edgesA1A5.add(new LabeledEdge<String>(Y, X, A5));
+		Set<LabeledEdge<String>> edgesA1A5 = new HashSet<>();
+		edgesA1A5.add(new LabeledEdge<>(X, Y, A1));
+		edgesA1A5.add(new LabeledEdge<>(Y, X, A5));
 
-		Set<LabeledEdge<String>> edgesA1A5A6 = new HashSet<LabeledEdge<String>>();
-		edgesA1A5A6.add(new LabeledEdge<String>(X, Z, A1));
-		edgesA1A5A6.add(new LabeledEdge<String>(Z, X, A5));
-		edgesA1A5A6.add(new LabeledEdge<String>(X, Z, A6));
+		Set<LabeledEdge<String>> edgesA1A5A6 = new HashSet<>();
+		edgesA1A5A6.add(new LabeledEdge<>(X, Z, A1));
+		edgesA1A5A6.add(new LabeledEdge<>(Z, X, A5));
+		edgesA1A5A6.add(new LabeledEdge<>(X, Z, A6));
 
-		Set<LabeledEdge<String>> edgesA3 = new HashSet<LabeledEdge<String>>();
-		edgesA3.add(new LabeledEdge<String>(Z, K, A3));
+		Set<LabeledEdge<String>> edgesA3 = new HashSet<>();
+		edgesA3.add(new LabeledEdge<>(Z, K, A3));
 
-		Set<LabeledEdge<String>> edgesA4 = new HashSet<LabeledEdge<String>>();
-		edgesA4.add(new LabeledEdge<String>(Y, W, A4));
+		Set<LabeledEdge<String>> edgesA4 = new HashSet<>();
+		edgesA4.add(new LabeledEdge<>(Y, W, A4));
 
 		EdgeGroup edgeGroupA1A5 = new EdgeGroup(edgesA1A5);
 		EdgeGroup edgeGroupA1A5A6 = new EdgeGroup(edgesA1A5A6);

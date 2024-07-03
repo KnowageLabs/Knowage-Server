@@ -984,7 +984,7 @@ public class KpiService {
 									String attribute = attributesIterator.next();
 									usedAttributes.add(attribute);
 									if (kpis.get(kpi.getName()) == null) {
-										kpis.put(kpi.getName(), new ArrayList<String>());
+										kpis.put(kpi.getName(), new ArrayList<>());
 									}
 									kpis.get(kpi.getName()).add(attribute);
 								}

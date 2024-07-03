@@ -31,24 +31,28 @@ public class DataStoreFilter implements IDataStoreFilter {
 		this.type = type;
 	}
 	
+	@Override
 	public String getFieldName() {
 		return fieldName;
 	}
 	public void setFieldName(String fieldName) {
 		this.fieldName = fieldName;
 	}
+	@Override
 	public String getValue() {
 		return value;
 	}
 	public void setValue(String value) {
 		this.value = value;
 	}
+	@Override
 	public String getOperator() {
 		return operator;
 	}
 	public void setOperator(String operator) {
 		this.operator = operator;
 	}
+	@Override
 	public String getType() {
 		return type;
 	}

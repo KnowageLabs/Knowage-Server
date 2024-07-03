@@ -85,6 +85,7 @@ public class OlapModelFactoryImpl extends EFactoryImpl implements OlapModelFacto
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public OlapModel createOlapModel() {
 		OlapModelImpl olapModel = new OlapModelImpl();
 		return olapModel;
@@ -95,6 +96,7 @@ public class OlapModelFactoryImpl extends EFactoryImpl implements OlapModelFacto
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public Cube createCube() {
 		CubeImpl cube = new CubeImpl();
 		return cube;
@@ -105,6 +107,7 @@ public class OlapModelFactoryImpl extends EFactoryImpl implements OlapModelFacto
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public Dimension createDimension() {
 		DimensionImpl dimension = new DimensionImpl();
 		return dimension;
@@ -115,6 +118,7 @@ public class OlapModelFactoryImpl extends EFactoryImpl implements OlapModelFacto
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public Hierarchy createHierarchy() {
 		HierarchyImpl hierarchy = new HierarchyImpl();
 		return hierarchy;
@@ -125,6 +129,7 @@ public class OlapModelFactoryImpl extends EFactoryImpl implements OlapModelFacto
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public Level createLevel() {
 		LevelImpl level = new LevelImpl();
 		return level;
@@ -135,6 +140,7 @@ public class OlapModelFactoryImpl extends EFactoryImpl implements OlapModelFacto
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public Measure createMeasure() {
 		MeasureImpl measure = new MeasureImpl();
 		return measure;
@@ -145,6 +151,7 @@ public class OlapModelFactoryImpl extends EFactoryImpl implements OlapModelFacto
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public CalculatedMember createCalculatedMember() {
 		CalculatedMemberImpl calculatedMember = new CalculatedMemberImpl();
 		return calculatedMember;
@@ -155,6 +162,7 @@ public class OlapModelFactoryImpl extends EFactoryImpl implements OlapModelFacto
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public NamedSet createNamedSet() {
 		NamedSetImpl namedSet = new NamedSetImpl();
 		return namedSet;
@@ -165,6 +173,7 @@ public class OlapModelFactoryImpl extends EFactoryImpl implements OlapModelFacto
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public VirtualCube createVirtualCube() {
 		VirtualCubeImpl virtualCube = new VirtualCubeImpl();
 		return virtualCube;
@@ -175,6 +184,7 @@ public class OlapModelFactoryImpl extends EFactoryImpl implements OlapModelFacto
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public VirtualCubeDimension createVirtualCubeDimension() {
 		VirtualCubeDimensionImpl virtualCubeDimension = new VirtualCubeDimensionImpl();
 		return virtualCubeDimension;
@@ -185,6 +195,7 @@ public class OlapModelFactoryImpl extends EFactoryImpl implements OlapModelFacto
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public VirtualCubeMeasure createVirtualCubeMeasure() {
 		VirtualCubeMeasureImpl virtualCubeMeasure = new VirtualCubeMeasureImpl();
 		return virtualCubeMeasure;
@@ -195,6 +206,7 @@ public class OlapModelFactoryImpl extends EFactoryImpl implements OlapModelFacto
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public OlapModelPackage getOlapModelPackage() {
 		return (OlapModelPackage)getEPackage();
 	}

@@ -19,8 +19,6 @@ package it.eng.spagobi.writeback4j.sql;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.sql.Statement;
-
 import org.apache.log4j.Logger;
 
 /* SpagoBI, the Open Source Business Intelligence suite

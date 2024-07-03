@@ -72,7 +72,7 @@ public class ModelFieldPathsJSONDeserializer extends JsonDeserializer<ModelField
 	
 	@Override
 	public ModelFieldPaths deserialize(JsonParser jsonParser, DeserializationContext ctxt) throws IOException, JsonProcessingException {
-		Set<PathChoice> choices = new HashSet<PathChoice>();
+		Set<PathChoice> choices = new HashSet<>();
         ObjectCodec oc = jsonParser.getCodec();
         JsonNode node = oc.readTree(jsonParser);
         TextNode id = (TextNode)node.get(ID);
@@ -140,7 +140,7 @@ public class ModelFieldPathsJSONDeserializer extends JsonDeserializer<ModelField
 		boolean activebool = active!=null && active.asBoolean();
 		if(activebool){
 	        if(nodes!=null && start!=null && end!=null){
-	        	List<Relationship> relations = new ArrayList<Relationship>();
+	        	List<Relationship> relations = new ArrayList<>();
 	        	for(int i=0; i<nodes.size(); i++){
 	        		relations.add(deserializeRelationship(nodes.get(i)));
 	        	}
@@ -168,7 +168,7 @@ public class ModelFieldPathsJSONDeserializer extends JsonDeserializer<ModelField
 		if(relationShips!=null){
 			Iterator<Relationship> iter = relationShips.iterator();
 			while (iter.hasNext()) {
-				Relationship relationship = (Relationship) iter.next();
+				Relationship relationship = iter.next();
 				if(relationship.getId().equals(id)){
 					return relationship;
 				}

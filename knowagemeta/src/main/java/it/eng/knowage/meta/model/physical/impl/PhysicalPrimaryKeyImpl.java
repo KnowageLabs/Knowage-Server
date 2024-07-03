@@ -184,7 +184,7 @@ public class PhysicalPrimaryKeyImpl extends ModelObjectImpl implements PhysicalP
 	@Override
 	public EList<PhysicalColumn> getColumns() {
 		if (columns == null) {
-			columns = new EObjectResolvingEList<PhysicalColumn>(PhysicalColumn.class, this, PhysicalModelPackage.PHYSICAL_PRIMARY_KEY__COLUMNS);
+			columns = new EObjectResolvingEList<>(PhysicalColumn.class, this, PhysicalModelPackage.PHYSICAL_PRIMARY_KEY__COLUMNS);
 		}
 		return columns;
 	}

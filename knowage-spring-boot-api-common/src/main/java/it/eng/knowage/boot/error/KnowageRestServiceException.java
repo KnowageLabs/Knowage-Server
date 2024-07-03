@@ -103,6 +103,7 @@ public class KnowageRestServiceException extends KnowageRuntimeException {
 		return localizedMessage;
 	}
 
+	@Override
 	public Locale getLocale() {
 		if (locale == null) {
 			locale = Locale.US;

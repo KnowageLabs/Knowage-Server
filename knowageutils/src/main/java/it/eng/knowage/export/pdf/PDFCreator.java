@@ -74,8 +74,7 @@ public abstract class PDFCreator {
 	private static final DateTimeFormatter DEFAULT_DATE_FORMATTER_V2 = DateTimeFormatter.ofPattern(DEFAULT_DATE_FORMAT);
 
 	private static void createPDF(List<InputStream> inputImages, Path output) throws IOException {
-		PDDocument document = new PDDocument();
-		try {
+		try (PDDocument document = new PDDocument()) {
 			for (InputStream is : inputImages) {
 				BufferedImage bimg = ImageIO.read(is);
 				float width = bimg.getWidth();
@@ -89,8 +88,6 @@ public abstract class PDFCreator {
 				}
 			}
 			document.save(output.toFile());
-		} finally {
-			document.close();
 		}
 	}
 

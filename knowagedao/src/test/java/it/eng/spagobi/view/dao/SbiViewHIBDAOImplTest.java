@@ -82,7 +82,7 @@ public class SbiViewHIBDAOImplTest {
 		JSONObject settings = new JSONObject();
 		settings.put("setting1", "");
 
-		BIObject biObj = (BIObject) dao3.loadAllBIObjects().stream().findFirst().get();
+		BIObject biObj = dao3.loadAllBIObjects().stream().findFirst().get();
 
 		e2.setLabel("label");
 		e2.setName("Name");

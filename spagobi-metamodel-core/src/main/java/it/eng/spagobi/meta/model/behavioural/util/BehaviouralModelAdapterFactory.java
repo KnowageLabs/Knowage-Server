@@ -9,7 +9,6 @@
 **/
 package it.eng.spagobi.meta.model.behavioural.util;
 
-import it.eng.spagobi.meta.model.behavioural.*;
 import it.eng.spagobi.meta.model.behavioural.BehaviouralModel;
 import it.eng.spagobi.meta.model.behavioural.BehaviouralModelPackage;
 

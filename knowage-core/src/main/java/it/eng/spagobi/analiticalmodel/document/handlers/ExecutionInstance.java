@@ -17,8 +17,6 @@
  */
 package it.eng.spagobi.analiticalmodel.document.handlers;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
-
 import java.io.Serializable;
 
 import java.util.ArrayList;

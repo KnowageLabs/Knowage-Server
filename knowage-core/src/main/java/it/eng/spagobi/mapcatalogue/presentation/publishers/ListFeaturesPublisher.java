@@ -45,6 +45,7 @@ public class ListFeaturesPublisher implements PublisherDispatcherIFace {
 	 * @return A string representing the name of the correct publisher, which will
 	 * call the correct jsp reference.
 	 */
+	@Override
 	public String getPublisherName(RequestContainer requestContainer, ResponseContainer responseContainer) {
 
 		//SourceBean serviceRequest = requestContainer.getServiceRequest();

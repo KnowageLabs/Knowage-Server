@@ -41,6 +41,7 @@ public class HibernateTransaction implements ITransaction{
 	/* (non-Javadoc)
 	 * @see it.eng.qbe.datasource.transaction.ITransaction#open()
 	 */
+	@Override
 	public void open(){
 		session = dataSource.getHibernateSessionFactory().openSession();	
 	}
@@ -48,6 +49,7 @@ public class HibernateTransaction implements ITransaction{
 	/* (non-Javadoc)
 	 * @see it.eng.qbe.datasource.transaction.ITransaction#close()
 	 */
+	@Override
 	public void close(){
 		//the session in new so we should close it
 		session.close();
@@ -56,6 +58,7 @@ public class HibernateTransaction implements ITransaction{
 	/* (non-Javadoc)
 	 * @see it.eng.qbe.datasource.transaction.ITransaction#getSQLConnection()
 	 */
+	@Override
 	public java.sql.Connection getSQLConnection(){
 		return getConnection(this.session);
 	}

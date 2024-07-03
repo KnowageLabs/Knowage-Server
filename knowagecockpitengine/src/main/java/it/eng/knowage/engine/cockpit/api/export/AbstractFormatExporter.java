@@ -63,7 +63,6 @@ import it.eng.knowage.engine.cockpit.api.export.pdf.CssColorParser;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.i18n.dao.I18NMessagesDAO;
-import it.eng.spagobi.tenant.TenantManager;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.bo.SolrDataSet;
 import it.eng.spagobi.tools.dataset.bo.VersionedDataSet;
@@ -1572,12 +1571,12 @@ public abstract class AbstractFormatExporter {
 			// calculate scale
 			float scale = 1;
 			if (pictHeightPx > rowsHeightPx) {
-				float tmpscale = rowsHeightPx / (float) pictHeightPx;
+				float tmpscale = rowsHeightPx / pictHeightPx;
 				if (tmpscale < scale)
 					scale = tmpscale;
 			}
 			if (pictWidthPx > colsWidthPx) {
-				float tmpscale = colsWidthPx / (float) pictWidthPx;
+				float tmpscale = colsWidthPx / pictWidthPx;
 				if (tmpscale < scale)
 					scale = tmpscale;
 			}

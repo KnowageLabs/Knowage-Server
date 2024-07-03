@@ -66,7 +66,7 @@ public class UserBO implements Serializable {
 	private boolean blockedByFailedLoginAttempts;
 
 	private List sbiExtUserRoleses = new ArrayList();
-	private HashMap<Integer, HashMap<String, String>> sbiUserAttributeses = new HashMap<Integer, HashMap<String, String>>();
+	private HashMap<Integer, HashMap<String, String>> sbiUserAttributeses = new HashMap<>();
 
 	public Integer getId() {
 		return id;

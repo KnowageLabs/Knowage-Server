@@ -36,7 +36,7 @@ public class JSONObjectDeserializator {
 
 	public static HashMap<String, Object> getHashMapFromJSONObject(JSONObject object) throws IOException {
 
-		HashMap<String, Object> map = new HashMap<String, Object>();
+		HashMap<String, Object> map = new HashMap<>();
 		ObjectMapper mapper = JacksonMapper.getMapper();
 
 		try {
@@ -53,7 +53,7 @@ public class JSONObjectDeserializator {
 
 	public static HashMap<String, Object> getHashMapFromString(String object) throws IOException {
 
-		HashMap<String, Object> map = new HashMap<String, Object>();
+		HashMap<String, Object> map = new HashMap<>();
 		ObjectMapper mapper = JacksonMapper.getMapper();
 
 		try {

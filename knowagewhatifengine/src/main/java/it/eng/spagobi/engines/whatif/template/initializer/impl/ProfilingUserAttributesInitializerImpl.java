@@ -44,7 +44,7 @@ public class ProfilingUserAttributesInitializerImpl extends AbstractInitializer 
 	public void init(SourceBean template, WhatIfTemplate toReturn) {
 		SourceBean dataAccessSB = (SourceBean) template.getAttribute(TAG_DATA_ACCESS);
 		logger.debug(TAG_DATA_ACCESS + ": " + dataAccessSB);
-		List<String> attributes = new ArrayList<String>();
+		List<String> attributes = new ArrayList<>();
 		if (dataAccessSB != null) {
 			List attributesSB = dataAccessSB.getAttributeAsList(TAG_USER_ATTRIBUTE);
 			Iterator it = attributesSB.iterator();

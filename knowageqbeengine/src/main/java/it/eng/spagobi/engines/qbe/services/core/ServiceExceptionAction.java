@@ -43,6 +43,7 @@ public class ServiceExceptionAction extends AbstractQbeEngineAction {
     public static transient Logger logger = Logger.getLogger(ServiceExceptionAction.class);
 	
    
+	@Override
 	public void service(SourceBean serviceRequest, SourceBean serviceResponse)  {
 		
 		EMFErrorHandler errorHandler;

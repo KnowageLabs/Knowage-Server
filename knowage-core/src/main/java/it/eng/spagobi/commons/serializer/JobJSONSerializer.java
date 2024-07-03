@@ -128,7 +128,7 @@ public class JobJSONSerializer implements Serializer {
 					}
 
 					// retrieve loadAtRuntime parameters (for document parameters using Analitical Drivers)
-					Map<String, String> loadAtRuntimeParameters = new HashMap<String, String>();
+					Map<String, String> loadAtRuntimeParameters = new HashMap<>();
 					String documentLoadAtRuntimeParameters = parameters.get(internalDocumentName + "_loadAtRuntime");
 
 					if ((documentLoadAtRuntimeParameters != null) && (!documentLoadAtRuntimeParameters.isEmpty())) {
@@ -156,7 +156,7 @@ public class JobJSONSerializer implements Serializer {
 
 					// retrieve formula parameters
 					// ------------------------------------------------
-					Map<String, String> useFormulaParameters = new HashMap<String, String>();
+					Map<String, String> useFormulaParameters = new HashMap<>();
 					String documentFormulaParameters = parameters.get(internalDocumentName + "_useFormula");
 					if ((documentFormulaParameters != null) && (!documentFormulaParameters.isEmpty())) {
 						String[] useFormulaArray = documentFormulaParameters.split(";");

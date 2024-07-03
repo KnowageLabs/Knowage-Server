@@ -372,7 +372,8 @@ public abstract class AbstractJSONArray {
      * @return a printable, displayable, transmittable
      *  representation of the array.
      */
-    public String toString() {
+    @Override
+	public String toString() {
         try {
             return '[' + this.join(",") + ']';
         } catch (Exception e) {

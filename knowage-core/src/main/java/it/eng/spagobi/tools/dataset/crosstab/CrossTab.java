@@ -125,9 +125,9 @@ public class CrossTab {
 //		}
 //
 
-		List<String> rowCordinates = new ArrayList<String>();
-		List<String> columnCordinates = new ArrayList<String>();
-		List<String> data = new ArrayList<String>();
+		List<String> rowCordinates = new ArrayList<>();
+		List<String> columnCordinates = new ArrayList<>();
+		List<String> data = new ArrayList<>();
 
 		columnsRoot = new Node(Node.CROSSTAB_NODE_COLUMN_ROOT);
 		rowsRoot = new Node(Node.CROSSTAB_NODE_ROW_ROOT);
@@ -206,7 +206,7 @@ public class CrossTab {
 				columnsRoot.getLeafsNumber());
 
 		// put measures' info into measures variable
-		measures = new ArrayList<CrossTab.MeasureInfo>();
+		measures = new ArrayList<>();
 		IMetaData meta = valuesDataStore.getMetaData();
 		for (int i = meta.getFieldCount() - measuresCount; i < meta.getFieldCount(); i++) {
 			// the field number i contains the measure number (i - <number of dimensions>)
@@ -216,8 +216,8 @@ public class CrossTab {
 			measures.add(getMeasureInfo(fieldMeta, relevantMeasure));
 		}
 
-		celltypeOfColumns = new ArrayList<CrossTab.CellType>();
-		celltypeOfRows = new ArrayList<CrossTab.CellType>();
+		celltypeOfColumns = new ArrayList<>();
+		celltypeOfRows = new ArrayList<>();
 
 		for (int i = 0; i < dataMatrix.length; i++) {
 			celltypeOfRows.add(CellType.DATA);
@@ -403,7 +403,7 @@ public class CrossTab {
 	 * @param measures
 	 */
 	private void addMeasuresToTree(Node root, List<Measure> measures) {
-		List<Node> measuresNodes = new ArrayList<Node>();
+		List<Node> measuresNodes = new ArrayList<>();
 		for (int i = 0; i < measures.size(); i++) {
 			measuresNodes.add(new Node(measures.get(i).getAlias()));
 		}
@@ -432,7 +432,7 @@ public class CrossTab {
 	 * @return list with all the path from the node n to the leafs
 	 */
 	private List<String> getLeafsPathList(Node n) {
-		List<String> toReturn = new ArrayList<String>();
+		List<String> toReturn = new ArrayList<>();
 		for (int i = 0; i < n.getChilds().size(); i++) {
 			toReturn.addAll(visit(n.getChilds().get(i), PATH_SEPARATOR));
 		}
@@ -440,7 +440,7 @@ public class CrossTab {
 	}
 
 	private List<String> visit(Node n, String prefix) {
-		List<String> toReturn = new ArrayList<String>();
+		List<String> toReturn = new ArrayList<>();
 		if (n.getChilds().size() == 0) {
 			if (prefix.equals(PATH_SEPARATOR)) {
 				toReturn.add(prefix + (n.getValue()));
@@ -534,7 +534,7 @@ public class CrossTab {
 		Node node;
 		Node nodeToCheck = root;
 		int nodePosition;
-		List<IField> valueFields = new ArrayList<IField>();
+		List<IField> valueFields = new ArrayList<>();
 
 		valueFields = valueRecord.getFields();
 

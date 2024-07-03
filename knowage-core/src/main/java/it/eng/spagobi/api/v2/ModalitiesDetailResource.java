@@ -17,10 +17,7 @@
  */
 package it.eng.spagobi.api.v2;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
-
 import java.net.URI;
-import java.net.URLEncoder;
 import java.util.List;
 
 import javax.validation.Valid;
@@ -48,8 +45,7 @@ import it.eng.spagobi.services.rest.annotations.UserConstraint;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
-import org.owasp.esapi.reference.DefaultEncoder;
-import org.owasp.esapi.errors.EncodingException; 
+import org.owasp.esapi.reference.DefaultEncoder; 
 
 
 @Path("/2.0/customChecks")

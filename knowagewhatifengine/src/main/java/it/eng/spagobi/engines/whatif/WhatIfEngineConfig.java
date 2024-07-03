@@ -449,7 +449,7 @@ public class WhatIfEngineConfig {
 			SourceBean algorithmsBean;
 			List<SourceBean> algorithmsListBean;
 
-			algorithmsDefinitionMap = new HashMap<String, AllocationAlgorithmDefinition>();
+			algorithmsDefinitionMap = new HashMap<>();
 
 			SourceBean writeBackBean = (SourceBean) getConfigSourceBean().getAttribute(WRITEBACK_TAG);
 			if (writeBackBean != null) {

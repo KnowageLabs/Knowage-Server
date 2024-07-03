@@ -32,11 +32,11 @@ public class EdgeGroup {
 	private boolean resolved = false;
 
 	public EdgeGroup(Set<LabeledEdge<String>> edges) {
-		this.edgeNames = new HashSet<String>(edges.size());
+		this.edgeNames = new HashSet<>(edges.size());
 		for (LabeledEdge<String> edge : edges) {
 			edgeNames.add(edge.getLabel());
 		}
-		SortedSet<String> orderedEdgeNames = new TreeSet<String>(edgeNames);
+		SortedSet<String> orderedEdgeNames = new TreeSet<>(edgeNames);
 		this.orderedEdgeNames = StringUtils.join(orderedEdgeNames.iterator(), ",");
 	}
 

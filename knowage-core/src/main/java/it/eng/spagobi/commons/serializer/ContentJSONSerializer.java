@@ -35,6 +35,7 @@ public class ContentJSONSerializer implements Serializer {
 	public static final String FILE_NAME = "fileName";
 	public static final String DIMENSION = "dimension";
 	
+	@Override
 	public Object serialize(Object o, Locale locale) throws SerializationException {
 		JSONObject  result = null;
 		

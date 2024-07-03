@@ -155,7 +155,7 @@ public class CalculatedMemberManager {
 
 	private static List<IdentifierSegment> getParentSegments(Member parentMember, String calculateFieldName) {
 
-		List<IdentifierSegment> parentSegments = new ArrayList<IdentifierSegment>();
+		List<IdentifierSegment> parentSegments = new ArrayList<>();
 
 		String parentMemberUniqueName = parentMember.getUniqueName();
 

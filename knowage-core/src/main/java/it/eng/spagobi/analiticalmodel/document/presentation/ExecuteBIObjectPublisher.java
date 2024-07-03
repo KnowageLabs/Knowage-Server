@@ -54,6 +54,7 @@ public class ExecuteBIObjectPublisher implements PublisherDispatcherIFace {
 	 * will call the correct jsp reference.
 	 */
 
+	@Override
 	public String getPublisherName(RequestContainer requestContainer,
 			ResponseContainer responseContainer) {
 		logger.debug("IN");

@@ -17,11 +17,8 @@
  */
 package it.eng.spagobi.commons.serializer;
 
-import it.eng.spagobi.analiticalmodel.document.bo.Snapshot;
-import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.hotlink.rememberme.bo.RememberMe;
 
-import java.text.SimpleDateFormat;
 import java.util.Locale;
 
 import org.json.JSONObject;
@@ -42,6 +39,7 @@ public class FavouritesJSONSerializer implements Serializer {
 	public static final String SUBOBJECT_NAME = "subobjectName";
 	public static final String PARAMETERS = "parameters";
 	
+	@Override
 	public Object serialize(Object o, Locale locale) throws SerializationException {
 		JSONObject  result = null;
 		

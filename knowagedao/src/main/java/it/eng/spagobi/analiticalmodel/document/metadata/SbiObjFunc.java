@@ -92,6 +92,7 @@ public class SbiObjFunc extends SbiHibernateModel implements  Comparable {
 	/* (non-Javadoc)
 	 * @see java.lang.Comparable#compareTo(T)
 	 */
+	@Override
 	public int compareTo(Object obj2) {
 		SbiObjFunc sbiObjFunc2 = (SbiObjFunc) obj2;
 		String path2 = sbiObjFunc2.getId().getSbiFunctions().getPath();

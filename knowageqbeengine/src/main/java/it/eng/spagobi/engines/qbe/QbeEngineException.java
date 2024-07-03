@@ -52,7 +52,8 @@ public class QbeEngineException extends SpagoBIEngineException {
     	//this.hints = new ArrayList();
     }
     
-    public QbeEngineInstance getEngineInstance() {
+    @Override
+	public QbeEngineInstance getEngineInstance() {
 		return engineInstance;
 	}
 

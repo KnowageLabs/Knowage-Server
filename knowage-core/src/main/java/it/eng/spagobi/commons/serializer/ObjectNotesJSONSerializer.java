@@ -43,6 +43,7 @@ public class ObjectNotesJSONSerializer implements Serializer {
 	public static final String VISIBILITY = "visibility";
 	public static final String DELETABLE = "deletable";
 	
+	@Override
 	public Object serialize(Object o, Locale locale) throws SerializationException {
 		JSONObject  result = null;
 		
