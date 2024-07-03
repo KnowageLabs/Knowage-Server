@@ -17,6 +17,6 @@
 	</network>
 	<properties>
 		<property name="hazelcast.socket.bind.any">false</property>
-		<property name="hazelcast.logging.type">log4j</property>
+		<property name="hazelcast.logging.type">log4j2</property>
 	</properties>
 </hazelcast>

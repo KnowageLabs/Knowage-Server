@@ -115,7 +115,7 @@
 		<logger name="audit" additivity="false" level="info">
 			<AppenderRef ref="KNOWAGE_OPERATOR_TRACE" />
 		</logger>
-		<logger name="com.hazelcast" level="error">
+		<logger name="com.hazelcast" level="debug">
 			<AppenderRef ref="KNOWAGE_CORE" />
 		</logger>
 		<logger name="dataset.audit" additivity="false" level="error">
