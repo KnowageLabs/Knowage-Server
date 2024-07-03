@@ -18,12 +18,10 @@
 
 package it.eng.spagobi.utilities.locks;
 
-import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
-import it.eng.spagobi.utilities.locks.constants.HazelcastConstant;
-
 import java.io.FileNotFoundException;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.hazelcast.config.ClasspathXmlConfig;
 import com.hazelcast.config.Config;
@@ -32,6 +30,8 @@ import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.map.IMap;
 
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+import it.eng.spagobi.utilities.locks.constants.HazelcastConstant;
 
 /**
  * @author Alessandro Portosa (alessandro.portosa@eng.it)
@@ -41,22 +41,22 @@ import com.hazelcast.map.IMap;
 
 public class DistributedLockFactory {
 
-	private static Logger logger = Logger.getLogger(DistributedLockFactory.class);
+	private static Logger logger = LogManager.getLogger(DistributedLockFactory.class);
 	private static volatile Config defaultConfig = null;
 
 	@SuppressWarnings("rawtypes")
 	public static IMap getDistributedMap(String instanceName, String mapName) {
-		logger.debug("Getting Hazelcast map with name [" + mapName + "]");
+		logger.debug("Getting Hazelcast map with name {}", mapName);
 		HazelcastInstance hz = getHazelcastInstance(instanceName);
 		return hz.getMap(mapName);
 	}
 
 	public static synchronized HazelcastInstance getHazelcastInstance(String instanceName) {
-		logger.debug("Getting Hazelcast instance with name [" + instanceName + "]");
+		logger.debug("Getting Hazelcast instance with name {}", instanceName);
 		HazelcastInstance hz = Hazelcast.getHazelcastInstanceByName(instanceName);
 		if (hz == null) {
-			logger.debug("No Hazelcast instance with name [" + instanceName + "] found");
-			logger.debug("Creating Hazelcast instance with name [" + instanceName + "]");
+			logger.debug("No Hazelcast instance with name {} found", instanceName);
+			logger.debug("Creating Hazelcast instance with name {}", instanceName);
 			Config config = getDefaultConfig();
 			config.setInstanceName(instanceName);
 			hz = Hazelcast.newHazelcastInstance(config);
@@ -69,14 +69,15 @@ public class DistributedLockFactory {
 			if (defaultConfig == null) {
 				String configFilename = System.getProperty(HazelcastConstant.HAZELCAST_CONFIG);
 				if (configFilename != null) {
-					logger.debug("Creating Hazelcast instance from system property config [" + configFilename + "]");
+					logger.debug("Creating Hazelcast instance from system property config {}", configFilename);
 					defaultConfig = new FileSystemXmlConfig(configFilename);
 				} else {
-					logger.debug("Creating Hazelcast instance from classpath config [" + configFilename + "]");
+					logger.debug("Creating Hazelcast instance from classpath config {}", configFilename);
 					defaultConfig = new ClasspathXmlConfig("hazelcast.xml");
 				}
 			}
 		} catch (FileNotFoundException ex) {
+			logger.error("Error getting Hazelcast config", ex);
 			throw new SpagoBIRuntimeException("Impossible to load system property config for Hazelcast", ex);
 		}
 		return defaultConfig;

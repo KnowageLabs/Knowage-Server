@@ -214,6 +214,12 @@
 		<logger name="it.eng.spagobi.tools.dataset.actions.AbstractDatasetActionsChecker" level="debug" additivity="false">
 			<AppenderRef ref="KNOWAGE_CORE" />
 		</logger>
+		<logger name="it.eng.spagobi.utilities.locks.listeners.HazelcastContextListener" level="debug" additivity="false">
+			<AppenderRef ref="KNOWAGE_CORE" />
+		</logger>
+		<logger name="it.eng.spagobi.utilities.locks.DistributedLockFactory" level="debug" additivity="false">
+			<AppenderRef ref="KNOWAGE_CORE" />
+		</logger>
 		<Root level="error">
 			<AppenderRef ref="KNOWAGE_CORE" />
 		</Root>
