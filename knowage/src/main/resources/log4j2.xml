@@ -115,7 +115,7 @@
 		<logger name="audit" additivity="false" level="info">
 			<AppenderRef ref="KNOWAGE_OPERATOR_TRACE" />
 		</logger>
-		<logger name="com.hazelcast" level="debug">
+		<logger name="com.hazelcast" level="warn">
 			<AppenderRef ref="KNOWAGE_CORE" />
 		</logger>
 		<logger name="dataset.audit" additivity="false" level="error">
@@ -211,13 +211,13 @@
 		<logger name="it.eng.knowage.privacymanager.EventBuilderUtils" level="error" additivity="false">
 			<AppenderRef ref="KNOWAGE_CORE" />
 		</logger>
-		<logger name="it.eng.spagobi.tools.dataset.actions.AbstractDatasetActionsChecker" level="debug" additivity="false">
+		<logger name="it.eng.spagobi.tools.dataset.actions.AbstractDatasetActionsChecker" level="warn" additivity="false">
 			<AppenderRef ref="KNOWAGE_CORE" />
 		</logger>
-		<logger name="it.eng.spagobi.utilities.locks.listeners.HazelcastContextListener" level="debug" additivity="false">
+		<logger name="it.eng.spagobi.utilities.locks.listeners.HazelcastContextListener" level="warn" additivity="false">
 			<AppenderRef ref="KNOWAGE_CORE" />
 		</logger>
-		<logger name="it.eng.spagobi.utilities.locks.DistributedLockFactory" level="debug" additivity="false">
+		<logger name="it.eng.spagobi.utilities.locks.DistributedLockFactory" level="warn" additivity="false">
 			<AppenderRef ref="KNOWAGE_CORE" />
 		</logger>
 		<Root level="error">
