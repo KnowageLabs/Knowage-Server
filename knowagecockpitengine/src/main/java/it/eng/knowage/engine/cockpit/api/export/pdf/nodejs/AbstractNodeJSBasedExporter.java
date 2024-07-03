@@ -216,9 +216,9 @@ public abstract class AbstractNodeJSBasedExporter {
 
 		// @formatter:off
 		URI url = UriBuilder.fromUri(requestUrl)
+				.replaceQueryParam("outputType_description", "HTML")
+				.replaceQueryParam("outputType", "HTML")
 				// Strange way to delete a query param but that's it
-				.replaceQueryParam("outputType_description")
-				.replaceQueryParam("outputType")
 				.replaceQueryParam("export")
 				.build();
 		// @formatter:on
