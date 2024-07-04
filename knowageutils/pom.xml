@@ -226,12 +226,6 @@
 			<artifactId>poi-ooxml</artifactId>
 			<version>${apache.poi}</version>
 			<scope>compile</scope>
-			<exclusions>
-				<exclusion>
-					 <groupId>org.apache.xmlbeans</groupId>
-					 <artifactId>xmlbeans</artifactId>
-				</exclusion>
-			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>com.jayway.jsonpath</groupId>
