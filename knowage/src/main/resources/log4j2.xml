@@ -214,9 +214,6 @@
 		<logger name="it.eng.spagobi.tools.dataset.actions.AbstractDatasetActionsChecker" level="debug" additivity="false">
 			<AppenderRef ref="KNOWAGE_CORE" />
 		</logger>
-		<logger name="it.eng.knowage.tools.servermanager.importexport.ImporterMetadata" level="debug" additivity="false">
-			<AppenderRef ref="KNOWAGE_CORE" />
-		</logger>
 		<Root level="error">
 			<AppenderRef ref="KNOWAGE_CORE" />
 		</Root>
