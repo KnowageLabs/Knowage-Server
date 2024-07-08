@@ -49,12 +49,7 @@ import org.json.JSONObject;
 import it.eng.knowage.commons.security.KnowageSystemConfiguration;
 import it.eng.spago.base.RequestContainer;
 import it.eng.spago.base.SessionContainer;
-import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.security.IEngUserProfile;
-import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
-import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
-import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.Parameter;
-import it.eng.spagobi.behaviouralmodel.lov.bo.ModalitiesValue;
 import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.bo.Config;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
@@ -78,6 +73,7 @@ import it.eng.spagobi.utilities.file.FileUtils;
 public class GeneralUtilities extends SpagoBIUtilities {
 
 	private static final Logger LOGGER = LogManager.getLogger(GeneralUtilities.class);
+
 	private static final String PREVIEW_FILE_STORAGE_DIRECTORY = "preview" + File.separatorChar + "images";
 	private static final String BACKEND_EXTENSION = "BackEnd";
 	private static final String VUE_ENVIRONMENT = "vue.environment";
@@ -161,41 +157,6 @@ public class GeneralUtilities extends SpagoBIUtilities {
 	}
 
 	/**
-	 * Subsitute bi object parameters lov profile attributes.
-	 *
-	 * @param obj     the obj
-	 * @param session the session
-	 *
-	 * @throws Exception        the exception
-	 * @throws EMFInternalError the EMF internal error
-	 */
-	public static void subsituteBIObjectParametersLovProfileAttributes(BIObject obj, SessionContainer session)
-			throws Exception {
-		LOGGER.trace("IN");
-		List<BIObjectParameter> biparams = obj.getDrivers();
-		Iterator<BIObjectParameter> iterParams = biparams.iterator();
-		while (iterParams.hasNext()) {
-			// if the param is a Fixed Lov, Make the profile attribute
-			// substitution at runtime
-			BIObjectParameter biparam = iterParams.next();
-			Parameter param = biparam.getParameter();
-			ModalitiesValue modVal = param.getModalityValue();
-			if (modVal.getITypeCd().equals(SpagoBIConstants.INPUT_TYPE_FIX_LOV_CODE)) {
-				String value = modVal.getLovProvider();
-				int profileAttributeStartIndex = value.indexOf("${");
-				if (profileAttributeStartIndex != -1) {
-					IEngUserProfile profile = (IEngUserProfile) session.getPermanentContainer()
-							.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
-					value = StringUtilities.substituteProfileAttributesInString(value, profile,
-							profileAttributeStartIndex);
-					biparam.getParameter().getModalityValue().setLovProvider(value);
-				}
-			}
-		}
-		LOGGER.trace("OUT");
-	}
-
-	/**
 	 * Creates a new user profile, given his identifier.
 	 *
 	 * @param userId The user identifier
@@ -270,8 +231,8 @@ public class GeneralUtilities extends SpagoBIUtilities {
 	}
 
 	/**
-	 * Gets the default locale from SpagoBI configuration file, the behaviors is the same of getDefaultLocale() function, with difference that if not finds returns
-	 * null
+	 * Gets the default locale from SpagoBI configuration file, the behaviors is the same of getDefaultLocale() function, with difference that if not finds
+	 * returns null
 	 *
 	 * TODO : merge its behaviour with GetDefaultLocale (not done know cause today is release date). Gets the default locale.
 	 *
@@ -298,8 +259,7 @@ public class GeneralUtilities extends SpagoBIUtilities {
 		LOGGER.trace("Getting default locale");
 		Locale locale = null;
 		try {
-			String defaultLanguageTag = SingletonConfig.getInstance()
-					.getConfigValue("SPAGOBI.LANGUAGE_SUPPORTED.LANGUAGE.default");
+			String defaultLanguageTag = SingletonConfig.getInstance().getConfigValue("SPAGOBI.LANGUAGE_SUPPORTED.LANGUAGE.default");
 			String languageTag = StringUtils.isNotBlank(defaultLanguageTag) ? defaultLanguageTag : "en-US";
 			LOGGER.trace("Default locale found: {}", languageTag);
 			locale = Locale.forLanguageTag(languageTag);
@@ -313,13 +273,12 @@ public class GeneralUtilities extends SpagoBIUtilities {
 	public static List<Locale> getSupportedLocales() {
 		LOGGER.trace("Getting supported locales");
 		List<Locale> ret = new ArrayList<>();
-		String supportedLanguages = SingletonConfig.getInstance()
-				.getConfigValue("SPAGOBI.LANGUAGE_SUPPORTED.LANGUAGES");
+		String supportedLanguages = SingletonConfig.getInstance().getConfigValue("SPAGOBI.LANGUAGE_SUPPORTED.LANGUAGES");
 		if (StringUtils.isNotBlank(supportedLanguages)) {
 			for (String supportedLanguageTag : supportedLanguages.split(",", -1)) {
 				Locale locale = Locale.forLanguageTag(supportedLanguageTag);
-				LOGGER.trace("Found locale with language = [{}] and script = [{}] and country = [{}]",
-						locale.getLanguage(), locale.getScript(), locale.getCountry());
+				LOGGER.trace("Found locale with language = [{}] and script = [{}] and country = [{}]", locale.getLanguage(), locale.getScript(),
+						locale.getCountry());
 				ret.add(locale);
 			}
 
@@ -452,8 +411,7 @@ public class GeneralUtilities extends SpagoBIUtilities {
 		String ret = null;
 		// if a particular language is specified take the corrisponding date-format
 		if (locale != null) {
-			ret = SingletonConfig.getInstance()
-					.getConfigValue("SPAGOBI.DATE-FORMAT-" + locale.toLanguageTag() + ".format");
+			ret = SingletonConfig.getInstance().getConfigValue("SPAGOBI.DATE-FORMAT-" + locale.toLanguageTag() + ".format");
 		}
 		if (ret == null) {
 			ret = SingletonConfig.getInstance().getConfigValue("SPAGOBI.DATE-FORMAT.format");
@@ -700,17 +658,14 @@ public class GeneralUtilities extends SpagoBIUtilities {
 			try {
 				parameterValue = URLDecoder.decode(parameterValueEncoded, UTF_8.name());
 			} catch (UnsupportedEncodingException e) {
-				LOGGER.error("Error in decoding parameter: UTF 8 not supported {}; use previous value {}",
-						parameterName, parameterValueEncoded, e);
+				LOGGER.error("Error in decoding parameter: UTF 8 not supported {}; use previous value {}", parameterName, parameterValueEncoded, e);
 				parameterValue = parameterValueEncoded;
 			} catch (java.lang.IllegalArgumentException e) { // can happen when in document composition a '%' char is given
-				LOGGER.warn(
-						"Error in decoding parameter, illegal argument for (probably value % is present); use preceding value {}",
-						parameterName, parameterValueEncoded);
+				LOGGER.warn("Error in decoding parameter, illegal argument for (probably value % is present); use preceding value {}", parameterName,
+						parameterValueEncoded);
 				parameterValue = parameterValueEncoded;
 			} catch (Exception e) {
-				LOGGER.warn("Generic Error in decoding parameter {} ; use previous value {}", parameterName,
-						parameterValueEncoded);
+				LOGGER.warn("Generic Error in decoding parameter {} ; use previous value {}", parameterName, parameterValueEncoded);
 				parameterValue = parameterValueEncoded;
 			}
 
@@ -743,8 +698,7 @@ public class GeneralUtilities extends SpagoBIUtilities {
 		if (maxResultsStr != null) {
 			maxResults = Integer.parseInt(maxResultsStr);
 		} else {
-			LOGGER.warn(
-					"Dataset max results configuration not found. Check spagobi.xml, SPAGOBI.DATASET.maxResults attribute");
+			LOGGER.warn("Dataset max results configuration not found. Check spagobi.xml, SPAGOBI.DATASET.maxResults attribute");
 			LOGGER.debug("Using default value that is Integer.MAX_VALUE = {}", Integer.MAX_VALUE);
 		}
 		return maxResults;
@@ -812,8 +766,7 @@ public class GeneralUtilities extends SpagoBIUtilities {
 			}
 			return propertyValue;
 		} catch (Throwable t) {
-			throw new SpagoBIRuntimeException(
-					"An unexpected exception occured while loading spagobi property [" + propertyName + "]", t);
+			throw new SpagoBIRuntimeException("An unexpected exception occured while loading spagobi property [" + propertyName + "]", t);
 		}
 	}
 
@@ -822,8 +775,7 @@ public class GeneralUtilities extends SpagoBIUtilities {
 		String urlEngine = getExternalEngineContextPath(eng);
 		LOGGER.debug("Engine url is {}", urlEngine);
 		if (!"it.eng.spagobi.engines.drivers.dashboard.DashboardDriver".equals(eng.getDriverName())) {
-			Assert.assertTrue(urlEngine != null && !urlEngine.trim().equals(""),
-					"External engine url is not defined!!");
+			Assert.assertTrue(urlEngine != null && !urlEngine.trim().equals(""), "External engine url is not defined!!");
 		}
 		if ("it.eng.spagobi.engines.drivers.dashboard.DashboardDriver".equals(eng.getDriverName())) {
 			urlEngine = resolveRelativeUrlsForVue(urlEngine);
@@ -874,8 +826,7 @@ public class GeneralUtilities extends SpagoBIUtilities {
 	}
 
 	public static String getServiceHostUrl() {
-		String serviceURL = SpagoBIUtilities
-				.readJndiResource(SingletonConfig.getInstance().getConfigValue(SPAGOBI_SPAGOBI_SERVICE_JNDI));
+		String serviceURL = SpagoBIUtilities.readJndiResource(SingletonConfig.getInstance().getConfigValue(SPAGOBI_SPAGOBI_SERVICE_JNDI));
 		serviceURL = serviceURL.substring(0, serviceURL.lastIndexOf('/'));
 
 		return serviceURL;
@@ -898,8 +849,7 @@ public class GeneralUtilities extends SpagoBIUtilities {
 		return sb.toString();
 	}
 
-	public static String getAngularPropertiesFileName(String currLanguage, String currScript, String currCountry,
-			String separator) {
+	public static String getAngularPropertiesFileName(String currLanguage, String currScript, String currCountry, String separator) {
 		Locale locale = new Builder().setLanguage(currLanguage).setRegion(currCountry).setScript(currScript).build();
 		return "/js/lib/angular-localization/" + getAngularPropertiesFileName(locale, separator) + ".js";
 	}

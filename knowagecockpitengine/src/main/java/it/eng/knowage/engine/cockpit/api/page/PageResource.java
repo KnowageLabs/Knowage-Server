@@ -637,6 +637,7 @@ public class PageResource extends AbstractCockpitEngineResource {
 	private void addParametersToHideToolbarAndMenuInVue(URIBuilder uriBuilder) {
 		uriBuilder.setParameter("toolbar", "false");
 		uriBuilder.setParameter("menu", "false");
+		uriBuilder.setParameter("finalUser", "true");
 	}
 
 	private void reconcileParametersWithParamsV2FromUrl(Map<String, String[]> parameterMap) throws JSONException {

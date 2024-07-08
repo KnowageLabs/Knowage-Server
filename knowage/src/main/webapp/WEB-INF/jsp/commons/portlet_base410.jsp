@@ -177,7 +177,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	}
 	}
 	
-	IEngUserProfile userProfile = (IEngUserProfile)permanentSession.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+	IEngUserProfile userProfile = (IEngUserProfile) session.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 	
 	String userUniqueIdentifier="";
 	String userId="";

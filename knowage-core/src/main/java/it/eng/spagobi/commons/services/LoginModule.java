@@ -161,7 +161,7 @@ public class LoginModule extends AbstractHttpModule {
 
 		EMFErrorHandler errorHandler = getErrorHandler();
 
-		UserProfile previousProfile = (UserProfile) permSess.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+		UserProfile previousProfile = (UserProfile) httpSession.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 
 		String userId = (String) request.getAttribute("userID");
 		logger.debug("userID=" + userId);
@@ -357,7 +357,7 @@ public class LoginModule extends AbstractHttpModule {
 			// in case user has a default role, we get his default user profile object
 			profile = SessionUserProfileBuilder.getDefaultUserProfile((UserProfile) profile);
 			// put user profile into session
-			storeProfileInSession((UserProfile) profile, permSess, httpSession);
+			storeProfileInSession((UserProfile) profile, httpSession);
 
 			// PM-int
 			LoginEventBuilder eventBuilder = new LoginEventBuilder();
@@ -437,14 +437,13 @@ public class LoginModule extends AbstractHttpModule {
 		}
 	}
 
-	private void storeProfileInSession(UserProfile userProfile, SessionContainer permanentContainer, HttpSession httpSession) {
+	private void storeProfileInSession(UserProfile userProfile, HttpSession httpSession) {
 		logger.debug("IN");
 		HttpServletRequest servletRequest = getHttpRequest();
 
 		// PM-int
 		UserProfileUtility.enrichProfile(userProfile, servletRequest, httpSession);
 
-		permanentContainer.setAttribute(IEngUserProfile.ENG_USER_PROFILE, userProfile);
 		httpSession.setAttribute(IEngUserProfile.ENG_USER_PROFILE, userProfile);
 
 		logger.debug("OUT");

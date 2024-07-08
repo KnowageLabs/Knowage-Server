@@ -24,7 +24,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
 
-import it.eng.spago.base.SessionContainer;
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.dispatching.action.AbstractHttpAction;
 import it.eng.spago.security.IEngUserProfile;
@@ -36,15 +35,17 @@ import it.eng.spagobi.utilities.mime.MimeUtils;
 
 public class GetOfficeContentAction extends AbstractHttpAction {
 
-    private static transient Logger logger=Logger.getLogger(GetOfficeContentAction.class);
+	private static transient Logger logger = Logger.getLogger(GetOfficeContentAction.class);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 *
 	 * @see it.eng.spago.dispatching.service.ServiceIFace#service(it.eng.spago.base.SourceBean, it.eng.spago.base.SourceBean)
 	 */
 	@Override
 	public void service(SourceBean request, SourceBean responseSb) throws Exception {
-	    logger.debug("IN");
-	    freezeHttpResponse();
+		logger.debug("IN");
+		freezeHttpResponse();
 
 		HttpServletResponse response = getHttpResponse();
 		HttpServletRequest req = getHttpRequest();
@@ -53,27 +54,24 @@ public class GetOfficeContentAction extends AbstractHttpAction {
 		Integer auditId = null;
 		String auditIdStr = req.getParameter(AuditManager.AUDIT_ID);
 		if (auditIdStr == null) {
-		    logger.warn("Audit record id not specified! No operations will be performed");
+			logger.warn("Audit record id not specified! No operations will be performed");
 		} else {
-		    logger.debug("Audit id = [" + auditIdStr + "]");
-		    auditId = new Integer(auditIdStr);
+			logger.debug("Audit id = [" + auditIdStr + "]");
+			auditId = new Integer(auditIdStr);
 		}
 
 		try {
 
 			if (auditId != null) {
-			    auditManager.updateAudit(auditId, new Long(System.currentTimeMillis()), null, "EXECUTION_STARTED", null,
-				    null);
+				auditManager.updateAudit(auditId, new Long(System.currentTimeMillis()), null, "EXECUTION_STARTED", null, null);
 			}
 
-			SessionContainer sessionContainer = this.getRequestContainer().getSessionContainer();
-			SessionContainer permanentContainer = sessionContainer.getPermanentContainer();
-			IEngUserProfile profile = (IEngUserProfile) permanentContainer.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+			IEngUserProfile profile = (IEngUserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 			if (profile == null) {
 				throw new SecurityException("User profile not found in session");
 			}
 
-			String documentId = (String)request.getAttribute("documentId");
+			String documentId = (String) request.getAttribute("documentId");
 			if (documentId == null)
 				throw new Exception("Document id missing!!");
 			logger.debug("Got parameter documentId = " + documentId);
@@ -84,14 +82,14 @@ public class GetOfficeContentAction extends AbstractHttpAction {
 
 			logger.debug("Template Read");
 
-			if(templateFileName==null){
+			if (templateFileName == null) {
 				logger.warn("Template has no name");
-				templateFileName="";
+				templateFileName = "";
 			}
 
 			response.setHeader("Cache-Control", ""); // leave blank to avoid IE errors
 			response.setHeader("Pragma", ""); // leave blank to avoid IE errors
-			response.setHeader("content-disposition","inline; filename="+templateFileName);
+			response.setHeader("content-disposition", "inline; filename=" + templateFileName);
 
 			String mimeType = MimeUtils.getMimeType(templateFileName);
 			logger.debug("Mime type is = " + mimeType);
@@ -105,17 +103,15 @@ public class GetOfficeContentAction extends AbstractHttpAction {
 			response.getOutputStream().flush();
 			response.getOutputStream().close();
 
-		    // AUDIT UPDATE
-		    auditManager.updateAudit(auditId, null, new Long(System.currentTimeMillis()), "EXECUTION_PERFORMED", null,
-			    null);
+			// AUDIT UPDATE
+			auditManager.updateAudit(auditId, null, new Long(System.currentTimeMillis()), "EXECUTION_PERFORMED", null, null);
 
 		} catch (Exception e) {
-		    logger.error("Exception", e);
-		    // AUDIT UPDATE
-		    auditManager.updateAudit(auditId, null, new Long(System.currentTimeMillis()), "EXECUTION_FAILED", e
-			    .getMessage(), null);
+			logger.error("Exception", e);
+			// AUDIT UPDATE
+			auditManager.updateAudit(auditId, null, new Long(System.currentTimeMillis()), "EXECUTION_FAILED", e.getMessage(), null);
 		} finally {
-		    logger.debug("OUT");
+			logger.debug("OUT");
 		}
 	}
 
