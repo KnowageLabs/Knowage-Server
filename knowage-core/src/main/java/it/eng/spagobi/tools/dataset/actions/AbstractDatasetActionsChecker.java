@@ -120,7 +120,6 @@ public abstract class AbstractDatasetActionsChecker implements IDatasetActionsCh
 		// @formatter:off
 		boolean cond3 = (isUser || isTester || isModelAdministrator) && (
 				   (isScopeEnterprise && inVisibleCategories)
-				|| (isScopeTechnical)
 				|| (isScopeUser       && inVisibleCategories)
 			);
 		// @formatter:on

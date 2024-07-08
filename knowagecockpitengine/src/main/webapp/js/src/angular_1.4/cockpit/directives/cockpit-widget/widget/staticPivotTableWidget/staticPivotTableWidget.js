@@ -1630,7 +1630,7 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 				return;
 			}
 			if($scope.selectedColumn.ranges && $scope.selectedColumn.ranges.length > 0){
-				if($scope.selectedColumn.ranges.some((i)=>!i.operator || typeof i.value != 'undefined')) {
+				if($scope.selectedColumn.ranges.some((i)=>!i.operator || typeof i.value == 'undefined')) {
 					sbiModule_messaging.showErrorMessage(sbiModule_translate.load('sbi.chartengine.structure.serieStyleConfig.error.badThresholdsSettings'), sbiModule_translate.load('sbi.generic.error'));
 					return;
 				}

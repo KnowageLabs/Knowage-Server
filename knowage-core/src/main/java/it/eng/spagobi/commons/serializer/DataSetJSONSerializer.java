@@ -35,6 +35,7 @@ import it.eng.knowage.parameter.ParameterManagerFactory;
 import it.eng.spago.base.SourceBean;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.utilities.UserUtilities;
 import it.eng.spagobi.container.ObjectUtils;
 import it.eng.spagobi.tools.dataset.DatasetManagementAPI;
 import it.eng.spagobi.tools.dataset.bo.DataSetParametersList;
@@ -281,6 +282,10 @@ public class DataSetJSONSerializer implements Serializer {
 
 			String config = JSONUtils.escapeJsonString(ds.getConfiguration());
 			JSONObject jsonConf = ObjectUtils.toJSONObject(config);
+			UserProfile profile = UserProfileManager.getProfile();
+			boolean isAdmin = UserUtilities.hasAdministratorRole(profile);
+			boolean isDeveloper = UserUtilities.hasDeveloperRole(profile);
+
 			try {
 				if (type.equalsIgnoreCase(DataSetConstants.FILE) || type.equalsIgnoreCase(DataSetConstants.CKAN)) {
 					String fileName = jsonConf.getString(DataSetConstants.FILE_NAME);
@@ -398,7 +403,9 @@ public class DataSetJSONSerializer implements Serializer {
 					}
 
 				} else if (type.equalsIgnoreCase(DataSetConstants.QUERY)) {
-					result.put(QUERY, jsonConf.getString(DataSetConstants.QUERY));
+					if (isAdmin || isDeveloper) {
+						result.put(QUERY, jsonConf.getString(DataSetConstants.QUERY));
+					}
 					result.put(QUERY_SCRIPT, jsonConf.getString(DataSetConstants.QUERY_SCRIPT));
 					result.put(QUERY_SCRIPT_LANGUAGE, jsonConf.getString(DataSetConstants.QUERY_SCRIPT_LANGUAGE));
 					result.put(DATA_SOURCE, jsonConf.getString(DataSetConstants.DATA_SOURCE));
@@ -507,7 +514,6 @@ public class DataSetJSONSerializer implements Serializer {
 			}
 			result.put(TAGS, tags);
 
-			UserProfile profile = UserProfileManager.getProfile();
 			try {
 				DatasetManagementAPI datasetManagementAPI = new DatasetManagementAPI(profile);
 				datasetManagementAPI.canLoadData(ds);
