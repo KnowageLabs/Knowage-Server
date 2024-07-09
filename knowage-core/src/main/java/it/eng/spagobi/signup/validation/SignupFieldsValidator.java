@@ -39,7 +39,7 @@ import it.eng.spagobi.utilities.json.JSONUtils;
 public class SignupFieldsValidator implements IFieldsValidator {
 
 	private static final Logger LOGGER = LogManager.getLogger(SignupFieldsValidator.class);
-	private static final String REGEX_PASSPHRASE = "[^\\d][a-zA-Z0-9]{7,15}";
+	private static final String REGEX_SECRETPHRASE = "[^\\d][a-zA-Z0-9]{7,15}";
 	private static final String REGEX_EMAIL = "[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,4}";
 	private static final String REGEX_DATE = "(0[1-9]|[12][\\d]|3[01])/(0[1-9]|1[012])/(19|20)\\d\\d";
 	private static org.owasp.esapi.Encoder esapiEncoder = DefaultEncoder.getInstance();
@@ -48,7 +48,7 @@ public class SignupFieldsValidator implements IFieldsValidator {
 
 		if (username != null && password.indexOf(username) != -1)
 			return false;
-		return password.matches(REGEX_PASSPHRASE);
+		return password.matches(REGEX_SECRETPHRASE);
 	}
 
 	private boolean validateEmail(String email) {

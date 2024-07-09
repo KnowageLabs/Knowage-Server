@@ -32,8 +32,8 @@ public class Password {
 
 	private static final Logger LOGGER = Logger.getLogger(Password.class);
 
-	public static final String PREFIX_V2_SHA_PWD_ENCRIPTING = "v2#SHA#";
-	public static final String PREFIX_SHA_PWD_ENCRIPTING = "#SHA#";
+	public static final String PREFIX_V2_SHA_SECRETPHRASE_ENCRIPTING = "v2#SHA#";
+	public static final String PREFIX_SHA_SECRETPHRASE_ENCRIPTING = "#SHA#";
 
 	private String value = "";
 	private String encValue = "";
@@ -102,9 +102,9 @@ public class Password {
 
 		if (encValue != null) {
 			if (before72) {
-				encValue = PREFIX_SHA_PWD_ENCRIPTING + PasswordEncrypterHolder.OLD_INSTANCE.hash(value);
+				encValue = PREFIX_SHA_SECRETPHRASE_ENCRIPTING + PasswordEncrypterHolder.OLD_INSTANCE.hash(value);
 			} else {
-				encValue = PREFIX_V2_SHA_PWD_ENCRIPTING + PasswordEncrypterHolder.INSTANCE.hash(value);
+				encValue = PREFIX_V2_SHA_SECRETPHRASE_ENCRIPTING + PasswordEncrypterHolder.INSTANCE.hash(value);
 			}
 		}
 		return encValue;

@@ -182,7 +182,7 @@ public class PasswordChecker {
 
 			String oldPwdEnc = !isEncrypted
 					? Password.hashPassword(oldPwd,
-							tmpUser.getPassword().startsWith(Password.PREFIX_SHA_PWD_ENCRIPTING))
+							tmpUser.getPassword().startsWith(Password.PREFIX_SHA_SECRETPHRASE_ENCRIPTING))
 					: oldPwd;
 			if (tmpUser == null || tmpUser != null && !oldPwdEnc.equals(tmpUser.getPassword())) {
 				logger.debug("The old pwd is uncorrect.");

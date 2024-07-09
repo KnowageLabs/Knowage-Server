@@ -81,8 +81,8 @@ encryptedPassword = chiper.encrypt(this.password);
 <form method="post" target="myiframe"
     action="<%= mainUrl.toString() %>" id="myform" name="myform">
     <input type="hidden" name="<%= SsoServiceInterface.USER_NAME_REQUEST_PARAMETER %>" value="<%= this.userId %>">
-    <input type="hidden" name="<%= SsoServiceInterface.PASSWORD_REQUEST_PARAMETER %>" value="<%= encryptedPassword %>">
-    <input type="hidden" name="<%= SsoServiceInterface.PASSWORD_MODE_REQUEST_PARAMETER %>" value="<%= SsoServiceInterface.PASSWORD_MODE_ENCRYPTED %>">
+    <input type="hidden" name="<%= SsoServiceInterface.SECRETPHRASE_REQUEST_PARAMETER %>" value="<%= encryptedPassword %>">
+    <input type="hidden" name="<%= SsoServiceInterface.SECRETPHRASE_MODE_REQUEST_PARAMETER %>" value="<%= SsoServiceInterface.SECRETPHRASE_MODE_ENCRYPTED %>">
 </form>
 
 <iframe name="myiframe" id="myiframe" src="about:blank" style="<%= iframeStyle != null ? iframeStyle : "" %>"></iframe>

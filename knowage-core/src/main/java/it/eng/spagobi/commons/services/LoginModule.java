@@ -430,7 +430,7 @@ public class LoginModule extends AbstractHttpModule {
 	}
 
 	private void checkIfIsBefore72AuthMethod(SourceBean response, MessageBuilder msgBuilder, Locale locale, SbiUser user) throws SourceBeanException {
-		if (user.getPassword().startsWith(Password.PREFIX_SHA_PWD_ENCRIPTING)) {
+		if (user.getPassword().startsWith(Password.PREFIX_SHA_SECRETPHRASE_ENCRIPTING)) {
 			logger.info("Old encrypting method. Change password required.");
 			response.setAttribute("old_enc_method_message", msgBuilder.getMessage("old_enc_method_message", "messages", locale));
 		}
@@ -577,7 +577,7 @@ public class LoginModule extends AbstractHttpModule {
 	}
 
 	private boolean encriptedBefore72(SbiUser user) {
-		return user.getPassword().startsWith(Password.PREFIX_SHA_PWD_ENCRIPTING);
+		return user.getPassword().startsWith(Password.PREFIX_SHA_SECRETPHRASE_ENCRIPTING);
 	}
 
 	public String getServiceHostUrl() {
