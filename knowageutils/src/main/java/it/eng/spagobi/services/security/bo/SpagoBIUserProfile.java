@@ -66,6 +66,11 @@ public class SpagoBIUserProfile implements Serializable {
 		return attributes;
 	}
 
+	public void setAttributes(Map<String, Object> attributes) {
+		this.attributes.clear();
+		this.attributes.putAll(attributes);
+	}
+
 	/**
 	 * Gets the functions value for this SpagoBIUserProfile.
 	 *
