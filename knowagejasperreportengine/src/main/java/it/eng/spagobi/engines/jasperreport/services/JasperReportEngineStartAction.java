@@ -22,7 +22,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import it.eng.spagobi.engines.jasperreport.JasperReportEngine;
 import it.eng.spagobi.engines.jasperreport.JasperReportEngineInstance;
@@ -40,14 +41,13 @@ import it.eng.spagobi.utilities.engines.SpagoBIEngineException;
  */
 public class JasperReportEngineStartAction extends AbstractEngineStartServlet {
 
-	private static String CONNECTION_NAME = "connectionName";
-	private static String OUTPUT_TYPE = "outputType";
+	private static final String CONNECTION_NAME = "connectionName";
+	private static final String OUTPUT_TYPE = "outputType";
 
 	/** Logger component. */
-	private static transient Logger logger = Logger.getLogger(JasperReportEngineStartAction.class);
+	private static final Logger LOGGER = LogManager.getLogger(JasperReportEngineStartAction.class);
 
-	@Override
-	public void doService(EngineStartServletIOManager servletIOManager) throws SpagoBIEngineException {
+	public void service(EngineStartServletIOManager servletIOManager) throws SpagoBIEngineException {
 
 		IDataSource dataSource;
 		IDataSet dataSet;
@@ -57,33 +57,31 @@ public class JasperReportEngineStartAction extends AbstractEngineStartServlet {
 		JasperReportEngineTemplate template;
 		JasperReportEngineInstance engineInstance;
 
-		logger.debug("IN");
+		LOGGER.debug("IN");
 
 		try {
-			// log some contextual infos
-			logger.debug("User: [" + servletIOManager.getUserId() + "]");
-			logger.debug("Document: [" + servletIOManager.getDocumentId() + "]");
+			LOGGER.debug("User: [{}]", servletIOManager.getUserId());
+			LOGGER.debug("Document: [{}]", servletIOManager.getDocumentId());
 
 			dataSource = servletIOManager.getDataSource();
-			logger.debug("Datasource: [" + (dataSource == null ? dataSource : dataSource.getLabel()) + "]");
+			LOGGER.debug("Datasource: [{}]", (dataSource == null ? dataSource : dataSource.getLabel()));
 			if (dataSource == null) {
-				logger.warn("This document doesn't have the Data Source");
+				LOGGER.warn("This document doesn't have the Data Source");
 			}
 
 			dataSet = servletIOManager.getDataSet();
-			logger.debug("Dataset: [" + (dataSet == null ? dataSource : dataSet.getName()) + "]");
+			LOGGER.debug("Dataset: [{}]", (dataSet == null ? dataSource : dataSet.getName()));
 
 			// read and log builtin parameters
 			connectionName = servletIOManager.getParameterAsString(CONNECTION_NAME);
-			logger.debug("Parameter [" + CONNECTION_NAME + "] is equal to [" + connectionName + "]");
+			LOGGER.debug("Parameter [{}] is equal to [{}]", CONNECTION_NAME, connectionName);
 
 			outputType = servletIOManager.getParameterAsString(OUTPUT_TYPE);
-			logger.debug("Parameter [" + OUTPUT_TYPE + "] is equal to [" + outputType + "]");
+			LOGGER.debug("Parameter [{}] is equal to [{}]", OUTPUT_TYPE, outputType);
 			if (StringUtils.isEmpty(outputType)) {
 				outputType = JasperReportEngine.getConfig().getDefaultOutputType();
 				servletIOManager.getEnv().put(OUTPUT_TYPE, outputType);
-				logger.debug("Parameter [" + OUTPUT_TYPE + "] has been set to the default value ["
-						+ servletIOManager.getEnv().get(OUTPUT_TYPE) + "]");
+				LOGGER.debug("Parameter [{}] has been set to the default value [{}]", OUTPUT_TYPE, servletIOManager.getEnv().get(OUTPUT_TYPE));
 			}
 
 			// this proxy is used by ScriptletChart to execute and embed external chart into report
@@ -113,11 +111,11 @@ public class JasperReportEngineStartAction extends AbstractEngineStartServlet {
 			Files.delete(reportOutputDir);
 
 			servletIOManager.auditServiceEndEvent();
-		} catch (Throwable t) {
+		} catch (Exception e) {
 			throw new SpagoBIEngineException(
-					"An error occurred while executing report. Check log file for more information", t);
+					"An error occurred while executing report. Check log file for more information", e);
 		} finally {
-			logger.debug("OUT");
+			LOGGER.debug("OUT");
 		}
 
 	}

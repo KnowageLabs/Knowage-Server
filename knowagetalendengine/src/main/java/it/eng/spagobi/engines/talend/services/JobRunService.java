@@ -28,18 +28,20 @@ public class JobRunService extends AbstractEngineStartServlet {
 
 	public static final String JS_FILE_ZIP = "JS_File";
 	public static final String JS_EXT_ZIP = ".zip";
+	
+	private static final String MSG_OK = "msgKO";
 
 	private static final long serialVersionUID = 1L;
 
-	private static final Logger logger = Logger.getLogger(JobRunService.class);
+	private static final Logger LOGGER = Logger.getLogger(JobRunService.class);
 
 	@Override
-	public void doService(EngineStartServletIOManager servletIOManager) throws SpagoBIEngineException {
+	public void service(EngineStartServletIOManager servletIOManager) throws SpagoBIEngineException {
 
 		RuntimeRepository runtimeRepository;
 		Job job;
 
-		logger.debug("IN");
+		LOGGER.debug("IN");
 
 		try {
 
@@ -51,22 +53,22 @@ public class JobRunService extends AbstractEngineStartServlet {
 				runtimeRepository = TalendEngine.getRuntimeRepository();
 				runtimeRepository.runJob(job, servletIOManager.getEnv());
 			} catch (JobNotFoundException ex) {
-				logger.error(ex.getMessage());
+				LOGGER.error(ex.getMessage());
 
 				throw new SpagoBIEngineException("Job not found", "job.not.existing");
 
 			} catch (ContextNotFoundException ex) {
-				logger.error(ex.getMessage(), ex);
+				LOGGER.error(ex.getMessage(), ex);
 
 				throw new SpagoBIEngineException("Context script not found", "context.script.not.existing");
 
 			} catch (JobExecutionException ex) {
-				logger.error(ex.getMessage(), ex);
+				LOGGER.error(ex.getMessage(), ex);
 
 				throw new SpagoBIEngineException("Job execution error", "job.exectuion.error");
 
 			} catch (Exception e) {
-				logger.error(e.getMessage(), e);
+				LOGGER.error(e.getMessage(), e);
 
 				throw new SpagoBIEngineException("Job execution error", "job.exectuion.error");
 			}
@@ -74,23 +76,21 @@ public class JobRunService extends AbstractEngineStartServlet {
 			String nextJSP = "/jsp/messageOK.jsp";
 			RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(nextJSP);
 			HttpServletRequest req = servletIOManager.getRequest();
-			if (req.getAttribute("msgOK") != null)
-				req.removeAttribute("msgOK");
-			req.setAttribute("msgOK", ("Job: " + job.getName() + " - " + servletIOManager.getLocalizedMessage("etl.process.started")));
+			if (req.getAttribute(MSG_OK) != null)
+				req.removeAttribute(MSG_OK);
+			req.setAttribute(MSG_OK, ("Job: " + job.getName() + " - " + servletIOManager.getLocalizedMessage("etl.process.started")));
 			servletIOManager.setRequest(req);
 			try {
 				dispatcher.forward(servletIOManager.getRequest(), servletIOManager.getResponse());
 
-			} catch (ServletException e) {
-				throw new SpagoBIEngineRuntimeException(e);
-			} catch (IOException e) {
+			} catch (ServletException | IOException e) {
 				throw new SpagoBIEngineRuntimeException(e);
 			}
 
 			// servletIOManager.tryToWriteBackToClient(servletIOManager.getLocalizedMessage("etl.process.started")) called before
 
 		} finally {
-			logger.debug("OUT");
+			LOGGER.debug("OUT");
 		}
 	}
 }
