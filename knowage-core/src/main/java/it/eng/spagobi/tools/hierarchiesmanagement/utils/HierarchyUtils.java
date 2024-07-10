@@ -32,7 +32,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -58,7 +59,11 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 
 public class HierarchyUtils {
 
-	private static Logger logger = Logger.getLogger(HierarchyUtils.class);
+	private static Logger logger = LogManager.getLogger(HierarchyUtils.class);
+	
+	private static final String START = "START";
+	private static final String HIER_TARGET_NAME = "hierTargetName";
+	private static final String VALIDITY_DATE = "validityDate";
 
 	/**
 	 * This method creates a JSON from a Hierarchy field
@@ -70,7 +75,7 @@ public class HierarchyUtils {
 	 */
 	private static JSONObject createJSONObjectFromField(Field field, boolean isHierarchyField) throws JSONException {
 
-		logger.debug("START");
+		logger.debug(START);
 
 		JSONObject result = new JSONObject();
 
@@ -78,41 +83,41 @@ public class HierarchyUtils {
 
 		if (field.getId() != null)
 			result.put(HierarchyConstants.FIELD_ID, field.getId());
-		logger.debug("Field [" + HierarchyConstants.FIELD_ID + "] is " + field.getId());
+		logger.debug("Field [{}] is {}", HierarchyConstants.FIELD_ID, field.getId());
 
 		if (field.getName() != null)
 			result.put(HierarchyConstants.FIELD_NAME, field.getName());
-		logger.debug("Field [" + HierarchyConstants.FIELD_NAME + "] is " + field.getName());
+		logger.debug("Field [{}] is {}", HierarchyConstants.FIELD_NAME, field.getName());
 
 		if (field.getFixValue() != null)
 			result.put(HierarchyConstants.FIELD_FIX_VALUE, field.getFixValue());
-		logger.debug("Field [" + HierarchyConstants.FIELD_FIX_VALUE + "] is " + field.getFixValue());
+		logger.debug("Field [{}] is {}", HierarchyConstants.FIELD_FIX_VALUE, field.getFixValue());
 
 		result.put(HierarchyConstants.FIELD_VISIBLE, field.isVisible());
-		logger.debug("Field [" + HierarchyConstants.FIELD_VISIBLE + "] is " + field.isVisible());
+		logger.debug("Field [{}] is {}", HierarchyConstants.FIELD_VISIBLE, field.isVisible());
 
 		result.put(HierarchyConstants.FIELD_EDITABLE, field.isEditable());
-		logger.debug("Field [" + HierarchyConstants.FIELD_EDITABLE + "] is " + field.isEditable());
+		logger.debug("Field [{}] is {}", HierarchyConstants.FIELD_EDITABLE, field.isEditable());
 
 		result.put(HierarchyConstants.FIELD_PARENT, field.isParent());
-		logger.debug("Field [" + HierarchyConstants.FIELD_PARENT + "] is " + field.isParent());
+		logger.debug("Field [{}] is {}", HierarchyConstants.FIELD_PARENT, field.isParent());
 
 		if (field.getType() != null)
 			result.put(HierarchyConstants.FIELD_TYPE, field.getType());
-		logger.debug("Field [" + HierarchyConstants.FIELD_TYPE + "] is " + field.getType());
+		logger.debug("Field [{}] is {}", HierarchyConstants.FIELD_TYPE, field.getType());
 
 		if (isHierarchyField) { // add these values only for hierarchies fields
 
 			logger.debug("This Field is a Hierarchy field");
 
 			result.put(HierarchyConstants.FIELD_SINGLE_VALUE, field.isSingleValue());
-			logger.debug("Field [" + HierarchyConstants.FIELD_SINGLE_VALUE + "] is " + field.isSingleValue());
+			logger.debug("Field [{}] is {}", HierarchyConstants.FIELD_SINGLE_VALUE, field.isSingleValue());
 
 			result.put(HierarchyConstants.FIELD_REQUIRED, field.isRequired());
-			logger.debug("Field [" + HierarchyConstants.FIELD_REQUIRED + "] is " + field.isRequired());
+			logger.debug("Field [{}] is {}", HierarchyConstants.FIELD_REQUIRED, field.isRequired());
 
 			result.put(HierarchyConstants.FIELD_IS_ORDER, field.isOrderField());
-			logger.debug("Field [" + HierarchyConstants.FIELD_IS_ORDER + "] is " + field.isOrderField());
+			logger.debug("Field [{}] is {}", HierarchyConstants.FIELD_IS_ORDER, field.isOrderField());
 		}
 
 		logger.debug("END");
@@ -129,7 +134,7 @@ public class HierarchyUtils {
 	 */
 	private static JSONObject createJSONObjectFromFilter(Filter filter) throws JSONException {
 
-		logger.debug("START");
+		logger.debug(START);
 
 		JSONObject result = new JSONObject();
 
@@ -137,22 +142,22 @@ public class HierarchyUtils {
 
 		if (filter.getName() != null)
 			result.put(HierarchyConstants.FILTER_NAME, filter.getName());
-		logger.debug("Filter [" + HierarchyConstants.FILTER_NAME + "] is " + filter.getName());
+		logger.debug("Filter [{}] is {}", HierarchyConstants.FILTER_NAME,  filter.getName());
 
 		if (filter.getType() != null)
 			result.put(HierarchyConstants.FILTER_TYPE, filter.getType());
-		logger.debug("Filter [" + HierarchyConstants.FILTER_TYPE + "] is " + filter.getType());
+		logger.debug("Filter [{}] is {}", HierarchyConstants.FILTER_TYPE, filter.getType());
 
 		if (filter.getDefaultValue() != null)
 			result.put(HierarchyConstants.FILTER_DEFAULT, filter.getDefaultValue());
-		logger.debug("Filter [" + HierarchyConstants.FILTER_DEFAULT + "] is " + filter.getDefaultValue());
+		logger.debug("Filter [{}] is {}", HierarchyConstants.FILTER_DEFAULT, filter.getDefaultValue());
 
 		Map<String, String> conditions = filter.getConditions();
 		for (int i = 1; i <= conditions.size(); i++) {
 			String key = HierarchyConstants.FILTER_CONDITION + i;
 			String value = conditions.get(key);
 			result.put(key, value);
-			logger.debug("Filter [" + HierarchyConstants.FILTER_CONDITION + i + "] is " + filter.getConditions());
+			logger.debug("Filter [{}] is {}", key, filter.getConditions());
 		}
 
 		logger.debug("END");
@@ -171,7 +176,7 @@ public class HierarchyUtils {
 	public static JSONArray createJSONArrayFromFieldsList(List<Field> fields, boolean hierarchyFields)
 			throws JSONException {
 
-		logger.debug("START");
+		logger.debug(START);
 
 		JSONArray result = new JSONArray();
 
@@ -192,7 +197,7 @@ public class HierarchyUtils {
 	 * @throws JSONException
 	 */
 	public static JSONArray createJSONArrayFromFiltersList(List<Filter> filters) throws JSONException {
-		logger.debug("START");
+		logger.debug(START);
 
 		JSONArray result = new JSONArray();
 
@@ -214,7 +219,7 @@ public class HierarchyUtils {
 	 */
 	public static JSONObject createJSONArrayFromHashMap(Map values, JSONObject result) throws JSONException {
 
-		logger.debug("START");
+		logger.debug(START);
 
 		if (result == null)
 			result = new JSONObject();
@@ -226,7 +231,7 @@ public class HierarchyUtils {
 			Object value = values.get(key);
 			if (key != null && value != null && !result.has(key))
 				result.put(key, value);
-			logger.debug("Field [" + key + "] is " + value);
+			logger.debug("Field [{}] is {}",key, value);
 		}
 
 		logger.debug("END");
@@ -252,10 +257,10 @@ public class HierarchyUtils {
 						"No datasource found for Hierarchies");
 			}
 			return dataSource;
-		} catch (Throwable t) {
+		} catch (Exception e) {
 			logger.error("An unexpected error occured while retriving hierarchy datasource informations");
 			throw new SpagoBIServiceException(
-					"An unexpected error occured while retriving hierarchy datasource informations", t);
+					"An unexpected error occured while retriving hierarchy datasource informations", e);
 		}
 
 	}
@@ -275,13 +280,13 @@ public class HierarchyUtils {
 		}
 		Integer countId = null;
 		String primaryKeyColum = AbstractJDBCDataset.encapsulateColumnName(primaryKey, dataSource);
-		String query = "SELECT MAX(" + primaryKeyColum + ") as COUNT_ID FROM " + hierTableName;
+		String query = String.format("SELECT MAX(%s) as COUNT_ID FROM %s", primaryKeyColum, hierTableName);
 		try (PreparedStatement stm = dbConnection.prepareStatement(query); ResultSet resultSet = stm.executeQuery()) {
 			if (resultSet.next()) {
 				countId = resultSet.getInt("COUNT_ID");
 			}
 		} catch (SQLException se) {
-			logger.error("Error while retrieve id with stmt: [" + query + "]");
+			logger.error("Error while retrieve id with stmt: [{}]", query);
 			return -1;
 		}
 
@@ -295,9 +300,9 @@ public class HierarchyUtils {
 	 * @return a JSON array with ids of all visible fields
 	 * @throws JSONException
 	 */
-	public static JSONArray createColumnsSearch(List<Field> fields) throws JSONException {
+	public static JSONArray createColumnsSearch(List<Field> fields) {
 
-		logger.debug("START");
+		logger.debug(START);
 
 		JSONArray result = new JSONArray();
 
@@ -319,7 +324,7 @@ public class HierarchyUtils {
 	 * @return the converted date
 	 */
 	public static String getConvertedDate(String dateToConvert, IDataSource dataSource) {
-		logger.debug("START");
+		logger.debug(START);
 
 		// defining date conversion
 		String format = (SingletonConfig.getInstance().getConfigValue("SPAGOBI.DATE-FORMAT-SERVER.format"));
@@ -356,12 +361,7 @@ public class HierarchyUtils {
 	 * @return String with condition
 	 */
 	public static String createDateAfterCondition(IDataSource dataSource, String filterDate, String beginDtColumn) {
-
-		String fDateConverted = HierarchyUtils.getConvertedDate(filterDate, dataSource);
-		String dateAfterCondition = " AND " + beginDtColumn + " >= " + fDateConverted;
-
-		return dateAfterCondition;
-
+		return String.format(" AND %s >= %s", beginDtColumn, HierarchyUtils.getConvertedDate(filterDate, dataSource));
 	}
 
 	/**
@@ -429,7 +429,7 @@ public class HierarchyUtils {
 			String hierarchyName, String hierTypeCol, String hierarchyType, String dimFilterFieldCol,
 			String selectFilterField, String vFilterDateWhereClause, boolean exludeHierLeaf) {
 
-		logger.debug("Filter Hierarchy [" + hierarchyName + "]");
+		logger.debug("Filter Hierarchy [{}]", hierarchyName);
 
 		StringBuilder query = new StringBuilder();
 		String clauseIn = (exludeHierLeaf) ? " NOT IN " : " IN ";
@@ -448,7 +448,7 @@ public class HierarchyUtils {
 
 	public static JSONArray createRootData(IDataStore dataStore) throws JSONException {
 
-		logger.debug("START");
+		logger.debug(START);
 
 		JSONArray rootArray = new JSONArray();
 
@@ -490,11 +490,9 @@ public class HierarchyUtils {
 		String queryText = HierarchyUtils.createDimensionDataQuery(dataSource, metadataFields, dimensionName,
 				validityDate, optionalFilter, filterDate, filterHierarchy, filterHierType, hierTableName,
 				dimFilterField, hierFilterField, exludeHierLeaf);
-		logger.error("getDimensionDataStore query: [" + queryText + "]");
+		logger.error("getDimensionDataStore query: [{}]", queryText);
 
-		IDataStore dataStore = dataSource.executeStatement(queryText, 0, 0);
-
-		return dataStore;
+		return dataSource.executeStatement(queryText, 0, 0);
 	}
 
 	public static IDataStore getDimensionFromHierDataStore(IDataSource dataSource, String dimensionName,
@@ -509,10 +507,9 @@ public class HierarchyUtils {
 		String queryText = HierarchyUtils.createDimensionFromHierDataQuery(dataSource, metadataFields, dimensionName,
 				validityDate, optionalFilter, filterDate, filterHierarchy, filterHierType, hierTableName,
 				dimFilterField, hierFilterField, exludeHierLeaf);
-		logger.error("getDimensionFromHierDataStore query: [" + queryText + "]");
-		IDataStore dataStore = dataSource.executeStatement(queryText, 0, 0);
-
-		return dataStore;
+		logger.error("getDimensionFromHierDataStore query: [{}]", queryText);
+		
+		return dataSource.executeStatement(queryText, 0, 0);
 	}
 
 	public static Map<String, Integer> getMetadataFieldsMap(List<Field> metadataFields) {
@@ -533,13 +530,13 @@ public class HierarchyUtils {
 			String filterHierType, String hierTableName, String dimFilterField, String hierFilterField,
 			boolean exludeHierLeaf) {
 
-		logger.debug("START");
+		logger.debug(START);
 
 		StringBuilder query = getDimensionQuerySB(dataSource, metadataFields, dimensionName, validityDate,
 				optionalFilter, filterDate, filterHierarchy, filterHierType, hierTableName, dimFilterField,
 				hierFilterField, exludeHierLeaf);
 
-		logger.debug("Query for dimension data is: " + query);
+		logger.debug("Query for dimension data is: {}", query);
 		logger.debug("END");
 		return query.toString();
 	}
@@ -549,13 +546,13 @@ public class HierarchyUtils {
 			String filterHierType, String hierTableName, String dimFilterField, String hierFilterField,
 			boolean exludeHierLeaf) {
 
-		logger.debug("START");
+		logger.debug(START);
 
 		StringBuilder query = getDimensionFromHierQuerySB(dataSource, metadataFields, dimensionName, validityDate,
 				optionalFilter, filterDate, filterHierarchy, filterHierType, hierTableName, dimFilterField,
 				hierFilterField, exludeHierLeaf);
 
-		logger.debug("Query for dimension data is: " + query);
+		logger.debug("Query for dimension data is: {}", query);
 		logger.debug("END");
 		return query.toString();
 	}
@@ -565,7 +562,7 @@ public class HierarchyUtils {
 			String filterHierType, String hierTableName, String dimFilterField, String hierFilterField,
 			boolean exludeHierLeaf) {
 
-		logger.debug("START");
+		logger.debug(START);
 
 		StringBuilder selectClauseBuffer = new StringBuilder(" ");
 		String sep = ",";
@@ -600,7 +597,7 @@ public class HierarchyUtils {
 				"SELECT " + selectClause + " FROM " + dimensionName + " WHERE " + vDateWhereClause);
 
 		if (optionalFilter != null) {
-			logger.debug("Optional Filters are [" + optionalFilter + "]");
+			logger.debug("Optional Filters are [{}]", optionalFilter);
 
 			// get optional filters and add them to the query
 			JSONArray filtersJSONArray = ObjectUtils.toJSONArray(optionalFilter);
@@ -634,14 +631,14 @@ public class HierarchyUtils {
 					}
 				}
 			} catch (JSONException je) {
-				logger.error("Error while getting optional filters. Error: " + je);
+				logger.error("Error while getting optional filters. Error: {}", je.getMessage());
 				throw new SpagoBIServiceException(
 						"An unexpected error occured while deserializing optional filters structure from JSON", je);
 			}
 		}
 
 		if (filterHierarchy != null) {
-			logger.debug("Filter Hierarchy is [" + filterHierarchy + "]");
+			logger.debug("Filter Hierarchy is [{}]", filterHierarchy);
 			String vFilterDateWhereClause = "";
 			if (filterDate != null) {
 				String vFilterDateConverted = HierarchyUtils.getConvertedDate(filterDate, dataSource);
@@ -666,7 +663,7 @@ public class HierarchyUtils {
 			String dimensionName, String validityDate, String optionalFilter, String filterDate, String filterHierarchy,
 			String filterHierType, String hierTableName, String dimFilterField, String hierFilterField,
 			boolean exludeHierLeaf) {
-		logger.debug("START");
+		logger.debug(START);
 
 		String selectClause = getDimenensionSelectClause(dataSource, metadataFields, " D.");
 
@@ -692,7 +689,7 @@ public class HierarchyUtils {
 
 	private static String getDimenensionSelectClause(IDataSource dataSource, List<Field> metadataFields, String alias) {
 		String toReturn = "";
-		logger.debug("START");
+		logger.debug(START);
 
 		StringBuilder selectClauseBuffer = new StringBuilder(" ");
 		String sep = ",";
@@ -717,7 +714,7 @@ public class HierarchyUtils {
 
 	public static List<Field> createBkpFields(List<Field> genFields, String[] bkpGenFields) {
 
-		logger.debug("START");
+		logger.debug(START);
 
 		List<Field> result = new ArrayList<>();
 
@@ -743,10 +740,10 @@ public class HierarchyUtils {
 	public static boolean deleteHierarchy(String dimension, String hierarchyName, IDataSource dataSource,
 			Connection connection) throws SQLException {
 		// delete hierarchy
-		logger.debug("START");
+		logger.debug(START);
 
 		try {
-			logger.debug("Preparing delete statement. Name of the hierarchy is [" + hierarchyName + "]");
+			logger.debug("Preparing delete statement. Name of the hierarchy is [{}]", hierarchyName);
 
 			// 1 - get hierarchy table postfix(ex: _CDC)
 			Hierarchies hierarchies = HierarchiesSingleton.getInstance();
@@ -755,10 +752,9 @@ public class HierarchyUtils {
 			String hierarchyNameCol = AbstractJDBCDataset.encapsulateColumnName("HIER_CD", dataSource);
 			String hierarchyBckCol = AbstractJDBCDataset.encapsulateColumnName("BACKUP", dataSource);
 			String tableName = hierarchies.getHierarchyTableName(dimension);
-			String queryText = "DELETE FROM " + tableName + " WHERE " + hierarchyNameCol + "= ? AND " + hierarchyBckCol
-					+ " = ? ";
+			String queryText = String.format("DELETE FROM %s WHERE %s= ? AND %s = ? ", tableName, hierarchyNameCol, hierarchyBckCol);
 
-			logger.debug("The delete query is [" + queryText + "]");
+			logger.debug("The delete query is [{}]", queryText);
 
 			// 3 - Execute DELETE statement
 			try (PreparedStatement statement = connection.prepareStatement(queryText)) {
@@ -770,9 +766,9 @@ public class HierarchyUtils {
 			logger.debug("Delete query successfully executed");
 			logger.debug("END");
 
-		} catch (Throwable t) {
+		} catch (Exception e) {
 			logger.error("An unexpected error occured while deleting custom hierarchy");
-			throw new SpagoBIServiceException("An unexpected error occured while deleting custom hierarchy", t);
+			throw new SpagoBIServiceException("An unexpected error occured while deleting custom hierarchy", e);
 		}
 
 		return true;
@@ -793,7 +789,7 @@ public class HierarchyUtils {
 
 			toReturn++;
 		}
-		logger.info("Attribute '" + name + "' non found in fields' list ");
+		logger.info("Attribute '{}' non found in fields' list ", name);
 		return -1;
 	}
 
@@ -833,7 +829,7 @@ public class HierarchyUtils {
 			leafIdString = String.valueOf(leafId);
 		}
 		data.setLeafId(leafIdString);
-		logger.debug("leafIdString: " + leafIdString);
+		logger.debug("leafIdString: {}", leafIdString);
 
 		IField leafParentCodeField = currRecord.getFieldAt(metadata.getFieldIndex(HierarchyConstants.LEAF_PARENT_CD));
 		String leafParentCodeString = (String) leafParentCodeField.getValue();
@@ -856,7 +852,7 @@ public class HierarchyUtils {
 			beginDtDate = (Date) beginDtField.getValue();
 		}
 		data.setBeginDt(beginDtDate);
-		logger.debug("beginDtDate: " + beginDtDate);
+		logger.debug("beginDtDate: {}", beginDtDate);
 
 		IField endDtField = currRecord.getFieldAt(metadata.getFieldIndex(HierarchyConstants.END_DT));
 		Date endDtDate = null;
@@ -867,7 +863,7 @@ public class HierarchyUtils {
 			endDtDate = (Date) endDtField.getValue();
 		}
 		data.setEndDt(endDtDate);
-		logger.debug("endDtDate: " + endDtDate);
+		logger.debug("endDtDate: {}", endDtDate);
 
 		Map mapAttrs = new HashMap();
 		int numLevels = Integer.parseInt((String) hierarchies.getConfig(dimension).get(HierarchyConstants.NUM_LEVELS));
@@ -878,7 +874,7 @@ public class HierarchyUtils {
 		} else {
 			maxDepth = (Integer) field.getValue();
 		}
-		logger.debug("maxDepth: " + maxDepth);
+		logger.debug("maxDepth: {}", maxDepth);
 
 		// add leaf field attributes for automatic edit field GUI
 		ArrayList<Field> leafFields = hierarchies.getHierarchy(dimension).getMetadataLeafFields();
@@ -889,12 +885,12 @@ public class HierarchyUtils {
 				IField fldValue = currRecord.getFieldAt(metadata.getFieldIndex(idFld + maxDepth));
 				Object value = (fld.getFixValue() != null) ? fld.getFixValue() : fldValue.getValue();
 				mapAttrs.put(idFld, value);
-				logger.debug("mapAttrs.put: idFld [" + idFld + "], value [" + value + "]");
+				logger.debug("mapAttrs.put: idFld [{}], value [{}]", idFld, value);
 			} else {
 				IField fldValue = currRecord.getFieldAt(metadata.getFieldIndex(idFld));
 				Object value = (fld.getFixValue() != null) ? fld.getFixValue() : fldValue.getValue();
 				mapAttrs.put(idFld, value);
-				logger.debug("mapAttrs.put: idFld [" + idFld + "], value [" + value + "]");
+				logger.debug("mapAttrs.put: idFld [{}], value [{}]", idFld, value);
 			}
 		}
 		data.setAttributes(mapAttrs);
@@ -913,9 +909,9 @@ public class HierarchyUtils {
 			HierarchyUtils.createJSONArrayFromHashMap(mapAttrs, toReturn);
 
 			return toReturn;
-		} catch (Throwable t) {
+		} catch (Exception e) {
 			throw new SpagoBIServiceException(
-					"An unexpected error occured while serializing hierarchy details structure to JSON", t);
+					"An unexpected error occured while serializing hierarchy details structure to JSON", e);
 		}
 
 	}
@@ -929,9 +925,7 @@ public class HierarchyUtils {
 				hierarchyDate, filterDate, filterDimension, optionDate, optionHierarchy, optionHierType,
 				exludeHierLeaf);
 
-		IDataStore dataStore = dataSource.executeStatement(queryText, 0, 0);
-
-		return dataStore;
+		return dataSource.executeStatement(queryText, 0, 0);
 	}
 
 	/**
@@ -1046,7 +1040,7 @@ public class HierarchyUtils {
 				+ "' AND " + vDateWhereClause);
 
 		if (filterDimension != null) {
-			logger.debug("Filter dimension is [" + filterDimension + "]");
+			logger.debug("Filter dimension is [{}]", filterDimension);
 
 			String vDateOptionConverted = HierarchyUtils.getConvertedDate(optionDate, dataSource);
 			String vDateOptionWhereClause = vDateOptionConverted + " >= " + hierDateBeginColumn + " AND "
@@ -1059,13 +1053,13 @@ public class HierarchyUtils {
 		}
 
 		if (filterDate != null) {
-			logger.debug("Filter date is [" + optionDate + "]");
+			logger.debug("Filter date is [{}]", optionDate);
 
 			query.append(HierarchyUtils.createDateAfterCondition(dataSource, filterDate, hierDateBeginColumn));
 		}
 
 		if (optionHierarchy != null) {
-			logger.debug("Filter Hierarchy is [" + optionHierarchy + "]");
+			logger.debug("Filter Hierarchy is [{}]", optionHierarchy);
 
 			String vDateOptionConverted = HierarchyUtils.getConvertedDate(optionDate, dataSource);
 			String vDateOptionWhereClause = vDateOptionConverted + " >= " + hierDateBeginColumn + " AND "
@@ -1080,7 +1074,7 @@ public class HierarchyUtils {
 		// order cluase
 		query.append(" ORDER BY " + orderClauseBuffer.toString());
 
-		logger.debug("Query for get hierarchies: " + query);
+		logger.debug("Query for get hierarchies: {}", query);
 		return query.toString();
 	}
 
@@ -1094,7 +1088,7 @@ public class HierarchyUtils {
 	 */
 	public static String updateHierarchyForBackup(IDataSource dataSource, Connection databaseConnection, Map paramsMap,
 			boolean isSyncronize) {
-		logger.debug("START");
+		logger.debug(START);
 
 		String hierNameColumn = AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.HIER_NM, dataSource);
 		String beginDtColumn = AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.BEGIN_DT, dataSource);
@@ -1107,11 +1101,11 @@ public class HierarchyUtils {
 		Calendar calendar = Calendar.getInstance();
 		calendar.setTime(calendar.getTime());
 		long timestamp = calendar.getTimeInMillis();
-		String newHierName = (String) paramsMap.get("hierTargetName") + "_" + timestamp;
+		String newHierName = (String) paramsMap.get(HIER_TARGET_NAME) + "_" + timestamp;
 		String vDateWhereClause = null;
 		Date vDateConverted = new Date(0L);
-		if (paramsMap.containsKey("validityDate") && paramsMap.get("validityDate") != null) {
-			vDateConverted = Date.valueOf((String) paramsMap.get("validityDate"));
+		if (paramsMap.containsKey(VALIDITY_DATE) && paramsMap.get(VALIDITY_DATE) != null) {
+			vDateConverted = Date.valueOf((String) paramsMap.get(VALIDITY_DATE));
 			vDateWhereClause = " ? >= " + beginDtColumn + " AND ? <= " + endDtColumn;
 		} else {
 			vDateWhereClause = "? = ?";
@@ -1128,13 +1122,13 @@ public class HierarchyUtils {
 					+ hierTypeColumn + "= ? AND " + vDateWhereClause;
 		}
 
-		logger.debug("The update query is [" + updateQuery + "]");
+		logger.debug("The update query is [{}]", updateQuery);
 
 		try (PreparedStatement preparedStatement = databaseConnection.prepareStatement(updateQuery)) {
 			preparedStatement.setString(1, newHierName);
 			preparedStatement.setBoolean(2, true);
 			preparedStatement.setTimestamp(3, new java.sql.Timestamp(timestamp));
-			preparedStatement.setString(4, (String) paramsMap.get("hierTargetName"));
+			preparedStatement.setString(4, (String) paramsMap.get(HIER_TARGET_NAME));
 			preparedStatement.setString(5, (String) paramsMap.get("hierTargetType"));
 
 			if (isSyncronize) {
@@ -1148,27 +1142,26 @@ public class HierarchyUtils {
 			logger.debug("Update query successfully executed");
 			logger.debug("END");
 
-		} catch (Throwable t) {
+		} catch (Exception e) {
 			logger.error("An unexpected error occured while updating hierarchy for backup");
-			throw new SpagoBIServiceException("An unexpected error occured while updating hierarchy for backup", t);
+			throw new SpagoBIServiceException("An unexpected error occured while updating hierarchy for backup",  e);
 		}
 
 		// Backups propagations information only for MASTER HIERARCHIES type
 		String origHierType = (String) paramsMap.get("hierTargetType");
 		if (origHierType.equalsIgnoreCase("MASTER") && paramsMap.get("doPropagation") != null
-				&& (Boolean) paramsMap.get("doPropagation")) {
+				&& Boolean.TRUE.equals(paramsMap.get("doPropagation"))) {
 			String hierNameTargetColumn = AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.HIER_NM_T,
 					dataSource);
 
-			String updateRelQuery = "UPDATE " + HierarchyConstants.REL_MASTER_TECH_TABLE_NAME + " SET "
-					+ hierNameTargetColumn + "= ?, " + bkpColumn + " = ?, " + bkpTimestampColumn + "= ? WHERE "
-					+ hierNameTargetColumn + "= ? AND (" + bkpColumn + "= ? OR " + bkpColumn + " IS NULL)";
+			String updateRelQuery = String.format("UPDATE %s SET %s= ?, %s = ?, %s= ? WHERE %s= ? AND (%s= ? OR %s IS NULL)", 
+					HierarchyConstants.REL_MASTER_TECH_TABLE_NAME, hierNameTargetColumn, bkpColumn, bkpTimestampColumn, hierNameTargetColumn, bkpColumn, bkpColumn);
 
-			logger.debug("The relations update query is [" + updateRelQuery + "]");
+			logger.debug("The relations update query is [{}]", updateRelQuery);
 
 			String relColumns = getRelationalColumns(dataSource);
 			Map fixedValuesMap = new HashMap();
-			fixedValuesMap.put(HierarchyConstants.HIER_NM_T, paramsMap.get("hierTargetName"));
+			fixedValuesMap.put(HierarchyConstants.HIER_NM_T, paramsMap.get(HIER_TARGET_NAME));
 			String primaryKeyColumn = AbstractJDBCDataset
 					.encapsulateColumnName(HierarchyConstants.REL_MASTER_TECH_TABLE_NAME_ID, dataSource);
 
@@ -1176,10 +1169,9 @@ public class HierarchyUtils {
 			// if a primary key is present replace the column name with the a counter of the column [E.g. "MT_ID" becomes ? and is set to {countId} ]
 			// relValuesColumns = relValuesColumns.replace(primaryKeyColumn, "MAX(" + primaryKeyColumn + ") + 1"); // MAX(REL_MASTER_TECH_TABLE_NAME_ID)
 
-			String selectRelQuery = "select  " + relValuesColumns + " from  "
-					+ HierarchyConstants.REL_MASTER_TECH_TABLE_NAME + " where " + hierNameTargetColumn + "= ? and "
-					+ bkpColumn + "= ?";
-			logger.debug("The relations insert original query is [" + selectRelQuery + "]");
+			String selectRelQuery = String.format("select  %s from  %s where %s= ? and %s= ?", 
+					relValuesColumns, HierarchyConstants.REL_MASTER_TECH_TABLE_NAME, hierNameTargetColumn, bkpColumn);
+			logger.debug("The relations insert original query is [{}]", selectRelQuery);
 
 			try (PreparedStatement preparedRelStatement = databaseConnection.prepareStatement(updateRelQuery);
 					PreparedStatement preparedSelRelStatement = databaseConnection.prepareStatement(selectRelQuery)) {
@@ -1187,7 +1179,7 @@ public class HierarchyUtils {
 				preparedRelStatement.setString(1, newHierName);
 				preparedRelStatement.setBoolean(2, true);
 				preparedRelStatement.setTimestamp(3, new java.sql.Timestamp(timestamp));
-				preparedRelStatement.setString(4, (String) paramsMap.get("hierTargetName"));
+				preparedRelStatement.setString(4, (String) paramsMap.get(HIER_TARGET_NAME));
 				preparedRelStatement.setBoolean(5, false);
 
 				preparedRelStatement.executeUpdate();
@@ -1207,8 +1199,8 @@ public class HierarchyUtils {
 						String sep = i < mt.getColumnCount() ? "," : "";
 						relInsValuesColumns = relInsValuesColumns + "?" + sep;
 					}
-					String insertOrigRelQuery = "insert into " + HierarchyConstants.REL_MASTER_TECH_TABLE_NAME + " ("
-							+ relColumns + ") VALUES (" + relInsValuesColumns + ")";
+					String insertOrigRelQuery = String.format("insert into %s (%s) VALUES (%s)", 
+							HierarchyConstants.REL_MASTER_TECH_TABLE_NAME, relColumns, relInsValuesColumns);
 					PreparedStatement preparedInsRelStatement = databaseConnection.prepareStatement(insertOrigRelQuery);
 					setParameterPropagationInsertQuery(preparedInsRelStatement, rs, countId);
 					preparedInsRelStatement.executeUpdate();
@@ -1221,10 +1213,10 @@ public class HierarchyUtils {
 				logger.debug("Update relations query successfully executed");
 				logger.debug("END");
 
-			} catch (Throwable t) {
+			} catch (Exception e) {
 				logger.error("An unexpected error occured while updating hierarchy relations for backup");
 				throw new SpagoBIServiceException(
-						"An unexpected error occured while updating hierarchy relations for backup", t);
+						"An unexpected error occured while updating hierarchy relations for backup", e);
 			}
 			logger.debug("Update relations query successfully executed");
 
@@ -1328,8 +1320,8 @@ public class HierarchyUtils {
 				int idCount = HierarchyUtils.getCountId(HierarchyConstants.REL_MASTER_TECH_TABLE_NAME_ID,
 						HierarchyConstants.REL_MASTER_TECH_TABLE_NAME, connection, dataSource);
 				values.put(HierarchyConstants.REL_MASTER_TECH_TABLE_NAME_ID, idCount + 1);
-				String insertRelQuery = "insert into " + HierarchyConstants.REL_MASTER_TECH_TABLE_NAME + " ("
-						+ relColumns + ") values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?) ";
+				String insertRelQuery = String.format("insert into %s (%s) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?) ", 
+						HierarchyConstants.REL_MASTER_TECH_TABLE_NAME, relColumns);
 				try (PreparedStatement relPreparedStatement = connection.prepareStatement(insertRelQuery)) {
 					for (int k = 1; k <= 15; k++) {
 						relPreparedStatement.setObject(k, null);
@@ -1337,16 +1329,16 @@ public class HierarchyUtils {
 					valorizeRelPlaceholders(relPreparedStatement, values);
 					relPreparedStatement.executeUpdate();
 					relPreparedStatement.close();
-				} catch (Throwable t2) {
-					logger.error(t2.getMessage());
+				} catch (Exception e2) {
+					logger.error(e2.getMessage());
 					logger.error("An unexpected error occured while updating hierarchy for propagation");
 					throw new SpagoBIServiceException(
-							"An unexpected error occured while updating hierarchy for propagation", t2);
+							"An unexpected error occured while updating hierarchy for propagation", e2);
 				}
 			}
-		} catch (Throwable t) {
+		} catch (Exception e) {
 			throw new SpagoBIServiceException("An unexpected error occured while persisting hierarchy relations",
-					t.getMessage());
+					e.getMessage());
 		}
 	}
 
@@ -1539,7 +1531,7 @@ public class HierarchyUtils {
 			toReturn.setObject(13, values.get(HierarchyConstants.NODE_LEV_M));
 			toReturn.setObject(14, values.get(HierarchyConstants.GENERAL_INFO_T));
 			toReturn.setObject(15, values.get(HierarchyConstants.REL_MASTER_TECH_TABLE_NAME_ID));
-		} catch (Throwable t) {
+		} catch (Exception e) {
 			String errMsg = "Error while inserting relation of element with code: ["
 					+ values.get(HierarchyConstants.NODE_CD_T) + "] and name: ["
 					+ values.get(HierarchyConstants.NODE_NM_T) + "]";
@@ -1551,10 +1543,10 @@ public class HierarchyUtils {
 					Object value = values.get(key);
 					errMsg += " key: " + key + " - value: " + value + ((iter.hasNext()) ? "," : "]");
 				}
-				logger.error(errMsg, t);
+				logger.error(errMsg, e);
 			}
 			throw new SpagoBIServiceException("An unexpected error occured while persisting hierarchy structure: ",
-					t.getMessage() + " - " + t.getCause() + " - " + errMsg);
+					e.getMessage() + " - " + e.getCause() + " - " + errMsg);
 		}
 
 		return toReturn;
