@@ -269,9 +269,34 @@ public class ExtJsQbeTreeBuilder {
 				}
 			}
 		}
+		
+		
+		////
+		List<IModelField> allFields =entity.getAllFields();
+		
+		Iterator<IModelField> allFieldIterator= allFields.iterator();
+		while(allFieldIterator.hasNext()) {
+			IModelField field= allFieldIterator.next();
+			if(field.isKey()) {
+				JSONObject jsObject =getFieldNode(entity,field);
+				if(jsObject !=null) {
+					children.put(jsObject);
+				}
+			}
+			else {
+				Boolean isARelation = (Boolean) field.getProperties().get("relation");
+				JSONObject jsObject = getFieldNode(entity, field);
+				if (jsObject != null && (isARelation == null || !isARelation)) {
+					children.put(jsObject);
+				}
+			}
+			
+		}
+		/////
+		
 
 		// add key fields
-		List<IModelField> keyFields = entity.getKeyFields();
+		/*List<IModelField> keyFields = entity.getKeyFields();
 
 		Iterator<IModelField> keyFieldIterator = keyFields.iterator();
 		while (keyFieldIterator.hasNext()) {
@@ -281,10 +306,10 @@ public class ExtJsQbeTreeBuilder {
 				children.put(jsObject);
 			}
 
-		}
+		}*/
 
 		// add normal fields
-		List<IModelField> normalFields = entity.getNormalFields();
+	/*	List<IModelField> normalFields = entity.getNormalFields();
 
 		Iterator<IModelField> normalFieldIterator = normalFields.iterator();
 		while (normalFieldIterator.hasNext()) {
@@ -294,7 +319,7 @@ public class ExtJsQbeTreeBuilder {
 			if (jsObject != null && (isARelation == null || !isARelation)) {
 				children.put(jsObject);
 			}
-		}
+		}*/
 
 		// add calculated fields
 		List<ModelCalculatedField> calculatedFields = entity.getCalculatedFields();
