@@ -494,10 +494,10 @@ public class HierarchyMasterService {
 
 		String setPart = String.format("SET %s", sb.toString());
 
-		String vDateWhereClause = " ? >= DST." + beginDtColumn + " AND ? <= DST." + endDtColumn;
-		String joinClause = " DST." + leafIdColumn + " = SRC." + leafIdColumn;
-		String wherePart = " WHERE DST." + hierNameColumn + "=? AND DST." + hierTypeColumn + "= ? AND "
-				+ vDateWhereClause + "AND " + joinClause;
+		String vDateWhereClause = String.format(" ? >= DST.%s AND ? <= DST.%s", beginDtColumn, endDtColumn);
+		String joinClause = String.format(" DST.%s = SRC.%s", leafIdColumn, leafIdColumn);
+		String wherePart = String.format(" WHERE DST.%s=? AND DST.%s= ? AND %s AND %s", 
+				hierNameColumn, hierTypeColumn, vDateWhereClause, joinClause);
 
 		String updateQuery = updatePart + setPart + wherePart;
 
