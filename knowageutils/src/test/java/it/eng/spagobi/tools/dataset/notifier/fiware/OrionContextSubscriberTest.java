@@ -151,7 +151,7 @@ public class OrionContextSubscriberTest extends TestCase {
 
 		@Override
 		public Predicate<Call> getPredicate() {
-			return new Predicate<Call>() {
+			return new Predicate<>() {
 
 				@Override
 				public boolean apply(Call c) {

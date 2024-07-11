@@ -122,7 +122,7 @@ public class ResourceExportFolderCleaningManager {
 	private void cleanToQuota(Long actualFolderSize, File folder) throws Exception {
 		logger.debug("IN - cleanToQuota");
 
-		Comparator<File> creationTimeComparator = new Comparator<File>() {
+		Comparator<File> creationTimeComparator = new Comparator<>() {
 
 			@Override
 			public int compare(File o1, File o2) {

@@ -184,7 +184,7 @@ public class ChartEngineUtil {
 		JsonFactory factory = new JsonFactory();
 		ObjectMapper mapper = new ObjectMapper(factory);
 
-		TypeReference<Map<String, Object>> typeRef = new TypeReference<Map<String, Object>>() {
+		TypeReference<Map<String, Object>> typeRef = new TypeReference<>() {
 		};
 
 		// TODO Add at this level StringEscapeUtils.escapeHtml

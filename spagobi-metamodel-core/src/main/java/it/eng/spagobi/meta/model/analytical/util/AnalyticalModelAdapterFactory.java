@@ -72,7 +72,7 @@ public class AnalyticalModelAdapterFactory extends AdapterFactoryImpl {
 	 * @generated
 	 */
 	protected AnalyticalModelSwitch<Adapter> modelSwitch =
-		new AnalyticalModelSwitch<Adapter>() {
+		new AnalyticalModelSwitch<>() {
 			@Override
 			public Adapter caseAnalyticalModel(AnalyticalModel object) {
 				return createAnalyticalModelAdapter();

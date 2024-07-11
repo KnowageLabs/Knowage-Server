@@ -17,10 +17,7 @@
  */
 package it.eng.spagobi.api.v2;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
-
 import java.net.URI;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -68,8 +65,7 @@ import it.eng.spagobi.security.Password;
 import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
 import it.eng.spagobi.services.rest.annotations.UserConstraint;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
-import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
-import org.owasp.esapi.errors.EncodingException; 
+import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException; 
 
 @Path("/2.0/users")
 @ManageAuthorization

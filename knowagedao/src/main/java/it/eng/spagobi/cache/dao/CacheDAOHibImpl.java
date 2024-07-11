@@ -453,7 +453,7 @@ public class CacheDAOHibImpl extends AbstractHibernateDAO implements ICacheDAO {
 		HashMap<String, Object> properties = null;
 		try {
 			ObjectMapper mapper = new ObjectMapper();
-			TypeReference<HashMap<String, Object>> typeRef = new TypeReference<HashMap<String, Object>>() {
+			TypeReference<HashMap<String, Object>> typeRef = new TypeReference<>() {
 			};
 			properties = mapper.readValue(hibCacheItem.getProperties(), typeRef);
 		} catch (Throwable t) {

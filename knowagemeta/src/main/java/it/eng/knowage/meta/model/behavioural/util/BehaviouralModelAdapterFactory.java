@@ -79,7 +79,7 @@ public class BehaviouralModelAdapterFactory extends AdapterFactoryImpl {
 	 * @generated
 	 */
 	protected BehaviouralModelSwitch<Adapter> modelSwitch =
-		new BehaviouralModelSwitch<Adapter>() {
+		new BehaviouralModelSwitch<>() {
 			@Override
 			public Adapter caseBehaviouralModel(BehaviouralModel object) {
 				return createBehaviouralModelAdapter();

@@ -77,7 +77,7 @@ public class PhysicalModelAdapterFactory extends AdapterFactoryImpl {
 	 * @generated
 	 */
 	protected PhysicalModelSwitch<Adapter> modelSwitch =
-		new PhysicalModelSwitch<Adapter>() {
+		new PhysicalModelSwitch<>() {
 			@Override
 			public Adapter casePhysicalModel(PhysicalModel object) {
 				return createPhysicalModelAdapter();

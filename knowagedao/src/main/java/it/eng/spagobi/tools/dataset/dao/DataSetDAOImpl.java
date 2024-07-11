@@ -174,7 +174,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 	@Override
 	public Integer countBIObjAssociated(Integer dsId) {
 		logger.debug("IN");
-		Integer resultNumber = Integer.valueOf(0);
+		Integer resultNumber = 0;
 		Session session = null;
 		Transaction transaction = null;
 		try {
@@ -184,7 +184,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 			String hql = "select count(*) from SbiObjDataSet s where s.dsId = ? ";
 			Query aQuery = session.createQuery(hql);
 			aQuery.setInteger(0, dsId.intValue());
-			resultNumber = Integer.valueOf(((Long) aQuery.uniqueResult()).intValue());
+			resultNumber = ((Long) aQuery.uniqueResult()).intValue();
 
 		} catch (Exception e) {
 			if (transaction != null && transaction.isActive()) {
@@ -254,7 +254,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 			}
 			logger.debug("OUT");
 		}
-		return Integer.valueOf(resultNumber.intValue());
+		return resultNumber.intValue();
 	}
 
 	/**
@@ -1476,7 +1476,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 
 			if (offset == null) {
 				logger.warn("Input parameter [offset] is null. It will be set to [0]");
-				offset = Integer.valueOf(0);
+				offset = 0;
 			}
 			if (fetchSize == null) {
 				logger.warn("Input parameter [offset] is null. It will be set to [" + Integer.MAX_VALUE + "]");
@@ -1598,7 +1598,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 
 			if (offset == null) {
 				logger.warn("Input parameter [offset] is null. It will be set to [0]");
-				offset = Integer.valueOf(0);
+				offset = 0;
 			}
 			if (fetchSize == null) {
 				logger.warn("Input parameter [offset] is null. It will be set to [" + Integer.MAX_VALUE + "]");
@@ -1616,7 +1616,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 
 			Query countQuery = session.createQuery(String.format("select count(*) %s", hsql));
 			Long temp = (Long) countQuery.uniqueResult();
-			Integer resultNumber = Integer.valueOf(temp.intValue());
+			Integer resultNumber = temp.intValue();
 
 			offset = offset < 0 ? 0 : offset;
 			if (resultNumber > 0) {
@@ -1698,7 +1698,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 
 			if (offset == null) {
 				logger.warn("Input parameter [offset] is null. It will be set to [0]");
-				offset = Integer.valueOf(0);
+				offset = 0;
 			}
 			if (fetchSize == null) {
 				logger.warn("Input parameter [offset] is null. It will be set to [" + Integer.MAX_VALUE + "]");
@@ -1962,7 +1962,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 
 			if (offset == null) {
 				logger.warn("Input parameter [offset] is null. It will be set to [0]");
-				offset = Integer.valueOf(0);
+				offset = 0;
 			}
 			if (fetchSize == null) {
 				logger.warn("Input parameter [offset] is null. It will be set to [" + Integer.MAX_VALUE + "]");
@@ -2103,7 +2103,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 
 			if (offset == null) {
 				logger.warn("Input parameter [offset] is null. It will be set to [0]");
-				offset = Integer.valueOf(0);
+				offset = 0;
 			}
 			if (fetchSize == null) {
 				logger.warn("Input parameter [offset] is null. It will be set to [" + Integer.MAX_VALUE + "]");
@@ -2209,7 +2209,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 
 			if (offset == null) {
 				logger.warn("Input parameter [offset] is null. It will be set to [0]");
-				offset = Integer.valueOf(0);
+				offset = 0;
 			}
 			if (fetchSize == null) {
 				logger.warn("Input parameter [offset] is null. It will be set to [" + Integer.MAX_VALUE + "]");
@@ -2748,9 +2748,9 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 		}
 		logger.debug("Current max prog : " + maxId);
 		if (maxId == null) {
-			nextId = Integer.valueOf(1);
+			nextId = 1;
 		} else {
-			nextId = Integer.valueOf(maxId.intValue() + 1);
+			nextId = maxId.intValue() + 1;
 		}
 
 		if (isInsert) {
@@ -3090,7 +3090,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 	@Override
 	public Integer countCategories(Integer catId) {
 		logger.debug("IN");
-		Integer resultNumber = Integer.valueOf(0);
+		Integer resultNumber = 0;
 		Session session = null;
 		Transaction transaction = null;
 		try {
@@ -3100,7 +3100,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 			String hql = "select count(distinct id.dsId) from SbiDataSet s where s.category.id = ? ";
 			Query aQuery = session.createQuery(hql);
 			aQuery.setInteger(0, catId.intValue());
-			resultNumber = Integer.valueOf(((Long) aQuery.uniqueResult()).intValue());
+			resultNumber = ((Long) aQuery.uniqueResult()).intValue();
 
 		} catch (Exception e) {
 			if (transaction != null && transaction.isActive()) {

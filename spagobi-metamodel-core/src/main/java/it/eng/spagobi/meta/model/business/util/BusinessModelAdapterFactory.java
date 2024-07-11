@@ -83,7 +83,7 @@ public class BusinessModelAdapterFactory extends AdapterFactoryImpl {
 	 * @generated
 	 */
 	protected BusinessModelSwitch<Adapter> modelSwitch =
-		new BusinessModelSwitch<Adapter>() {
+		new BusinessModelSwitch<>() {
 			@Override
 			public Adapter caseBusinessModel(BusinessModel object) {
 				return createBusinessModelAdapter();

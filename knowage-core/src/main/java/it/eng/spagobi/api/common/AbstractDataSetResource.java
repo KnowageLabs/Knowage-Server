@@ -246,7 +246,7 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 				Map<String, Object> optionMap;
 				if (options != null && !options.isEmpty()) {
 					ObjectMapper objectMapper = new ObjectMapper();
-					optionMap = new HashMap<>((Map<? extends String, ?>) objectMapper.readValue(options,
+					optionMap = new HashMap<>(objectMapper.readValue(options,
 							new TypeReference<Map<String, Object>>() {
 							}));
 				} else {

@@ -71,7 +71,7 @@ class MondrianOlap4jMember extends MondrianOlap4jMetadataElement implements Memb
 				return conn.getSchemaReader().getMemberChildren(member);
 			}
 		});
-		return new AbstractNamedList<MondrianOlap4jMember>() {
+		return new AbstractNamedList<>() {
 			@Override
 			public String getName(Object member) {
 				return ((MondrianOlap4jMember) member).getName();

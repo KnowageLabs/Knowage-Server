@@ -150,7 +150,7 @@ public class DynamicClassLoader extends URLClassLoader {
 				String s = jar.getAbsolutePath().replace(File.separatorChar, '/');
 				final URL jarUrl = new URL("jar","",-1,"file:/"+s+"!/META-INF/persistence.xml");
 				//build the enumeration with only the URL with the location of the persistence.xml
-				return new Enumeration<URL>() {
+				return new Enumeration<>() {
 					private int position = 0;
 
 					@Override

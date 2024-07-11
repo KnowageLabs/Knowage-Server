@@ -21,8 +21,6 @@ package it.eng.spagobi.engines.whatif.parser;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.Random;
-
 import org.olap4j.OlapDataSource;
 import org.pivot4j.PivotModel;
 

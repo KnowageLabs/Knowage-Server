@@ -111,7 +111,7 @@ public class SpagoBIScriptManager {
 
 			final String _script = script;
 
-			results = AccessController.doPrivileged(new PrivilegedExceptionAction<Object>() {
+			results = AccessController.doPrivileged(new PrivilegedExceptionAction<>() {
 
 				@Override
 				public Object run() throws ScriptException {
