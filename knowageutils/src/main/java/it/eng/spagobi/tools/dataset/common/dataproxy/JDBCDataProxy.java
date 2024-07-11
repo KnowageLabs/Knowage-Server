@@ -46,7 +46,7 @@ public class JDBCDataProxy extends AbstractDataProxy {
 	private String statement;
 	private String schema;
 
-	private static transient Logger logger = Logger.getLogger(JDBCDataProxy.class);
+	private static final Logger logger = Logger.getLogger(JDBCDataProxy.class);
 
 	public JDBCDataProxy() {
 		this.setCalculateResultNumberOnLoad(true);
@@ -72,7 +72,7 @@ public class JDBCDataProxy extends AbstractDataProxy {
 		this.schema = schema;
 	}
 
-	public IDataStore load(String statement, IDataReader dataReader) throws EMFUserError {
+	public IDataStore load(String statement, IDataReader dataReader) {
 		if (statement != null) {
 			setStatement(statement);
 		}
@@ -235,7 +235,7 @@ public class JDBCDataProxy extends AbstractDataProxy {
 			if (!dialect.toLowerCase().contains("orient")) {
 				tableAlias = "temptable";
 			}
-			String sqlQuery = "SELECT COUNT(*) FROM (" + statement + ") " + tableAlias;
+			String sqlQuery = String.format("SELECT COUNT(*) FROM (%s) %s", statement, tableAlias);
 			stmt = connection.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
 			Monitor timeToExecuteStatement = MonitorFactory.start("Knowage.JDBCDataProxy.executeCountStatement:" + sqlQuery);
 			long start = System.currentTimeMillis();
@@ -249,8 +249,8 @@ public class JDBCDataProxy extends AbstractDataProxy {
 			LogMF.info(logger, "Executed count statement:\n{0} - Executed time: [" + (stop - start) + " ms]", sqlQuery);
 			rs.next();
 			resultNumber = rs.getInt(1);
-		} catch (Throwable t) {
-			throw new SpagoBIRuntimeException("An error occurred while creating connection steatment", t);
+		} catch (Exception e) {
+			throw new SpagoBIRuntimeException("An error occurred while creating connection steatment", e);
 		} finally {
 			releaseResources(null, stmt, rs);
 

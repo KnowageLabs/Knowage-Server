@@ -25,7 +25,6 @@ import java.sql.Statement;
 
 import org.apache.log4j.Logger;
 
-import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.tools.dataset.common.datareader.IDataReader;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
@@ -33,7 +32,7 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 public class JDBCPostgreSQLDataProxy extends JDBCDataProxy {
 
-	private static transient Logger logger = Logger.getLogger(JDBCPostgreSQLDataProxy.class);
+	private static final Logger logger = Logger.getLogger(JDBCPostgreSQLDataProxy.class);
 
 	private String statement;
 
@@ -74,7 +73,7 @@ public class JDBCPostgreSQLDataProxy extends JDBCDataProxy {
 	}
 
 	@Override
-	public IDataStore load(String statement, IDataReader dataReader) throws EMFUserError {
+	public IDataStore load(String statement, IDataReader dataReader) {
 		if (statement != null) {
 			setStatement(statement);
 		}
@@ -150,7 +149,7 @@ public class JDBCPostgreSQLDataProxy extends JDBCDataProxy {
 
 			if (resultNumber > -1) { // it means that resultNumber was successfully calculated by this data proxy
 				int limitedResultNumber = getMaxResults() > 0 && resultNumber > getMaxResults() ? getMaxResults() : resultNumber;
-				dataStore.getMetaData().setProperty("resultNumber", new Integer(limitedResultNumber));
+				dataStore.getMetaData().setProperty("resultNumber", Integer.valueOf(limitedResultNumber));
 			}
 
 		} finally {
@@ -174,14 +173,14 @@ public class JDBCPostgreSQLDataProxy extends JDBCDataProxy {
 
 		try {
 			String tableAlias = "temptable";
-			String sqlQuery = "SELECT COUNT(*) FROM (" + getStatement() + ") " + tableAlias;
+			String sqlQuery = String.format("SELECT COUNT(*) FROM (%s) %s", getStatement(), tableAlias);
 			logger.info("Executing query " + sqlQuery + " ...");
 			stmt = connection.prepareStatement(sqlQuery,ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
 			rs = stmt.executeQuery();
 			rs.next();
 			resultNumber = rs.getInt(1);
-		} catch (Throwable t) {
-			throw new SpagoBIRuntimeException("An error occurred while creating connection steatment", t);
+		} catch (Exception e) {
+			throw new SpagoBIRuntimeException("An error occurred while creating connection steatment", e);
 		} finally {
 			releaseResources(null, stmt, rs);
 		}
@@ -221,11 +220,9 @@ public class JDBCPostgreSQLDataProxy extends JDBCDataProxy {
 
 	private String getFinalStatement() {
 
-		if (fetchSize == -1) {
-			if (!this.statement.isEmpty()) {
-				this.statement = removeLastSemicolon(this.statement);
-				return this.statement;
-			}
+		if (fetchSize == -1 && !this.statement.isEmpty()) {
+			this.statement = removeLastSemicolon(this.statement);
+			return this.statement;
 		}
 
 		StringBuilder newStatement = new StringBuilder();

@@ -72,8 +72,8 @@ public class JPQLDataSet extends AbstractQbeDataSet {
 	public void loadData(int offset, int fetchSize, int maxResults) {
 		try {
 			loadDataPersistenceProvider(offset, fetchSize, maxResults);
-		} catch (Throwable t) {
-			throw new RuntimeException("Impossible to load data", t);
+		} catch (Exception e) {
+			throw new SpagoBIRuntimeException("Impossible to load data", e);
 		}
 	}
 
@@ -103,12 +103,12 @@ public class JPQLDataSet extends AbstractQbeDataSet {
 
 		IStatement filteredStatement = this.getStatement();
 		String statementStr = filteredStatement.getQueryString();
-		LOGGER.debug("Compiling query statement [" + statementStr + "]");
+		LOGGER.debug("Compiling query statement [{}]", statementStr);
 		javax.persistence.Query jpqlQuery = getEntityMananger().createQuery(statementStr);
 
 		if (this.isCalculateResultNumberOnLoadEnabled()) {
 			resultNumber = getResultNumber(filteredStatement);
-			LOGGER.info("Number of fetched records: " + resultNumber + " for query " + filteredStatement.getQueryString());
+			LOGGER.info("Number of fetched records: {} for query {}", resultNumber, filteredStatement.getQueryString());
 			overflow = (maxResults > 0) && (resultNumber >= maxResults);
 		}
 
@@ -122,7 +122,7 @@ public class JPQLDataSet extends AbstractQbeDataSet {
 			if (maxResults > 0) {
 				fetchSize = (fetchSize > 0) ? Math.min(fetchSize, maxResults) : maxResults;
 			}
-			LOGGER.debug("Executing query " + filteredStatement.getQueryString() + " with offset = " + offset + " and fetch size = " + fetchSize);
+			LOGGER.debug("Executing query {} with offset = {} and fetch size = {}", filteredStatement.getQueryString(), offset, fetchSize);
 			jpqlQuery.setFirstResult(offset);
 			if (fetchSize > 0) {
 				jpqlQuery.setMaxResults(fetchSize);
@@ -130,11 +130,11 @@ public class JPQLDataSet extends AbstractQbeDataSet {
 
 			try {
 				result = jpqlQuery.getResultList();
-			} catch (Throwable t) {
-				throw new RuntimeException("Impossible to execute statement [" + statementStr + "]", t);
+			} catch (Exception e) {
+				throw new SpagoBIRuntimeException("Impossible to execute statement [" + statementStr + "]", e);
 			}
 
-			LOGGER.debug("Query " + filteredStatement.getQueryString() + " with offset = " + offset + " and fetch size = " + fetchSize + " executed");
+			LOGGER.debug("Query {} with offset = {} and fetch size = {} executed", filteredStatement.getQueryString(), offset, fetchSize);
 		}
 
 		dataStore = toDataStore(result, ((AbstractStatement) statement).getDataStoreMeta());
@@ -161,61 +161,59 @@ public class JPQLDataSet extends AbstractQbeDataSet {
 	private void enableFilters(Session session) {
 		Map<String, Object> drivers = this.getDrivers();
 		LOGGER.info("Drivers: {}", drivers);
-		if (drivers != null) {
-			if (!drivers.isEmpty()) {
-				Filter filter = null;
-				Set<String> filterNames = session.getSessionFactory().getDefinedFilterNames();
-				Iterator<String> it = filterNames.iterator();
+		if (drivers != null && !drivers.isEmpty()) {
+			Filter filter = null;
+			Set<String> filterNames = session.getSessionFactory().getDefinedFilterNames();
+			Iterator<String> it = filterNames.iterator();
 
-				while (it.hasNext()) {
-					String filterName = it.next();
-					filter = session.enableFilter(filterName);
-					Map<String, Type> parametersTypes = filter.getFilterDefinition().getParameterTypes();
-					for (Entry<String, Type> entry : parametersTypes.entrySet()) {
-						String parameterName = entry.getKey();
-						Type parameterType = entry.getValue();
-						String driverName = parameterName.toString();
-						Object value = null;
-						Object valueAfterConversion = null;
-						Class<?> wantedClass = parameterType.getReturnedClass();
-						try {
-							List<?> valueList = (List<?>) drivers.get(driverName);
-							LOGGER.info("Values for driver name {} of type {} ({}): {}", parameterName, parameterType, wantedClass, valueList);
-							if (valueList != null) {
-								if (valueList.size() == 1) {
-									Map<?, ?> valueDescriptionMap = (Map<?, ?>) valueList.get(0);
-									if (!valueDescriptionMap.isEmpty()) {
-										value = valueDescriptionMap.get("value");
-										valueAfterConversion = mapValueToRequiredType(wantedClass, value);
-										if (valueAfterConversion instanceof List) {
-											filter.setParameterList(driverName, (List) valueAfterConversion);
-										} else {
-											filter.setParameter(driverName, valueAfterConversion);
-										}
-										LOGGER.info("Actual value for driver name {} of type {} ({}): {}", parameterName, parameterType, wantedClass,
-												valueAfterConversion);
+			while (it.hasNext()) {
+				String filterName = it.next();
+				filter = session.enableFilter(filterName);
+				Map<String, Type> parametersTypes = filter.getFilterDefinition().getParameterTypes();
+				for (Entry<String, Type> entry : parametersTypes.entrySet()) {
+					String parameterName = entry.getKey();
+					Type parameterType = entry.getValue();
+					String driverName = parameterName;
+					Object value = null;
+					Object valueAfterConversion = null;
+					Class<?> wantedClass = parameterType.getReturnedClass();
+					try {
+						List<?> valueList = (List<?>) drivers.get(driverName);
+						LOGGER.info("Values for driver name {} of type {} ({}): {}", parameterName, parameterType, wantedClass, valueList);
+						if (valueList != null) {
+							if (valueList.size() == 1) {
+								Map<?, ?> valueDescriptionMap = (Map<?, ?>) valueList.get(0);
+								if (!valueDescriptionMap.isEmpty()) {
+									value = valueDescriptionMap.get("value");
+									valueAfterConversion = mapValueToRequiredType(wantedClass, value);
+									if (valueAfterConversion instanceof List) {
+										filter.setParameterList(driverName, (List) valueAfterConversion);
+									} else {
+										filter.setParameter(driverName, valueAfterConversion);
 									}
-								} else if (valueList.size() > 1) {
-									List<Object> multivalueList = new ArrayList<>();
-									for (int i = 0; i < valueList.size(); i++) {
-										Map<?, ?> valueDescriptionMap = (Map<?, ?>) valueList.get(i);
-										value = valueDescriptionMap.get("value");
-										valueAfterConversion = mapValueToRequiredType(wantedClass, value);
-										multivalueList.add(valueAfterConversion);
-									}
-									filter.setParameterList(driverName, multivalueList);
 									LOGGER.info("Actual value for driver name {} of type {} ({}): {}", parameterName, parameterType, wantedClass,
-											multivalueList);
+											valueAfterConversion);
 								}
+							} else if (valueList.size() > 1) {
+								List<Object> multivalueList = new ArrayList<>();
+								for (int i = 0; i < valueList.size(); i++) {
+									Map<?, ?> valueDescriptionMap = (Map<?, ?>) valueList.get(i);
+									value = valueDescriptionMap.get("value");
+									valueAfterConversion = mapValueToRequiredType(wantedClass, value);
+									multivalueList.add(valueAfterConversion);
+								}
+								filter.setParameterList(driverName, multivalueList);
+								LOGGER.info("Actual value for driver name {} of type {} ({}): {}", parameterName, parameterType, wantedClass,
+										multivalueList);
 							}
-							value = null;
-							valueAfterConversion = null;
-						} catch (Exception e) {
-							String msg = String.format("Error during conversion for driver %s from value %s of class %s to %s of class %s", driverName, value,
-									value != null ? value.getClass().getName() : "N.D.", valueAfterConversion, wantedClass.getName());
-							LOGGER.error(msg, e);
-							throw new SpagoBIRuntimeException(msg, e);
 						}
+						value = null;
+						valueAfterConversion = null;
+					} catch (Exception e) {
+						String msg = String.format("Error during conversion for driver %s from value %s of class %s to %s of class %s", driverName, value,
+								value != null ? value.getClass().getName() : "N.D.", valueAfterConversion, wantedClass.getName());
+						LOGGER.error(msg, e);
+						throw new SpagoBIRuntimeException(msg, e);
 					}
 				}
 			}
@@ -242,20 +240,20 @@ public class JPQLDataSet extends AbstractQbeDataSet {
 		Object ret = null;
 		if (value instanceof List) {
 			List<?> listOfValues = (List<?>) value;
-			List<Object> _ret = new ArrayList<>();
+			List<Object> tmpRet = new ArrayList<>();
 
 			for (Object currValue : listOfValues) {
 				if (Date.class.equals(wantedClass)) {
 					String configValue = SingletonConfig.getInstance().getConfigValue("SPAGOBI.DATE-FORMAT-SERVER.format");
 					SimpleDateFormat simpleDateFormat = new SimpleDateFormat(configValue);
-					_ret.add(simpleDateFormat.parse(currValue.toString()));
+					tmpRet.add(simpleDateFormat.parse(currValue.toString()));
 				} else {
 					Constructor<?> constructor = wantedClass.getConstructor(String.class);
-					_ret.add(constructor.newInstance(currValue.toString()));
+					tmpRet.add(constructor.newInstance(currValue.toString()));
 				}
 			}
 
-			ret = _ret;
+			ret = tmpRet;
 		} else {
 			if (Date.class.equals(wantedClass)) {
 				String configValue = SingletonConfig.getInstance().getConfigValue("SPAGOBI.DATE-FORMAT-SERVER.format");
@@ -290,10 +288,11 @@ public class JPQLDataSet extends AbstractQbeDataSet {
 				sqlQueryString = sqlQueryString.substring(0, orderByIndexOf);
 			}
 
-			Number singleResult = (Number) em.createNativeQuery("SELECT COUNT(*) FROM (" + sqlQueryString + ") COUNT_INLINE_VIEW").getSingleResult();
+			String query = String.format("SELECT COUNT(*) FROM (%s) COUNT_INLINE_VIEW", sqlQueryString);
+			Number singleResult = (Number) em.createNativeQuery(query).getSingleResult();
 			resultNumber = singleResult.intValue();
 		} catch (Exception e) {
-			throw new RuntimeException("Impossible to get result number", e);
+			throw new SpagoBIRuntimeException("Impossible to get result number", e);
 		} finally {
 			if (nonNull(em)) {
 				em.close();
@@ -324,7 +323,7 @@ public class JPQLDataSet extends AbstractQbeDataSet {
 
 	@Override
 	public String getSQLQuery(boolean includeInjectedFilters) {
-		LOGGER.debug("IN: includeInjectedFilters = " + includeInjectedFilters);
+		LOGGER.debug("IN: includeInjectedFilters = {}", includeInjectedFilters);
 		String toReturn = null;
 		if (includeInjectedFilters) {
 			IStatement filteredStatement = this.getFilteredStatement();
@@ -332,7 +331,7 @@ public class JPQLDataSet extends AbstractQbeDataSet {
 		} else {
 			toReturn = statement.getSqlQueryString();
 		}
-		LOGGER.debug("OUT: returning [" + toReturn + "]");
+		LOGGER.debug("OUT: returning [{}]", toReturn);
 		return toReturn;
 	}
 
@@ -347,7 +346,7 @@ public class JPQLDataSet extends AbstractQbeDataSet {
 		String metadataXMLString = dsp.metadataToXML(metadata);
 
 		String sqlQueryString = this.getSQLQuery(true);
-		LOGGER.debug("Executing query: " + sqlQueryString);
+		LOGGER.debug("Executing query: {}", sqlQueryString);
 		JDBCDataSet jdbcDataset = (JDBCDataSet) JDBCDatasetFactory.getJDBCDataSet(this.getDataSource());
 		jdbcDataset.setDsMetadata(metadataXMLString);
 		jdbcDataset.setQuery(sqlQueryString);

@@ -117,9 +117,9 @@ public class JPAPersistenceManager implements IPersistenceManager {
 
 			toReturn = keyAttributeName;
 
-		} catch (Throwable t) {
-			logger.error(t);
-			throw new SpagoBIRuntimeException("Error searching for key column", t);
+		} catch (Exception e) {
+			logger.error(e);
+			throw new SpagoBIRuntimeException("Error searching for key column", e);
 		}
 
 		logger.debug("OUT");
@@ -132,7 +132,6 @@ public class JPAPersistenceManager implements IPersistenceManager {
 		String name = targetEntity.getName();
 
 		logger.debug("SELECT max(p." + keyColumn + ") as c FROM " + targetEntity.getName() + " p");
-		// logger.debug("SELECT max(p."+keyColumn+") as c FROM "+targetEntity.getName()+" p");
 
 		CriteriaBuilder cb1 = entityManager.getCriteriaBuilder();
 		@SuppressWarnings("unchecked")
@@ -142,7 +141,6 @@ public class JPAPersistenceManager implements IPersistenceManager {
 		Number num = (Number) cq.select(cb1.max(root.<Number>get(keyColumn)));
 		
 		//Query maxQuery = entityManager.createQuery("SELECT max(p." + keyColumn + ") as c FROM " + targetEntity.getName() + " p");
-
 
 		//Object result = maxQuery.getSingleResult();
 
@@ -161,7 +159,7 @@ public class JPAPersistenceManager implements IPersistenceManager {
 		logger.debug("IN");
 		Integer toReturn = 0;
 
-		Query maxQuery = entityManager.createQuery("SELECT max(p." + keyColumn + ") as c FROM " + tableName + " p");
+		Query maxQuery = entityManager.createQuery(String.format("SELECT max(p.%s) as c FROM %s p", keyColumn, tableName));
 
 		Object result = maxQuery.getSingleResult();
 
@@ -200,11 +198,6 @@ public class JPAPersistenceManager implements IPersistenceManager {
 			String keyAttributeName = getKeyAttributeName(targetEntity);
 			logger.debug("Key attribute name is equal to " + keyAttributeName);
 			// targetEntity.getI
-
-			// if(autoLoadPK == true){
-			// //remove key attribute
-			// aRecord.remove(keyAttributeName);
-			// }
 
 			Iterator it = aRecord.keys();
 
@@ -288,12 +281,12 @@ public class JPAPersistenceManager implements IPersistenceManager {
 					this.getDataSource().getConfiguration().getModelName(), registryConf.getEntity(), null, aRecord,
 					null);
 
-		} catch (Throwable t) {
+		} catch (Exception e) {
 			if (entityTransaction != null && entityTransaction.isActive()) {
 				entityTransaction.rollback();
 			}
-			logger.error(t);
-			throw new SpagoBIRuntimeException("Error saving entity", t);
+			logger.error(e);
+			throw new SpagoBIRuntimeException("Error saving entity", e);
 		} finally {
 			logger.debug("OUT");
 		}
@@ -407,12 +400,12 @@ public class JPAPersistenceManager implements IPersistenceManager {
 					this.getDataSource().getConfiguration().getModelName(), registryConf.getEntity(), oldRecord,
 					aRecord, changesCounter);
 
-		} catch (Throwable t) {
+		} catch (Exception e) {
 			if (entityTransaction != null && entityTransaction.isActive()) {
 				entityTransaction.rollback();
 			}
-			logger.error(t);
-			throw new SpagoBIRuntimeException("Error saving entity", t);
+			logger.error(e);
+			throw new SpagoBIRuntimeException("Error saving entity", e);
 		} finally {
 			logger.debug("OUT");
 		}
@@ -420,7 +413,7 @@ public class JPAPersistenceManager implements IPersistenceManager {
 	}
 
 	private Map<String, Object> getAllSubEntityProperties(JSONObject aRecord, RegistryConfiguration registryConf,
-			String subEntity) throws JSONException {
+			String subEntity) {
 		List<Column> columns = registryConf.getColumns();
 		// @formatter:off
 		Map<String, Object> allSubEntityProperties =
@@ -553,10 +546,7 @@ public class JPAPersistenceManager implements IPersistenceManager {
 				entityTransaction.begin();
 			}
 
-			// String q =
-			// "DELETE from "+targetEntity.getName()+" o WHERE o."+keyAttributeName+"="+keyColumnValue.toString();
-			String q = "DELETE from " + targetEntity.getName() + " WHERE " + keyAttributeName + "="
-					+ keyColumnValue.toString();
+			String q = String.format("DELETE from %s WHERE %s=%s",targetEntity.getName(), keyAttributeName, keyColumnValue.toString());
 			logger.debug("create Query " + q);
 			Query deleteQuery = entityManager.createQuery(q);
 
@@ -570,12 +560,12 @@ public class JPAPersistenceManager implements IPersistenceManager {
 					this.getDataSource().getConfiguration().getModelName(), registryConf.getEntity(), aRecord, null,
 					null);
 
-		} catch (Throwable t) {
+		} catch (Exception e) {
 			if (entityTransaction != null && entityTransaction.isActive()) {
 				entityTransaction.rollback();
 			}
-			logger.error(t);
-			throw new SpagoBIRuntimeException("Error deleting entity", t);
+			logger.error(e);
+			throw new SpagoBIRuntimeException("Error deleting entity", e);
 		} finally {
 			logger.debug("OUT");
 		}
@@ -583,12 +573,8 @@ public class JPAPersistenceManager implements IPersistenceManager {
 	}
 
 	public EntityType getTargetEntity(RegistryConfiguration registryConf, EntityManager entityManager) {
-
 		String targetEntityName = getTargetEntityName(registryConf);
-
-		EntityType targetEntity = getEntityByName(entityManager, targetEntityName);
-
-		return targetEntity;
+		return getEntityByName(entityManager, targetEntityName);
 	}
 
 	protected EntityType getEntityByName(EntityManager entityManager, String entityName) {
