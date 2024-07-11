@@ -50,7 +50,7 @@ import it.eng.qbe.query.serializer.json.QuerySerializationConstants;
 import it.eng.qbe.statement.AbstractStatement;
 import it.eng.qbe.statement.StatementTockenizer;
 import it.eng.spagobi.tools.dataset.common.query.IAggregationFunction;
-import it.eng.spagobi.utilities.StringUtils;
+import it.eng.spagobi.utilities.KnowageStringUtils;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
@@ -277,7 +277,7 @@ public class HQLStatement extends AbstractStatement {
 
 			@Override
 			public String apply(String leftHandValue, String[] rightHandValues) {
-				String rightHandValue = StringUtils.join(rightHandValues, ",");
+				String rightHandValue = KnowageStringUtils.join(rightHandValues, ",");
 				return leftHandValue + " IN (" + rightHandValue + ")";
 			}
 		});
@@ -288,7 +288,7 @@ public class HQLStatement extends AbstractStatement {
 
 			@Override
 			public String apply(String leftHandValue, String[] rightHandValues) {
-				String rightHandValue = StringUtils.join(rightHandValues, ",");
+				String rightHandValue = KnowageStringUtils.join(rightHandValues, ",");
 				return leftHandValue + " NOT IN (" + rightHandValue + ")";
 			}
 		});
@@ -688,11 +688,11 @@ public class HQLStatement extends AbstractStatement {
 				|| operandType.equalsIgnoreCase("java.lang.Character")) {
 			// if the value is already surrounded by quotes, does not neither
 			// add quotes nor escape quotes
-			if (StringUtils.isBounded(operandValueToBound, "'")) {
+			if (KnowageStringUtils.isBounded(operandValueToBound, "'")) {
 				boundedValue = operandValueToBound;
 			} else {
-				operandValueToBound = StringUtils.escapeQuotes(operandValueToBound);
-				return StringUtils.bound(operandValueToBound, "'");
+				operandValueToBound = KnowageStringUtils.escapeQuotes(operandValueToBound);
+				return KnowageStringUtils.bound(operandValueToBound, "'");
 			}
 		} else if (operandType.equalsIgnoreCase("TIMESTAMP") || operandType.equalsIgnoreCase("DATE") || operandType.equalsIgnoreCase("java.sql.TIMESTAMP")
 				|| operandType.equalsIgnoreCase("java.sql.date") || operandType.equalsIgnoreCase("java.util.date")) {
@@ -738,7 +738,7 @@ public class HQLStatement extends AbstractStatement {
 			} else if (dialect.equalsIgnoreCase(QuerySerializationConstants.DIALECT_HSQL)) {
 				try {
 					DateFormat df;
-					if (StringUtils.isBounded(dateStr, "'")) {
+					if (KnowageStringUtils.isBounded(dateStr, "'")) {
 						df = new SimpleDateFormat("'dd/MM/yyyy HH:mm:SS'");
 					} else {
 						df = new SimpleDateFormat("dd/MM/yyyy HH:mm:SS");
@@ -785,7 +785,7 @@ public class HQLStatement extends AbstractStatement {
 				 */
 				try {
 					DateFormat dateFormat;
-					if (StringUtils.isBounded(dateStr, "'")) {
+					if (KnowageStringUtils.isBounded(dateStr, "'")) {
 						dateFormat = new SimpleDateFormat("'dd/MM/yyyy'");
 					} else {
 						dateFormat = new SimpleDateFormat("dd/MM/yyyy");
@@ -1324,7 +1324,7 @@ public class HQLStatement extends AbstractStatement {
 
 		Set subqueryIds;
 		try {
-			subqueryIds = StringUtils.getParameters(queryStr, "Q");
+			subqueryIds = KnowageStringUtils.getParameters(queryStr, "Q");
 		} catch (IOException e) {
 			throw new SpagoBIRuntimeException("Impossible to set parameters in query", e);
 		}
@@ -1354,7 +1354,7 @@ public class HQLStatement extends AbstractStatement {
 
 		if (getParameters() != null) {
 			try {
-				queryStr = StringUtils.replaceParameters(queryStr.trim(), "P", getParameters());
+				queryStr = KnowageStringUtils.replaceParameters(queryStr.trim(), "P", getParameters());
 			} catch (IOException e) {
 				throw new SpagoBIRuntimeException("Impossible to set parameters in query", e);
 			}

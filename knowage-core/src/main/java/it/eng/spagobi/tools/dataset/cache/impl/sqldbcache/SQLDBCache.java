@@ -31,7 +31,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.log4j.Logger;
 
-import com.hazelcast.core.IMap;
+import com.hazelcast.map.IMap;
 import com.jamonapi.Monitor;
 import com.jamonapi.MonitorFactory;
 

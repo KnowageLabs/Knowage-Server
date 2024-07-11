@@ -26,7 +26,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
-import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.log4j.LogMF;
 import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
@@ -62,6 +62,7 @@ import it.eng.spagobi.profiling.bean.SbiUserAttributes;
 import it.eng.spagobi.profiling.bean.SbiUserAttributesId;
 import it.eng.spagobi.profiling.bo.UserBO;
 import it.eng.spagobi.profiling.dao.filters.FinalUsersFilter;
+import it.eng.spagobi.utilities.KnowageStringUtils;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
@@ -961,7 +962,7 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserD
 			String actualFieldName = AvailableFiltersOnUsersList.valueOf(staticFilter.getField()).toString();
 			String leftHandValue = ignoreCase ? "upper(" + actualFieldName + ")" : actualFieldName;
 			String value = staticFilter.getValue() != null ? staticFilter.getValue().toString() : "";
-			String escapedValue = StringEscapeUtils.escapeSql(value);
+			String escapedValue = KnowageStringUtils.escapeSql(value);
 			String[] rightHandValues = new String[] { "'" + (ignoreCase ? escapedValue.toUpperCase() : escapedValue) + "'" };
 			return conditionalOperator.apply(leftHandValue, rightHandValues);
 		} else if (filter instanceof FinalUsersFilter) {

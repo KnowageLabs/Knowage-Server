@@ -39,8 +39,8 @@ import java.util.TreeMap;
 
 import org.apache.commons.collections.BidiMap;
 import org.apache.commons.collections.bidimap.DualHashBidiMap;
-import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.text.StringEscapeUtils;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -171,7 +171,7 @@ public class CrossTab {
 				Entry<String, String> entry = iterator.next();
 
 				String value = entry.getValue();
-				value = StringEscapeUtils.escapeJavaScript(value);
+				value = StringEscapeUtils.escapeEcmaScript(value);
 
 				ret.append("@.").append(entry.getKey()).append(" == \"").append(value).append("\"");
 

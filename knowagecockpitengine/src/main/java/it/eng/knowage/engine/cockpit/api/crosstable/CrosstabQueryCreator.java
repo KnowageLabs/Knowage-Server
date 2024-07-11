@@ -32,7 +32,7 @@ import it.eng.spagobi.tools.dataset.common.query.AggregationFunctions;
 import it.eng.spagobi.tools.dataset.common.query.IAggregationFunction;
 import it.eng.spagobi.tools.dataset.persist.IDataSetTableDescriptor;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
-import it.eng.spagobi.utilities.StringUtils;
+import it.eng.spagobi.utilities.KnowageStringUtils;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
@@ -290,11 +290,11 @@ public class CrosstabQueryCreator {
 		if (String.class.isAssignableFrom(clazz)) {
 			// if the value is already surrounded by quotes, does not neither
 			// add quotes nor escape quotes
-			if (StringUtils.isBounded(operandValueToBound, "'")) {
+			if (KnowageStringUtils.isBounded(operandValueToBound, "'")) {
 				boundedValue = operandValueToBound;
 			} else {
-				operandValueToBound = StringUtils.escapeQuotes(operandValueToBound);
-				return StringUtils.bound(operandValueToBound, "'");
+				operandValueToBound = KnowageStringUtils.escapeQuotes(operandValueToBound);
+				return KnowageStringUtils.bound(operandValueToBound, "'");
 			}
 		} else if (Date.class.isAssignableFrom(clazz)) {
 			Long time = null;
@@ -411,7 +411,7 @@ public class CrosstabQueryCreator {
 			} else if (dialect.equalsIgnoreCase(QuerySerializationConstants.DIALECT_HSQL)) {
 				try {
 					DateFormat df;
-					if (StringUtils.isBounded(dateStr, "'")) {
+					if (KnowageStringUtils.isBounded(dateStr, "'")) {
 						df = new SimpleDateFormat("'dd/MM/yyyy HH:mm:SS'");
 					} else {
 						df = new SimpleDateFormat("dd/MM/yyyy HH:mm:SS");
@@ -458,7 +458,7 @@ public class CrosstabQueryCreator {
 				 */
 				try {
 					DateFormat dateFormat;
-					if (StringUtils.isBounded(dateStr, "'")) {
+					if (KnowageStringUtils.isBounded(dateStr, "'")) {
 						dateFormat = new SimpleDateFormat("'dd/MM/yyyy'");
 					} else {
 						dateFormat = new SimpleDateFormat("dd/MM/yyyy");

@@ -21,7 +21,7 @@ import java.util.Iterator;
 import java.util.Locale;
 import java.util.Locale.Builder;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
 import it.eng.spago.base.RequestContainer;

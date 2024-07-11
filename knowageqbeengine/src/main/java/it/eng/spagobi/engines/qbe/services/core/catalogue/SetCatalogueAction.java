@@ -75,7 +75,7 @@ import it.eng.spago.base.SourceBean;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.engines.qbe.QbeEngineConfig;
 import it.eng.spagobi.engines.qbe.services.core.AbstractQbeEngineAction;
-import it.eng.spagobi.utilities.StringUtils;
+import it.eng.spagobi.utilities.KnowageStringUtils;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
@@ -618,11 +618,11 @@ public class SetCatalogueAction extends AbstractQbeEngineAction {
 
 			// if the value is already surrounded by quotes, does not neither
 			// add quotes nor escape quotes
-			if (StringUtils.isBounded(operandValueToBound, "'")) {
+			if (KnowageStringUtils.isBounded(operandValueToBound, "'")) {
 				boundedValue = operandValueToBound;
 			} else {
-				operandValueToBound = StringUtils.escapeQuotes(operandValueToBound);
-				return StringUtils.bound(operandValueToBound, "'");
+				operandValueToBound = KnowageStringUtils.escapeQuotes(operandValueToBound);
+				return KnowageStringUtils.bound(operandValueToBound, "'");
 			}
 		} else if (operandType.equalsIgnoreCase("DATE") || operandType.equalsIgnoreCase("java.sql.date")
 				|| operandType.equalsIgnoreCase("java.util.date")) {
@@ -662,7 +662,7 @@ public class SetCatalogueAction extends AbstractQbeEngineAction {
 			} else if (dialect.equalsIgnoreCase(QuerySerializationConstants.DIALECT_HSQL)) {
 				try {
 					DateFormat daf;
-					if (StringUtils.isBounded(toReturn, "'")) {
+					if (KnowageStringUtils.isBounded(toReturn, "'")) {
 						daf = new SimpleDateFormat("'dd/MM/yyyy HH:mm:SS'");
 					} else {
 						daf = new SimpleDateFormat("dd/MM/yyyy HH:mm:SS");
@@ -708,7 +708,7 @@ public class SetCatalogueAction extends AbstractQbeEngineAction {
 				 */
 				try {
 					DateFormat dateFormat;
-					if (StringUtils.isBounded(toReturn, "'")) {
+					if (KnowageStringUtils.isBounded(toReturn, "'")) {
 						dateFormat = new SimpleDateFormat("'dd/MM/yyyy'");
 					} else {
 						dateFormat = new SimpleDateFormat("dd/MM/yyyy");
@@ -756,7 +756,7 @@ public class SetCatalogueAction extends AbstractQbeEngineAction {
 			} else if (dialect.equalsIgnoreCase(QuerySerializationConstants.DIALECT_HSQL)) {
 				try {
 					DateFormat daf;
-					if (StringUtils.isBounded(toReturn, "'")) {
+					if (KnowageStringUtils.isBounded(toReturn, "'")) {
 						daf = new SimpleDateFormat("'dd/MM/yyyy HH:mm:SS'");
 					} else {
 						daf = new SimpleDateFormat("dd/MM/yyyy HH:mm:SS");
@@ -802,7 +802,7 @@ public class SetCatalogueAction extends AbstractQbeEngineAction {
 				 */
 				try {
 					DateFormat dateFormat;
-					if (StringUtils.isBounded(toReturn, "'")) {
+					if (KnowageStringUtils.isBounded(toReturn, "'")) {
 						dateFormat = new SimpleDateFormat("'dd/MM/yyyy'");
 					} else {
 						dateFormat = new SimpleDateFormat("dd/MM/yyyy");

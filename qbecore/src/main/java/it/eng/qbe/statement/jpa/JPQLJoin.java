@@ -5,7 +5,7 @@ import java.util.List;
 
 import javax.persistence.criteria.JoinType;
 
-import it.eng.spagobi.utilities.StringUtils;
+import it.eng.spagobi.utilities.KnowageStringUtils;
 
 public class JPQLJoin {
 
@@ -46,7 +46,7 @@ public class JPQLJoin {
 		joinElements.add(this.joinPath.toString());
 		joinElements.add(this.targetEntityAllias);
 
-		return StringUtils.join(joinElements, " ");
+		return KnowageStringUtils.join(joinElements, " ");
 	}
 
 }

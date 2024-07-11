@@ -15,24 +15,36 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package it.eng.spagobi.georeport.dao;
 
-import it.eng.spagobi.commons.dao.ISpagoBIDao;
+package it.eng.spagobi.engines.georeport.dao;
 
-import java.util.Map;
+import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 
-import org.geotools.feature.FeatureCollection;
-import org.opengis.feature.simple.SimpleFeature;
+public class FeaturesProviderRuntimeException extends SpagoBIEngineRuntimeException {
+    	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 
-/**
- * @authors Andrea Gioia (andrea.gioia@eng.it), Fabio D'Ovidio (f.dovidio@inovaos.it)
- */
-public interface IFeaturesProviderWFSDAO extends ISpagoBIDao {
-
-	SimpleFeature getFeatureById(Object fetureProviderEndPoint, String layerName, Map parameters);
-
-	FeatureCollection getAllFeatures(String srcFile);
-
-	FeatureCollection getAllFeaturesOLD(Object fetureProviderEndPoint, String layerName);
+	/**
+	 * Builds a <code>GeoEngineException</code>.
+	 * 
+	 * @param message Text of the exception
+	 */
+    public FeaturesProviderRuntimeException(String message) {
+    	super(message);
+    }
+	
+    /**
+     * Builds a <code>GeoEngineException</code>.
+     * 
+     * @param message Text of the exception
+     * @param ex previous Throwable object
+     */
+    public FeaturesProviderRuntimeException(String message, Throwable ex) {
+    	super(message, ex);
+    }
 
 }
+

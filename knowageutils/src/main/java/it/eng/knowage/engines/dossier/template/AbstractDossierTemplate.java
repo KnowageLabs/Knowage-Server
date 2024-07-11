@@ -22,11 +22,10 @@ import java.util.List;
 
 import javax.xml.bind.annotation.XmlAttribute;
 
-import org.codehaus.jackson.map.annotate.JsonSerialize;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSetter;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 import it.eng.knowage.engines.dossier.template.doc.DocDossierTemplate;
 import it.eng.knowage.engines.dossier.template.parameter.Parameter;

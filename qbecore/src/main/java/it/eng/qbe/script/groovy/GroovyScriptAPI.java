@@ -17,9 +17,10 @@
  */
 package it.eng.qbe.script.groovy;
 
+import org.apache.commons.text.StringEscapeUtils;
+
 import it.eng.spagobi.utilities.assertion.Assert;
 
-import org.apache.commons.lang.StringEscapeUtils;
 
 public class GroovyScriptAPI {
 
@@ -35,25 +36,25 @@ public class GroovyScriptAPI {
 		StringBuffer result = new StringBuffer("");
 		result.append("<a href='#' onclick=\"javascript:sendMessage({");
 		result.append("'windowName' : this.name");
-		result.append(", 'label' : '" + StringEscapeUtils.escapeJavaScript(label) + "'");
-		result.append(", 'parameters' : '" + StringEscapeUtils.escapeJavaScript(parameters) + "'");
-		if(subobject != null) result.append(", 'subobject' : '" + StringEscapeUtils.escapeJavaScript(subobject) + "'");
-		if(newTitle != null) result.append(", 'title' : '" + StringEscapeUtils.escapeJavaScript(newTitle) + "'");
-		if(target != null) result.append(", 'target' : '" + StringEscapeUtils.escapeJavaScript(target) + "'");
+		result.append(", 'label' : '" + StringEscapeUtils.escapeEcmaScript(label) + "'");
+		result.append(", 'parameters' : '" + StringEscapeUtils.escapeEcmaScript(parameters) + "'");
+		if(subobject != null) result.append(", 'subobject' : '" + StringEscapeUtils.escapeEcmaScript(subobject) + "'");
+		if(newTitle != null) result.append(", 'title' : '" + StringEscapeUtils.escapeEcmaScript(newTitle) + "'");
+		if(target != null) result.append(", 'target' : '" + StringEscapeUtils.escapeEcmaScript(target) + "'");
 		result.append("}, 'crossnavigation');\"");
-		result.append(">" + StringEscapeUtils.escapeHtml(text) + "</a>");
+		result.append(">" + StringEscapeUtils.escapeHtml4(text) + "</a>");
 		return result.toString();
 	}
 	
 	public String getImage(String imageUrl) {
 		StringBuffer result = new StringBuffer("");
-		result.append("<img src='" + StringEscapeUtils.escapeHtml(imageUrl) + "'></img>");
+		result.append("<img src='" + StringEscapeUtils.escapeHtml4(imageUrl) + "'></img>");
 		return result.toString();
 	}
 	
 	public String getLink(String url, String text) {
 		StringBuffer result = new StringBuffer("");
-		result.append("<a href='" + StringEscapeUtils.escapeHtml(url) + "'>" +StringEscapeUtils.escapeHtml(text)  + "</a>");
+		result.append("<a href='" + StringEscapeUtils.escapeHtml4(url) + "'>" +StringEscapeUtils.escapeHtml4(text)  + "</a>");
 		return result.toString();
 	}
 	

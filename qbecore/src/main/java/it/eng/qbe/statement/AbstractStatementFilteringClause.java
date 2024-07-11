@@ -33,7 +33,7 @@ import it.eng.qbe.query.Operand;
 import it.eng.qbe.query.Query;
 import it.eng.spagobi.tools.dataset.common.query.CustomFunction;
 import it.eng.spagobi.tools.dataset.common.query.IAggregationFunction;
-import it.eng.spagobi.utilities.StringUtils;
+import it.eng.spagobi.utilities.KnowageStringUtils;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.objects.Couple;
 
@@ -351,13 +351,13 @@ public abstract class AbstractStatementFilteringClause extends AbstractStatement
 				|| operandType.equalsIgnoreCase("java.lang.Character")) {
 
 			// if the value is already surrounded by quotes, does not neither add quotes nor escape quotes
-			if (StringUtils.isBounded(operandValueToBound, "'")) {
+			if (KnowageStringUtils.isBounded(operandValueToBound, "'")) {
 				boundedValue = operandValueToBound;
 			} else {
-				operandValueToBound = StringUtils.escapeQuotes(operandValueToBound);
+				operandValueToBound = KnowageStringUtils.escapeQuotes(operandValueToBound);
 				if (!operandValueToBound.startsWith("$P{")) {
 
-					return StringUtils.bound(operandValueToBound, "'");
+					return KnowageStringUtils.bound(operandValueToBound, "'");
 				} else {
 					return operandValueToBound;
 				}

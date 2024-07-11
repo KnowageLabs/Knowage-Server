@@ -26,7 +26,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.log4j.LogMF;
 import org.apache.log4j.Logger;
 
@@ -36,6 +35,7 @@ import com.jayway.jsonpath.JsonPath;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
+import it.eng.spagobi.utilities.KnowageStringUtils;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 public class PNTSecurityServiceSupplier extends OIDCFullIdTokenSecurityServiceSupplier {
@@ -150,7 +150,7 @@ public class PNTSecurityServiceSupplier extends OIDCFullIdTokenSecurityServiceSu
 				String.join("','",
 						values
 							.stream()
-							.map(StringEscapeUtils::escapeSql) // SQL escape for each region
+							.map(KnowageStringUtils::escapeSql) // SQL escape for each region
 							.collect(Collectors.toList())) +
 				"'";
 		// @formatter:on

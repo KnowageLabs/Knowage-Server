@@ -59,7 +59,7 @@ import it.eng.spagobi.tools.catalogue.dao.IMetaModelsDAO;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.tools.datasource.bo.serializer.JDBCDataSourcePoolConfigurationJSONSerializer;
 import it.eng.spagobi.tools.datasource.dao.IDataSourceDAO;
-import it.eng.spagobi.utilities.StringUtils;
+import it.eng.spagobi.utilities.KnowageStringUtils;
 import it.eng.spagobi.utilities.database.DataBaseException;
 import it.eng.spagobi.utilities.database.DataBaseFactory;
 import it.eng.spagobi.utilities.database.IDataBase;
@@ -677,7 +677,7 @@ public class PhysicalModelInitializer {
 
 			while (tableRs.next()) {
 				String tableName = tableRs.getString("TABLE_NAME");
-				if (StringUtils.matchesLikeNotLikeCriteria(tableName, tableNamePatternLike, tableNamePatternNotLike))
+				if (KnowageStringUtils.matchesLikeNotLikeCriteria(tableName, tableNamePatternLike, tableNamePatternNotLike))
 					tablesOnDatabase.add(tableName);
 			}
 			tableRs.close();
@@ -739,7 +739,7 @@ public class PhysicalModelInitializer {
 
 			while (tableRs.next()) {
 				String tableName = tableRs.getString("TABLE_NAME");
-				if (StringUtils.matchesLikeNotLikeCriteria(tableName, tableNamePatternLike, tableNamePatternNotLike))
+				if (KnowageStringUtils.matchesLikeNotLikeCriteria(tableName, tableNamePatternLike, tableNamePatternNotLike))
 					tablesOnDatabase.add(tableName);
 			}
 			tableRs.close();
@@ -806,7 +806,7 @@ public class PhysicalModelInitializer {
 
 			while (tableRs.next()) {
 				String tableName = tableRs.getString("TABLE_NAME");
-				if (StringUtils.matchesLikeNotLikeCriteria(tableName, tableNamePatternLike, tableNamePatternNotLike))
+				if (KnowageStringUtils.matchesLikeNotLikeCriteria(tableName, tableNamePatternLike, tableNamePatternNotLike))
 					tablesOnDatabase.add(tableName);
 			}
 			tableRs.close();

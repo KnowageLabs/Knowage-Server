@@ -28,8 +28,8 @@ import java.util.Set;
 
 import javax.servlet.http.HttpSession;
 
-import org.apache.commons.lang.StringEscapeUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.text.StringEscapeUtils;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -884,7 +884,8 @@ public class MenuListJSONSerializerForREST implements Serializer {
 	}
 
 	private void setPropertiesForFunctionalityMenu(Menu childElem, JSONObject temp2, String path) throws JSONException {
-		temp2.put(TO, StringEscapeUtils.escapeJavaScript(MenuHelper.findFunctionalityUrl(childElem, contextName)));
+		temp2.put(TO,
+				StringEscapeUtils.escapeEcmaScript(MenuHelper.findFunctionalityUrl(childElem, contextName)));
 	}
 
 	private void setPropertiesForStaticMenu(Menu childElem, JSONObject temp2, String path) throws JSONException {

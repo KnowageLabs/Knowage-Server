@@ -36,7 +36,6 @@ import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.bo.VersionedDataSet;
 import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
 import it.eng.spagobi.tools.dataset.persist.IPersistedManager;
-import it.eng.spagobi.tools.dataset.persist.PersistedHDFSManager;
 import it.eng.spagobi.tools.dataset.persist.PersistedTableManager;
 import it.eng.spagobi.tools.dataset.utils.datamart.SpagoBICoreDatamartRetriever;
 
@@ -84,10 +83,6 @@ public class ExecutePersistDatasetJob extends AbstractSpagoBIJob implements Job 
 				ptm.persistDataSet(dataset);
 			}
 
-			if (dataset.isPersistedHDFS()) {
-				ptm = new PersistedHDFSManager(userProfile);
-				ptm.persistDataSet(dataset);
-			}
 			logger.debug("Persistence ended succesfully!");
 		} catch (Exception e) {
 			logger.error("Error while executiong job ", e);

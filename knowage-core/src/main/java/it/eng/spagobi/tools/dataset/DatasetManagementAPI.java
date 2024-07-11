@@ -98,7 +98,7 @@ import it.eng.spagobi.tools.dataset.strategy.DatasetEvaluationStrategyFactory;
 import it.eng.spagobi.tools.dataset.strategy.IDatasetEvaluationStrategy;
 import it.eng.spagobi.tools.dataset.utils.DataSetUtilities;
 import it.eng.spagobi.utilities.Helper;
-import it.eng.spagobi.utilities.StringUtils;
+import it.eng.spagobi.utilities.KnowageStringUtils;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.cache.CacheItem;
 import it.eng.spagobi.utilities.database.DataBaseException;
@@ -695,8 +695,8 @@ public class DatasetManagementAPI {
 
 								}
 							}
-							String newValuesString = StringUtils.join(newValues, ",");
-							newValuesString = newValuesString.replace("&comma;", ",");
+							String newValuesString = KnowageStringUtils.join(newValues, ",");
+							newValuesString = newValuesString.replaceAll("&comma;", ",");
 							paramValues.put(paramName, newValuesString);
 							break;
 						}
@@ -761,8 +761,8 @@ public class DatasetManagementAPI {
 //									}
 								}
 							}
-							String newValuesString = StringUtils.join(newValues, ",");
-							newValuesString = newValuesString.replace("&comma;", ",");
+							String newValuesString = KnowageStringUtils.join(newValues, ",");
+							newValuesString = newValuesString.replaceAll("&comma;", ",");
 							paramValues.put(paramName, newValuesString);
 							break;
 						}

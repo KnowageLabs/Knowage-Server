@@ -53,7 +53,7 @@ import it.eng.spagobi.tools.dataset.utils.DatasetMetadataParser;
 import it.eng.spagobi.tools.datasource.bo.DataSourceFactory;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.user.UserProfileManager;
-import it.eng.spagobi.utilities.StringUtils;
+import it.eng.spagobi.utilities.KnowageStringUtils;
 import it.eng.spagobi.utilities.database.temporarytable.TemporaryTableManager;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
@@ -1042,8 +1042,8 @@ public abstract class AbstractDataSet implements IDataSet {
 	private String getFilterValue(String value, Class clazz) {
 		String toReturn = null;
 		if (String.class.isAssignableFrom(clazz)) {
-			value = StringUtils.escapeQuotes(value);
-			toReturn = StringUtils.bound(value, "'");
+			value = KnowageStringUtils.escapeQuotes(value);
+			toReturn = KnowageStringUtils.bound(value, "'");
 		} else if (Number.class.isAssignableFrom(clazz)) {
 			toReturn = value;
 		} else if (Boolean.class.isAssignableFrom(clazz)) {

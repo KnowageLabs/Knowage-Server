@@ -23,7 +23,7 @@ import java.util.Locale;
 
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
 import it.eng.knowage.commons.utilities.KnLanguageCookie;

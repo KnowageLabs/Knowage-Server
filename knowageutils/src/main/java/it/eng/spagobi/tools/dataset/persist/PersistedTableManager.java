@@ -57,7 +57,7 @@ import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData.FieldType;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import it.eng.spagobi.tools.dataset.metasql.query.DatabaseDialect;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
-import it.eng.spagobi.utilities.StringUtils;
+import it.eng.spagobi.utilities.KnowageStringUtils;
 import it.eng.spagobi.utilities.database.CacheDataBase;
 import it.eng.spagobi.utilities.database.DataBaseException;
 import it.eng.spagobi.utilities.database.DataBaseFactory;
@@ -1144,7 +1144,7 @@ public class PersistedTableManager implements IPersistedManager {
 		UUID uuidObj = UUID.randomUUID();
 		String generatedId = uuidObj.toString();
 		generatedId = generatedId.replaceAll("-", "");
-		generatedId = StringUtils.convertNonAscii(generatedId);
+		generatedId = KnowageStringUtils.convertNonAscii(generatedId);
 		if ((prefix != null) && (!prefix.isEmpty())) {
 			generatedId = prefix + generatedId;
 		}

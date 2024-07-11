@@ -34,7 +34,7 @@ import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.persist.DataSetTableDescriptor;
 import it.eng.spagobi.tools.dataset.persist.IDataSetTableDescriptor;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
-import it.eng.spagobi.utilities.StringUtils;
+import it.eng.spagobi.utilities.KnowageStringUtils;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.database.DataBaseException;
 import it.eng.spagobi.utilities.database.DataBaseFactory;
@@ -543,7 +543,7 @@ public class TemporaryTableManager {
 			logger.debug("Actual table prefix : [" + schema + "]");
 		}
 		String tableNameSuffix = getTableNameSuffix();
-		String cleanRoot = StringUtils.convertNonAscii(root);
+		String cleanRoot = KnowageStringUtils.convertNonAscii(root);
 		// removing non letters
 		StringBuilder sb = new StringBuilder();
 		int n = cleanRoot.length();

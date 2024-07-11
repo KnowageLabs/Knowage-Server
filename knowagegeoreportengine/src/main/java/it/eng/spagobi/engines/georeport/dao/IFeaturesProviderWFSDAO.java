@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package it.eng.spagobi.georeport.dao;
+package it.eng.spagobi.engines.georeport.dao;
 
 import it.eng.spagobi.commons.dao.ISpagoBIDao;
 
@@ -27,7 +27,7 @@ import org.opengis.feature.simple.SimpleFeature;
 /**
  * @authors Andrea Gioia (andrea.gioia@eng.it), Fabio D'Ovidio (f.dovidio@inovaos.it)
  */
-public interface IFeaturesProviderFileDAO extends ISpagoBIDao {
+public interface IFeaturesProviderWFSDAO extends ISpagoBIDao {
 
 	SimpleFeature getFeatureById(Object fetureProviderEndPoint, String layerName, Map parameters);
 

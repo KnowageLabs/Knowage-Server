@@ -56,7 +56,6 @@ import javax.ws.rs.core.Response.Status;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.LogMF;
 import org.apache.log4j.Logger;
-import org.geotools.data.DataSourceException;
 import org.jasypt.encryption.pbe.PBEStringEncryptor;
 import org.jboss.resteasy.plugins.providers.html.View;
 import org.json.JSONArray;
@@ -130,7 +129,6 @@ import it.eng.spagobi.tools.dataset.metasql.query.item.SimpleSelectionField;
 import it.eng.spagobi.tools.dataset.metasql.query.item.UnaryFilter;
 import it.eng.spagobi.tools.dataset.metasql.query.item.UnsatisfiedFilter;
 import it.eng.spagobi.tools.dataset.persist.IPersistedManager;
-import it.eng.spagobi.tools.dataset.persist.PersistedHDFSManager;
 import it.eng.spagobi.tools.dataset.persist.PersistedTableManager;
 import it.eng.spagobi.tools.dataset.utils.DataSetUtilities;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
@@ -199,7 +197,7 @@ public class DataSetResource extends AbstractDataSetResource {
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	@UserConstraint(functionalities = { CommunityFunctionalityConstants.SELF_SERVICE_DATASET_MANAGEMENT })
 	public String availableFunctions(@PathParam("dsId") String datasetId, @QueryParam("useCache") boolean useCache)
-			throws JSONException, DataBaseException, EMFUserError, DataSourceException {
+			throws JSONException, DataBaseException, EMFUserError, SpagoBIRuntimeException {
 		logger.debug("IN");
 
 		ISbiDataSetDAO dsDAO = DAOFactory.getSbiDataSetDAO();
@@ -213,7 +211,7 @@ public class DataSetResource extends AbstractDataSetResource {
 			IDataSource dataSource = dataSourceDAO.loadDataSourceWriteDefault();
 
 			if (dataSource == null)
-				throw new DataSourceException("No data source found for cache");
+				throw new SpagoBIRuntimeException("No data source found for cache");
 
 			String dataBaseDialect = dataSource.getDialectName();
 			List<String> availableFunctions = datasetFunctionsConfig.getAvailableFunctions(dataBaseDialect);
@@ -316,11 +314,6 @@ public class DataSetResource extends AbstractDataSetResource {
 
 		try {
 			DAOFactory.getDataSetDAO().insertDataSet(dataset);
-
-			if (dataset.isPersistedHDFS()) {
-				IPersistedManager ptm = new PersistedHDFSManager(getUserProfile());
-				ptm.persistDataSet(dataset);
-			}
 
 			if (dataset.isPersisted()) {
 				IPersistedManager ptm = new PersistedTableManager(getUserProfile());

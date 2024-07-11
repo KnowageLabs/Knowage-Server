@@ -26,7 +26,7 @@ import java.sql.Timestamp;
 import java.util.Date;
 import java.util.Map;
 
-import org.apache.commons.lang.math.NumberUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.log4j.Logger;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
@@ -48,7 +48,7 @@ import it.eng.spagobi.tools.dataset.common.datastore.Record;
 import it.eng.spagobi.tools.dataset.common.metadata.FieldMetadata;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import it.eng.spagobi.tools.dataset.common.metadata.MetaData;
-import it.eng.spagobi.utilities.StringUtils;
+import it.eng.spagobi.utilities.KnowageStringUtils;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 /**
@@ -181,7 +181,7 @@ public class FileDatasetCsvDataReader extends AbstractDataReader {
 				// Create Datastore Metadata with header file
 				for (int i = 0; i < header.length; i++) {
 					FieldMetadata fieldMeta = new FieldMetadata();
-					String fieldName = StringUtils.escapeForSQLColumnName(header[i]);
+					String fieldName = KnowageStringUtils.escapeForSQLColumnName(header[i]);
 					fieldMeta.setName(fieldName);
 					dataStoreMeta.addFiedMeta(fieldMeta);
 				}

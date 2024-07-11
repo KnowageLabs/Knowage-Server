@@ -17,7 +17,7 @@
  */
 package it.eng.spagobi.tools.dataset.graph;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.HashSet;
 import java.util.Set;

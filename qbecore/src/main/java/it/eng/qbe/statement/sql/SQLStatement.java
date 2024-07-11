@@ -33,7 +33,7 @@ import it.eng.qbe.model.structure.IModelEntity;
 import it.eng.qbe.query.Query;
 import it.eng.qbe.statement.AbstractStatement;
 import it.eng.spagobi.tools.dataset.bo.AbstractJDBCDataset;
-import it.eng.spagobi.utilities.StringUtils;
+import it.eng.spagobi.utilities.KnowageStringUtils;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
@@ -67,7 +67,7 @@ public class SQLStatement extends AbstractStatement {
 
 		if (getParameters() != null) {
 			try {
-				queryStr = StringUtils.replaceParameters(queryStr.trim(), "P", getParameters());
+				queryStr = KnowageStringUtils.replaceParameters(queryStr.trim(), "P", getParameters());
 			} catch (IOException e) {
 				throw new SpagoBIRuntimeException("Impossible to set parameters in query", e);
 			}
@@ -111,7 +111,7 @@ public class SQLStatement extends AbstractStatement {
 
 		Set subqueryIds;
 		try {
-			subqueryIds = StringUtils.getParameters(queryStr, "Q");
+			subqueryIds = KnowageStringUtils.getParameters(queryStr, "Q");
 		} catch (IOException e) {
 			throw new SpagoBIRuntimeException("Impossible to set parameters in query", e);
 		}
