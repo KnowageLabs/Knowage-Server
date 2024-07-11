@@ -65,7 +65,8 @@ import it.eng.spagobi.utilities.KnowageStringUtils;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
-public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserDAO, EmittingEventDAO<UserEventsEmettingCommand> {
+public class SbiUserDAOHibImpl extends AbstractHibernateDAO
+		implements ISbiUserDAO, EmittingEventDAO<UserEventsEmettingCommand> {
 
 	private static final Logger LOGGER = Logger.getLogger(SbiUserDAOHibImpl.class);
 
@@ -495,13 +496,14 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserD
 				}
 
 				SbiExtUserRoles sbiExtUserRole = new SbiExtUserRoles();
-				SbiExtUserRolesId extUserRoleId = new SbiExtUserRolesId(currentSessionUser.getId(),aRole.getExtRoleId());
+				SbiExtUserRolesId extUserRoleId = new SbiExtUserRolesId(currentSessionUser.getId(),
+						aRole.getExtRoleId());
 
 				sbiExtUserRole.setId(extUserRoleId);
 				sbiExtUserRole.setSbiUser(currentSessionUser);
 
 				sbiExtUserRole.setSbiUser(currentSessionUser);
-				//sbiExtUserRole.getId().setId(currentSessionUser.getId());
+				// sbiExtUserRole.getId().setId(currentSessionUser.getId());
 				sbiExtUserRole.getCommonInfo().setOrganization(aRole.getCommonInfo().getOrganization());
 				updateSbiCommonInfo4Insert(sbiExtUserRole);
 				aSession.saveOrUpdate(sbiExtUserRole);
@@ -577,7 +579,8 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserD
 								}
 							}
 
-							if (currUserAttr != null && !Objects.equals(currUserAttr.getAttributeValue(), temp.getAttributeValue())) {
+							if (currUserAttr != null
+									&& !Objects.equals(currUserAttr.getAttributeValue(), temp.getAttributeValue())) {
 								temp.setAttributeValue(currUserAttr.getAttributeValue());
 								updateSbiCommonInfo4Update(temp);
 								aSession.saveOrUpdate(temp);
@@ -602,7 +605,8 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserD
 						updateSbiCommonInfo4Insert(attribute);
 						aSession.saveOrUpdate(attribute);
 
-						SbiAttribute loadedSbiAttribute = DAOFactory.getSbiAttributeDAO().loadSbiAttributeById(attributeId);
+						SbiAttribute loadedSbiAttribute = DAOFactory.getSbiAttributeDAO()
+								.loadSbiAttributeById(attributeId);
 						attribute.setSbiAttribute(loadedSbiAttribute);
 						attribute.setSbiUser(currentSessionUser);
 
@@ -700,8 +704,8 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserD
 	}
 
 	/**
-	 * Check if the user identifier in input is valid (for insertion or modification) for the user with the input integer id. In case of user insertion, id
-	 * should be null.
+	 * Check if the user identifier in input is valid (for insertion or modification) for the user with the input integer id. In case of user insertion, id should
+	 * be null.
 	 *
 	 * @param userId The user identifier to check
 	 * @param id     The id of the user to which the user identifier should be validated
@@ -783,7 +787,8 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserD
 
 		Integer maxFailedLoginAttempts = null;
 		try {
-			maxFailedLoginAttempts = Integer.valueOf(SingletonConfig.getInstance().getConfigValue("internal.security.login.maxFailedLoginAttempts"));
+			maxFailedLoginAttempts = Integer.valueOf(
+					SingletonConfig.getInstance().getConfigValue("internal.security.login.maxFailedLoginAttempts"));
 		} catch (NumberFormatException e) {
 			throw new SpagoBIRuntimeException("Error while retrieving maxFailedLoginAttempts for user ", e);
 		} catch (Exception e) {
@@ -954,12 +959,14 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserD
 		if (filter instanceof QueryStaticFilter) {
 			QueryStaticFilter staticFilter = (QueryStaticFilter) filter;
 			boolean ignoreCase = staticFilter.isIgnoreCase();
-			IConditionalOperator conditionalOperator = (IConditionalOperator) HQLStatement.conditionalOperators.get(staticFilter.getOperator());
+			IConditionalOperator conditionalOperator = (IConditionalOperator) HQLStatement.conditionalOperators
+					.get(staticFilter.getOperator());
 			String actualFieldName = AvailableFiltersOnUsersList.valueOf(staticFilter.getField()).toString();
 			String leftHandValue = ignoreCase ? "upper(" + actualFieldName + ")" : actualFieldName;
 			String value = staticFilter.getValue() != null ? staticFilter.getValue().toString() : "";
 			String escapedValue = KnowageStringUtils.escapeSql(value);
-			String[] rightHandValues = new String[] { "'" + (ignoreCase ? escapedValue.toUpperCase() : escapedValue) + "'" };
+			String[] rightHandValues = new String[] {
+					"'" + (ignoreCase ? escapedValue.toUpperCase() : escapedValue) + "'" };
 			return conditionalOperator.apply(leftHandValue, rightHandValues);
 		} else if (filter instanceof FinalUsersFilter) {
 			StringBuilder buffer = new StringBuilder();
@@ -989,7 +996,8 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserD
 			disableTenantFilter(aSession);
 			tx = aSession.beginTransaction();
 
-			Number count = (Number) aSession.createCriteria(SbiUser.class).setProjection(Projections.rowCount()).uniqueResult();
+			Number count = (Number) aSession.createCriteria(SbiUser.class).setProjection(Projections.rowCount())
+					.uniqueResult();
 
 			return count.longValue() > 0;
 

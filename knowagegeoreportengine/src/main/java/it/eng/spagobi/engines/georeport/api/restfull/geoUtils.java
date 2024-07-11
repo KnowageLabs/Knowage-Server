@@ -23,7 +23,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.geotools.data.DataUtilities;
 import org.geotools.feature.FeatureCollection;
 import org.geotools.feature.FeatureIterator;
@@ -39,6 +40,8 @@ import it.eng.knowage.commons.security.PathTraversalChecker;
 import it.eng.spago.base.SourceBean;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
+import it.eng.spagobi.engines.georeport.dao.FeaturesProviderDAOFileImpl;
+import it.eng.spagobi.engines.georeport.dao.FeaturesProviderDAOWFSImpl;
 import it.eng.spagobi.engines.georeport.utils.LayerCache;
 import it.eng.spagobi.engines.georeport.utils.Monitor;
 import it.eng.spagobi.mapcatalogue.bo.GeoLayer;
@@ -65,7 +68,7 @@ public class geoUtils {
 	public static final String LAYER_URL = "layerUrl";
 	public static final String NO_DATASET = "noDataset";
 
-	private static Logger logger = Logger.getLogger(geoUtils.class);
+	private static Logger logger = LogManager.getLogger(geoUtils.class);
 
 	public static FieldType getDsFieldType(String xml, String fieldName) throws Exception {
 		FieldType toReturn = IFieldMetaData.FieldType.ATTRIBUTE;
@@ -151,11 +154,11 @@ public class geoUtils {
 
 						PathTraversalChecker.get(SpagoBIUtilities.getResourcePath(), source);
 
-						outputFeatureCollection = DAOFactory.getFeaturesProviderFileDAO().getAllFeatures(source);
-
+						FeaturesProviderDAOFileImpl featuresProviderDAOFileImpl = new FeaturesProviderDAOFileImpl();
+						outputFeatureCollection = featuresProviderDAOFileImpl.getAllFeatures(source);
 					} else {
-						
-						outputFeatureCollection = DAOFactory.getFeaturesProviderWFSDAO().getAllFeatures(source);
+						FeaturesProviderDAOWFSImpl featuresProviderDAOWFSImpl = new FeaturesProviderDAOWFSImpl();
+						outputFeatureCollection = featuresProviderDAOWFSImpl.getAllFeatures(source);
 					}
 					Assert.assertNotNull(outputFeatureCollection, "The feature source returned a null object");
 					logger.debug(

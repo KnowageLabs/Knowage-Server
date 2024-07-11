@@ -5,7 +5,7 @@
 	
 	<groupId>it.eng.knowage</groupId>
 	<artifactId>knowage-ce-parent</artifactId>
-	<version>8.2.0-SNAPSHOT</version>
+	<version>9.0.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>knowage-ce-parent</name>
 	
@@ -54,7 +54,7 @@
 	</distributionManagement>
 	
 	<properties>
-		<apache.poi>4.1.2</apache.poi>
+		<apache.poi>5.2.5</apache.poi>
 		<checkstyle-maven-plugin.version>3.3.1</checkstyle-maven-plugin.version>
 		<checkstyle.config.location>${project.basedir}/../checkstyle/checkstyle.xml</checkstyle.config.location>
 		<checkstyle.header.file>${project.basedir}/../LICENSE</checkstyle.header.file>
@@ -72,10 +72,10 @@
 		<!-- For eclipse plugin -->
 		<m2e.jpa.activation>false</m2e.jpa.activation>
 		<m2e.jsf.activation>false</m2e.jsf.activation>
-		<maven.compiler.source>1.8</maven.compiler.source>
-		<maven.compiler.target>1.8</maven.compiler.target>
+		<maven.compiler.source>17</maven.compiler.source>
+		<maven.compiler.target>17</maven.compiler.target>
 		<mpir.skip>true</mpir.skip>
-		<ojdbc.version>12.2.0.1</ojdbc.version>
+		<ojdbc.version>23.4.0.24.05</ojdbc.version>
 		<owasp-java-html-sanitizer.version>20220608.1</owasp-java-html-sanitizer.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<quartz.version>2.3.2</quartz.version>
@@ -173,7 +173,7 @@
 			
 			<dependency>
 				<groupId>com.oracle.database.jdbc</groupId>
-				<artifactId>ojdbc8</artifactId>
+				<artifactId>ojdbc11</artifactId>
 				<version>${ojdbc.version}</version>
 			</dependency>
 			

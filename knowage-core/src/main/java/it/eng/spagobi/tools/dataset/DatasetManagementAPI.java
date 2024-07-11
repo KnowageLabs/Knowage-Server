@@ -37,12 +37,13 @@ import java.util.zip.InflaterInputStream;
 
 import javax.naming.NamingException;
 
-import org.apache.log4j.Logger;
+import org.apache.livy.shaded.kryo.kryo.Kryo;
+import org.apache.livy.shaded.kryo.kryo.io.UnsafeInput;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.esotericsoftware.kryo.Kryo;
-import com.esotericsoftware.kryo.io.UnsafeInput;
 import com.jamonapi.Monitor;
 import com.jamonapi.MonitorFactory;
 
@@ -105,7 +106,6 @@ import it.eng.spagobi.utilities.database.DataBaseException;
 import it.eng.spagobi.utilities.exceptions.ActionNotPermittedException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.threadmanager.WorkManager;
-import it.eng.spagobi.utilities.trove.TLongHashSetSerializer;
 
 /**
  * DataLayer facade class. It manage the access to SpagoBI's datasets. It is built on top of the dao. It manages all complex operations that involve more than a
@@ -118,7 +118,7 @@ import it.eng.spagobi.utilities.trove.TLongHashSetSerializer;
 
 public class DatasetManagementAPI {
 
-	private static Logger logger = Logger.getLogger(DatasetManagementAPI.class);
+	private static Logger logger = LogManager.getLogger(DatasetManagementAPI.class);
 
 	private UserProfile userProfile;
 	private IDataSetDAO dataSetDao;
@@ -791,7 +791,7 @@ public class DatasetManagementAPI {
 		UnsafeInput input = null;
 		try {
 			Kryo kryo = new Kryo();
-			kryo.register(TLongHashSet.class, new TLongHashSetSerializer());
+			kryo.register(TLongHashSet.class);
 			String filepath = path + File.separatorChar + hashSignature + DataSetConstants.DOMAIN_VALUES_EXTENSION;
 			File file = new File(filepath);
 			if (!file.exists()) {

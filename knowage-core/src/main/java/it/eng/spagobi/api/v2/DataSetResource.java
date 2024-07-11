@@ -52,7 +52,6 @@ import javax.ws.rs.core.Response.Status;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.LogMF;
 import org.apache.log4j.Logger;
-import org.geotools.data.DataSourceException;
 import org.jasypt.encryption.pbe.PBEStringEncryptor;
 import org.jboss.resteasy.plugins.providers.html.View;
 import org.json.JSONArray;
@@ -197,7 +196,7 @@ public class DataSetResource extends AbstractDataSetResource {
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	@UserConstraint(functionalities = { CommunityFunctionalityConstants.SELF_SERVICE_DATASET_MANAGEMENT })
 	public String availableFunctions(@PathParam("dsId") String datasetId, @QueryParam("useCache") boolean useCache)
-			throws JSONException, DataBaseException, EMFUserError, DataSourceException {
+			throws JSONException, DataBaseException, EMFUserError, SpagoBIRuntimeException {
 		logger.debug("IN");
 
 		ISbiDataSetDAO dsDAO = DAOFactory.getSbiDataSetDAO();
@@ -211,7 +210,7 @@ public class DataSetResource extends AbstractDataSetResource {
 			IDataSource dataSource = dataSourceDAO.loadDataSourceWriteDefault();
 
 			if (dataSource == null)
-				throw new DataSourceException("No data source found for cache");
+				throw new SpagoBIRuntimeException("No data source found for cache");
 
 			String dataBaseDialect = dataSource.getDialectName();
 			List<String> availableFunctions = datasetFunctionsConfig.getAvailableFunctions(dataBaseDialect);

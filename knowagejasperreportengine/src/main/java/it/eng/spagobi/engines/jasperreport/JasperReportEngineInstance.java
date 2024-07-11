@@ -56,7 +56,8 @@ import com.jamonapi.MonitorFactory;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.engines.jasperreport.datasource.JRSpagoBIDataStoreDataSource;
-import it.eng.spagobi.engines.jasperreport.exporters.JRImageExporterParameter;
+import it.eng.spagobi.engines.jasperreport.exporters.JRImageBase64Exporter;
+import it.eng.spagobi.engines.jasperreport.exporters.JRJpegExporter;
 import it.eng.spagobi.services.common.EnginConf;
 import it.eng.spagobi.services.content.bo.Content;
 import it.eng.spagobi.services.proxy.ContentServiceProxy;
@@ -76,8 +77,6 @@ import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.engines.IEngineAnalysisState;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineException;
 import net.sf.jasperreports.engine.JRDataset;
-import net.sf.jasperreports.engine.JRExporter;
-import net.sf.jasperreports.engine.JRExporterParameter;
 import net.sf.jasperreports.engine.JRParameter;
 import net.sf.jasperreports.engine.JRVirtualizer;
 import net.sf.jasperreports.engine.JasperCompileManager;
@@ -85,9 +84,14 @@ import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.JasperReport;
 import net.sf.jasperreports.engine.design.JasperDesign;
-import net.sf.jasperreports.engine.export.JRHtmlExporterParameter;
-import net.sf.jasperreports.engine.export.JRTextExporterParameter;
+import net.sf.jasperreports.engine.export.HtmlExporter;
+import net.sf.jasperreports.engine.export.JRTextExporter;
 import net.sf.jasperreports.engine.xml.JRXmlLoader;
+import net.sf.jasperreports.export.Exporter;
+import net.sf.jasperreports.export.SimpleExporterInput;
+import net.sf.jasperreports.export.SimpleHtmlExporterConfiguration;
+import net.sf.jasperreports.export.SimpleOutputStreamExporterOutput;
+import net.sf.jasperreports.export.SimpleTextExporterConfiguration;
 
 /**
  * @authors Andrea Gioia (andrea.gioia@eng.it) Davide Zerbetto (davide.zerbetto@eng.it)
@@ -96,7 +100,7 @@ public class JasperReportEngineInstance extends AbstractEngineInstance {
 
 	JasperReportEngineTemplate template;
 	String outputType;
-	JRExporter exporter;
+	Exporter exporter;
 	boolean virtualizationEnabled;
 	JRVirtualizer virtualizer;
 	File libDir;
@@ -221,27 +225,49 @@ public class JasperReportEngineInstance extends AbstractEngineInstance {
 			Monitor monitorExportReport = MonitorFactory.start("JasperReportRunner.ExportReport");
 
 			if (outputType.equalsIgnoreCase("html")) {
-				exporter.setParameter(JRHtmlExporterParameter.IS_USING_IMAGES_TO_ALIGN, Boolean.FALSE);
-				exporter.setParameter(JRHtmlExporterParameter.BETWEEN_PAGES_HTML, "");
+				exporter = new HtmlExporter();
+				SimpleHtmlExporterConfiguration configuration = new SimpleHtmlExporterConfiguration();
+//				exporter.setParameter(JRHtmlExporterParameter.IS_USING_IMAGES_TO_ALIGN, Boolean.FALSE);
+//				exporter.setParameter(JRHtmlExporterParameter.BETWEEN_PAGES_HTML, "");
+				configuration.setBetweenPagesHtml("");
+
 				HashMap mImagesMap = new HashMap();
 				UUID uuid = UUID.randomUUID();
 				String mapName = uuid.toString();
 				httpServletRequest.getSession().setAttribute(mapName, mImagesMap);
-				exporter.setParameter(JRHtmlExporterParameter.IMAGES_MAP, mImagesMap);
-				exporter.setParameter(JRHtmlExporterParameter.IMAGES_URI,
-						"JRImageServlet?mapname=" + mapName + "&image=");
+//				exporter.setParameter(JRHtmlExporterParameter.IMAGES_MAP, mImagesMap);
+//				exporter.setParameter(JRHtmlExporterParameter.IMAGES_URI,
+//						"JRImageServlet?mapname=" + mapName + "&image=");
+
+				exporter.setConfiguration(configuration);
 			} else if (outputType.equalsIgnoreCase("txt")) {
-				exporter.setParameter(JRTextExporterParameter.PAGE_HEIGHT, 100);
-				exporter.setParameter(JRTextExporterParameter.PAGE_WIDTH, 100);
+				exporter = new JRTextExporter();
+				SimpleTextExporterConfiguration configuration = new SimpleTextExporterConfiguration();
+//				exporter.setParameter(JRTextExporterParameter.PAGE_HEIGHT, 100);
+//				exporter.setParameter(JRTextExporterParameter.PAGE_WIDTH, 100);
+				exporter.setConfiguration(configuration);
 			} else if (outputType.equalsIgnoreCase("JPG")) {
-				exporter.setParameter(JRImageExporterParameter.JASPER_REPORT, report);
+				exporter = new JRJpegExporter();
+//				exporter.setParameter(JRImageExporterParameter.JASPER_REPORT, report);
 			} else if (outputType.equalsIgnoreCase("JPGBASE64")) {
-				exporter.setParameter(JRImageExporterParameter.JASPER_REPORT, report);
+				exporter = new JRImageBase64Exporter();
+//				exporter.setParameter(JRImageExporterParameter.JASPER_REPORT, report);
 			}
 
-			exporter.setParameter(JRExporterParameter.JASPER_PRINT, jasperPrint);
-			exporter.setParameter(JRExporterParameter.OUTPUT_STREAM, out);
-			exporter.exportReport();
+//			exporter.setParameter(JRExporterParameter.JASPER_PRINT, jasperPrint);
+//			exporter.setParameter(JRExporterParameter.OUTPUT_STREAM, out);
+
+			exporter.setExporterInput(new SimpleExporterInput(jasperPrint));
+			SimpleOutputStreamExporterOutput exporterOutput = null;
+			try (OutputStream outputStream = out) {
+				exporterOutput = new SimpleOutputStreamExporterOutput(outputStream);
+				exporter.setExporterOutput(exporterOutput);
+				exporter.exportReport();
+			} finally {
+				if (exporterOutput != null) {
+					exporterOutput.close();
+				}
+			}
 
 			monitorExportReport.stop();
 			LOGGER.debug("Report exported succesfully");
@@ -367,7 +393,7 @@ public class JasperReportEngineInstance extends AbstractEngineInstance {
 			LOGGER.debug("Internazionalization in " + language);
 			Builder builder = new Builder().setLanguage(language).setRegion(country);
 			String script = (String) getEnv().get("SBI_SCRIPT");
-			if (org.apache.commons.lang.StringUtils.isNotBlank(script)) {
+			if (StringUtils.isNotBlank(script)) {
 				builder.setScript(script);
 			}
 			locale = builder.build();
@@ -742,11 +768,11 @@ public class JasperReportEngineInstance extends AbstractEngineInstance {
 		this.workingDir = workingDir;
 	}
 
-	public JRExporter getExporter() {
+	public Exporter getExporter() {
 		return exporter;
 	}
 
-	public void setExporter(JRExporter exporter) {
+	public void setExporter(Exporter exporter) {
 		this.exporter = exporter;
 	}
 

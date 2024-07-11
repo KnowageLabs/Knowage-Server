@@ -41,10 +41,9 @@ public class JSONObjectDeserializator {
 
 		try {
 			if (object != null)
-
-				map = (HashMap<String, Object>) mapper.readValue(object.toString(), new TypeReference<Map<String, Object>>() {
-				});
-
+				map = (HashMap<String, Object>) mapper.readValue(object.toString(),
+						new TypeReference<Map<String, Object>>() {
+						});
 		} catch (IOException e) {
 			throw new IOException(e.getMessage(), e);
 		}
@@ -58,9 +57,7 @@ public class JSONObjectDeserializator {
 
 		try {
 			if (object != null)
-
 				map = (HashMap<String, Object>) mapper.readValue(object, new TypeReference<Map<String, Object>>() {
-
 				});
 		} catch (IOException e) {
 			throw new IOException(e.getMessage(), e);
