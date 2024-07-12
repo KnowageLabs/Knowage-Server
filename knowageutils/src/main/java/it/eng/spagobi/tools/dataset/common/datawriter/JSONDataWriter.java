@@ -359,7 +359,8 @@ public class JSONDataWriter implements IDataWriter {
 				} else if (Time.class.isAssignableFrom(fieldMetaData.getType())) {
 					result = CACHE_TIMEONLY_FORMATTER_V2.format((TemporalAccessor) field.getValue());
 				} else if (Date.class.isAssignableFrom(fieldMetaData.getType())) {
-					result = DATE_FORMATTER_V2.format((TemporalAccessor) field.getValue());
+					Date _value = (Date) field.getValue();
+					result = DATE_FORMATTER_V2.format(_value.toInstant());
 				} else if (Boolean.class.isAssignableFrom(fieldMetaData.getType())) {
 					result = Boolean.valueOf(field.getValue().toString());
 				} else if (Byte.class.isAssignableFrom(fieldMetaData.getType())) {
