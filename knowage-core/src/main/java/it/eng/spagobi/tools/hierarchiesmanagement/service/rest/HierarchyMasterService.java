@@ -498,7 +498,7 @@ public class HierarchyMasterService {
 		String wherePart = String.format(" WHERE DST.%s=? AND DST.%s= ? AND %s AND %s", 
 				hierNameColumn, hierTypeColumn, vDateWhereClause, joinClause);
 
-		String updateQuery = updatePart + setPart + wherePart;
+		String updateQuery = String.format("%s%s%s", updatePart, setPart, wherePart);
 
 		logger.debug("The update query is [" + updateQuery + "]");
 
