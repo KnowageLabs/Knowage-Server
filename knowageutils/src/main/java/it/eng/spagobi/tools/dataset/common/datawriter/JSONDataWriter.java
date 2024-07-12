@@ -112,7 +112,8 @@ public class JSONDataWriter implements IDataWriter {
 
 	protected final DateTimeFormatter DATE_FORMATTER_V2 = DateTimeFormatter.ofPattern(DATE_FORMAT);
 	protected final DateTimeFormatter TIMESTAMP_FORMATTER_V2 = DateTimeFormatter.ofPattern(TIMESTAMP_FORMAT);
-	protected final DateTimeFormatter CACHE_TIMESTAMP_FORMATTER_V2 = DateTimeFormatter.ofPattern(CACHE_TIMESTAMP_FORMAT);
+	protected final DateTimeFormatter CACHE_TIMESTAMP_FORMATTER_V2 = DateTimeFormatter
+			.ofPattern(CACHE_TIMESTAMP_FORMAT);
 	protected final DateTimeFormatter CACHE_TIMEONLY_FORMATTER_V2 = DateTimeFormatter.ofPattern(TIME_FORMAT);
 	// public static final String WORKSHEETS_ADDITIONAL_DATA_FIELDS_OPTIONS_OPTIONS = "options";
 	// public static final String WORKSHEETS_ADDITIONAL_DATA_FIELDS_OPTIONS_SCALE_FACTOR = "measureScaleFactor";
@@ -353,7 +354,8 @@ public class JSONDataWriter implements IDataWriter {
 					}
 					result = _result;
 				} else if (Timestamp.class.isAssignableFrom(fieldMetaData.getType())) {
-					result = TIMESTAMP_FORMATTER_V2.format((TemporalAccessor) field.getValue());
+					Timestamp _value = (Timestamp) field.getValue();
+					result = TIMESTAMP_FORMATTER_V2.format(_value.toInstant());
 				} else if (Time.class.isAssignableFrom(fieldMetaData.getType())) {
 					result = CACHE_TIMEONLY_FORMATTER_V2.format((TemporalAccessor) field.getValue());
 				} else if (Date.class.isAssignableFrom(fieldMetaData.getType())) {

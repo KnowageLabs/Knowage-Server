@@ -25,7 +25,6 @@ import java.sql.Statement;
 
 import org.apache.log4j.Logger;
 
-import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.tools.dataset.common.datareader.IDataReader;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
@@ -82,7 +81,7 @@ public class JDBCBigQueryDataProxy extends JDBCDataProxy {
 	}
 
 	@Override
-	public IDataStore load(String statement, IDataReader dataReader) throws EMFUserError {
+	public IDataStore load(String statement, IDataReader dataReader) {
 		if (statement != null) {
 			setStatement(statement);
 		}
@@ -112,14 +111,11 @@ public class JDBCBigQueryDataProxy extends JDBCDataProxy {
 			}
 			String dialect = dataSource.getHibDialectClass();
 			Assert.assertNotNull(dialect, "Database dialect cannot be null");
-			
 
-
-			
 			String sqlQuery = "";
 			try {
 				sqlQuery = getStatement();
-  			    stmt = connection.prepareStatement(sqlQuery);
+				stmt = connection.prepareStatement(sqlQuery);
 				if (getMaxResults() > 0) {
 					stmt.setMaxRows(getMaxResults());
 				}
@@ -146,7 +142,8 @@ public class JDBCBigQueryDataProxy extends JDBCDataProxy {
 					try {
 						logger.debug("Loading data using scrollable resultset tecnique");
 						resultNumber = getResultNumber(resultSet);
-						logger.debug("OK data loaded using scrollable resultset tecnique : resultNumber = " + resultNumber);
+						logger.debug(
+								"OK data loaded using scrollable resultset tecnique : resultNumber = " + resultNumber);
 						dataReader.setCalculateResultNumberEnabled(false);
 					} catch (SQLException e) {
 						logger.debug("KO data loaded using scrollable resultset tecnique", e);
@@ -167,7 +164,8 @@ public class JDBCBigQueryDataProxy extends JDBCDataProxy {
 			}
 
 			if (resultNumber > -1) { // it means that resultNumber was successfully calculated by this data proxy
-				int limitedResultNumber = getMaxResults() > 0 && resultNumber > getMaxResults() ? getMaxResults() : resultNumber;
+				int limitedResultNumber = getMaxResults() > 0 && resultNumber > getMaxResults() ? getMaxResults()
+						: resultNumber;
 				dataStore.getMetaData().setProperty("resultNumber", Integer.valueOf(limitedResultNumber));
 			}
 
@@ -180,7 +178,6 @@ public class JDBCBigQueryDataProxy extends JDBCDataProxy {
 		}
 		return dataStore;
 
-		
 	}
 
 	@Override
@@ -205,7 +202,7 @@ public class JDBCBigQueryDataProxy extends JDBCDataProxy {
 			String sqlQuery = String.format("SELECT COUNT(*) FROM (%s) %s", getOldStatement(), tableAlias);
 			logger.info("Executing query " + sqlQuery + " ...");
 			stmt = connection.prepareStatement(sqlQuery, ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
-			
+
 			rs = stmt.executeQuery();
 			rs.next();
 			resultNumber = rs.getInt(1);
@@ -309,8 +306,8 @@ public class JDBCBigQueryDataProxy extends JDBCDataProxy {
 	public String getStatement() {
 
 		if (fetchSize == -1 && !this.statement.isEmpty()) {
-				this.statement = removeLastSemicolon(this.statement);
-				return this.statement;
+			this.statement = removeLastSemicolon(this.statement);
+			return this.statement;
 		}
 
 		StringBuilder newStatement = new StringBuilder();
