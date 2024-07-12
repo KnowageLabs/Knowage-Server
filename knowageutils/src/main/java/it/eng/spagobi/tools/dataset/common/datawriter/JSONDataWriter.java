@@ -28,6 +28,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.OffsetDateTime;
 import java.time.OffsetTime;
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.TemporalAccessor;
@@ -360,7 +361,7 @@ public class JSONDataWriter implements IDataWriter {
 					result = CACHE_TIMEONLY_FORMATTER_V2.format((TemporalAccessor) field.getValue());
 				} else if (Date.class.isAssignableFrom(fieldMetaData.getType())) {
 					Date _value = (Date) field.getValue();
-					result = DATE_FORMATTER_V2.format(_value.toInstant());
+					result = DATE_FORMATTER_V2.format(_value.toInstant().atZone(ZoneId.systemDefault()));
 				} else if (Boolean.class.isAssignableFrom(fieldMetaData.getType())) {
 					result = Boolean.valueOf(field.getValue().toString());
 				} else if (Byte.class.isAssignableFrom(fieldMetaData.getType())) {
