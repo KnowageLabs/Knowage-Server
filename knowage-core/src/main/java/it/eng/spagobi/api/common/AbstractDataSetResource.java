@@ -913,7 +913,7 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 
 	protected List<String> getColumnList(String columns, IDataSet dataSet,
 			Map<String, String> columnAliasToColumnName) {
-		List<String> columnList = new ArrayList<>(Arrays.asList(columns.trim().split("\\s*,\\s*"))); // trim spaces while splitting
+		List<String> columnList = new ArrayList<>(Arrays.asList(columns.trim().replaceAll("\\s+", " ").split("\\s,\\s")));
 
 		// transform QBE columns
 		for (int i = 0; i < columnList.size(); i++) {
