@@ -26,7 +26,7 @@ public class SpagoBIUserProfile implements Serializable {
 
 	private static final long serialVersionUID = 4628667082032801018L;
 
-	private final Map<String, Object> attributes = new LinkedHashMap<>();
+	private Map<String, Object> attributes = new LinkedHashMap<>();
 
 	private String[] functions;
 
@@ -67,8 +67,7 @@ public class SpagoBIUserProfile implements Serializable {
 	}
 
 	public void setAttributes(Map<String, Object> attributes) {
-		this.attributes.clear();
-		this.attributes.putAll(attributes);
+		this.attributes = attributes;
 	}
 
 	/**
