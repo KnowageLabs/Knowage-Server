@@ -157,16 +157,11 @@ public class HibernateSessionManager {
 			DatabaseMetaData metaData = connection.getMetaData();
 			String url = metaData.getURL();
 
-			Pattern jdbcPattern = Pattern.compile("(jdbc:[^:]+).+");
-			Matcher matcher = jdbcPattern.matcher(url);
-			matcher.matches();
-			String urlPrefix = matcher.group(1);
-
-			if (!JDBC_URL_PREFIX_2_DIALECT.containsKey(urlPrefix)) {
-				throw new IllegalStateException("Prefix " + urlPrefix + " doesn't have a matching dialect.");
+			if (!JDBC_URL_PREFIX_2_DIALECT.containsKey(url)) {
+				throw new IllegalStateException("Prefix " + url + " doesn't have a matching dialect.");
 			}
 
-			figuredOutValue = JDBC_URL_PREFIX_2_DIALECT.get(urlPrefix);
+			figuredOutValue = JDBC_URL_PREFIX_2_DIALECT.get(url);
 		} catch (Exception e) {
 			LOGGER.error("Error determining Hibernate's dialect", e);
 		} finally {
