@@ -105,7 +105,7 @@ public class SolrFacetPivotDataReader extends SolrDataReader {
 
 	private JSONArray getDocsFromFacet(String categoryAlias, JSONObject facet) throws JSONException {
 		JSONArray docs = new JSONArray();
-		if (sortedCategories.containsKey(categoryAlias) && Boolean.TRUE.equals(!sortedCategories.get(categoryAlias))) {
+		if (sortedCategories.containsKey(categoryAlias) && !sortedCategories.get(categoryAlias)) {
 			addDocs(getBucketDocs(categoryAlias, facet), docs);
 			addDocs(getMissingDocs(categoryAlias, facet), docs);
 		} else {
@@ -246,6 +246,7 @@ public class SolrFacetPivotDataReader extends SolrDataReader {
 				facetContainer = facet.optJSONObject("facet");
 			}
 			if (facetContainer != null) {
+				Pattern aggregatedMeasureDefinitionPattern = Pattern.compile("\\w+\\((\\w+)\\)");
 				Iterator<String> keys = facetContainer.keys();
 				while (keys.hasNext()) {
 					String rawMeasureAlias = keys.next();
@@ -254,8 +255,7 @@ public class SolrFacetPivotDataReader extends SolrDataReader {
 
 						String measureName;
 						String measureDefinition = facetContainer.getString(rawMeasureAlias);
-						Matcher matcher = Pattern.compile("\\w+\\((\\w+)\\)")
-								.matcher(measureDefinition);
+						Matcher matcher = aggregatedMeasureDefinitionPattern.matcher(measureDefinition);
 						if (matcher.find()) {
 							measureName = matcher.group(1);
 						} else {

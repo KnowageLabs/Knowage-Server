@@ -157,10 +157,10 @@ public class HibernateSessionManager {
 			DatabaseMetaData metaData = connection.getMetaData();
 			String url = metaData.getURL();
 
-			String urlPrefix = null;
-			if(Pattern.compile("(jdbc:[^:]+).+").matcher(url).matches()){				
-				urlPrefix = Pattern.compile("(jdbc:[^:]+).+").matcher(url).group(1);
-			}
+			Pattern jdbcPattern = Pattern.compile("(jdbc:[^:]+).+");
+			Matcher matcher = jdbcPattern.matcher(url);
+			matcher.matches();
+			String urlPrefix = matcher.group(1);
 
 			if (!JDBC_URL_PREFIX_2_DIALECT.containsKey(urlPrefix)) {
 				throw new IllegalStateException("Prefix " + urlPrefix + " doesn't have a matching dialect.");

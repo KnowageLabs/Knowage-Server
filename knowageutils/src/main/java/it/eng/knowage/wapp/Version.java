@@ -27,8 +27,6 @@ import java.util.regex.Pattern;
 
 import org.apache.log4j.Logger;
 
-import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
-
 /**
  * Reading Knowage version dynamically from Maven. It is used to concatenate project version with main src folder, parent of all static files, in purpose of
  * managing caching properly.
@@ -80,7 +78,7 @@ public class Version {
 			}
 		} catch (Exception e) {
 			LOGGER.error("Cannot read " + KNOWAGE_APPLICATION_PROPERTIES + " file", e);
-			throw new SpagoBIRuntimeException("Cannot read " + KNOWAGE_APPLICATION_PROPERTIES + " file", e);
+			throw new RuntimeException("Cannot read " + KNOWAGE_APPLICATION_PROPERTIES + " file", e);
 		}
 	}
 
@@ -128,9 +126,8 @@ public class Version {
 		LOGGER.debug("IN");
 		String toReturn = "";
 		// Find all digits separated by dot (.) + optional i.e. [7.0.0-SNAPSHOT]
-		Matcher matcher = Pattern.compile("([\\d]+)\\.([\\d]+)\\.([\\d]+)(-(.+))?") //regexPattern
-				.matcher(completeVersion);
-		
+		Pattern regexPattern = Pattern.compile("([\\d]+)\\.([\\d]+)\\.([\\d]+)(-(.+))?");
+		Matcher matcher = regexPattern.matcher(completeVersion);
 		if (matcher.find()) {
 			switch (part) {
 			case "MAJOR":
