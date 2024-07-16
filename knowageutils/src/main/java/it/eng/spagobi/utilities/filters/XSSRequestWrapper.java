@@ -204,20 +204,21 @@ public class XSSRequestWrapper extends HttpServletRequestWrapper {
 
 	private static String checkImgTags(String value) {
 		LOGGER.debug("IN");
-		Pattern maliciousImgPattern = Pattern.compile("&lt;img(.*?)&gt;", Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL);
-		value = maliciousImgPattern.matcher(value).replaceAll("");
+		value = Pattern.compile("&lt;img(.*?)&gt;", Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL) // maliciousImgPattern
+				.matcher(value)
+				.replaceAll("");
 
-		Pattern scriptPattern = Pattern.compile("<img[^>]+(src\\s*=\\s*['\"]([^'\"]+)['\"])[^>]*>",
-				Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL);
-		Pattern dataPattern = Pattern.compile("data:image\\/(gif|jpeg|pjpeg|png|svg\\+xml|tiff|vnd\\.microsoft\\.icon);(utf-8;|utf8;)?base64",
-				Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL);
-		Matcher scriptMatcher = scriptPattern.matcher(value);
+		Matcher scriptMatcher = Pattern.compile("<img[^>]+(src\\s*=\\s*['\"]([^'\"]+)['\"])[^>]*>",
+				Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL) // scriptPattern
+				.matcher(value);
 
 		while (scriptMatcher.find()) {
 			String img = scriptMatcher.group();
 			String link = scriptMatcher.group(2);
 
-			Matcher dataMatcher = dataPattern.matcher(link);
+			Matcher dataMatcher = Pattern.compile("data:image\\/(gif|jpeg|pjpeg|png|svg\\+xml|tiff|vnd\\.microsoft\\.icon);(utf-8;|utf8;)?base64",
+					Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL) // dataPattern
+					.matcher(link);
 
 			if (!dataMatcher.find()) {
 				try {
@@ -249,11 +250,14 @@ public class XSSRequestWrapper extends HttpServletRequestWrapper {
 
 	private static String checkIframeTags(String value) {
 		LOGGER.debug("IN");
-		Pattern maliciousTagPattern = Pattern.compile("&lt;iframe(.*?)iframe\\s*&gt;", Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL);
-		value = maliciousTagPattern.matcher(value).replaceAll("");
+		value = Pattern.compile("&lt;iframe(.*?)iframe\\s*&gt;", 
+				Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL)// maliciousTagPattern
+				.matcher(value)
+				.replaceAll("");
 
-		Pattern scriptPattern = Pattern.compile("<iframe[^>]*?(?:\\/>|>[^<]*?<\\/iframe>)", Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL);
-		Matcher scriptMatcher = scriptPattern.matcher(value);
+		Matcher scriptMatcher = Pattern.compile("<iframe[^>]*?(?:\\/>|>[^<]*?<\\/iframe>)", 
+				Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL) // scriptPattern
+				.matcher(value);
 
 		while (scriptMatcher.find()) {
 			String iframe = scriptMatcher.group();
@@ -288,17 +292,18 @@ public class XSSRequestWrapper extends HttpServletRequestWrapper {
 
 	private static String checkAnchorTags(String value) {
 		LOGGER.debug("IN");
-		Pattern aPattern = Pattern.compile("<a([^>]+)>(.+?)</a>", Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL);
-		Pattern hrefPattern = Pattern.compile("\\s*href\\s*=\\s*['\"]([^'\"]+)['\"]", Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL);
-
-		Matcher aTagMatcher = aPattern.matcher(value);
+		Matcher aTagMatcher = Pattern.compile("<a([^>]+)>(.+?)</a>", 
+				Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL) //aPattern
+				.matcher(value);
 
 		while (aTagMatcher.find()) {
 			String aTag = aTagMatcher.group();
 			String href = aTagMatcher.group(1);
 
 			// In <a> tag find href attribute
-			Matcher hrefMatcher = hrefPattern.matcher(href);
+			Matcher hrefMatcher = Pattern.compile("\\s*href\\s*=\\s*['\"]([^'\"]+)['\"]", 
+					Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL) // hrefPattern
+					.matcher(href);
 
 			while (hrefMatcher.find()) {
 				String link = hrefMatcher.group(1);
@@ -331,18 +336,22 @@ public class XSSRequestWrapper extends HttpServletRequestWrapper {
 
 	private static String checkVideoTags(String value) {
 		LOGGER.debug("IN");
-		Pattern maliciousPattern = Pattern.compile("&lt;video(.*?)video&gt;", Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL);
-		value = maliciousPattern.matcher(value).replaceAll("");
+		value = Pattern.compile("&lt;video(.*?)video&gt;", 
+				Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL) // maliciousPattern
+				.matcher(value)
+				.replaceAll("");
 
-		Pattern scriptPattern = Pattern.compile("<video(.+?)</video\\s*>", Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL);
-		Pattern srcAttributePattern = Pattern.compile("\\s*src\\s*=\\s*['\"]([^'\"]+)['\"]", Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL);
-		Matcher matcher = scriptPattern.matcher(value);
+		Matcher matcher = Pattern.compile("<video(.+?)</video\\s*>", 
+				Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL) // scriptPattern
+				.matcher(value);
 
 		while (matcher.find()) {
 			String video = matcher.group();
 			String betweenVideoTags = matcher.group(1);
 
-			Matcher srcMatcher = srcAttributePattern.matcher(betweenVideoTags);
+			Matcher srcMatcher = Pattern.compile("\\s*src\\s*=\\s*['\"]([^'\"]+)['\"]", 
+					Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL) // srcAttributePattern
+					.matcher(betweenVideoTags);
 
 			while (srcMatcher.find()) {
 				String link = srcMatcher.group(1);
@@ -375,20 +384,22 @@ public class XSSRequestWrapper extends HttpServletRequestWrapper {
 
 	private static String checkCSS(String value) {
 		LOGGER.debug("IN");
-		Pattern cssUrlPattern = Pattern.compile("url\\s*\\(['\"]?([^'\"\\)]+)['\"]?\\)", Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL);
-		Pattern cssUrlDataPattern = Pattern.compile("data:image\\/(gif|jpeg|pjpeg|png|svg\\+xml|tiff|vnd\\.microsoft\\.icon);(utf-8;)?base64",
-				Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL);
-		Pattern domElementID = Pattern.compile("(#[a-zA-Z0-9\\_\\-]+)", Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL);
 		String domId = "";
 
-		Matcher urlMatcher = cssUrlPattern.matcher(value);
+		Matcher urlMatcher = Pattern.compile("url\\s*\\(['\"]?([^'\"\\)]+)['\"]?\\)", 
+				Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL)// cssUrlPattern
+				.matcher(value);
 
 		while (urlMatcher.find()) {
 			String cssUrl = urlMatcher.group();
 			String link = urlMatcher.group(1);
 
-			Matcher dataMatcher = cssUrlDataPattern.matcher(link);
-			Matcher domIdMatcher = domElementID.matcher(link);
+			Matcher dataMatcher = Pattern.compile("data:image\\/(gif|jpeg|pjpeg|png|svg\\+xml|tiff|vnd\\.microsoft\\.icon);(utf-8;)?base64",
+					Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL) // cssUrlDataPattern
+					.matcher(link);
+			Matcher domIdMatcher = Pattern.compile("(#[a-zA-Z0-9\\_\\-]+)", 
+					Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL) // domElementID
+					.matcher(link);
 
 			if (domIdMatcher.find()) {
 				domId = domIdMatcher.group();

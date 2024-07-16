@@ -66,7 +66,7 @@ public class QuartzInitializer implements InitializerIFace {
 		JDBC_URL_PREFIX_2_DELEGATE_CLASS.put(JDBC_HSQLDB, "org.quartz.impl.jdbcjobstore.HSQLDBDelegate");
 	}
 
-	private SourceBean _config = null;
+	private SourceBean config = null;
 
 	/*
 	 * (non-Javadoc)
@@ -86,7 +86,7 @@ public class QuartzInitializer implements InitializerIFace {
 			String figuredOutValue = null;
 
 			if (properties.containsKey(PROPERTY_DELEGATE_CLASS)) {
-				LOGGER.info("Quartz delegate class set to " + properties.get(PROPERTY_DELEGATE_CLASS));
+				LOGGER.info("Quartz delegate class set to {}", properties.get(PROPERTY_DELEGATE_CLASS));
 			} else {
 				LOGGER.warn("Property " + PROPERTY_DELEGATE_CLASS + " not set! Trying to figure out what delegate class needs to be used...");
 				determineDelegateClass(properties);
@@ -126,10 +126,10 @@ public class QuartzInitializer implements InitializerIFace {
 			DatabaseMetaData metaData = connection.getMetaData();
 			String url = metaData.getURL();
 
-			Pattern jdbcPattern = Pattern.compile("(jdbc:[^:]+).+");
-			Matcher matcher = jdbcPattern.matcher(url);
-			matcher.matches();
-			String urlPrefix = matcher.group(1);
+			String urlPrefix = null;
+			if(Pattern.compile("(jdbc:[^:]+).+").matcher(url).matches()){				
+				urlPrefix = Pattern.compile("(jdbc:[^:]+).+").matcher(url).group(1);
+			}
 
 			if (!JDBC_URL_PREFIX_2_DELEGATE_CLASS.containsKey(urlPrefix)) {
 				throw new IllegalStateException("Prefix " + urlPrefix + " doesn't have a matching delegate class.");
@@ -137,7 +137,7 @@ public class QuartzInitializer implements InitializerIFace {
 
 			figuredOutValue = JDBC_URL_PREFIX_2_DELEGATE_CLASS.get(urlPrefix);
 
-			LOGGER.info("Quartz will be initialized with the delegate class " + figuredOutValue);
+			LOGGER.info("Quartz will be initialized with the delegate class {}", figuredOutValue);
 			properties.put(PROPERTY_DELEGATE_CLASS, figuredOutValue);
 
 		} catch (Exception e) {
@@ -160,7 +160,7 @@ public class QuartzInitializer implements InitializerIFace {
 	 */
 	@Override
 	public SourceBean getConfig() {
-		return _config;
+		return config;
 	}
 
 }
