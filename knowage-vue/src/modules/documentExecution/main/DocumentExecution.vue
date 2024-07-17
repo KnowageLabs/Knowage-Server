@@ -341,6 +341,12 @@ export default defineComponent({
     isInDocBrowser() {
       return this.$router.currentRoute.value.matched.some((i) => i.name === "document-browser" || i.name === "document-execution-workspace");
     },
+    async directDownloadDataset(datasetId: number) {
+      await this.$http
+        .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/export/dataset/${datasetId}/csv`, {}, { headers: { Accept: "application/json, text/plain, */*", "Content-Type": "application/json;charset=UTF-8" } })
+        .then(() => this.setInfo({ title: this.$t("common.toast.updateTitle"), msg: this.$t("workspace.myData.exportSuccess") }))
+        .catch(() => {});
+    },
     async iframeEventsListener(event) {
       if (event.data.type === "crossNavigation") {
         this.executeCrossNavigation(event);

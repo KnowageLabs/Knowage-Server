@@ -86,9 +86,7 @@ export default defineComponent({
 
       if (this.dataset.pars && this.dataset.pars.length > 0) {
         postData.pars = deepcopy(this.dataset.pars);
-        const paramRegex = /[^$P{]+(?=\})/;
         postData.pars.forEach((param: any) => {
-          const matched = paramRegex.exec(param.value);
           param.value = param.value ?? param.defaultValue;
         });
       }
