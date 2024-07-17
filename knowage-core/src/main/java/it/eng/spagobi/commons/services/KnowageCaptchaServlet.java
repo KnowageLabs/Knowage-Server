@@ -34,14 +34,14 @@ public class KnowageCaptchaServlet extends HttpServlet {
 			try {
 				height = Integer.parseInt(getInitParameter("height"));
 			} catch (Exception e) {
-				e.printStackTrace();
+				LOGGER.error("doGet", e);
 			}
 		}
 		if (getInitParameter("width") != null) {
 			try {
 				width = Integer.parseInt(getInitParameter("width"));
 			} catch (Exception e) {
-				e.printStackTrace();
+				LOGGER.error("doGet", e);
 			}
 		}
 

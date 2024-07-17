@@ -42,7 +42,6 @@ public class ServiceKpiValueXml {
 			// e.printStackTrace();
 			// logger.error("Problem while retrieving xml of Kpivalue with id " + (kpiValueID != null ? kpiValueID : "null"), e);
 		} catch (SecurityException e) {
-			e.printStackTrace();
 			logger.error("Security Exception while retrieving xml of Kpivalue with id " + (kpiValueID != null ? kpiValueID : "null"), e);
 		}
 		logger.debug("OUT");

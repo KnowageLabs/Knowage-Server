@@ -404,8 +404,7 @@ public class GlossaryDAOImpl extends AbstractHibernateDAO implements IGlossaryDA
 					jo.put("SBI_GL_CONTENTS", fin);
 
 				} catch (JSONException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					logger.error(e);
 				}
 
 				return jo;
@@ -668,9 +667,7 @@ public class GlossaryDAOImpl extends AbstractHibernateDAO implements IGlossaryDA
 											updateSbiCommonInfo4Update(at);
 										}
 									} catch (JSONException e) {
-										// TODO Auto-generated catch block
-										e.printStackTrace();
-
+										logger.error(e);
 									}
 									references.add(at);
 									break;
@@ -694,8 +691,7 @@ public class GlossaryDAOImpl extends AbstractHibernateDAO implements IGlossaryDA
 							tmp.setSequence(Integer.valueOf(mapLink.get(w.getWordId()).getString(ORDER)));
 
 						} catch (JSONException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
+							logger.error(e);
 						}
 
 						updateSbiCommonInfo4Insert(tmp);
@@ -753,9 +749,7 @@ public class GlossaryDAOImpl extends AbstractHibernateDAO implements IGlossaryDA
 											updateSbiCommonInfo4Update(at);
 										}
 									} catch (JSONException e) {
-										// TODO Auto-generated catch block
-										e.printStackTrace();
-
+										logger.error(e);
 									}
 
 									SbiUdpValue.add(at);
@@ -785,8 +779,7 @@ public class GlossaryDAOImpl extends AbstractHibernateDAO implements IGlossaryDA
 							// .getInt("ORDER"));
 
 						} catch (JSONException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
+							logger.error(e);
 						}
 
 						updateSbiCommonInfo4Insert(tmp);

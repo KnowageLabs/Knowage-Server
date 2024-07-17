@@ -360,7 +360,6 @@ public class StringUtilities {
 		try {
 			result = df.parse(strDate);
 		} catch (ParseException e) {
-			e.printStackTrace();
 			LOGGER.error("Error while parsing the date " + strDate + ": " + e);
 			throw new Exception("Error while parsing the date '" + strDate + ": " + e);
 		}

@@ -74,8 +74,7 @@ public class GeoReportEngine {
 			// templ.put("crossNavigationMultiselect", isCross);
 			template = templ.toString();
 		} catch (JSONException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error(e);
 		}
 
 		georeportEngineInstance = new GeoReportEngineInstance(template, env);

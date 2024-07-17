@@ -19,6 +19,7 @@ package it.eng.spagobi.utilities.service;
 
 import java.io.IOException;
 
+import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -34,6 +35,11 @@ public class JSONResponse implements IServiceResponse {
 	int statusCode;
 	String content;
 	String callback;
+	
+	/**
+	 * Logger component
+	 */
+	private static final Logger LOGGER = Logger.getLogger(JSONResponse.class);
 	
 	
 	public String getCallback() {
@@ -83,7 +89,7 @@ public class JSONResponse implements IServiceResponse {
 		try {
 			o = new JSONObject("{text: " + content + "}");
 		} catch (JSONException e) {
-			e.printStackTrace();
+			LOGGER.error(e);
 			Assert.assertUnreachable("Default json object generated to wrap a simple text response is not well formed");
 		}
 		setContent( o.toString() );

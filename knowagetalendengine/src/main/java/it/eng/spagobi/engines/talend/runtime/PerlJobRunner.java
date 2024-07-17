@@ -123,7 +123,7 @@ public class PerlJobRunner implements IJobRunner {
 					(EventServiceProxy) parameters.get(EngineConstants.ENV_EVENT_SERVICE_PROXY));
 			wm.run(jrt, listener);
 		} catch (Exception e) {
-			e.printStackTrace();
+			LOGGER.error(e);
 		}
 
 

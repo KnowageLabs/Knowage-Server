@@ -61,7 +61,7 @@ public class NotifierServlet extends HttpServlet {
 		try {			
 			doPost(req, resp);
 		} catch (ServletException | IOException ex) {
-			ex.printStackTrace();
+			logger.error(ex);
 		}
 	}
 
@@ -71,7 +71,7 @@ public class NotifierServlet extends HttpServlet {
 		try {			
 			manager.manage(req, resp);
 		} catch (IOException ex) {
-			ex.printStackTrace();
+			logger.error(ex);
 		}
 	}
 

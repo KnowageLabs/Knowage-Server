@@ -22,8 +22,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.StandardOpenOption;
+import java.security.SecureRandom;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -36,7 +38,6 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.Response;
 
-import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -197,7 +198,10 @@ public class ExportResource extends AbstractQbeEngineResource {
 	}
 
 	private File createTempFile() throws IOException {
-		return File.createTempFile("knowage-registry-export", RandomStringUtils.randomAscii(10));
+		SecureRandom random = new SecureRandom(); // Compliant for security-sensitive use cases
+		byte[] bytes = new byte[20];
+		random.nextBytes(bytes);
+		return File.createTempFile("knowage-registry-export", Arrays.toString(bytes));
 	}
 
 	private void extractFields(Connection connection, String jpaQuery, String sqlQuery, List<Field> extractedFields)

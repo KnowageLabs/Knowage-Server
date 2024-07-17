@@ -56,8 +56,7 @@ public class ModalitiesValuesJSONSerializer implements Serializer {
 			result.put(LABEL, modalitiesValue.getLabel());
 			result.put(SELECTIONTYPE, modalitiesValue.getSelectionType());
 		} catch (JSONException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw new SerializationException("An error occurred while serializing object: " + o, e);
 		}
 
 		return result;

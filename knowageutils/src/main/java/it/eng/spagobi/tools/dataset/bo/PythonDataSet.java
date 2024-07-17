@@ -140,7 +140,7 @@ public class PythonDataSet extends ConfigurableDataSet {
 			} else {
 				throw new IllegalStateException("Invalid Python Dataset Type: " + pythonDatasetType);
 			}
-			toReturn = pythonAddress.replaceAll("/+$", "") + "/dataset";
+			toReturn = pythonAddress.replace("/+$", "") + "/dataset";
 		} catch (Exception e) {
 			logger.error("Cannot retrieve python address from configuration.", e);
 			return "";
@@ -149,8 +149,7 @@ public class PythonDataSet extends ConfigurableDataSet {
 	}
 
 	private JSONObject getJSONConfig() {
-		JSONObject jsonConf = ObjectUtils.toJSONObject(getConfiguration());
-		return jsonConf;
+		return ObjectUtils.toJSONObject(getConfiguration());
 	}
 
 	protected List<JSONPathAttribute> getJsonPathAttributes(String propName, JSONObject conf) throws JSONException {
@@ -256,8 +255,7 @@ public class PythonDataSet extends ConfigurableDataSet {
 			return null;
 		}
 
-		String uuid = (String) up.getUserId();
-		return uuid;
+		return (String) up.getUserId();
 	}
 
 	private UserProfile getCurrentUserProfile() {

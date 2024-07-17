@@ -79,8 +79,7 @@ public class GetSubObjectsService extends AbstractSpagoBIResource {
 				canDeleteSubObject = true;
 			}
 		} catch (EMFInternalError e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
+			LOGGER.error("Error while recovering information about user",e1);
 		}
 		if (canDeleteSubObject) {
 			LOGGER.info("User [id: {}, userId: {}, name: {}] is deleting customized view [id: {}, name: {}] ...",

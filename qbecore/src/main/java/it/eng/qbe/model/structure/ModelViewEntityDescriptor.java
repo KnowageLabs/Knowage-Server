@@ -304,7 +304,6 @@ public class ModelViewEntityDescriptor implements IModelViewEntityDescriptor {
 					columns.add( columnName );
 				}
 			} catch (JSONException e){
-				e.printStackTrace();
 				logger.error("Error in columnsJSON: "+columnsJSON);
 			}
 
