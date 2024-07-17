@@ -28,14 +28,17 @@ import org.json.JSONObject;
 
 import it.eng.qbe.datasource.IDataSource;
 import it.eng.qbe.datasource.dataset.DataSetDataSource;
+import it.eng.qbe.model.accessmodality.IModelAccessModality;
 import it.eng.qbe.query.ISelectField;
 import it.eng.qbe.query.Query;
 import it.eng.qbe.statement.IStatement;
 import it.eng.spago.base.SourceBean;
+import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.engines.qbe.services.core.AbstractQbeEngineAction;
 import it.eng.spagobi.engines.qbe.services.core.ExecuteQueryAction;
 import it.eng.spagobi.utilities.assertion.Assert;
+import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceException;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceExceptionHandler;
 import it.eng.spagobi.utilities.service.JSONSuccess;
@@ -80,18 +83,23 @@ public class GetSQLQueryAction extends AbstractQbeEngineAction {
 				query = getEngineInstance().getQueryCatalogue().getFirstQuery();
 
 			}
-
-			getEngineInstance().setActiveQuery(query);
 			Assert.assertNotNull(query, "Query not found!!");
+			
+			UserProfile userProfile = (UserProfile) getEnv().get(EngineConstants.ENV_USER_PROFILE);
+			IModelAccessModality accessModality = getEngineInstance().getDataSource().getModelAccessModality();
+			Query filteredQuery = accessModality.getFilteredStatement(query, this.getEngineInstance().getDataSource(), userProfile.getUserAttributes());
+
+			getEngineInstance().setActiveQuery(filteredQuery);
+			
 
 			if (replaceParametersWithQuestion) {
 				// promptable filters values may come with request (read-only
 				// user modality)
-				ExecuteQueryAction.updatePromptableFiltersValue(query, this, true);
+				ExecuteQueryAction.updatePromptableFiltersValue(filteredQuery, this, true);
 			} else {
 				// promptable filters values may come with request (read-only
 				// user modality)
-				ExecuteQueryAction.updatePromptableFiltersValue(query, this);
+				ExecuteQueryAction.updatePromptableFiltersValue(filteredQuery, this);
 			}
 
 			statement = getEngineInstance().getStatment();
