@@ -341,7 +341,7 @@ export default defineComponent({
     isInDocBrowser() {
       return this.$router.currentRoute.value.matched.some((i) => i.name === "document-browser" || i.name === "document-execution-workspace");
     },
-    iframeEventsListener(event) {
+    async iframeEventsListener(event) {
       if (event.data.type === "crossNavigation") {
         this.executeCrossNavigation(event);
       } else if (event.data.type === "preview") {
