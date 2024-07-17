@@ -2057,6 +2057,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				}
 			}
 
+			if ($scope.ngModel.style.legend.position == 'drag') {
+				ret["min-width"] = Math.max(150, $scope.ngModel.style.legend.width);
+			}
+
 			return ret;
 		}
 
