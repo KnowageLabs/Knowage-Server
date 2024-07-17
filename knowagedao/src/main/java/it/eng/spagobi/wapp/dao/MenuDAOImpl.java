@@ -994,8 +994,7 @@ public class MenuDAOImpl extends AbstractHibernateDAO implements IMenuDAO {
 				menuIcon.setUnicode(null);
 				menuIcon.setVisible(jsonObject.getBoolean("visible"));
 			} catch (JSONException e) {
-				// Error parsing JSON object
-				e.printStackTrace();
+				LOGGER.error(e);
 			}
 
 			icon = menuIcon;
@@ -1016,8 +1015,7 @@ public class MenuDAOImpl extends AbstractHibernateDAO implements IMenuDAO {
 				menuIcon.setUnicode(null);
 				menuIcon.setVisible(jsonObject.getBoolean("visible"));
 			} catch (JSONException e) {
-				// Error parsing JSON object
-				e.printStackTrace();
+				LOGGER.error(e);
 			}
 			custIcon = menuIcon;
 		}

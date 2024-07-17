@@ -392,7 +392,7 @@ public class ExtJsQbeTreeBuilder {
 			nodeAttributes.put("subjectId", subjectId);
 			fieldNode.put("attributes", nodeAttributes);
 		} catch (JSONException e) {
-			e.printStackTrace();
+			logger.error(e);
 		}
 
 		return fieldNode;
@@ -445,7 +445,7 @@ public class ExtJsQbeTreeBuilder {
 			fieldNode.put("children", jsonlevels);
 
 		} catch (JSONException e) {
-			e.printStackTrace();
+			logger.error(e);
 		}
 		return fieldNode;
 	}
@@ -514,7 +514,7 @@ public class ExtJsQbeTreeBuilder {
 			nodeAttributes.put("formState", formState);
 			fieldNode.put("attributes", nodeAttributes);
 		} catch (JSONException e) {
-			e.printStackTrace();
+			logger.error(e);
 		}
 
 		return fieldNode;
@@ -570,7 +570,7 @@ public class ExtJsQbeTreeBuilder {
 			nodeAttributes.put("longDescription", relationString);
 			fieldNode.put("attributes", nodeAttributes);
 		} catch (JSONException e) {
-			e.printStackTrace();
+			logger.error(e);
 		}
 
 		return fieldNode;

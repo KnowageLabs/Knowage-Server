@@ -138,8 +138,7 @@ public class DistributionListDaoImpl extends AbstractHibernateDAO implements IDi
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 9106);
 
 		} catch (SourceBeanException e) {
-			logger.error("Error while generating Source Bean");
-			e.printStackTrace();
+			logger.error("Error while generating Source Bean", e);
 		} finally {
 			if (aSession != null) {
 				if (aSession.isOpen())
@@ -191,8 +190,7 @@ public class DistributionListDaoImpl extends AbstractHibernateDAO implements IDi
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 9106);
 
 		} catch (SourceBeanException e) {
-			logger.error("Error while generating Source Bean");
-			e.printStackTrace();
+			logger.error("Error while generating Source Bean", e);
 		} finally {
 			if (aSession != null) {
 				if (aSession.isOpen())
@@ -676,8 +674,7 @@ public class DistributionListDaoImpl extends AbstractHibernateDAO implements IDi
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 9106);
 
 		} catch (SourceBeanException e) {
-			logger.error("Error while generating Source Bean");
-			e.printStackTrace();
+			logger.error("Error while generating Source Bean", e);
 		} finally {
 			if (aSession != null) {
 				if (aSession.isOpen())
@@ -769,8 +766,7 @@ public class DistributionListDaoImpl extends AbstractHibernateDAO implements IDi
 				tx.rollback();
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 9106);
 		} catch (SourceBeanException e) {
-			logger.error("Error while generating Source Bean");
-			e.printStackTrace();
+			logger.error("Error while generating Source Bean", e);
 		} finally {
 			if (tmpSession != null) {
 				if (tmpSession.isOpen())

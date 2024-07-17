@@ -123,7 +123,7 @@ public class DefaultValuesRetriever {
 		try {
 			lovResultHandler = new LovResultHandler(lovResult);
 		} catch (SourceBeanException e) {
-			e.printStackTrace();
+			LOGGER.error("getLovResult",e);
 		}
 
 		DefaultValuesList defaultValuesList = new DefaultValuesList();

@@ -63,7 +63,7 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 public class SchedulerUtilitiesV2 {
 
-	private static transient Logger logger = Logger.getLogger(SchedulerUtilitiesV2.class);
+	private static final Logger logger = Logger.getLogger(SchedulerUtilitiesV2.class);
 
 	public static JSONObject isValidJobTrigger(JobTrigger jobt) throws JSONException {
 
@@ -118,8 +118,7 @@ public class SchedulerUtilitiesV2 {
 						ja.put(" End time is before Start time  ");
 					}
 				} catch (ParseException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					logger.error("Error while validating JobTrigger", e);
 				}
 			}
 
@@ -239,8 +238,7 @@ public class SchedulerUtilitiesV2 {
 							jerr.put(" End time is before Start time  ");
 						}
 					} catch (ParseException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
+						logger.error("Error while getting JobTrigger", e);
 					}
 				}
 

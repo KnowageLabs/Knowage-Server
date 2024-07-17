@@ -153,8 +153,7 @@ public class MDXFormulaHandler {
 					}
 				}
 			} catch (OlapException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				LOGGER.error("Error getting selected time hierarchy name", e);
 			}
 		}
 		return null;

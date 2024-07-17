@@ -347,7 +347,7 @@ public abstract class DependenciesPostProcessingLov extends AbstractLOV {
 				doesRowSatisfyCondition = doesRowSatisfyCondition(row, valuefilter, valuetypefilter, columnfilter,
 						typeFilter);
 			} catch (EMFValidationError error) {
-				error.printStackTrace();
+				LOGGER.warn("An error occurred while filtering list", error);
 				return list;
 			}
 			if (doesRowSatisfyCondition)
@@ -598,7 +598,7 @@ public abstract class DependenciesPostProcessingLov extends AbstractLOV {
 					else
 						doesRowSatisfyCondition = true;
 				} catch (EMFValidationError error) {
-					error.printStackTrace();
+					LOGGER.warn("An error occurred while filtering list", error);
 					return list;
 				}
 				if (doesRowSatisfyCondition)

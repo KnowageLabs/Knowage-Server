@@ -128,7 +128,7 @@ public class ExecutionProxy {
 						request = new SourceBean("");
 						resp = new SourceBean("");
 					} catch (SourceBeanException e1) {
-						e1.printStackTrace();
+						LOGGER.error("Error while executing document", e1);
 					}
 					RequestContainer reqContainer = new RequestContainer();
 					ResponseContainer resContainer = new ResponseContainer();

@@ -1673,7 +1673,7 @@ public class TimeAggregationHandler {
 			JSONObject dataSetJSON = (JSONObject) dataSetWriter.write(ds);
 			logger.debug(dataSetJSON.getJSONArray("rows").toString());
 		} catch (JSONException e) {
-			e.printStackTrace();
+			logger.error("sysoDatastore", e);
 		}
 	}
 
