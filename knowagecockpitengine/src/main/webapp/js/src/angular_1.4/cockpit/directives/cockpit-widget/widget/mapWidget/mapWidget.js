@@ -971,7 +971,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				var coordinate = evt.coordinate;
 				if (selectedLayer) {
 					var originalLayer = selectedLayer.get("originalLayer");
-					if (originalLayer.showTooltip) {
+					if (originalLayer && originalLayer.showTooltip) {
 						var tooltipCol = originalLayer.tooltipColumn;
 						var prop = $scope.getColumnSelectedOfDataset(selectedLayer.dsId)
 							.find(function(e) { return tooltipCol == e.name; });
