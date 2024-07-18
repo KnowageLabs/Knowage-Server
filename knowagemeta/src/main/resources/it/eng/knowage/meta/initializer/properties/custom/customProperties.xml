@@ -157,12 +157,12 @@
 				description="The column identify a subject"
 				category="Structural" defaultValue="false" />  
 
-			<type id="behavioural.notEnabledRoles" name="Roles enabled"
-				description="Roles enabled to view this column"
+			<type id="behavioural.notEnabledRoles" name="Roles NOT enabled"
+				description="Roles NOT enabled to view this column"
 				category="Behavioural" defaultValue="" />
 
-			<type id="behavioural.notEnabledRoles" name="Roles enabled"
-				description="Roles enabled to view this column"
+			<type id="behavioural.notEnabledRoles" name="Roles NOT enabled"
+				description="Roles NOT enabled to view this column"
 				category="Behavioural" defaultValue="" />
 
 		</types>
