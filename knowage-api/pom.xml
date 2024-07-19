@@ -80,7 +80,7 @@
 		<dependency>
 			<groupId>org.jboss.resteasy</groupId>
 			<artifactId>resteasy-spring-boot-starter</artifactId>
-			<version>4.7.0.Final</version>
+			<version>4.8.2.Final</version>
 		</dependency>
 		<dependency>
 			<groupId>javax.ws.rs</groupId>
