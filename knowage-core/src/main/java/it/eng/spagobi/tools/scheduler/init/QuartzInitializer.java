@@ -23,7 +23,9 @@ import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Properties;
+import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -66,7 +68,7 @@ public class QuartzInitializer implements InitializerIFace {
 		JDBC_URL_PREFIX_2_DELEGATE_CLASS.put(JDBC_HSQLDB, "org.quartz.impl.jdbcjobstore.HSQLDBDelegate");
 	}
 
-	private SourceBean _config = null;
+	private SourceBean config = null;
 
 	/*
 	 * (non-Javadoc)
@@ -86,7 +88,7 @@ public class QuartzInitializer implements InitializerIFace {
 			String figuredOutValue = null;
 
 			if (properties.containsKey(PROPERTY_DELEGATE_CLASS)) {
-				LOGGER.info("Quartz delegate class set to " + properties.get(PROPERTY_DELEGATE_CLASS));
+				LOGGER.info("Quartz delegate class set to {}", properties.get(PROPERTY_DELEGATE_CLASS));
 			} else {
 				LOGGER.warn("Property " + PROPERTY_DELEGATE_CLASS + " not set! Trying to figure out what delegate class needs to be used...");
 				determineDelegateClass(properties);
@@ -125,14 +127,22 @@ public class QuartzInitializer implements InitializerIFace {
 			connection = ds.getConnection();
 			DatabaseMetaData metaData = connection.getMetaData();
 			String url = metaData.getURL();
-
-			if (!JDBC_URL_PREFIX_2_DELEGATE_CLASS.containsKey(url)) {
-				throw new IllegalStateException("Prefix " + url + " doesn't have a matching delegate class.");
+			
+			// @formatter:off		
+			Optional<Entry<String, String>> delegate = JDBC_URL_PREFIX_2_DELEGATE_CLASS
+					.entrySet()
+					.stream()
+					.filter(e -> url.startsWith(e.getKey()))
+					.findFirst();
+			// @formatter:on
+			
+			if (delegate.isEmpty()) {
+				throw new IllegalStateException("The url " + url + " doesn't have a matching delegate class.");
 			}
 
-			figuredOutValue = JDBC_URL_PREFIX_2_DELEGATE_CLASS.get(url);
+			figuredOutValue = delegate.get().getValue();
 
-			LOGGER.info("Quartz will be initialized with the delegate class " + figuredOutValue);
+			LOGGER.info("Quartz will be initialized with the delegate class {}", figuredOutValue);
 			properties.put(PROPERTY_DELEGATE_CLASS, figuredOutValue);
 
 		} catch (Exception e) {
@@ -155,7 +165,7 @@ public class QuartzInitializer implements InitializerIFace {
 	 */
 	@Override
 	public SourceBean getConfig() {
-		return _config;
+		return config;
 	}
 
 }

@@ -23,6 +23,8 @@ import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
+import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -157,11 +159,19 @@ public class HibernateSessionManager {
 			DatabaseMetaData metaData = connection.getMetaData();
 			String url = metaData.getURL();
 
-			if (!JDBC_URL_PREFIX_2_DIALECT.containsKey(url)) {
-				throw new IllegalStateException("Prefix " + url + " doesn't have a matching dialect.");
+			// @formatter:off		
+			Optional<Entry<String, String>> delegate = JDBC_URL_PREFIX_2_DIALECT
+					.entrySet()
+					.stream()
+					.filter(e -> url.startsWith(e.getKey()))
+					.findFirst();
+			// @formatter:on
+			
+			if (delegate.isEmpty()) {
+				throw new IllegalStateException("The url " + url + " doesn't have a matching delegate class.");
 			}
 
-			figuredOutValue = JDBC_URL_PREFIX_2_DIALECT.get(url);
+			figuredOutValue = delegate.get().getValue();
 		} catch (Exception e) {
 			LOGGER.error("Error determining Hibernate's dialect", e);
 		} finally {
