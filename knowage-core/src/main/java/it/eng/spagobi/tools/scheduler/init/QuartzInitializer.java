@@ -126,11 +126,16 @@ public class QuartzInitializer implements InitializerIFace {
 			DatabaseMetaData metaData = connection.getMetaData();
 			String url = metaData.getURL();
 
-			if (!JDBC_URL_PREFIX_2_DELEGATE_CLASS.containsKey(url)) {
-				throw new IllegalStateException("Prefix " + url + " doesn't have a matching delegate class.");
+			Pattern jdbcPattern = Pattern.compile("(jdbc:[^:]+).+");
+			Matcher matcher = jdbcPattern.matcher(url);
+			matcher.matches();
+			String urlPrefix = matcher.group(1);
+
+			if (!JDBC_URL_PREFIX_2_DELEGATE_CLASS.containsKey(urlPrefix)) {
+				throw new IllegalStateException("Prefix " + urlPrefix + " doesn't have a matching delegate class.");
 			}
 
-			figuredOutValue = JDBC_URL_PREFIX_2_DELEGATE_CLASS.get(url);
+			figuredOutValue = JDBC_URL_PREFIX_2_DELEGATE_CLASS.get(urlPrefix);
 
 			LOGGER.info("Quartz will be initialized with the delegate class " + figuredOutValue);
 			properties.put(PROPERTY_DELEGATE_CLASS, figuredOutValue);
