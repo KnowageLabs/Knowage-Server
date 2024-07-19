@@ -21,12 +21,18 @@ import it.eng.spagobi.utilities.exceptions.ActionNotPermittedException;
 
 public interface IDatasetActionsChecker {
 
-	public void canLoadData() throws ActionNotPermittedException;
+	void canSee() throws ActionNotPermittedException;
 
-	public void canEdit() throws ActionNotPermittedException;
+	void canSeeContent() throws ActionNotPermittedException;
 
-	public void canSave() throws ActionNotPermittedException;
+	void canLoadData() throws ActionNotPermittedException;
 
-	public void canShare() throws ActionNotPermittedException;
+	void canEdit() throws ActionNotPermittedException;
+
+	void canSave() throws ActionNotPermittedException;
+
+	void canDelete() throws ActionNotPermittedException;
+
+	void canShare() throws ActionNotPermittedException;
 
 }

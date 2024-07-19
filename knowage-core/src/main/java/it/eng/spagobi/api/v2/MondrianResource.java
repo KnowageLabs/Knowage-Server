@@ -116,8 +116,7 @@ public class MondrianResource extends AbstractSpagoBIResource {
 			artifact = artifactDAO.loadArtifactByNameAndType(name, "MONDRIAN_SCHEMA");
 		} catch (Exception e) {
 			LOGGER.error("Non-fatal error while getting artifact with name: " + name, e);
-			throw new SpagoBIServiceException(this.request.getPathInfo(),
-					"Error while getting artifact with name: " + name, e);
+			throw new SpagoBIServiceException(this.request.getPathInfo(), "Error while getting artifact with name: " + name, e);
 		} finally {
 			LOGGER.debug("OUT");
 		}
@@ -264,8 +263,7 @@ public class MondrianResource extends AbstractSpagoBIResource {
 		}
 
 		if (artifact.getId() == null) {
-			return Response.status(Status.NOT_FOUND).entity("The artifact with id " + artifactId + " doesn't exist")
-					.build();
+			return Response.status(Status.NOT_FOUND).entity("The artifact with id " + artifactId + " doesn't exist").build();
 		}
 
 		try {
@@ -279,8 +277,7 @@ public class MondrianResource extends AbstractSpagoBIResource {
 					artifactDAO.setActiveVersion(artifactId, artifact.getCurrentContentId());
 				}
 
-			} else if (artifactDAO.loadArtifactById(artifactId).getModelLocked() && !artifact.getModelLocked()
-					&& artifact.getModelLocker() != null) {
+			} else if (artifactDAO.loadArtifactById(artifactId).getModelLocked() && !artifact.getModelLocked() && artifact.getModelLocker() != null) {
 
 				Artifact temp = artifactDAO.loadArtifactById(artifactId);
 				temp.setModelLocked(false);
@@ -302,6 +299,7 @@ public class MondrianResource extends AbstractSpagoBIResource {
 
 	@DELETE
 	@Path("/{ID}")
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.MONDRIAN_SCHEMA_MANAGEMENT })
 	public Response delete(@PathParam("ID") int artifactId) {
 
 		try {
@@ -323,6 +321,7 @@ public class MondrianResource extends AbstractSpagoBIResource {
 
 	@DELETE
 	@Path("/{ID}/versions/{contentID}")
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.MONDRIAN_SCHEMA_MANAGEMENT })
 	public Response deleteContent(@PathParam("ID") int artifactId, @PathParam("contentID") int contentId) {
 
 		try {

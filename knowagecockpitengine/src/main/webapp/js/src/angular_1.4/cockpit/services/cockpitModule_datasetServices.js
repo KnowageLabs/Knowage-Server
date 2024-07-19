@@ -1,4 +1,4 @@
-angular.module("cockpitModule").service("cockpitModule_datasetServices",function(sbiModule_translate,sbiModule_util,sbiModule_i18n,sbiModule_restServices,cockpitModule_template, $filter, $q, 
+angular.module("cockpitModule").service("cockpitModule_datasetServices",function(sbiModule_translate,sbiModule_util,sbiModule_i18n,sbiModule_restServices,cockpitModule_template, $filter, $q, sbiModule_config,
 $mdPanel,cockpitModule_widgetSelection,cockpitModule_properties,cockpitModule_utilstServices, $rootScope,sbiModule_messaging,sbiModule_user,cockpitModule_templateServices,driversExecutionService,cockpitModule_analyticalDrivers){
 	var ds=this;
 
@@ -561,14 +561,19 @@ $mdPanel,cockpitModule_widgetSelection,cockpitModule_properties,cockpitModule_ut
 				if(angular.equals(cockpitModule_template.configuration.datasets[i].dsId,dsId)){
 					angular.forEach(cockpitModule_template.configuration.datasets[i].parameters,function(item,key){
 						this[key]=[cockpitModule_utilstServices.getParameterValue(item)];
-						if (item == undefined) {
+						if (!this[key] || !this[key][0]) {
 
 							var datasetFound=ds.getDatasetById(dsId);
 							var paramsFound = datasetFound.parameters;
 							for (var j = 0; j < paramsFound.length; j++) {
 
-								if((paramsFound[j].name == key) && paramsFound[j].defaultValue != undefined) {
-									this[key] = paramsFound[j].defaultValue;
+								if(sbiModule_config.parameterDefaultsWinsOnEmptyDriver && (paramsFound[j].name == key) && paramsFound[j].defaultValue != undefined) {
+									let tempDefaultValue = paramsFound[j].defaultValue;
+									if (Array.isArray(tempDefaultValue)) {
+										this[key] = tempDefaultValue;
+									} else {
+										this[key] = [tempDefaultValue];
+									}
 									cockpitModule_template.configuration.datasets[i].parameters[key] = this[key] ;
 								}
 

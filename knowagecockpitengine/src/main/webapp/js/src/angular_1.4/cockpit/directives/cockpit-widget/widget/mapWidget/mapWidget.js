@@ -853,7 +853,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				evt.map.forEachFeatureAtPixel(evt.pixel,
 					function(feature, layer) {
 						
-						if (!layer.get("originalLayer").isStatic && !featureFounded) {
+						if (!featureFounded
+								&& layer.get("originalLayer")
+								&& !layer.get("originalLayer").isStatic) {
 							$scope.selectedLayer = layer;
 							$scope.selectedLayerDefinition = $scope.selectedLayer.get("originalLayer");
 							$scope.selectedFeature = (Array.isArray(feature.get('features')) && feature.get('features').length == 1) ? feature.get('features')[0] : feature;
@@ -969,7 +971,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				var coordinate = evt.coordinate;
 				if (selectedLayer) {
 					var originalLayer = selectedLayer.get("originalLayer");
-					if (originalLayer.showTooltip) {
+					if (originalLayer && originalLayer.showTooltip) {
 						var tooltipCol = originalLayer.tooltipColumn;
 						var prop = $scope.getColumnSelectedOfDataset(selectedLayer.dsId)
 							.find(function(e) { return tooltipCol == e.name; });
@@ -2053,6 +2055,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				} else {
 					ret["background-color"] = "unset";
 				}
+			}
+
+			if ($scope.ngModel.style.legend.position == 'drag') {
+				ret["min-width"] = Math.max(150, $scope.ngModel.style.legend.width);
 			}
 
 			return ret;

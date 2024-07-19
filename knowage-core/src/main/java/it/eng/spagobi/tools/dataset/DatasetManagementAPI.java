@@ -223,9 +223,9 @@ public class DatasetManagementAPI {
 				}
 				// check categories of dataset
 				Set<Domain> categoryList = UserUtilities.getDataSetCategoriesByUser(currUserProfile);
-				if (categoryList != null && categoryList.size() > 0) {
-					for (Iterator iterator = categoryList.iterator(); iterator.hasNext();) {
-						Domain domain = (Domain) iterator.next();
+				if (categoryList != null && !categoryList.isEmpty()) {
+					for (Iterator<Domain> iterator = categoryList.iterator(); iterator.hasNext();) {
+						Domain domain = iterator.next();
 						Integer domainId = domain.getValueId();
 
 						if (dsCategoryId.equals(domainId)) {
@@ -486,8 +486,8 @@ public class DatasetManagementAPI {
 		if (tableName != null && !tableName.isEmpty() && columns != null && !columns.isEmpty()) {
 
 			StringBuilder columnsSTring = new StringBuilder();
-			for (Iterator iterator = columns.iterator(); iterator.hasNext();) {
-				String column = (String) iterator.next();
+			for (Iterator<String> iterator = columns.iterator(); iterator.hasNext();) {
+				String column = iterator.next();
 				columnsSTring = columnsSTring.append(column);
 				columnsSTring = columnsSTring.append(",");
 			}
@@ -520,8 +520,9 @@ public class DatasetManagementAPI {
 			ICategoryDAO categoryDao = DAOFactory.getCategoryDAO();
 
 			// TODO : Makes sense?
-			List<Domain> dialects = categoryDao.getCategoriesForDataset().stream().map(Domain::fromCategory).collect(toList());
-			if (dialects == null || dialects.size() == 0) {
+			List<Domain> dialects = categoryDao.getCategoriesForDataset().stream().map(Domain::fromCategory)
+					.collect(toList());
+			if (dialects == null || dialects.isEmpty()) {
 				return null;
 			}
 
@@ -661,16 +662,16 @@ public class DatasetManagementAPI {
 								String value = values[j].trim();
 								if (!value.isEmpty()) {
 									if (!value.startsWith(delim) && !value.endsWith(delim)) {
-										value = value.replaceAll("\'", "\'\'");
+										value = value.replace("\'", "\'\'");
 										newValues.add(delim + value + delim);
 									} else {
 										if (isString && value.startsWith(delim) && value.endsWith(delim)) {
 											value = value.substring(1, value.length() - 1);
-											value = value.replaceAll("\'", "\'\'");
+											value = value.replace("\'", "\'\'");
 											newValues.add(delim + value + delim);
 										} else {
 											if (isString)
-												value = value.replaceAll("\'", "\'\'");
+												value = value.replace("\'", "\'\'");
 											if (value.endsWith(delim))
 												value = delim + value + delim;
 											newValues.add(value);
@@ -678,11 +679,10 @@ public class DatasetManagementAPI {
 
 									}
 
-//									}
 								}
 							}
 							String newValuesString = StringUtils.join(newValues, ",");
-							newValuesString = newValuesString.replaceAll("&comma;", ",");
+							newValuesString = newValuesString.replace("&comma;", ",");
 							paramValues.put(paramName, newValuesString);
 							break;
 						}
@@ -723,16 +723,16 @@ public class DatasetManagementAPI {
 								String value = values[j].trim();
 								if (!value.isEmpty()) {
 									if (!value.startsWith(delim) && !value.endsWith(delim)) {
-										value = value.replaceAll("\'", "\'\'");
+										value = value.replace("\'", "\'\'");
 										newValues.add(delim + value + delim);
 									} else {
 										if (isString && value.startsWith(delim) && value.endsWith(delim)) {
 											value = value.substring(1, value.length() - 1);
-											value = value.replaceAll("\'", "\'\'");
+											value = value.replace("\'", "\'\'");
 											newValues.add(delim + value + delim);
 										} else {
 											if (isString)
-												value = value.replaceAll("\'", "\'\'");
+												value = value.replace("\'", "\'\'");
 											if (value.endsWith(delim))
 												value = delim + value + delim;
 
@@ -745,7 +745,7 @@ public class DatasetManagementAPI {
 								}
 							}
 							String newValuesString = StringUtils.join(newValues, ",");
-							newValuesString = newValuesString.replaceAll("&comma;", ",");
+							newValuesString = newValuesString.replace("&comma;", ",");
 							paramValues.put(paramName, newValuesString);
 							break;
 						}
@@ -877,7 +877,7 @@ public class DatasetManagementAPI {
 			}
 		}
 
-		if (minMaxFilterIndexes.size() > 0) {
+		if (!minMaxFilterIndexes.isEmpty()) {
 			logger.debug("MIN/MAX filter found");
 
 			Filter where = getWhereFilter(noMinMaxFilters, likeFilters);
@@ -937,20 +937,28 @@ public class DatasetManagementAPI {
 
 	public Filter getWhereFilter(List<Filter> filters, List<SimpleFilter> likeFilters) {
 		Filter where = null;
-		if (filters.size() > 0) {
+		if (!filters.isEmpty()) {
 			if (filters.size() == 1 && filters.get(0) instanceof UnsatisfiedFilter) {
 				where = filters.get(0);
 			} else {
 				AndFilter andFilter = new AndFilter(filters);
-				if (likeFilters.size() > 0) {
+				if (!likeFilters.isEmpty()) {
 					andFilter.and(new OrFilter(likeFilters));
 				}
 				where = andFilter;
 			}
-		} else if (likeFilters.size() > 0) {
+		} else if (!likeFilters.isEmpty()) {
 			where = new OrFilter(likeFilters);
 		}
 		return where;
+	}
+
+	public void canSee(IDataSet dataSet) throws ActionNotPermittedException {
+		DatasetActionsCheckerFactory.getDatasetActionsChecker(getUserProfile(), dataSet).canSee();
+	}
+
+	public void canSeeContent(IDataSet dataSet) throws ActionNotPermittedException {
+		DatasetActionsCheckerFactory.getDatasetActionsChecker(getUserProfile(), dataSet).canSeeContent();
 	}
 
 	public void canLoadData(IDataSet dataSet) throws ActionNotPermittedException {
@@ -963,6 +971,10 @@ public class DatasetManagementAPI {
 
 	public void canSave(IDataSet dataSet) throws ActionNotPermittedException {
 		DatasetActionsCheckerFactory.getDatasetActionsChecker(getUserProfile(), dataSet).canSave();
+	}
+
+	public void canDelete(IDataSet dataSet) throws ActionNotPermittedException {
+		DatasetActionsCheckerFactory.getDatasetActionsChecker(getUserProfile(), dataSet).canDelete();
 	}
 
 	public void canShare(IDataSet dataSet) throws ActionNotPermittedException {

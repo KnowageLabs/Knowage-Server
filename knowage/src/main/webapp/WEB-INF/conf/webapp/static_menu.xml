@@ -83,7 +83,7 @@
 				toBeAuthorized="MANAGE_GLOSSARY_BUSINESS"
 				iconCls="fa fa-2x fa-building" />
 			<ITEM id="4009" label="menu.timespan"
-				requiredFunctionality="Timespan"
+				requiredFunctionality="TimespanManagement"
 				to="/timespan" />
 			<ITEM id="4010" label="menu.calendar"
 				requiredFunctionality="Calendar"

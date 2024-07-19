@@ -73,6 +73,7 @@
             <DocumentExecutionLinkDialog :visible="linkDialogVisible" :linkInfo="linkInfo" :embedHTML="embedHTML" :propDocument="document" :parameters="linkParameters" @close="linkDialogVisible = false"></DocumentExecutionLinkDialog>
             <DocumentExecutionSelectCrossNavigationDialog :visible="destinationSelectDialogVisible" :crossNavigationDocuments="crossNavigationDocuments" @close="destinationSelectDialogVisible = false" @selected="onCrossNavigationSelected"></DocumentExecutionSelectCrossNavigationDialog>
             <DocumentExecutionCNContainerDialog v-if="crossNavigationContainerData" :visible="crossNavigationContainerVisible" :data="crossNavigationContainerData" @close="onCrossNavigationContainerClose"></DocumentExecutionCNContainerDialog>
+            <DatasetEditorPreview v-if="datasetPreviewShown" :visible="datasetPreviewShown" :prop-dataset="datasetToPreview" :dashboard-id="document.dashboardId" @close="datasetPreviewShown = false" />
         </div>
     </div>
 </template>
@@ -101,12 +102,13 @@ import DocumentExecutionCNContainerDialog from './dialogs/documentExecutionCNCon
 import { getCorrectRolesForExecution } from '../../../helpers/commons/roleHelper'
 import { findCrossTargetByCrossName, loadNavigationParamsInitialValue } from './DocumentExecutionCrossNavigationHelper'
 import { getValidDate } from './DocumentExecutionCrossNavigationHelper'
+import DatasetEditorPreview from '../dashboard/dataset/DatasetEditorDataTab/DatasetEditorPreview.vue'
 
 const crypto = require('crypto')
 const deepcopy = require('deepcopy')
 // @ts-ignore
 // eslint-disable-next-line
-window.execExternalCrossNavigation = function(outputParameters, otherOutputParameters, crossNavigationLabel) {
+window.execExternalCrossNavigation = function (outputParameters, otherOutputParameters, crossNavigationLabel) {
     postMessage(
         {
             type: 'crossNavigation',
@@ -120,9 +122,24 @@ window.execExternalCrossNavigation = function(outputParameters, otherOutputParam
     )
 }
 
+// @ts-ignore
+// eslint-disable-next-line
+window.execPreviewDataset = function (dsLabel, parameters, directDownload) {
+    postMessage(
+        {
+            type: 'preview',
+            dsLabel: dsLabel,
+            parameters: parameters,
+            directDownload: directDownload
+        },
+        location.origin
+    )
+}
+
 export default defineComponent({
     name: 'document-execution',
     components: {
+        DatasetEditorPreview,
         DocumentExecutionBreadcrumb,
         DocumentExecutionHelpDialog,
         DocumentExecutionRankDialog,
@@ -198,7 +215,9 @@ export default defineComponent({
             newCockpitCreated: false,
             loadingCrossNavigationDocument: false,
             crossNavigationSourceDocumentName: '',
-            metadataLoading: false
+            metadataLoading: false,
+            datasetPreviewShown: false as boolean,
+            datasetToPreview: {} as any
         }
     },
     watch: {
@@ -325,9 +344,36 @@ export default defineComponent({
         isInDocBrowser() {
             return this.$router.currentRoute.value.matched.some((i) => i.name === 'document-browser' || i.name === 'document-execution-workspace')
         },
-        iframeEventsListener(event) {
+        async directDownloadDataset(datasetId: number) {
+            await this.$http
+                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/export/dataset/${datasetId}/csv`, {}, { headers: { Accept: 'application/json, text/plain, */*', 'Content-Type': 'application/json;charset=UTF-8' } })
+                .then(() => {
+                    this.$store.commit('setInfo', {
+                        title: this.$t('common.toast.updateTitle'),
+                        msg: this.$t('workspace.myData.exportSuccess')
+                    })
+                })
+                .catch(() => {})
+        },
+        async iframeEventsListener(event) {
             if (event.data.type === 'crossNavigation') {
                 this.executeCrossNavigation(event)
+            } else if (event.data.type === 'preview') {
+                await this.$http
+                    .get(process.env.VUE_APP_HOST_URL + `/knowage/restful-services//1.0/datasets/${event.data.dsLabel}`)
+                    .then((response: AxiosResponse<any>) => {
+                        this.datasetToPreview = response.data[0]
+                        if (event.data.parameters && event.data.parameters.length > 0) {
+                            this.datasetToPreview.pars.forEach((i) => {
+                                if (Object.keys(event.data.parameters[0]).includes(i.name)) {
+                                    i.value = event.data.parameters[0][i.name]
+                                }
+                            })
+                        }
+                    })
+                    .catch(() => {})
+                if (event.data.directDownload) this.directDownloadDataset(this.datasetToPreview.id)
+                else this.datasetPreviewShown = true
             } else if (event.data.type === 'cockpitExecuted') {
                 this.loading = false
             }

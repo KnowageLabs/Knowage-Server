@@ -15,6 +15,7 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 --%>
 
+<%@page import="it.eng.spagobi.commons.SingletonConfig"%>
 <%@page import="it.eng.knowage.commons.security.KnowageSystemConfiguration"%>
 <%@page import="org.json.JSONObject"%>
 <%@page import="java.util.regex.Matcher"%>
@@ -45,7 +46,8 @@ sbiM.factory('sbiModule_config',function(){
 		externalBasePath:"<%= KnowageSystemConfiguration.getKnowageContext()%>",
 		chartEngineContextName:"<%=chartEngineContextName%>",
 		dynamicResourcesBasePath: "<%=dynamicResourcesBasePath%>",  	//  /knowage/js/src
-		dynamicResourcesEnginePath: "<%=dynamicResourcesEnginePath%>"   //  /cockpitengine/js/src
+		dynamicResourcesEnginePath: "<%=dynamicResourcesEnginePath%>",   //  /cockpitengine/js/src
+		parameterDefaultsWinsOnEmptyDriver: <%= "true".equalsIgnoreCase(SingletonConfig.getInstance().getConfigValue("dataset.parameters.default.wins.over.empty.driver")) %>
 	};
 });
 
