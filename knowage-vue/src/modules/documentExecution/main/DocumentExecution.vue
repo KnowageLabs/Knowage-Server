@@ -1015,7 +1015,7 @@ export default defineComponent({
                         parameters[parameter.urlName + '_field_visible_description'] = parameter.type === 'NUM' && parameter.parameterValue[0].description ? +parameter.parameterValue[0].description : parameter.parameterValue[0].description
                     } else if (parameter.selectionType === 'TREE' || parameter.selectionType === 'LOOKUP' || parameter.multivalue) {
                         parameters[parameter.urlName] = parameter.parameterValue.map((el: any) => {
-                            if(typeof el.value === "object") return return el.value[0]
+                            if(typeof el.value === "object") return el.value[0]
                             else return el.value
                         })
                         let tempString = ''
