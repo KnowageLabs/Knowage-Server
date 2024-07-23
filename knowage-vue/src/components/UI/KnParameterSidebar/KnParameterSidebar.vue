@@ -431,7 +431,7 @@ export default defineComponent({
                 })
             } else if (parameter.type === 'DATE' && parameter.showOnPanel === 'true' && parameter.visible) {
                 if (parameter.driverDefaultValue[0].desc?.split('#')[0]) {
-                    parameter.parameterValue[0].value = luxonFormatDate(parameter.driverDefaultValue[0].desc?.split('#')[0],parameter.driverDefaultValue[0].desc?.split('#')[1],'D')
+                    parameter.parameterValue[0].value = luxonFormatDate(parameter.driverDefaultValue[0].desc?.split('#')[0],parameter.driverDefaultValue[0].desc?.split('#')[1])
                 }
             } else {
                 if (!parameter.parameterValue[0]) {

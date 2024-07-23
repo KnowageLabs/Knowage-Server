@@ -39,9 +39,10 @@ export function formatNumberWithLocale(number: number, precision?: number, forma
 }
 
 export function luxonFormatDate(dateString: any | Date, inputFormat?: string, outputFormat?: string) {
-    const tempDate = inputFormat ? DateTime.fromFormat(dateString, inputFormat).setLocale(getLocale(true)) : DateTime.fromJSDate(dateString).setLocale(getLocale(true))
+    let tempDate = inputFormat ? DateTime.fromFormat(dateString, inputFormat).setLocale(getLocale(true)) : DateTime.fromJSDate(dateString).setLocale(getLocale(true))
+    if (!tempDate.isValid) tempDate = DateTime.fromFormat(dateString, 'dd/MM/yyyy')
     if (outputFormat) return tempDate.toFormat(outputFormat)
-    else return tempDate.toLocaleString(DateTime.DATE_SHORT)
+    else return tempDate.toLocaleString({ year: 'numeric', month: '2-digit', day: '2-digit' })
 }
 
 export function localeDate(locale?: any): String {
