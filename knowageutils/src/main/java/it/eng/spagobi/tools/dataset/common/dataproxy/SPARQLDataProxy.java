@@ -19,6 +19,7 @@ package it.eng.spagobi.tools.dataset.common.dataproxy;
 
 import org.apache.jena.query.QueryExecution;
 import org.apache.jena.query.QueryExecutionFactory;
+import org.apache.jena.sparql.exec.http.QueryExecutionHTTP;
 import org.apache.jena.query.ResultSet;
 import org.apache.log4j.Logger;
 
@@ -55,7 +56,8 @@ public class SPARQLDataProxy extends AbstractDataProxy {
 		logger.debug("IN");
 		IDataStore dataStore = null;
 
-		try (QueryExecution queryExecution = QueryExecutionFactory.sparqlService(sparqlEndpoint, sparqlQuery, defaultGraphIRI)) {
+		//try (QueryExecution queryExecution = QueryExecutionFactory.sparqlService(sparqlEndpoint, sparqlQuery, defaultGraphIRI)) {
+		try (QueryExecution queryExecution = QueryExecutionHTTP.create().service(sparqlEndpoint).query(sparqlQuery).addDefaultGraphURI(defaultGraphIRI).timeout(executionTimeout * 1000, null).build()) {		
 			ResultSet resultSet = executeSPARQLQuery(queryExecution);
 			dataStore = readResultSet(dataReader, dataStore, resultSet);
 		} catch (Exception e) {
@@ -82,7 +84,7 @@ public class SPARQLDataProxy extends AbstractDataProxy {
 
 
 	private ResultSet executeSPARQLQuery(QueryExecution queryExecution) {
-		queryExecution.setTimeout(executionTimeout * 1000);
+		//queryExecution.setTimeout(executionTimeout * 1000);
 		Monitor monitor = MonitorFactory.start("Knowage.SPARQLDataProxy.executeSPARQLQuery");
 		ResultSet resultSet = null;
 		try {
