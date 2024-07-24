@@ -280,9 +280,9 @@ public abstract class AbstractFormatExporter {
 					if (variable.getString("action").equalsIgnoreCase("header"))
 						return getCockpitVariables().getString(variable.getString("variable"));
 				}
-				return column.getString("aliasToShow");
+				return column.has("aliasToShow") ? column.getString("aliasToShow") : column.getString("alias");
 			} else
-				return column.getString("aliasToShow");
+				return column.has("aliasToShow") ? column.getString("aliasToShow") : column.getString("alias");
 		} catch (Exception e) {
 			LOGGER.error("Error retrieving table column header values.", e);
 			return "";

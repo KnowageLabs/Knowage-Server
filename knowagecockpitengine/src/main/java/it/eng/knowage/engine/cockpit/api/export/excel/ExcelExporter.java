@@ -911,20 +911,23 @@ public class ExcelExporter extends AbstractFormatExporter {
 					JSONObject column = columnsOrdered.getJSONObject(i);
 					String columnName = column.getString("header");
 					String chartAggregation = null;
-					if (widgetData.getString("type").equalsIgnoreCase("table")
-							|| widgetData.getString("type").equalsIgnoreCase("discovery")) {
+					if (widgetData.getString("type").equalsIgnoreCase("table")){
 						// renaming table columns names of the excel export
-
-//						if (arrayHeader.get(columnName) != null) {
-//							columnName = arrayHeader.get(columnName);
-//						}
-							
 						for (int j = 0; j < columnSelectedOfDataset.length(); j++) {
 							JSONObject columnSelected = columnSelectedOfDataset.getJSONObject(j);
-							if (columnName.equals(columnSelected.getString("aliasToShow"))) {
+							if(columnSelected.has("aliasToShow") && columnName.equals(columnSelected.getString("aliasToShow"))) {
 								columnName = getTableColumnHeaderValue(columnSelected);
 								break;
-							}
+							} 								
+						}
+					} else if (widgetData.getString("type").equalsIgnoreCase("discovery")){
+						// renaming table columns names of the excel export							
+						for (int j = 0; j < columnSelectedOfDataset.length(); j++) {
+							JSONObject columnSelected = columnSelectedOfDataset.getJSONObject(j);
+							if(columnSelected.has("name") && columnName.equals(columnSelected.getString("name"))) {
+								columnName = getTableColumnHeaderValue(columnSelected);
+								break;
+							} 							
 						}
 					} else if (widgetData.getString("type").equalsIgnoreCase("chart")) {
 						chartAggregation = chartAggregationsMap.get(columnName);
