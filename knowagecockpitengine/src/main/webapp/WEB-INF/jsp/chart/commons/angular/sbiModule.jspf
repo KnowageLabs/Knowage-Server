@@ -482,7 +482,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		return {
 		        request: function (config) {
 					config.params = {};
-		            config.params.SBI_EXECUTION_ID=<%=request.getParameter("SBI_EXECUTION_ID")!=null? "'"+request.getParameter("SBI_EXECUTION_ID")+"'" : "null"%>;
+		            config.params.SBI_EXECUTION_ID=<%=esapiEncoder.encodeForJavaScript(request.getParameter("SBI_EXECUTION_ID")!=null? "'"+request.getParameter("SBI_EXECUTION_ID")+"'" : "null")%>;
 		            return config;
 		        }
 

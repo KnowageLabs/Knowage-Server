@@ -109,7 +109,7 @@ angular.module("cockpitModule").factory("cockpitModule_template",function(sbiMod
 		template.configuration.variables=[];
 	}
 
-    var cockpitSelections = JSON.parse('<%=initialSelections%>');
+    var cockpitSelections = JSON.parse('<%=esapiEncoder.encodeForJavaScript(initialSelections)%>');
 	if(cockpitSelections.aggregations && cockpitSelections.aggregations.length > 0) {
 	    angular.merge(template.configuration.aggregations, cockpitSelections.aggregations);
 	}

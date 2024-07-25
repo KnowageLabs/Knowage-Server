@@ -46,6 +46,8 @@ author:
 <%@page import="java.util.Iterator"%>
 <%@page import="com.fasterxml.jackson.databind.ObjectMapper"%>
 <%@page import="org.json.JSONObject"%>
+<%@page import="org.owasp.esapi.reference.DefaultEncoder"%>	
+<%@page import="org.owasp.esapi.Encoder"%>	
 
 <%-- ---------------------------------------------------------------------- --%>
 <%-- JAVA CODE 																--%>
@@ -170,6 +172,7 @@ author:
 	}
 	String driverParams = new JSONObject(driverParamsMap).toString(0).replaceAll("'", "\\\\'");
 	String uuidO=request.getParameter("SBI_EXECUTION_ID")!=null? request.getParameter("SBI_EXECUTION_ID"): "null";
+	Encoder esapiEncoder = DefaultEncoder.getInstance();
 %>
 
 
@@ -186,7 +189,7 @@ author:
 <%@include file="commons/includeMessageResource.jspf"%>
 
 <script>
-	var sbiExecutionId = <%=request.getParameter("SBI_EXECUTION_ID")!=null? "'"+request.getParameter("SBI_EXECUTION_ID")+"'" : "null"%>;
+	var sbiExecutionId = <%=esapiEncoder.encodeForJavaScript(request.getParameter("SBI_EXECUTION_ID")!=null? "'"+request.getParameter("SBI_EXECUTION_ID")+"'" : "null")%>;
 	//var sbiExecutionId = '<%=uuidO%>';
 	var userId = '<%=userId%>';
 	var hostName = '<%=request.getServerName()%>';

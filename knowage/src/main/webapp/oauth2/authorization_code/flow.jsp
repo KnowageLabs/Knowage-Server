@@ -15,8 +15,10 @@ GNU Affero General Public License for more details.
 You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 --%>
-
+<%@page import="org.owasp.esapi.reference.DefaultEncoder"%>	
+<%@page import="org.owasp.esapi.Encoder"%>	
 <%
+Encoder esapiEncoder = DefaultEncoder.getInstance();
 String code = request.getParameter("code");
 %>
 
@@ -51,7 +53,7 @@ String code = request.getParameter("code");
     const clientId = oauth2Config.clientId;
     const redirectUri = oauth2Config.redirectUrl;
     const scope = oauth2Config.scopes;
-    const code = <%= code  %>;
+    const code = <%= esapiEncoder.encodeForJavaScript(code)  %>;
     const accessTokenResponse;
     if(code == null){
     	accessTokenResponse = null;
