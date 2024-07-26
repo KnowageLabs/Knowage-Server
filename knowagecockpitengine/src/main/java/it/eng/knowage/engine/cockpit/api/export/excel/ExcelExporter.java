@@ -1411,15 +1411,17 @@ public class ExcelExporter extends AbstractFormatExporter {
 			else
 				sheetName = widgetName;
 			String safeSheetName = WorkbookUtil.createSafeSheetName(sheetName);
-			if (safeSheetName.length() + String.valueOf(uniqueId).length() > SHEET_NAME_MAX_LEN)
-				safeSheetName = safeSheetName.substring(0, safeSheetName.length() - String.valueOf(uniqueId).length());
+			if (safeSheetName.length() + 
+						"(".length() + String.valueOf(uniqueId).length() + "(".length() > SHEET_NAME_MAX_LEN)
+				safeSheetName = safeSheetName.substring(0, safeSheetName.length() - 
+						"(".length() - String.valueOf(uniqueId).length() - ")".length());
 			String uniqueSafeSheetName = safeSheetName/* + String.valueOf(uniqueId)*/;
 			try {				
 				sheet = wb.createSheet(uniqueSafeSheetName);
 				uniqueId++;
 				return sheet;
 			} catch (Exception e) {
-				sheet = wb.createSheet(uniqueSafeSheetName + "(" + String.valueOf(uniqueId) + ")"); 
+				sheet = wb.createSheet(uniqueSafeSheetName + "(" + uniqueId + ")"); 
 				uniqueId++;
 				return sheet;
 			}
