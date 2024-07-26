@@ -186,7 +186,7 @@
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
 import { AxiosResponse } from 'axios'
-import { formatDate } from '@/helpers/commons/localeHelper'
+import { formatDate, luxonFormatDate } from '@/helpers/commons/localeHelper'
 import { iDocument, iParameter, iAdmissibleValues } from './KnParameterSidebar'
 import { setVisualDependency, updateVisualDependency } from './KnParameterSidebarVisualDependency'
 import { setDataDependency, updateDataDependency } from './KnParameterSidebarDataDependency'
@@ -431,7 +431,7 @@ export default defineComponent({
                 })
             } else if (parameter.type === 'DATE' && parameter.showOnPanel === 'true' && parameter.visible) {
                 if (parameter.driverDefaultValue[0].desc?.split('#')[0]) {
-                    parameter.parameterValue[0].value = this.getFormattedDate(parameter.driverDefaultValue[0].desc?.split('#')[0], undefined)
+                    parameter.parameterValue[0].value = luxonFormatDate(parameter.driverDefaultValue[0].desc?.split('#')[0],parameter.driverDefaultValue[0].desc?.split('#')[1])
                 }
             } else {
                 if (!parameter.parameterValue[0]) {

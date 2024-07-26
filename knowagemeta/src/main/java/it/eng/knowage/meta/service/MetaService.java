@@ -110,6 +110,7 @@ import it.eng.knowage.meta.model.physical.PhysicalModel;
 import it.eng.knowage.meta.model.physical.PhysicalTable;
 import it.eng.knowage.meta.model.serializer.EmfXmiSerializer;
 import it.eng.knowage.meta.model.serializer.ModelPropertyFactory;
+import it.eng.knowage.meta.model.util.JXPathContextBuilder;
 import it.eng.qbe.utility.CustomFunctionsSingleton;
 import it.eng.qbe.utility.CustomizedFunctionsReader;
 import it.eng.qbe.utility.DbTypeThreadLocal;
@@ -214,7 +215,8 @@ public class MetaService extends AbstractSpagoBIResource {
 
 			return Response.ok(translatedModel.toString()).build();
 
-		} catch (Throwable t) {			logger.error("Impossibile to load the model", t);
+		} catch (Throwable t) {
+			logger.error("Impossibile to load the model", t);
 			throw new SpagoBIServiceException(req.getPathInfo(), t);
 		}
 	}
@@ -1491,8 +1493,7 @@ public class MetaService extends AbstractSpagoBIResource {
 	private void applyPatch(JsonNode patch, Model model) throws SpagoBIException {
 		logger.debug("applyPatch:" + patch != null ? patch.toString() : "null");
 		Iterator<JsonNode> elements = patch.elements();
-		JXPathContext context = JXPathContext.newContext(model);
-		context.setFactory(new ModelPropertyFactory());
+		JXPathContext context = JXPathContextBuilder.newInstance(model).withFactory(new ModelPropertyFactory()).build();
 		while (elements.hasNext()) {
 			JsonNode jsonNode = elements.next();
 			String operation = jsonNode.get("op").textValue();

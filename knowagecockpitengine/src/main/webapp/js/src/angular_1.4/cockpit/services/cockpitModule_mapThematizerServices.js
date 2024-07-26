@@ -247,14 +247,20 @@
 
 		mts.getChoroplethStyles = function(externalLegend, value, parentLayer, fillColor, borderColor) {
 			var color =  mts.getColorFromClassification(externalLegend, value, parentLayer) || fillColor;
+			var alpha;
+			var borderAlpha;
+
+			if (!borderAlpha) borderAlpha = mts.rgbaToAlpha(borderColor) || 1;
 
 			return  [new ol.style.Style({
 				stroke: new ol.style.Stroke({
 					color: borderColor || color,
-					width: 2
+					width: 2,
+					opacity: borderAlpha,
 				}),
 				fill: new ol.style.Fill({
-					color: color
+					color: color,
+					opacity: alpha
 				})
 			})];
 
@@ -264,72 +270,83 @@
 			var style;
 			var color = extColor;
 			var alpha;
+			var borderColor = config.style.borderColor;
+			var borderAlpha; 
 
 			if (!color) color = mts.getColorFromClassification(externalLegend, value, parentLayer);
 			if (!color) color = mts.getColorByThresholds(value, props);
 			if (!color) color = (config.style && config.style.color) ? config.style.color : 'grey';
 //			if (!color) color = (config.style && config.style.color) ? mts.rgbaToHex(config.style.color) : 'grey';
 			if (!alpha) alpha = (config.style && config.style.color) ? mts.rgbaToAlpha(config.style.color) : 1;
+			if (props.coordType != "string" && !borderColor) borderColor = color;
+			if (!borderAlpha) borderAlpha = (config.style && config.style.borderColor) ? mts.rgbaToAlpha(config.style.borderColor) : 1;
 
-			switch(config.type) {
-
-			case "icon":
-				//font-awesome
-				var size = config.size || 100;
-				style = new ol.style.Style({
-					text: new ol.style.Text({
-							text: config.icon.unicode,
-							font: '' + config.icon.fontWeight + ' ' + ((2*size) + '% ') + '"' + config.icon.fontFamily + '"',
-							fill: new ol.style.Fill({
-								color: color,
-								opacity: alpha
+			if (props.coordType === "string") {
+				switch(config.type) {
+	
+				case "icon":
+					//font-awesome
+					var size = config.size || 100;
+					style = new ol.style.Style({
+						text: new ol.style.Text({
+								text: config.icon.unicode,
+								font: '' + config.icon.fontWeight + ' ' + ((2*size) + '% ') + '"' + config.icon.fontFamily + '"',
+								fill: new ol.style.Fill({
+									color: color,
+									opacity: alpha
+								})
 							})
+						});
+					break;
+	
+				case "url": case 'img':
+					//img (upload)
+					style =  new ol.style.Style({
+						image: new ol.style.Icon({
+								stroke: new ol.style.Stroke({ //border doesn't work
+									color: 'red',
+									width: 10
+								}),
+								scale: (config.scale) ? (config.scale/100) : 1,
+								opacity: 1,
+								crossOrigin: null,
+								src: config[config.type]
+							})
+					});
+					break;
+	
+				default:
+					var size = (config.size || 12);
+					var scale = size / 100;
+					var defaultImg = mts.getDefaultMarker(value, color, props, config);
+	
+					style = new ol.style.Style({
+						image: new ol.style.Icon({
+							crossOrigin: 'anonymous',
+							opacity: alpha,
+							img: defaultImg,
+							imgSize: [100, 100],
+							scale: scale
 						})
 					});
-				break;
-
-			case "url": case 'img':
-				//img (upload)
-				style =  new ol.style.Style({
-					image: new ol.style.Icon({
-							stroke: new ol.style.Stroke({ //border doesn't work
-								color: 'red',
-								width: 10
-							}),
-							scale: (config.scale) ? (config.scale/100) : 1,
-							opacity: 1,
-							crossOrigin: null,
-							src: config[config.type]
+	
+					break;
+	
+				}
+			} else {
+				return new ol.style.Style({
+						fill: new ol.style.Fill({
+							color: color,
+							opacity: alpha
+						}),
+						stroke: new ol.style.Stroke({
+							color: borderColor,
+							opacity: borderAlpha,
+							width: (config.size) ? (config.size) : 1
 						})
-				});
-				break;
-
-			default:
-				var size = (config.size || 12);
-				var scale = size / 100;
-				var defaultImg = mts.getDefaultMarker(value, color, props, config);
-
-				style = new ol.style.Style({
-					image: new ol.style.Icon({
-						crossOrigin: 'anonymous',
-						opacity: alpha,
-						img: defaultImg,
-						imgSize: [100, 100],
-						scale: scale
-					})
-				});
-
-//				style = new ol.style.Style({
-//					image: new ol.style.Circle({
-//							radius: size / 2,
-//							fill: new ol.style.Fill({color: color}),
-//							stroke: new ol.style.Stroke({color: "#000000", width: 1})
-//						})
-//				});
-
-				break;
-
+					});
 			}
+
 			return style;
 		}
 
