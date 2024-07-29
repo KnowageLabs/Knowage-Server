@@ -1,4 +1,4 @@
-angular.module("cockpitModule").service("cockpitModule_datasetServices",function(sbiModule_translate,sbiModule_util,sbiModule_i18n,sbiModule_restServices,cockpitModule_template, $filter, $q, 
+angular.module("cockpitModule").service("cockpitModule_datasetServices",function(sbiModule_translate,sbiModule_util,sbiModule_i18n,sbiModule_restServices,cockpitModule_template, $filter, $q, sbiModule_config,
 $mdPanel,cockpitModule_widgetSelection,cockpitModule_properties,cockpitModule_utilstServices, $rootScope,sbiModule_messaging,sbiModule_user,cockpitModule_templateServices,driversExecutionService,cockpitModule_analyticalDrivers){
 	var ds=this;
 
@@ -561,15 +561,19 @@ $mdPanel,cockpitModule_widgetSelection,cockpitModule_properties,cockpitModule_ut
 				if(angular.equals(cockpitModule_template.configuration.datasets[i].dsId,dsId)){
 					angular.forEach(cockpitModule_template.configuration.datasets[i].parameters,function(item,key){
 						this[key]=[cockpitModule_utilstServices.getParameterValue(item)];
-						if (item == undefined) {
+						if (!this[key] || !this[key][0]) {
 
 							var datasetFound=ds.getDatasetById(dsId);
 							var paramsFound = datasetFound.parameters;
 							for (var j = 0; j < paramsFound.length; j++) {
 
-								if((paramsFound[j].name == key) && paramsFound[j].defaultValue != undefined) {
-									this[key] = paramsFound[j].defaultValue;
-									cockpitModule_template.configuration.datasets[i].parameters[key] = this[key] ;
+								if(sbiModule_config.parameterDefaultsWinsOnEmptyDriver && (paramsFound[j].name == key) && paramsFound[j].defaultValue != undefined) {
+									let tempDefaultValue = paramsFound[j].defaultValue;
+									if (Array.isArray(tempDefaultValue)) {
+										this[key] = tempDefaultValue;
+									} else {
+										this[key] = [tempDefaultValue];
+									}
 								}
 
 							}
@@ -1239,7 +1243,7 @@ $mdPanel,cockpitModule_widgetSelection,cockpitModule_properties,cockpitModule_ut
 					var tempJSN = '"';
 					if(Array.isArray(parameters[parameter])) {
 						var splittedValues = parameters[parameter];
-						if(Array.isArray(parameters[parameter][0])) {
+						if(Array.isArray(parameters[parameter][0]) && parameters[parameter].length === 1) {
 							splittedValues = [];
 							if (parameters[parameter][0].length > 1) {
 								for (var i in parameters[parameter][0]) {
@@ -1252,7 +1256,7 @@ $mdPanel,cockpitModule_widgetSelection,cockpitModule_properties,cockpitModule_ut
 								}
 							}
 						}
-						if (typeof parameters[parameter][0] == "string" ) {
+						if (typeof parameters[parameter][0] == "string" && parameters[parameter].length === 1) {
 							splittedValues = parameters[parameter][0].split(',');
 						}
 

@@ -673,6 +673,11 @@
 	<CONFIG label="KNOWAGE.MANDATORY-ROLE" name="Mandatory session role"
 		description="If true, when users with more than one role logon, they must choose a session role before continuing" isActive="true"
 		valueCheck="false" valueType="STRING" category="SECURITY" />
+		
+	<CONFIG label="dataset.parameters.default.wins.over.empty.driver" name="Dataset parameters default value wins over empty driver"
+		description="When executing a cockpit, in case driver value is missing, parameter's default value is considered"
+		isActive="true" valueCheck="false" valueType="STRING"
+		category="GENERIC_CONFIGURATION" />
 
 </CONFIGS>
 

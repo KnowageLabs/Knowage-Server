@@ -896,20 +896,23 @@ public class ExcelExporter extends AbstractFormatExporter {
 					JSONObject column = columnsOrdered.getJSONObject(i);
 					String columnName = column.getString("header");
 					String chartAggregation = null;
-					if (widgetData.getString("type").equalsIgnoreCase("table")
-							|| widgetData.getString("type").equalsIgnoreCase("discovery")) {
+					if (widgetData.getString("type").equalsIgnoreCase("table")){
 						// renaming table columns names of the excel export
-
-//						if (arrayHeader.get(columnName) != null) {
-//							columnName = arrayHeader.get(columnName);
-//						}
-							
 						for (int j = 0; j < columnSelectedOfDataset.length(); j++) {
 							JSONObject columnSelected = columnSelectedOfDataset.getJSONObject(j);
-							if (columnName.equals(columnSelected.getString("aliasToShow"))) {
+							if(columnSelected.has("aliasToShow") && columnName.equals(columnSelected.getString("aliasToShow"))) {
 								columnName = getTableColumnHeaderValue(columnSelected);
 								break;
-							}
+							} 								
+						}
+					} else if (widgetData.getString("type").equalsIgnoreCase("discovery")){
+						// renaming table columns names of the excel export							
+						for (int j = 0; j < columnSelectedOfDataset.length(); j++) {
+							JSONObject columnSelected = columnSelectedOfDataset.getJSONObject(j);
+							if(columnSelected.has("name") && columnName.equals(columnSelected.getString("name"))) {
+								columnName = getTableColumnHeaderValue(columnSelected);
+								break;
+							} 							
 						}
 					} else if (widgetData.getString("type").equalsIgnoreCase("chart")) {
 						chartAggregation = chartAggregationsMap.get(columnName);
@@ -1380,15 +1383,17 @@ public class ExcelExporter extends AbstractFormatExporter {
 			else
 				sheetName = widgetName;
 			String safeSheetName = WorkbookUtil.createSafeSheetName(sheetName);
-			if (safeSheetName.length() + String.valueOf(uniqueId).length() > SHEET_NAME_MAX_LEN)
-				safeSheetName = safeSheetName.substring(0, safeSheetName.length() - String.valueOf(uniqueId).length());
-			String uniqueSafeSheetName = safeSheetName/* + String.valueOf(uniqueId) */;
-			try {
+			if (safeSheetName.length() + 
+						"(".length() + String.valueOf(uniqueId).length() + "(".length() > SHEET_NAME_MAX_LEN)
+				safeSheetName = safeSheetName.substring(0, safeSheetName.length() - 
+						"(".length() - String.valueOf(uniqueId).length() - ")".length());
+			String uniqueSafeSheetName = safeSheetName/* + String.valueOf(uniqueId)*/;
+			try {				
 				sheet = wb.createSheet(uniqueSafeSheetName);
 				uniqueId++;
 				return sheet;
 			} catch (Exception e) {
-				sheet = wb.createSheet(uniqueSafeSheetName + "(" + String.valueOf(uniqueId) + ")");
+				sheet = wb.createSheet(uniqueSafeSheetName + "(" + uniqueId + ")"); 
 				uniqueId++;
 				return sheet;
 			}
