@@ -360,7 +360,7 @@ export default defineComponent({
                 this.executeCrossNavigation(event)
             } else if (event.data.type === 'preview') {
                 await this.$http
-                    .get(process.env.VUE_APP_HOST_URL + `/knowage/restful-services//1.0/datasets/${event.data.dsLabel}`)
+                    .get(process.env.VUE_APP_HOST_URL + `/knowage/restful-services/1.0/datasets/${event.data.dsLabel}`)
                     .then((response: AxiosResponse<any>) => {
                         this.datasetToPreview = response.data[0]
                         if (event.data.parameters && event.data.parameters.length > 0) {
