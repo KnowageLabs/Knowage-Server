@@ -31,7 +31,7 @@ import javax.crypto.spec.SecretKeySpec;
 
 public class PasswordEncrypter {
 	private Mac mac = null;
-	private static final String PROVIDER = "HmacSHA1";
+	private static final String PROVIDER = "SHA-512";
 
 	public PasswordEncrypter(byte[] keyBytes) {
 		// All com.sun.crypto.** classes are JDK internal APIs that are not supported and should not be used.
