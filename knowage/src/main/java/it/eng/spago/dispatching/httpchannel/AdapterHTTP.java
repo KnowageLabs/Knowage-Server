@@ -589,8 +589,8 @@ public class AdapterHTTP extends HttpServlet {
 		requestContainer.setAttribute(HTTP_REQUEST_SERVER_NAME, request.getServerName());
 		requestContainer.setAttribute(HTTP_REQUEST_SERVER_PORT, String.valueOf(request.getServerPort()));
 		requestContainer.setAttribute(HTTP_REQUEST_SERVLET_PATH, request.getServletPath());
-		if (request.getUserPrincipal() != null)
-			requestContainer.setAttribute(HTTP_REQUEST_USER_PRINCIPAL, request.getUserPrincipal());
+		//if (request.getUserPrincipal() != null)
+		//	requestContainer.setAttribute(HTTP_REQUEST_USER_PRINCIPAL, request.getUserPrincipal());
 		requestContainer.setAttribute(HTTP_REQUEST_REQUESTED_SESSION_ID_FROM_COOKIE,
 				String.valueOf(request.isRequestedSessionIdFromCookie()));
 		requestContainer.setAttribute(HTTP_REQUEST_REQUESTED_SESSION_ID_FROM_URL,
