@@ -36,8 +36,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <!-- angular reference-->
 <script type="text/javascript" src="<%=urlBuilder.getResourcePath(spagoBiContext, "/dist/angular-bundle.js")%>"></script>
 
-<!-- IE11 polyfills bundle -->
-<script type="text/javascript" src="<%=urlBuilder.getResourcePath(spagoBiContext, "/dist/polyfills-bundle.js")%>"></script>
 
 <!-- All internal/external libraries bundle -->
 <script type="text/javascript" src="<%=urlBuilder.getResourcePath(spagoBiContext, "/dist/knowage-lib-bundle.js")%>"></script>

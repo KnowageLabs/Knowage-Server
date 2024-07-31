@@ -54,15 +54,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     	<link rel="stylesheet" type="text/css"  href="<%= KnowageSystemConfiguration.getKnowageContext() %>/node_modules/toastify-js/src/toastify.css">
     	<link rel="stylesheet" href="<%=urlBuilder.getResourceLink(request,"/themes/commons/css/customStyle.css")%>">
     	<script src="<%= KnowageSystemConfiguration.getKnowageContext() %>/node_modules/ag-grid-community/dist/ag-grid-community.min.noStyle.js"></script>
-    	<!-- POLYFILLS -->
-    	<script>if (!Array.isArray) {
-		  Array.isArray = function(arg) {
-		    return Object.prototype.toString.call(arg) === '[object Array]';
-		  };
-		}</script>
-    	<script src="<%= KnowageSystemConfiguration.getKnowageContext() %>/polyfills/promise-polyfill/promise-polyfill.js"></script>
-    	<script src="<%= KnowageSystemConfiguration.getKnowageContext() %>/polyfills/fetch-polyfill/fetch-polyfill.js"></script>
-    	<script src="<%= KnowageSystemConfiguration.getKnowageContext() %>/polyfills/url-polyfill/url-polyfill.min.js"></script>
     	<style>
     		html, body {height: 100%;}
 			.ag-center-cols-viewport{

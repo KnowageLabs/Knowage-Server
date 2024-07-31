@@ -19,10 +19,6 @@ module.exports = function(grunt) {
 	        	  'js/lib/angular/angular_1.4/angular-messages.min.js',
 	        	  'js/lib/angular/angular_1.4/angular-cookies.js'
 	        	  ],
-	        	 'dist/polyfills-bundle.js': [
-	        		 'polyfills/*/*polyfill.js',
-	        		 'polyfills/canvas-toBlob/canvas-toBlob.js'
-	              ],
 	        	 'dist/knowage-lib-bundle.js' : [
 	        		 'js/lib/angular/angular-material_1.1.0/angular-material.min.js',
 	        		 'js/lib/angular/angular-tree/angular-ui-tree.js',
@@ -91,7 +87,6 @@ module.exports = function(grunt) {
         target: {
           files: {
             'dist/angular-bundle.min.js': ['dist/angular-bundle.js'],
-            'dist/polyfills-bundle.min.js': ['dist/polyfills-bundle.js'],
             'dist/knowage-lib-bundle.min.js': ['dist/knowage-lib-bundle.js'],
             'dist/knowage-modules-bundle.min.js': ['dist/knowage-modules-bundle.js'],
             'dist/knowage-sources-bundle_<%= pkg.version %>.min.js': ['dist/knowage-sources-bundle_<%= pkg.version %>.js']
