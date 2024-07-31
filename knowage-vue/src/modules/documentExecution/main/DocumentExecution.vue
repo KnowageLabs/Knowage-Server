@@ -367,7 +367,7 @@ export default defineComponent({
         },
         async directDownloadDataset(dataset: any) {
             await this.$http
-            .post(import.meta.env.VITE_KNOWAGE_CONTEXT + `/restful-services/2.0/export/dataset/${dataset.id}/csv`, this.prepareDriversAndParameter(dataset.pars), { headers: { Accept: 'application/json, text/plain, */*', 'Content-Type': 'application/json;charset=UTF-8' } })
+            .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/export/dataset/${dataset.id}/csv`, this.prepareDriversAndParameter(dataset.pars), { headers: { Accept: 'application/json, text/plain, */*', 'Content-Type': 'application/json;charset=UTF-8' } })
                 .then(() => {
                     this.$store.commit('setInfo', {
                         title: this.$t('common.toast.updateTitle'),
