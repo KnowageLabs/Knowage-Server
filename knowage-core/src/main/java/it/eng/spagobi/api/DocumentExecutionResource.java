@@ -926,7 +926,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 								.put(esapiEncoder.decodeFromURL(value.replaceAll("%", "%25").replace("+", "%2B")));
 					} else {
 						valuesLstDecoded.put(value);
-						URLDecoder.decode(value.replaceAll("%", "%25").replace("+", "%2B"), UTF_8.name()); // uses the original value for list and %
+						esapiEncoder.decodeFromURL(value.replaceAll("%", "%25").replace("+", "%2B")); // uses the original value for list and %
 					}
 				}
 				toReturn.put(key, valuesLstDecoded);
