@@ -377,8 +377,10 @@ export default defineComponent({
                 .catch(() => {})
         },
         async iframeEventsListener(event) {
+            if(this.loading) return
+            this.loading = true
             if (event.data.type === 'crossNavigation') {
-                this.executeCrossNavigation(event)
+               await this.executeCrossNavigation(event)
             } else if (event.data.type === 'preview') {
                 await this.$http
                     .get(process.env.VUE_APP_HOST_URL + `/knowage/restful-services/1.0/datasets/${event.data.dsLabel}`)
@@ -393,11 +395,10 @@ export default defineComponent({
                         }
                     })
                     .catch(() => {})
-                if (event.data.directDownload) this.directDownloadDataset(this.datasetToPreview)
+                if (event.data.directDownload) await this.directDownloadDataset(this.datasetToPreview)
                 else this.datasetPreviewShown = true
-            } else if (event.data.type === 'cockpitExecuted') {
-                this.loading = false
-            }
+            } 
+            this.loading = false
         },
         editCockpitDocumentConfirm() {
             if (this.documentMode === 'EDIT') {
