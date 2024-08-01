@@ -44,11 +44,11 @@ function checkIfMultivalueDriverContainsCrossNavigationValue(tempParam: any, cro
 export function getValidDate(value: string, serverDateFormat: string) {
     const extractedDateValue = extractDatePart(value)
     let momentDate = moment(deepcopy(extractedDateValue))
-    const tempServerDateFormat = serverDateFormat.replaceAll('y', 'Y')
+    const tempServerDateFormat = serverDateFormat === 'yyyy-MM-dd' ? 'YYYY-MM-DD' : serverDateFormat
     const validFormats = [tempServerDateFormat, 'DD/MM/YYYY', 'DD/MM/YYYY HH:mm:ss.SSS']
     let tempDateFormatFromTheDateValue = extractDateFormatPart(value)
     if (tempDateFormatFromTheDateValue) {
-        tempDateFormatFromTheDateValue = tempDateFormatFromTheDateValue.replaceAll('y', 'Y')
+        tempDateFormatFromTheDateValue = tempDateFormatFromTheDateValue === 'yyyy-MM-dd' ? 'YYYY-MM-DD' : tempDateFormatFromTheDateValue
         validFormats.unshift(tempDateFormatFromTheDateValue)
     }
     for (let i = 0; i < validFormats.length; i++) {
