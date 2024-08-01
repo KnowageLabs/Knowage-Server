@@ -346,7 +346,7 @@ export default defineComponent({
         },
         prepareDriversAndParameter(parameters: any) {
             let tempObj = {} as any
-            if (parameters.length > 0) {
+            if (parameters?.length > 0) {
                 const tempParams = parameters.map((i) => {
                     return {
                         name: i.name,
@@ -356,7 +356,7 @@ export default defineComponent({
                 })
                 tempObj.parameters = tempParams
             }
-            if (this.filtersData?.filterStatus.length > 0) {
+            if (this.filtersData?.filterStatus?.length > 0) {
                 let tempDrivers = {} as any
                 this.filtersData.filterStatus.forEach((i) => {
                     tempDrivers[i.urlName] = i.parameterValue.length > 1 ? i.parameterValue.map((p) => p.value) : i.parameterValue[0].value
