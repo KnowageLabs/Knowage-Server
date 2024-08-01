@@ -48,7 +48,7 @@ export function getValidDate(value: string, serverDateFormat: string) {
     const validFormats = [tempServerDateFormat, 'DD/MM/YYYY', 'DD/MM/YYYY HH:mm:ss.SSS']
     let tempDateFormatFromTheDateValue = extractDateFormatPart(value)
     if (tempDateFormatFromTheDateValue) {
-        tempDateFormatFromTheDateValue = tempDateFormatFromTheDateValue.replaceAll('y', 'Y')
+        tempDateFormatFromTheDateValue = tempDateFormatFromTheDateValue === 'yyyy-MM-dd' ? 'YYYY-MM-DD' : tempDateFormatFromTheDateValue
         validFormats.unshift(tempDateFormatFromTheDateValue)
     }
     for (let i = 0; i < validFormats.length; i++) {
