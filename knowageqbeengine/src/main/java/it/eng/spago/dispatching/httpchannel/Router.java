@@ -26,8 +26,6 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.owasp.esapi.HTTPUtilities;
-import org.owasp.esapi.reference.DefaultHTTPUtilities;
 
 import it.eng.spago.base.Constants;
 import it.eng.spago.configuration.ConfigSingleton;
@@ -35,8 +33,6 @@ import it.eng.spago.tracing.TracerSingleton;
 import it.eng.spago.util.JavaScript;
 
 public class Router {
-	
-	private static HTTPUtilities httpUtils = new DefaultHTTPUtilities();
     public Router(String publisher) {
         this(publisher, true);
     } // public Router(String publisher)
@@ -148,8 +144,7 @@ public class Router {
             requestDispatcher.forward(request, response);
         } // if (_isForward)
         else {
-        	
-            response.sendRedirect(httpUtils.safeEncodeRedirectURL(publishingURL));
+            response.sendRedirect(response.encodeRedirectURL(publishingURL));
         } // if (_isForward) else
     } // public void route(ServletContext servletContext, HttpServletRequest request,
 
