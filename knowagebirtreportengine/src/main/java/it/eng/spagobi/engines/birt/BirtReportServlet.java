@@ -36,6 +36,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
+import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -81,6 +82,7 @@ import org.eclipse.birt.report.utility.DataExtractionParameterUtil;
 import org.owasp.esapi.HTTPUtilities;
 import org.owasp.esapi.reference.DefaultHTTPUtilities;
 
+import it.eng.knowage.utils.zip.ZipUtilsForSonar;
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.security.IEngUserProfile;
@@ -338,23 +340,30 @@ public class BirtReportServlet extends HttpServlet {
 			}
 			util.unzip(fileZip, getBirtExecutionTempDir(executionId));
 			try (JarFile zipFile = new JarFile(fileZip)) {
-				Enumeration totalZipEntries = zipFile.entries();
+				Enumeration<JarEntry> totalZipEntries = zipFile.entries();
 				File jarFile = null;
 				while (totalZipEntries.hasMoreElements()) {
-					ZipEntry entry = (ZipEntry) totalZipEntries.nextElement();
-					if (entry.getName().endsWith(".jar")) {
-						jarFile = new File(getBirtExecutionTempDirName(executionId) + entry.getName());
-						// set classloader with jar
-						ClassLoader previous = Thread.currentThread().getContextClassLoader();
-						DynamicClassLoader dcl = new DynamicClassLoader(jarFile, previous);
-						Thread.currentThread().setContextClassLoader(dcl);
-					} else if (entry.getName().endsWith(".rptdesign")) {
-						// set InputStream with report
-						File birtFile = new File(getBirtExecutionTempDirName(executionId) + entry.getName());
-						InputStream isBirt = new FileInputStream(birtFile);
-						byte[] templateRptDesign = new byte[0];
-						templateRptDesign = util.getByteArrayFromInputStream(isBirt);
-						is = new java.io.ByteArrayInputStream(templateRptDesign);
+					ZipUtilsForSonar zipUtilsForSonar = new ZipUtilsForSonar();
+					
+					if(zipUtilsForSonar.doThresholdCheck(JS_FILE_ZIP + JS_EXT_ZIP)) {
+						ZipEntry entry = totalZipEntries.nextElement();
+						if (entry.getName().endsWith(".jar")) {
+							jarFile = new File(getBirtExecutionTempDirName(executionId) + entry.getName());
+							// set classloader with jar
+							ClassLoader previous = Thread.currentThread().getContextClassLoader();
+							DynamicClassLoader dcl = new DynamicClassLoader(jarFile, previous);
+							Thread.currentThread().setContextClassLoader(dcl);
+						} else if (entry.getName().endsWith(".rptdesign")) {
+							// set InputStream with report
+							File birtFile = new File(getBirtExecutionTempDirName(executionId) + entry.getName());
+							InputStream isBirt = new FileInputStream(birtFile);
+							byte[] templateRptDesign = new byte[0];
+							templateRptDesign = util.getByteArrayFromInputStream(isBirt);
+							is = new java.io.ByteArrayInputStream(templateRptDesign);
+						}							
+					} else {
+						logger.error("Error while unzip file. Invalid archive file");
+						throw new SpagoBIRuntimeException("Error while unzip file. Invalid archive file");
 					}
 				}
 			}

@@ -106,6 +106,7 @@ import it.eng.knowage.meta.model.physical.PhysicalModel;
 import it.eng.knowage.meta.model.physical.PhysicalTable;
 import it.eng.knowage.meta.model.serializer.EmfXmiSerializer;
 import it.eng.knowage.meta.model.serializer.ModelPropertyFactory;
+import it.eng.knowage.utils.zip.ZipUtilsForSonar;
 import it.eng.qbe.utility.CustomFunctionsSingleton;
 import it.eng.qbe.utility.CustomizedFunctionsReader;
 import it.eng.qbe.utility.DbTypeThreadLocal;
@@ -126,6 +127,7 @@ import it.eng.spagobi.tools.datasource.dao.IDataSourceDAO;
 import it.eng.spagobi.utilities.JSError;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIException;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.rest.RestUtilities;
 
@@ -1821,17 +1823,23 @@ public class MetaService extends AbstractSpagoBIResource {
 
 			Enumeration enumEntries = jar.entries();
 			while (enumEntries.hasMoreElements()) {
-				JarEntry fileEntry = (java.util.jar.JarEntry) enumEntries.nextElement();
-				logger.debug("jar content " + fileEntry.getName());
-
-				if (fileEntry.getName().endsWith("sbimodel")) {
-					logger.debug("found model file " + fileEntry.getName());
-					is = jar.getInputStream(fileEntry);
-					byte[] byteContent = SpagoBIUtilities.getByteArrayFromInputStream(is);
-					return byteContent;
-
+				ZipUtilsForSonar zipUtilsForSonar = new ZipUtilsForSonar();
+				
+				if(zipUtilsForSonar.doThresholdCheck(path)) {
+					JarEntry fileEntry = (java.util.jar.JarEntry) enumEntries.nextElement();
+					logger.debug("jar content " + fileEntry.getName());
+	
+					if (fileEntry.getName().endsWith("sbimodel")) {
+						logger.debug("found model file " + fileEntry.getName());
+						is = jar.getInputStream(fileEntry);
+						byte[] byteContent = SpagoBIUtilities.getByteArrayFromInputStream(is);
+						return byteContent;
+	
+					}
+				} else {
+					logger.error("Error while unzip file. Invalid archive file");
+					throw new SpagoBIRuntimeException("Error while unzip file. Invalid archive file");
 				}
-
 			}
 		} catch (IOException e1) {
 			logger.error("the model file could not be taken by datamart.jar due to error ", e1);

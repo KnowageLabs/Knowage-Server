@@ -53,6 +53,7 @@ import org.apache.log4j.Logger;
 import com.jamonapi.Monitor;
 import com.jamonapi.MonitorFactory;
 
+import it.eng.knowage.utils.zip.ZipUtilsForSonar;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.engines.jasperreport.datasource.JRSpagoBIDataStoreDataSource;
@@ -76,6 +77,7 @@ import it.eng.spagobi.utilities.engines.AuditServiceProxy;
 import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.engines.IEngineAnalysisState;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineException;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import net.sf.jasperreports.engine.JRDataset;
 import net.sf.jasperreports.engine.JRParameter;
 import net.sf.jasperreports.engine.JRVirtualizer;
@@ -675,22 +677,30 @@ public class JasperReportEngineInstance extends AbstractEngineInstance {
 							Enumeration totalZipEntries = zipFile.entries();
 							File jarFile = null;
 							while (totalZipEntries.hasMoreElements()) {
-								ZipEntry entry = (ZipEntry) totalZipEntries.nextElement();
-								if (entry.getName().endsWith(".jar")) {
-									// set classloader with jar
-									jarFile = new File(destDir + entry.getName());
-									ClassLoader previous = Thread.currentThread().getContextClassLoader();
-									DynamicClassLoader dcl = new DynamicClassLoader(jarFile, previous);
-									// ClassLoader current = URLClassLoader.newInstance(new URL[]{jarFile.toURI().toURL()}, previous);
-									Thread.currentThread().setContextClassLoader(dcl);
-								}
-								if (entry.getName().endsWith(".jrxml")) {
-									// set InputStream with jrxml
-									File jrxmlFile = new File(
-											destDir + System.getProperty("file.separator") + entry.getName());
-									InputStream isJrxml = new FileInputStream(jrxmlFile);
-									templateContent = util.getByteArrayFromInputStream(isJrxml);
-									is = new java.io.ByteArrayInputStream(templateContent);
+								
+								ZipUtilsForSonar zipUtilsForSonar = new ZipUtilsForSonar();
+								
+								if(zipUtilsForSonar.doThresholdCheck(this.JS_FILE_ZIP + i + JS_EXT_ZIP)) {
+									ZipEntry entry = (ZipEntry) totalZipEntries.nextElement();
+									if (entry.getName().endsWith(".jar")) {
+										// set classloader with jar
+										jarFile = new File(destDir + entry.getName());
+										ClassLoader previous = Thread.currentThread().getContextClassLoader();
+										DynamicClassLoader dcl = new DynamicClassLoader(jarFile, previous);
+										// ClassLoader current = URLClassLoader.newInstance(new URL[]{jarFile.toURI().toURL()}, previous);
+										Thread.currentThread().setContextClassLoader(dcl);
+									}
+									if (entry.getName().endsWith(".jrxml")) {
+										// set InputStream with jrxml
+										File jrxmlFile = new File(
+												destDir + System.getProperty("file.separator") + entry.getName());
+										InputStream isJrxml = new FileInputStream(jrxmlFile);
+										templateContent = util.getByteArrayFromInputStream(isJrxml);
+										is = new java.io.ByteArrayInputStream(templateContent);
+									}
+								} else {
+									LOGGER.error("Error while unzip file. Invalid archive file");
+									throw new SpagoBIRuntimeException("Error while unzip file. Invalid archive file");
 								}
 							}
 						}

@@ -32,6 +32,8 @@ import java.util.zip.ZipFile;
 import org.apache.log4j.Logger;
 
 import it.eng.knowage.commons.security.PathTraversalChecker;
+import it.eng.knowage.utils.zip.ZipUtilsForSonar;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 /**
  * This class has been created to provide SpagoBI Access Utils, in order to customize operations with clients.
@@ -51,7 +53,7 @@ public class SpagoBIAccessUtils {
 	 * @throws ZipException the zip exception
 	 * @throws IOException  Signals that an I/O exception has occurred.
 	 */
-	public void unzip(File repositoryZip, File newDirectory) throws ZipException, IOException {
+	public void unzip(File repositoryZip, File newDirectory) throws IOException {
 		try (ZipFile zipFile = new ZipFile(repositoryZip)) {
 			Enumeration<? extends ZipEntry> entries = zipFile.entries();
 			ZipEntry entry = null;
@@ -59,30 +61,37 @@ public class SpagoBIAccessUtils {
 			String path = null;
 			File file = null;
 			while (entries.hasMoreElements()) {
-				entry = entries.nextElement();
-				name = entry.getName();
-				path = newDirectory.getPath() + File.separator + name;
-				file = new File(path);
-				PathTraversalChecker.checkDescendentOfDirectory(file, newDirectory);
-
-				// if file already exists, deletes it
-				if (file.exists() && file.isFile())
-					deleteDirectory(file);
-
-				if (!entry.isDirectory()) {
-					file = file.getParentFile();
-					file.mkdirs();
-
-					String fileName = newDirectory.getPath() + File.separator + entry.getName();
-
-					try (FileOutputStream fileout = new FileOutputStream(fileName);
-							BufferedOutputStream bufout = new BufferedOutputStream(fileout);
-							InputStream in = zipFile.getInputStream(entry)) {
-						copyInputStream(in, bufout);
-						bufout.flush();
+				ZipUtilsForSonar zipUtilsForSonar = new ZipUtilsForSonar();
+				
+				if(zipUtilsForSonar.doThresholdCheck(path)) {
+					entry = entries.nextElement();
+					name = entry.getName();
+					path = newDirectory.getPath() + File.separator + name;
+					file = new File(path);
+					PathTraversalChecker.checkDescendentOfDirectory(file, newDirectory);
+	
+					// if file already exists, deletes it
+					if (file.exists() && file.isFile())
+						deleteDirectory(file);
+	
+					if (!entry.isDirectory()) {
+						file = file.getParentFile();
+						file.mkdirs();
+	
+						String fileName = newDirectory.getPath() + File.separator + entry.getName();
+	
+						try (FileOutputStream fileout = new FileOutputStream(fileName);
+								BufferedOutputStream bufout = new BufferedOutputStream(fileout);
+								InputStream in = zipFile.getInputStream(entry)) {
+							copyInputStream(in, bufout);
+							bufout.flush();
+						}
+					} else {
+						file.mkdirs();
 					}
 				} else {
-					file.mkdirs();
+					LOGGER.error("Error while unzip file. Invalid archive file");
+					throw new SpagoBIRuntimeException("Error while unzip file. Invalid archive file");
 				}
 			}
 		}
