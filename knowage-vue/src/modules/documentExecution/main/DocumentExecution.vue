@@ -1034,7 +1034,7 @@ export default defineComponent({
                     } else if (parameter.valueSelection === 'man_in') {
                         if (!parameter.parameterValue[0]) parameter.parameterValue[0] = { value: '', description: '' }
                         parameters[parameter.urlName] = parameter.type === 'NUM' && parameter.parameterValue[0].value ? +parameter.parameterValue[0].value : parameter.parameterValue[0].value
-                        parameters[parameter.urlName + '_field_visible_description'] = parameter.type === 'NUM' && parameter.parameterValue[0].description ? +parameter.parameterValue[0].description : parameter.parameterValue[0].description
+                        parameters[parameter.urlName + '_field_visible_description'] = parameter.parameterValue[0].value
                     } else if (parameter.selectionType === 'TREE' || parameter.selectionType === 'LOOKUP' || parameter.multivalue) {
                         parameters[parameter.urlName] = parameter.parameterValue.map((el: any) => {
                             if(typeof el.value === "object") return el.value[0]
