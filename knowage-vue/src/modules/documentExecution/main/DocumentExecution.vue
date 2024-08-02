@@ -346,7 +346,7 @@ export default defineComponent({
         },
         prepareDriversAndParameter(parameters: any) {
             let tempObj = {} as any
-            if (parameters.length > 0) {
+            if (parameters?.length > 0) {
                 const tempParams = parameters.map((i) => {
                     return {
                         name: i.name,
@@ -356,7 +356,7 @@ export default defineComponent({
                 })
                 tempObj.parameters = tempParams
             }
-            if (this.filtersData?.filterStatus.length > 0) {
+            if (this.filtersData?.filterStatus?.length > 0) {
                 let tempDrivers = {} as any
                 this.filtersData.filterStatus.forEach((i) => {
                     tempDrivers[i.urlName] = i.parameterValue.length > 1 ? i.parameterValue.map((p) => p.value) : i.parameterValue[0].value
@@ -377,8 +377,10 @@ export default defineComponent({
                 .catch(() => {})
         },
         async iframeEventsListener(event) {
+            if(this.loading) return
+            this.loading = true
             if (event.data.type === 'crossNavigation') {
-                this.executeCrossNavigation(event)
+               await this.executeCrossNavigation(event)
             } else if (event.data.type === 'preview') {
                 await this.$http
                     .get(process.env.VUE_APP_HOST_URL + `/knowage/restful-services/1.0/datasets/${event.data.dsLabel}`)
@@ -393,11 +395,10 @@ export default defineComponent({
                         }
                     })
                     .catch(() => {})
-                if (event.data.directDownload) this.directDownloadDataset(this.datasetToPreview.id)
+                if (event.data.directDownload) await this.directDownloadDataset(this.datasetToPreview)
                 else this.datasetPreviewShown = true
-            } else if (event.data.type === 'cockpitExecuted') {
-                this.loading = false
-            }
+            } 
+            this.loading = false
         },
         editCockpitDocumentConfirm() {
             if (this.documentMode === 'EDIT') {
