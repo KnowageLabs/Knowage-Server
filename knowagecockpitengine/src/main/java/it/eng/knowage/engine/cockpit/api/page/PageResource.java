@@ -38,6 +38,7 @@ import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 import javax.servlet.http.HttpServletRequest;
@@ -374,7 +375,53 @@ public class PageResource extends AbstractCockpitEngineResource {
 				pdfFrontPage, pdfBackPage);
 		byte[] data = pngExporter.getBinaryData();
 
-		boolean isZipped = new ZipInputStream(new ByteArrayInputStream(data)).getNextEntry() != null;
+		boolean isZipped = false;
+		
+		// TODO non-regression-test 
+		int thresholdEntries = 10000;
+		int thresholdSize = 1000000000;
+		double thresholdRatio = 10;
+		int totalSizeArchive = 0;
+		int totalEntryArchive = 0;
+		
+		ZipInputStream zippedInputStream = new ZipInputStream(new ByteArrayInputStream(data));
+		ZipEntry zipEntry = null;
+		
+		while((zipEntry = zippedInputStream.getNextEntry()) != null) {
+			
+			totalEntryArchive ++;
+			
+			int nBytes = -1;
+			byte[] buffer = new byte[2048];
+			int totalSizeEntry = 0;
+
+			while((nBytes = new ZipInputStream(new ByteArrayInputStream(data)).read(buffer)) > 0) {
+			      //out.write(buffer, 0, nBytes);
+			      totalSizeEntry += nBytes;
+			      totalSizeArchive += nBytes;
+
+			      double compressionRatio = (double) totalSizeEntry / zipEntry.getCompressedSize();
+			      if(compressionRatio > thresholdRatio) {
+			        // ratio between compressed and uncompressed data is highly suspicious, looks like a Zip Bomb Attack
+			    	logger.error("Error while unzip file. Invalid archive file");
+					throw new SpagoBIRuntimeException("Error while unzip file. Invalid archive file");
+			      }
+			 } 
+			
+			if(totalSizeArchive > thresholdSize) {
+				// the uncompressed data size is too much for the application resource capacity
+				logger.error("Error while unzip file. Invalid archive file");
+				throw new SpagoBIRuntimeException("Error while unzip file. Invalid archive file");
+			}
+
+			if(totalEntryArchive > thresholdEntries) {
+				// too much entries in this archive, can lead to inodes exhaustion of the system
+				logger.error("Error while unzip file. Invalid archive file");
+				throw new SpagoBIRuntimeException("Error while unzip file. Invalid archive file");
+			}
+			
+			isZipped = new ZipInputStream(new ByteArrayInputStream(data)).getNextEntry() != null;			  
+		}
 
 		String mimeType = null;
 		String contentDisposition = null;
