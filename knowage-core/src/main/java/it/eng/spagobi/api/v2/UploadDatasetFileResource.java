@@ -40,7 +40,7 @@ import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 
-import it.eng.knowage.utils.zip.ZipUtilsForSonar;
+import it.eng.knowage.utils.zip.SonarZipUtils;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.api.AbstractSpagoBIResource;
 import it.eng.spagobi.commons.bo.UserProfile;
@@ -278,30 +278,52 @@ public class UploadDatasetFileResource extends AbstractSpagoBIResource {
 			ZipInputStream zippedInputStream = new ZipInputStream(uploaded.getInputStream());
 			ZipEntry zipEntry = null;			
 
-			ZipUtilsForSonar zipUtilsForSonar = new ZipUtilsForSonar();
-			if(zipUtilsForSonar.doThresholdCheck(uploaded.getName())) {
+			SonarZipUtils sonarZipUtils = new SonarZipUtils();
+			
+			while((zipEntry = zippedInputStream.getNextEntry()) != null) {
 				
-				while((zipEntry = zippedInputStream.getNextEntry()) != null) {	
-					
-					String zipItemName = zipEntry.getName();
-					
-					logger.debug("Method unzipUploadedFile(): Zip entry [ " + zipItemName + " ]");
-					
-					if (zipEntry.isDirectory()) {
-						throw new SpagoBIServiceException(getActionName(), "The uploaded file is a folder. Zip directly the file.");
-					}
-					
-					DiskFileItemFactory factory = new DiskFileItemFactory();
-					tempFileItem = factory.createItem(uploaded.getFieldName(), "application/octet-stream", uploaded.isFormField(), zipItemName);
-					OutputStream tempFileItemOutStream = tempFileItem.getOutputStream();
-					
-					IOUtils.copy(zippedInputStream, tempFileItemOutStream);
-					tempFileItemOutStream.close();					
-				} 
-			} else {
-					logger.error("Error while unzip file. Invalid archive file");
-					throw new SpagoBIServiceException(getActionName(), "Error while unzip file. Invalid archive file");
-			}				 
+				sonarZipUtils.inizializer();
+				
+				String zipItemName = zipEntry.getName();
+				
+				logger.debug("Method unzipUploadedFile(): Zip entry [ " + zipItemName + " ]");
+				
+				if (zipEntry.isDirectory()) {
+					throw new SpagoBIServiceException(getActionName(), "The uploaded file is a folder. Zip directly the file.");
+				}
+				
+				DiskFileItemFactory factory = new DiskFileItemFactory();
+				tempFileItem = factory.createItem(uploaded.getFieldName(), "application/octet-stream", uploaded.isFormField(), zipItemName);
+				OutputStream tempFileItemOutStream = tempFileItem.getOutputStream();
+				
+				int nBytes = -1;
+				while((nBytes = zippedInputStream.read(sonarZipUtils.getBuffer())) > 0) {
+					sonarZipUtils.setnBytes(nBytes);
+					tempFileItemOutStream.write(sonarZipUtils.getBuffer(), 0, sonarZipUtils.getnBytes());
+					sonarZipUtils.setTotalSizeEntry(sonarZipUtils.getTotalSizeEntry() + sonarZipUtils.getnBytes());
+					sonarZipUtils.setTotalSizeArchive(sonarZipUtils.getTotalSizeArchive() + sonarZipUtils.getnBytes());
+		
+				    double compressionRatio = (double) sonarZipUtils.getTotalSizeEntry() / zipEntry.getCompressedSize();
+				    if(compressionRatio > sonarZipUtils.getThresholdRatio()) {
+				    	// ratio between compressed and uncompressed data is highly suspicious, looks like a Zip Bomb Attack
+				    	break;
+				    }
+				}
+				
+				if(sonarZipUtils.getTotalSizeArchive() > sonarZipUtils.getThresholdSize()) {
+				      // the uncompressed data size is too much for the application resource capacity
+				      break;
+				}
+		
+				if(sonarZipUtils.getTotalEntryArchive() > sonarZipUtils.getThresholdEntries()) {
+				      // too much entries in this archive, can lead to inodes exhaustion of the system
+					break;
+				}
+				
+				IOUtils.copy(zippedInputStream, tempFileItemOutStream);
+				tempFileItemOutStream.close();					
+			}				
+				 			 
 			
 			zippedInputStream.close();
 
