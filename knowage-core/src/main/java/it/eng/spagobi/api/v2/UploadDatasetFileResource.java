@@ -278,11 +278,10 @@ public class UploadDatasetFileResource extends AbstractSpagoBIResource {
 			ZipInputStream zippedInputStream = new ZipInputStream(uploaded.getInputStream());
 			ZipEntry zipEntry = null;			
 
-			ZipUtilsForSonar zipUtilsForSonar = new ZipUtilsForSonar();
-			if(zipUtilsForSonar.doThresholdCheck(uploaded.getName())) {
+			while((zipEntry = zippedInputStream.getNextEntry()) != null) {	
+				ZipUtilsForSonar zipUtilsForSonar = new ZipUtilsForSonar();
 				
-				while((zipEntry = zippedInputStream.getNextEntry()) != null) {	
-					
+				if(zipUtilsForSonar.doThresholdCheck(uploaded.getName())) {
 					String zipItemName = zipEntry.getName();
 					
 					logger.debug("Method unzipUploadedFile(): Zip entry [ " + zipItemName + " ]");
@@ -297,11 +296,11 @@ public class UploadDatasetFileResource extends AbstractSpagoBIResource {
 					
 					IOUtils.copy(zippedInputStream, tempFileItemOutStream);
 					tempFileItemOutStream.close();					
-				} 
-			} else {
+				} else {
 					logger.error("Error while unzip file. Invalid archive file");
 					throw new SpagoBIServiceException(getActionName(), "Error while unzip file. Invalid archive file");
-			}				 
+				}				 
+			}			
 			
 			zippedInputStream.close();
 
