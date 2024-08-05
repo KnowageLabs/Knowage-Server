@@ -223,7 +223,7 @@ public class AuditLogUtilities {
 	}
 
 	public static String calculateHash(StringBuilder str) throws Exception {
-		MessageDigest algorithm = MessageDigest.getInstance("MD5");
+		MessageDigest algorithm = MessageDigest.getInstance("SHA-512");
 		String is = new String(str);
 		DigestInputStream dis = new DigestInputStream(new ByteArrayInputStream(is.getBytes()), algorithm);
 		while (dis.read() != -1)
