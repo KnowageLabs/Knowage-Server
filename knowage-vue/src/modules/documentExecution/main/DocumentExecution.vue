@@ -359,7 +359,7 @@ export default defineComponent({
             if (this.filtersData?.filterStatus?.length > 0) {
                 let tempDrivers = {} as any
                 this.filtersData.filterStatus.forEach((i) => {
-                    tempDrivers[i.urlName] = i.parameterValue.length > 1 ? i.parameterValue.map((p) => p.value) : i.parameterValue[0].value
+                    tempDrivers[i.urlName] = i.multivalue ? i.parameterValue.map((p) => p.value) : i.parameterValue[0].value
                 })
                 tempObj.drivers = tempDrivers
             }
