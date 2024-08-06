@@ -77,7 +77,7 @@ public class ChangeLanguage extends AbstractSpagoBIAction {
 		try {
 			writeBackToClient(new JSONAcknowledge());
 		} catch (IOException e) {
-			throw new SpagoBIRuntimeException("Impossible to write back the responce to the client", e);
+			throw new SpagoBIRuntimeException("Impossible to write back the responce to the client");
 
 		}
 
