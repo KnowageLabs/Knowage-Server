@@ -216,6 +216,7 @@ export default defineComponent({
             loadingCrossNavigationDocument: false,
             crossNavigationSourceDocumentName: '',
             metadataLoading: false,
+            iframeMessageLoading: false as boolean,
             datasetPreviewShown: false as boolean,
             datasetToPreview: {} as any
         }
@@ -377,8 +378,8 @@ export default defineComponent({
                 .catch(() => {})
         },
         async iframeEventsListener(event) {
-            if(this.loading) return
-            this.loading = true
+            if(this.iframeMessageLoading) return
+            this.iframeMessageLoading = true
             if (event.data.type === 'crossNavigation') {
                await this.executeCrossNavigation(event)
             } else if (event.data.type === 'preview') {
@@ -398,7 +399,7 @@ export default defineComponent({
                 if (event.data.directDownload) await this.directDownloadDataset(this.datasetToPreview)
                 else this.datasetPreviewShown = true
             } 
-            this.loading = false
+            this.iframeMessageLoading = false
         },
         editCockpitDocumentConfirm() {
             if (this.documentMode === 'EDIT') {
