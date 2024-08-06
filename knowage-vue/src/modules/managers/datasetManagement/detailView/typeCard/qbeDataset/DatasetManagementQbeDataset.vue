@@ -71,7 +71,9 @@
     <VCodeMirror class="kn-height-full" ref="codeMirror" v-model:value="qbeQuery" :options="codemirrorOptions" />
   </Dialog>
 
-  <QBE v-if="qbeVisible" :visible="qbeVisible" :dataset="qbeDataset" :returnQueryMode="true" :getQueryFromDatasetProp="getQueryFromDataset" @querySaved="onQbeDialogSave" @close="onQbeDialogClose" />
+  <QBE v-if="qbeVisible" :visible="qbeVisible" :dataset="qbeDataset" :from-ds-management="true" :returnQueryMode="true" :getQueryFromDatasetProp="getQueryFromDataset" @querySaved="onQbeDialogSave" @close="onQbeDialogClose" />
+
+  
 </template>
 
 <script lang="ts">
