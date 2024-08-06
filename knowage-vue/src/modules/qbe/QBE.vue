@@ -233,7 +233,7 @@ export default defineComponent({
         KnCalculatedField,
         Dropdown
     },
-    props: { visible: { type: Boolean }, dataset: { type: Object }, returnQueryMode: { type: Boolean }, getQueryFromDatasetProp: { type: Boolean }, sourceDataset: { type: Object } },
+    props: { visible: { type: Boolean }, dataset: { type: Object }, returnQueryMode: { type: Boolean }, getQueryFromDatasetProp: { type: Boolean }, sourceDataset: { type: Object },fromDsManagement: { type: Boolean, default: false } },
     emits: ['close', 'querySaved'],
     data() {
         return {
@@ -312,37 +312,39 @@ export default defineComponent({
 
         let invalidRole = false
         let dataset = this.dataset ?? this.sourceDataset
-        getCorrectRolesForExecution(null, dataset)
-            .then(async (response: any) => {
-                let correctRolesForExecution = response
+        if (!this.fromDsManagement) {
+            getCorrectRolesForExecution(null, dataset)
+                .then(async (response: any) => {
+                    let correctRolesForExecution = response
 
-                if (!this.userRole) {
-                    if (correctRolesForExecution.length == 1) {
-                        this.userRole = correctRolesForExecution[0]
-                    } else {
-                        this.parameterSidebarVisible = true
-                    }
-                } else if (this.userRole) {
-                    if (correctRolesForExecution.length == 1) {
-                        let correctRole = correctRolesForExecution[0]
-                        if (this.userRole !== correctRole) {
-                            this.$store.commit('setError', {
-                                title: this.$t('common.error.generic'),
-                                msg: this.$t('documentExecution.main.userRoleError')
-                            })
-                            invalidRole = true
+                    if (!this.userRole) {
+                        if (correctRolesForExecution.length == 1) {
+                            this.userRole = correctRolesForExecution[0]
+                        } else {
+                            this.parameterSidebarVisible = true
+                        }
+                    } else if (this.userRole) {
+                        if (correctRolesForExecution.length == 1) {
+                            let correctRole = correctRolesForExecution[0]
+                            if (this.userRole !== correctRole) {
+                                this.$store.commit('setError', {
+                                    title: this.$t('common.error.generic'),
+                                    msg: this.$t('documentExecution.main.userRoleError')
+                                })
+                                invalidRole = true
+                            }
                         }
                     }
-                }
-                if (!invalidRole) {
-                    if (this.userRole) {
-                        await this.loadPage()
-                    } else {
-                        this.parameterSidebarVisible = true
+                    if (!invalidRole) {
+                        if (this.userRole) {
+                            await this.loadPage()
+                        } else {
+                            this.parameterSidebarVisible = true
+                        }
                     }
-                }
-            })
-            .catch(() => this.$emit('close'))
+                })
+                .catch(() => this.$emit('close'))
+            }else await this.loadPage()
     },
     methods: {
         //#region ===================== Load QBE and format data ====================================================
