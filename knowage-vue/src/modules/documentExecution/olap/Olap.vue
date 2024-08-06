@@ -543,10 +543,7 @@ export default defineComponent({
                 .post(process.env.VUE_APP_OLAP_PATH + `1.0/axis/moveDimensionToOtherAxis?SBI_EXECUTION_ID=${this.id}`, toSend, { headers: { Accept: 'application/json, text/plain, */*', 'Content-Type': 'application/json;charset=UTF-8' } })
                 .then((response: AxiosResponse<any>) => {
                     this.olap = response.data
-                    if (this.olapDesigner && this.olapDesigner.template) {
-                        this.olapDesigner.template.wrappedObject.olap.MDXMondrianQuery.XML_TAG_TEXT_CONTENT = this.olap.MDXWITHOUTCF
-                        this.olapDesigner.template.wrappedObject.olap.MDXQUERY.XML_TAG_TEXT_CONTENT = this.olap.MDXWITHOUTCF
-                    }
+                    if (this.olapDesigner && this.olapDesigner.template) this.updateOlapDesignerWithMDXFromOlap()
                 })
                 .catch(() => this.$store.commit('setError', { title: this.$t('common.toast.error'), msg: this.$t('documentExecution.olap.filterToolbar.putFilterOnAxisError') }))
             this.formatOlapTable()
@@ -556,7 +553,10 @@ export default defineComponent({
             this.loading = true
             await this.$http
                 .post(process.env.VUE_APP_OLAP_PATH + `1.0/axis/swap?SBI_EXECUTION_ID=${this.id}`, null, { headers: { Accept: 'application/json, text/plain, */*', 'Content-Type': 'application/json;charset=UTF-8' } })
-                .then((response: AxiosResponse<any>) => (this.olap = response.data))
+                .then((response: AxiosResponse<any>) => {
+                    this.olap = response.data
+                    if (this.olapDesigner && this.olapDesigner.template) this.updateOlapDesignerWithMDXFromOlap()
+                })
                 .catch(() => this.$store.commit('setError', { title: this.$t('common.toast.error'), msg: this.$t('documentExecution.olap.filterToolbar.swapAxisError') }))
             this.formatOlapTable()
             this.loading = false
@@ -568,6 +568,7 @@ export default defineComponent({
                 .post(process.env.VUE_APP_OLAP_PATH + `1.0/axis/moveHierarchy?SBI_EXECUTION_ID=${this.id}`, toSend, { headers: { Accept: 'application/json, text/plain, */*', 'Content-Type': 'application/json;charset=UTF-8' } })
                 .then((response: AxiosResponse<any>) => {
                     this.olap = response.data
+                    if (this.olapDesigner && this.olapDesigner.template) this.updateOlapDesignerWithMDXFromOlap()
                 })
                 .catch(() => this.$store.commit('setError', { title: this.$t('common.toast.error'), msg: this.$t('documentExecution.olap.filterToolbar.hierarchyMoveError') }))
             this.formatOlapTable()
@@ -589,7 +590,10 @@ export default defineComponent({
                 this.loading = true
                 await this.$http
                     .post(process.env.VUE_APP_OLAP_PATH + `1.0/axis/updateHierarchyOnDimension?SBI_EXECUTION_ID=${this.id}`, toSend, { headers: { Accept: 'application/json, text/plain, */*', 'Content-Type': 'application/json;charset=UTF-8' } })
-                    .then((response: AxiosResponse<any>) => (this.olap = response.data))
+                    .then((response: AxiosResponse<any>) => {
+                        this.olap = response.data
+                        if (this.olapDesigner && this.olapDesigner.template) this.updateOlapDesignerWithMDXFromOlap()
+                    })
                     .catch(() => this.$store.commit('setError', { title: this.$t('common.toast.error'), msg: this.$t('documentExecution.olap.filterToolbar.hierarchyUpdateError') }))
                     .finally(() => {
                         this.formatOlapTable()
@@ -618,7 +622,10 @@ export default defineComponent({
             this.olap.modelConfig.crossNavigation.buttonClicked = crossNavigation
             await this.$http
                 .get(process.env.VUE_APP_OLAP_PATH + `1.0/crossnavigation/initialize/?SBI_EXECUTION_ID=${this.id}`, { headers: { Accept: 'application/json, text/plain, */*', 'Content-Type': 'application/json;charset=UTF-8' } })
-                .then((response: AxiosResponse<any>) => (this.olap = response.data))
+                .then((response: AxiosResponse<any>) => {
+                    this.olap = response.data
+                    if (this.olapDesigner && this.olapDesigner.template) this.updateOlapDesignerWithMDXFromOlap()
+                })
                 .catch(() => {})
             this.formatOlapTable()
             this.loading = false
@@ -867,6 +874,7 @@ export default defineComponent({
                         await this.drillThrough(event)
                         break
                 }
+                if (this.olapDesigner && this.olapDesigner.template) this.updateOlapDesignerWithMDXFromOlap()
             }
         },
         openFilterDialog(filter: any) {
@@ -1072,7 +1080,7 @@ export default defineComponent({
                 group = ''
 
             // separators
-            parts_local.forEach(function(i) {
+            parts_local.forEach(function (i) {
                 switch (i.type) {
                     case 'group':
                         group = i.value
@@ -1138,6 +1146,10 @@ export default defineComponent({
             this.formatOlapTable()
             this.loadVersions()
             this.saveVersionDialogVisible = false
+        },
+        updateOlapDesignerWithMDXFromOlap() {
+            this.olapDesigner.template.wrappedObject.olap.MDXMondrianQuery.XML_TAG_TEXT_CONTENT = this.olap.MDXWITHOUTCF
+            this.olapDesigner.template.wrappedObject.olap.MDXQUERY.XML_TAG_TEXT_CONTENT = this.olap.MDXWITHOUTCF
         }
     }
 })
