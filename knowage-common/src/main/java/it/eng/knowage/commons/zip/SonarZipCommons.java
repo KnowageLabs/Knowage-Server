@@ -1,4 +1,4 @@
-package it.eng.knowage.utils.zip;
+package it.eng.knowage.commons.zip;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -6,17 +6,17 @@ import java.util.Enumeration;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
-import org.apache.log4j.Logger;
-import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-public class ZipUtilsForSonar {
+public class SonarZipCommons {
 	
-	private static final Logger logger = Logger.getLogger(ZipUtilsForSonar.class);
+	private static final Logger LOGGER = LogManager.getLogger(SonarZipCommons.class);
 	
 	int thresholdEntries = 10000;
 	int thresholdSize = 1000000000;
@@ -24,10 +24,11 @@ public class ZipUtilsForSonar {
 	int totalSizeArchive = 0;
 	int totalEntryArchive = 0;
 	
+	
 	public boolean doThresholdCheck(String inFile) {
 		try {
 			File f = new File(inFile);
-			ZipFile zipFile = new ZipFile(f);
+			ZipFile zipFile = new ZipFile(f);						
 			Enumeration<? extends ZipEntry> entries = zipFile.entries();
 			
 			ZipEntry ze = entries.nextElement();
@@ -65,8 +66,9 @@ public class ZipUtilsForSonar {
 			return true;
 			
 		} catch (Exception e) {
-			logger.error("Error while unzip file. Invalid archive file");
-			throw new SpagoBIServiceException("Error while unzip file. Invalid archive file", e);
-		}
+			LOGGER.error("Error while unzip file. Invalid archive file");
+		} 
+		
+		return false;
 	}
 }

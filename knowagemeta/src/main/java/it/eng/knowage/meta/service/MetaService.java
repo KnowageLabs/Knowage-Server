@@ -106,7 +106,7 @@ import it.eng.knowage.meta.model.physical.PhysicalModel;
 import it.eng.knowage.meta.model.physical.PhysicalTable;
 import it.eng.knowage.meta.model.serializer.EmfXmiSerializer;
 import it.eng.knowage.meta.model.serializer.ModelPropertyFactory;
-import it.eng.knowage.utils.zip.ZipUtilsForSonar;
+import it.eng.knowage.commons.zip.SonarZipCommons;
 import it.eng.qbe.utility.CustomFunctionsSingleton;
 import it.eng.qbe.utility.CustomizedFunctionsReader;
 import it.eng.qbe.utility.DbTypeThreadLocal;
@@ -1823,9 +1823,9 @@ public class MetaService extends AbstractSpagoBIResource {
 
 			Enumeration enumEntries = jar.entries();
 			while (enumEntries.hasMoreElements()) {
-				ZipUtilsForSonar zipUtilsForSonar = new ZipUtilsForSonar();
+				SonarZipCommons sonarZipCommons = new SonarZipCommons();
 				
-				if(zipUtilsForSonar.doThresholdCheck(path)) {
+				if(sonarZipCommons.doThresholdCheck(path)) {
 					JarEntry fileEntry = (java.util.jar.JarEntry) enumEntries.nextElement();
 					logger.debug("jar content " + fileEntry.getName());
 	

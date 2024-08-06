@@ -20,7 +20,7 @@ import java.util.zip.ZipFile;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import it.eng.knowage.utils.zip.ZipUtilsForSonar;
+import it.eng.knowage.commons.zip.SonarZipCommons;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 /**
@@ -63,9 +63,9 @@ public class ZipUtils {
 			Enumeration<? extends ZipEntry> entries = zipFile.entries();
 
 			while (entries.hasMoreElements()) {
-				ZipUtilsForSonar zipUtilsForSonar = new ZipUtilsForSonar();
+				SonarZipCommons sonarZipCommons = new SonarZipCommons();
 				
-				if(zipUtilsForSonar.doThresholdCheck(zipFile.getName())) {
+				if(sonarZipCommons.doThresholdCheck(zipFile.getName())) {
 					ZipEntry entry = entries.nextElement();
 	
 					if (!entry.isDirectory()) {
@@ -104,9 +104,9 @@ public class ZipUtils {
 		try {
 			Enumeration<? extends ZipEntry> entries = zipFile.entries();
 			while (entries.hasMoreElements()) {
-				ZipUtilsForSonar zipUtilsForSonar = new ZipUtilsForSonar();
+				SonarZipCommons sonarZipCommons = new SonarZipCommons();
 				
-				if(zipUtilsForSonar.doThresholdCheck(zipFile.getName())) {
+				if(sonarZipCommons.doThresholdCheck(zipFile.getName())) {
 					ZipEntry entry = entries.nextElement();
 	
 					if (!entry.isDirectory()) {
@@ -158,9 +158,9 @@ public class ZipUtils {
 			Enumeration<? extends ZipEntry> entries = zipFile.entries();
 
 			while (entries.hasMoreElements()) {
-				ZipUtilsForSonar zipUtilsForSonar = new ZipUtilsForSonar();
+				SonarZipCommons sonarZipCommons = new SonarZipCommons();
 				
-				if(zipUtilsForSonar.doThresholdCheck(zipFile.getName())) {
+				if(sonarZipCommons.doThresholdCheck(zipFile.getName())) {
 					ZipEntry entry = entries.nextElement();
 	
 					if (!entry.isDirectory()) {

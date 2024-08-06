@@ -46,7 +46,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.log4j.LogMF;
 import org.apache.log4j.Logger;
 
-import it.eng.knowage.utils.zip.ZipUtilsForSonar;
+import it.eng.knowage.commons.zip.SonarZipCommons;
 import it.eng.spago.base.RequestContainer;
 import it.eng.spago.base.ResponseContainer;
 import it.eng.spago.base.SessionContainer;
@@ -1197,9 +1197,9 @@ public class DocumentsServiceImpl extends AbstractSDKService implements Document
 
 			Enumeration<JarEntry> enumEntries = jar.entries();
 			while (enumEntries.hasMoreElements()) {
-				ZipUtilsForSonar zipUtilsForSonar = new ZipUtilsForSonar();
+				SonarZipCommons sonarZipCommons = new SonarZipCommons();
 				
-				if(zipUtilsForSonar.doThresholdCheck(path)) {
+				if(sonarZipCommons.doThresholdCheck(path)) {
 					JarEntry fileEntry = enumEntries.nextElement();
 					logger.debug("jar content " + fileEntry.getName());
 	

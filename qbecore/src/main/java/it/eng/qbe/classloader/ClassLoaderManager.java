@@ -27,7 +27,7 @@ import java.util.jar.JarFile;
 
 import org.apache.log4j.Logger;
 
-import it.eng.knowage.utils.zip.ZipUtilsForSonar;
+import it.eng.knowage.commons.zip.SonarZipCommons;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 /**
@@ -148,9 +148,9 @@ public class ClassLoaderManager {
 			jarFile = new JarFile(file);
 			Enumeration<JarEntry> entries = jarFile.entries();
 			while (entries.hasMoreElements()) {
-				ZipUtilsForSonar zipUtilsForSonar = new ZipUtilsForSonar();
+				SonarZipCommons sonarZipCommons = new SonarZipCommons();
 				
-				if(zipUtilsForSonar.doThresholdCheck(file.getName())) {
+				if(sonarZipCommons.doThresholdCheck(file.getName())) {
 					JarEntry entry = entries.nextElement();
 					if (entry.getName().endsWith(".class")) {
 						String entryName = entry.getName();

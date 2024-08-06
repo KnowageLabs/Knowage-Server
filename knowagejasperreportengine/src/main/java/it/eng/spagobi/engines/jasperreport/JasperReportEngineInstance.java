@@ -53,7 +53,7 @@ import org.apache.log4j.Logger;
 import com.jamonapi.Monitor;
 import com.jamonapi.MonitorFactory;
 
-import it.eng.knowage.utils.zip.ZipUtilsForSonar;
+import it.eng.knowage.commons.zip.SonarZipCommons;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.engines.jasperreport.datasource.JRSpagoBIDataStoreDataSource;
@@ -129,8 +129,8 @@ public class JasperReportEngineInstance extends AbstractEngineInstance {
 		LOGGER.debug("IN");
 		try (OutputStream out = new FileOutputStream(file)) {
 			runReport(out, httpServletRequest);
-		} catch (Throwable t1) {
-			throw new JasperReportEngineRuntimeException("Impossible to run report", t1);
+		} catch (Exception e1) {
+			throw new JasperReportEngineRuntimeException("Impossible to run report", e1);
 		}
 	}
 
@@ -274,7 +274,7 @@ public class JasperReportEngineInstance extends AbstractEngineInstance {
 			monitorExportReport.stop();
 			LOGGER.debug("Report exported succesfully");
 
-		} catch (Throwable e) {
+		} catch (Exception e) {
 			throw new JasperReportEngineRuntimeException("Impossible to run report", e);
 		} finally {
 			try {
@@ -292,8 +292,8 @@ public class JasperReportEngineInstance extends AbstractEngineInstance {
 					util.deleteDirectory(tmpDir);
 					LOGGER.debug("Delating temporary directory: " + tmpDir);
 				}
-			} catch (Throwable t) {
-				LOGGER.error("Error while deleting cache dir content", t);
+			} catch (Exception e) {
+				LOGGER.error("Error while deleting cache dir content", e);
 			}
 			monitor.stop();
 			LOGGER.debug("OUT");
@@ -322,7 +322,7 @@ public class JasperReportEngineInstance extends AbstractEngineInstance {
 		resourcePath = EnginConf.getInstance().getResourcePath() + "/img/";
 		entity = (String) getEnv().get(SpagoBIConstants.SBI_ENTITY);
 		if (entity != null && entity.length() > 0) {
-			resourcePath = resourcePath.concat(entity + "/");
+			resourcePath = resourcePath.concat(String.format(entity, "/"));
 		}
 		getEnv().put("SBI_RESOURCE_PATH", resourcePath);
 
@@ -453,7 +453,6 @@ public class JasperReportEngineInstance extends AbstractEngineInstance {
 				try {
 					Files.copy(source.toPath(), target.toPath(), REPLACE_EXISTING);
 				} catch (IOException e) {
-					//e.printStackTrace();
 					LOGGER.error("Files.copy",e);
 				}
 			}
@@ -586,8 +585,8 @@ public class JasperReportEngineInstance extends AbstractEngineInstance {
 				}
 			}
 
-		} catch (Throwable t) {
-			LOGGER.error("Error while extracting subreports meta", t);
+		} catch (Exception e) {
+			LOGGER.error("Error while extracting subreports meta", e);
 		} finally {
 			LOGGER.debug("OUT");
 		}
@@ -625,7 +624,7 @@ public class JasperReportEngineInstance extends AbstractEngineInstance {
 				});
 				LOGGER.debug("found [" + compiledJRFiles.length + "] compiled files");
 				if (compiledJRFiles.length > 1) {
-					throw new RuntimeException(
+					throw new SpagoBIRuntimeException(
 							"More then one compiled file found in directory [" + subreportCacheDir + "]");
 				}
 
@@ -678,9 +677,9 @@ public class JasperReportEngineInstance extends AbstractEngineInstance {
 							File jarFile = null;
 							while (totalZipEntries.hasMoreElements()) {
 								
-								ZipUtilsForSonar zipUtilsForSonar = new ZipUtilsForSonar();
+								SonarZipCommons sonarZipCommons = new SonarZipCommons();
 								
-								if(zipUtilsForSonar.doThresholdCheck(this.JS_FILE_ZIP + i + JS_EXT_ZIP)) {
+								if(sonarZipCommons.doThresholdCheck(this.JS_FILE_ZIP + i + JS_EXT_ZIP)) {
 									ZipEntry entry = (ZipEntry) totalZipEntries.nextElement();
 									if (entry.getName().endsWith(".jar")) {
 										// set classloader with jar
@@ -737,8 +736,8 @@ public class JasperReportEngineInstance extends AbstractEngineInstance {
 			ClassLoader previous = Thread.currentThread().getContextClassLoader();
 			ClassLoader current = URLClassLoader.newInstance(urls, previous);
 			Thread.currentThread().setContextClassLoader(current);
-		} catch (Throwable t) {
-			LOGGER.error("Error while ccompiling subreports", t);
+		} catch (Exception e) {
+			LOGGER.error("Error while ccompiling subreports", e);
 		} finally {
 			LOGGER.debug("OUT");
 		}
@@ -810,14 +809,14 @@ public class JasperReportEngineInstance extends AbstractEngineInstance {
 				if (attrname != null)
 					schema = (String) userProfile.getUserAttribute(attrname);
 			}
-		} catch (Throwable t1) {
-			LOGGER.error("Impossible to manage properly multiSchema attribute", t1);
+		} catch (Exception e1) {
+			LOGGER.error("Impossible to manage properly multiSchema attribute", e1);
 		}
 
 		try {
 			conn = getDataSource().getConnection();
-		} catch (Throwable t2) {
-			LOGGER.error("Cannot retrieve connection for schema [" + schema + "]", t2);
+		} catch (Exception e2) {
+			LOGGER.error("Cannot retrieve connection for schema [" + schema + "]", e2);
 		}
 
 		return conn;

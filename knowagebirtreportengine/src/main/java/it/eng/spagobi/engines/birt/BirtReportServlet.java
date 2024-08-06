@@ -82,7 +82,7 @@ import org.eclipse.birt.report.utility.DataExtractionParameterUtil;
 import org.owasp.esapi.HTTPUtilities;
 import org.owasp.esapi.reference.DefaultHTTPUtilities;
 
-import it.eng.knowage.utils.zip.ZipUtilsForSonar;
+import it.eng.knowage.commons.zip.SonarZipCommons;
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.security.IEngUserProfile;
@@ -343,9 +343,9 @@ public class BirtReportServlet extends HttpServlet {
 				Enumeration<JarEntry> totalZipEntries = zipFile.entries();
 				File jarFile = null;
 				while (totalZipEntries.hasMoreElements()) {
-					ZipUtilsForSonar zipUtilsForSonar = new ZipUtilsForSonar();
+					SonarZipCommons sonarZipCommons = new SonarZipCommons();
 					
-					if(zipUtilsForSonar.doThresholdCheck(JS_FILE_ZIP + JS_EXT_ZIP)) {
+					if(sonarZipCommons.doThresholdCheck(JS_FILE_ZIP + JS_EXT_ZIP)) {
 						ZipEntry entry = totalZipEntries.nextElement();
 						if (entry.getName().endsWith(".jar")) {
 							jarFile = new File(getBirtExecutionTempDirName(executionId) + entry.getName());

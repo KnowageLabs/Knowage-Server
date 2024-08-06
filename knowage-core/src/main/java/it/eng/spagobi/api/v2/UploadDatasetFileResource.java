@@ -40,7 +40,7 @@ import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 
-import it.eng.knowage.utils.zip.ZipUtilsForSonar;
+import it.eng.knowage.commons.zip.SonarZipCommons;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.api.AbstractSpagoBIResource;
 import it.eng.spagobi.commons.bo.UserProfile;
@@ -279,9 +279,9 @@ public class UploadDatasetFileResource extends AbstractSpagoBIResource {
 			ZipEntry zipEntry = null;			
 
 			while((zipEntry = zippedInputStream.getNextEntry()) != null) {	
-				ZipUtilsForSonar zipUtilsForSonar = new ZipUtilsForSonar();
+				SonarZipCommons sonarZipCommons = new SonarZipCommons();
 				
-				if(zipUtilsForSonar.doThresholdCheck(uploaded.getName())) {
+				if(sonarZipCommons.doThresholdCheck(uploaded.getName())) {
 					String zipItemName = zipEntry.getName();
 					
 					logger.debug("Method unzipUploadedFile(): Zip entry [ " + zipItemName + " ]");

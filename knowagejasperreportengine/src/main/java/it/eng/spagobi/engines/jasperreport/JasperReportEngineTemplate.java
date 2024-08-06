@@ -26,7 +26,7 @@ import java.util.Enumeration;
 import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
 
-import it.eng.knowage.utils.zip.ZipUtilsForSonar;
+import it.eng.knowage.commons.zip.SonarZipCommons;
 import it.eng.spagobi.utilities.DynamicClassLoader;
 import it.eng.spagobi.utilities.SpagoBIAccessUtils;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
@@ -67,9 +67,9 @@ public class JasperReportEngineTemplate {
 				File jarFile = null;
 				while (totalZipEntries.hasMoreElements()) {
 					
-					ZipUtilsForSonar zipUtilsForSonar = new ZipUtilsForSonar();
+					SonarZipCommons sonarZipCommons = new SonarZipCommons();
 					
-					if(zipUtilsForSonar.doThresholdCheck(JS_FILE_ZIP + JS_EXT_ZIP)) {
+					if(sonarZipCommons.doThresholdCheck(JS_FILE_ZIP + JS_EXT_ZIP)) {
 						ZipEntry entry = (ZipEntry) totalZipEntries.nextElement();
 						if (entry.getName().endsWith(".jar")) {
 							jarFile = new File(tempDir, entry.getName());
@@ -97,10 +97,8 @@ public class JasperReportEngineTemplate {
 			} else {
 				is = new ByteArrayInputStream( content );
 			}
-		} catch(Throwable t) {
-			throw new JasperReportEngineRuntimeException("Impossible to load template", t);
-		} finally {
-			
+		} catch(Exception e) {
+			throw new JasperReportEngineRuntimeException("Impossible to load template", e);
 		}
 		
 		return is;

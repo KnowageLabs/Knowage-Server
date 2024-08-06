@@ -32,7 +32,7 @@ import java.util.zip.ZipFile;
 import org.apache.log4j.Logger;
 
 import it.eng.knowage.commons.security.PathTraversalChecker;
-import it.eng.knowage.utils.zip.ZipUtilsForSonar;
+import it.eng.knowage.commons.zip.SonarZipCommons;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 /**
@@ -61,9 +61,9 @@ public class SpagoBIAccessUtils {
 			String path = null;
 			File file = null;
 			while (entries.hasMoreElements()) {
-				ZipUtilsForSonar zipUtilsForSonar = new ZipUtilsForSonar();
+				SonarZipCommons sonarZipCommons = new SonarZipCommons();
 				
-				if(zipUtilsForSonar.doThresholdCheck(path)) {
+				if(sonarZipCommons.doThresholdCheck(path)) {
 					entry = entries.nextElement();
 					name = entry.getName();
 					path = newDirectory.getPath() + File.separator + name;

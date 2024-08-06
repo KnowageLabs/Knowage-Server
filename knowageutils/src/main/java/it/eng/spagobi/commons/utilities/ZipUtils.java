@@ -39,7 +39,7 @@ import java.util.zip.ZipOutputStream;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import it.eng.knowage.utils.zip.ZipUtilsForSonar;
+import it.eng.knowage.commons.zip.SonarZipCommons;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 /**
@@ -291,9 +291,9 @@ public class ZipUtils {
 		try (FileInputStream fis = new FileInputStream(filePath);
 				ZipInputStream zipIs = new ZipInputStream(new BufferedInputStream(fis))) {
 			while ((zEntry = zipIs.getNextEntry()) != null) {
-				ZipUtilsForSonar zipUtilsForSonar = new ZipUtilsForSonar();
+				SonarZipCommons sonarZipCommons = new SonarZipCommons();
 				
-				if(zipUtilsForSonar.doThresholdCheck(filePath)) {
+				if(sonarZipCommons.doThresholdCheck(filePath)) {
 					unzipEntry(filePath, zEntry, zipIs);
 				} else {
 					LOGGER.error("Error while unzip file. Invalid archive file");
