@@ -104,12 +104,13 @@ public class Compiler {
 
 		List<File> files = new ArrayList<>();
 		logger.debug("Traversing files");
-		for (File f : Files.fileTreeTraverser().preOrderTraversal(this.srcDir).toList()) {
+		
+		Files.fileTraverser().depthFirstPreOrder(this.srcDir).forEach(f -> {
 			if (f.isFile() && f.getName().endsWith("java")) {
 				logger.debug("File to compile added to the list: " + f.getName());
 				files.add(f);
 			}
-		}
+		});
 		logger.debug("Initialize diagnostic collector");
 		DiagnosticCollector<JavaFileObject> diagnostics = new DiagnosticCollector<>();
 		logger.debug("Searching java system compiler");
