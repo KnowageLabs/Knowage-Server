@@ -17,11 +17,10 @@
  */
 package it.eng.spagobi.rest.validation;
 
-import java.util.Map;
-
 import javax.ws.rs.core.MultivaluedMap;
 
 import org.json.JSONArray;
+import org.owasp.esapi.errors.EncodingException;
 
 /**
  * @author Monica Franceschini (monica.franceschini@eng.it)
@@ -29,6 +28,6 @@ import org.json.JSONArray;
  */
 public interface IFieldsValidator {
 	
-	public JSONArray validateFields(MultivaluedMap<String, String> parameters);
+	public JSONArray validateFields(MultivaluedMap<String, String> parameters) throws EncodingException;
 
 }

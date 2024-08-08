@@ -7,6 +7,7 @@
 
 package it.eng.spagobi.services.datasource.bo;
 
+import java.io.ObjectOutputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -496,5 +497,9 @@ public class SpagoBiDataSource implements java.io.Serializable {
 
 		return connection;
 	}
+	
+	private final void writeObject(ObjectOutputStream aOutputStream) {
+		  throw new UnsupportedOperationException("Security violation : cannot serialize object to a stream");
+    }
 
 }

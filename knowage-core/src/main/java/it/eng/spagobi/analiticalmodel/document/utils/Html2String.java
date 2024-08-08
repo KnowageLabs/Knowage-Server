@@ -52,6 +52,7 @@ public class Html2String extends HTMLEditorKit.ParserCallback {
 		logger.debug("OUT");
 	}
 
+	@Override
 	public void handleText(char[] text, int pos) {
 		buffer.append(text);
 	}

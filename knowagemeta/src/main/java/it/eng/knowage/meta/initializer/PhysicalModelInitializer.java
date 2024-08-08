@@ -451,7 +451,8 @@ public class PhysicalModelInitializer {
 					column.setDefaultValue(rs.getString("COLUMN_DEF"));
 				} catch (Throwable t) {
 					log("Impossible to set Default column value");
-					t.printStackTrace();
+					//t.printStackTrace();
+					logger.error("Impossible to set Default column value",t);
 					column.setDefaultValue(null);
 				}
 				column.setName(rs.getString("COLUMN_NAME"));
@@ -672,7 +673,7 @@ public class PhysicalModelInitializer {
 			addSchema(dbMeta, physicalModel, database.getSchema(connection));
 			addCatalog(connection, physicalModel, database.getCatalog(connection));
 
-			List<String> tablesOnDatabase = new ArrayList<String>();
+			List<String> tablesOnDatabase = new ArrayList<>();
 			ResultSet tableRs = dbMeta.getTables(physicalModel.getCatalog(), physicalModel.getSchema(), null, new String[] { "TABLE", "VIEW" });
 
 			while (tableRs.next()) {
@@ -718,7 +719,7 @@ public class PhysicalModelInitializer {
 			connection = dataSource.getConnection();
 			DatabaseMetaData dbMeta = connection.getMetaData();
 
-			List<String> newColumnsNames = new ArrayList<String>();
+			List<String> newColumnsNames = new ArrayList<>();
 //			List<String> tablesOnDatabase = new ArrayList<String>();
 //			ResultSet tableRs = dbMeta.getTables(physicalModel.getCatalog(), physicalModel.getSchema(), null, new String[] { "TABLE", "VIEW" });
 //
@@ -734,7 +735,7 @@ public class PhysicalModelInitializer {
 			final String tableNamePatternLike = model.getTablePrefixLike();
 			final String tableNamePatternNotLike = model.getTablePrefixNotLike();
 
-			List<String> tablesOnDatabase = new ArrayList<String>();
+			List<String> tablesOnDatabase = new ArrayList<>();
 			ResultSet tableRs = dbMeta.getTables(physicalModel.getCatalog(), physicalModel.getSchema(), null, new String[] { "TABLE", "VIEW" });
 
 			while (tableRs.next()) {
@@ -792,8 +793,8 @@ public class PhysicalModelInitializer {
 			connection = dataSource.getConnection();
 			DatabaseMetaData dbMeta = connection.getMetaData();
 
-			List<String> tablesRemoved = new ArrayList<String>();
-			List<String> columnsRemoved = new ArrayList<String>();
+			List<String> tablesRemoved = new ArrayList<>();
+			List<String> columnsRemoved = new ArrayList<>();
 
 			IMetaModelsDAO modelDAO = DAOFactory.getMetaModelsDAO();
 			MetaModel model = modelDAO.loadMetaModelById(metamodel.getId());
@@ -801,7 +802,7 @@ public class PhysicalModelInitializer {
 			final String tableNamePatternLike = model.getTablePrefixLike();
 			final String tableNamePatternNotLike = model.getTablePrefixNotLike();
 
-			List<String> tablesOnDatabase = new ArrayList<String>();
+			List<String> tablesOnDatabase = new ArrayList<>();
 			ResultSet tableRs = dbMeta.getTables(physicalModel.getCatalog(), physicalModel.getSchema(), null, new String[] { "TABLE", "VIEW" });
 
 			while (tableRs.next()) {
@@ -825,7 +826,7 @@ public class PhysicalModelInitializer {
 					// 2 - Check columns existence
 					List<PhysicalColumn> physicalColumns = originalTable.getColumns();
 					ResultSet rs = dbMeta.getColumns(physicalModel.getCatalog(), physicalModel.getSchema(), originalTable.getName(), null);
-					List<String> columnsNamesOnDb = new ArrayList<String>();
+					List<String> columnsNamesOnDb = new ArrayList<>();
 					while (rs.next()) {
 						String columnName = rs.getString("COLUMN_NAME");
 						columnsNamesOnDb.add(columnName);
@@ -867,8 +868,8 @@ public class PhysicalModelInitializer {
 		EList<PhysicalTable> updatedTables = updatedModel.getTables();
 
 		// 1 - Find new tables and columns not present in the original Model
-		List<PhysicalTable> tablesToAdd = new ArrayList<PhysicalTable>();
-		List<PhysicalForeignKey> foreignKeysToAdd = new ArrayList<PhysicalForeignKey>();
+		List<PhysicalTable> tablesToAdd = new ArrayList<>();
+		List<PhysicalForeignKey> foreignKeysToAdd = new ArrayList<>();
 		for (PhysicalTable updatedTable : updatedTables) {
 			String updatedTableName = updatedTable.getName();
 			PhysicalTable tableFound = findTable(updatedTableName, originalTables);
@@ -961,7 +962,7 @@ public class PhysicalModelInitializer {
 						physicalForeignKey.setSourceTable(searchedSourceTable);
 
 						EList<PhysicalColumn> sourceColumns = physicalForeignKey.getSourceColumns();
-						List<PhysicalColumn> searchedSourceColumns = new ArrayList<PhysicalColumn>();
+						List<PhysicalColumn> searchedSourceColumns = new ArrayList<>();
 						for (PhysicalColumn sourceColumn : sourceColumns) {
 							PhysicalColumn searchedColumn = findColumn(sourceColumn.getName(), searchedSourceTable.getColumns());
 							searchedSourceColumns.add(searchedColumn);
@@ -973,7 +974,7 @@ public class PhysicalModelInitializer {
 						physicalForeignKey.setDestinationTable(searchedDestinationTable);
 
 						EList<PhysicalColumn> destinationColumns = physicalForeignKey.getDestinationColumns();
-						List<PhysicalColumn> searchedDestinationColumns = new ArrayList<PhysicalColumn>();
+						List<PhysicalColumn> searchedDestinationColumns = new ArrayList<>();
 						for (PhysicalColumn destinationColumn : destinationColumns) {
 							PhysicalColumn searchedColumn = findColumn(destinationColumn.getName(), searchedDestinationTable.getColumns());
 							searchedDestinationColumns.add(searchedColumn);
@@ -1009,7 +1010,7 @@ public class PhysicalModelInitializer {
 		EList<PhysicalColumn> updatedColumns = updatedTable.getColumns();
 
 		// 1 - Find new columns not present in the originalTable
-		List<PhysicalColumn> columnsToAdd = new ArrayList<PhysicalColumn>();
+		List<PhysicalColumn> columnsToAdd = new ArrayList<>();
 		for (PhysicalColumn updatedColumn : updatedColumns) {
 			PhysicalColumn columnFound = findColumn(updatedColumn.getName(), originalColumns);
 			if (columnFound == null) {
@@ -1087,7 +1088,7 @@ public class PhysicalModelInitializer {
 	private void checkForeignKeys(PhysicalTable originalTable, PhysicalTable updatedTable) {
 		List<PhysicalForeignKey> originalPhysicalForeignKeys = originalTable.getForeignKeys();
 		List<PhysicalForeignKey> updatedPhysicalForeignKeys = updatedTable.getForeignKeys();
-		List<PhysicalForeignKey> foreignKeysToAdd = new ArrayList<PhysicalForeignKey>();
+		List<PhysicalForeignKey> foreignKeysToAdd = new ArrayList<>();
 		foreignKeysToAdd.addAll(updatedPhysicalForeignKeys);
 
 		Iterator<PhysicalForeignKey> iterator = originalPhysicalForeignKeys.iterator();
@@ -1364,7 +1365,7 @@ public class PhysicalModelInitializer {
 	 */
 	public List<ModelObject> getElementsMarkedAsDeleted(PhysicalModel physicalModel) {
 		List<PhysicalTable> physicalTables = physicalModel.getTables();
-		List<ModelObject> markedElements = new ArrayList<ModelObject>();
+		List<ModelObject> markedElements = new ArrayList<>();
 		for (PhysicalTable physicalTable : physicalTables) {
 			// check table
 			String isDeleted = getProperty(physicalTable, PhysicalModelPropertiesFromFileInitializer.IS_DELETED);
@@ -1550,31 +1551,6 @@ public class PhysicalModelInitializer {
 			model.setProperty(PhysicalModelPropertiesFromFileInitializer.CONNECTION_DATABASE_QUOTESTRING, quote);
 			logger.debug(MessageFormat.format("PhysicalModel Property: Connection databasequotestring is [{0}]",
 					model.getProperties().get(PhysicalModelPropertiesFromFileInitializer.CONNECTION_DATABASE_QUOTESTRING).getValue()));
-
-			/*
-			 * model.getPropertyType("connection.name").setDefaultValue(connectionName); logger.debug("PhysicalModel Property: Connection name is [{}]",
-			 * model.getPropertyType("connection.name").getDefaultValue());
-			 *
-			 * model.getPropertyType("connection.driver").setDefaultValue(connectionDriver); logger.debug("PhysicalModel Property: Connection driver is [{}]",
-			 * model.getPropertyType("connection.driver").getDefaultValue());
-			 *
-			 * model.getPropertyType("connection.url").setDefaultValue(connectionUrl); logger.debug("PhysicalModel Property: Connection url is [{}]",
-			 * model.getPropertyType("connection.url").getDefaultValue());
-			 *
-			 * model.getPropertyType("connection.username").setDefaultValue(connectionUsername);
-			 * logger.debug("PhysicalModel Property: Connection username is [{}]", model.getPropertyType("connection.username").getDefaultValue());
-			 *
-			 * model.getPropertyType("connection.password").setDefaultValue(connectionPassword);
-			 * logger.debug("PhysicalModel Property: Connection password is [{}]", model.getPropertyType("connection.password").getDefaultValue());
-			 *
-			 * model.getPropertyType("connection.databasename").setDefaultValue(connectionDatabaseName);
-			 * logger.debug("PhysicalModel Property: Connection databasename is [{}]", model.getPropertyType("connection.databasename").getDefaultValue());
-			 *
-			 * // Quote string identification String quote = dbMeta.getIdentifierQuoteString(); // check if escaping is needed if (quote.equals("\"")) { quote =
-			 * "\\\""; } model.getPropertyType("connection.databasequotestring").setDefaultValue(quote);
-			 * logger.debug("PhysicalModel Property: Connection databasequotestring is [{}]", model.getPropertyType("connection.databasequotestring")
-			 * .getDefaultValue());
-			 */
 		} catch (Throwable t) {
 			throw new RuntimeException("Impossible to initialize physical model", t);
 		}

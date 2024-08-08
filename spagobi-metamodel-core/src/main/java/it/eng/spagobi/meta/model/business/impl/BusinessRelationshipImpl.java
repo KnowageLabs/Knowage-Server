@@ -125,6 +125,7 @@ public class BusinessRelationshipImpl extends ModelObjectImpl implements Busines
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public BusinessModel getModel() {
 		if (eContainerFeatureID() != BusinessModelPackage.BUSINESS_RELATIONSHIP__MODEL) return null;
 		return (BusinessModel)eContainer();
@@ -145,6 +146,7 @@ public class BusinessRelationshipImpl extends ModelObjectImpl implements Busines
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void setModel(BusinessModel newModel) {
 		if (newModel != eInternalContainer() || (eContainerFeatureID() != BusinessModelPackage.BUSINESS_RELATIONSHIP__MODEL && newModel != null)) {
 			if (EcoreUtil.isAncestor(this, newModel))
@@ -166,6 +168,7 @@ public class BusinessRelationshipImpl extends ModelObjectImpl implements Busines
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public BusinessColumnSet getSourceTable() {
 		if (sourceTable != null && sourceTable.eIsProxy()) {
 			InternalEObject oldSourceTable = (InternalEObject)sourceTable;
@@ -192,6 +195,7 @@ public class BusinessRelationshipImpl extends ModelObjectImpl implements Busines
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void setSourceTable(BusinessColumnSet newSourceTable) {
 		BusinessColumnSet oldSourceTable = sourceTable;
 		sourceTable = newSourceTable;
@@ -204,6 +208,7 @@ public class BusinessRelationshipImpl extends ModelObjectImpl implements Busines
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public BusinessColumnSet getDestinationTable() {
 		if (destinationTable != null && destinationTable.eIsProxy()) {
 			InternalEObject oldDestinationTable = (InternalEObject)destinationTable;
@@ -230,6 +235,7 @@ public class BusinessRelationshipImpl extends ModelObjectImpl implements Busines
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void setDestinationTable(BusinessColumnSet newDestinationTable) {
 		BusinessColumnSet oldDestinationTable = destinationTable;
 		destinationTable = newDestinationTable;
@@ -242,9 +248,10 @@ public class BusinessRelationshipImpl extends ModelObjectImpl implements Busines
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EList<BusinessColumn> getSourceColumns() {
 		if (sourceColumns == null) {
-			sourceColumns = new EObjectResolvingEList<BusinessColumn>(BusinessColumn.class, this, BusinessModelPackage.BUSINESS_RELATIONSHIP__SOURCE_COLUMNS);
+			sourceColumns = new EObjectResolvingEList<>(BusinessColumn.class, this, BusinessModelPackage.BUSINESS_RELATIONSHIP__SOURCE_COLUMNS);
 		}
 		return sourceColumns;
 	}
@@ -254,9 +261,10 @@ public class BusinessRelationshipImpl extends ModelObjectImpl implements Busines
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EList<BusinessColumn> getDestinationColumns() {
 		if (destinationColumns == null) {
-			destinationColumns = new EObjectResolvingEList<BusinessColumn>(BusinessColumn.class, this, BusinessModelPackage.BUSINESS_RELATIONSHIP__DESTINATION_COLUMNS);
+			destinationColumns = new EObjectResolvingEList<>(BusinessColumn.class, this, BusinessModelPackage.BUSINESS_RELATIONSHIP__DESTINATION_COLUMNS);
 		}
 		return destinationColumns;
 	}
@@ -266,6 +274,7 @@ public class BusinessRelationshipImpl extends ModelObjectImpl implements Busines
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public PhysicalForeignKey getPhysicalForeignKey() {
 		if (physicalForeignKey != null && physicalForeignKey.eIsProxy()) {
 			InternalEObject oldPhysicalForeignKey = (InternalEObject)physicalForeignKey;
@@ -292,6 +301,7 @@ public class BusinessRelationshipImpl extends ModelObjectImpl implements Busines
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void setPhysicalForeignKey(PhysicalForeignKey newPhysicalForeignKey) {
 		PhysicalForeignKey oldPhysicalForeignKey = physicalForeignKey;
 		physicalForeignKey = newPhysicalForeignKey;
@@ -469,7 +479,7 @@ public class BusinessRelationshipImpl extends ModelObjectImpl implements Busines
 	@Override
 	public List<SimpleBusinessColumn> getDestinationSimpleBusinessColumns() {
 		EList<BusinessColumn> destinationColumns = getDestinationColumns();
-		List<SimpleBusinessColumn> destinationSimpleColumns = new ArrayList<SimpleBusinessColumn>();
+		List<SimpleBusinessColumn> destinationSimpleColumns = new ArrayList<>();
 		for(BusinessColumn column : destinationColumns){
 			if (column instanceof SimpleBusinessColumn){
 				destinationSimpleColumns.add((SimpleBusinessColumn)column);
@@ -481,7 +491,7 @@ public class BusinessRelationshipImpl extends ModelObjectImpl implements Busines
 	@Override
 	public List<SimpleBusinessColumn> getSourceSimpleBusinessColumns() {
 		EList<BusinessColumn> sourceColumns = getSourceColumns();
-		List<SimpleBusinessColumn> sourceSimpleColumns = new ArrayList<SimpleBusinessColumn>();
+		List<SimpleBusinessColumn> sourceSimpleColumns = new ArrayList<>();
 		for(BusinessColumn column : sourceColumns){
 			if (column instanceof SimpleBusinessColumn){
 				sourceSimpleColumns.add((SimpleBusinessColumn)column);

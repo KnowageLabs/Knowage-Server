@@ -38,12 +38,17 @@ public class SbiKpiThreshold extends SbiHibernateModel implements java.io.Serial
 
 	public SbiKpiThreshold() {
 	}
+	
+	public SbiKpiThreshold(Integer id) {
+		super();
+		this.setId(id);
+	}
 
 	public Integer getId() {
 		return this.id;
 	}
 
-	public void setId(Integer id) {
+	private void setId(Integer id) {
 		this.id = id;
 	}
 

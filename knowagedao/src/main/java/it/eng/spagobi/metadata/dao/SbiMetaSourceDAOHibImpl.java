@@ -75,7 +75,7 @@ public class SbiMetaSourceDAOHibImpl extends AbstractHibernateDAO implements ISb
 			tx = tmpSession.beginTransaction();
 			SbiMetaSource hibSource = (SbiMetaSource) tmpSession.load(SbiMetaSource.class, id);
 			toReturn = new SbiMetaSource();
-			toReturn.setSourceId(hibSource.getSourceId());
+			toReturn.changeSourceId(hibSource.getSourceId());
 			toReturn.setName(hibSource.getName());
 			toReturn.setType(hibSource.getType());
 			toReturn.setUrl(hibSource.getUrl());
@@ -426,7 +426,7 @@ public class SbiMetaSourceDAOHibImpl extends AbstractHibernateDAO implements ISb
 		SbiMetaTable toReturn = null;
 		if (hibMetaTable != null) {
 			toReturn = new SbiMetaTable();
-			toReturn.setTableId(hibMetaTable.getTableId());
+			toReturn.changeTableId(hibMetaTable.getTableId());
 			toReturn.setName(hibMetaTable.getName());
 			toReturn.setDeleted(hibMetaTable.isDeleted());
 

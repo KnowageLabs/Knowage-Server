@@ -52,6 +52,7 @@ public class JoinSequence {
 	private JoinSequence next;
 	private boolean isFromPart = false;
 
+	@Override
 	public String toString() {
 		StringBuffer buf = new StringBuffer();
 		buf.append( "JoinSequence{" );
@@ -104,6 +105,7 @@ public class JoinSequence {
 			return lhsColumns;
 		}
 
+		@Override
 		public String toString() {
 			return joinable.toString() + '[' + alias + ']';
 		}

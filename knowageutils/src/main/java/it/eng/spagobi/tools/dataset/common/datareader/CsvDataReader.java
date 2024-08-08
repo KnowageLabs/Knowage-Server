@@ -99,9 +99,9 @@ public class CsvDataReader extends AbstractDataReader {
 			}
 
 		} catch (FileNotFoundException e) {
-			e.printStackTrace();
+			logger.error("FileNotFoundException",e);
 		}catch (IOException e) {
-			e.printStackTrace();
+			logger.error("IOException",e);
 		}
 
 		return dataStore;

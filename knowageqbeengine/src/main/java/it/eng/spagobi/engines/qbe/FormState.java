@@ -151,8 +151,8 @@ public class FormState extends EngineAnalysisState {
 	 * the name.. In this way we save in the subobject the name of the field
 	 */
 	public void setIdNameMap() {
-		Map<String, String> idNameMap = new HashMap<String, String>();
-		Map<String, String> nameIdMap = new HashMap<String, String>();
+		Map<String, String> idNameMap = new HashMap<>();
+		Map<String, String> nameIdMap = new HashMap<>();
 		try {
 			JSONObject formState = (JSONObject) getProperty(FORM_STATE);
 			if (formState != null && formState.length() != 0) {
@@ -282,7 +282,7 @@ public class FormState extends EngineAnalysisState {
 	 * @throws JSONException
 	 */
 	private void filterAdmissibleValues(JSONObject valuesJSON, JSONArray admissibleJSON, String prefix) throws JSONException {
-		List<String> deprecatedValues = new ArrayList<String>();
+		List<String> deprecatedValues = new ArrayList<>();
 
 		for (int y = 0; y < admissibleJSON.length(); y++) {
 			Iterator<String> keyIter = valuesJSON.keys();
@@ -314,7 +314,7 @@ public class FormState extends EngineAnalysisState {
 	 * @throws JSONException
 	 */
 	private void filterAdmissibleGroups(JSONObject valuesJSON, JSONArray admissibleJSON) throws JSONException {
-		List<String> deprecatedValues = new ArrayList<String>();
+		List<String> deprecatedValues = new ArrayList<>();
 
 		for (int y = 0; y < admissibleJSON.length(); y++) {
 			Iterator<String> keyIter = valuesJSON.keys();

@@ -596,7 +596,7 @@ public class SetCatalogueAction extends AbstractQbeEngineAction {
 		simpleModule.addDeserializer(ModelFieldPaths.class,
 				new ModelFieldPathsJSONDeserializer(relationShips, modelStructure, query));
 		mapper.registerModule(simpleModule);
-		TypeReference<List<ModelFieldPaths>> type = new TypeReference<List<ModelFieldPaths>>() {
+		TypeReference<List<ModelFieldPaths>> type = new TypeReference<>() {
 		};
 		try {
 			return mapper.readValue(serialized, type);

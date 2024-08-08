@@ -18,9 +18,9 @@
 package it.eng.spagobi.utilities.database;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -118,8 +118,8 @@ public class OracleDataBase extends AbstractDataBase implements CacheDataBase, M
 		Map<String, Map<String, String>> tableContent = new LinkedHashMap<>();
 		try (Connection conn = dataSource.getConnection()) {
 
-			Statement stmt = conn.createStatement();
-			try (ResultSet rs = stmt.executeQuery(SELECT_ALL_COLS)) {
+			PreparedStatement stmt = conn.prepareStatement(SELECT_ALL_COLS);
+			try (ResultSet rs = stmt.executeQuery()) {
 				while (rs.next()) {
 					String tableName = rs.getString(1);
 					String columnName = rs.getString(2);

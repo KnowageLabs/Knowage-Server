@@ -136,7 +136,7 @@ public abstract class AbstractBaseHttpAction extends AbstractHttpAction {
 		HashMap<String, Object> attributesMap;
 		Iterator it;
 
-		attributesMap = new HashMap<String, Object>();
+		attributesMap = new HashMap<>();
 		attributeNames = getSpagoBIRequestContainer().getKeys();
 
 		it = attributeNames.iterator();
@@ -157,7 +157,7 @@ public abstract class AbstractBaseHttpAction extends AbstractHttpAction {
 		LinkedHashMap<String, Object> attributesMap;
 		Iterator it;
 
-		attributesMap = new LinkedHashMap<String, Object>();
+		attributesMap = new LinkedHashMap<>();
 		attributeNames = getSpagoBIRequestContainer().getKeys();
 
 		it = attributeNames.iterator();
@@ -279,14 +279,8 @@ public abstract class AbstractBaseHttpAction extends AbstractHttpAction {
 	}
 
 	public void writeBackToClient(byte[] bytes, IStreamEncoder encoder, boolean inline, String contentName, String contentType) throws IOException {
-		InputStream is = null;
-		try {
-			is = new ByteArrayInputStream(bytes);
+		try (InputStream is = new ByteArrayInputStream(bytes)) {
 			writeBackToClient(is, encoder, inline, contentName, contentType);
-		} finally {
-			if (is != null) {
-				is.close();
-			}
 		}
 	}
 

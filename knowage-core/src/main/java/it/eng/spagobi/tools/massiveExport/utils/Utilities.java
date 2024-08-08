@@ -40,7 +40,7 @@ public class Utilities {
 		logger.debug("IN");
 		List objList = funct.getBiObjects();
 		// filteronly selected type
-		List<BIObject> selectedObjects = new ArrayList<BIObject>();
+		List<BIObject> selectedObjects = new ArrayList<>();
 		if (docType == null) {
 			selectedObjects = objList;
 		} else {

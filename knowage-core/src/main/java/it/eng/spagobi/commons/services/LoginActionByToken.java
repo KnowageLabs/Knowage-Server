@@ -40,7 +40,9 @@ import it.eng.spagobi.services.security.bo.SpagoBIUserProfile;
 import it.eng.spagobi.services.security.service.ISecurityServiceSupplier;
 import it.eng.spagobi.services.security.service.SecurityServiceSupplierFactory;
 import it.eng.spagobi.utilities.assertion.Assert;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
+import it.eng.spagobi.utilities.rest.RestUtilities;
 import it.eng.spagobi.utilities.service.AbstractBaseHttpAction;
 import it.eng.spagobi.utilities.service.JSONSuccess;
 
@@ -82,7 +84,13 @@ public class LoginActionByToken extends AbstractBaseHttpAction {
 			callback = getAttributeAsString(CALLBACK);
 			logger.debug("Parameter [" + CALLBACK + "] is equals to [" + callback + "]");
 
-			backUrl = getAttributeAsString(BACK_URL);
+			backUrl = getAttributeAsString(BACK_URL); 
+			try {
+			    RestUtilities.checkIfAddressIsInWhitelist(backUrl);
+			} catch(SpagoBIRuntimeException ex) {
+				logger.error("BackUrl validation Failed : [[" + ex.getMessage() + "]] BackUrl will be erased for security reasons.");
+				backUrl = null;
+			}
 			logger.debug("Parameter [" + BACK_URL + "] is equals to [" + backUrl + "]");
 
 			token = getAttributeAsString(TOKEN);

@@ -152,8 +152,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     		$scope.location = $location;
     		debugger;
     		$scope.version = $location.search().version.match(/^[0-9]{1,2}\.[0-9]{1,2}$/) ? $location.search().version : "master";
+    		var url = new URL(baseUrl);
+    		url.searchParams.append('token', $location.search().token);
+    		url.searchParams.append('locale', $location.search().locale);
+    		url.searchParams.append('version', $scope.version);
     		
-    		 $http.get(baseUrl + "?token="+$location.search().token+"&locale="+$location.search().locale+"&version="+$scope.version)
+    		 $http.get(url.toString())
 	    		 .then(function(response){
 	    			 $scope.loading = false;
 	    			 if(response.data.errors){

@@ -63,10 +63,7 @@ public class MDXFormulaHandler {
 	private static ModelConfig modelConfig;
 	private static ClassLoader classLoader = MDXFormulaHandler.class.getClassLoader();
 
-	public static void main(String[] args) throws JAXBException {
-		loadFile();
-		getFormulasFromXML2();
-	}
+
 
 	public static SpagoBIPivotModel getModel() {
 		return model;
@@ -156,8 +153,7 @@ public class MDXFormulaHandler {
 					}
 				}
 			} catch (OlapException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				LOGGER.error("Error getting selected time hierarchy name", e);
 			}
 		}
 		return null;

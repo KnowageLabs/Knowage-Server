@@ -179,7 +179,7 @@ class TableHeaderNode extends TreeNode<TableAxisContext> {
 	}
 
 	void addHierarhcyHeaders() {
-		List<TreeNode<TableAxisContext>> children = new ArrayList<TreeNode<TableAxisContext>>(getChildren());
+		List<TreeNode<TableAxisContext>> children = new ArrayList<>(getChildren());
 
 		for (TreeNode<TableAxisContext> child : children) {
 			TableHeaderNode nodeChild = (TableHeaderNode) child;
@@ -203,7 +203,7 @@ class TableHeaderNode extends TreeNode<TableAxisContext> {
 	}
 
 	void addParentMemberHeaders() {
-		List<TreeNode<TableAxisContext>> children = new ArrayList<TreeNode<TableAxisContext>>(getChildren());
+		List<TreeNode<TableAxisContext>> children = new ArrayList<>(getChildren());
 
 		MemberHierarchyCache cache = getReference().getMemberHierarchyCache();
 
@@ -265,7 +265,7 @@ class TableHeaderNode extends TreeNode<TableAxisContext> {
 					index = 0;
 				}
 
-				List<Level> lowerLevels = new LinkedList<Level>(levels.subList(index, endIndex));
+				List<Level> lowerLevels = new LinkedList<>(levels.subList(index, endIndex));
 
 				Collections.reverse(lowerLevels);
 
@@ -273,7 +273,7 @@ class TableHeaderNode extends TreeNode<TableAxisContext> {
 					List<Property> properties = getReference().getProperties(level);
 
 					if (!properties.isEmpty() && property == null) {
-						children = new ArrayList<TreeNode<TableAxisContext>>(getChildren());
+						children = new ArrayList<>(getChildren());
 						clear();
 
 						TableHeaderNode parentNode = this;
@@ -320,7 +320,7 @@ class TableHeaderNode extends TreeNode<TableAxisContext> {
 	}
 
 	void mergeChildren() {
-		List<TreeNode<TableAxisContext>> children = new ArrayList<TreeNode<TableAxisContext>>(getChildren());
+		List<TreeNode<TableAxisContext>> children = new ArrayList<>(getChildren());
 
 		TableHeaderNode lastChild = null;
 
@@ -441,11 +441,12 @@ class TableHeaderNode extends TreeNode<TableAxisContext> {
 				return rowSpan;
 			}
 
-			final Map<Hierarchy, Integer> maxSpans = new HashMap<Hierarchy, Integer>(getReference().getHierarchies().size());
+			final Map<Hierarchy, Integer> maxSpans = new HashMap<>(getReference().getHierarchies().size());
 
 			if (aggregator != null) {
 				getRoot().walkTree(new TreeNodeCallback<TableAxisContext>() {
 
+					@Override
 					public int handleTreeNode(TreeNode<TableAxisContext> node) {
 						TableHeaderNode nodeChild = (TableHeaderNode) node;
 
@@ -525,6 +526,7 @@ class TableHeaderNode extends TreeNode<TableAxisContext> {
 
 				walkChildrenAtColIndex(new TreeNodeCallback<TableAxisContext>() {
 
+					@Override
 					public int handleTreeNode(TreeNode<TableAxisContext> node) {
 						TableHeaderNode nodeChild = (TableHeaderNode) node;
 
@@ -551,6 +553,7 @@ class TableHeaderNode extends TreeNode<TableAxisContext> {
 				if (cachedSpan == null) {
 					getRoot().walkTree(new TreeNodeCallback<TableAxisContext>() {
 
+						@Override
 						public int handleTreeNode(TreeNode<TableAxisContext> node) {
 							TableHeaderNode nodeChild = (TableHeaderNode) node;
 
@@ -716,7 +719,7 @@ class TableHeaderNode extends TreeNode<TableAxisContext> {
 	}
 
 	protected List<Member> getMemberPath() {
-		List<Member> path = new LinkedList<Member>();
+		List<Member> path = new LinkedList<>();
 
 		TableHeaderNode node = (TableHeaderNode) getParent();
 
@@ -760,6 +763,7 @@ class TableHeaderNode extends TreeNode<TableAxisContext> {
 
 			getRoot().walkChildren(new TreeNodeCallback<TableAxisContext>() {
 
+				@Override
 				public int handleTreeNode(TreeNode<TableAxisContext> node) {
 					TableHeaderNode nodeChild = (TableHeaderNode) node;
 

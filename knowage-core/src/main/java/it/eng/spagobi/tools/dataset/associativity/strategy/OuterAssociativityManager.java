@@ -76,7 +76,7 @@ public class OuterAssociativityManager extends AbstractAssociativityManager {
 		try {
 			for (String v1 : graph.vertexSet()) {
 				IAssociativeDatasetContainer container = associativeDatasetContainers.get(v1);
-				result.getDatasetToEdgeGroup().put(v1, new HashSet<EdgeGroup>());
+				result.getDatasetToEdgeGroup().put(v1, new HashSet<>());
 				for (String v2 : graph.vertexSet()) {
 					if (!v1.equals(v2)) {
 						Set<LabeledEdge<String>> edges = graph.getAllEdges(v1, v2);
@@ -86,7 +86,7 @@ public class OuterAssociativityManager extends AbstractAssociativityManager {
 								List<String> columnNames = getColumnNames(edge.getLabel(), v1);
 								columnNames.addAll(getColumnNames(edge.getLabel(), v2));
 								if (ParametersUtilities.containsParameter(columnNames)) {
-									addEdgeGroup(v1, new ParametricLabeledEdge<String>(edge), container);
+									addEdgeGroup(v1, new ParametricLabeledEdge<>(edge), container);
 									edgesWithoutParameters.remove(edge);
 								}
 							}
@@ -357,7 +357,7 @@ public class OuterAssociativityManager extends AbstractAssociativityManager {
 		dataSet.setParametersMap(parametersValues);
 		dataSet.resolveParameters();
 
-		List<AbstractSelectionField> listProj = new ArrayList<AbstractSelectionField>();
+		List<AbstractSelectionField> listProj = new ArrayList<>();
 		listProj.add(projections);
 
 		IDatasetEvaluationStrategy strategy = DatasetEvaluationStrategyFactory.get(dataSet.getEvaluationStrategy(isNearRealtime), dataSet, userprofile);

@@ -238,9 +238,7 @@ public class SbiCommunityDAOImpl extends AbstractHibernateDAO implements ISbiCom
 
 				commUsers.setCreationDate(new Date());
 				commUsers.setLastChangeDate(new Date());
-				SbiCommunityUsersId id = new SbiCommunityUsersId();
-				id.setCommunityId(community.getCommunityId());
-				id.setUserId(userID);
+				SbiCommunityUsersId id = new SbiCommunityUsersId(community.getCommunityId(),userID);
 
 				commUsers.setId(id);
 
@@ -283,10 +281,8 @@ public class SbiCommunityDAOImpl extends AbstractHibernateDAO implements ISbiCom
 
 			commUsers.setCreationDate(new Date());
 			commUsers.setLastChangeDate(new Date());
-			SbiCommunityUsersId id = new SbiCommunityUsersId();
-			id.setCommunityId(community.getCommunityId());
-			id.setUserId(userID);
-
+			SbiCommunityUsersId id = new SbiCommunityUsersId(community.getCommunityId(),userID);
+			
 			commUsers.setId(id);
 
 			updateSbiCommonInfo4Insert(commUsers, true);

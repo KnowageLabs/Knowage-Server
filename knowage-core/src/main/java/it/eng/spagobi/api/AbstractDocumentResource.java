@@ -17,10 +17,7 @@
  */
 package it.eng.spagobi.api;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
-
 import java.net.URI;
-import java.net.URLEncoder;
 import java.util.List;
 
 import javax.ws.rs.PathParam;
@@ -31,6 +28,7 @@ import org.apache.clerezza.jaxrs.utils.form.FormFile;
 import org.apache.clerezza.jaxrs.utils.form.MultiPartBody;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.owasp.esapi.reference.DefaultEncoder;
 
 import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.error.EMFUserError;
@@ -49,6 +47,7 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 public abstract class AbstractDocumentResource extends AbstractSpagoBIResource {
 
 	private static final Logger LOGGER = LogManager.getLogger(AbstractDocumentResource.class);
+	private static org.owasp.esapi.Encoder esapiEncoder = DefaultEncoder.getInstance();
 
 	protected Response insertDocument(String body) {
 		BIObject document = (BIObject) JsonConverter.jsonToValidObject(body, BIObject.class);
@@ -79,7 +78,7 @@ public abstract class AbstractDocumentResource extends AbstractSpagoBIResource {
 		documentManager.saveDocument(document, null);
 
 		try {
-			String encodedLabel = URLEncoder.encode(document.getLabel(), UTF_8.name());
+			String encodedLabel = esapiEncoder.encodeForURL(document.getLabel());
 			encodedLabel = encodedLabel.replaceAll("\\+", "%20");
 			return Response.created(new URI("1.0/documents/" + encodedLabel)).build();
 		} catch (Exception e) {

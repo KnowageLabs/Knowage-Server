@@ -145,9 +145,15 @@ public class DocumentExecutionSnapshot extends AbstractSpagoBIResource {
 
 		try {
 			object.put("snapshot", snap.getContent());
-		} catch (EMFUserError | EMFInternalError | JSONException e) {
-			LOGGER.warn("Non-fatal error", e);
-		}
+
+		} catch (EMFUserError e) {
+			LOGGER.error(e);
+		} catch (EMFInternalError e) {
+			LOGGER.error(e);
+		} catch (JSONException e) {
+			LOGGER.error(e);
+
+		} 
 
 		return object.toString();
 	}
@@ -190,7 +196,7 @@ public class DocumentExecutionSnapshot extends AbstractSpagoBIResource {
 		} catch (JSONException e1) {
 			throw new SpagoBIServiceException(SERVICE_NAME, e1.getMessage());
 		}
-
+ 
 		return Response.ok(resultAsMap).build();
 	}
 

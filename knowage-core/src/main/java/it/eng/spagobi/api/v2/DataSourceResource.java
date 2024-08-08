@@ -55,6 +55,8 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.mongodb.MongoClient;
 import com.mongodb.client.MongoDatabase;
 
+import it.eng.knowage.features.Feature;
+import it.eng.knowage.rest.annotation.FeatureFlag;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.api.AbstractSpagoBIResource;
@@ -134,6 +136,7 @@ public class DataSourceResource extends AbstractSpagoBIResource {
 	@Path("/")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@UserConstraint(functionalities = { CommunityFunctionalityConstants.DATASOURCE_MANAGEMENT })
+	@FeatureFlag(Feature.EDIT_DATASOURCE)
 	public String postDataSource(IDataSource dataSource) {
 		LOGGER.debug("IN");
 		try {
@@ -172,6 +175,7 @@ public class DataSourceResource extends AbstractSpagoBIResource {
 	@Path("/")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@UserConstraint(functionalities = { CommunityFunctionalityConstants.DATASOURCE_MANAGEMENT })
+	@FeatureFlag(Feature.EDIT_DATASOURCE)
 	public List<IDataSource> putDataSource(IDataSource dataSource) {
 		LOGGER.debug("IN");
 		try {
@@ -203,6 +207,7 @@ public class DataSourceResource extends AbstractSpagoBIResource {
 	@DELETE
 	@Path("/{dsId}")
 	@UserConstraint(functionalities = { CommunityFunctionalityConstants.DATASOURCE_MANAGEMENT })
+	@FeatureFlag(Feature.EDIT_DATASOURCE)
 	public List<IDataSource> deleteDataSourceById(@PathParam("dsId") Integer dsId) throws EMFUserError {
 
 		LOGGER.debug("IN");
@@ -272,6 +277,7 @@ public class DataSourceResource extends AbstractSpagoBIResource {
 	@DELETE
 	@Path("/")
 	@UserConstraint(functionalities = { CommunityFunctionalityConstants.DATASOURCE_MANAGEMENT })
+	@FeatureFlag(Feature.EDIT_DATASOURCE)
 	public List<IDataSource> deleteMultiple(@QueryParam("id") List<Integer> ids) {
 		LOGGER.debug("IN");
 		try {
@@ -330,6 +336,7 @@ public class DataSourceResource extends AbstractSpagoBIResource {
 	@Path("/test")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@UserConstraint(functionalities = { CommunityFunctionalityConstants.DATASOURCE_MANAGEMENT })
+	@FeatureFlag(Feature.EDIT_DATASOURCE)
 	public Response testDataSource(IDataSource dataSource) throws Exception {
 
 		LOGGER.debug("IN");

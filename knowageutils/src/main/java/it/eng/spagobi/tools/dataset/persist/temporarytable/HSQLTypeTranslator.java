@@ -33,7 +33,7 @@ public class HSQLTypeTranslator implements INativeDBTypeable {
 
 	private static Map<String, String> hsqlTypeMapping;
 	static {
-		hsqlTypeMapping = new HashMap<String, String>();
+		hsqlTypeMapping = new HashMap<>();
 		hsqlTypeMapping.put("java.lang.Integer", "INTEGER");
 		hsqlTypeMapping.put("java.lang.String", "VARCHAR");
 		hsqlTypeMapping.put("java.lang.Boolean", "BOOLEAN");
@@ -46,6 +46,7 @@ public class HSQLTypeTranslator implements INativeDBTypeable {
 		hsqlTypeMapping.put("java.lang.BigDecimal", "NUMERIC");
 	}
 
+	@Override
 	@SuppressWarnings("rawtypes")
 	public String getNativeTypeString(String typeJavaName, Map properties) {
 		logger.debug("Translating java type " + typeJavaName

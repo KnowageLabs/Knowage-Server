@@ -17,6 +17,7 @@
  */
 package it.eng.spagobi.tools.distributionlist.bo;
 
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.List;
 /**
@@ -122,5 +123,8 @@ public class DistributionList implements Serializable {
 		this.documents = documents;
 	}
 	
+	private final void writeObject(ObjectOutputStream aOutputStream) {
+		  throw new UnsupportedOperationException("Security violation : cannot serialize object to a stream");
+	}
 
 }

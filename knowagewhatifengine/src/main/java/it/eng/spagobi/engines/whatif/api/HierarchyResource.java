@@ -325,8 +325,7 @@ public class HierarchyResource extends AbstractWhatIfEngineService {
 			axis = paramsObj.getInt("axis");
 			hier = paramsObj.getString("hierarchy");
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error("getVisibleMembers",e);
 		}
 
 		// if not a filter axis
@@ -341,8 +340,7 @@ public class HierarchyResource extends AbstractWhatIfEngineService {
 			try {
 				ja.put(serializeVisibleObject(visibleMembers.get(i)));
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				logger.error("serializeVisibleObject",e);
 			}
 		}
 

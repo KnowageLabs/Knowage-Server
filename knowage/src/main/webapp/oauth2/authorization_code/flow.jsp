@@ -15,14 +15,10 @@ GNU Affero General Public License for more details.
 You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 --%>
-
-<%@page import="it.eng.spagobi.security.OAuth2.OAuth2Client"%>
-<%@page import="it.eng.spagobi.security.OAuth2.OAuth2Config"%>
-<%@page import="org.apache.commons.lang.StringEscapeUtils"%>
-<%@page import="org.json.JSONObject"%>
-
+<%@page import="org.owasp.esapi.reference.DefaultEncoder"%>	
+<%@page import="org.owasp.esapi.Encoder"%>	
 <%
-OAuth2Config oauth2Config = OAuth2Config.getInstance();
+Encoder esapiEncoder = DefaultEncoder.getInstance();
 String code = request.getParameter("code");
 %>
 
@@ -34,11 +30,50 @@ String code = request.getParameter("code");
   </head>
   <body>
     <script>
-    const authorizeEndpoint = '<%= StringEscapeUtils.escapeJavaScript(oauth2Config.getAuthorizeUrl()) %>';
-    const clientId = '<%= StringEscapeUtils.escapeJavaScript(oauth2Config.getClientId()) %>';
-    const scope = '<%= StringEscapeUtils.escapeJavaScript(oauth2Config.getScopes()) %>';
-    const redirectUri = '<%= StringEscapeUtils.escapeJavaScript(oauth2Config.getRedirectUrl()) %>';
-    const accessTokenResponse = <%= code != null ? new JSONObject(new OAuth2Client().getAccessToken(code)) : "null" %>;
+    var oauth2Config = null;
+	
+    var xhrOAuth2C = new XMLHttpRequest();
+
+    xhrOAuth2C.onload = function() {
+        var response = xhrOAuth2C.response;
+
+        if (xhrOAuth2C.status == 200) {
+        	oauthConfig = response;
+        } else {
+            alert("Error: " + response.error_description + " (" + response.error + ")");
+        }
+    };
+    xhrOAuth2C.responseType = 'json';
+    xhrOAuth2C.open("GET", '/oauth2configservice', true);
+    xhrOAuth2C.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+    xhrOAuth2C.send();
+
+    const authorizeEndpoint = oauth2Config.authorizeUrl;
+    const tokenEndpoint = oauth2Config.accessTokenUrl;
+    const clientId = oauth2Config.clientId;
+    const redirectUri = oauth2Config.redirectUrl;
+    const scope = oauth2Config.scopes;
+    const code = <%= esapiEncoder.encodeForJavaScript(code)  %>;
+    const accessTokenResponse;
+    if(code == null){
+    	accessTokenResponse = null;
+    } else {
+        var xhrO2AT = new XMLHttpRequest();
+
+        xhrO2AT.onload = function() {
+            var response = xhrO2AT.response;
+
+            if (xhr.status == 200) {
+            	accessTokenResponse = response;
+            } else {
+                alert("Error: " + response.error_description + " (" + response.error + ")");
+            }
+        };
+        xhrO2AT.responseType = 'json';
+        xhrO2AT.open("GET", '/oauth2clientservice', true);
+        //xhrO2AT.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+        xhrO2AT.send(new URLSearchParams({code: code});   	
+    }
 
         if (window.location.search) {
             var args = new URLSearchParams(window.location.search);
@@ -49,8 +84,8 @@ String code = request.getParameter("code");
             	    throw Error("Probable session hijacking attack!");
             	}
 
-        		var access_token = accessTokenResponse.access_token;
-        		var id_token = accessTokenResponse.id_token;
+        		var access_token = accessTokenResponse.accessToken;
+        		var id_token = accessTokenResponse.idToken;
         		if (id_token) {
         			// storing id_token for later usage (on logout)
                 	window.sessionStorage.setItem("id_token", id_token);

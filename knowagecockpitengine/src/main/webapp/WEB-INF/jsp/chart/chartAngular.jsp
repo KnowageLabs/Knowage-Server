@@ -21,7 +21,7 @@ author: Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 --%>
 
 <%-- ---------------------------------------------------------------------- --%>
-<%-- HTML	 																--%>
+<%-- HTML	 		  org.owasp.esapi.reference.DefaultEncoder														--%>
 <%-- ---------------------------------------------------------------------- --%>
 <html ng-app="chartExecutionManager">
 
@@ -29,9 +29,9 @@ author: Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 	<head>
 		
 		<%-- ---------------------------------------------------------------------- --%>
-		<%-- IMPORT [START]															--%>
+		<%-- IMPORT [START]			
 		<%-- ---------------------------------------------------------------------- --%>
-		
+        	
 		<!-- Getting all the data resource that is needed for execution of the chart (Java code). -->
 		<%@include file="commons/angular/angularResource.jspf"%>
 		
@@ -67,16 +67,16 @@ author: Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 						
 		<script>
 		
-			/* Parameters needed for the WebServiceManagerFactory. */
-			var sbiExecutionId = <%=request.getParameter("SBI_EXECUTION_ID")!=null? "'"+request.getParameter("SBI_EXECUTION_ID")+"'" : "null"%>;
-			var userId = '<%=userId%>'; <%-- e.g. biadmin --%>
-			var hostName = '<%=request.getServerName()%>'; <%-- e.g. localhost --%>
+			/* Parameters needed for the WebServiceManagerFactory. esapi  */
+			var sbiExecutionId = <%=esapiEncoder.encodeForJavaScript( (request.getParameter("SBI_EXECUTION_ID")!=null? "'"+request.getParameter("SBI_EXECUTION_ID")+"'" : "null") )%>;
+			var userId = '<%=esapiEncoder.encodeForJavaScript(userId)%>'; <%-- e.g. biadmin --%>
+			var hostName = '<%=esapiEncoder.encodeForJavaScript(request.getServerName())%>'; <%-- e.g. localhost --%>
 			var serverPort = '<%=request.getServerPort()%>'; <%-- e.g. 8080 --%>
 			var protocol = window.location.protocol; <%-- e.g. http: --%>
-			var driverParams = '<%=driverParams%>'; <%-- e.g. object that hold values for IS_TECHNICAL_USER, MODALITY, SBI_ENVIRONMENT, user_id, etc. --%>
+			var driverParams = '<%=esapiEncoder.encodeForJavaScript(driverParams)%>'; <%-- e.g. object that hold values for IS_TECHNICAL_USER, MODALITY, SBI_ENVIRONMENT, user_id, etc. --%>
 
-			var currentDocumentName = '<%=docName%>'; <%-- name of the document --%>
-			var currentDocumentLabel = '<%=docLabelComositeDoc%>'; <%-- label of the document --%>
+			var currentDocumentName = '<%=esapiEncoder.encodeForJavaScript(docName)%>'; <%-- name of the document --%>
+			var currentDocumentLabel = '<%=esapiEncoder.encodeForJavaScript(docLabelComositeDoc)%>'; <%-- label of the document --%>
 			
 			// Global variable that serves as an indicator if the chart type of the rendered document is ChartJS. (danristo)			
 			var isLibChartJs = '<%=isLibChartJS%>';
@@ -145,18 +145,18 @@ author: Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 					that are displayed on charts in various ways (values in tables, values in tooltip etc.).
 					@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 				*/
-				locale = '<%=locale%>';	
+				locale = '<%=locale %>';	
 				thisContextName = '${pageContext.request.contextPath}';  //'knowagechartengine'
-		 		driverParams = '<%=driverParams%>';
-	 			jsonTemplate = '<%=template%>';
-	 			datasetLabel = '<%=datasetLabel%>';
+		 		driverParams = '<%=esapiEncoder.encodeForJavaScript(driverParams)%>';
+	 			jsonTemplate = '<%=esapiEncoder.encodeForJavaScript(template)%>';
+	 			datasetLabel = '<%=esapiEncoder.encodeForJavaScript(datasetLabel)%>';
 	 			isCockpit = <%=isCockpit%>;
 	 			
-				aggregations = '<%=aggregations%>';
-	 			selections = '<%=selections%>';
-	 			associations = '<%=associations%>';
-	 			widgetId = '<%=widgetId%>';
-	 			metaData = '<%=metaData%>';
+				aggregations = '<%=esapiEncoder.encodeForJavaScript(aggregations)%>';
+	 			selections = '<%=esapiEncoder.encodeForJavaScript(selections)%>';
+	 			associations = '<%=esapiEncoder.encodeForJavaScript(associations)%>';
+	 			widgetId = '<%=esapiEncoder.encodeForJavaScript(widgetId)%>';
+	 			metaData = '<%=esapiEncoder.encodeForJavaScript(metaData)%>';
 	 			 			
 	 			/* 
 	 				Set the exportChart variable to NULL. This variable will be predefined into a function that will serve

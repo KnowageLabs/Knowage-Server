@@ -70,6 +70,7 @@ public class LinkableBar extends BarCharts implements ILinkableChart {
 	private static transient Logger logger=Logger.getLogger(LinkableBar.class);
 
 
+	@Override
 	public void configureChart(SourceBean content) {
 		logger.debug("IN");
 		super.configureChart(content);
@@ -99,7 +100,7 @@ public class LinkableBar extends BarCharts implements ILinkableChart {
 
 			List parameters =drillSB.getAttributeAsList("PARAM");
 			if(parameters!=null){
-				drillParametersMap=new HashMap<String, DrillParameter>();
+				drillParametersMap=new HashMap<>();
 
 				for (Iterator iterator = parameters.iterator(); iterator.hasNext();) {
 					SourceBean att = (SourceBean) iterator.next();
@@ -155,6 +156,7 @@ public class LinkableBar extends BarCharts implements ILinkableChart {
 
 
 
+	@Override
 	public JFreeChart createChart(DatasetMap datasets) {
 		logger.debug("IN");
 		CategoryDataset dataset=(CategoryDataset)datasets.getDatasets().get("1");
@@ -201,7 +203,7 @@ public class LinkableBar extends BarCharts implements ILinkableChart {
 			renderer.setItemURLGenerator(new StandardCategoryURLGenerator(rootUrl));
 		}*/
 
-		CategoryPlot plot = new CategoryPlot((CategoryDataset)dataset, categoryAxis, valueAxis, renderer);
+		CategoryPlot plot = new CategoryPlot(dataset, categoryAxis, valueAxis, renderer);
 		plot.setOrientation(PlotOrientation.VERTICAL);
 		if(horizontalView)
 		{
@@ -337,13 +339,14 @@ public class LinkableBar extends BarCharts implements ILinkableChart {
 	 * @return the document_ parameters
 	 */
 
+	@Override
 	public String getDocument_Parameters(HashMap<String, DrillParameter> _drillParametersMap) { 
 		logger.debug("IN");
 		String document_parameter="";
 		if(_drillParametersMap!=null){
 			for (Iterator iterator = _drillParametersMap.keySet().iterator(); iterator.hasNext();) {
 				String name = (String) iterator.next();
-				DrillParameter drillPar=(DrillParameter)_drillParametersMap.get(name);
+				DrillParameter drillPar=_drillParametersMap.get(name);
 				String value=drillPar.getValue();
 				if(name!=null && !name.equals("") && value!=null && !value.equals("")){
 					document_parameter+="%26"+name+"%3D"+value;
@@ -360,6 +363,7 @@ public class LinkableBar extends BarCharts implements ILinkableChart {
 	/* (non-Javadoc)
 	 * @see it.eng.spagobi.engines.chart.bo.charttypes.ILinkableChart#getRootUrl()
 	 */
+	@Override
 	public String getRootUrl() {
 		return rootUrl;
 	}
@@ -367,6 +371,7 @@ public class LinkableBar extends BarCharts implements ILinkableChart {
 	/* (non-Javadoc)
 	 * @see it.eng.spagobi.engines.chart.bo.charttypes.ILinkableChart#setRootUrl(java.lang.String)
 	 */
+	@Override
 	public void setRootUrl(String rootUrl) {
 		this.rootUrl = rootUrl;
 	}
@@ -374,6 +379,7 @@ public class LinkableBar extends BarCharts implements ILinkableChart {
 	/* (non-Javadoc)
 	 * @see it.eng.spagobi.engines.chart.bo.ChartImpl#isLinkable()
 	 */
+	@Override
 	public boolean isLinkable(){
 		return true;
 	}
@@ -382,6 +388,7 @@ public class LinkableBar extends BarCharts implements ILinkableChart {
 	/* (non-Javadoc)
 	 * @see it.eng.spagobi.engines.chart.bo.charttypes.ILinkableChart#getMode()
 	 */
+	@Override
 	public String getMode() {
 		return mode;
 	}
@@ -390,6 +397,7 @@ public class LinkableBar extends BarCharts implements ILinkableChart {
 	/* (non-Javadoc)
 	 * @see it.eng.spagobi.engines.chart.bo.charttypes.ILinkableChart#setMode(java.lang.String)
 	 */
+	@Override
 	public void setMode(String mode) {
 		this.mode = mode;
 	}
@@ -398,6 +406,7 @@ public class LinkableBar extends BarCharts implements ILinkableChart {
 	/* (non-Javadoc)
 	 * @see it.eng.spagobi.engines.chart.bo.charttypes.ILinkableChart#getDrillLabel()
 	 */
+	@Override
 	public String getDrillLabel() {
 		return drillLabel;
 	}
@@ -406,16 +415,19 @@ public class LinkableBar extends BarCharts implements ILinkableChart {
 	/* (non-Javadoc)
 	 * @see it.eng.spagobi.engines.chart.bo.charttypes.ILinkableChart#setDrillLabel(java.lang.String)
 	 */
+	@Override
 	public void setDrillLabel(String drillLabel) {
 		this.drillLabel = drillLabel;
 	}
 
 
+	@Override
 	public HashMap<String, DrillParameter> getDrillParametersMap() {
 		return drillParametersMap;
 	}
 
 
+	@Override
 	public void setDrillParametersMap(
 			HashMap<String, DrillParameter> drillParametersMap) {
 		this.drillParametersMap = drillParametersMap;
@@ -427,6 +439,7 @@ public class LinkableBar extends BarCharts implements ILinkableChart {
 	/* (non-Javadoc)
 	 * @see it.eng.spagobi.engines.chart.bo.charttypes.ILinkableChart#getCategoryUrlName()
 	 */
+	@Override
 	public String getCategoryUrlName() {
 		return categoryUrlName;
 	}
@@ -435,6 +448,7 @@ public class LinkableBar extends BarCharts implements ILinkableChart {
 	/* (non-Javadoc)
 	 * @see it.eng.spagobi.engines.chart.bo.charttypes.ILinkableChart#setCategoryUrlName(java.lang.String)
 	 */
+	@Override
 	public void setCategoryUrlName(String categoryUrlName) {
 		this.categoryUrlName = categoryUrlName;
 	}
@@ -443,6 +457,7 @@ public class LinkableBar extends BarCharts implements ILinkableChart {
 	/* (non-Javadoc)
 	 * @see it.eng.spagobi.engines.chart.bo.charttypes.ILinkableChart#getSerieUrlname()
 	 */
+	@Override
 	public String getSerieUrlname() {
 		return serieUrlname;
 	}
@@ -451,6 +466,7 @@ public class LinkableBar extends BarCharts implements ILinkableChart {
 	/* (non-Javadoc)
 	 * @see it.eng.spagobi.engines.chart.bo.charttypes.ILinkableChart#setSerieUrlname(java.lang.String)
 	 */
+	@Override
 	public void setSerieUrlname(String serieUrlname) {
 		this.serieUrlname = serieUrlname;
 	}
@@ -458,6 +474,7 @@ public class LinkableBar extends BarCharts implements ILinkableChart {
 
 
 
+	@Override
 	public String getDrillDocTitle() {
 		return drillDocTitle;
 	}
@@ -465,6 +482,7 @@ public class LinkableBar extends BarCharts implements ILinkableChart {
 
 
 
+	@Override
 	public void setDrillDocTitle(String drillDocTitle) {
 		this.drillDocTitle = drillDocTitle;
 	}
@@ -472,6 +490,7 @@ public class LinkableBar extends BarCharts implements ILinkableChart {
 
 
 
+	@Override
 	public String getTarget() {
 		return target;
 	}
@@ -479,6 +498,7 @@ public class LinkableBar extends BarCharts implements ILinkableChart {
 
 
 
+	@Override
 	public void setTarget(String target) {
 		this.target = target;
 	}

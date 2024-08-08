@@ -39,6 +39,7 @@ public class ModalitiesValuesJSONSerializer implements Serializer {
 	// public static final String DATASETID = "DATASET_ID";
 	// public static final String MULTIVALUE = "MULTIVALUE";
 
+	@Override
 	public Object serialize(Object o, Locale locale) throws SerializationException {
 
 		JSONObject result = new JSONObject();
@@ -55,8 +56,7 @@ public class ModalitiesValuesJSONSerializer implements Serializer {
 			result.put(LABEL, modalitiesValue.getLabel());
 			result.put(SELECTIONTYPE, modalitiesValue.getSelectionType());
 		} catch (JSONException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw new SerializationException("An error occurred while serializing object: " + o, e);
 		}
 
 		return result;

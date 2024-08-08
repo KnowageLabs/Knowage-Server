@@ -24,7 +24,7 @@ public class SbiNewsRolesId implements Serializable {
 		return newsId;
 	}
 
-	public void setNewsId(Integer newsId) {
+	private void setNewsId(Integer newsId) {
 		this.newsId = newsId;
 	}
 
@@ -32,7 +32,7 @@ public class SbiNewsRolesId implements Serializable {
 		return extRoleId;
 	}
 
-	public void setExtRoleId(Integer extRoleId) {
+	private void setExtRoleId(Integer extRoleId) {
 		this.extRoleId = extRoleId;
 	}
 

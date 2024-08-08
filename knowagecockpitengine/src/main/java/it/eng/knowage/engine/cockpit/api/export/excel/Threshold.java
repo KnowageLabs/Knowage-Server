@@ -1,7 +1,5 @@
 package it.eng.knowage.engine.cockpit.api.export.excel;
 
-import java.awt.Color;
-
 import org.apache.poi.xssf.usermodel.XSSFColor;
 
 public class Threshold {
@@ -24,7 +22,8 @@ public class Threshold {
 		int r = Integer.parseInt(colors[0].trim());
 		int g = Integer.parseInt(colors[1].trim());
 		int b = Integer.parseInt(colors[2].trim());
-		return new XSSFColor(new Color(r, g, b));
+		
+		return new XSSFColor(new byte[]{(byte) r, (byte) g, (byte) b});
 	}
 
 	public boolean isConstraintSatisfied(Double value) {

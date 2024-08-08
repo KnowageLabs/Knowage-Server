@@ -165,34 +165,4 @@ public class GridMetadataContainer {
 		return toReturn;
 	}
 
-	public static void main(String[] args) {
-		GridMetadataContainer gmc = new GridMetadataContainer();
-
-		gmc.setResults(2);
-
-		gmc.getFields().add("strNumber");
-		HashMap am = new HashMap<String, String>();
-		am.put("a", "a");
-		am.put("b", "b");
-		gmc.getFields().add(am);
-		HashMap am2 = new HashMap<String, String>();
-		am2.put("1", "1");
-		am2.put("2", "2");
-		gmc.getFields().add(am2);
-
-		HashMap am3 = new HashMap<String, String>();
-		am3.put("11a", "11a");
-		am3.put("11b", "11b");
-		gmc.getValues().add(am3);
-		HashMap am4 = new HashMap<String, String>();
-		am4.put("111", "111");
-		am4.put("112", "112");
-		gmc.getValues().add(am4);
-		try {
-			logger.debug(gmc.toJSONString());
-		} catch (Exception e) {
-			logger.debug("ssss");
-		}
-
-	}
 }

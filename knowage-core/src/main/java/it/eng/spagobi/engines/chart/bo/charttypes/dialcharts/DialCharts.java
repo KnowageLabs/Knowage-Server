@@ -31,8 +31,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Vector;
-
 import org.apache.log4j.Logger;
 import org.jfree.chart.JFreeChart;
 import org.jfree.data.general.DefaultValueDataset;
@@ -85,6 +83,7 @@ public class DialCharts extends ChartImpl {
 	/* (non-Javadoc)
 	 * @see it.eng.spagobi.engines.chart.bo.ChartImpl#createChart(java.lang.String, org.jfree.data.general.Dataset)
 	 */
+	@Override
 	public JFreeChart createChart(DatasetMap dataset){
 		return null;
 	}
@@ -93,6 +92,7 @@ public class DialCharts extends ChartImpl {
 	/* (non-Javadoc)
 	 * @see it.eng.spagobi.engines.chart.bo.ChartImpl#configureChart(it.eng.spago.base.SourceBean)
 	 */
+	@Override
 	public void configureChart(SourceBean content){
 		logger.debug("IN");
 
@@ -271,6 +271,7 @@ public class DialCharts extends ChartImpl {
 	/* (non-Javadoc)
 	 * @see it.eng.spagobi.engines.chart.bo.ChartImpl#calculateValue()
 	 */
+	@Override
 	public DatasetMap calculateValue() throws Exception{
 		logger.debug("IN");
 		String res=DataSetAccessFunctions.getDataSetResultFromId(profile, getData(),parametersObject);
@@ -347,6 +348,7 @@ public class DialCharts extends ChartImpl {
 	/* (non-Javadoc)
 	 * @see it.eng.spagobi.engines.chart.bo.ChartImpl#isLovConfDefined()
 	 */
+	@Override
 	public boolean isLovConfDefined() {
 		return isLovConfDefined;
 	}
@@ -357,6 +359,7 @@ public class DialCharts extends ChartImpl {
 	/* (non-Javadoc)
 	 * @see it.eng.spagobi.engines.chart.bo.ChartImpl#setLovConfDefined(boolean)
 	 */
+	@Override
 	public void setLovConfDefined(boolean isLovConfDefined) {
 		this.isLovConfDefined = isLovConfDefined;
 	}

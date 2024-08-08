@@ -668,9 +668,7 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 			SbiOrganizationDatasource sbiOrganizationDatasource = new SbiOrganizationDatasource();
 			sbiOrganizationDatasource.setSbiDataSource(hibDataSource);
 			sbiOrganizationDatasource.setSbiOrganizations(sbiOrganizations);
-			SbiOrganizationDatasourceId idRel = new SbiOrganizationDatasourceId();
-			idRel.setDatasourceId(id);
-			idRel.setOrganizationId(sbiOrganizations.getId());
+			SbiOrganizationDatasourceId idRel = new SbiOrganizationDatasourceId(id,sbiOrganizations.getId());
 			sbiOrganizationDatasource.setId(idRel);
 
 			sbiOrganizationDatasource.getCommonInfo().setOrganization(organization);
@@ -796,7 +794,7 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 				String jdbcPoolConfiguration = mapper.writeValueAsString(jdbcAdvancedOptionsObj);
 				sbiDataSource.setJdbcPoolConfiguration(jdbcPoolConfiguration);
 			}
-			sbiDataSource.setDsId(dataSource.getDsId());
+			sbiDataSource.changeDsId(dataSource.getDsId());
 			sbiDataSource.setLabel(dataSource.getLabel());
 			sbiDataSource.setDescr(dataSource.getDescr());
 			sbiDataSource.setJndi(dataSource.getJndi());
@@ -1045,9 +1043,7 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 			SbiOrganizationDatasource sbiOrganizationDatasource = new SbiOrganizationDatasource();
 			sbiOrganizationDatasource.setSbiDataSource(datasource);
 			sbiOrganizationDatasource.setSbiOrganizations(sbiOrganizations);
-			SbiOrganizationDatasourceId idRel = new SbiOrganizationDatasourceId();
-			idRel.setDatasourceId(datasourceId);
-			idRel.setOrganizationId(sbiOrganizations.getId());
+			SbiOrganizationDatasourceId idRel = new SbiOrganizationDatasourceId(datasourceId,sbiOrganizations.getId());
 			sbiOrganizationDatasource.setId(idRel);
 			updateSbiCommonInfo4Insert(sbiOrganizationDatasource);
 

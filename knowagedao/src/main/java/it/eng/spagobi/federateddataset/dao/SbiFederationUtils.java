@@ -44,7 +44,7 @@ public class SbiFederationUtils {
 		FederationDefinition fd = toDatasetFederation(hibFd);
 		if (sourceDatasets == null) {
 			logger.debug("No dataset is added in the definition");
-			sourceDatasets = new HashSet<IDataSet>();
+			sourceDatasets = new HashSet<>();
 		} else {
 			logger.debug("Adding also the dataset to the federation definition");
 		}
@@ -96,7 +96,7 @@ public class SbiFederationUtils {
 		Assert.assertNotNull(sbiFederationDefinition, "The federation is null");
 		Assert.assertNotNull(federationDefinition, "The federation is null");
 
-		sbiFederationDefinition.setFederation_id(federationDefinition.getFederation_id());
+		sbiFederationDefinition.changeFederation_id(federationDefinition.getFederation_id());
 		sbiFederationDefinition.setLabel(federationDefinition.getLabel());
 		sbiFederationDefinition.setName(federationDefinition.getName());
 		sbiFederationDefinition.setDescription(federationDefinition.getDescription());
@@ -113,7 +113,7 @@ public class SbiFederationUtils {
 
 	public static Set<SbiDataSet> toSbiDataSet(Set<IDataSet> dataSets) {
 
-		Set<SbiDataSet> ds = new java.util.HashSet<SbiDataSet>();
+		Set<SbiDataSet> ds = new java.util.HashSet<>();
 		for (IDataSet dataset : dataSets) {
 			int version = 1;
 			if (dataset instanceof VersionedDataSet) {

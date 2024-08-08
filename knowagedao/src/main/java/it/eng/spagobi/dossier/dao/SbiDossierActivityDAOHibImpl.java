@@ -238,17 +238,15 @@ public class SbiDossierActivityDAOHibImpl extends AbstractHibernateDAO implement
 	}
 
 	public SbiDossierActivity toSbiDossierActivity(DossierActivity dossierActivity) {
-		SbiDossierActivity sda = new SbiDossierActivity();
-
-		sda.setId(dossierActivity.getId());
+		SbiDossierActivity sda = new SbiDossierActivity(dossierActivity.getId());
 		sda.setActivity(dossierActivity.getActivity());
 		sda.setDocumentId(dossierActivity.getDocumentId());
 		sda.setParameters(dossierActivity.getParameters());
 		sda.setConfigContent(dossierActivity.getConfigContent());
 		UserProfile userProfile = (UserProfile) this.getUserProfile();
 		if (dossierActivity.getProgressId() != null) {
-			SbiProgressThread progress = new SbiProgressThread();
-			progress.setProgressThreadId(dossierActivity.getProgressId());
+			SbiProgressThread progress = new SbiProgressThread(dossierActivity.getProgressId());
+			
 			progress.setUserId((String) userProfile.getUserId());
 			progress.setExecutionRole(dossierActivity.getExecutionRole());
 			sda.setProgress(progress);

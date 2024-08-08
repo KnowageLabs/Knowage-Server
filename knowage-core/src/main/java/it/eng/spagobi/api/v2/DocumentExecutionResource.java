@@ -20,16 +20,12 @@ package it.eng.spagobi.api.v2;
 import static it.eng.spagobi.commons.constants.SpagoBIConstants.DATE_RANGE_OPTIONS_KEY;
 import static it.eng.spagobi.commons.constants.SpagoBIConstants.DATE_RANGE_QUANTITY_JSON;
 import static it.eng.spagobi.commons.constants.SpagoBIConstants.DATE_RANGE_TYPE_JSON;
-import static java.nio.charset.StandardCharsets.UTF_8;
-
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
 import java.text.Format;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -71,11 +67,16 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import org.owasp.esapi.errors.EncodingException;
+import org.owasp.esapi.reference.DefaultEncoder;
+
 import com.google.common.collect.BiMap;
 import com.jamonapi.Monitor;
 import com.jamonapi.MonitorFactory;
 
 import edu.emory.mathcs.backport.java.util.Collections;
+import it.eng.knowage.features.Feature;
+import it.eng.knowage.rest.annotation.FeatureFlag;
 import it.eng.spago.base.RequestContainer;
 import it.eng.spago.base.RequestContainerAccess;
 import it.eng.spago.error.EMFInternalError;
@@ -152,7 +153,8 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 	// public static String MODE_COMPLETE = "complete";
 	// public static String START = "start";
 	// public static String LIMIT = "limit";
-	public String runDocumentExecution = SingletonConfig.getInstance().getConfigValue("document.execution.startAutomatically");
+	public String runDocumentExecution = SingletonConfig.getInstance()
+			.getConfigValue("document.execution.startAutomatically");
 
 	public static final String SERVICE_NAME = "DOCUMENT_EXECUTION_RESOURCE";
 	private static final String DESCRIPTION_FIELD = "description";
@@ -165,6 +167,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 
 	private static final String[] VISIBLE_COLUMNS = new String[] { VALUE_FIELD, LABEL_FIELD, DESCRIPTION_FIELD };
 	private static final String METADATA_DIR = "metadata";
+	private static org.owasp.esapi.Encoder esapiEncoder = DefaultEncoder.getInstance();
 
 	private class DocumentExecutionException extends Exception {
 		private static final long serialVersionUID = -1882998632783944575L;
@@ -177,8 +180,8 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 	private static final Logger LOGGER = Logger.getLogger(DocumentExecutionResource.class);
 
 	/**
-	 * @return { executionURL: 'http:...', errors: 1 - 'role missing' 2 -'Missing paramters' [list of missing mandatory filters ] 3 -'operation not allowed' [if
-	 *         the request role is not owned by the requesting user] }
+	 * @return { executionURL: 'http:...', errors: 1 - 'role missing' 2 -'Missing paramters' [list of missing mandatory filters ] 3 -'operation not allowed' [if the
+	 *         request role is not owned by the requesting user] }
 	 * @throws JSONException
 	 * @throws IOException
 	 * @throws EMFInternalError
@@ -186,12 +189,15 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 	@POST
 	@Path("/url")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	@FeatureFlag(Feature.EDIT_DOCUMENT)
 	public Response getDocumentExecutionURL(@Context HttpServletRequest req) throws IOException, JSONException {
 
 		LOGGER.debug("IN");
-		Monitor getDocumentExecutionURLMonitor = MonitorFactory.start("Knowage.DocumentExecutionResource.getDocumentExecutionURL");
+		Monitor getDocumentExecutionURLMonitor = MonitorFactory
+				.start("Knowage.DocumentExecutionResource.getDocumentExecutionURL");
 
-		Monitor getDocumentExecutionURLIntroMonitor = MonitorFactory.start("Knowage.DocumentExecutionResource.getDocumentExecutionURL.intro");
+		Monitor getDocumentExecutionURLIntroMonitor = MonitorFactory
+				.start("Knowage.DocumentExecutionResource.getDocumentExecutionURL.intro");
 
 		JSONObject requestVal = RestUtilities.readBodyAsJSONObject(req);
 		String label = requestVal.getString("label");
@@ -227,27 +233,33 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 			String executingRole = getExecutionRole(role);
 			// displayToolbar
 			// modality
-			Monitor loadBIObjectForExecutionByLabelAndRoleMonitor = MonitorFactory
-					.start("Knowage.DocumentExecutionResource.getDocumentExecutionURL.loadBIObjectForExecutionByLabelAndRole");
-			BIObject obj = DriversRuntimeLoaderFactory.getDriversRuntimeLoader().loadBIObjectForExecutionByLabelAndRole(label, executingRole);
+			Monitor loadBIObjectForExecutionByLabelAndRoleMonitor = MonitorFactory.start(
+					"Knowage.DocumentExecutionResource.getDocumentExecutionURL.loadBIObjectForExecutionByLabelAndRole");
+			BIObject obj = DriversRuntimeLoaderFactory.getDriversRuntimeLoader()
+					.loadBIObjectForExecutionByLabelAndRole(label, executingRole);
 			loadBIObjectForExecutionByLabelAndRoleMonitor.stop();
 			IParameterUseDAO parameterUseDAO = DAOFactory.getParameterUseDAO();
 			// BUILD THE PARAMETERS
-			Monitor buildJsonParametersMonitor = MonitorFactory.start("Knowage.DocumentExecutionResource.getDocumentExecutionURL.buildJsonParametersMonitor");
+			Monitor buildJsonParametersMonitor = MonitorFactory
+					.start("Knowage.DocumentExecutionResource.getDocumentExecutionURL.buildJsonParametersMonitor");
 			DocumentRuntime dum = new DocumentRuntime(this.getUserProfile(), locale);
-			JSONObject jsonParametersToSend = buildJsonParameters(jsonParameters, req, role, parameterUseDAO, obj, dum);
+			JSONObject jsonParametersToSend = buildJsonParameters(jsonParameters, req, role,
+					parameterUseDAO, obj, dum);
 			buildJsonParametersMonitor.stop();
 			// BUILD URL
-			Monitor buildJUrlMonitor = MonitorFactory.start("Knowage.DocumentExecutionResource.getDocumentExecutionURL.buildUrl");
+			Monitor buildJUrlMonitor = MonitorFactory
+					.start("Knowage.DocumentExecutionResource.getDocumentExecutionURL.buildUrl");
 
-			String url = DocumentExecutionUtils.handleNormalExecutionUrl(this.getUserProfile(), obj, req, this.getAttributeAsString("SBI_ENVIRONMENT"),
-					executingRole, modality, jsonParametersToSend, locale);
+			String url = DocumentExecutionUtils.handleNormalExecutionUrl(this.getUserProfile(), obj, req,
+					this.getAttributeAsString("SBI_ENVIRONMENT"), executingRole, modality, jsonParametersToSend,
+					locale);
 
 			if (!isOLAPSubObjectExecution(obj, requestVal)) {
 				// in case of the execution of an OLAP subobject, we skip the validations on drivers for now
 				// TODO implement validation also for OLAP subobjects
-				errorList = DocumentExecutionUtils.handleNormalExecutionError(this.getUserProfile(), obj, req, this.getAttributeAsString("SBI_ENVIRONMENT"),
-						executingRole, modality, jsonParametersToSend, locale);
+				errorList = DocumentExecutionUtils.handleNormalExecutionError(this.getUserProfile(), obj, req,
+						this.getAttributeAsString("SBI_ENVIRONMENT"), executingRole, modality, jsonParametersToSend,
+						locale);
 			}
 
 			engineParam = buildEngineUrlString(requestVal, obj, req, isForExport, cockpitSelections);
@@ -300,9 +312,10 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 		return documentTypeCode.equals(SpagoBIConstants.OLAP_TYPE_CODE) && !StringUtils.isEmpty(subObjectId);
 	}
 
-	private String buildEngineUrlString(JSONObject reqVal, BIObject obj, HttpServletRequest req, String isForExport, String cockpitSelections)
-			throws JSONException {
-		Monitor buildEngineUrlStringMonitor = MonitorFactory.start("Knowage.DocumentExecutionResource.buildEngineUrlString");
+	private String buildEngineUrlString(JSONObject reqVal, BIObject obj, HttpServletRequest req, String isForExport,
+			String cockpitSelections) throws JSONException {
+		Monitor buildEngineUrlStringMonitor = MonitorFactory
+				.start("Knowage.DocumentExecutionResource.buildEngineUrlString");
 
 		String ret = "";
 
@@ -335,7 +348,8 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 		if (obj.getBiObjectTypeCode().equals(SpagoBIConstants.REPORT_TYPE_CODE) && obj.getEngine() != null
 				&& (obj.getEngine().getLabel().equals(SpagoBIConstants.BIRT_ENGINE_LABEL)
 						|| obj.getEngine().getLabel().equals(SpagoBIConstants.JASPER_ENGINE_LABEL))
-				&& (req.getHeader("User-Agent").indexOf("Mobile") != -1 || req.getHeader("User-Agent").indexOf("iPad") != -1
+				&& (req.getHeader("User-Agent").indexOf("Mobile") != -1
+						|| req.getHeader("User-Agent").indexOf("iPad") != -1
 						|| req.getHeader("User-Agent").indexOf("iPhone") != -1)) {
 			ret = ret + "&outputType=PDF";
 		}
@@ -356,7 +370,8 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 			DocumentRuntime dum) throws JSONException, EMFUserError {
 		List<DocumentDriverRuntime> parameters = DocumentExecutionUtils.getParameters(obj, role, req.getLocale(), null, null, false, dum);
 		for (DocumentDriverRuntime objParameter : parameters) {
-			Monitor checkingsParameterMonitor = MonitorFactory.start("Knowage.DocumentExecutionResource.buildJsonParameters.checkings");
+			Monitor checkingsParameterMonitor = MonitorFactory
+					.start("Knowage.DocumentExecutionResource.buildJsonParameters.checkings");
 			try {
 				// SETTING DEFAULT VALUE IF NO PRESENT IN JSON SUBMIT PARAMETER
 				if (jsonParameters.isNull(objParameter.getId())) {
@@ -366,25 +381,32 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 							Object value;
 							// DEFAULT DATE FIELD : {date#format}
 
-							if (objParameter.getParType().equals("DATE") && objParameter.getDefaultValues().get(0).getValue().toString().contains("#")) {
+							if (objParameter.getParType().equals("DATE")
+									&& objParameter.getDefaultValues().get(0).getValue().toString().contains("#")) {
 								// CONVERT DATE FORMAT FROM DEFAULT TO SERVER
-								value = convertDate(objParameter.getDefaultValues().get(0).getValue().toString().split("#")[1],
+								value = convertDate(
+										objParameter.getDefaultValues().get(0).getValue().toString().split("#")[1],
 										// GeneralUtilities.getLocaleDateFormat(permanentSession),
-										SingletonConfig.getInstance().getConfigValue("SPAGOBI.DATE-FORMAT-SERVER.format"),
+										SingletonConfig.getInstance()
+												.getConfigValue("SPAGOBI.DATE-FORMAT-SERVER.format"),
 										objParameter.getDefaultValues().get(0).getValue().toString().split("#")[0]);
 							}
 
 							// DEFAULT DATE RANGE FIELD : {date_2W#format}
 							else if (objParameter.getParType().equals("DATE_RANGE")
 									&& objParameter.getDefaultValues().get(0).getValue().toString().contains("#")) {
-								String dateRange = objParameter.getDefaultValues().get(0).getValue().toString().split("#")[0];
+								String dateRange = objParameter.getDefaultValues().get(0).getValue().toString()
+										.split("#")[0];
 								String[] dateRangeArr = dateRange.split("_");
 								String range = "_" + dateRangeArr[dateRangeArr.length - 1];
 								dateRange = dateRange.replace(range, "");
 								// CONVERT DATE FORMAT FROM DEFAULT TO Server
-								value = convertDate(objParameter.getDefaultValues().get(0).getValue().toString().split("#")[1],
+								value = convertDate(
+										objParameter.getDefaultValues().get(0).getValue().toString().split("#")[1],
 										// GeneralUtilities.getLocaleDateFormat(permanentSession)
-										SingletonConfig.getInstance().getConfigValue("SPAGOBI.DATE-FORMAT-SERVER.format"), dateRange);
+										SingletonConfig.getInstance()
+												.getConfigValue("SPAGOBI.DATE-FORMAT-SERVER.format"),
+										dateRange);
 								value = value + range;
 							} else {
 								value = objParameter.getDefaultValues().get(0).getValue();
@@ -397,7 +419,8 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 							String paramDescStr = "";
 							for (int i = 0; i < objParameter.getDefaultValues().size(); i++) {
 								paramValArr.add(objParameter.getDefaultValues().get(i).getValue().toString());
-								paramDescStr = paramDescStr + objParameter.getDefaultValues().get(i).getValue().toString();
+								paramDescStr = paramDescStr
+										+ objParameter.getDefaultValues().get(i).getValue().toString();
 								if (i < objParameter.getDefaultValues().size() - 1) {
 									paramDescStr = paramDescStr + ";";
 								}
@@ -421,16 +444,21 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 					Integer paruseId = objParameter.getParameterUseId();
 					parameterUse = parameterUseDAO.loadByUseID(paruseId);
 					if ("lov".equalsIgnoreCase(parameterUse.getValueSelection())
-							&& !objParameter.getSelectionType().equalsIgnoreCase(DocumentExecutionUtils.SELECTION_TYPE_TREE)
-							&& (objParameter.getLovDependencies() == null || objParameter.getLovDependencies().isEmpty())) {
-						Map<String, Object> defaultValuesData = DocumentExecutionUtils.getLovDefaultValues(role, obj, objParameter.getDriver(), req);
+							&& !objParameter.getSelectionType()
+									.equalsIgnoreCase(DocumentExecutionUtils.SELECTION_TYPE_TREE)
+							&& (objParameter.getLovDependencies() == null
+									|| objParameter.getLovDependencies().isEmpty())) {
+						Map<String, Object> defaultValuesData = DocumentExecutionUtils.getLovDefaultValues(role, obj,
+								objParameter.getDriver(), req);
 
 						ArrayList<HashMap<String, Object>> defaultValues = (ArrayList<HashMap<String, Object>>) defaultValuesData
 								.get(DocumentExecutionUtils.DEFAULT_VALUES);
 
-						if (defaultValues != null && defaultValues.size() == 1 && !defaultValues.get(0).containsKey("error")) {
+						if (defaultValues != null && defaultValues.size() == 1
+								&& !defaultValues.get(0).containsKey("error")) {
 							jsonParameters.put(objParameter.getId(), defaultValues.get(0).get("value"));
-							jsonParameters.put(objParameter.getId() + "_field_visible_description", defaultValues.get(0).get("value"));
+							jsonParameters.put(objParameter.getId() + "_field_visible_description",
+									defaultValues.get(0).get("value"));
 						}
 					}
 				}
@@ -488,7 +516,8 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 				biObjDataSet = (BIObjDataSet) itDs.next();
 				dsId = biObjDataSet.getDataSetId();
 				dataset = datasetDao.loadDataSetById(dsId);
-				dataset = dataset instanceof VersionedDataSet ? ((VersionedDataSet) dataset).getWrappedDataset() : dataset;
+				dataset = dataset instanceof VersionedDataSet ? ((VersionedDataSet) dataset).getWrappedDataset()
+						: dataset;
 				if (dataset != null && dataset.getDsType() == "SbiQbeDataSet") {
 					String config = dataset.getConfiguration();
 					JSONObject jsonConfig = new JSONObject(dataset.getConfiguration());
@@ -507,17 +536,20 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 	}
 
 	/**
-	 * @return { filterStatus: [{ title: 'Provincia', urlName: 'provincia', type: 'list', lista:[[k,v],[k,v], [k,v]] }, { title: 'Comune', urlName: 'comune',
-	 *         type: 'list', lista:[], dependsOn: 'provincia' }, { title: 'Free Search', type: 'manual', urlName: 'freesearch' }], isReadyForExecution: true,
-	 *         errors: [ 'role missing', 'operation not allowed' ] }
+	 * @return { filterStatus: [{ title: 'Provincia', urlName: 'provincia', type: 'list', lista:[[k,v],[k,v], [k,v]] }, { title: 'Comune', urlName: 'comune', type:
+	 *         'list', lista:[], dependsOn: 'provincia' }, { title: 'Free Search', type: 'manual', urlName: 'freesearch' }], isReadyForExecution: true, errors: [
+	 *         'role missing', 'operation not allowed' ] }
 	 * @throws EMFUserError
 	 * @throws JSONException
 	 * @throws IOException
+	 * @throws EncodingException 
 	 */
 	@POST
 	@Path("/filters")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-	public Response getDocumentExecutionFilters(@Context HttpServletRequest req) throws DocumentExecutionException, EMFUserError, IOException, JSONException {
+	@FeatureFlag(Feature.EDIT_DOCUMENT)
+	public Response getDocumentExecutionFilters(@Context HttpServletRequest req)
+			throws DocumentExecutionException, EMFUserError, IOException, JSONException, EncodingException {
 
 		LOGGER.debug("IN");
 
@@ -536,7 +568,8 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 
 		boolean driversCacheEnabled = false;
 		Map<String, JSONObject> sessionParametersMap = new HashMap<>();
-		if (("true").equals(SingletonConfig.getInstance().getConfigValue("SPAGOBI.SESSION_PARAMETERS_MANAGER.enabled"))) {
+		if (("true")
+				.equals(SingletonConfig.getInstance().getConfigValue("SPAGOBI.SESSION_PARAMETERS_MANAGER.enabled"))) {
 			sessionParametersMap = getSessionParameters(requestVal);
 			driversCacheEnabled = true;
 		}
@@ -545,7 +578,8 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 		List<String> parsFromCross = new ArrayList<>();
 
 		IParameterUseDAO parameterUseDAO = DAOFactory.getParameterUseDAO();
-		BIObject biObject = DriversRuntimeLoaderFactory.getDriversRuntimeLoader().loadBIObjectForExecutionByLabelAndRole(label, role);
+		BIObject biObject = DriversRuntimeLoaderFactory.getDriversRuntimeLoader()
+				.loadBIObjectForExecutionByLabelAndRole(label, role);
 
 		Locale locale = GeneralUtilities.getCurrentLocale(aRequestContainer);
 
@@ -553,7 +587,8 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 
 		final ArrayList<HashMap<String, Object>> parametersArrayList = new ArrayList<>();
 		DocumentRuntime dum = new DocumentRuntime(this.getUserProfile(), locale);
-		List<DocumentDriverRuntime> parameters = DocumentExecutionUtils.getParameters(biObject, role, req.getLocale(), null, parsFromCross, true, dum);
+		List<DocumentDriverRuntime> parameters = DocumentExecutionUtils.getParameters(biObject, role, req.getLocale(),
+				null, parsFromCross, true, dum);
 
 		ArrayList<HashMap<String, Object>> datasetParametersArrayList = new ArrayList<>();
 		datasetParametersArrayList = getQbeDrivers(biObject);
@@ -585,8 +620,8 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 				parameterAsMap.put("driverUseLabel", objParameter.getAnalyticalDriverExecModality().getLabel());
 				parameterAsMap.put(PROPERTY_METADATA, metadata);
 
-				parameterAsMap.put("allowInternalNodeSelection",
-						objParameter.getPar().getModalityValue().getLovProvider().contains("<LOVTYPE>treeinner</LOVTYPE>"));
+				parameterAsMap.put("allowInternalNodeSelection", objParameter.getPar().getModalityValue()
+						.getLovProvider().contains("<LOVTYPE>treeinner</LOVTYPE>"));
 
 				// get values
 				if (objParameter.getDriver().getParameterValues() != null) {
@@ -609,15 +644,17 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 
 							String itemVal = valuesList.get(k);
 
-							String itemDescr = descriptionList.size() > k && descriptionList.get(k) != null ? descriptionList.get(k) : itemVal;
+							String itemDescr = descriptionList.size() > k && descriptionList.get(k) != null
+									? descriptionList.get(k)
+									: itemVal;
 
 							try {
 								// % character breaks decode method
 								if (!itemVal.contains("%")) {
-									itemVal = URLDecoder.decode(itemVal.replace("+", "%2B"), UTF_8.name());
+									itemVal = esapiEncoder.decodeFromURL(itemVal.replace("+", "%2B"));
 								}
 								if (!itemDescr.contains("%")) {
-									itemDescr = URLDecoder.decode(itemDescr.replace("+", "%2B"), UTF_8.name());
+									itemDescr = esapiEncoder.decodeFromURL(itemDescr.replace("+", "%2B"));
 								}
 
 								// check input value and convert if it's an old multivalue syntax({;{xxx;yyy}STRING}) to list of values :["A-OMP", "A-PO", "CL"]
@@ -637,21 +674,21 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 									paramDescrLst.add(itemDescr);
 
 								}
-							} catch (UnsupportedEncodingException e) {
+							} catch (EncodingException e) {
 								LOGGER.debug("An error occured while decoding parameter with value[" + itemVal + "]" + e);
 							}
 						}
 					} else if (paramValues instanceof String) {
 						// % character breaks decode method
 						if (!((String) paramValues).contains("%")) {
-							paramValues = URLDecoder.decode(((String) paramValues).replace("+", "%2B"), UTF_8.name());
+							paramValues = esapiEncoder.decodeFromURL(((String) paramValues).replace("+", "%2B"));
 						}
 						paramValueLst.add(paramValues.toString());
 
 						String parDescrVal = paramDescriptionValues != null && paramDescriptionValues instanceof String ? paramDescriptionValues.toString()
 								: paramValues.toString();
 						if (!parDescrVal.contains("%")) {
-							parDescrVal = URLDecoder.decode(parDescrVal.replace("+", "%2B"), UTF_8.name());
+							parDescrVal = esapiEncoder.decodeFromURL(parDescrVal.replace("+", "%2B")) ;
 						}
 						paramDescrLst.add(parDescrVal);
 
@@ -978,7 +1015,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 
 	// private List<AbstractDriverRuntime<AbstractDriver>>
 
-	protected JSONObject decodeRequestParameters(JSONObject requestValParams) throws JSONException, IOException {
+	protected JSONObject decodeRequestParameters(JSONObject requestValParams) throws JSONException, IOException, EncodingException {
 		JSONObject toReturn = new JSONObject();
 
 		Iterator keys = requestValParams.keys();
@@ -989,7 +1026,8 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 				String value = String.valueOf(valueObj);
 				// if (!value.equals("%7B%3B%7B") && !value.equalsIgnoreCase("%")) {
 				if (!value.equals("") && !value.equalsIgnoreCase("%")) {
-					toReturn.put(key, URLDecoder.decode(value.replaceAll("%", "%25").replace("+", "%2B"), UTF_8.name()));
+					toReturn.put(key,
+							esapiEncoder.decodeFromURL(value.replaceAll("%", "%25").replace("+", "%2B")));
 				} else {
 					toReturn.put(key, value); // uses the original value for list and %
 				}
@@ -997,7 +1035,8 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 				String value = String.valueOf(valueObj);
 				// if (!value.equals("%7B%3B%7B") && !value.equalsIgnoreCase("%")) {
 				if (!value.equals("") && !value.equalsIgnoreCase("%")) {
-					toReturn.put(key, URLDecoder.decode(value.replaceAll("%", "%25").replace("+", "%2B"), UTF_8.name()));
+					toReturn.put(key,
+							esapiEncoder.decodeFromURL(value.replaceAll("%", "%25").replace("+", "%2B")));
 				} else {
 					toReturn.put(key, value); // uses the original value for list and %
 				}
@@ -1008,10 +1047,11 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 					// String value = (String) valuesLst.get(v);
 					String value = (valuesLst.get(v) != null) ? String.valueOf(valuesLst.get(v)) : "";
 					if (!value.equals("") && !value.equalsIgnoreCase("%")) {
-						ValuesLstDecoded.put(URLDecoder.decode(value.replaceAll("%", "%25").replace("+", "%2B"), UTF_8.name()));
+						ValuesLstDecoded
+								.put(esapiEncoder.decodeFromURL(value.replaceAll("%", "%25").replace("+", "%2B")));
 					} else {
 						ValuesLstDecoded.put(value);
-						URLDecoder.decode(value.replaceAll("%", "%25").replace("+", "%2B"), UTF_8.name()); // uses the original value for list and %
+						esapiEncoder.decodeFromURL(value.replaceAll("%", "%25").replace("+", "%2B")); // uses the original value for list and %
 					}
 				}
 				toReturn.put(key, ValuesLstDecoded);
@@ -1026,7 +1066,8 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 					String value = String.valueOf(valueOb);
 					// if (!value.equals("%7B%3B%7B") && !value.equalsIgnoreCase("%")) {
 					if (!value.equals("") && !value.equalsIgnoreCase("%")) {
-						ValuesLstDecoded.put(URLDecoder.decode(value.replaceAll("%", "%25").replace("+", "%2B"), UTF_8.name()));
+						ValuesLstDecoded
+								.put(esapiEncoder.decodeFromURL(value.replaceAll("%", "%25").replace("+", "%2B")));
 					} else {
 						ValuesLstDecoded.put(value); // uses the original value for list and %
 					}
@@ -1196,7 +1237,9 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 	@POST
 	@Path("/admissibleValuesTree")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-	public Response getParameterValuesV2(@Context HttpServletRequest req) throws EMFUserError, IOException, JSONException {
+	@FeatureFlag(Feature.EDIT_DOCUMENT)
+	public Response getParameterValuesV2(@Context HttpServletRequest req)
+			throws EMFUserError, IOException, JSONException {
 		return getParameterValues(req);
 	}
 
@@ -1207,7 +1250,8 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 	@Path("/parametervalues")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	@Deprecated
-	public Response getParameterValues(@Context HttpServletRequest req) throws EMFUserError, IOException, JSONException {
+	public Response getParameterValues(@Context HttpServletRequest req)
+			throws EMFUserError, IOException, JSONException {
 
 		RequestContainer aRequestContainer = RequestContainerAccess.getRequestContainer(req);
 		Locale locale = GeneralUtilities.getCurrentLocale(aRequestContainer);
@@ -1226,7 +1270,8 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 		treeLovNode = (String) requestVal.opt("treeLovNode");
 		mode = (String) requestVal.opt("mode");
 
-		BIObject biObject = DriversRuntimeLoaderFactory.getDriversRuntimeLoader().loadBIObjectForExecutionByLabelAndRole(label, role);
+		BIObject biObject = DriversRuntimeLoaderFactory.getDriversRuntimeLoader()
+				.loadBIObjectForExecutionByLabelAndRole(label, role);
 
 		BIObjectParameter biObjectParameter = null;
 		List<BIObjectParameter> parameters = biObject.getDrivers();
@@ -1250,10 +1295,11 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 			treeLovNodeLevel = new Integer(splittedNode[1]);
 		}
 
-		Map<String, Object> defaultValuesData = DocumentExecutionUtils.getLovDefaultValues(role, biObject, biObjectParameter, requestVal, treeLovNodeLevel,
-				treeLovNodeValue, req.getLocale());
+		Map<String, Object> defaultValuesData = DocumentExecutionUtils.getLovDefaultValues(role, biObject,
+				biObjectParameter, requestVal, treeLovNodeLevel, treeLovNodeValue, req.getLocale());
 
-		ArrayList<Map<String, Object>> result = (ArrayList<Map<String, Object>>) defaultValuesData.get(DocumentExecutionUtils.DEFAULT_VALUES);
+		ArrayList<Map<String, Object>> result = (ArrayList<Map<String, Object>>) defaultValuesData
+				.get(DocumentExecutionUtils.DEFAULT_VALUES);
 
 		Map<String, Object> resultAsMap = new HashMap<>();
 
@@ -1261,7 +1307,8 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 			resultAsMap.put("rows", result);
 		} else {
 			List errorList = DocumentExecutionUtils.handleNormalExecutionError(this.getUserProfile(), biObject, req,
-					this.getAttributeAsString("SBI_ENVIRONMENT"), role, biObjectParameter.getParameter().getModalityValue().getSelectionType(), null, locale);
+					this.getAttributeAsString("SBI_ENVIRONMENT"), role,
+					biObjectParameter.getParameter().getModalityValue().getSelectionType(), null, locale);
 
 			resultAsMap.put("errors", errorList);
 		}
@@ -1277,7 +1324,8 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 	@Path("/filterlist")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	public Response getDocumentExecutionFilterList(@QueryParam("label") String label, @QueryParam("role") String role,
-			@QueryParam("parameters") String jsonParameters, @QueryParam("urlName") String urlName, @Context HttpServletRequest req) {
+			@QueryParam("parameters") String jsonParameters, @QueryParam("urlName") String urlName,
+			@Context HttpServletRequest req) {
 		LOGGER.debug("IN");
 
 		String toBeReturned = "{}";
@@ -1302,6 +1350,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 	@POST
 	@Path("/canHavePublicExecutionUrl")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	@FeatureFlag(Feature.EDIT_DOCUMENT)
 	public Response canHavePublicExecutionUrl(@Context HttpServletRequest req) {
 		LOGGER.debug("IN");
 
@@ -1318,7 +1367,8 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 
 			biObj = DAOFactory.getBIObjectDAO().loadBIObjectByLabel(label);
 			if (biObj != null) {
-				SpagoBIUserProfile publicProfile = PublicProfile.createPublicUserProfile(PublicProfile.PUBLIC_USER_PREFIX + tenant);
+				SpagoBIUserProfile publicProfile = PublicProfile
+						.createPublicUserProfile(PublicProfile.PUBLIC_USER_PREFIX + tenant);
 
 				if (publicProfile == null) {
 					noPublicRoleError = true;
@@ -1353,6 +1403,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 	@Path("/uploadfilemetadata")
 	@UserConstraint(functionalities = { CommunityFunctionalityConstants.DOCUMENT_METADATA_MANAGEMENT })
 	@Consumes({ MediaType.MULTIPART_FORM_DATA, MediaType.APPLICATION_JSON })
+	@FeatureFlag(Feature.EDIT_DOCUMENT)
 	public Response uploadFile(MultiPartBody input) {
 
 		byte[] bytes = null;
@@ -1361,7 +1412,8 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 
 			if (input != null) {
 
-				String saveDirectoryPath = SpagoBIUtilities.getResourcePath() + "/" + METADATA_DIR + "/" + getUserProfile().getUserName().toString();
+				String saveDirectoryPath = SpagoBIUtilities.getResourcePath() + "/" + METADATA_DIR + "/"
+						+ getUserProfile().getUserName().toString();
 				final FormFile file = input.getFormFileParameterValues("file")[0];
 				bytes = file.getContent();
 
@@ -1398,8 +1450,9 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 	 */
 	@GET
 	@Path("/{id}/{metadataObjectId}/documentfilemetadata")
-	public Response documentFileMetadata(@PathParam("id") Integer objectId, @PathParam("metadataObjectId") Integer metaObjId,
-			@Context HttpServletRequest httpRequest) throws EMFUserError {
+	public Response documentFileMetadata(@PathParam("id") Integer objectId,
+			@PathParam("metadataObjectId") Integer metaObjId, @Context HttpServletRequest httpRequest)
+			throws EMFUserError {
 		try {
 			Integer subObjectId = null;
 			IObjMetacontentDAO metacontentDAO = DAOFactory.getObjMetacontentDAO();
@@ -1490,20 +1543,23 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 		return role;
 	}
 
-	private DefaultValuesList buildParameterSessionValueList(String sessionParameterValue, String sessionParameterDescription, BIObjectParameter objParameter) {
+	private DefaultValuesList buildParameterSessionValueList(String sessionParameterValue,
+			String sessionParameterDescription, BIObjectParameter objParameter) {
 
 		LOGGER.debug("IN");
 
 		DefaultValuesList valueList = new DefaultValuesList();
 
-		SimpleDateFormat serverDateFormat = new SimpleDateFormat(SingletonConfig.getInstance().getConfigValue("SPAGOBI.DATE-FORMAT-SERVER.format"));
+		SimpleDateFormat serverDateFormat = new SimpleDateFormat(
+				SingletonConfig.getInstance().getConfigValue("SPAGOBI.DATE-FORMAT-SERVER.format"));
 
 		if (objParameter.getParameter().getType().equals("DATE")) {
 			String valueDate = sessionParameterValue;
 
 			String[] date = valueDate.split("#");
 			if (date.length < 2) {
-				throw new SpagoBIRuntimeException("Illegal format for Value List Date Type [" + valueDate + "+], unable to find symbol [#]");
+				throw new SpagoBIRuntimeException(
+						"Illegal format for Value List Date Type [" + valueDate + "+], unable to find symbol [#]");
 			}
 			SimpleDateFormat format = new SimpleDateFormat(date[1]);
 			LovValue valueDef = new LovValue();
@@ -1583,7 +1639,8 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 
 			try {
 				String value = null;
-				if (sessionParameterValue != null && sessionParameterValue.length() > 0 && sessionParameterValue.charAt(0) == '[') {
+				if (sessionParameterValue != null && sessionParameterValue.length() > 0
+						&& sessionParameterValue.charAt(0) == '[') {
 					JSONArray valuesArray = new JSONArray(sessionParameterValue);
 					if (valuesArray.get(0) != null) {
 						value = valuesArray.get(0).toString();
@@ -1621,7 +1678,8 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 		return date;
 	}
 
-	private static void addToZipFile(String filePath, String fileName, ZipOutputStream zos) throws FileNotFoundException, IOException {
+	private static void addToZipFile(String filePath, String fileName, ZipOutputStream zos)
+			throws FileNotFoundException, IOException {
 
 		File file = new File(filePath + "/" + fileName);
 		try (FileInputStream fis = new FileInputStream(file)) {
@@ -1686,8 +1744,8 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 
 	}
 
-	public ArrayList<HashMap<String, Object>> transformRuntimeDrivers(List<BusinessModelDriverRuntime> parameters, IParameterUseDAO parameterUseDAO,
-			String role, MetaModel businessModel, BusinessModelOpenParameters BMOP) {
+	public ArrayList<HashMap<String, Object>> transformRuntimeDrivers(List<BusinessModelDriverRuntime> parameters,
+			IParameterUseDAO parameterUseDAO, String role, MetaModel businessModel, BusinessModelOpenParameters BMOP) {
 		ArrayList<HashMap<String, Object>> parametersArrayList = new ArrayList<>();
 		ParameterUse parameterUse;
 		for (BusinessModelDriverRuntime objParameter : parameters) {
@@ -1739,15 +1797,17 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 
 						String itemVal = valuesList.get(k);
 
-						String itemDescr = descriptionList.size() > k && descriptionList.get(k) != null ? descriptionList.get(k) : itemVal;
+						String itemDescr = descriptionList.size() > k && descriptionList.get(k) != null
+								? descriptionList.get(k)
+								: itemVal;
 
 						try {
 							// % character breaks decode method
 							if (!itemVal.contains("%")) {
-								itemVal = URLDecoder.decode(itemVal, UTF_8.name());
+								itemVal = esapiEncoder.decodeFromURL(itemVal);
 							}
 							if (!itemDescr.contains("%")) {
-								itemDescr = URLDecoder.decode(itemDescr, UTF_8.name());
+								itemDescr = esapiEncoder.decodeFromURL(itemDescr);
 							}
 
 							// check input value and convert if it's an old multivalue syntax({;{xxx;yyy}STRING}) to list of values :["A-OMP", "A-PO", "CL"]
@@ -1765,7 +1825,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 									paramValueLst.add(itemVal);
 								paramDescrLst.add(itemDescr);
 							}
-						} catch (UnsupportedEncodingException e) {
+						} catch (EncodingException e) {
 							LOGGER.debug("An error occured while decoding parameter with value[" + itemVal + "]" + e);
 						}
 					}
@@ -1773,20 +1833,21 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 					// % character breaks decode method
 					if (!((String) paramValues).contains("%")) {
 						try {
-							paramValues = URLDecoder.decode((String) paramValues, UTF_8.name());
-						} catch (UnsupportedEncodingException e) {
+							paramValues = esapiEncoder.decodeFromURL((String) paramValues);
+						} catch (EncodingException e) {
 							LOGGER.debug(e.getCause(), e);
 							throw new SpagoBIRuntimeException(e.getMessage(), e);
 						}
 					}
 					paramValueLst.add(paramValues.toString());
 
-					String parDescrVal = paramDescriptionValues != null && paramDescriptionValues instanceof String ? paramDescriptionValues.toString()
+					String parDescrVal = paramDescriptionValues != null && paramDescriptionValues instanceof String
+							? paramDescriptionValues.toString()
 							: paramValues.toString();
 					if (!parDescrVal.contains("%")) {
 						try {
-							parDescrVal = URLDecoder.decode(parDescrVal, UTF_8.name());
-						} catch (UnsupportedEncodingException e) {
+							parDescrVal = esapiEncoder.decodeFromURL(parDescrVal);
+						} catch (EncodingException e) {
 							LOGGER.debug(e.getCause(), e);
 							throw new SpagoBIRuntimeException(e.getMessage(), e);
 						}
@@ -1812,11 +1873,14 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 					parameterAsMap.put(PROPERTY_DATA, new ArrayList<>());
 				}
 				parameterAsMap.put("defaultValuesMeta", objParameter.getLovVisibleColumnsNames());
-				parameterAsMap.put(DocumentExecutionUtils.VALUE_COLUMN_NAME_METADATA, objParameter.getLovValueColumnName());
-				parameterAsMap.put(DocumentExecutionUtils.DESCRIPTION_COLUMN_NAME_METADATA, objParameter.getLovDescriptionColumnName());
+				parameterAsMap.put(DocumentExecutionUtils.VALUE_COLUMN_NAME_METADATA,
+						objParameter.getLovValueColumnName());
+				parameterAsMap.put(DocumentExecutionUtils.DESCRIPTION_COLUMN_NAME_METADATA,
+						objParameter.getLovDescriptionColumnName());
 
 				// hide the parameter if is mandatory and have one value in lov (no error parameter)
-				if (admissibleValues != null && admissibleValues.size() == 1 && objParameter.isMandatory() && !admissibleValues.get(0).containsKey("error")
+				if (admissibleValues != null && admissibleValues.size() == 1 && objParameter.isMandatory()
+						&& !admissibleValues.get(0).containsKey("error")
 						&& (objParameter.getDataDependencies() == null || objParameter.getDataDependencies().isEmpty())
 						&& (objParameter.getLovDependencies() == null || objParameter.getLovDependencies().isEmpty())) {
 					showParameterLov = false;
@@ -1832,7 +1896,8 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 			// DATE RANGE DEFAULT VALUE
 			if (objParameter.getParType().equals("DATE_RANGE")) {
 				try {
-					ArrayList<HashMap<String, Object>> defaultValues = BMOP.manageDataRange(businessModel, role, objParameter.getId());
+					ArrayList<HashMap<String, Object>> defaultValues = BMOP.manageDataRange(businessModel, role,
+							objParameter.getId());
 					parameterAsMap.put(PROPERTY_DATA, defaultValues);
 				} catch (SerializationException | EMFUserError | JSONException | IOException e) {
 					LOGGER.debug("Filters DATE RANGE ERRORS ", e);
@@ -1842,12 +1907,15 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 			// convert the parameterValue from array of string in array of object
 			DefaultValuesList parameterValueList = new DefaultValuesList();
 			Object oVals = parameterAsMap.get("parameterValue");
-			Object oDescr = parameterAsMap.get("parameterDescription") != null ? parameterAsMap.get("parameterDescription") : new ArrayList<String>();
+			Object oDescr = parameterAsMap.get("parameterDescription") != null
+					? parameterAsMap.get("parameterDescription")
+					: new ArrayList<String>();
 
 			if (oVals != null) {
 				if (oVals instanceof List) {
 					// CROSS NAV : INPUT PARAM PARAMETER TARGET DOC IS STRING
-					if (oVals.toString().startsWith("[") && oVals.toString().endsWith("]") && parameterUse.getValueSelection().equals("man_in")) {
+					if (oVals.toString().startsWith("[") && oVals.toString().endsWith("]")
+							&& parameterUse.getValueSelection().equals("man_in")) {
 						List<String> valList = (ArrayList) oVals;
 						String stringResult = "";
 						for (int k = 0; k < valList.size(); k++) {
@@ -1895,7 +1963,9 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 				String parLab = objParameter.getDriver() != null && objParameter.getDriver().getParameter() != null
 						? objParameter.getDriver().getParameter().getLabel()
 						: "";
-				String useModLab = objParameter.getAnalyticalDriverExecModality() != null ? objParameter.getAnalyticalDriverExecModality().getLabel() : "";
+				String useModLab = objParameter.getAnalyticalDriverExecModality() != null
+						? objParameter.getAnalyticalDriverExecModality().getLabel()
+						: "";
 				String sessionKey = parLab + "_" + useModLab;
 
 				valueList = objParameter.getDefaultValues();
@@ -1930,7 +2000,8 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 		return parametersArrayList;
 	}
 
-	public ArrayList<HashMap<String, Object>> getDatasetDriversByModelName(String businessModelName, Boolean loadDSwithDrivers) {
+	public ArrayList<HashMap<String, Object>> getDatasetDriversByModelName(String businessModelName,
+			Boolean loadDSwithDrivers) {
 		ArrayList<HashMap<String, Object>> parametersArrList = new ArrayList<>();
 		IMetaModelsDAO dao = DAOFactory.getMetaModelsDAO();
 		IParameterUseDAO parameterUseDAO = DAOFactory.getParameterUseDAO();
@@ -1938,12 +2009,14 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 		BusinessModelOpenParameters bmop = new BusinessModelOpenParameters();
 		String role;
 		try {
-			role = getUserProfile().getRoles().contains("admin") ? "admin" : (String) getUserProfile().getRoles().iterator().next();
+			role = getUserProfile().getRoles().contains("admin") ? "admin"
+					: (String) getUserProfile().getRoles().iterator().next();
 		} catch (EMFInternalError e2) {
 			LOGGER.debug(e2.getCause(), e2);
 			throw new SpagoBIRuntimeException(e2.getMessage(), e2);
 		}
-		MetaModel businessModel = dao.loadMetaModelForExecutionByNameAndRole(businessModelName, role, loadDSwithDrivers);
+		MetaModel businessModel = dao.loadMetaModelForExecutionByNameAndRole(businessModelName, role,
+				loadDSwithDrivers);
 		if (businessModel == null) {
 			return null;
 		}

@@ -121,11 +121,11 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 
 		UserProfile userProfile = UserProfileManager.getProfile();
 
-		List<String> correctRoles = new ArrayList<String>();
+		List<String> correctRoles = new ArrayList<>();
 		try {
 
-			List<String> userRoles = new ArrayList<String>();
-			userProfile.getRolesForUse().forEach(x -> userRoles.add((String) x));
+			List<String> userRoles = new ArrayList<>();
+			userProfile.getRolesForUse().forEach(x -> userRoles.add(x));
 
 			if (userRoles.size() > 0) {
 
@@ -230,7 +230,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 	}
 
 	private List<String> getModelRoles(UserProfile userProfile, MetaModel model) throws EMFInternalError {
-		List<String> modelsRoles = new ArrayList<String>();
+		List<String> modelsRoles = new ArrayList<>();
 		List<BIMetaModelParameter> drivers = model.getDrivers();
 
 		for (BIMetaModelParameter biMetaModelParameter : drivers) {

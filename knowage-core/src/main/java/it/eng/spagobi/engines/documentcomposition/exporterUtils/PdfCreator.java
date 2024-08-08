@@ -398,7 +398,7 @@ public class PdfCreator {
 		try {
 			region = image.getSubimage(0, 0, pxWidthToCut, pxHeightToCut);
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("getSubimage",e);
 		}
 		byte[] newBytes = getBytes(region);
 		Image cutImg = Image.getInstance(newBytes);

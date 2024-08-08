@@ -75,7 +75,7 @@ public class RestFederationDefinition extends AbstractSpagoBIResource {
 
 			List<FederationDefinition> listOfFederations = federDsDao.loadNotDegeneratedFederatedDataSets();
 			if (listOfFederations == null) {
-				listOfFederations = new ArrayList<FederationDefinition>();
+				listOfFederations = new ArrayList<>();
 			}
 			return listOfFederations;
 		} catch (EMFUserError e) {
@@ -235,8 +235,8 @@ public class RestFederationDefinition extends AbstractSpagoBIResource {
 
 	private Set<IDataSet> deserializeDatasets(String relationships) {
 
-		Set<String> datasetNames = new HashSet<String>();
-		Set<IDataSet> datasets = new HashSet<IDataSet>();
+		Set<String> datasetNames = new HashSet<>();
+		Set<IDataSet> datasets = new HashSet<>();
 
 		// loading the datasets
 		try {

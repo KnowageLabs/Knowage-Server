@@ -65,6 +65,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import it.eng.spagobi.commons.SingletonConfig;
+import it.eng.spagobi.commons.constants.ConfigurationConstants;
 import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
 import it.eng.spagobi.security.hmacfilter.HMACFilterAuthenticationProvider;
 import it.eng.spagobi.security.hmacfilter.HMACSecurityException;
@@ -72,6 +73,7 @@ import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.filters.XSSRequestWrapper;
 import it.eng.spagobi.utilities.json.JSONUtils;
+import it.eng.spagobi.utilities.whitelist.WhiteList;
 
 public class RestUtilities {
 
@@ -304,6 +306,7 @@ public class RestUtilities {
 		logger.debug("requestHeaders = " + requestHeaders);
 		logger.debug("requestBody = " + requestBody);
 
+		checkIfAddressIsInWhitelist(address);
 		HttpMethodBase method = getMethod(httpMethod, address);
 		if (requestHeaders != null) {
 			for (Entry<String, String> entry : requestHeaders.entrySet()) {
@@ -346,9 +349,12 @@ public class RestUtilities {
 	}
 
 	@SuppressWarnings("deprecation")
-	public static InputStream makeRequestGetStream(HttpMethod httpMethod, String address,
-			Map<String, String> requestHeaders, String requestBody, List<NameValuePair> queryParams,
-			boolean authenticate) throws HttpException, IOException, HMACSecurityException {
+
+	public static InputStream makeRequestGetStream(HttpMethod httpMethod, String address, Map<String, String> requestHeaders, String requestBody,
+			List<NameValuePair> queryParams, boolean authenticate) throws HttpException, IOException, HMACSecurityException {
+		
+		checkIfAddressIsInWhitelist(address);
+
 		final HttpMethodBase method = getMethod(httpMethod, address);
 		if (requestHeaders != null) {
 			for (Entry<String, String> entry : requestHeaders.entrySet()) {
@@ -398,7 +404,7 @@ public class RestUtilities {
 		};
 	}
 
-	protected static HttpClient getHttpClient(String address) {
+	private static HttpClient getHttpClient(String address) {
 		HttpClient client = new HttpClient();
 		loadHttpTimeout();
 		client.setTimeout(timeout);
@@ -515,5 +521,20 @@ public class RestUtilities {
 		List<String> whitelist = HttpHeadersWhitelist.getInstance().getWhitelist();
 		if (!whitelist.contains(value))
 			throw new SpagoBIRuntimeException("Header value " + value + " is not in the list of allowed headers.");
+	}
+	
+	public static void checkIfAddressIsInWhitelist(String address) {
+		String knowageBase = SpagoBIUtilities.readJndiResource(SingletonConfig.getInstance().getConfigValue(ConfigurationConstants.SPAGOBI_SPAGOBI_SERVICE_JNDI));
+		if(address.startsWith(knowageBase)) {
+		   return;	
+		}
+		
+		List<String> whitelist = WhiteList.getInstance().getExternalServices();
+		for(String baseUrl : whitelist) {
+			if(address.startsWith(baseUrl)) {
+				return;
+			}
+		}
+		throw new SpagoBIRuntimeException("Address value " + address + " is not in the whitelist of allowed external services.");
 	}
 }

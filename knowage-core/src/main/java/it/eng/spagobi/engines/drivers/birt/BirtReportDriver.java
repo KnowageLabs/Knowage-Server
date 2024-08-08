@@ -183,7 +183,7 @@ public class BirtReportDriver extends AbstractEngineDriver implements IEngineDri
 
 		logger.debug("IN");
 
-		ArrayList<String> datasetsLabels = new ArrayList<String>();
+		ArrayList<String> datasetsLabels = new ArrayList<>();
 		SourceBean templateContent = getTemplateAsSourceBean(contentTemplate);
 
 		// get datasets from template

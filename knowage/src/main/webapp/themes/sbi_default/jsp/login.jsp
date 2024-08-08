@@ -92,6 +92,9 @@
 		}
 	}
 
+	roleToCheckLbl = StringEscapeUtils.escapeHtml(roleToCheckLbl);
+	roleToCheckVal = StringEscapeUtils.escapeHtml(roleToCheckVal);
+	
 	IMessageBuilder msgBuilder = MessageBuilderFactory.getMessageBuilder();
 
 	String sbiMode = "WEB";

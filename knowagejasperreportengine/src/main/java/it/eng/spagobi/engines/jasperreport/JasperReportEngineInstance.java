@@ -53,10 +53,12 @@ import org.apache.log4j.Logger;
 import com.jamonapi.Monitor;
 import com.jamonapi.MonitorFactory;
 
+import it.eng.knowage.commons.zip.SonarZipCommons;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.engines.jasperreport.datasource.JRSpagoBIDataStoreDataSource;
-import it.eng.spagobi.engines.jasperreport.exporters.JRImageExporterParameter;
+import it.eng.spagobi.engines.jasperreport.exporters.JRImageBase64Exporter;
+import it.eng.spagobi.engines.jasperreport.exporters.JRJpegExporter;
 import it.eng.spagobi.services.common.EnginConf;
 import it.eng.spagobi.services.content.bo.Content;
 import it.eng.spagobi.services.proxy.ContentServiceProxy;
@@ -75,9 +77,8 @@ import it.eng.spagobi.utilities.engines.AuditServiceProxy;
 import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.engines.IEngineAnalysisState;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineException;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import net.sf.jasperreports.engine.JRDataset;
-import net.sf.jasperreports.engine.JRExporter;
-import net.sf.jasperreports.engine.JRExporterParameter;
 import net.sf.jasperreports.engine.JRParameter;
 import net.sf.jasperreports.engine.JRVirtualizer;
 import net.sf.jasperreports.engine.JasperCompileManager;
@@ -85,9 +86,14 @@ import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.JasperReport;
 import net.sf.jasperreports.engine.design.JasperDesign;
-import net.sf.jasperreports.engine.export.JRHtmlExporterParameter;
-import net.sf.jasperreports.engine.export.JRTextExporterParameter;
+import net.sf.jasperreports.engine.export.HtmlExporter;
+import net.sf.jasperreports.engine.export.JRTextExporter;
 import net.sf.jasperreports.engine.xml.JRXmlLoader;
+import net.sf.jasperreports.export.Exporter;
+import net.sf.jasperreports.export.SimpleExporterInput;
+import net.sf.jasperreports.export.SimpleHtmlExporterConfiguration;
+import net.sf.jasperreports.export.SimpleOutputStreamExporterOutput;
+import net.sf.jasperreports.export.SimpleTextExporterConfiguration;
 
 /**
  * @authors Andrea Gioia (andrea.gioia@eng.it) Davide Zerbetto (davide.zerbetto@eng.it)
@@ -96,7 +102,7 @@ public class JasperReportEngineInstance extends AbstractEngineInstance {
 
 	JasperReportEngineTemplate template;
 	String outputType;
-	JRExporter exporter;
+	Exporter exporter;
 	boolean virtualizationEnabled;
 	JRVirtualizer virtualizer;
 	File libDir;
@@ -123,8 +129,8 @@ public class JasperReportEngineInstance extends AbstractEngineInstance {
 		LOGGER.debug("IN");
 		try (OutputStream out = new FileOutputStream(file)) {
 			runReport(out, httpServletRequest);
-		} catch (Throwable t1) {
-			throw new JasperReportEngineRuntimeException("Impossible to run report", t1);
+		} catch (Exception e1) {
+			throw new JasperReportEngineRuntimeException("Impossible to run report", e1);
 		}
 	}
 
@@ -221,32 +227,54 @@ public class JasperReportEngineInstance extends AbstractEngineInstance {
 			Monitor monitorExportReport = MonitorFactory.start("JasperReportRunner.ExportReport");
 
 			if (outputType.equalsIgnoreCase("html")) {
-				exporter.setParameter(JRHtmlExporterParameter.IS_USING_IMAGES_TO_ALIGN, Boolean.FALSE);
-				exporter.setParameter(JRHtmlExporterParameter.BETWEEN_PAGES_HTML, "");
+				exporter = new HtmlExporter();
+				SimpleHtmlExporterConfiguration configuration = new SimpleHtmlExporterConfiguration();
+//				exporter.setParameter(JRHtmlExporterParameter.IS_USING_IMAGES_TO_ALIGN, Boolean.FALSE);
+//				exporter.setParameter(JRHtmlExporterParameter.BETWEEN_PAGES_HTML, "");
+				configuration.setBetweenPagesHtml("");
+
 				HashMap mImagesMap = new HashMap();
 				UUID uuid = UUID.randomUUID();
 				String mapName = uuid.toString();
 				httpServletRequest.getSession().setAttribute(mapName, mImagesMap);
-				exporter.setParameter(JRHtmlExporterParameter.IMAGES_MAP, mImagesMap);
-				exporter.setParameter(JRHtmlExporterParameter.IMAGES_URI,
-						"JRImageServlet?mapname=" + mapName + "&image=");
+//				exporter.setParameter(JRHtmlExporterParameter.IMAGES_MAP, mImagesMap);
+//				exporter.setParameter(JRHtmlExporterParameter.IMAGES_URI,
+//						"JRImageServlet?mapname=" + mapName + "&image=");
+
+				exporter.setConfiguration(configuration);
 			} else if (outputType.equalsIgnoreCase("txt")) {
-				exporter.setParameter(JRTextExporterParameter.PAGE_HEIGHT, 100);
-				exporter.setParameter(JRTextExporterParameter.PAGE_WIDTH, 100);
+				exporter = new JRTextExporter();
+				SimpleTextExporterConfiguration configuration = new SimpleTextExporterConfiguration();
+//				exporter.setParameter(JRTextExporterParameter.PAGE_HEIGHT, 100);
+//				exporter.setParameter(JRTextExporterParameter.PAGE_WIDTH, 100);
+				exporter.setConfiguration(configuration);
 			} else if (outputType.equalsIgnoreCase("JPG")) {
-				exporter.setParameter(JRImageExporterParameter.JASPER_REPORT, report);
+				exporter = new JRJpegExporter();
+//				exporter.setParameter(JRImageExporterParameter.JASPER_REPORT, report);
 			} else if (outputType.equalsIgnoreCase("JPGBASE64")) {
-				exporter.setParameter(JRImageExporterParameter.JASPER_REPORT, report);
+				exporter = new JRImageBase64Exporter();
+//				exporter.setParameter(JRImageExporterParameter.JASPER_REPORT, report);
 			}
 
-			exporter.setParameter(JRExporterParameter.JASPER_PRINT, jasperPrint);
-			exporter.setParameter(JRExporterParameter.OUTPUT_STREAM, out);
-			exporter.exportReport();
+//			exporter.setParameter(JRExporterParameter.JASPER_PRINT, jasperPrint);
+//			exporter.setParameter(JRExporterParameter.OUTPUT_STREAM, out);
+
+			exporter.setExporterInput(new SimpleExporterInput(jasperPrint));
+			SimpleOutputStreamExporterOutput exporterOutput = null;
+			try (OutputStream outputStream = out) {
+				exporterOutput = new SimpleOutputStreamExporterOutput(outputStream);
+				exporter.setExporterOutput(exporterOutput);
+				exporter.exportReport();
+			} finally {
+				if (exporterOutput != null) {
+					exporterOutput.close();
+				}
+			}
 
 			monitorExportReport.stop();
 			LOGGER.debug("Report exported succesfully");
 
-		} catch (Throwable e) {
+		} catch (Exception e) {
 			throw new JasperReportEngineRuntimeException("Impossible to run report", e);
 		} finally {
 			try {
@@ -264,8 +292,8 @@ public class JasperReportEngineInstance extends AbstractEngineInstance {
 					util.deleteDirectory(tmpDir);
 					LOGGER.debug("Delating temporary directory: " + tmpDir);
 				}
-			} catch (Throwable t) {
-				LOGGER.error("Error while deleting cache dir content", t);
+			} catch (Exception e) {
+				LOGGER.error("Error while deleting cache dir content", e);
 			}
 			monitor.stop();
 			LOGGER.debug("OUT");
@@ -294,7 +322,7 @@ public class JasperReportEngineInstance extends AbstractEngineInstance {
 		resourcePath = EnginConf.getInstance().getResourcePath() + "/img/";
 		entity = (String) getEnv().get(SpagoBIConstants.SBI_ENTITY);
 		if (entity != null && entity.length() > 0) {
-			resourcePath = resourcePath.concat(entity + "/");
+			resourcePath = resourcePath.concat(String.format(entity, "/"));
 		}
 		getEnv().put("SBI_RESOURCE_PATH", resourcePath);
 
@@ -367,7 +395,7 @@ public class JasperReportEngineInstance extends AbstractEngineInstance {
 			LOGGER.debug("Internazionalization in " + language);
 			Builder builder = new Builder().setLanguage(language).setRegion(country);
 			String script = (String) getEnv().get("SBI_SCRIPT");
-			if (org.apache.commons.lang.StringUtils.isNotBlank(script)) {
+			if (StringUtils.isNotBlank(script)) {
 				builder.setScript(script);
 			}
 			locale = builder.build();
@@ -425,8 +453,7 @@ public class JasperReportEngineInstance extends AbstractEngineInstance {
 				try {
 					Files.copy(source.toPath(), target.toPath(), REPLACE_EXISTING);
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					LOGGER.error("Files.copy",e);
 				}
 			}
 			LOGGER.debug("Properties are copied to [" + pathMasterID + "]");
@@ -558,8 +585,8 @@ public class JasperReportEngineInstance extends AbstractEngineInstance {
 				}
 			}
 
-		} catch (Throwable t) {
-			LOGGER.error("Error while extracting subreports meta", t);
+		} catch (Exception e) {
+			LOGGER.error("Error while extracting subreports meta", e);
 		} finally {
 			LOGGER.debug("OUT");
 		}
@@ -597,7 +624,7 @@ public class JasperReportEngineInstance extends AbstractEngineInstance {
 				});
 				LOGGER.debug("found [" + compiledJRFiles.length + "] compiled files");
 				if (compiledJRFiles.length > 1) {
-					throw new RuntimeException(
+					throw new SpagoBIRuntimeException(
 							"More then one compiled file found in directory [" + subreportCacheDir + "]");
 				}
 
@@ -649,22 +676,30 @@ public class JasperReportEngineInstance extends AbstractEngineInstance {
 							Enumeration totalZipEntries = zipFile.entries();
 							File jarFile = null;
 							while (totalZipEntries.hasMoreElements()) {
-								ZipEntry entry = (ZipEntry) totalZipEntries.nextElement();
-								if (entry.getName().endsWith(".jar")) {
-									// set classloader with jar
-									jarFile = new File(destDir + entry.getName());
-									ClassLoader previous = Thread.currentThread().getContextClassLoader();
-									DynamicClassLoader dcl = new DynamicClassLoader(jarFile, previous);
-									// ClassLoader current = URLClassLoader.newInstance(new URL[]{jarFile.toURI().toURL()}, previous);
-									Thread.currentThread().setContextClassLoader(dcl);
-								}
-								if (entry.getName().endsWith(".jrxml")) {
-									// set InputStream with jrxml
-									File jrxmlFile = new File(
-											destDir + System.getProperty("file.separator") + entry.getName());
-									InputStream isJrxml = new FileInputStream(jrxmlFile);
-									templateContent = util.getByteArrayFromInputStream(isJrxml);
-									is = new java.io.ByteArrayInputStream(templateContent);
+								
+								SonarZipCommons sonarZipCommons = new SonarZipCommons();
+								
+								if(sonarZipCommons.doThresholdCheck(this.JS_FILE_ZIP + i + JS_EXT_ZIP)) {
+									ZipEntry entry = (ZipEntry) totalZipEntries.nextElement();
+									if (entry.getName().endsWith(".jar")) {
+										// set classloader with jar
+										jarFile = new File(destDir + entry.getName());
+										ClassLoader previous = Thread.currentThread().getContextClassLoader();
+										DynamicClassLoader dcl = new DynamicClassLoader(jarFile, previous);
+										// ClassLoader current = URLClassLoader.newInstance(new URL[]{jarFile.toURI().toURL()}, previous);
+										Thread.currentThread().setContextClassLoader(dcl);
+									}
+									if (entry.getName().endsWith(".jrxml")) {
+										// set InputStream with jrxml
+										File jrxmlFile = new File(
+												destDir + System.getProperty("file.separator") + entry.getName());
+										InputStream isJrxml = new FileInputStream(jrxmlFile);
+										templateContent = util.getByteArrayFromInputStream(isJrxml);
+										is = new java.io.ByteArrayInputStream(templateContent);
+									}
+								} else {
+									LOGGER.error("Error while unzip file. Invalid archive file");
+									throw new SpagoBIRuntimeException("Error while unzip file. Invalid archive file");
 								}
 							}
 						}
@@ -701,8 +736,8 @@ public class JasperReportEngineInstance extends AbstractEngineInstance {
 			ClassLoader previous = Thread.currentThread().getContextClassLoader();
 			ClassLoader current = URLClassLoader.newInstance(urls, previous);
 			Thread.currentThread().setContextClassLoader(current);
-		} catch (Throwable t) {
-			LOGGER.error("Error while ccompiling subreports", t);
+		} catch (Exception e) {
+			LOGGER.error("Error while ccompiling subreports", e);
 		} finally {
 			LOGGER.debug("OUT");
 		}
@@ -742,11 +777,11 @@ public class JasperReportEngineInstance extends AbstractEngineInstance {
 		this.workingDir = workingDir;
 	}
 
-	public JRExporter getExporter() {
+	public Exporter getExporter() {
 		return exporter;
 	}
 
-	public void setExporter(JRExporter exporter) {
+	public void setExporter(Exporter exporter) {
 		this.exporter = exporter;
 	}
 
@@ -774,14 +809,14 @@ public class JasperReportEngineInstance extends AbstractEngineInstance {
 				if (attrname != null)
 					schema = (String) userProfile.getUserAttribute(attrname);
 			}
-		} catch (Throwable t1) {
-			LOGGER.error("Impossible to manage properly multiSchema attribute", t1);
+		} catch (Exception e1) {
+			LOGGER.error("Impossible to manage properly multiSchema attribute", e1);
 		}
 
 		try {
 			conn = getDataSource().getConnection();
-		} catch (Throwable t2) {
-			LOGGER.error("Cannot retrieve connection for schema [" + schema + "]", t2);
+		} catch (Exception e2) {
+			LOGGER.error("Cannot retrieve connection for schema [" + schema + "]", e2);
 		}
 
 		return conn;

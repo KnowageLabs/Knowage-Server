@@ -26,7 +26,7 @@ public class SbiFunctionInputVariableId implements java.io.Serializable {
 		return this.functionUuid;
 	}
 
-	public void setFunctionUuid(String functionUuid) {
+	private void setFunctionUuid(String functionUuid) {
 		this.functionUuid = functionUuid;
 	}
 
@@ -34,7 +34,7 @@ public class SbiFunctionInputVariableId implements java.io.Serializable {
 		return this.varName;
 	}
 
-	public void setVarName(String varName) {
+	private void setVarName(String varName) {
 		this.varName = varName;
 	}
 

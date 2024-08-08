@@ -217,7 +217,7 @@ public class Hierarchies {
 				toReturn.setName(sbRow.getAttribute(HierarchyConstants.NAME) != null ? sbRow.getAttribute(HierarchyConstants.NAME).toString() : null);
 				// set dimension fields metadata
 				List lstFields = sbRow.getAttributeAsList(HierarchyConstants.DIM_FIELDS + "." + HierarchyConstants.FIELD);
-				ArrayList<Field> metadataDimension = new ArrayList<Field>();
+				ArrayList<Field> metadataDimension = new ArrayList<>();
 				for (Iterator iter = lstFields.iterator(); iter.hasNext();) {
 					SourceBean sbField = (SourceBean) iter.next();
 					String fieldId = sbField.getAttribute(HierarchyConstants.FIELD_ID) != null ? sbField.getAttribute(HierarchyConstants.FIELD_ID).toString()
@@ -260,7 +260,7 @@ public class Hierarchies {
 				toReturn.setMetadataFields(metadataDimension);
 				// set dimension filters metadata
 				List lstFilters = sbRow.getAttributeAsList(HierarchyConstants.DIM_FILTERS + "." + HierarchyConstants.FILTER);
-				ArrayList<Filter> metadataFilterDim = new ArrayList<Filter>();
+				ArrayList<Filter> metadataFilterDim = new ArrayList<>();
 				for (Iterator iter = lstFilters.iterator(); iter.hasNext();) {
 					SourceBean sbFilter = (SourceBean) iter.next();
 					String filterName = sbFilter.getAttribute(HierarchyConstants.FILTER_NAME) != null
@@ -275,7 +275,7 @@ public class Hierarchies {
 
 					boolean checkCondition = true;
 					int idx = 0;
-					LinkedHashMap<String, String> conditions = new LinkedHashMap<String, String>();
+					LinkedHashMap<String, String> conditions = new LinkedHashMap<>();
 					while (checkCondition) {
 						idx++;
 						if (sbFilter.getAttribute(HierarchyConstants.FILTER_CONDITION + idx) != null) {
@@ -320,7 +320,7 @@ public class Hierarchies {
 				// GENERAL_FIELDS
 				List lstGeneralFields = sbRow
 						.getAttributeAsList(HierarchyConstants.HIER_FIELDS + "." + HierarchyConstants.GENERAL_FIELDS + "." + HierarchyConstants.FIELD);
-				ArrayList<Field> metadataGeneralHierarchy = new ArrayList<Field>();
+				ArrayList<Field> metadataGeneralHierarchy = new ArrayList<>();
 				for (Iterator iter = lstGeneralFields.iterator(); iter.hasNext();) {
 					SourceBean sbField = (SourceBean) iter.next();
 					String fieldId = sbField.getAttribute(HierarchyConstants.FIELD_ID) != null ? sbField.getAttribute(HierarchyConstants.FIELD_ID).toString()
@@ -364,7 +364,7 @@ public class Hierarchies {
 				// NODE_FIELDS
 				List lstNodeFields = sbRow
 						.getAttributeAsList(HierarchyConstants.HIER_FIELDS + "." + HierarchyConstants.NODE_FIELDS + "." + HierarchyConstants.FIELD);
-				ArrayList<Field> metadataNodeHierarchy = new ArrayList<Field>();
+				ArrayList<Field> metadataNodeHierarchy = new ArrayList<>();
 				for (Iterator iter = lstNodeFields.iterator(); iter.hasNext();) {
 					SourceBean sbField = (SourceBean) iter.next();
 					String fieldId = sbField.getAttribute(HierarchyConstants.FIELD_ID) != null ? sbField.getAttribute(HierarchyConstants.FIELD_ID).toString()
@@ -408,7 +408,7 @@ public class Hierarchies {
 				// LEAF_FIELDS
 				List lstLeafFields = sbRow
 						.getAttributeAsList(HierarchyConstants.HIER_FIELDS + "." + HierarchyConstants.LEAF_FIELDS + "." + HierarchyConstants.FIELD);
-				ArrayList<Field> metadataLeafHierarchy = new ArrayList<Field>();
+				ArrayList<Field> metadataLeafHierarchy = new ArrayList<>();
 				for (Iterator iter = lstLeafFields.iterator(); iter.hasNext();) {
 					SourceBean sbField = (SourceBean) iter.next();
 					String fieldId = sbField.getAttribute(HierarchyConstants.FIELD_ID) != null ? sbField.getAttribute(HierarchyConstants.FIELD_ID).toString()
@@ -487,7 +487,7 @@ public class Hierarchies {
 	 * @return the hashmap config
 	 */
 	public HashMap<String, Object> getConfig(String dimension) {
-		HashMap<String, Object> toReturn = new HashMap<String, Object>();
+		HashMap<String, Object> toReturn = new HashMap<>();
 
 		SourceBean sb = getTemplate();
 		SourceBean dimensions = (SourceBean) sb.getAttribute(HierarchyConstants.DIMENSIONS);

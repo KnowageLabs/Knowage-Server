@@ -17,6 +17,7 @@
  */
 package it.eng.knowage.knowageapi.dao.dto;
 
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
 
 import javax.persistence.Column;
@@ -89,5 +90,10 @@ public class SbiWidgetGalleryId implements Serializable {
 		this.uuid = uuid;
 		this.organization = organization;
 	}
+	
+	private final void writeObject(ObjectOutputStream aOutputStream) {
+		  throw new UnsupportedOperationException("Security violation : cannot serialize object to a stream");
+	}
+
 
 }

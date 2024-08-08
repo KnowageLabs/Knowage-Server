@@ -25,7 +25,7 @@ import java.util.List;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
+import org.apache.log4j.Logger;
 import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.commons.dao.dto.SbiCategory;
@@ -55,6 +55,8 @@ public class GeoLayer {
 	private List<SbiExtRoles> roles;
 	private List<String> properties;
 
+	private static Logger logger = Logger.getLogger(GeoLayer.class);
+	
 	public GeoLayer() {
 		super();
 	}
@@ -161,9 +163,11 @@ public class GeoLayer {
 					}
 				}
 			} catch (NumberFormatException e) {
-				e.printStackTrace();
+				//e.printStackTrace();
+				logger.error("NumberFormatException",e);
 			} catch (JSONException e) {
-				e.printStackTrace();
+				//e.printStackTrace();
+				logger.error("JSONException",e);
 			}
 		} else {
 			this.setLayerIdentify(null);
@@ -286,8 +290,7 @@ public class GeoLayer {
 
 	public SbiGeoLayers toSpagoBiGeoLayers() throws EMFUserError, EMFInternalError {
 
-		SbiGeoLayers sbm = new SbiGeoLayers();
-		sbm.setLayerId(getLayerId());
+		SbiGeoLayers sbm = new SbiGeoLayers(getLayerId());
 		sbm.setLabel(getLabel());
 		sbm.setName(getName());
 		sbm.setDescr(getDescr());

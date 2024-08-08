@@ -196,7 +196,7 @@ public class BusinessIdentifierImpl extends ModelObjectImpl implements BusinessI
 	@Override
 	public EList<BusinessColumn> getColumns() {
 		if (columns == null) {
-			columns = new EObjectResolvingEList<BusinessColumn>(BusinessColumn.class, this, BusinessModelPackage.BUSINESS_IDENTIFIER__COLUMNS);
+			columns = new EObjectResolvingEList<>(BusinessColumn.class, this, BusinessModelPackage.BUSINESS_IDENTIFIER__COLUMNS);
 		}
 		return columns;
 	}
@@ -393,7 +393,7 @@ public class BusinessIdentifierImpl extends ModelObjectImpl implements BusinessI
 	@Override
 	public List<SimpleBusinessColumn> getSimpleBusinessColumns() {
 		EList<BusinessColumn> businessColumns = getColumns();
-		List<SimpleBusinessColumn> simpleColumns = new ArrayList<SimpleBusinessColumn>();
+		List<SimpleBusinessColumn> simpleColumns = new ArrayList<>();
 
 		for (BusinessColumn column : businessColumns) {
 			if (column instanceof SimpleBusinessColumn) {

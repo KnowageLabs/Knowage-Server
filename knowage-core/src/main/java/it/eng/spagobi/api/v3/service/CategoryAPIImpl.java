@@ -124,7 +124,7 @@ public class CategoryAPIImpl implements CategoryAPI {
 	@Override
 	public List<MetaModel> getMetaModelsUsedByCategory(Integer catId) {
 		IMetaModelsDAO dsMeta = DAOFactory.getMetaModelsDAO();
-		List<Integer> catList = new ArrayList<Integer>();
+		List<Integer> catList = new ArrayList<>();
 		catList.add(catId);
 		return dsMeta.loadMetaModelByCategories(catList);
 	}

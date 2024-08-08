@@ -30,6 +30,7 @@ public class JdbcTableDescriptor implements IDbSchemaDescriptor {
 
 	public static transient Logger logger = Logger.getLogger(JdbcTableDescriptor.class);
 
+	@Override
 	public Set<String> getColumnNames(String table, IDataSource dataSource) {
 		logger.debug("IN");
 		logger.debug("Loading the name of the columns of the table " + table);

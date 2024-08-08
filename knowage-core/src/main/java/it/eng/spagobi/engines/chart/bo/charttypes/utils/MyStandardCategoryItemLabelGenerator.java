@@ -68,6 +68,7 @@ public class MyStandardCategoryItemLabelGenerator extends StandardCategoryItemLa
 		super(labelFormat, formatter);
 		catSerLabel=catSerMap;	}
 
+	@Override
 	public String generateLabel(CategoryDataset dataset, int row, int column) {
 		logger.debug("IN");
 		String category=(String)dataset.getColumnKey(column);

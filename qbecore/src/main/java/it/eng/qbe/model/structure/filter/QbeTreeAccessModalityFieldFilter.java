@@ -50,6 +50,7 @@ public class QbeTreeAccessModalityFieldFilter extends ComposableQbeTreeFieldFilt
 	}
 	
 	
+	@Override
 	public List filter(IDataSource dataSource, List fields) {
 		List list;
 		IModelField field;

@@ -81,7 +81,7 @@ public class SbiMetaSource extends SbiHibernateModel {
 		return this.sourceId;
 	}
 
-	public void setSourceId(Integer sourceId) {
+	private void setSourceId(Integer sourceId) {
 		this.sourceId = sourceId;
 	}
 
@@ -155,6 +155,11 @@ public class SbiMetaSource extends SbiHibernateModel {
 
 	public void setSbiMetaTables(Set sbiMetaTables) {
 		this.sbiMetaTables = sbiMetaTables;
+	}
+
+	public void changeSourceId(Integer sourceId) {
+		this.setSourceId(sourceId);
+		
 	}
 
 }

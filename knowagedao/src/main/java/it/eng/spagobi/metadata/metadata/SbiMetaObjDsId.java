@@ -23,12 +23,17 @@ public class SbiMetaObjDsId extends SbiHibernateModel {
 		this.organization = organization;
 		this.objId = objId;
 	}
+	
+	public SbiMetaObjDsId(int dsId, int objId) {
+		this.dsId = dsId;
+		this.objId = objId;
+	}
 
 	public int getDsId() {
 		return this.dsId;
 	}
 
-	public void setDsId(int dsId) {
+	private void setDsId(int dsId) {
 		this.dsId = dsId;
 	}
 
@@ -36,7 +41,7 @@ public class SbiMetaObjDsId extends SbiHibernateModel {
 		return this.versionNum;
 	}
 
-	public void setVersionNum(int versionNum) {
+	private void setVersionNum(int versionNum) {
 		this.versionNum = versionNum;
 	}
 
@@ -44,7 +49,7 @@ public class SbiMetaObjDsId extends SbiHibernateModel {
 		return this.organization;
 	}
 
-	public void setOrganization(String organization) {
+	private void setOrganization(String organization) {
 		this.organization = organization;
 	}
 
@@ -52,7 +57,7 @@ public class SbiMetaObjDsId extends SbiHibernateModel {
 		return this.objId;
 	}
 
-	public void setObjId(int objId) {
+	private void setObjId(int objId) {
 		this.objId = objId;
 	}
 

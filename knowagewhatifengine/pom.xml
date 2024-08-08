@@ -6,7 +6,7 @@
 	<parent>
 		<groupId>it.eng.knowage</groupId>
 		<artifactId>knowage-ce-parent</artifactId>
-		<version>8.2.0-SNAPSHOT</version>
+		<version>9.0.0-SNAPSHOT</version>
 		<relativePath>../knowage-ce-parent/pom.xml</relativePath>
 	</parent>
 	
@@ -72,6 +72,10 @@
 					<artifactId>jflex</artifactId>
 					<groupId>de.jflex</groupId>
 				</exclusion>
+				<exclusion>
+					<groupId>xml-apis</groupId>
+					<artifactId>xml-apis</artifactId>
+				</exclusion>
 			</exclusions>
 		</dependency>
 		<!-- pivot4j-0.9 is not compatible with managed poi (from knowage-ce-parent/pom.xml), 
@@ -79,7 +83,7 @@
 		<dependency>
 			<groupId>org.apache.poi</groupId>
 			<artifactId>poi</artifactId>
-			<version>3.10-beta2</version>
+			<version>5.2.5</version>
 		</dependency>
 		<!-- Provides support for Graylog in log4j2 -->
 		<dependency>
@@ -89,7 +93,7 @@
 		<dependency>
 			<groupId>org.apache.poi</groupId>
 			<artifactId>poi-ooxml</artifactId>
-			<version>3.10-beta2</version>
+			<version>5.2.5</version>
 		</dependency>
 		<dependency>
 			<groupId>de.jflex</groupId>
@@ -124,6 +128,10 @@
 				<exclusion>
 					<artifactId>log4j</artifactId>
 					<groupId>log4j</groupId>
+				</exclusion>
+				<exclusion>
+					<groupId>xml-apis</groupId>
+					<artifactId>xml-apis</artifactId>
 				</exclusion>
 			</exclusions>
 		</dependency>

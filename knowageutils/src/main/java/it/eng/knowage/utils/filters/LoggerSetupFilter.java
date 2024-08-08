@@ -29,7 +29,6 @@ public class LoggerSetupFilter implements Filter {
 	private static final String HTTP_HEADER_X_FORWARDED_HOST = "X-Forwarded-Host";
 
 	private static final String THREAD_CONTEXT_KEY_CORRELATION_ID = "correlationId";
-	private static final String THREAD_CONTEXT_KEY_JSESSION_ID = "jSessionId";
 	private static final String THREAD_CONTEXT_KEY_ENVIRONMENT = "environment";
 
 	@Override
@@ -81,7 +80,6 @@ public class LoggerSetupFilter implements Filter {
 
 	private void preDoFilterForCorrelationId(HttpServletRequest httpRequest, HttpServletResponse httpResponse) {
 
-		String jSessionId = String.valueOf(httpRequest.getRequestedSessionId());
 		String header1 = httpRequest.getHeader(HTTP_HEADER_NGINX_CORRELATION_ID);
 		String header2 = httpRequest.getHeader(HTTP_HEADER_X_KN_CORRELATION_ID);
 		String correlationId = null;
@@ -99,7 +97,7 @@ public class LoggerSetupFilter implements Filter {
 		LoggerSetupFilter.validateCorrelationId(correlationId);
 
 		ThreadContext.put(THREAD_CONTEXT_KEY_CORRELATION_ID, correlationId);
-		ThreadContext.put(THREAD_CONTEXT_KEY_JSESSION_ID, jSessionId);
+		// put jSessionId in THREAD_CONTEXT_KEY_JSESSION_ID here before
 
 		httpResponse.setHeader(HTTP_HEADER_X_KN_CORRELATION_ID, correlationId);
 	}
@@ -120,7 +118,7 @@ public class LoggerSetupFilter implements Filter {
 
 	private void postDoFilterForCorrelationId() {
 		ThreadContext.remove(THREAD_CONTEXT_KEY_CORRELATION_ID);
-		ThreadContext.remove(THREAD_CONTEXT_KEY_JSESSION_ID);
+		// remove THREAD_CONTEXT_KEY_JSESSION_ID here before
 	}
 
 	@Override

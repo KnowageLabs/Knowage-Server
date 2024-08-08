@@ -17,6 +17,7 @@
  */
 package it.eng.knowage.knowageapi.dao.dto;
 
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.sql.Timestamp;
 
@@ -165,6 +166,9 @@ public class SbiWidgetGalleryTag implements Serializable {
 
 	public void setSbiWidgetGallery(SbiWidgetGallery sbiWidgetGallery) {
 		this.sbiWidgetGallery = sbiWidgetGallery;
+	}
+	private final void writeObject(ObjectOutputStream aOutputStream) {
+		  throw new UnsupportedOperationException("Security violation : cannot serialize object to a stream");
 	}
 
 }

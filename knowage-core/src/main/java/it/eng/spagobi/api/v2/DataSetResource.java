@@ -18,14 +18,10 @@
 package it.eng.spagobi.api.v2;
 
 import static it.eng.spagobi.tools.glossary.util.Util.getNumberOrNull;
-import static java.nio.charset.StandardCharsets.UTF_8;
-
 import java.io.File;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URLDecoder;
 import java.sql.SQLSyntaxErrorException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -61,6 +57,8 @@ import org.jboss.resteasy.plugins.providers.html.View;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.owasp.esapi.reference.DefaultEncoder;
+import org.owasp.esapi.errors.EncodingException;
 
 import com.jamonapi.Monitor;
 import com.jamonapi.MonitorFactory;
@@ -151,6 +149,7 @@ import it.eng.spagobi.utilities.rest.RestUtilities;
 public class DataSetResource extends AbstractDataSetResource {
 
 	protected static Logger logger = Logger.getLogger(DataSetResource.class);
+	private static org.owasp.esapi.Encoder esapiEncoder = DefaultEncoder.getInstance();
 
 	public String getNotDerivedDataSets(@QueryParam("callback") String callback) {
 		logger.debug("IN");
@@ -1079,10 +1078,10 @@ public class DataSetResource extends AbstractDataSetResource {
 						try {
 							// % character breaks decode method
 							if (!itemVal.contains("%")) {
-								itemVal = URLDecoder.decode(itemVal, UTF_8.name());
+								itemVal = esapiEncoder.decodeFromURL(itemVal);
 							}
 							if (!itemDescr.contains("%")) {
-								itemDescr = URLDecoder.decode(itemDescr, UTF_8.name());
+								itemDescr = esapiEncoder.decodeFromURL(itemDescr);
 							}
 
 							// check input value and convert if it's an old multivalue syntax({;{xxx;yyy}STRING}) to list of values :["A-OMP", "A-PO", "CL"]
@@ -1101,7 +1100,7 @@ public class DataSetResource extends AbstractDataSetResource {
 									paramDescrLst.add(itemDescr);
 								}
 							}
-						} catch (UnsupportedEncodingException e) {
+						} catch (EncodingException e) {
 							logger.debug("An error occured while decoding parameter with value[" + itemVal + "]" + e);
 						}
 					}
@@ -1109,8 +1108,8 @@ public class DataSetResource extends AbstractDataSetResource {
 					// % character breaks decode method
 					if (!((String) paramValues).contains("%")) {
 						try {
-							paramValues = URLDecoder.decode((String) paramValues, UTF_8.name());
-						} catch (UnsupportedEncodingException e) {
+							paramValues = esapiEncoder.decodeFromURL((String) paramValues);
+						} catch (EncodingException e) {
 							logger.debug(e.getCause(), e);
 							throw new SpagoBIRuntimeException(e.getMessage(), e);
 						}
@@ -1122,8 +1121,8 @@ public class DataSetResource extends AbstractDataSetResource {
 							: paramValues.toString();
 					if (!parDescrVal.contains("%")) {
 						try {
-							parDescrVal = URLDecoder.decode(parDescrVal, UTF_8.name());
-						} catch (UnsupportedEncodingException e) {
+							parDescrVal = esapiEncoder.decodeFromURL(parDescrVal);
+						} catch (EncodingException e) {
 							logger.debug(e.getCause(), e);
 							throw new SpagoBIRuntimeException(e.getMessage(), e);
 						}

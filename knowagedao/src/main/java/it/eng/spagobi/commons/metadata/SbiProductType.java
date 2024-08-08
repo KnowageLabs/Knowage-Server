@@ -41,7 +41,7 @@ public class SbiProductType extends SbiHibernateModel {
 		return productTypeId;
 	}
 
-	public void setProductTypeId(Integer productTypeId) {
+	private void setProductTypeId(Integer productTypeId) {
 		this.productTypeId = productTypeId;
 	}
 

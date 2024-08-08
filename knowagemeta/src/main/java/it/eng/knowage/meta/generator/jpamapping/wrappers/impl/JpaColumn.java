@@ -225,7 +225,8 @@ public class JpaColumn implements IJpaColumn {
 			}
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			//e.printStackTrace();
+			logger.error("isColumnInRelationshipWithView",e);
 		}
 		return isColumnInRelationshipWithView;
 

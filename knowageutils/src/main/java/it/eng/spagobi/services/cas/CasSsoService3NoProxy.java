@@ -17,9 +17,6 @@
  */
 package it.eng.spagobi.services.cas;
 
-import it.eng.spago.base.SourceBean;
-import it.eng.spago.configuration.ConfigSingleton;
-import it.eng.spagobi.services.common.EnginConf;
 import it.eng.spagobi.services.common.SsoServiceInterface;
 import it.eng.spagobi.services.security.exceptions.SecurityException;
 
@@ -31,12 +28,8 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
 
-import org.jasig.cas.client.authentication.AttributePrincipal;
-import org.jasig.cas.client.authentication.AuthenticationFilter;
 import org.jasig.cas.client.util.AbstractCasFilter;
 import org.jasig.cas.client.validation.Assertion;
-import org.jasig.cas.client.validation.Cas20ProxyTicketValidator;
-import org.jasig.cas.client.validation.TicketValidationException;
 
 
 
@@ -54,11 +47,12 @@ public class CasSsoService3NoProxy implements SsoServiceInterface {
      * 
      * @return String
      */
-    public String readUserIdentifier(HttpServletRequest request){
+    @Override
+	public String readUserIdentifier(HttpServletRequest request){
     HttpSession session=request.getSession();
     Assertion assertion = (Assertion) session.getAttribute(AbstractCasFilter.CONST_CAS_ASSERTION);
     String userInSession=assertion.getPrincipal().getName();
-	String user=(String)request.getRemoteUser();
+	String user=request.getRemoteUser();
 	logger.debug("CAS user in HttpServletRequest:"+user);
 	logger.debug("CAS user in HttpSession:"+userInSession);
 	return user!=null? user:userInSession;
@@ -71,7 +65,8 @@ public class CasSsoService3NoProxy implements SsoServiceInterface {
      * 
      * @return String
      */
-    public String readUserIdentifier(PortletSession session){
+    @Override
+	public String readUserIdentifier(PortletSession session){
     Assertion assertion = (Assertion) session.getAttribute(AbstractCasFilter.CONST_CAS_ASSERTION);
     String user=assertion.getPrincipal().getName();
 	logger.debug("CAS user in PortletSession:"+user);
@@ -87,7 +82,8 @@ public class CasSsoService3NoProxy implements SsoServiceInterface {
      * 
      * @throws IOException Signals that an I/O exception has occurred.
      */
-    public String readTicket(HttpSession session) throws IOException{
+    @Override
+	public String readTicket(HttpSession session) throws IOException{
 	    logger.debug("IN");
 	    logger.debug("OUT. No ticket ");
 	    return "";
@@ -103,7 +99,8 @@ public class CasSsoService3NoProxy implements SsoServiceInterface {
      * 
      * @throws SecurityException the security exception
      */
-    public void validateTicket(String ticket, String userId)throws SecurityException {
+    @Override
+	public void validateTicket(String ticket, String userId)throws SecurityException {
 	logger.debug("IN");
 
 

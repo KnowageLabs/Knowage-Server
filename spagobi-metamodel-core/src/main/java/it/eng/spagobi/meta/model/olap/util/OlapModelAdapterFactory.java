@@ -74,7 +74,7 @@ public class OlapModelAdapterFactory extends AdapterFactoryImpl {
 	 * @generated
 	 */
 	protected OlapModelSwitch<Adapter> modelSwitch =
-		new OlapModelSwitch<Adapter>() {
+		new OlapModelSwitch<>() {
 			@Override
 			public Adapter caseOlapModel(OlapModel object) {
 				return createOlapModelAdapter();

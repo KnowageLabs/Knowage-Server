@@ -106,6 +106,7 @@ public class PerlJobRunner implements IJobRunner {
 					LOGGER.error("Document parameter cannot be considered.");
 				}
 				cmd = cmd + " --context=\"" + contextTempScriptFile.getAbsolutePath() + "\"";
+
 			}
 		}
 
@@ -122,8 +123,9 @@ public class PerlJobRunner implements IJobRunner {
 					(EventServiceProxy) parameters.get(EngineConstants.ENV_EVENT_SERVICE_PROXY));
 			wm.run(jrt, listener);
 		} catch (Exception e) {
-			e.printStackTrace();
+			LOGGER.error(e);
 		}
+
 
 	}
 
@@ -179,6 +181,7 @@ public class PerlJobRunner implements IJobRunner {
 			}
 			return contextScriptTempFile;
 		}
+
 	}
 
 }

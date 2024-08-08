@@ -17,9 +17,6 @@
  */
 package it.eng.spagobi.api.v2;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
-
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Base64;
@@ -49,6 +46,7 @@ import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.owasp.esapi.reference.DefaultEncoder;
 
 import it.eng.knowage.monitor.IKnowageMonitor;
 import it.eng.knowage.monitor.KnowageMonitorFactory;
@@ -101,7 +99,7 @@ import it.eng.spagobi.utilities.rest.RestUtilities;
 public class LovResource extends AbstractSpagoBIResource {
 
 	private static Logger logger = Logger.getLogger(LovResource.class);
-
+	private static org.owasp.esapi.Encoder esapiEncoder = DefaultEncoder.getInstance();
 	@SuppressWarnings("unchecked")
 	@GET
 	@Path("/get/all")
@@ -467,7 +465,7 @@ public class LovResource extends AbstractSpagoBIResource {
 			}
 			modalitiesValueDAO.eraseModalitiesValue(modVal);
 
-			String encodedLov = URLEncoder.encode("" + modVal.getId(), UTF_8.name());
+			String encodedLov = esapiEncoder.encodeForURL("" + modVal.getId());
 			return Response.ok().entity(encodedLov).build();
 
 		} catch (Exception exception) {

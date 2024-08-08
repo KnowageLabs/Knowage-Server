@@ -35,7 +35,7 @@ public class MondrianSchemaManager {
 
 	private static Logger logger = Logger.getLogger(MondrianSchemaManager.class);
 
-	private static Map<Integer, File> cache = new HashMap<Integer, File>();
+	private static Map<Integer, File> cache = new HashMap<>();
 
 	private ArtifactServiceProxy proxy = null;
 

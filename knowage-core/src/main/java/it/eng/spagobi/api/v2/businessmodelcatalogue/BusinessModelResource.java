@@ -94,7 +94,7 @@ public class BusinessModelResource extends AbstractSpagoBIResource {
 	public List<MetaModel> getBusinessModels(@QueryParam("fileExtension") String fileExtension) {
 		logger.debug("IN");
 
-		List<MetaModel> businessModelList = new ArrayList<MetaModel>();
+		List<MetaModel> businessModelList = new ArrayList<>();
 		IMetaModelsDAO businessModelsDAO = DAOFactory.getMetaModelsDAO();
 		businessModelsDAO.setUserProfile(getUserProfile());
 		try {
@@ -112,7 +112,7 @@ public class BusinessModelResource extends AbstractSpagoBIResource {
 				}
 			}
 
-			List<MetaModel> filteredBusinessModels = new ArrayList<MetaModel>();
+			List<MetaModel> filteredBusinessModels = new ArrayList<>();
 			if (fileExtension != null) {
 				for (MetaModel bm : businessModelList) {
 					Content content = businessModelsDAO.loadActiveMetaModelContentById(bm.getId());
@@ -193,9 +193,9 @@ public class BusinessModelResource extends AbstractSpagoBIResource {
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	public Response getBusinessModelVersions(@PathParam("bmId") Integer bmId) {
 		logger.debug("IN");
-		HashMap<String, Object> resultAsMap = new HashMap<String, Object>();
+		HashMap<String, Object> resultAsMap = new HashMap<>();
 		List<Content> versions = null;
-		List<Content> versionsToShow = new ArrayList<Content>();
+		List<Content> versionsToShow = new ArrayList<>();
 		IMetaModelsDAO businessModelsDAO = DAOFactory.getMetaModelsDAO();
 		businessModelsDAO.setUserProfile(getUserProfile());
 		try {

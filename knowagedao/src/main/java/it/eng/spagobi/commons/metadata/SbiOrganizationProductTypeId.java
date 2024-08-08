@@ -35,7 +35,7 @@ public class SbiOrganizationProductTypeId implements java.io.Serializable {
 		return productTypeId;
 	}
 
-	public void setProductTypeId(int productTypeId) {
+	private void setProductTypeId(int productTypeId) {
 		this.productTypeId = productTypeId;
 	}
 
@@ -43,10 +43,11 @@ public class SbiOrganizationProductTypeId implements java.io.Serializable {
 		return this.organizationId;
 	}
 
-	public void setOrganizationId(int organizationId) {
+	private void setOrganizationId(int organizationId) {
 		this.organizationId = organizationId;
 	}
 
+	@Override
 	public boolean equals(Object other) {
 		if ((this == other))
 			return true;
@@ -60,6 +61,7 @@ public class SbiOrganizationProductTypeId implements java.io.Serializable {
 				&& (this.getOrganizationId() == castOther.getOrganizationId());
 	}
 
+	@Override
 	public int hashCode() {
 		int result = 17;
 

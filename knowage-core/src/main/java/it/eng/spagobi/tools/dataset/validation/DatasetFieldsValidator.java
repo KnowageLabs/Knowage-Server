@@ -22,18 +22,14 @@ import it.eng.spagobi.rest.validation.IFieldsValidator;
 import it.eng.spagobi.utilities.json.JSONUtils;
 
 import java.io.IOException;
-import java.net.URLDecoder;
-import java.net.URLEncoder;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.regex.Pattern;
-
 import javax.ws.rs.core.MultivaluedMap;
 
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.owasp.esapi.errors.EncodingException;
+import org.owasp.esapi.reference.DefaultEncoder;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -46,15 +42,17 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 public class DatasetFieldsValidator implements IFieldsValidator {
 	
 	private static transient Logger logger = Logger.getLogger(DatasetFieldsValidator.class);
-
-	public JSONArray validateFields(MultivaluedMap<String, String> parameters) {
+	private static org.owasp.esapi.Encoder esapiEncoder = DefaultEncoder.getInstance();
+	
+	@Override
+	public JSONArray validateFields(MultivaluedMap<String, String> parameters) throws EncodingException {
 		JSONArray validationErrors = new JSONArray();
 
 		//Dataset Validation ---------------------------------------------
 		String datasetMetadata = parameters.get("meta").get(0);
 		
 		if (datasetMetadata != null)	{
-			datasetMetadata = URLDecoder.decode(datasetMetadata);
+			datasetMetadata = esapiEncoder.decodeFromURL(datasetMetadata);
 			try {
 				if ((!datasetMetadata.equals("")) && (!datasetMetadata.equals("[]"))) {
 					JSONObject metadataObject = JSONUtils.toJSONObject(datasetMetadata);

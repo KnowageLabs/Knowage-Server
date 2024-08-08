@@ -50,7 +50,7 @@ public class SbiGlReferencesId implements Serializable {
 	 * @param wordId
 	 *            the wordId to set
 	 */
-	public void setWordId(int wordId) {
+	private void setWordId(int wordId) {
 		this.wordId = wordId;
 	}
 
@@ -65,7 +65,7 @@ public class SbiGlReferencesId implements Serializable {
 	 * @param refWordId
 	 *            the refWordId to set
 	 */
-	public void setRefWordId(int refWordId) {
+	private void setRefWordId(int refWordId) {
 		this.refWordId = refWordId;
 	}
 

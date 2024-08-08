@@ -65,7 +65,7 @@ public class SbiGeoMapFeaturesId implements java.io.Serializable {
 	 * 
 	 * @param mapId the new map id
 	 */
-	public void setMapId(int mapId) {
+	private void setMapId(int mapId) {
 		this.mapId = mapId;
 	}
 
@@ -83,13 +83,14 @@ public class SbiGeoMapFeaturesId implements java.io.Serializable {
 	 * 
 	 * @param featureId the new feature id
 	 */
-	public void setFeatureId(int featureId) {
+	private void setFeatureId(int featureId) {
 		this.featureId = featureId;
 	}
 
 	/* (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
+	@Override
 	public boolean equals(Object other) {
 		if ((this == other))
 			return true;
@@ -106,6 +107,7 @@ public class SbiGeoMapFeaturesId implements java.io.Serializable {
 	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
 	 */
+	@Override
 	public int hashCode() {
 		int result = 17;
 

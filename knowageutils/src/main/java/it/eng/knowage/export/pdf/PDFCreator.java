@@ -31,6 +31,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.TemporalAccessor;
 import java.util.List;
 
 import javax.imageio.ImageIO;
@@ -67,11 +69,12 @@ public abstract class PDFCreator {
 
 	private static final String TEMP_SUFFIX = ".temp.pdf";
 	private static final String DEFAULT_DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
+	@Deprecated
 	private static final SimpleDateFormat DEFAULT_DATE_FORMATTER = new SimpleDateFormat(DEFAULT_DATE_FORMAT);
+	private static final DateTimeFormatter DEFAULT_DATE_FORMATTER_V2 = DateTimeFormatter.ofPattern(DEFAULT_DATE_FORMAT);
 
 	private static void createPDF(List<InputStream> inputImages, Path output) throws IOException {
-		PDDocument document = new PDDocument();
-		try {
+		try (PDDocument document = new PDDocument()) {
 			for (InputStream is : inputImages) {
 				BufferedImage bimg = ImageIO.read(is);
 				float width = bimg.getWidth();
@@ -85,8 +88,6 @@ public abstract class PDFCreator {
 				}
 			}
 			document.save(output.toFile());
-		} finally {
-			document.close();
 		}
 	}
 
@@ -229,7 +230,7 @@ public abstract class PDFCreator {
 	private static void writeFrontpageDetails(PDDocument doc, PDFont font, float fontSize, FrontpageDetails details) throws IOException {
 		String name = "Name: " + details.getName();
 		String description = "Description: " + details.getDescription();
-		String date = "Date: " + DEFAULT_DATE_FORMATTER.format(details.getDate());
+		String date = "Date: " + DEFAULT_DATE_FORMATTER_V2.format((TemporalAccessor) details.getDate());
 		PDPage page = doc.getPage(0);
 		PDRectangle pageSize = page.getMediaBox();
 		float stringWidth = font.getStringWidth(StringUtilities.findLongest(name, description, date)) * fontSize / 1000f;
@@ -251,14 +252,29 @@ public abstract class PDFCreator {
 
 	private static InputStream getFrontpage() throws FileNotFoundException {
 		String path = SingletonConfig.getInstance().getConfigValue(ConfigurationConstants.DOCUMENT_EXPORTING_PDF_FRONT_PAGE);
+		FileInputStream fileInputStream =null;
+		try {
+			fileInputStream = new FileInputStream(path);
+		}catch (Exception e) {
+			logger.error("FileInputStream",e);
+		}
+		
+		
 		return (path == null || path.isEmpty())
 				? Thread.currentThread().getContextClassLoader().getResourceAsStream(PDFCreator.DEFAULT_FRONT_PAGE_RESOURCE_PATH)
-				: new FileInputStream(path);
+				: fileInputStream;
 	}
 
 	private static InputStream getBackpage() throws FileNotFoundException {
 		String path = SingletonConfig.getInstance().getConfigValue(ConfigurationConstants.DOCUMENT_EXPORTING_PDF_BACK_PAGE);
+		FileInputStream fileInputStream =null;
+		try {
+			fileInputStream = new FileInputStream(path);
+		}catch (Exception e) {
+			logger.error("FileInputStream",e);
+		}
+		
 		return (path == null || path.isEmpty()) ? Thread.currentThread().getContextClassLoader().getResourceAsStream(PDFCreator.DEFAULT_BACK_PAGE_RESOURCE_PATH)
-				: new FileInputStream(path);
+				: fileInputStream;
 	}
 }

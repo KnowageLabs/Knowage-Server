@@ -18,13 +18,13 @@
 package it.eng.knowage.engines.svgviewer.map.renderer;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
-
+import org.apache.log4j.Logger;
 import it.eng.knowage.engines.svgviewer.SvgViewerEngineConstants;
 import it.eng.spago.base.SourceBean;
 import it.eng.spagobi.tools.datasource.bo.DataSourceFactory;
@@ -47,7 +47,7 @@ public class QueryLabelProducer extends AbstractLabelProducer {
 
 	/** The param names. */
 	private Set paramNames;
-
+	private static Logger logger = Logger.getLogger(QueryLabelProducer.class);
 	/*
 	 * (non-Javadoc)
 	 *
@@ -95,8 +95,8 @@ public class QueryLabelProducer extends AbstractLabelProducer {
 		Connection connection = null;
 		try {
 			connection = dataSource.getConnection();
-			Statement statement = connection.createStatement();
-			statement.execute(query);
+			PreparedStatement statement = connection.prepareStatement(query);
+			statement.execute();
 			ResultSet resultSet = statement.getResultSet();
 			if (resultSet.next()) {
 				Iterator it = paramNames.iterator();
@@ -110,13 +110,13 @@ public class QueryLabelProducer extends AbstractLabelProducer {
 				}
 			}
 		} catch (Exception ex) {
-			ex.printStackTrace();
+			logger.error("getLabel",ex);
 		} finally {
 			if (connection != null) {
 				try {
 					connection.close();
 				} catch (SQLException e) {
-					e.printStackTrace();
+					logger.error("connection",e);
 				}
 			}
 		}

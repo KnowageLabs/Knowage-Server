@@ -53,7 +53,7 @@ public class SolrFilterVisitor extends AbstractFilterVisitor {
     private List<String> highlightFields;
 
     public SolrFilterVisitor(List<String> highlightFields) {
-        this.highlightFields = highlightFields != null ? highlightFields : new ArrayList<String>();
+        this.highlightFields = highlightFields != null ? highlightFields : new ArrayList<>();
     }
 
     @Override

@@ -23,7 +23,7 @@ package it.eng.qbe.utility;
  */
 public class DbTypeThreadLocal {
 
-	private static final ThreadLocal<String> _dbType = new ThreadLocal<String>();
+	private static final ThreadLocal<String> _dbType = new ThreadLocal<>();
 
 	public static void setDbType(String dbType) {
 		_dbType.set(dbType);

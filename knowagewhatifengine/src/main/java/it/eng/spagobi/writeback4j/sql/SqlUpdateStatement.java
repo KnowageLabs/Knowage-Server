@@ -18,8 +18,7 @@
 package it.eng.spagobi.writeback4j.sql;
 
 import java.sql.Connection;
-import java.sql.Statement;
-
+import java.sql.PreparedStatement;
 import org.apache.log4j.Logger;
 
 /* SpagoBI, the Open Source Business Intelligence suite
@@ -47,8 +46,8 @@ public class SqlUpdateStatement {
 		logger.debug("Executing update query: " + sqlStatement);
 
 		try {
-			Statement statement = connection.createStatement();
-			statement.executeUpdate(sqlStatement);
+			PreparedStatement statement = connection.prepareStatement(sqlStatement);
+			statement.executeUpdate();
 
 		} catch (Exception e) {
 			logger.error("Error executing the query " + sqlStatement, e);

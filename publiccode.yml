@@ -2,7 +2,7 @@
 # metadata file that makes public software easily discoverable.
 # More info at https://github.com/italia/publiccode.yml
 
-publiccodeYmlVersion: "0.4.0"
+publiccodeYmlVersion: "0.2"
 applicationSuite: Knowage Suite
 categories:
   - data-analytics
@@ -46,7 +46,7 @@ description:
       - |-
         SMART DATA: combina indici Solr con altre fonti dati e abilita faceted
         views e full text search
-    # DEPRECATED : genericName: Business Intelligence e Analytics
+    genericName: Business Intelligence e Analytics
     longDescription: |
       KNOWAGE è la suite open source per la business intelligence e gli analytics che
       affianca alle tradizionali capacità di business intelligence, strumenti
@@ -151,7 +151,7 @@ localisation:
     - ru
   localisationReady: true
 logo: |-
-  https://raw.githubusercontent.com/KnowageLabs/Knowage-Server/master/images/logo/logo.svg
+  https://raw.githubusercontent.com/KnowageLabs/Knowage-Server/master/logo/logo.svg
 maintenance:
   contacts:
     - email: angelo.bernabei@eng.it

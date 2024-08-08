@@ -18,8 +18,6 @@
 package it.eng.spagobi.mapcatalogue.bo;
 
 import it.eng.spagobi.mapcatalogue.metadata.SbiGeoFeatures;
-import it.eng.spagobi.services.dataset.bo.SpagoBiDataSet;
-
 import java.io.Serializable;
 
 /**
@@ -120,8 +118,7 @@ public class GeoFeature  implements Serializable   {
 	*/
 	
 	public SbiGeoFeatures toSpagoBiGeoFeatures() {
-		SbiGeoFeatures sbgf = new SbiGeoFeatures();
-		sbgf.setFeatureId(getFeatureId());
+		SbiGeoFeatures sbgf = new SbiGeoFeatures(getFeatureId());
 		sbgf.setName(getName());
 		sbgf.setDescr(getDescr());
 		sbgf.setType(getType());

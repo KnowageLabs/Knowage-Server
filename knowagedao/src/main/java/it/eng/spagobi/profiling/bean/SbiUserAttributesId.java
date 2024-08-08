@@ -35,22 +35,35 @@ public class SbiUserAttributesId implements java.io.Serializable {
 		this.attributeId = attributeId;
 	}
 
+	public SbiUserAttributesId(int attributeId) {
+		this.attributeId = attributeId;
+	}
+	
 	public int getId() {
 		return this.id;
 	}
 
-	public void setId(int id) {
+	private void setId(int id) {
 		this.id = id;
+	}
+	
+	public void changeId(int id) {
+		this.setId(id);
 	}
 
 	public int getAttributeId() {
 		return this.attributeId;
 	}
 
-	public void setAttributeId(int attributeId) {
+	private void setAttributeId(int attributeId) {
+		this.attributeId = attributeId;
+	}
+	
+	public void changeAttributeId(int attributeId) {
 		this.attributeId = attributeId;
 	}
 
+	@Override
 	public boolean equals(Object other) {
 		if ((this == other))
 			return true;
@@ -64,6 +77,7 @@ public class SbiUserAttributesId implements java.io.Serializable {
 				&& (this.getAttributeId() == castOther.getAttributeId());
 	}
 
+	@Override
 	public int hashCode() {
 		int result = 17;
 

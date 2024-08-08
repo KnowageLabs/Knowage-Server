@@ -18,13 +18,13 @@
 package it.eng.spagobi.tools.dataset.common.dataproxy;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
 import org.apache.log4j.Logger;
 
-import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.tools.dataset.common.datareader.IDataReader;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
@@ -42,7 +42,7 @@ public class JDBCRedShiftDataProxy extends JDBCDataProxy {
 	int fetchSize;
 	int offset;
 
-	private static transient Logger logger = Logger.getLogger(JDBCRedShiftDataProxy.class);
+	private static final Logger logger = Logger.getLogger(JDBCRedShiftDataProxy.class);
 
 	public JDBCRedShiftDataProxy(int offsetParam, int fetchSizeParam) {
 		this.setCalculateResultNumberOnLoad(true);
@@ -81,7 +81,7 @@ public class JDBCRedShiftDataProxy extends JDBCDataProxy {
 	}
 
 	@Override
-	public IDataStore load(String statement, IDataReader dataReader) throws EMFUserError {
+	public IDataStore load(String statement, IDataReader dataReader) {
 		if (statement != null) {
 			setStatement(statement);
 		}
@@ -93,7 +93,7 @@ public class JDBCRedShiftDataProxy extends JDBCDataProxy {
 
 		IDataStore dataStore;
 		Connection connection;
-		Statement stmt;
+		PreparedStatement stmt;
 		ResultSet resultSet;
 
 		logger.debug("IN");
@@ -111,22 +111,22 @@ public class JDBCRedShiftDataProxy extends JDBCDataProxy {
 			}
 			String dialect = dataSource.getHibDialectClass();
 			Assert.assertNotNull(dialect, "Database dialect cannot be null");
-			try {
+			
 
-				stmt = connection.createStatement();
+				
 
-			} catch (Exception t) {
-				throw new SpagoBIRuntimeException("An error occurred while creating connection steatment", t);
-			}
+			
 			String sqlQuery = "";
 			try {
+				
+				sqlQuery = getStatement();
+				stmt = connection.prepareStatement(sqlQuery);
 				// get max size
 				if (getMaxResults() > 0) {
 					stmt.setMaxRows(getMaxResults());
 				}
-				sqlQuery = getStatement();
 				logger.info("Executing query " + sqlQuery + " ...");
-				resultSet = stmt.executeQuery(sqlQuery);
+				resultSet = stmt.executeQuery();
 
 			} catch (Exception t) {
 				throw new SpagoBIRuntimeException("An error occurred while executing statement: " + sqlQuery, t);
@@ -170,7 +170,7 @@ public class JDBCRedShiftDataProxy extends JDBCDataProxy {
 
 			if (resultNumber > -1) { // it means that resultNumber was successfully calculated by this data proxy
 				int limitedResultNumber = getMaxResults() > 0 && resultNumber > getMaxResults() ? getMaxResults() : resultNumber;
-				dataStore.getMetaData().setProperty("resultNumber", new Integer(limitedResultNumber));
+				dataStore.getMetaData().setProperty("resultNumber", Integer.valueOf(limitedResultNumber));
 			}
 
 		} finally {
@@ -188,7 +188,7 @@ public class JDBCRedShiftDataProxy extends JDBCDataProxy {
 	protected int getResultNumber(Connection connection) {
 		logger.debug("IN");
 		int resultNumber = 0;
-		Statement stmt = null;
+		PreparedStatement stmt = null;
 
 		ResultSet rs = null;
 
@@ -203,14 +203,14 @@ public class JDBCRedShiftDataProxy extends JDBCDataProxy {
 			if (!dialect.toLowerCase().contains("orient")) {
 				tableAlias = "temptable";
 			}
-			String sqlQuery = "SELECT COUNT(*) FROM (" + getOldStatement() + ") " + tableAlias;
+			String sqlQuery = String.format("SELECT COUNT(*) FROM (%s) %s",getOldStatement(), tableAlias);
 			logger.info("Executing query " + sqlQuery + " ...");
-			stmt = connection.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
+			stmt = connection.prepareStatement(sqlQuery,ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
 			rs = stmt.executeQuery(sqlQuery);
 			rs.next();
 			resultNumber = rs.getInt(1);
-		} catch (Throwable t) {
-			throw new SpagoBIRuntimeException("An error occurred while creating connection steatment", t);
+		} catch (Exception e) {
+			throw new SpagoBIRuntimeException("An error occurred while creating connection steatment", e);
 		} finally {
 			releaseResources(null, stmt, rs);
 		}
@@ -308,11 +308,9 @@ public class JDBCRedShiftDataProxy extends JDBCDataProxy {
 	@Override
 	public String getStatement() {
 
-		if (fetchSize == -1) {
-			if (!this.statement.isEmpty()) {
-				this.statement = removeLastSemicolon(this.statement);
-				return this.statement;
-			}
+		if (fetchSize == -1 && !this.statement.isEmpty()) {
+			this.statement = removeLastSemicolon(this.statement);
+			return this.statement;
 		}
 
 		String newStatement = "";

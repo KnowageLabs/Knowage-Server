@@ -162,9 +162,7 @@ public class SbiJobTableDAOHibImpl extends AbstractHibernateDAO implements ISbiJ
 		try {
 			aSession = getSession();
 			tx = aSession.beginTransaction();
-			SbiMetaJobTableId hibId = new SbiMetaJobTableId();
-			hibId.setTableId(aMetaJobTable.getId().getTableId());
-			hibId.setJobId(aMetaJobTable.getId().getJobId());
+			SbiMetaJobTableId hibId = new SbiMetaJobTableId(aMetaJobTable.getId().getJobId(),aMetaJobTable.getId().getTableId());
 
 			updateSbiCommonInfo4Update(hibId);
 			tx.commit();
@@ -208,9 +206,8 @@ public class SbiJobTableDAOHibImpl extends AbstractHibernateDAO implements ISbiJ
 
 		try {
 
-			SbiMetaJobTableId hibId = new SbiMetaJobTableId();
-			hibId.setTableId(aMetaJobTable.getSbiMetaTable().getTableId());
-			hibId.setJobId(aMetaJobTable.getSbiMetaJob().getJobId());
+			SbiMetaJobTableId hibId = new SbiMetaJobTableId(aMetaJobTable.getSbiMetaJob().getJobId(),aMetaJobTable.getSbiMetaTable().getTableId());
+
 			aMetaJobTable.setId(hibId);
 
 			updateSbiCommonInfo4Insert(aMetaJobTable);
@@ -234,9 +231,7 @@ public class SbiJobTableDAOHibImpl extends AbstractHibernateDAO implements ISbiJ
 			aSession = getSession();
 			tx = aSession.beginTransaction();
 
-			SbiMetaJobTableId hibId = new SbiMetaJobTableId();
-			hibId.setTableId(aMetaJobTable.getId().getTableId());
-			hibId.setJobId(aMetaJobTable.getId().getJobId());
+			SbiMetaJobTableId hibId = new SbiMetaJobTableId(aMetaJobTable.getId().getJobId(),aMetaJobTable.getId().getTableId());
 
 			SbiMetaJobTable hib = (SbiMetaJobTable) aSession.load(SbiMetaJobTable.class, hibId);
 

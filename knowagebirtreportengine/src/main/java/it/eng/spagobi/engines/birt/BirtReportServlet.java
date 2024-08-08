@@ -36,6 +36,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
+import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -78,6 +79,10 @@ import org.eclipse.birt.report.engine.dataextraction.ICSVDataExtractionOption;
 import org.eclipse.birt.report.utility.BirtUtility;
 import org.eclipse.birt.report.utility.DataExtractionParameterUtil;
 
+import org.owasp.esapi.HTTPUtilities;
+import org.owasp.esapi.reference.DefaultHTTPUtilities;
+
+import it.eng.knowage.commons.zip.SonarZipCommons;
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.security.IEngUserProfile;
@@ -124,6 +129,7 @@ public class BirtReportServlet extends HttpServlet {
 
 	public static final String PAGE_FILE_NAME = "page";
 	public static final String REPORT_EXECUTION_ID = "REPORT_EXECUTION_ID";
+	private static HTTPUtilities httpUtils = new DefaultHTTPUtilities();
 
 	/*
 	 * (non-Javadoc)
@@ -334,23 +340,30 @@ public class BirtReportServlet extends HttpServlet {
 			}
 			util.unzip(fileZip, getBirtExecutionTempDir(executionId));
 			try (JarFile zipFile = new JarFile(fileZip)) {
-				Enumeration totalZipEntries = zipFile.entries();
+				Enumeration<JarEntry> totalZipEntries = zipFile.entries();
 				File jarFile = null;
 				while (totalZipEntries.hasMoreElements()) {
-					ZipEntry entry = (ZipEntry) totalZipEntries.nextElement();
-					if (entry.getName().endsWith(".jar")) {
-						jarFile = new File(getBirtExecutionTempDirName(executionId) + entry.getName());
-						// set classloader with jar
-						ClassLoader previous = Thread.currentThread().getContextClassLoader();
-						DynamicClassLoader dcl = new DynamicClassLoader(jarFile, previous);
-						Thread.currentThread().setContextClassLoader(dcl);
-					} else if (entry.getName().endsWith(".rptdesign")) {
-						// set InputStream with report
-						File birtFile = new File(getBirtExecutionTempDirName(executionId) + entry.getName());
-						InputStream isBirt = new FileInputStream(birtFile);
-						byte[] templateRptDesign = new byte[0];
-						templateRptDesign = util.getByteArrayFromInputStream(isBirt);
-						is = new java.io.ByteArrayInputStream(templateRptDesign);
+					SonarZipCommons sonarZipCommons = new SonarZipCommons();
+					
+					if(sonarZipCommons.doThresholdCheck(JS_FILE_ZIP + JS_EXT_ZIP)) {
+						ZipEntry entry = totalZipEntries.nextElement();
+						if (entry.getName().endsWith(".jar")) {
+							jarFile = new File(getBirtExecutionTempDirName(executionId) + entry.getName());
+							// set classloader with jar
+							ClassLoader previous = Thread.currentThread().getContextClassLoader();
+							DynamicClassLoader dcl = new DynamicClassLoader(jarFile, previous);
+							Thread.currentThread().setContextClassLoader(dcl);
+						} else if (entry.getName().endsWith(".rptdesign")) {
+							// set InputStream with report
+							File birtFile = new File(getBirtExecutionTempDirName(executionId) + entry.getName());
+							InputStream isBirt = new FileInputStream(birtFile);
+							byte[] templateRptDesign = new byte[0];
+							templateRptDesign = util.getByteArrayFromInputStream(isBirt);
+							is = new java.io.ByteArrayInputStream(templateRptDesign);
+						}							
+					} else {
+						logger.error("Error while unzip file. Invalid archive file");
+						throw new SpagoBIRuntimeException("Error while unzip file. Invalid archive file");
 					}
 				}
 			}
@@ -661,57 +674,58 @@ public class BirtReportServlet extends HttpServlet {
 			renderOption.setOutputFormat(IBirtConstants.PDF_RENDER_FORMAT);
 			// renderOption.setSupportedImageFormats("JPG;jpg;PNG;png;BMP;bmp;SVG;svg;GIF;gif");
 			response.setContentType("application/pdf");
-			response.setHeader("Content-disposition", "inline; filename=" + templateFileName + ".pdf");
+			httpUtils.setHeader(response, "Content-disposition", "inline; filename=" + templateFileName + ".pdf");
 		} else if (outputFormat != null && outputFormat.equalsIgnoreCase(IBirtConstants.HTML_RENDER_FORMAT)) {
 			renderOption = prepareHtmlRenderOption(request);
 			renderOption.setOutputFormat(IBirtConstants.HTML_RENDER_FORMAT);
-			response.setHeader("Content-Type", "text/html");
-			response.setContentType("text/html");
+			httpUtils.setHeader(response, "Content-Type", "text/html");
+			httpUtils.setContentType(response);
 		} else if (outputFormat != null && outputFormat.equalsIgnoreCase(IBirtConstants.DOC_RENDER_FORMAT)) {
 			renderOption = new RenderOption();
 			setMSOfficeEmitterId("doc", renderOption);
 			response.setContentType("application/msword");
-			response.setHeader("Content-disposition", "inline; filename=" + templateFileName + ".doc");
+			httpUtils.setHeader(response, "Content-disposition", "inline; filename=" + templateFileName + ".doc");
 		} else if (outputFormat != null && outputFormat.equalsIgnoreCase("docx")) {
 			renderOption = new RenderOption();
 			setMSOfficeEmitterId("docx", renderOption);
 			response.setContentType("application/vnd.openxmlformats-officedocument.wordprocessingml.document");
-			response.setHeader("Content-disposition", "inline; filename=" + templateFileName + ".docx");
+			httpUtils.setHeader(response, "Content-disposition", "inline; filename=" + templateFileName + ".docx");
 		} else if (outputFormat != null && outputFormat.equalsIgnoreCase(RTF_FORMAT)) {
 			renderOption = prepareHtmlRenderOption(request);
 			renderOption.setOutputFormat(RTF_FORMAT);
 			response.setContentType("application/rtf");
-			response.setHeader("Content-disposition", "inline; filename=" + templateFileName + ".rtf");
+			httpUtils.setHeader(response,"Content-disposition", "inline; filename=" + templateFileName + ".rtf");
 		} else if (outputFormat != null && outputFormat.equalsIgnoreCase(IBirtConstants.EXCEL_RENDER_FORMAT)) {
 			renderOption = new EXCELRenderOption();
 			setMSOfficeEmitterId("xls", renderOption);
 			renderOption.setOption("ExcelEmitter.SingleSheetWithPageBreaks", true);
 			response.setContentType("application/vnd.ms-excel");
-			response.setHeader("Content-disposition", "inline; filename=" + templateFileName + ".xls");
+			httpUtils.setHeader(response, "Content-disposition", "inline; filename=" + templateFileName + ".xls");
 		} else if (outputFormat != null && outputFormat.equalsIgnoreCase("xlsx")) {
 			renderOption = new EXCELRenderOption();
 			renderOption.setOption("excel_native_charts", false);
 			setMSOfficeEmitterId("xlsx", renderOption);
 			renderOption.setOption("ExcelEmitter.SingleSheetWithPageBreaks", true);
 			response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
-			response.setHeader("Content-disposition", "inline; filename=" + templateFileName + ".xlsx");
+			httpUtils.setHeader(response, "Content-disposition", "inline; filename=" + templateFileName + ".xlsx");
 		} else if (outputFormat != null && outputFormat.equalsIgnoreCase("ppt")) {
 			renderOption = new RenderOption();
 			setMSOfficeEmitterId("ppt", renderOption);
 			response.setContentType("application/vnd.ms-powerpoint");
-			response.setHeader("Content-disposition", "inline; filename=" + templateFileName + ".ppt");
+			httpUtils.setHeader(response, "Content-disposition", "inline; filename=" + templateFileName + ".ppt");
 		} else if (outputFormat != null && outputFormat.equalsIgnoreCase("pptx")) {
 			renderOption = new RenderOption();
 			setMSOfficeEmitterId("pptx", renderOption);
 			response.setContentType("application/vnd.openxmlformats-officedocument.presentationml.presentation");
-			response.setHeader("Content-disposition", "inline; filename=" + templateFileName + ".pptx");
+			httpUtils.setHeader(response, "Content-disposition", "inline; filename=" + templateFileName + ".pptx");
 		} else if (outputFormat != null && outputFormat.equalsIgnoreCase(IBirtConstants.POSTSCRIPT_RENDER_FORMAT)) {
 			renderOption = new PDFRenderOption();
 			renderOption.setOutputFormat(IBirtConstants.POSTSCRIPT_RENDER_FORMAT);
 			// renderOption.setOutputFileName(templateFileName + ".ps");
-			response.setHeader("Content-disposition", "inline; filename=" + templateFileName + ".ps");
-		} else if (outputFormat != null
-				&& outputFormat.equalsIgnoreCase(DataExtractionParameterUtil.EXTRACTION_FORMAT_CSV)) {
+
+			httpUtils.setHeader(response, "Content-disposition", "inline; filename=" + templateFileName + ".ps");
+		} else if (outputFormat != null && outputFormat.equalsIgnoreCase(DataExtractionParameterUtil.EXTRACTION_FORMAT_CSV)) {
+
 			logger.debug(" Output format parameter is CSV. Create document obj .");
 			prepareCSVRender(reportParams, request, design, userId, documentId, profile, kpiUrl, response, context,
 					birtReportEngine);
@@ -722,8 +736,8 @@ public class BirtReportServlet extends HttpServlet {
 			outputFormat = IBirtConstants.HTML_RENDER_FORMAT;
 			renderOption = prepareHtmlRenderOption(request);
 			renderOption.setOutputFormat(IBirtConstants.HTML_RENDER_FORMAT);
-			response.setContentType("text/html");
-			response.setHeader("Content-Type", "text/html");
+			httpUtils.setContentType(response);
+			httpUtils.setHeader(response, "Content-Type", "text/html");
 		}
 
 		IRunAndRenderTask runAndRenderTask = null;
@@ -944,7 +958,7 @@ public class BirtReportServlet extends HttpServlet {
 		try {
 			// Set the HTTP response
 			response.setContentType("application/zip");
-			response.setHeader("Content-disposition", "attachment; filename=reportcsv.zip");
+			httpUtils.setHeader(response, "Content-disposition", "attachment; filename=reportcsv.zip");
 
 			// ZipOutputStream directly on the response OutputStream
 			ZipOutputStream outZip = new ZipOutputStream(responseOut);
@@ -1009,8 +1023,8 @@ public class BirtReportServlet extends HttpServlet {
 		extractionOptions.setOutputStream(responseOut);
 
 		// Set the HTTP response
-		response.setContentType("text/csv");
-		response.setHeader("Content-disposition", "inline; filename=reportcsv.csv");
+		response.setContentType("text/csv"); 
+		httpUtils.setHeader(response, "Content-disposition", "inline; filename=reportcsv.csv");
 		dataExtractionTask.selectResultSet(resultSet.getResultSetName());
 		dataExtractionTask.extract(extractionOptions);
 		logger.debug("Extraction successfull " + resultSet.getResultSetName());

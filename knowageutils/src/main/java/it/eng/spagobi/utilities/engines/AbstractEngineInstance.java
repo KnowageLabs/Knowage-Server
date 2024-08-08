@@ -20,8 +20,6 @@ package it.eng.spagobi.utilities.engines;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
-
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
  *
@@ -41,6 +39,7 @@ public abstract class AbstractEngineInstance implements IEngineInstance {
 		setEnv( env );
 	}
 	
+	@Override
 	public String getId() {
 		return id;
 	}
@@ -49,18 +48,22 @@ public abstract class AbstractEngineInstance implements IEngineInstance {
 		this.id = id;
 	}
 	
+	@Override
 	public Map getEnv() {
 		return env;
 	}
 
+	@Override
 	public void setEnv(Map env) {
 		this.env = env;
 	}
 
+	@Override
 	public EngineAnalysisMetadata getAnalysisMetadata() {
 		return analysisMetadata;
 	}
 
+	@Override
 	public void setAnalysisMetadata(EngineAnalysisMetadata analysisMetadata) {
 		this.analysisMetadata = analysisMetadata;
 	}

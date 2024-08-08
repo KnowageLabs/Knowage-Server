@@ -100,6 +100,11 @@ import it.eng.spagobi.utilities.json.JSONUtils;
 public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO {
 
 	private static Logger logger = Logger.getLogger(DataSetDAOImpl.class);
+	private static final String OWNER = "owner";
+	private static final String IDS_CAT = "idsCat";
+	private static final String VALUE_ID = "valueId";
+	private static final String SHARED = "shared";
+	private static final String ENTERPRISE = "enterprise";
 
 	// ========================================================================================
 	// READ operations (cRud)
@@ -169,7 +174,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 	@Override
 	public Integer countBIObjAssociated(Integer dsId) {
 		logger.debug("IN");
-		Integer resultNumber = new Integer(0);
+		Integer resultNumber = 0;
 		Session session = null;
 		Transaction transaction = null;
 		try {
@@ -179,14 +184,14 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 			String hql = "select count(*) from SbiObjDataSet s where s.dsId = ? ";
 			Query aQuery = session.createQuery(hql);
 			aQuery.setInteger(0, dsId.intValue());
-			resultNumber = new Integer(((Long) aQuery.uniqueResult()).intValue());
+			resultNumber = ((Long) aQuery.uniqueResult()).intValue();
 
-		} catch (Throwable t) {
+		} catch (Exception e) {
 			if (transaction != null && transaction.isActive()) {
 				transaction.rollback();
 			}
 			throw new SpagoBIDAOException(
-					"Error while getting the objects associated with the data set with id " + dsId, t);
+					"Error while getting the objects associated with the data set with id " + dsId, e);
 		} finally {
 			if (session != null && session.isOpen()) {
 				session.close();
@@ -218,17 +223,17 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 				List idsCat = createIdsCatogriesList(devCategories);
 				String owner = ((UserProfile) getUserProfile()).getUserId().toString();
 				Query countQuery;
-				if (idsCat == null || idsCat.size() == 0) {
+				if (idsCat == null || idsCat.isEmpty()) {
 					countQuery = session
 							.createQuery("select count(*) from SbiDataSet sb where sb.active = ? and owner = :owner");
 					countQuery.setBoolean(0, true);
-					countQuery.setString("owner", owner);
+					countQuery.setString(OWNER, owner);
 				} else {
 					countQuery = session.createQuery(
 							"select count(*) from SbiDataSet sb where sb.active = ? and (sb.category.id IN (:idsCat) or owner = :owner)");
 					countQuery.setBoolean(0, true);
-					countQuery.setParameterList("idsCat", idsCat);
-					countQuery.setString("owner", owner);
+					countQuery.setParameterList(IDS_CAT, idsCat);
+					countQuery.setString(OWNER, owner);
 				}
 
 				resultNumber = (Long) countQuery.uniqueResult();
@@ -238,18 +243,18 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 				hqlQuery.setBoolean(0, true);
 				resultNumber = (Long) hqlQuery.uniqueResult();
 			}
-		} catch (Throwable t) {
+		} catch (Exception e) {
 			if (transaction != null && transaction.isActive()) {
 				transaction.rollback();
 			}
-			throw new SpagoBIDAOException("Error while loading the list of SbiDataSet", t);
+			throw new SpagoBIDAOException("Error while loading the list of SbiDataSet", e);
 		} finally {
 			if (session != null && session.isOpen()) {
 				session.close();
 			}
 			logger.debug("OUT");
 		}
-		return new Integer(resultNumber.intValue());
+		return resultNumber.intValue();
 	}
 
 	/**
@@ -280,8 +285,8 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 				Assert.assertNotNull(session, "session cannot be null");
 				transaction = session.beginTransaction();
 				Assert.assertNotNull(transaction, "transaction cannot be null");
-			} catch (Throwable t) {
-				throw new SpagoBIDAOException("An error occured while creating the new transaction", t);
+			} catch (Exception e) {
+				throw new SpagoBIDAOException("An error occured while creating the new transaction", e);
 			}
 
 			Query query = session.createQuery("from SbiDataSet h where h.active = ? and h.id.dsId = ?");
@@ -302,12 +307,12 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 				deleted = true;
 			}
 
-		} catch (Throwable t) {
+		} catch (Exception e) {
 			if (transaction != null && transaction.isActive()) {
 				transaction.rollback();
 			}
 			throw new SpagoBIDAOException("An unexpected error occured while deleting inactive versions of dataset "
-					+ "whose id is equal to [" + datasetId + "]", t);
+					+ "whose id is equal to [" + datasetId + "]", e);
 		} finally {
 			if (session != null && session.isOpen()) {
 				session.close();
@@ -344,8 +349,8 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 				Assert.assertNotNull(session, "session cannot be null");
 				transaction = session.beginTransaction();
 				Assert.assertNotNull(transaction, "transaction cannot be null");
-			} catch (Throwable t) {
-				throw new SpagoBIDAOException("An error occured while creating the new transaction", t);
+			} catch (Exception e) {
+				throw new SpagoBIDAOException("An error occured while creating the new transaction", e);
 			}
 
 			// check if dataset is used by document by querying SBI_OBJ_DATA_SET table
@@ -375,11 +380,9 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 			}
 
 			boolean bLovs = hasBILovAssociated(String.valueOf(datasetId));
-			// if (!objectsAssociated.isEmpty() || bObjects || bLovs ) {
 			if (!objectsAssociated.isEmpty() || !federationsAssociated.isEmpty() || bLovs) {
 				String message = "[deleteInUseDSError]: Dataset with id [" + datasetId + "] "
 						+ "cannot be erased because it is referenced by documents or federations or lovs.";
-				// throw new SpagoBIDOAException(message);
 				DatasetInUseException diue = new DatasetInUseException(message);
 				diue.setLov(bLovs);
 				ArrayList<String> objs = new ArrayList<>();
@@ -408,18 +411,16 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 					session.delete(sbiDataSet);
 
 					FederationDefinition fd = toReturn.getDatasetFederation();
-					if (fd != null) {
-						if (fd.isDegenerated()) {
+					if (fd != null && fd.isDegenerated()) {
 							logger.debug("The datset is derived so there is a linked federation");
 							SbiFederationDefinitionDAOHibImpl dao = (SbiFederationDefinitionDAOHibImpl) DAOFactory
 									.getFedetatedDatasetDAO();
 							dao.deleteFederatedDatasetById(fd.getFederation_id(), session);
 							logger.debug("Deleted the linked federation with id" + derivedFederationId);
-						}
 					}
 
 					// deletes all relations with the business class
-					Integer intDsId = Integer.valueOf(datasetId);
+					Integer intDsId = datasetId;
 					List<SbiMetaDsBc> lstBcs = DAOFactory.getSbiDsBcDAO().loadBcByDsIdAndTenant(intDsId,
 							sbiDataSet.getId().getOrganization());
 					for (SbiMetaDsBc dsBc : lstBcs) {
@@ -441,15 +442,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 				}
 				// if dataset is of type FILE, delete associated file as well
 				if (sbiDataSet.getType().equals(DataSetConstants.DS_FILE)) {
-					try {
-						JSONObject config = new JSONObject(sbiDataSet.getConfiguration());
-						String fileName = config.getString("fileName");
-						String fileDir = SpagoBIUtilities.getFileDatasetResourcePath();
-						File toDelete = new File(fileDir + File.separatorChar + fileName);
-						toDelete.delete();
-					} catch (Exception e) {
-						logger.error("Cannot delete file associated to dataset: " + sbiDataSet.getLabel(), e);
-					}
+					deleteFileAssociatedToDataset(sbiDataSet);
 				}
 			}
 
@@ -463,18 +456,18 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 
 		}
 
-		catch (Throwable t) {
+		catch (Exception e) {
 			if (transaction != null && transaction.isActive()) {
 				transaction.rollback();
 			}
-			if (t instanceof DatasetException) {
-				DatasetException de = (DatasetException) t;
+			if (e instanceof DatasetException) {
+				DatasetException de = (DatasetException) e;
 				throw de;
 			} else {
-				String msg = (t.getMessage() != null) ? t.getMessage()
+				String msg = (e.getMessage() != null) ? e.getMessage()
 						: "An unexpected error occured while deleting dataset " + "whose id is equal to [" + datasetId
 								+ "]";
-				throw new SpagoBIDAOException(msg, t);
+				throw new SpagoBIDAOException(msg, e);
 			}
 		} finally {
 			if (session != null && session.isOpen()) {
@@ -509,8 +502,8 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 				Assert.assertNotNull(session, "session cannot be null");
 				transaction = session.beginTransaction();
 				Assert.assertNotNull(transaction, "transaction cannot be null");
-			} catch (Throwable t) {
-				throw new SpagoBIDAOException("An error occured while creating the new transaction", t);
+			} catch (Exception e) {
+				throw new SpagoBIDAOException("An error occured while creating the new transaction", e);
 			}
 
 			// deletes all versions of the dataset specified
@@ -527,14 +520,14 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 
 			transaction.commit();
 
-		} catch (Throwable t) {
+		} catch (Exception e) {
 			if (transaction != null && transaction.isActive()) {
 				transaction.rollback();
 			}
-			String msg = (t.getMessage() != null) ? t.getMessage()
+			String msg = (e.getMessage() != null) ? e.getMessage()
 					: "An unexpected error occured while deleting dataset " + "whose id is equal to [" + datasetId
 							+ "]";
-			throw new SpagoBIDAOException(msg, t);
+			throw new SpagoBIDAOException(msg, e);
 		} finally {
 			if (session != null && session.isOpen()) {
 				session.close();
@@ -573,8 +566,8 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 				Assert.assertNotNull(session, "session cannot be null");
 				transaction = session.beginTransaction();
 				Assert.assertNotNull(transaction, "transaction cannot be null");
-			} catch (Throwable t) {
-				throw new SpagoBIDAOException("An error occured while creating the new transaction", t);
+			} catch (Exception e) {
+				throw new SpagoBIDAOException("An error occured while creating the new transaction", e);
 			}
 
 			// SbiDataSet sbiDataSet = (SbiDataSet) session.load(SbiDataSet.class, datasetVersionId);
@@ -590,12 +583,12 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 				deleted = true;
 			}
 
-		} catch (Throwable t) {
+		} catch (Exception e) {
 			if (transaction != null && transaction.isActive()) {
 				transaction.rollback();
 			}
 			throw new SpagoBIDAOException("An unexpected error occured while deleting dataset version"
-					+ "whose version num is equal to [" + datasetVersionNum + "]", t);
+					+ "whose version num is equal to [" + datasetVersionNum + "]", e);
 		} finally {
 			if (session != null && session.isOpen()) {
 				session.close();
@@ -627,12 +620,12 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 				hibQuery.setInteger(0, dsId);
 				toReturn = (Integer) hibQuery.uniqueResult();
 			}
-		} catch (Throwable t) {
+		} catch (Exception e) {
 			if (transaction != null && transaction.isActive()) {
 				transaction.rollback();
 			}
 			throw new SpagoBIDAOException(
-					"Error while modifing the data Set with id " + ((dsId == null) ? "" : String.valueOf(dsId)), t);
+					"Error while modifing the data Set with id " + ((dsId == null) ? "" : String.valueOf(dsId)), e);
 		} finally {
 			if (session != null && session.isOpen()) {
 				session.close();
@@ -664,19 +657,15 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 
 			String hql = " from SbiLov s where datasetId = ?";
 			Query aQuery = session.createQuery(hql);
-			aQuery.setInteger(0, dsIdInt.intValue());
+			aQuery.setInteger(0, Integer.parseInt(dsId));
 			List biLovAssocitedWithDs = aQuery.list();
-			if (biLovAssocitedWithDs.size() > 0)
-				bool = true;
-			else
-				bool = false;
+			bool = !biLovAssocitedWithDs.isEmpty();
 			transaction.commit();
-		} catch (Throwable t) {
+		} catch (Exception e) {
 			if (transaction != null && transaction.isActive()) {
 				transaction.rollback();
 			}
-			throw new SpagoBIDAOException("Error while getting the lovs associated with the data set with id " + dsId,
-					t);
+			throw new SpagoBIDAOException("Error while getting the lovs associated with the data set with id " + dsId, e);
 		} finally {
 			if (session != null && session.isOpen()) {
 				session.close();
@@ -751,12 +740,12 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 			else
 				toReturn = true;
 
-		} catch (Throwable t) {
+		} catch (Exception e) {
 			if (transaction != null && transaction.isActive()) {
 				transaction.rollback();
 			}
 			throw new SpagoBIDAOException(
-					"Error while getting the objects associated with the data set with id " + dsId, t);
+					"Error while getting the objects associated with the data set with id " + dsId, e);
 		} finally {
 			if (session != null && session.isOpen()) {
 				session.close();
@@ -788,7 +777,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 
 		logger.debug("IN");
 
-		boolean keepPreviousSession = optionalDbSession != null ? true : false;
+		boolean keepPreviousSession = (optionalDbSession != null);
 
 		idToReturn = null;
 		session = null;
@@ -801,8 +790,8 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 					Assert.assertNotNull(session, "session cannot be null");
 					transaction = session.beginTransaction();
 					Assert.assertNotNull(transaction, "transaction cannot be null");
-				} catch (Throwable t) {
-					throw new SpagoBIDAOException("An error occured while creating the new transaction", t);
+				} catch (Exception e) {
+					throw new SpagoBIDAOException("An error occured while creating the new transaction", e);
 				}
 			} else {
 				session = optionalDbSession;
@@ -810,7 +799,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 
 			SbiDomains transformer = null;
 			if (dataSet.getTransformerId() != null) {
-				Criterion aCriterion = Restrictions.eq("valueId", dataSet.getTransformerId());
+				Criterion aCriterion = Restrictions.eq(VALUE_ID, dataSet.getTransformerId());
 				Criteria criteria = session.createCriteria(SbiDomains.class);
 				criteria.add(aCriterion);
 
@@ -835,7 +824,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 			}
 			SbiDomains scope = null;
 			if (dataSet.getScopeId() != null) {
-				Criterion aCriterion = Restrictions.eq("valueId", dataSet.getScopeId());
+				Criterion aCriterion = Restrictions.eq(VALUE_ID, dataSet.getScopeId());
 				Criteria criteria = session.createCriteria(SbiDomains.class);
 				criteria.add(aCriterion);
 				scope = (SbiDomains) criteria.uniqueResult();
@@ -876,7 +865,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 			String sbiVersionIn = hibDataSet.getCommonInfo().getSbiVersionIn();
 			hibDataSet.setUserIn(userIn);
 			hibDataSet.setSbiVersionIn(sbiVersionIn);
-			hibDataSet.getId().setVersionNum(1);
+			hibDataSet.getId().changeVersionNum(1);
 			hibDataSet.getId().setOrganization(hibDataSet.getCommonInfo().getOrganization());
 			hibDataSet.setTimeIn(currentTStamp);
 			// hibDataSet.setOrganization(hibDataSet.getCommonInfo().getOrganization());
@@ -943,11 +932,11 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 
 			DataSetEventManager.getINSTANCE().notifyInsert(dataSet);
 
-		} catch (Throwable t) {
+		} catch (Exception e) {
 			if (transaction != null && transaction.isActive()) {
 				transaction.rollback();
 			}
-			throw new SpagoBIDAOException("An unexpected error occured while inserting dataset", t);
+			throw new SpagoBIDAOException("An unexpected error occured while inserting dataset", e);
 		} finally {
 			if (!keepPreviousSession && session != null && session.isOpen()) {
 				session.close();
@@ -989,8 +978,8 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 				Assert.assertNotNull(session, "session cannot be null");
 				transaction = session.beginTransaction();
 				Assert.assertNotNull(transaction, "transaction cannot be null");
-			} catch (Throwable t) {
-				throw new SpagoBIDAOException("An error occured while creating the new transaction", t);
+			} catch (Exception e) {
+				throw new SpagoBIDAOException("An error occured while creating the new transaction", e);
 			}
 
 			Query hibQuery = session.createQuery("from SbiDataSet h where h.active = ? and h.id.dsId = ?");
@@ -1004,12 +993,12 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 			}
 			transaction.commit();
 
-		} catch (Throwable t) {
+		} catch (Exception e) {
 			if (transaction != null && transaction.isActive()) {
 				transaction.rollback();
 			}
 			throw new SpagoBIDAOException(
-					"An unexpected error occured while loading dataset whose id is equal to [" + id + "]", t);
+					"An unexpected error occured while loading dataset whose id is equal to [" + id + "]", e);
 		} finally {
 			if (session != null && session.isOpen()) {
 				session.close();
@@ -1041,8 +1030,8 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 				Assert.assertNotNull(session, "session cannot be null");
 				transaction = session.beginTransaction();
 				Assert.assertNotNull(transaction, "transaction cannot be null");
-			} catch (Throwable t) {
-				throw new SpagoBIDAOException("An error occured while creating the new transaction", t);
+			} catch (Exception e) {
+				throw new SpagoBIDAOException("An error occured while creating the new transaction", e);
 			}
 			Query hibQuery = session.createQuery("from SbiDataSet h where h.active = ? and h.label = ? ");
 			hibQuery.setBoolean(0, true);
@@ -1056,12 +1045,12 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 
 			transaction.commit();
 
-		} catch (Throwable t) {
+		} catch (Exception e) {
 			if (transaction != null && transaction.isActive()) {
 				transaction.rollback();
 			}
 			throw new SpagoBIDAOException(
-					"An unexpected error occured while loading dataset whose label is equal to [" + label + "]", t);
+					"An unexpected error occured while loading dataset whose label is equal to [" + label + "]", e);
 		} finally {
 			if (session != null && session.isOpen()) {
 				session.close();
@@ -1103,12 +1092,12 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 
 			transaction.commit();
 
-		} catch (Throwable t) {
+		} catch (Exception e) {
 			if (transaction != null && transaction.isActive()) {
 				transaction.rollback();
 			}
 			throw new SpagoBIDAOException(
-					"An unexpected error occured while loading dataset whose name is equal to [" + name + "]", t);
+					"An unexpected error occured while loading dataset whose name is equal to [" + name + "]", e);
 		} finally {
 			if (session != null && session.isOpen()) {
 				session.close();
@@ -1202,9 +1191,9 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 
 			if (owner != null) {
 				statement.append(" and (");
-				statement.append(includeOwned ? "h.owner = :owner" : "h.owner != :owner");
+				statement.append(Boolean.TRUE.equals(includeOwned) ? "h.owner = :owner" : "h.owner != :owner");
 				statement.append(") ");
-				parameters.put("owner", owner);
+				parameters.put(OWNER, owner);
 			}
 
 			if (type != null) {
@@ -1214,7 +1203,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 
 			if (categoryList != null) {
 				logger.debug("We'll take in consideration categories");
-				if (categoryList.size() > 0) {
+				if (!categoryList.isEmpty()) {
 					logger.debug("User has one or more categories");
 					if (owner != null && includeOwned) {
 						logger.debug("The owner can see all it's datasets");
@@ -1242,7 +1231,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 				parameters.put("implementation", implementation);
 			}
 
-			if (!showDerivedDatasets) {
+			if (Boolean.FALSE.equals(showDerivedDatasets)) {
 				statement.append(" and h.federation is null ");
 			}
 
@@ -1260,9 +1249,9 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 			}
 
 			results = executeQuery(query, session);
-		} catch (Throwable t) {
+		} catch (Exception e) {
 			throw new SpagoBIDAOException(
-					"An unexpected error occured while loading dataset whose owner is equal to [" + owner + "]", t);
+					"An unexpected error occured while loading dataset whose owner is equal to [" + owner + "]", e);
 		} finally {
 			if (session != null && session.isOpen()) {
 				session.close();
@@ -1332,7 +1321,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 			StringBuilder statement = new StringBuilder(
 					"select distinct(dst.dataSet) from SbiDatasetTag dst where dst.dataSet.active = ? ");
 
-			if (scope.equalsIgnoreCase("owned") || scope.equalsIgnoreCase("shared")) {
+			if (scope.equalsIgnoreCase("owned") || scope.equalsIgnoreCase(SHARED)) {
 				owner = user.getUserId().toString();
 				if (owner != null) {
 					if (scope.equalsIgnoreCase("owned"))
@@ -1342,12 +1331,12 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 				}
 			}
 
-			if (scope.equalsIgnoreCase("enterprise") || scope.equalsIgnoreCase("shared")
+			if (scope.equalsIgnoreCase(ENTERPRISE) || scope.equalsIgnoreCase(SHARED)
 					|| scope.equalsIgnoreCase("all")) {
 				statement.append("and dst.dataSet.scope.valueCd = :domain ");
-				if (scope.equalsIgnoreCase("enterprise"))
+				if (scope.equalsIgnoreCase(ENTERPRISE))
 					domain = scope.toUpperCase();
-				else if (scope.equalsIgnoreCase("shared"))
+				else if (scope.equalsIgnoreCase(SHARED))
 					domain = "USER";
 				else {
 					domains = new String[2];
@@ -1374,7 +1363,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 			query.setBoolean(0, true);
 
 			if (owner != null) {
-				query.setString("owner", owner);
+				query.setString(OWNER, owner);
 			}
 
 			if (domain != null)
@@ -1382,7 +1371,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 
 			if (domains != null && domains.length > 0) {
 				query.setString("user", domains[0]);
-				query.setString("enterprise", domains[1]);
+				query.setString(ENTERPRISE, domains[1]);
 			}
 
 			if (categoryList != null && !categoryList.isEmpty()) {
@@ -1487,7 +1476,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 
 			if (offset == null) {
 				logger.warn("Input parameter [offset] is null. It will be set to [0]");
-				offset = new Integer(0);
+				offset = 0;
 			}
 			if (fetchSize == null) {
 				logger.warn("Input parameter [offset] is null. It will be set to [" + Integer.MAX_VALUE + "]");
@@ -1522,7 +1511,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 			}
 
 			if (!isAdmin) {
-				if (idsCat == null || idsCat.size() == 0) {
+				if (idsCat == null || idsCat.isEmpty()) {
 					sb.append("and ds.owner = :owner ");
 				} else {
 					sb.append("and (ds.category.id in (:idsCat) or ds.owner = :owner) ");
@@ -1553,11 +1542,11 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 
 			Query listQuery = session.createQuery(sb.toString());
 
-			if (idsCat != null && idsCat.size() > 0) {
-				listQuery.setParameterList("idsCat", idsCat);
+			if (idsCat != null && !idsCat.isEmpty()) {
+				listQuery.setParameterList(IDS_CAT, idsCat);
 			}
 			if (!isAdmin) {
-				listQuery.setString("owner", owner);
+				listQuery.setString(OWNER, owner);
 			}
 			if (valuefilter != null) {
 				listQuery.setString("search", "%" + valuefilter.toUpperCase() + "%");
@@ -1579,11 +1568,11 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 				}
 			}
 
-		} catch (Throwable t) {
+		} catch (Exception e) {
 			if (transaction != null && transaction.isActive()) {
 				transaction.rollback();
 			}
-			throw new SpagoBIDAOException("An unexpected error has occured while loading datasets with tags", t);
+			throw new SpagoBIDAOException("An unexpected error has occured while loading datasets with tags", e);
 		} finally {
 			if (session != null && session.isOpen())
 				session.close();
@@ -1609,7 +1598,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 
 			if (offset == null) {
 				logger.warn("Input parameter [offset] is null. It will be set to [0]");
-				offset = new Integer(0);
+				offset = 0;
 			}
 			if (fetchSize == null) {
 				logger.warn("Input parameter [offset] is null. It will be set to [" + Integer.MAX_VALUE + "]");
@@ -1621,13 +1610,13 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 				Assert.assertNotNull(session, "session cannot be null");
 				transaction = session.beginTransaction();
 				Assert.assertNotNull(transaction, "transaction cannot be null");
-			} catch (Throwable t) {
-				throw new SpagoBIDAOException("An error occured while creating the new transaction", t);
+			} catch (Exception e) {
+				throw new SpagoBIDAOException("An error occured while creating the new transaction", e);
 			}
 
-			Query countQuery = session.createQuery("select count(*) " + hsql);
+			Query countQuery = session.createQuery(String.format("select count(*) %s", hsql));
 			Long temp = (Long) countQuery.uniqueResult();
-			Integer resultNumber = new Integer(temp.intValue());
+			Integer resultNumber = temp.intValue();
 
 			offset = offset < 0 ? 0 : offset;
 			if (resultNumber > 0) {
@@ -1646,7 +1635,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 
 					List<IDataSet> oldDsVersion = new ArrayList();
 
-					if (Integer.valueOf(sbiDatasetVersion.getId().getVersionNum()) != null) {
+					if (sbiDatasetVersion.getId().getVersionNum() != null) {
 						Integer dsId = sbiDatasetVersion.getId().getDsId();
 						Query hibQuery = session.createQuery("from SbiDataSet h where h.active = ? and h.id.dsId = ?");
 						hibQuery.setBoolean(0, false);
@@ -1669,11 +1658,11 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 				}
 			}
 
-		} catch (Throwable t) {
+		} catch (Exception e) {
 			if (transaction != null && transaction.isActive()) {
 				transaction.rollback();
 			}
-			throw new SpagoBIDAOException("An unexpected error occured while loading dataset versions", t);
+			throw new SpagoBIDAOException("An unexpected error occured while loading dataset versions", e);
 		} finally {
 			if (session != null && session.isOpen()) {
 				session.close();
@@ -1709,7 +1698,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 
 			if (offset == null) {
 				logger.warn("Input parameter [offset] is null. It will be set to [0]");
-				offset = new Integer(0);
+				offset = 0;
 			}
 			if (fetchSize == null) {
 				logger.warn("Input parameter [offset] is null. It will be set to [" + Integer.MAX_VALUE + "]");
@@ -1721,8 +1710,8 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 				Assert.assertNotNull(session, "session cannot be null");
 				transaction = session.beginTransaction();
 				Assert.assertNotNull(transaction, "transaction cannot be null");
-			} catch (Throwable t) {
-				throw new SpagoBIDAOException("An error occured while creating the new transaction", t);
+			} catch (Exception e) {
+				throw new SpagoBIDAOException("An error occured while creating the new transaction", e);
 			}
 
 			// if not admin filter by category and owner
@@ -1733,7 +1722,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 
 				idsCat = createIdsCatogriesList(devCategories);
 
-				if (idsCat == null || idsCat.size() == 0) {
+				if (idsCat == null || idsCat.isEmpty()) {
 					hsql = hsql + " and h.owner = :owner";
 				} else {
 					hsql = hsql + " and (h.category.id IN (:idsCat) or h.owner = :owner)";
@@ -1745,10 +1734,10 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 			offset = offset < 0 ? 0 : offset;
 			Query listQuery = session.createQuery(hsql);
 			if (idsCat != null && idsCat.size() > 0) {
-				listQuery.setParameterList("idsCat", idsCat);
+				listQuery.setParameterList(IDS_CAT, idsCat);
 			}
 			if (!isAdmin) {
-				listQuery.setString("owner", owner);
+				listQuery.setString(OWNER, owner);
 			}
 
 			listQuery.setFirstResult(offset);
@@ -1758,11 +1747,11 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 
 			addGuiDataSet(toReturn, sbiDatasetVersions);
 
-		} catch (Throwable t) {
+		} catch (Exception e) {
 			if (transaction != null && transaction.isActive()) {
 				transaction.rollback();
 			}
-			throw new SpagoBIDAOException("An unexpected error occured while loading dataset versions", t);
+			throw new SpagoBIDAOException("An unexpected error occured while loading dataset versions", e);
 		} finally {
 			if (session != null && session.isOpen()) {
 				session.close();
@@ -1793,8 +1782,8 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 				Assert.assertNotNull(session, "session cannot be null");
 				transaction = session.beginTransaction();
 				Assert.assertNotNull(transaction, "transaction cannot be null");
-			} catch (Throwable t) {
-				throw new SpagoBIDAOException("An error occured while creating the new transaction", t);
+			} catch (Exception e) {
+				throw new SpagoBIDAOException("An error occured while creating the new transaction", e);
 			}
 
 			// if not admin filter by category and owner
@@ -1816,10 +1805,10 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 
 			Query listQuery = session.createQuery(statement.toString());
 			if (idsCat != null && idsCat.size() > 0) {
-				listQuery.setParameterList("idsCat", idsCat);
+				listQuery.setParameterList(IDS_CAT, idsCat);
 			}
 			if (!isAdmin) {
-				listQuery.setString("owner", owner);
+				listQuery.setString(OWNER, owner);
 			}
 
 			if (dsType != null)
@@ -1827,11 +1816,11 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 
 			List<SbiDataSet> sbiDatasetVersions = listQuery.list();
 			addGuiDataSet(toReturn, sbiDatasetVersions);
-		} catch (Throwable t) {
+		} catch (Exception e) {
 			if (transaction != null && transaction.isActive()) {
 				transaction.rollback();
 			}
-			throw new SpagoBIDAOException("An unexpected error occured while loading dataset versions", t);
+			throw new SpagoBIDAOException("An unexpected error occured while loading dataset versions", e);
 		} finally {
 			if (session != null && session.isOpen()) {
 				session.close();
@@ -1880,7 +1869,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 
 			Query query = session.createQuery(statement.toString());
 			query.setBoolean("active", true);
-			query.setString("owner", userProfile.getUserId().toString());
+			query.setString(OWNER, userProfile.getUserId().toString());
 
 			if (categoryIds != null && !categoryIds.isEmpty())
 				query.setParameterList("categories", categoryIds);
@@ -1973,7 +1962,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 
 			if (offset == null) {
 				logger.warn("Input parameter [offset] is null. It will be set to [0]");
-				offset = new Integer(0);
+				offset = 0;
 			}
 			if (fetchSize == null) {
 				logger.warn("Input parameter [offset] is null. It will be set to [" + Integer.MAX_VALUE + "]");
@@ -1985,8 +1974,8 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 				Assert.assertNotNull(session, "session cannot be null");
 				transaction = session.beginTransaction();
 				Assert.assertNotNull(transaction, "transaction cannot be null");
-			} catch (Throwable t) {
-				throw new SpagoBIDAOException("An error occured while creating the new transaction", t);
+			} catch (Exception e) {
+				throw new SpagoBIDAOException("An error occured while creating the new transaction", e);
 			}
 
 			List<Domain> devCategories = new LinkedList<>();
@@ -1996,17 +1985,17 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 				List idsCat = createIdsCatogriesList(devCategories);
 				String owner = ((UserProfile) getUserProfile()).getUserId().toString();
 				Query countQuery = null;
-				if (idsCat != null && idsCat.size() > 0) {
+				if (idsCat != null && !idsCat.isEmpty()) {
 					countQuery = session.createQuery(
 							"select count(*) from SbiDataSet sb where sb.active = ? and (sb.category.id  IN (:idsCat) or sb.owner = :owner) ");
 					countQuery.setBoolean(0, true);
-					countQuery.setParameterList("idsCat", idsCat);
-					countQuery.setString("owner", owner);
+					countQuery.setParameterList(IDS_CAT, idsCat);
+					countQuery.setString(OWNER, owner);
 				} else {
 					countQuery = session.createQuery(
 							"select count(*) from SbiDataSet sb where sb.active = ? and  sb.owner = :owner) ");
 					countQuery.setBoolean(0, true);
-					countQuery.setString("owner", owner);
+					countQuery.setString(OWNER, owner);
 				}
 
 				Long resultNumber = (Long) countQuery.uniqueResult();
@@ -2020,8 +2009,8 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 				listQuery = session.createQuery(
 						"from SbiDataSet h where h.active = ? and (h.category.id IN (:idsCat) or h.owner = :owner) order by h.name");
 				listQuery.setBoolean(0, true);
-				listQuery.setParameterList("idsCat", idsCat);
-				listQuery.setString("owner", owner);
+				listQuery.setParameterList(IDS_CAT, idsCat);
+				listQuery.setString(OWNER, owner);
 				listQuery.setFirstResult(offset);
 			} else {
 				Query countQuery = session.createQuery("select count(*) from SbiDataSet sb where sb.active = ? ");
@@ -2051,7 +2040,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 					IDataSet ds = DataSetFactory.toDataSet(hibDataSet, this.getUserProfile());
 					List<IDataSet> oldDsVersion = new ArrayList();
 
-					if (Integer.valueOf(hibDataSet.getId().getDsId()) != null) {
+					if (hibDataSet.getId().getDsId() != null) {
 						Integer dsId = hibDataSet.getId().getDsId();
 						Query hibQuery = session.createQuery("from SbiDataSet h where h.active = ? and h.id.dsId = ?");
 						hibQuery.setBoolean(0, false);
@@ -2074,12 +2063,12 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 					toReturn.add(ds);
 				}
 			}
-		} catch (Throwable t) {
+		} catch (Exception e) {
 			if (transaction != null && transaction.isActive()) {
 				transaction.rollback();
 			}
-			t.printStackTrace();
-			throw new SpagoBIDAOException("An unexpected error occured while loading datasets", t);
+			logger.error("An unexpected error occured while loading datasets",e);
+			throw new SpagoBIDAOException("An unexpected error occured while loading datasets", e);
 		} finally {
 			if (session != null && session.isOpen()) {
 				session.close();
@@ -2114,7 +2103,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 
 			if (offset == null) {
 				logger.warn("Input parameter [offset] is null. It will be set to [0]");
-				offset = new Integer(0);
+				offset = 0;
 			}
 			if (fetchSize == null) {
 				logger.warn("Input parameter [offset] is null. It will be set to [" + Integer.MAX_VALUE + "]");
@@ -2126,8 +2115,8 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 				Assert.assertNotNull(session, "session cannot be null");
 				transaction = session.beginTransaction();
 				Assert.assertNotNull(transaction, "transaction cannot be null");
-			} catch (Throwable t) {
-				throw new SpagoBIDAOException("An error occured while creating the new transaction", t);
+			} catch (Exception e) {
+				throw new SpagoBIDAOException("An error occured while creating the new transaction", e);
 			}
 
 			Query countQuery = session.createQuery("select count(*) from SbiDataSet sb where sb.active = ? ");
@@ -2156,7 +2145,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 					IDataSet ds = DataSetFactory.toDataSet(hibDataSet, this.getUserProfile());
 					List<IDataSet> oldDsVersion = new ArrayList();
 
-					if (Integer.valueOf(hibDataSet.getId().getDsId()) != null) {
+					if (hibDataSet.getId().getDsId() != null) {
 						Integer dsId = hibDataSet.getId().getDsId();
 						Query hibQuery = session.createQuery(
 								"from SbiDataSet h where h.active = ? and h.id.dsId = ?  and h.owner = ?  ");
@@ -2180,11 +2169,11 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 					toReturn.add(ds);
 				}
 			}
-		} catch (Throwable t) {
+		} catch (Exception e) {
 			if (transaction != null && transaction.isActive()) {
 				transaction.rollback();
 			}
-			throw new SpagoBIDAOException("An unexpected error occured while loading datasets", t);
+			throw new SpagoBIDAOException("An unexpected error occured while loading datasets", e);
 		} finally {
 			if (session != null && session.isOpen()) {
 				session.close();
@@ -2220,7 +2209,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 
 			if (offset == null) {
 				logger.warn("Input parameter [offset] is null. It will be set to [0]");
-				offset = new Integer(0);
+				offset = 0;
 			}
 			if (fetchSize == null) {
 				logger.warn("Input parameter [offset] is null. It will be set to [" + Integer.MAX_VALUE + "]");
@@ -2232,8 +2221,8 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 				Assert.assertNotNull(session, "session cannot be null");
 				transaction = session.beginTransaction();
 				Assert.assertNotNull(transaction, "transaction cannot be null");
-			} catch (Throwable t) {
-				throw new SpagoBIDAOException("An error occured while creating the new transaction", t);
+			} catch (Exception e) {
+				throw new SpagoBIDAOException("An error occured while creating the new transaction", e);
 			}
 
 			Query countQuery = session.createQuery("select count(*) from SbiDataSet ds where ds.active = ?");
@@ -2251,11 +2240,11 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 				listQuery.setMaxResults(fetchSize);
 			toReturn = listQuery.list();
 
-		} catch (Throwable t) {
+		} catch (Exception e) {
 			if (transaction != null && transaction.isActive()) {
 				transaction.rollback();
 			}
-			throw new SpagoBIDAOException("An unexpected error occured while loading datasets", t);
+			throw new SpagoBIDAOException("An unexpected error occured while loading datasets", e);
 		} finally {
 			if (session != null && session.isOpen()) {
 				session.close();
@@ -2330,8 +2319,8 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 					Assert.assertNotNull(session, "session cannot be null");
 					transaction = session.beginTransaction();
 					Assert.assertNotNull(transaction, "transaction cannot be null");
-				} catch (Throwable t) {
-					throw new SpagoBIDAOException("An error occured while creating the new transaction", t);
+				} catch (Exception e) {
+					throw new SpagoBIDAOException("An error occured while creating the new transaction", e);
 				}
 			} else {
 				session = optionalDbSession;
@@ -2344,7 +2333,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 				hibDataSet.setActive(true);
 				SbiDomains transformer = null;
 				if (dataSet.getTransformerId() != null) {
-					Criterion aCriterion = Restrictions.eq("valueId", dataSet.getTransformerId());
+					Criterion aCriterion = Restrictions.eq(VALUE_ID, dataSet.getTransformerId());
 					Criteria criteria = session.createCriteria(SbiDomains.class);
 					criteria.add(aCriterion);
 					transformer = (SbiDomains) criteria.uniqueResult();
@@ -2366,7 +2355,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 
 				SbiDomains scope = null;
 				if (dataSet.getScopeId() != null) {
-					Criterion aCriterion = Restrictions.eq("valueId", dataSet.getScopeId());
+					Criterion aCriterion = Restrictions.eq(VALUE_ID, dataSet.getScopeId());
 					Criteria criteria = session.createCriteria(SbiDomains.class);
 					criteria.add(aCriterion);
 					scope = (SbiDomains) criteria.uniqueResult();
@@ -2480,12 +2469,12 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 				}
 				DataSetEventManager.getINSTANCE().notifyChange(dataSet);
 			}
-		} catch (Throwable t) {
+		} catch (Exception e) {
 			if (transaction != null && transaction.isActive()) {
 				transaction.rollback();
 			}
 			throw new SpagoBIDAOException("Error while modifing the data Set with id "
-					+ ((dataSet == null) ? "" : String.valueOf(dataSet.getId())), t);
+					+ ((dataSet == null) ? "" : String.valueOf(dataSet.getId())), e);
 		} finally {
 			if (!keepPreviousSession && session != null && session.isOpen()) {
 				session.close();
@@ -2588,12 +2577,12 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 				DataSetEventManager.getINSTANCE().notifyRestoreVersion(oldDataSet, toReturn);
 
 			}
-		} catch (Throwable t) {
+		} catch (Exception e) {
 			if (transaction != null && transaction.isActive()) {
 				transaction.rollback();
 			}
 			throw new SpagoBIDAOException(
-					"Error while modifing the data Set with id " + ((dsId == null) ? "" : String.valueOf(dsId)), t);
+					"Error while modifing the data Set with id " + ((dsId == null) ? "" : String.valueOf(dsId)), e);
 		} finally {
 			if (session != null && session.isOpen()) {
 				session.close();
@@ -2634,8 +2623,8 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 			Assert.assertNotNull(session, "session cannot be null");
 			transaction = session.beginTransaction();
 			Assert.assertNotNull(transaction, "transaction cannot be null");
-		} catch (Throwable t) {
-			throw new SpagoBIDAOException("An error occured while creating the new transaction", t);
+		} catch (Exception e) {
+			throw new SpagoBIDAOException("An error occured while creating the new transaction", e);
 		}
 
 		return transaction;
@@ -2666,11 +2655,11 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 			List<SbiDataSet> sbiDataSetList = query.list();
 			results = parseResult(sbiDataSetList);
 			transaction.commit();
-		} catch (Throwable t) {
+		} catch (Exception e) {
 			if (transaction != null && transaction.isActive()) {
 				transaction.rollback();
 			}
-			throw new SpagoBIDAOException("An unexpected error occured while loading dataset", t);
+			throw new SpagoBIDAOException("An unexpected error occured while loading dataset", e);
 		} finally {
 			logger.debug("OUT");
 		}
@@ -2732,13 +2721,13 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 		Query query = null;
 		if (isInsert) {
 			hql = " select max(sb.id.dsId) as maxId from SbiDataSet sb ";
-			toReturn.setVersionNum(new Integer("1"));
+			toReturn.changeVersionNum(new Integer("1"));
 			query = aSession.createQuery(hql);
 		} else {
 			hql = " select max(sb.id.versionNum) as maxId, sb.id.organization as organization from SbiDataSet sb where sb.id.dsId = ? group by organization";
 			query = aSession.createQuery(hql);
 			query.setInteger(0, dataSet.getId());
-			toReturn.setDsId(dataSet.getId());
+			toReturn.changeDsId(dataSet.getId());
 		}
 
 		List result = query.list();
@@ -2759,20 +2748,20 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 		}
 		logger.debug("Current max prog : " + maxId);
 		if (maxId == null) {
-			nextId = new Integer(1);
+			nextId = 1;
 		} else {
-			nextId = new Integer(maxId.intValue() + 1);
+			nextId = maxId.intValue() + 1;
 		}
 
 		if (isInsert) {
 			logger.debug("Nextid: " + nextId);
-			toReturn.setDsId(nextId);
+			toReturn.changeDsId(nextId);
 		} else {
 			logger.debug("NextVersion: " + nextId);
 			if (organization != null) {
 				toReturn.setOrganization(organization);
 			}
-			toReturn.setVersionNum(nextId);
+			toReturn.changeVersionNum(nextId);
 		}
 
 		return toReturn;
@@ -2880,12 +2869,12 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 					// String uniqueName = metaBC.getName().toLowerCase();
 
 					// sets the new bcId
-					SbiMetaDsBcId metaDsBcId = new SbiMetaDsBcId();
-					metaDsBcId.setOrganization(ds.getId().getOrganization());
+					SbiMetaDsBcId metaDsBcId = new SbiMetaDsBcId(ds.getId().getDsId(), ds.getId().getVersionNum(),ds.getId().getOrganization(), metaBC.getBcId() );
+					/*metaDsBcId.setOrganization(ds.getId().getOrganization());
 					metaDsBcId.setVersionNum(ds.getId().getVersionNum());
 					metaDsBcId.setDsId(ds.getId().getDsId());
 					metaDsBcId.setBcId(metaBC.getBcId());
-
+                    */
 					// Loads old records to delete (previous version)
 					List<SbiMetaDsBc> lstDsBc = DAOFactory.getDsBcDAO().loadDsBcByKey(metaDsBcId);
 					for (SbiMetaDsBc el : lstDsBc) {
@@ -2898,9 +2887,9 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 					insertedMap.put(entityName, true);
 				}
 			}
-		} catch (Throwable t) {
+		} catch (Exception e) {
 			throw new SpagoBIDAOException(
-					"An unexpected error occured while insert relations between dataset and business class", t);
+					"An unexpected error occured while insert relations between dataset and business class", e);
 		} finally {
 			logger.debug("OUT");
 		}
@@ -2960,7 +2949,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 			}
 
 			if (StringUtils.isNotEmpty(owner)) {
-				cr.add(Restrictions.eq("owner", owner));
+				cr.add(Restrictions.eq(OWNER, owner));
 			}
 
 			if (StringUtils.isNotEmpty(sortByColumn)) {
@@ -3016,8 +3005,8 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 				Assert.assertNotNull(session, "session cannot be null");
 				transaction = session.beginTransaction();
 				Assert.assertNotNull(transaction, "transaction cannot be null");
-			} catch (Throwable t) {
-				throw new SpagoBIDAOException("An error occured while creating the new transaction", t);
+			} catch (Exception e) {
+				throw new SpagoBIDAOException("An error occured while creating the new transaction", e);
 			}
 
 			Query hibQuery = session.createQuery(
@@ -3038,13 +3027,13 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 
 			transaction.commit();
 
-		} catch (Throwable t) {
+		} catch (Exception e) {
 			if (transaction != null && transaction.isActive()) {
 				transaction.rollback();
 			}
 			throw new SpagoBIDAOException(
 					"An unexpected error occured while loading dataset whose label is equal to [" + sourceLabel + "]",
-					t);
+					e);
 		} finally {
 			if (session != null && session.isOpen()) {
 				session.close();
@@ -3101,7 +3090,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 	@Override
 	public Integer countCategories(Integer catId) {
 		logger.debug("IN");
-		Integer resultNumber = new Integer(0);
+		Integer resultNumber = 0;
 		Session session = null;
 		Transaction transaction = null;
 		try {
@@ -3111,13 +3100,13 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 			String hql = "select count(distinct id.dsId) from SbiDataSet s where s.category.id = ? ";
 			Query aQuery = session.createQuery(hql);
 			aQuery.setInteger(0, catId.intValue());
-			resultNumber = new Integer(((Long) aQuery.uniqueResult()).intValue());
+			resultNumber = ((Long) aQuery.uniqueResult()).intValue();
 
-		} catch (Throwable t) {
+		} catch (Exception e) {
 			if (transaction != null && transaction.isActive()) {
 				transaction.rollback();
 			}
-			throw new SpagoBIDAOException("Error while getting the category with the data set with id " + catId, t);
+			throw new SpagoBIDAOException("Error while getting the category with the data set with id " + catId, e);
 		} finally {
 			if (session != null && session.isOpen()) {
 				session.close();
@@ -3148,8 +3137,8 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 				Assert.assertNotNull(session, "session cannot be null");
 				transaction = session.beginTransaction();
 				Assert.assertNotNull(transaction, "transaction cannot be null");
-			} catch (Throwable t) {
-				throw new SpagoBIDAOException("An error occured while creating the new transaction", t);
+			} catch (Exception e) {
+				throw new SpagoBIDAOException("An error occured while creating the new transaction", e);
 			}
 
 			Query hibQuery = session.createQuery("from SbiDataSet h where h.active = ? and h.category.id = :catId");
@@ -3168,13 +3157,13 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 
 			transaction.commit();
 
-		} catch (Throwable t) {
+		} catch (Exception e) {
 			if (transaction != null && transaction.isActive()) {
 				transaction.rollback();
 			}
 			throw new SpagoBIDAOException(
 					"An unexpected error occured while loading dataset whose category id is equal to [" + catId + "]",
-					t);
+					e);
 		} finally {
 			if (session != null && session.isOpen()) {
 				session.close();
@@ -3183,5 +3172,16 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 		}
 		return toReturn;
 	}
-
+	
+	private void deleteFileAssociatedToDataset(SbiDataSet sbiDataSet) {
+		try {
+			JSONObject config = new JSONObject(sbiDataSet.getConfiguration());
+			String fileName = config.getString("fileName");
+			String fileDir = SpagoBIUtilities.getFileDatasetResourcePath();
+			File toDelete = new File(fileDir + File.separatorChar + fileName);
+			toDelete.delete();					
+		} catch (Exception e) {
+			logger.error("Cannot delete file associated to dataset: " + sbiDataSet.getLabel(), e);
+		}
+	}
 }

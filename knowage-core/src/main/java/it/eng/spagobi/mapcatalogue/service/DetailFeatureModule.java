@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- *
+ * 
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,7 +11,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- *
+ * 
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -43,6 +43,8 @@ import it.eng.spagobi.mapcatalogue.bo.GeoFeature;
 import it.eng.spagobi.mapcatalogue.bo.GeoMap;
 import it.eng.spagobi.mapcatalogue.bo.GeoMapFeature;
 import it.eng.spagobi.mapcatalogue.dao.ISbiGeoFeaturesDAO;
+import org.apache.log4j.Logger;
+
 
 /**
  * Spago Action which executes the map producing request
@@ -50,16 +52,18 @@ import it.eng.spagobi.mapcatalogue.dao.ISbiGeoFeaturesDAO;
 public class DetailFeatureModule extends AbstractHttpModule {
 
 	private String modalita = "";
-
+	private static Logger logger = Logger.getLogger(DetailFeatureModule.class);
+	
 	/**
-	 * Method called automatically by Spago framework when the action is invoked. The method search into the request two parameters
+	 * Method called automatically by Spago framework when the action is invoked.
+	 * The method search into the request two parameters
 	 * <ul>
 	 * <li>message: a message which contains the type of the request</li>
 	 * </ul>
-	 *
-	 * @param serviceRequest  the Spago request SourceBean
+	 * 
+	 * @param serviceRequest the Spago request SourceBean
 	 * @param serviceResponse the Spago response SourceBean
-	 *
+	 * 
 	 * @throws Exception the exception
 	 */
 	@Override
@@ -247,15 +251,15 @@ public class DetailFeatureModule extends AbstractHttpModule {
 			try {
 				AuditLogUtilities.updateAudit(getHttpRequest(), profile, "MAP_CATALOG_FEATURE.ADD", logParam, "OK");
 			} catch (Exception e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
+				//e1.printStackTrace();
+				logger.error("AuditLogUtilities.updateAudit ",e1);
 			}
 		} else {
 			try {
 				AuditLogUtilities.updateAudit(getHttpRequest(), profile, "MAP_CATALOG_FEATURE.MODIFY", logParam, "OK");
 			} catch (Exception e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
+				//e1.printStackTrace();
+				logger.error("AuditLogUtilities.updateAudit ",e1);
 			}
 		}
 
@@ -288,8 +292,8 @@ public class DetailFeatureModule extends AbstractHttpModule {
 			try {
 				AuditLogUtilities.updateAudit(getHttpRequest(), profile, "MAP_CATALOG_FEATURE.DELETE", null, "ERR");
 			} catch (Exception e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
+				//e1.printStackTrace();
+				logger.error("AuditLogUtilities.updateAudit ",e1);
 			}
 			HashMap params = new HashMap();
 			params.put(AdmintoolsConstants.PAGE, ListFeaturesModule.MODULE_PAGE);
@@ -299,8 +303,8 @@ public class DetailFeatureModule extends AbstractHttpModule {
 			try {
 				AuditLogUtilities.updateAudit(getHttpRequest(), profile, "MAP_CATALOG_FEATURE.DELETE", null, "KO");
 			} catch (Exception e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
+				//e1.printStackTrace();
+				logger.error("AuditLogUtilities.updateAudit ",e1);
 			}
 			TracerSingleton.log(SpagoBIConstants.NAME_MODULE, TracerSingleton.MAJOR, "Cannot fill response container" + ex.getLocalizedMessage());
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
@@ -309,8 +313,8 @@ public class DetailFeatureModule extends AbstractHttpModule {
 		try {
 			AuditLogUtilities.updateAudit(getHttpRequest(), profile, "MAP_CATALOG_FEATURE.DELETE", null, "OK");
 		} catch (Exception e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
+			// e1.printStackTrace();
+			logger.error("AuditLogUtilities.updateAudit ",e1);
 		}
 
 	}

@@ -1316,8 +1316,8 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 				Integer functId = (Integer) rolesArray.get(0);
 				Integer roleId = (Integer) rolesArray.get(1);
 				String permission = (String) rolesArray.get(2);
-				SbiFunctions sbiFunct = new SbiFunctions();
-				sbiFunct.setFunctId(functId);
+				SbiFunctions sbiFunct = new SbiFunctions(functId);
+	
 
 				// hql =
 				// " from SbiFuncRole as funcRole where funcRole.id.function = '"

@@ -17,6 +17,16 @@ public class SbiKpiExecution extends SbiHibernateModel {
 	private Set<SbiKpiKpi> sbiKpiKpis = new HashSet<>();
 	private Set<SbiKpiExecutionFilter> sbiKpiExecutionFilters = new HashSet<>();
 
+	
+	public SbiKpiExecution() {
+		super();
+	}
+	
+	public SbiKpiExecution(Integer id) {
+		super();
+		this.setId(id);
+	}
+	
 	/**
 	 * @return the id
 	 */
@@ -28,7 +38,11 @@ public class SbiKpiExecution extends SbiHibernateModel {
 	 * @param id
 	 *            the id to set
 	 */
-	public void setId(Integer id) {
+	private void setId(Integer id) {
+		this.id = id;
+	}
+	
+	public void changeId(Integer id) {
 		this.id = id;
 	}
 

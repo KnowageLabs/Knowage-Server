@@ -35,6 +35,7 @@ public class EmfXmiSerializer implements IModelSerializer {
 	public static final String SPAGOBI_MODEL_URI = "it.eng.spagobi";
 
 	
+	@Override
 	public void serialize(Model model, File file)  {
 		FileOutputStream outputStream;
 		
@@ -78,6 +79,7 @@ public class EmfXmiSerializer implements IModelSerializer {
 		}	
 	}
 
+	@Override
 	public Model deserialize(File file) {
 		Model model;
 		FileInputStream inputStream;

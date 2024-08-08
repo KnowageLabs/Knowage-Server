@@ -53,7 +53,8 @@ public final class DeferrabilityTypeEnum
 
 
 
-  public List refTypeName()
+  @Override
+public List refTypeName()
   {
     return typeName;
   }
@@ -61,7 +62,8 @@ public final class DeferrabilityTypeEnum
 
 
 
-  public String toString()
+  @Override
+public String toString()
   {
     return literalName;
   }
@@ -69,7 +71,8 @@ public final class DeferrabilityTypeEnum
 
 
 
-  public int hashCode()
+  @Override
+public int hashCode()
   {
     return literalName.hashCode();
   }
@@ -79,7 +82,8 @@ public final class DeferrabilityTypeEnum
 
 
 
-  public boolean equals(Object o)
+  @Override
+public boolean equals(Object o)
   {
     if ((o instanceof DeferrabilityTypeEnum)) return o == this;
     if ((o instanceof DeferrabilityType)) return o.toString().equals(literalName);

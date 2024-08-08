@@ -30,7 +30,7 @@ public class TemporaryTableRecorder {
 	private List<TemporaryTable> temporaryTables = null;
 	
 	public TemporaryTableRecorder () {
-		temporaryTables = new ArrayList<TemporaryTable>();
+		temporaryTables = new ArrayList<>();
 	}
 	
 	public void addTemporaryTable(TemporaryTable tt) {

@@ -50,7 +50,7 @@ public class FilteredModelStructure extends AbstractModelObject implements IMode
 	@Override
 	public List<IModelEntity> getRootEntities(String modelName) {
 		List<IModelEntity> iModelEntities = qbeTreeFilter.filterEntities(dataSource, wrappedModelStructure.getRootEntities(modelName));
-		List<IModelEntity> filteredModelEntities = new ArrayList<IModelEntity>();
+		List<IModelEntity> filteredModelEntities = new ArrayList<>();
 		for (int i = 0; i < iModelEntities.size(); i++) {
 			filteredModelEntities.add(toFilteredModelEntity(iModelEntities.get(i)));
 		}
@@ -103,7 +103,7 @@ public class FilteredModelStructure extends AbstractModelObject implements IMode
 
 	@Override
 	public IModelEntity addRootEntity(String modelName, String name, String path, String role, String type) {
-		List<IModelEntity> list = new ArrayList<IModelEntity>();
+		List<IModelEntity> list = new ArrayList<>();
 		List<IModelEntity> filteredList;
 		IModelEntity entityn = wrappedModelStructure.addRootEntity(modelName, name, path, role, type);
 		if (entityn == null) {
@@ -124,7 +124,7 @@ public class FilteredModelStructure extends AbstractModelObject implements IMode
 
 	@Override
 	public IModelEntity getRootEntity(String modelName, String entityName) {
-		List<IModelEntity> list = new ArrayList<IModelEntity>();
+		List<IModelEntity> list = new ArrayList<>();
 		List<IModelEntity> filteredList;
 		IModelEntity entityn = wrappedModelStructure.getRootEntity(modelName, entityName);
 		if (entityn == null) {
@@ -140,7 +140,7 @@ public class FilteredModelStructure extends AbstractModelObject implements IMode
 
 	@Override
 	public IModelEntity getRootEntity(IModelEntity entity) {
-		List<IModelEntity> list = new ArrayList<IModelEntity>();
+		List<IModelEntity> list = new ArrayList<>();
 		List<IModelEntity> filteredList;
 		IModelEntity entityn = wrappedModelStructure.getRootEntity(entity);
 		if (entity == null) {
@@ -156,7 +156,7 @@ public class FilteredModelStructure extends AbstractModelObject implements IMode
 
 	@Override
 	public IModelEntity getRootEntity(IModelEntity entity, String modelName) {
-		List<IModelEntity> list = new ArrayList<IModelEntity>();
+		List<IModelEntity> list = new ArrayList<>();
 		List<IModelEntity> filteredList;
 		IModelEntity entityn = wrappedModelStructure.getRootEntity(entity, modelName);
 		if (entity == null) {
@@ -205,7 +205,7 @@ public class FilteredModelStructure extends AbstractModelObject implements IMode
 
 	@Override
 	public IModelEntity getEntity(String entityUniqueName) {
-		List<IModelEntity> list = new ArrayList<IModelEntity>();
+		List<IModelEntity> list = new ArrayList<>();
 		List<IModelEntity> filteredList;
 		IModelEntity entity = wrappedModelStructure.getEntity(entityUniqueName);
 		if (entity == null) {
@@ -227,7 +227,7 @@ public class FilteredModelStructure extends AbstractModelObject implements IMode
 
 	@Override
 	public IModelField getField(String fieldUniqueName) {
-		List<IModelField> list = new ArrayList<IModelField>();
+		List<IModelField> list = new ArrayList<>();
 		List<IModelField> filteredList;
 		IModelField field = wrappedModelStructure.getField(fieldUniqueName);
 		if (field == null) {
@@ -244,7 +244,7 @@ public class FilteredModelStructure extends AbstractModelObject implements IMode
 	@Override
 	public Map<String, List<ModelCalculatedField>> getCalculatedFields() {
 		Map<String, List<ModelCalculatedField>> calculatedFields = wrappedModelStructure.getCalculatedFields();
-		Map<String, List<ModelCalculatedField>> filteredCalculatedFields = new HashMap<String, List<ModelCalculatedField>>();
+		Map<String, List<ModelCalculatedField>> filteredCalculatedFields = new HashMap<>();
 		Iterator<String> iter = calculatedFields.keySet().iterator();
 		while (iter.hasNext()) {
 			String key = iter.next();

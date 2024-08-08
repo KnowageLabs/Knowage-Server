@@ -39,6 +39,8 @@
 			<param-value>UTF-8</param-value>
 		</init-param>
 	</filter>
+	
+	
 	<filter>
 		<filter-name>SpagoBIAccessFilter</filter-name>
 		<filter-class>it.eng.spagobi.utilities.filters.SpagoBIAccessFilter</filter-class>
@@ -134,6 +136,20 @@
 		<dispatcher>REQUEST</dispatcher>
 		<dispatcher>FORWARD</dispatcher>
 	</filter-mapping>
+	
+			<!--  ANTI CSRF FILTER -->
+	<filter>
+      <filter-name>KnowageAntiCsrfFilter</filter-name> 
+      <filter-class>it.eng.spagobi.security.utils.AntiCsrfFilter</filter-class> 
+     </filter>
+     
+     <filter-mapping>
+		<filter-name>KnowageAntiCsrfFilter</filter-name>
+		<url-pattern>/BirtReportServlet</url-pattern>
+		<url-pattern>/servlet/AdapterHTTP</url-pattern>
+		<dispatcher>REQUEST</dispatcher>
+		<dispatcher>FORWARD</dispatcher>
+	</filter-mapping>
 
 	<servlet>
 		<servlet-name>EngineTestServlet</servlet-name>
@@ -168,6 +184,20 @@
 	<welcome-file-list>
 		<welcome-file>/html/index.jsp</welcome-file>
 	</welcome-file-list>
+	<error-page>
+		<exception-type>java.lang.Throwable</exception-type>
+		<location>/html/error.html</location>
+	</error-page>
+
+	<error-page>
+		<error-code>404</error-code>
+		<location>/html/error.html</location>
+	</error-page>
+
+	<error-page>
+		<error-code>500</error-code>
+		<location>/html/error.html</location>
+	</error-page>
 
 	<!-- 
 		This servlet comes from resteasy-jaxrs and is enabled by default mapped to "" URL. The empty string has

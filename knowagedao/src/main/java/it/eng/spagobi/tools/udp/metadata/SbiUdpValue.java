@@ -81,7 +81,7 @@ public class SbiUdpValue  extends SbiHibernateModel {
         return this.udpValueId;
     }
     
-    public void setUdpValueId(Integer udpValueId) {
+    private void setUdpValueId(Integer udpValueId) {
         this.udpValueId = udpValueId;
     }
 

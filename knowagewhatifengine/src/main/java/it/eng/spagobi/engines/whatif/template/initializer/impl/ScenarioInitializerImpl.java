@@ -76,7 +76,7 @@ public class ScenarioInitializerImpl extends AbstractInitializer {
 
 		List<SourceBean> editableMeasuresBeans = scenarioSB.getAttributeAsList(MEASURE_TAG);
 		if (editableMeasuresBeans != null && editableMeasuresBeans.size() > 0) {
-			List<String> editableMeasures = new ArrayList<String>();
+			List<String> editableMeasures = new ArrayList<>();
 			for (int i = 0; i < editableMeasuresBeans.size(); i++) {
 				editableMeasures.add(editableMeasuresBeans.get(i).getCharacters());
 			}
@@ -92,7 +92,7 @@ public class ScenarioInitializerImpl extends AbstractInitializer {
 
 	private static void initScenarioVariables(SourceBean scenarioSB, SbiScenario scenario) {
 		logger.debug("IN. loading the scenario variables");
-		List<SbiScenarioVariable> variables = new ArrayList<SbiScenarioVariable>();
+		List<SbiScenarioVariable> variables = new ArrayList<>();
 
 		List<SourceBean> variablesBeans = scenarioSB.getAttributeAsList(VARIABLE_TAG);
 		if (variablesBeans != null && variablesBeans.size() > 0) {

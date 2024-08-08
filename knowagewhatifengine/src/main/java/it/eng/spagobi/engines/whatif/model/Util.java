@@ -16,6 +16,7 @@ import org.apache.poi.hssf.usermodel.HSSFShape;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.ClientAnchor;
 import org.apache.poi.ss.usermodel.CreationHelper;
 import org.apache.poi.ss.usermodel.DataFormat;
@@ -90,7 +91,7 @@ public class Util {
 		}
 	}
 
-	static List<FormulaInfo> formulaInfoList = new ArrayList<FormulaInfo>();
+	static List<FormulaInfo> formulaInfoList = new ArrayList<>();
 
 	public static void refreshFormula(XSSFWorkbook workbook) {
 		for (FormulaInfo formulaInfo : formulaInfoList) {
@@ -104,7 +105,7 @@ public class Util {
 		XSSFWorkbook destinationWorkbook = source;
 		XSSFSheet destinationSheet = destinationWorkbook.getSheetAt(0);
 
-		List<CellStyle> styleMap = new ArrayList<CellStyle>();
+		List<CellStyle> styleMap = new ArrayList<>();
 
 		for (short i = 0; i < destinationWorkbook.getNumCellStyles(); i++) {
 			styleMap.add(destinationWorkbook.getCellStyleAt(i));
@@ -170,7 +171,7 @@ public class Util {
 	 */
 	private static void copyRow(HSSFSheet source, XSSFSheet destSheet, HSSFRow srcRow, XSSFRow destRow, List<CellStyle> styleMap) {
 
-		Set<CellRangeAddressWrapper> mergedRegions = new TreeSet<CellRangeAddressWrapper>();
+		Set<CellRangeAddressWrapper> mergedRegions = new TreeSet<>();
 		short dh = source.getDefaultRowHeight();
 		if (srcRow.getHeight() != dh) {
 			destRow.setHeight(srcRow.getHeight());
@@ -309,11 +310,11 @@ public class Util {
 
 					Font oldFont = oldCell.getSheet().getWorkbook().getFontAt(oldCell.getCellStyle().getFontIndex());
 
-					Font newFont = newCell.getSheet().getWorkbook().findFont(oldFont.getBoldweight(), oldFont.getColor(), oldFont.getFontHeight(),
+					Font newFont = newCell.getSheet().getWorkbook().findFont(oldFont.getBold(), oldFont.getColor(), oldFont.getFontHeight(),
 							oldFont.getFontName(), oldFont.getItalic(), oldFont.getStrikeout(), oldFont.getTypeOffset(), oldFont.getUnderline());
 					if (newFont == null) {
 						newFont = newCell.getSheet().getWorkbook().createFont();
-						newFont.setBoldweight(oldFont.getBoldweight());
+						newFont.setBold(oldFont.getBold());
 						newFont.setColor(oldFont.getColor());
 						newFont.setFontHeight(oldFont.getFontHeight());
 						newFont.setFontName(oldFont.getFontName());
@@ -354,22 +355,22 @@ public class Util {
 			}
 		}
 		switch (oldCell.getCellType()) {
-		case Cell.CELL_TYPE_STRING:
+		case STRING:
 			newCell.setCellValue(oldCell.getStringCellValue());
 			break;
-		case Cell.CELL_TYPE_NUMERIC:
+		case NUMERIC:
 			newCell.setCellValue(oldCell.getNumericCellValue());
 			break;
-		case Cell.CELL_TYPE_BLANK:
-			newCell.setCellType(Cell.CELL_TYPE_BLANK);
+		case BLANK:
+			newCell.setCellType(CellType.BLANK);
 			break;
-		case Cell.CELL_TYPE_BOOLEAN:
+		case BOOLEAN:
 			newCell.setCellValue(oldCell.getBooleanCellValue());
 			break;
-		case Cell.CELL_TYPE_ERROR:
+		case ERROR:
 			newCell.setCellErrorValue(oldCell.getErrorCellValue());
 			break;
-		case Cell.CELL_TYPE_FORMULA:
+		case FORMULA:
 			newCell.setCellFormula(oldCell.getCellFormula());
 			formulaInfoList.add(new FormulaInfo(oldCell.getSheet().getSheetName(), oldCell.getRowIndex(), oldCell.getColumnIndex(), oldCell.getCellFormula()));
 			break;
@@ -446,7 +447,7 @@ public class Util {
 			oldFont = oldCell.getSheet().getWorkbook().getFontAt(oldCell.getCellStyle().getFontIndex());
 			newFont = newCell.getSheet().getWorkbook().getFontAt(currentCellStyle.getFontIndex());
 
-			if (newFont.getBoldweight() != oldFont.getBoldweight()) {
+			if (newFont.getBold() != oldFont.getBold()) {
 				continue;
 			}
 			if (newFont.getColor() != oldFont.getColor()) {
@@ -543,12 +544,12 @@ public class Util {
 		newSheet.setDisplayZeros(sheetToCopy.isDisplayZeros());
 		newSheet.setPrintGridlines(sheetToCopy.isPrintGridlines());
 		newSheet.setRightToLeft(sheetToCopy.isRightToLeft());
-		newSheet.setZoom(1, 1);
+		newSheet.setZoom(100); // Sheet.setZoom(int numerator, int denominator) Deprecated
 		copyPrintTitle(newSheet, sheetToCopy);
 	}
 
 	private static void copyPrintTitle(Sheet newSheet, Sheet sheetToCopy) {
-		int nbNames = sheetToCopy.getWorkbook().getNumberOfNames();
+		List<? extends Name> listNames = sheetToCopy.getWorkbook().getAllNames();
 		Name name = null;
 		String formula = null;
 
@@ -563,8 +564,9 @@ public class Util {
 		int colB = -1;
 		int colE = -1;
 
-		for (int i = 0; i < nbNames; i++) {
-			name = sheetToCopy.getWorkbook().getNameAt(i);
+		for (int i = 0; i < listNames.size(); i++) {
+			name = listNames.get(i); // Workbook.getNameAt(int) Deprecated because new projects should avoid accessing named ranges by index
+			
 			if (name.getSheetIndex() == sheetToCopy.getWorkbook().getSheetIndex(sheetToCopy)) {
 				if (name.getNameName().equals("Print_Titles") || name.getNameName().equals(XSSFName.BUILTIN_PRINT_TITLE)) {
 					formula = name.getRefersToFormula();
@@ -621,8 +623,12 @@ public class Util {
 							rowE = Integer.parseInt(rowEs);
 						}
 					}
-
-					newSheet.getWorkbook().setRepeatingRowsAndColumns(newSheet.getWorkbook().getSheetIndex(newSheet), colB, colE, rowB - 1, rowE - 1);
+					
+//					newSheet.getWorkbook().setRepeatingRowsAndColumns(newSheet.getWorkbook().getSheetIndex(newSheet), colB, colE, rowB - 1, rowE - 1);
+					String columnsRange = colB + ":" + colE;
+					String rowsRange = (rowB - 1) + ":" + (rowE - 1);
+					newSheet.setRepeatingColumns(CellRangeAddress.valueOf(columnsRange));
+					newSheet.setRepeatingRows(CellRangeAddress.valueOf(rowsRange));
 				}
 			}
 		}

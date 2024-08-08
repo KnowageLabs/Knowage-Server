@@ -10,7 +10,6 @@
 package it.eng.spagobi.meta.model.business.util;
 
 import it.eng.spagobi.meta.model.ModelObject;
-import it.eng.spagobi.meta.model.business.*;
 import it.eng.spagobi.meta.model.business.BusinessColumn;
 import it.eng.spagobi.meta.model.business.BusinessColumnSet;
 import it.eng.spagobi.meta.model.business.BusinessDomain;
@@ -84,7 +83,7 @@ public class BusinessModelAdapterFactory extends AdapterFactoryImpl {
 	 * @generated
 	 */
 	protected BusinessModelSwitch<Adapter> modelSwitch =
-		new BusinessModelSwitch<Adapter>() {
+		new BusinessModelSwitch<>() {
 			@Override
 			public Adapter caseBusinessModel(BusinessModel object) {
 				return createBusinessModelAdapter();

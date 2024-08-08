@@ -25,7 +25,7 @@ public class SbiMetaJob extends SbiHibernateModel {
 		this.name = name;
 		this.deleted = deleted;
 	}
-
+	
 	public SbiMetaJob(String name, boolean deleted, Set sbiMetaJobSources, Set sbiMetaJobTables) {
 		this.name = name;
 		this.deleted = deleted;
@@ -37,7 +37,7 @@ public class SbiMetaJob extends SbiHibernateModel {
 		return this.jobId;
 	}
 
-	public void setJobId(Integer jobId) {
+	private void setJobId(Integer jobId) {
 		this.jobId = jobId;
 	}
 
@@ -71,6 +71,11 @@ public class SbiMetaJob extends SbiHibernateModel {
 
 	public void setSbiMetaJobTables(Set sbiMetaJobTables) {
 		this.sbiMetaJobTables = sbiMetaJobTables;
+	}
+
+	public void changeJobId(Integer jobId) {
+		this.setJobId(jobId);
+		
 	}
 
 }

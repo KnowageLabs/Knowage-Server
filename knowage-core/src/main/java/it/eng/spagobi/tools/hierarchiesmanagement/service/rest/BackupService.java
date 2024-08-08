@@ -63,6 +63,7 @@ import it.eng.spagobi.utilities.rest.RestUtilities;
 public class BackupService {
 
 	private static Logger logger = Logger.getLogger(HierarchyService.class);
+	private static final String START = "START";
 
 	@POST
 	@Path("/modifyHierarchyBkps")
@@ -83,7 +84,7 @@ public class BackupService {
 			Hierarchies hierarchies = HierarchiesSingleton.getInstance();
 			String hierarchyTable = hierarchies.getHierarchyTableName(dimension);
 			Hierarchy hierarchyFields = hierarchies.getHierarchy(dimension);
-			List<Field> generalMetadataFields = new ArrayList<Field>(hierarchyFields.getMetadataGeneralFields());
+			List<Field> generalMetadataFields = new ArrayList<>(hierarchyFields.getMetadataGeneralFields());
 
 			// 2 - get datasource label name
 			String dataSourceName = hierarchies.getDataSourceOfDimension(dimension);
@@ -94,7 +95,7 @@ public class BackupService {
 			}
 
 			// 3 - define update command getting values from the request
-			LinkedHashMap<String, String> lstFields = new LinkedHashMap<String, String>();
+			LinkedHashMap<String, String> lstFields = new LinkedHashMap<>();
 			StringBuffer columnsBuffer = new StringBuffer(" ");
 			// general fields:
 			for (int i = 0, l = generalMetadataFields.size(); i < l; i++) {
@@ -116,12 +117,11 @@ public class BackupService {
 			String hierNameColumn = AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.HIER_NM, dataSource);
 
 			databaseConnection = dataSource.getConnection();
-			Statement stmt = databaseConnection.createStatement();
 			boolean doUpdateRelationsMT = false;
 
 			if (!hierarchyNameNew.equalsIgnoreCase(hierarchyNameOrig)) {
 				// if the name is changed check its univocity
-				String selectQuery = "SELECT count(*) as num FROM " + hierarchyTable + " WHERE  HIER_NM = ? ";
+				String selectQuery = String.format("SELECT count(*) as num FROM %s WHERE  HIER_NM = ? ", hierarchyTable);
 
 				PreparedStatement selectPs = databaseConnection.prepareStatement(selectQuery);
 				selectPs.setString(1, hierarchyNameNew);
@@ -136,7 +136,7 @@ public class BackupService {
 				}
 				doUpdateRelationsMT = true;
 			}
-			String updateQuery = "UPDATE " + hierarchyTable + " SET " + columns + " WHERE " + hierNameColumn + "= ?";
+			String updateQuery = String.format("UPDATE %s SET %s WHERE %s= ?", hierarchyTable, columns, hierNameColumn);
 			logger.debug("The update query is [" + updateQuery + "]");
 
 			PreparedStatement updatePs = databaseConnection.prepareStatement(updateQuery);
@@ -162,7 +162,7 @@ public class BackupService {
 			if (doUpdateRelationsMT) {
 				// update the HIER_NM_T to mantein the correct relations (if there are some records into the HIER_MASTER_TECHNICAL with the original name)
 				String columnNmT = AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.HIER_NM_T, dataSource);
-				String updateQueryRel = "UPDATE " + HierarchyConstants.REL_MASTER_TECH_TABLE_NAME + " SET " + columnNmT + " = ? WHERE " + columnNmT + "= ?";
+				String updateQueryRel = String.format("UPDATE %s SET %s = ? WHERE %s= ?", HierarchyConstants.REL_MASTER_TECH_TABLE_NAME, columnNmT, columnNmT);
 				logger.debug("The update query of relations is [" + updateQuery + "]");
 
 				PreparedStatement updatePsRel = databaseConnection.prepareStatement(updateQueryRel);
@@ -177,12 +177,12 @@ public class BackupService {
 			logger.debug("Executing commit. End transaction!");
 			databaseConnection.commit();
 
-		} catch (Throwable t) {
+		} catch (Exception e) {
 			if (!databaseConnection.getAutoCommit() && databaseConnection != null && !databaseConnection.isClosed()) {
 				databaseConnection.rollback();
 			}
 			logger.error("An unexpected error occured while modifing custom hierarchy");
-			throw new SpagoBIServiceException("An unexpected error occured while modifing custom hierarchy", t);
+			throw new SpagoBIServiceException("An unexpected error occured while modifing custom hierarchy", e);
 		} finally {
 			try {
 				if (databaseConnection != null && !databaseConnection.isClosed()) {
@@ -199,11 +199,11 @@ public class BackupService {
 	@Path("/restoreHierarchyBkps")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	@UserConstraint(functionalities = { CommunityFunctionalityConstants.HIERARCHIES_MANAGEMENT })
-	public String restoreHierarchyBkps(@Context HttpServletRequest req) throws SQLException {
+	public String restoreHierarchyBkps(@Context HttpServletRequest req) {
 		// restores a backup hierarchy
 		try {
 
-			logger.debug("START");
+			logger.debug(START);
 
 			JSONObject requestVal = RestUtilities.readBodyAsJSONObject(req);
 
@@ -222,9 +222,9 @@ public class BackupService {
 
 			restoreBackupHierarchy(dataSource, hierarchyBkpCode, hierarchyBkpName, hierarchyTable);
 
-		} catch (Throwable t) {
+		} catch (Exception e) {
 			logger.error("An unexpected error occured while restoring a backup hierarchy");
-			throw new SpagoBIServiceException("An unexpected error occured while restoring a backup hierarchy", t);
+			throw new SpagoBIServiceException("An unexpected error occured while restoring a backup hierarchy", e);
 		}
 
 		logger.debug("END");
@@ -237,9 +237,9 @@ public class BackupService {
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	@UserConstraint(functionalities = { CommunityFunctionalityConstants.HIERARCHIES_MANAGEMENT })
 	public String getHierarchyBkps(@QueryParam("dimension") String dimension, @QueryParam("hierarchyCode") String hierarchyCode,
-			@QueryParam("hierarchyName") String hierarchyName, @QueryParam("hierarchyType") String hierarchyType) throws SQLException {
+			@QueryParam("hierarchyName") String hierarchyName, @QueryParam("hierarchyType") String hierarchyType) {
 
-		logger.debug("START");
+		logger.debug(START);
 
 		JSONObject result = new JSONObject();
 
@@ -281,9 +281,9 @@ public class BackupService {
 			logger.debug("Columns Search array is [" + columnsSearchArray.toString() + "]");
 			result.put(HierarchyConstants.COLUMNS_SEARCH, columnsSearchArray);
 
-		} catch (Throwable t) {
+		} catch (Exception e) {
 			logger.error("An unexpected error occured while retrieving hierarchy backups");
-			throw new SpagoBIServiceException("An unexpected error occured while retrieving hierarchy backups", t);
+			throw new SpagoBIServiceException("An unexpected error occured while retrieving hierarchy backups", e);
 		}
 
 		logger.debug("JSON for hierarchy backups is [" + result.toString() + "]");
@@ -294,7 +294,7 @@ public class BackupService {
 
 	private void restoreBackupHierarchy(IDataSource dataSource, String hierBkpCode, String hierBkpName, String hierTableName) {
 
-		logger.debug("START");
+		logger.debug(START);
 		String hierNm = "";
 
 		String hierCdColumn = AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.HIER_CD, dataSource);
@@ -305,24 +305,20 @@ public class BackupService {
 		String hierCDTColumn = AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.HIER_CD_T, dataSource);
 		String hierNMTColumn = AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.HIER_NM_T, dataSource);
 
-		String selectQuery = "SELECT DISTINCT(" + hierNameColumn + ") FROM " + hierTableName + " WHERE " + hierCdColumn + "= ? AND (" + bkpColumn + " = ? OR "
-				+ bkpColumn + " IS NULL)";
-		String selectQueryRel = "SELECT DISTINCT(" + hierCDTColumn + ") FROM " + HierarchyConstants.REL_MASTER_TECH_TABLE_NAME + " WHERE " + hierNMTColumn
-				+ "= ? AND (" + bkpColumn + " = ? OR " + bkpColumn + " IS NULL)";
+		String selectQuery = String.format("SELECT DISTINCT(%s) FROM %s WHERE %s= ? AND (%s = ? OR %s IS NULL)", hierNameColumn, hierTableName, hierCdColumn, bkpColumn, bkpColumn);
+		String selectQueryRel = String.format("SELECT DISTINCT(%s) FROM %s WHERE %s= ? AND (%s = ? OR %s IS NULL)", hierCDTColumn, HierarchyConstants.REL_MASTER_TECH_TABLE_NAME, hierNMTColumn, bkpColumn, bkpColumn);
 
 		logger.debug("The select query is [" + selectQuery + "]");
 		logger.debug("The select query for relations TM is [" + selectQueryRel + "]");
 
-		String deleteQuery = "DELETE FROM " + hierTableName + " WHERE " + hierCdColumn + "= ? AND (" + bkpColumn + " = ? OR " + bkpColumn + " IS NULL)";
-		String deleteQueryRel = "DELETE FROM " + HierarchyConstants.REL_MASTER_TECH_TABLE_NAME + " WHERE " + hierNMTColumn + "= ? AND (" + bkpColumn
-				+ " = ? OR " + bkpColumn + " IS NULL)";
+		String deleteQuery = String.format("DELETE FROM %s WHERE %s= ? AND (%s = ? OR %s IS NULL)", hierTableName, hierCdColumn, bkpColumn, bkpColumn);
+		String deleteQueryRel = String.format("DELETE FROM %s WHERE %s= ? AND (%s = ? OR %s IS NULL)", HierarchyConstants.REL_MASTER_TECH_TABLE_NAME, hierNMTColumn, bkpColumn, bkpColumn);
 
 		logger.debug("The delete query is [" + deleteQuery + "]");
 		logger.debug("The delete query for relations TM is [" + deleteQueryRel + "]");
 
-		String updateQuery = "UPDATE " + hierTableName + " SET " + hierNameColumn + "= ?, " + bkpColumn + " = ? WHERE " + hierNameColumn + "= ?";
-		String updateQueryRel = "UPDATE " + HierarchyConstants.REL_MASTER_TECH_TABLE_NAME + " SET " + hierNMTColumn + "= ?, " + bkpColumn + " = ? WHERE "
-				+ hierNMTColumn + "= ?";
+		String updateQuery = String.format("UPDATE %s SET %s= ?, %s = ? WHERE %s= ?", hierTableName, hierNameColumn, bkpColumn, hierNameColumn);
+		String updateQueryRel = String.format("UPDATE %s SET %s= ?, %s = ? WHERE %s= ?",HierarchyConstants.REL_MASTER_TECH_TABLE_NAME, hierNMTColumn, bkpColumn, hierNMTColumn);
 
 		logger.debug("The update query is [" + updateQuery + "]");
 		logger.debug("The update query for relations TM is [" + updateQueryRel + "]");
@@ -391,9 +387,9 @@ public class BackupService {
 
 			logger.debug("END");
 
-		} catch (Throwable t) {
+		} catch (Exception e) {
 			logger.error("An unexpected error occured while restoring hierarchy backup");
-			throw new SpagoBIServiceException("An unexpected error occured while restoring hierarchy backup", t);
+			throw new SpagoBIServiceException("An unexpected error occured while restoring hierarchy backup", e);
 		}
 
 	}
@@ -401,7 +397,7 @@ public class BackupService {
 	private String selectHierarchyBkps(IDataSource dataSource, String hierTableName, String hierarchyCode, String hierarchyName, String hierarchyType,
 			List<Field> bkpFields) {
 
-		logger.debug("START");
+		logger.debug(START);
 
 		// select
 		StringBuffer selectClauseBuffer = new StringBuffer(" ");
@@ -432,10 +428,6 @@ public class BackupService {
 		if (hierarchyCode != null) {
 			query.append(" AND " + hierCdColumn + "= '" + hierarchyCode + "'");
 		}
-		//
-		// if (hierarchyName != null) {
-		// query.append(" AND " + hierNameColumn + "= '" + hierarchyName + "'");
-		// }
 
 		if (hierarchyType != null) {
 			query.append(" AND " + hierTypeColumn + "= '" + hierarchyType + "'");

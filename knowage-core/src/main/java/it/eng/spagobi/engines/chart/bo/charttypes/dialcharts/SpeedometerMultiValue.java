@@ -104,6 +104,7 @@ public class SpeedometerMultiValue extends DialCharts{
 	 */
 
 
+	@Override
 	public void configureChart(SourceBean content) {
 
 		super.configureChart(content);
@@ -255,6 +256,7 @@ public class SpeedometerMultiValue extends DialCharts{
 	 * @throws Exception the exception
 	 */
 
+	@Override
 	public DatasetMap calculateValue() throws Exception {
 		logger.debug("IN");
 		String res=DataSetAccessFunctions.getDataSetResultFromId(profile, getData(),parametersObject);
@@ -339,6 +341,7 @@ public class SpeedometerMultiValue extends DialCharts{
 	 * @return A chart speedometer.
 	 */
 
+	@Override
 	public JFreeChart createChart(DatasetMap datasets) {
 		logger.debug("IN");
 		JFreeChart chart = null;

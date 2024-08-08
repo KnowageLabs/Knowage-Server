@@ -1,9 +1,5 @@
 package it.eng.spagobi.analiticalmodel.document.handlers;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
-
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -13,6 +9,11 @@ import java.util.UUID;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
+
+import org.owasp.esapi.errors.EncodingException;
+import org.owasp.esapi.reference.DefaultEncoder;
+
+
 
 import com.jamonapi.Monitor;
 import com.jamonapi.MonitorFactory;
@@ -45,7 +46,7 @@ public class DocumentRuntime extends AbstractBIResourceRuntime<BIObjectParameter
 	private static final Logger LOGGER = Logger.getLogger(DocumentRuntime.class);
 
 	private final List<DocumentDriverRuntime> drivers = null;
-
+	private static org.owasp.esapi.Encoder esapiEncoder = DefaultEncoder.getInstance();
 	public DocumentRuntime(IEngUserProfile userProfile, Locale locale) {
 		super(userProfile, locale);
 	}
@@ -87,7 +88,8 @@ public class DocumentRuntime extends AbstractBIResourceRuntime<BIObjectParameter
 		}
 	}
 
-	public String getExecutionUrl(BIObject obj, String executionModality, String role) {
+
+	public String getExecutionUrl(BIObject obj, String executionModality, String role) throws EncodingException {
 		LOGGER.debug("IN");
 		Monitor getExecutionUrlMonitor = MonitorFactory.start("Knowage.DocumentRuntime.getExecutionUrl");
 
@@ -155,11 +157,12 @@ public class DocumentRuntime extends AbstractBIResourceRuntime<BIObjectParameter
 							if (value != null && !value.equals("")) {
 								// encoding value
 								try {
-									value = URLEncoder.encode(value, UTF_8.name());
-								} catch (UnsupportedEncodingException e) {
+									value = esapiEncoder.encodeForURL(value);
+								} catch (EncodingException e) {
 									LOGGER.warn("UTF-8 encoding is not supported!!!", e);
 									LOGGER.warn("Using system encoding...");
-									value = URLEncoder.encode(value);
+									value = esapiEncoder.encodeForURL(value);
+
 								}
 								buffer.append("&" + aParameter.getParameterUrlName() + "=" + value);
 							}

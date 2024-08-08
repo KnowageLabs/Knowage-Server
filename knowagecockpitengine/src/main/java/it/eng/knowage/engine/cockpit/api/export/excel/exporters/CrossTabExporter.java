@@ -757,17 +757,16 @@ public class CrossTabExporter extends GenericWidgetExporter implements IWidgetEx
 	}
 
 	private XSSFColor getThresholdColor(String measureId, Double value) {
-		Color white = new Color(255, 255, 255);
 		List<Threshold> thresholds = thresholdColorsMap.get(measureId);
 		if (thresholds == null || thresholds.isEmpty())
-			return new XSSFColor(white);
+			return new XSSFColor(new byte[] {(byte) 255, (byte) 255, (byte) 255});
 		for (Threshold t : thresholds) {
 			if (t.isConstraintSatisfied(value)) {
 				XSSFColor backgroundColor = t.getXSSFColor();
 				return backgroundColor;
 			}
 		}
-		return new XSSFColor(white);
+		return new XSSFColor(new byte[] {(byte) 255, (byte) 255, (byte) 255});
 	}
 
 	public int getCalculatedFieldDecimals() {

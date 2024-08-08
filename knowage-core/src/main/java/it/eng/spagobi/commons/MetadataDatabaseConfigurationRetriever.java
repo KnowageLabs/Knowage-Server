@@ -81,7 +81,7 @@ public class MetadataDatabaseConfigurationRetriever implements IConfigurationRet
 		IConfigDAO dao = null;
 		HashMap<String, String> configurations = null;
 		try {
-			configurations = new HashMap<String, String>();
+			configurations = new HashMap<>();
 			dao = DAOFactory.getSbiConfigDAO();
 			List<Config> allConfig = dao.loadAllConfigParameters();
 			if (allConfig.isEmpty()) {
@@ -106,7 +106,7 @@ public class MetadataDatabaseConfigurationRetriever implements IConfigurationRet
 			IConfigDAO configsDao = DAOFactory.getSbiConfigDAO();
 			configsDao.setUserProfile(UserProfileManager.getProfile());
 			List<Config> returnedVals = configsDao.loadConfigParametersByCategory(category);
-			return new ArrayList<IConfiguration>(returnedVals);
+			return new ArrayList<>(returnedVals);
 		} catch (Exception e) {
 			logger.error("Error while getting the list of configs", e);
 			throw new SpagoBIRuntimeException("Error while getting the list of configs", e);

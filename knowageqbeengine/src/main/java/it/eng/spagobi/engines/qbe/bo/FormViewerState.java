@@ -75,7 +75,7 @@ public class FormViewerState {
 	
 	public List<String> getOpenFilterValues(String openFilterId) {
 		logger.debug("IN: openFilterId = " + openFilterId);
-		List<String> toReturn = new ArrayList<String>();
+		List<String> toReturn = new ArrayList<>();
 		if (staticOpenFilters != null ) {
 			JSONArray values = staticOpenFilters.optJSONArray(openFilterId);
 			if (values != null && values.length() > 0) {
@@ -104,7 +104,7 @@ public class FormViewerState {
 	
 	public List<String> getDynamicFilterFromToValues(String dynamicFilterId) {
 		logger.debug("IN: dynamicFilterId = " + dynamicFilterId);
-		List<String> toReturn = new ArrayList<String>();
+		List<String> toReturn = new ArrayList<>();
 		if (dynamicFilters != null ) {
 			JSONObject dynamicFilter = dynamicFilters.optJSONObject(dynamicFilterId);
 			if (dynamicFilter != null && dynamicFilter.optString("fromvalue") != null && dynamicFilter.optString("tovalue") != null) {

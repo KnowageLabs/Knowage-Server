@@ -48,7 +48,6 @@ public class BIObjectNotesManager {
 			biobj = DAOFactory.getBIObjectDAO().loadBIObjectForExecutionByIdAndRole(biobjID, executionRole);
 		} catch (EMFUserError e1) {
 			logger.error("EMFUser Error",e1);
-			e1.printStackTrace();
 		}
 		
 		BIObjectParameter biobjpar = null;

@@ -17,6 +17,7 @@
  */
 package it.eng.spagobi.commons.bo;
 
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -824,6 +825,9 @@ public class Role implements Serializable {
 
 	public Boolean getAbleToUseDashboardThemeManagement() {
 		return isAbleToUseDashboardThemeManagement;
+	}
+	private final void writeObject(ObjectOutputStream aOutputStream) {
+		  throw new UnsupportedOperationException("Security violation : cannot serialize object to a stream");
 	}
 
 }

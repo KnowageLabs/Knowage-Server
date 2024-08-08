@@ -153,7 +153,7 @@ public class AddCalculatedFieldAction extends AbstractQbeEngineAction {
 
 			if (slots != null && slots.trim().length() > 0) {
 				JSONArray slotsJSON = new JSONArray(slots);
-				List<Slot> slotList = new ArrayList<Slot>();
+				List<Slot> slotList = new ArrayList<>();
 				for (int i = 0; i < slotsJSON.length(); i++) {
 					Slot slot = (Slot) SerializationManager.deserialize(slotsJSON.get(i), "application/json", Slot.class);
 					if (slot.getMappedValuesDescriptors().isEmpty()) {
@@ -176,7 +176,7 @@ public class AddCalculatedFieldAction extends AbstractQbeEngineAction {
 
 	private void setDefaultProperties(ModelCalculatedField field, String nature) {
 
-		HashMap<String, Object> properties = new HashMap<String, Object>();
+		HashMap<String, Object> properties = new HashMap<>();
 		properties.put(QuerySerializationConstants.FIELD_VISIBLE, "true");
 		properties.put("position", "0");
 		if (nature == null) {

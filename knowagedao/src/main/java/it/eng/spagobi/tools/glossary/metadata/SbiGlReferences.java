@@ -32,7 +32,8 @@ public class SbiGlReferences extends SbiHibernateModel {
 	private Integer sequence;
 
 	public SbiGlReferences() {
-	}
+	}	
+
 
 	/**
 	 * @param id
@@ -62,6 +63,8 @@ public class SbiGlReferences extends SbiHibernateModel {
 	public void setId(SbiGlReferencesId id) {
 		this.id = id;
 	}
+	
+
 
 	/**
 	 * @return the word

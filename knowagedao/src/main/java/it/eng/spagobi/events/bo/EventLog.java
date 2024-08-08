@@ -17,6 +17,7 @@
  */
 package it.eng.spagobi.events.bo;
 
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
@@ -233,7 +234,7 @@ public class EventLog implements Serializable {
 	}
 
 	public Map<String, Object> getAdditionalInformation() {
-		Map<String, Object> map = new HashMap<String, Object>();
+		Map<String, Object> map = new HashMap<>();
 		try {
 			IBIObjectDAO biObjectDAO = DAOFactory.getBIObjectDAO();
 			String biobjectIdStr = (String) getParametesrMap().get("biobjectId");
@@ -246,14 +247,14 @@ public class EventLog implements Serializable {
 			map.put("engine", biObject.getEngineLabel());
 			map.put("subobject", biObject.getEngineLabel());
 
-			List<Map<String, String>> subobjects = new ArrayList<Map<String, String>>();
+			List<Map<String, String>> subobjects = new ArrayList<>();
 
 			SubreportDAOHibImpl subreportDAOHibImpl = new SubreportDAOHibImpl();
 			List list = subreportDAOHibImpl.loadSubreportsByMasterRptId(biObject.getId());
 			for (int i = 0; i < list.size(); i++) {
 				Subreport subreport = (Subreport) list.get(i);
 				BIObject biobj = biObjectDAO.loadBIObjectForDetail(subreport.getSub_rpt_id());
-				Map<String, String> subobject = new HashMap<String, String>();
+				Map<String, String> subobject = new HashMap<>();
 				subobject.put("label", biobj.getLabel());
 				subobject.put("name", biobj.getName());
 				subobjects.add(subobject);
@@ -274,6 +275,10 @@ public class EventLog implements Serializable {
 		}
 		return map;
 
+	}
+
+	private final void writeObject(ObjectOutputStream aOutputStream) {
+		  throw new UnsupportedOperationException("Security violation : cannot serialize object to a stream");
 	}
 
 }

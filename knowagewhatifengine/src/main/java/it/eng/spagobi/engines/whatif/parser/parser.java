@@ -21,8 +21,6 @@ package it.eng.spagobi.engines.whatif.parser;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.Random;
-
 import org.olap4j.OlapDataSource;
 import org.pivot4j.PivotModel;
 
@@ -52,7 +50,7 @@ public class parser extends java_cup.runtime.lr_parser {
 	}
 
 	/** Production table. */
-	protected static final short _production_table[][] = unpackFromStrings(
+	protected static final short[][] _production_table = unpackFromStrings(
 			new String[] { "\000\027\000\002\002\004\000\002\002\004\000\002\002"
 					+ "\003\000\002\002\004\000\002\003\003\000\002\004\005"
 					+ "\000\002\004\006\000\002\004\005\000\002\004\006\000"
@@ -232,16 +230,7 @@ public class parser extends java_cup.runtime.lr_parser {
 		this.engineInstance = engineInstance;
 	}
 
-	/*
-	 * Generate a random Double. Just for test.
-	 */
-	public Double generateDouble() {
-		// CHECKSTYLE:OFF
-		Random random = new Random();
-		// CHECKSTYLE:ON
-		double rand = (double) random.nextInt(101 - 1) + 1;
-		return rand;
-	}
+
 
 	/*
 	 * Calculate the Member Value from the cube passing a list of dimensional coordinates

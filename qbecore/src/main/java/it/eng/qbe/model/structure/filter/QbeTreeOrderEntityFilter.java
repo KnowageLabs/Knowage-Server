@@ -52,10 +52,12 @@ public class QbeTreeOrderEntityFilter extends ComposableQbeTreeEntityFilter {
 	}
 	
 	
+	@Override
 	public List filter(IDataSource dataSource, List fields) {
 		
 		Collections.sort(fields, new Comparator() {
-		    public int compare(Object o1, Object o2) {
+		    @Override
+			public int compare(Object o1, Object o2) {
 		    	IModelEntity f1, f2;
 		    	String p1, p2;
 		    	int i1, i2;

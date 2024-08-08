@@ -197,9 +197,7 @@ public class SbiTableBcDAOHibImpl extends AbstractHibernateDAO implements ISbiTa
 			tx = aSession.beginTransaction();
 			SbiMetaTableBc hib = new SbiMetaTableBc();
 
-			SbiMetaTableBcId hibId = new SbiMetaTableBcId();
-			hibId.setTableId(aMetaTableBc.getId().getTableId());
-			hibId.setBcId(aMetaTableBc.getId().getBcId());
+			SbiMetaTableBcId hibId = new SbiMetaTableBcId(aMetaTableBc.getId().getTableId(),aMetaTableBc.getId().getBcId());
 			aMetaTableBc.setId(hibId);
 
 			updateSbiCommonInfo4Insert(aMetaTableBc);
@@ -226,9 +224,7 @@ public class SbiTableBcDAOHibImpl extends AbstractHibernateDAO implements ISbiTa
 			aSession = getSession();
 			tx = aSession.beginTransaction();
 
-			SbiMetaTableBcId hibId = new SbiMetaTableBcId();
-			hibId.setTableId(aMetaTableBc.getId().getTableId());
-			hibId.setBcId(aMetaTableBc.getId().getBcId());
+			SbiMetaTableBcId hibId = new SbiMetaTableBcId(aMetaTableBc.getId().getTableId(),aMetaTableBc.getId().getBcId());
 
 			SbiMetaTableBc hib = (SbiMetaTableBc) aSession.load(SbiMetaTableBc.class, hibId);
 
@@ -274,9 +270,7 @@ public class SbiTableBcDAOHibImpl extends AbstractHibernateDAO implements ISbiTa
 		logger.debug("IN");
 
 		try {
-			SbiMetaTableBcId hibId = new SbiMetaTableBcId();
-			hibId.setTableId(aMetaTableBc.getId().getTableId());
-			hibId.setBcId(aMetaTableBc.getId().getBcId());
+			SbiMetaTableBcId hibId = new SbiMetaTableBcId(aMetaTableBc.getId().getTableId(),aMetaTableBc.getId().getBcId());
 
 			updateSbiCommonInfo4Update(hibId);
 		} catch (HibernateException he) {
@@ -298,9 +292,8 @@ public class SbiTableBcDAOHibImpl extends AbstractHibernateDAO implements ISbiTa
 
 			SbiMetaTableBc hib = new SbiMetaTableBc();
 
-			SbiMetaTableBcId hibId = new SbiMetaTableBcId();
-			hibId.setTableId(aMetaTableBc.getId().getTableId());
-			hibId.setBcId(aMetaTableBc.getId().getBcId());
+			SbiMetaTableBcId hibId = new SbiMetaTableBcId(aMetaTableBc.getId().getTableId(),aMetaTableBc.getId().getBcId());
+
 			aMetaTableBc.setId(hibId);
 
 			updateSbiCommonInfo4Insert(aMetaTableBc);

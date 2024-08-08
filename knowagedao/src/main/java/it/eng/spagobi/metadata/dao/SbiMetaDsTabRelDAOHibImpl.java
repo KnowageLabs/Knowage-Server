@@ -95,10 +95,9 @@ public class SbiMetaDsTabRelDAOHibImpl extends AbstractHibernateDAO implements I
 			tmpSession = getSession();
 			tx = tmpSession.beginTransaction();
 
-			SbiMetaDsTabRel hibMeta = new SbiMetaDsTabRel();
+			SbiMetaDsTabRel hibMeta = new SbiMetaDsTabRel(SbiMetaDsTabRel.getRelationId());
 			hibMeta.setDatasetId(SbiMetaDsTabRel.getDatasetId());
 			hibMeta.setTableId(SbiMetaDsTabRel.getTableId());
-			hibMeta.setRelationId(SbiMetaDsTabRel.getRelationId());
 
 			updateSbiCommonInfo4Insert(hibMeta);
 			tmpSession.save(hibMeta);

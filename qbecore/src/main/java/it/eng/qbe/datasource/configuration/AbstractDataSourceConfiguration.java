@@ -47,48 +47,59 @@ public class AbstractDataSourceConfiguration implements IDataSourceConfiguration
 	public AbstractDataSourceConfiguration(String modelName) {
 		this.modelName = modelName;
 	}
+	@Override
 	public String getModelName() {
 		return modelName;
 	}
 
+	@Override
 	public IModelProperties loadModelProperties() {
 		return new SimpleModelProperties(new Properties());
 	}
 
+	@Override
 	public IModelProperties loadModelI18NProperties() {
 		return new SimpleModelProperties(new Properties());
 	}
 
+	@Override
 	public IModelProperties loadModelI18NProperties(Locale locale) {
 		return new SimpleModelProperties(new Properties());
 	}
 
+	@Override
 	public Map<String, Object> loadDataSourceProperties() {
-		return new HashMap<String, Object>();
+		return new HashMap<>();
 	}
 
+	@Override
 	public List<IModelRelationshipDescriptor> loadRelationships() {
-		return new ArrayList<IModelRelationshipDescriptor>();
+		return new ArrayList<>();
 	}
 
+	@Override
 	public List<IModelViewEntityDescriptor> loadViews() {
-		return new ArrayList<IModelViewEntityDescriptor>();
+		return new ArrayList<>();
 	}
 
+	@Override
 	public Map<String, List<ModelCalculatedField>> loadCalculatedFields() {
-		return new HashMap<String, List<ModelCalculatedField>>();
+		return new HashMap<>();
 	}
 
+	@Override
 	public void saveCalculatedFields(
 			Map<String, List<ModelCalculatedField>> calculatedFields) {
 		// do nothing
 	}
 
+	@Override
 	public HashMap<String, InLineFunction> loadInLineFunctions(String dialect){
-		return new HashMap<String, InLineFunction>();
+		return new HashMap<>();
 
 	}
+	@Override
 	public Map<String, HierarchicalDimensionField> loadHierarchicalDimension() {
-		return new HashMap<String, HierarchicalDimensionField>();
+		return new HashMap<>();
 	}
 }

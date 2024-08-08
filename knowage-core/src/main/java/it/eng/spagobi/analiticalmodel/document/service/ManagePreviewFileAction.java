@@ -78,7 +78,9 @@ public class ManagePreviewFileAction extends AbstractSpagoBIAction {
 			} else if (OPER_DOWNLOAD.equalsIgnoreCase(operation)) {
 				freezeHttpResponse();
 				String fileName = (String) getAttribute("fileName");
-
+				
+				PathTraversalChecker.isValidFileName(fileName);
+				
 				File file = getFile(fileName);
 				if (!file.exists()) {
 					writeBackToClient(404, "File not found.", false, null, "text/plain");

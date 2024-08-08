@@ -1065,7 +1065,7 @@ public class RESTDataSet extends ConfigurableDataSet {
 			String me = e.getMessage();
 			me += " - attribute " + attribute + " should be of number type";
 			NumberFormatException numberFormatException = new NumberFormatException(attribute);
-			numberFormatException.setStackTrace(e.getStackTrace());
+			
 			throw numberFormatException;
 		}
 

@@ -155,7 +155,7 @@ public class SbiDataSource extends SbiHibernateModel {
 	 *
 	 * @param dsId the new ds id
 	 */
-	public void setDsId(int dsId) {
+	private void setDsId(int dsId) {
 		this.dsId = dsId;
 	}
 
@@ -395,6 +395,11 @@ public class SbiDataSource extends SbiHibernateModel {
 
 	public void setJdbcPoolConfiguration(String jdbcPoolConfiguration) {
 		this.jdbcPoolConfiguration = jdbcPoolConfiguration;
+	}
+
+	public void changeDsId(int dsId) {
+		this.setDsId(dsId);
+		
 	}
 
 }

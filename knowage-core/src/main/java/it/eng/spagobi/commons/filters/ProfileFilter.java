@@ -309,14 +309,14 @@ public class ProfileFilter implements Filter {
 			LOGGER.debug("Request parameter {} is [{}]", SsoServiceInterface.USER_NAME_REQUEST_PARAMETER.toUpperCase(),
 					userId);
 		}
-		String password = httpRequest.getParameter(SsoServiceInterface.PASSWORD_REQUEST_PARAMETER.toLowerCase());
+		String password = httpRequest.getParameter(SsoServiceInterface.SECRETPHRASE_REQUEST_PARAMETER.toLowerCase());
 		if (password == null) {
-			password = httpRequest.getParameter(SsoServiceInterface.PASSWORD_REQUEST_PARAMETER.toUpperCase());
+			password = httpRequest.getParameter(SsoServiceInterface.SECRETPHRASE_REQUEST_PARAMETER.toUpperCase());
 		}
 		if (!isEmpty(userId) && !isNull(password)) {
 			LOGGER.debug("Read credentials from request: user id is [{}]", userId);
-			String passwordMode = httpRequest.getParameter(SsoServiceInterface.PASSWORD_MODE_REQUEST_PARAMETER);
-			if (!isEmpty(passwordMode) && passwordMode.equalsIgnoreCase(SsoServiceInterface.PASSWORD_MODE_ENCRYPTED)) {
+			String passwordMode = httpRequest.getParameter(SsoServiceInterface.SECRETPHRASE_MODE_REQUEST_PARAMETER);
+			if (!isEmpty(passwordMode) && passwordMode.equalsIgnoreCase(SsoServiceInterface.SECRETPHRASE_MODE_ENCRYPTED)) {
 				LOGGER.debug("Password mode is encrypted. Decripting password...");
 				DefaultCipher chiper = new DefaultCipher();
 				password = chiper.decrypt(password);

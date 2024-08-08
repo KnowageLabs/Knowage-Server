@@ -27,6 +27,14 @@ public class SbiImages extends SbiHibernateModel {
 	private byte[] content;
 	private byte[] contentIco;
 
+	public SbiImages() {
+		super();
+	}
+
+	public SbiImages(Integer imageId) {
+		super();
+		this.setImageId(imageId);
+	}
 	/**
 	 * @return the imageId
 	 */
@@ -38,7 +46,7 @@ public class SbiImages extends SbiHibernateModel {
 	 * @param imageId
 	 *            the imageId to set
 	 */
-	public void setImageId(Integer imageId) {
+	private void setImageId(Integer imageId) {
 		this.imageId = imageId;
 	}
 

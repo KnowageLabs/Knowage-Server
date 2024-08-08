@@ -17,9 +17,13 @@
  */
 package it.eng.spagobi.analiticalmodel.document.bo;
 
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.TemporalAccessor;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -159,6 +163,7 @@ public class BIObject implements Serializable, Cloneable, IDrivableBIResource<BI
 	private String stateCodeStr = null;
 
 	private static final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+	private static final DateTimeFormatter dateFormat_v2 = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
 	/**
 	 * Gets the id.
@@ -627,7 +632,11 @@ public class BIObject implements Serializable, Cloneable, IDrivableBIResource<BI
 	public String getFormattedDate() {
 		String formattedDate = null;
 		if (creationDate != null) {
-			formattedDate = dateFormat.format(creationDate);
+			if (creationDate instanceof Timestamp) {
+				formattedDate = dateFormat.format(creationDate);
+			} else if (creationDate instanceof TemporalAccessor) {
+				formattedDate = dateFormat_v2.format((TemporalAccessor) creationDate);
+			}
 		}
 		return formattedDate;
 	}
@@ -907,4 +916,9 @@ public class BIObject implements Serializable, Cloneable, IDrivableBIResource<BI
 	public void setMetamodelDrivers(List<BIMetaModelParameter> drivers) {
 		this.biBIMetaModelParameter = drivers;
 	}
+
+	private final void writeObject(ObjectOutputStream aOutputStream) {
+		throw new UnsupportedOperationException("Security violation : cannot serialize object to a stream");
+	}
+
 }

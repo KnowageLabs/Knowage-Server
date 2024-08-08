@@ -21,29 +21,31 @@ package it.eng.spagobi.engines.qbe.query;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.sql.Connection;
 import java.util.HashMap;
 import java.util.Locale;
 
 import org.apache.log4j.Logger;
 
-import net.sf.jasperreports.engine.JRExporter;
-import net.sf.jasperreports.engine.JRExporterParameter;
 import net.sf.jasperreports.engine.JRParameter;
 import net.sf.jasperreports.engine.JasperCompileManager;
 import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.JasperReport;
-import net.sf.jasperreports.engine.export.JExcelApiExporter;
 import net.sf.jasperreports.engine.export.JRCsvExporter;
-import net.sf.jasperreports.engine.export.JRHtmlExporter;
-import net.sf.jasperreports.engine.export.JRHtmlExporterParameter;
+import net.sf.jasperreports.engine.export.HtmlExporter;
 import net.sf.jasperreports.engine.export.JRPdfExporter;
 import net.sf.jasperreports.engine.export.JRRtfExporter;import net.sf.jasperreports.engine.export.JRTextExporter;
-
 import net.sf.jasperreports.engine.export.JRXmlExporter;
 import net.sf.jasperreports.engine.fill.JRFileVirtualizer;
+import net.sf.jasperreports.export.Exporter;
+import net.sf.jasperreports.engine.export.JRXlsExporter;
+import net.sf.jasperreports.export.SimpleExporterInput;
+import net.sf.jasperreports.export.SimpleHtmlExporterConfiguration;
+import net.sf.jasperreports.export.SimpleOutputStreamExporterOutput;
 
 
 /**
@@ -96,16 +98,17 @@ public class ReportRunner {
 		
 		JasperPrint jasperPrint = JasperFillManager.fillReport(report, params, conn);
 			
-		JRExporter exporter = null; 
+		Exporter exporter = null; 
 			
-		if (outputType.equalsIgnoreCase("text/html")) {
-		   	exporter = new JRHtmlExporter();
-		   	exporter.setParameter(JRHtmlExporterParameter.IS_USING_IMAGES_TO_ALIGN, Boolean.FALSE);
-		   	exporter.setParameter(JRHtmlExporterParameter.BETWEEN_PAGES_HTML, "");
+		if (outputType.equalsIgnoreCase("text/html")) { 
+		   	exporter = new HtmlExporter(); 
+		   	SimpleHtmlExporterConfiguration configuration = new SimpleHtmlExporterConfiguration();
+//			exporter.setParameter(JRHtmlExporterParameter.IS_USING_IMAGES_TO_ALIGN, Boolean.FALSE);
+//			exporter.setParameter(JRHtmlExporterParameter.BETWEEN_PAGES_HTML, "");
+		   	configuration.setBetweenPagesHtml("");
 		} else if (outputType.equalsIgnoreCase("text/xml")) {
 		   	exporter = new JRXmlExporter();
 		} else if (outputType.equalsIgnoreCase("text/plain")) {
-		   	//exporter = new JRTextExporter(); 
 		   	exporter = new JRTextExporter(); 
 		} else if (outputType.equalsIgnoreCase("text/csv")) {
 		   	exporter = new JRCsvExporter(); 	
@@ -114,14 +117,25 @@ public class ReportRunner {
 		} else if (outputType.equalsIgnoreCase("application/rtf"))	{			
 		   	exporter = new JRRtfExporter(); 		
 		} else if (outputType.equalsIgnoreCase("application/vnd.ms-excel")) {
-		   	exporter = new JExcelApiExporter();
+		   	exporter = new JRXlsExporter();
 		} else {
 		   	exporter = new JRPdfExporter();
 		}
-			
-		exporter.setParameter(JRExporterParameter.JASPER_PRINT, jasperPrint);
-	    exporter.setParameter(JRExporterParameter.OUTPUT_FILE , reportFile);
-	    exporter.exportReport();
+		
+//		exporter.setParameter(JRExporterParameter.JASPER_PRINT, jasperPrint);
+//		exporter.setParameter(JRExporterParameter.OUTPUT_STREAM, reportFile);
+	    
+	    exporter.setExporterInput(new SimpleExporterInput(jasperPrint));
+	    SimpleOutputStreamExporterOutput exporterOutput = null;
+	    try (OutputStream outputStream = new FileOutputStream(reportFile)) {
+	        exporterOutput = new SimpleOutputStreamExporterOutput(outputStream);
+	        exporter.setExporterOutput(exporterOutput);
+	        exporter.exportReport();
+	    } finally {
+	        if (exporterOutput != null) {
+	            exporterOutput.close();
+	        }
+	    }
 	    
 	}
 	

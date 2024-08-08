@@ -22,7 +22,7 @@ import it.eng.spagobi.commons.bo.UserProfile;
 
 public class UserProfileManager {
 
-	private static final ThreadLocal<UserProfile> _profile = new ThreadLocal<UserProfile>();
+	private static final ThreadLocal<UserProfile> _profile = new ThreadLocal<>();
 
 	public static void setProfile(UserProfile profile) {
 		_profile.set(profile);

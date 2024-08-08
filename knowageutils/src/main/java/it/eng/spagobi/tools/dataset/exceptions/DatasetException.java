@@ -17,12 +17,7 @@
  */
 package it.eng.spagobi.tools.dataset.exceptions;
 
-import it.eng.spago.base.SourceBean;
-import it.eng.spago.error.EMFInternalError;
-import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
-
-import java.util.List;
 
 
 /** This class is extended by  other classes representing particular datasetExceptions

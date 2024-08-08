@@ -49,6 +49,7 @@ public class SmartFilterAnalysisState extends EngineAnalysisState {
 		return (JSONObject)getProperty( FORMVALUES);
 	}
 	
+	@Override
 	public byte[] store() throws SpagoBIEngineException {
 		JSONObject formJSON = null;
 		JSONObject rowDataJSON = null;
@@ -67,6 +68,7 @@ public class SmartFilterAnalysisState extends EngineAnalysisState {
 		return rowData.getBytes();
 	}
 	
+	@Override
 	public void load(byte[] rowData) throws SpagoBIEngineException {
 		String str = null;
 		JSONObject rowDataJSON = null;

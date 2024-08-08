@@ -131,7 +131,7 @@ public class WhatIfHTMLRendereCallback extends HtmlRenderCallback {
 				ArrayList<String> fv = trimStyle(formatedValue);// formatedValue.split("=*\\s*\" | =*\\s*\'");
 
 				for (int i = 0; i < fv.size(); i++) {
-					String[] styles = fv.get(i).split("\\s*=\\s*");
+					String[] styles = fv.get(i).replaceAll("\\s*=", "=").replaceAll("=\\s*", "=").split("=");
 					if (styles.length == 2) {
 						cssw.writeStyle(styles[0], styles[1] + "!important");
 
@@ -591,7 +591,7 @@ public class WhatIfHTMLRendereCallback extends HtmlRenderCallback {
 
 	public static ArrayList<String> trimStyle(String formatedValue) {
 		ArrayList<String> result = new ArrayList<>();
-		String[] results = formatedValue.split("\\s*\\|\\s*");
+		String[] results = formatedValue.replaceAll("\\s*\\|", "|").replaceAll("\\|\\s*", "|").split("\\|");
 
 		for (int i = 0; i < results.length; i++) {
 			if (!results[i].contains("format") && results[i].contains("=")) {
@@ -606,7 +606,7 @@ public class WhatIfHTMLRendereCallback extends HtmlRenderCallback {
 
 		for (int i = 0; i < resArr.length; i++) {
 			if (resArr[i].contains("format")) {
-				String[] result = resArr[i].split("\\s*=\\s*");
+				String[] result = resArr[i].replaceAll("\\s*=", "=").replaceAll("=\\s*", "=").split("=");
 				String pattern = result[1];
 				NumberFormat nf = NumberFormat.getNumberInstance(Locale.getDefault());
 				DecimalFormat df = (DecimalFormat) nf;

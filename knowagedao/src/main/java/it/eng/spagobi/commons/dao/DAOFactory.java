@@ -114,6 +114,7 @@ import it.eng.spagobi.whatif.dao.IWhatifWorkflowDAO;
 import it.eng.spagobi.workspace.dao.IFunctionsOrganizerDAO;
 import it.eng.spagobi.workspace.dao.IObjFuncOrganizerDAO;
 
+
 /**
  * Contains all the data access object for all the BO objects defined into it.eng.spagobi.bo package.
  */

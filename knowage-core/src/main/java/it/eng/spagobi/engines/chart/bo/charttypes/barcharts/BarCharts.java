@@ -174,6 +174,7 @@ public class BarCharts extends ChartImpl {
 	 * @throws Exception the exception
 	 */
 
+	@Override
 	public DatasetMap calculateValue() throws Exception {
 		logger.debug("IN");
 		String res=DataSetAccessFunctions.getDataSetResultFromId(profile, getData(),parametersObject);
@@ -361,6 +362,7 @@ public class BarCharts extends ChartImpl {
 	 * @param content the content
 	 */
 
+	@Override
 	public void configureChart(SourceBean content) {
 		logger.debug("IN");
 		super.configureChart(content);
@@ -577,7 +579,7 @@ public class BarCharts extends ChartImpl {
 			orderColors = (SourceBean)content.getAttribute("CONF."+SERIES_ORDER_COLORS);
 		}
 		if(orderColors!=null){
-			orderColorVector=new Vector<Color>();
+			orderColorVector=new Vector<>();
 			List atts=orderColors.getContainedAttributes();
 			String numSerie="";
 			String colorSerie="";
@@ -605,7 +607,7 @@ public class BarCharts extends ChartImpl {
 			String StyleValue = "";
 			for (Iterator iterator = atts.iterator(); iterator.hasNext();) {
 				SourceBeanAttribute object = (SourceBeanAttribute) iterator.next();
-				String styleLabel=(String)object.getKey();
+				String styleLabel=object.getKey();
 				StyleValue=new String((String)object.getValue());
 				if(StyleValue!=null){
 					if (styleLabel.equalsIgnoreCase("font")) styleLabel = "font-family";
@@ -786,6 +788,7 @@ public class BarCharts extends ChartImpl {
 	 * @return the dataset
 	 */
 
+	@Override
 	public Dataset filterDataset(Dataset dataset, HashMap categories, int catSelected, int numberCatsVisualization) {
 		logger.debug("IN");
 		DefaultCategoryDataset catDataset=(DefaultCategoryDataset)dataset;
@@ -907,6 +910,7 @@ public class BarCharts extends ChartImpl {
 	/* (non-Javadoc)
 	 * @see it.eng.spagobi.engines.chart.bo.ChartImpl#createChart(java.lang.String, org.jfree.data.general.Dataset)
 	 */
+	@Override
 	public JFreeChart createChart(DatasetMap dataset) {
 		// TODO Auto-generated method stub
 		return super.createChart(dataset);

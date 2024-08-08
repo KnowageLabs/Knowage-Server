@@ -45,8 +45,8 @@ public class SbiUser extends SbiHibernateModel {
 
 	private Integer defaultRoleId;
 
-	private Set<SbiExtRoles> sbiExtUserRoleses = new HashSet<SbiExtRoles>(0);
-	private Set<SbiUserAttributes> sbiUserAttributeses = new HashSet<SbiUserAttributes>(0);
+	private Set<SbiExtRoles> sbiExtUserRoleses = new HashSet<>(0);
+	private Set<SbiUserAttributes> sbiUserAttributeses = new HashSet<>(0);
 
 	public SbiUser() {
 	}
@@ -272,6 +272,11 @@ public class SbiUser extends SbiHibernateModel {
 		} else if (!defaultRoleId.equals(other.defaultRoleId))
 			return false;
 		return true;
+	}
+
+	public void changeId(Integer id) {
+		this.setId(id);
+
 	}
 
 }

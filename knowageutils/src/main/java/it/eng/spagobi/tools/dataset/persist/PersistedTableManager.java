@@ -449,13 +449,13 @@ public class PersistedTableManager implements IPersistedManager {
 							columnSize.remove(fieldMetaName);
 							columnSize.put(fieldMetaName, newColumnSize);
 							try (Statement stmt = connection.createStatement()) {
-								String query = "ALTER TABLE " + tableName + " MODIFY COLUMN " + fieldMetaName + " "
-										+ getDBFieldTypeFromAlias(datasource, fieldMeta);
+								String query = String.format("ALTER TABLE %s MODIFY COLUMN %s %s",
+										tableName, AbstractJDBCDataset.encapsulateColumnName(fieldMetaName, datasource), getDBFieldTypeFromAlias(datasource, fieldMeta));
 								stmt.executeUpdate(query);
 							}
 						}
 					} catch (Exception e) {
-						throw new RuntimeException(
+						throw new SpagoBIRuntimeException(
 								"An unexpected error occurred while preparing statement for record [" + i + "]", e);
 					}
 				}
@@ -505,7 +505,7 @@ public class PersistedTableManager implements IPersistedManager {
 								intValue = Integer.valueOf(rawField.toString());
 							}
 							field.setValue(intValue);
-						} catch (Throwable t) {
+						} catch (Exception e) {
 							LOGGER.error("Error trying to convert value [" + field.getValue()
 									+ "] into an Integer value. Considering it as null...");
 							field.setValue(null);
@@ -521,7 +521,7 @@ public class PersistedTableManager implements IPersistedManager {
 							}
 							field.setValue(doubleValue);
 
-						} catch (Throwable t) {
+						} catch (Exception e) {
 							LOGGER.error("Error trying to convert value [" + field.getValue()
 									+ "] into a Double value. Considering it as null...");
 							field.setValue(null);
@@ -530,7 +530,7 @@ public class PersistedTableManager implements IPersistedManager {
 						try {
 							String stringValue = field.getValue().toString();
 							field.setValue(stringValue);
-						} catch (Throwable t) {
+						} catch (Exception e) {
 							LOGGER.error("Error trying to convert value [" + field.getValue()
 									+ "] into a String value. Considering it as null...");
 							field.setValue(null);
@@ -609,13 +609,10 @@ public class PersistedTableManager implements IPersistedManager {
 		if (fieldCount == 0)
 			return new PreparedStatement[0];
 
-		String insertQuery = "insert into " + getTableName();
-		String values = " values ";
+		String insertQuery = String.format("insert into %s (", getTableName());
+		String values = " values  (";
 		// createQuery used only for HSQL at this time
-		String createQuery = "create table " + getTableName() + " (";
-
-		insertQuery += " (";
-		values += " (";
+		String createQuery = String.format("create table %s (", getTableName());
 		String separator = "";
 
 		if (this.isRowCountColumIncluded()) {
@@ -641,7 +638,7 @@ public class PersistedTableManager implements IPersistedManager {
 		createQuery += ") ";
 		insertQuery += ") ";
 
-		String totalQuery = insertQuery + values;
+		String totalQuery = String.format("%s%s", insertQuery, values);
 		LOGGER.debug("create table statement: " + createQuery);
 		try {
 			for (int i = 0; i < batchCount; i++) {
@@ -674,10 +671,10 @@ public class PersistedTableManager implements IPersistedManager {
 							PersistedTableHelper.addField(statement, j, fieldValue, fieldMetaName, fieldMetaTypeName,
 									isfieldMetaFieldTypeMeasure, columnSize);
 						}
-					} catch (Throwable t) {
-						throw new RuntimeException(
+					} catch (Exception e) {
+						throw new SpagoBIRuntimeException(
 								"An unexpecetd error occured while preparing insert statemenet for record [" + i + "]",
-								t);
+								e);
 					}
 				}
 				statement.addBatch();
@@ -690,7 +687,7 @@ public class PersistedTableManager implements IPersistedManager {
 	}
 
 	private void prefillColumnSizes(Connection connection) throws SQLException {
-		try (PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM " + getTableName())) {
+		try (PreparedStatement preparedStatement = connection.prepareStatement(String.format("SELECT * FROM %s", getTableName()))) {
 			if (queryTimeout > 0) {
 				preparedStatement.setQueryTimeout(queryTimeout);
 			}
@@ -726,7 +723,7 @@ public class PersistedTableManager implements IPersistedManager {
 				createIndexes(dataset, datasource, tablename, columns);
 				result = true;
 			} catch (Exception e) {
-				LOGGER.error(e.getStackTrace(), e);
+				LOGGER.error("createIndexesOnTable", e);
 			}
 		}
 
@@ -928,13 +925,10 @@ public class PersistedTableManager implements IPersistedManager {
 		if (fieldCount == 0)
 			return null;
 
-		String insertQuery = "insert into " + getTableName();
-		String values = " values ";
+		String insertQuery = String.format("insert into %s (", getTableName());
+		String values = " values  (";
 		// createQuery used only for HSQL at this time
-		String createQuery = "create table " + getTableName() + " (";
-
-		insertQuery += " (";
-		values += " (";
+		String createQuery = String.format("create table %s (", getTableName());
 		String separator = "";
 
 		for (int i = 0; i < fieldCount; i++) {
@@ -951,7 +945,7 @@ public class PersistedTableManager implements IPersistedManager {
 		createQuery += ") ";
 		insertQuery += ") ";
 
-		String totalQuery = insertQuery + values;
+		String totalQuery = String.format("%s%s", insertQuery, values);
 		LOGGER.debug("create table statement: " + createQuery);
 		try {
 			statement = connection.prepareStatement(totalQuery);
@@ -1050,9 +1044,9 @@ public class PersistedTableManager implements IPersistedManager {
 			if (!dialect.contains("VoltDB")) {
 				connection.setAutoCommit(false);
 			}
-			Statement stmt = connection.createStatement();
+			PreparedStatement stmt = connection.prepareStatement(sql);
 			LOGGER.debug("Executing sql " + sql);
-			stmt.execute(sql);
+			stmt.execute();
 			if (!dialect.contains("VoltDB")) {
 				connection.commit();
 			}
@@ -1286,23 +1280,21 @@ public class PersistedTableManager implements IPersistedManager {
 						String dataSetFieldMetaName = dataSetFieldMeta.getName();
 						String dataSetFieldMetaTypeName = dataSetFieldMeta.getType().toString();
 
-						if (dataSetFieldMetaName.equals(storeFieldMetaName)) {
-							if (!dataSetFieldMetaTypeName.equals(storeFieldMetaTypeName)) {
-								storeFieldMeta.setType(dataSetFieldMeta.getType());
-								changeFieldValueType(datastore, dataSetFieldMeta, j, dataSetFieldMeta.getType());
-							}
+						if (dataSetFieldMetaName.equals(storeFieldMetaName) && !dataSetFieldMetaTypeName.equals(storeFieldMetaTypeName)) {
+							storeFieldMeta.setType(dataSetFieldMeta.getType());
+							changeFieldValueType(datastore, dataSetFieldMeta, j, dataSetFieldMeta.getType());
 						}
 
-					} catch (Throwable t) {
-						LOGGER.error("An unexpecetd error occured while ajusting metadata for record [" + j + "]", t);
-						throw new RuntimeException(
-								"An unexpecetd error occured while ajusting metadata for record [" + j + "]", t);
+					} catch (Exception e) {
+						LOGGER.error("An unexpecetd error occured while ajusting metadata for record [" + j + "]", e);
+						throw new SpagoBIRuntimeException(
+								"An unexpecetd error occured while ajusting metadata for record [" + j + "]", e);
 					}
 				}
-			} catch (Throwable t) {
-				LOGGER.error("An unexpecetd error occured while ajusting metadata for record [" + i + "]", t);
-				throw new RuntimeException("An unexpecetd error occured while ajusting metadata for record [" + i + "]",
-						t);
+			} catch (Exception e) {
+				LOGGER.error("An unexpecetd error occured while ajusting metadata for record [" + i + "]", e);
+				throw new SpagoBIRuntimeException("An unexpecetd error occured while ajusting metadata for record [" + i + "]",
+						e);
 			}
 		}
 	}

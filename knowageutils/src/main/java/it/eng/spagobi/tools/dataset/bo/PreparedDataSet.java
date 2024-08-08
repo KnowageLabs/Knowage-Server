@@ -139,7 +139,7 @@ public class PreparedDataSet extends ConfigurableDataSet {
 		LOGGER.debug("IN");
 		try {
 			IMetaData currMetadata = getMetadata();
-			String query = "select * from " + this.getTableName();
+			String query = String.format("select * from %s", this.getTableName());
 			Connection connection = dataSource.getConnection();
 			Statement stmt = connection.createStatement();
 

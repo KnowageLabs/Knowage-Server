@@ -37,6 +37,15 @@ public class SbiSnapshots  extends SbiHibernateModel {
     private Integer schedulationStartDate;
     private Integer sequence;
 
+    public SbiSnapshots() {
+    	super();
+    }
+    
+    public SbiSnapshots(Integer snapId) {
+    	super();
+    	this.snapId = snapId;
+    }
+    
 	public String getContentType() {
 		return contentType;
 	}
@@ -59,7 +68,7 @@ public class SbiSnapshots  extends SbiHibernateModel {
 	 *
 	 * @param snapId the new snap id
 	 */
-	public void setSnapId(Integer snapId) {
+	private void setSnapId(Integer snapId) {
 		this.snapId = snapId;
 	}
 

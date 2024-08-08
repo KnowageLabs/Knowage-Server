@@ -67,6 +67,7 @@ public class SimplePie extends PieCharts{
 	/* (non-Javadoc)
 	 * @see it.eng.spagobi.engines.chart.bo.charttypes.piecharts.PieCharts#configureChart(it.eng.spago.base.SourceBean)
 	 */
+	@Override
 	public void configureChart(SourceBean content) {
 		// TODO Auto-generated method stub
 		super.configureChart(content);
@@ -100,6 +101,7 @@ public class SimplePie extends PieCharts{
 	/* (non-Javadoc)
 	 * @see it.eng.spagobi.engines.chart.bo.charttypes.piecharts.PieCharts#createChart(java.lang.String, org.jfree.data.general.Dataset)
 	 */
+	@Override
 	public JFreeChart createChart(DatasetMap datasets) {
 
 		Dataset dataset=(Dataset)datasets.getDatasets().get("1");
@@ -196,6 +198,7 @@ public class SimplePie extends PieCharts{
 	/* (non-Javadoc)
 	 * @see it.eng.spagobi.engines.chart.bo.ChartImpl#isChangeableView()
 	 */
+	@Override
 	public boolean isChangeableView() {
 		return true;	
 	}
@@ -207,6 +210,7 @@ public class SimplePie extends PieCharts{
 	/* (non-Javadoc)
 	 * @see it.eng.spagobi.engines.chart.bo.ChartImpl#setChangeViewsParameter(java.lang.String, boolean)
 	 */
+	@Override
 	public void setChangeViewsParameter(String changePar, boolean how) {
 		if(changePar.equalsIgnoreCase(CHANGE_VIEW_3D)){
 			threeD=how;
@@ -221,6 +225,7 @@ public class SimplePie extends PieCharts{
 	/* (non-Javadoc)
 	 * @see it.eng.spagobi.engines.chart.bo.ChartImpl#getChangeViewParameter(java.lang.String)
 	 */
+	@Override
 	public boolean getChangeViewParameter(String changePar) {
 		boolean ret=false;
 		if(changePar.equalsIgnoreCase(CHANGE_VIEW_3D)){
@@ -235,6 +240,7 @@ public class SimplePie extends PieCharts{
 	/* (non-Javadoc)
 	 * @see it.eng.spagobi.engines.chart.bo.ChartImpl#getChangeViewParameterLabel(java.lang.String, int)
 	 */
+	@Override
 	public String getChangeViewParameterLabel(String changePar, int i) {
 		String ret="";
 		if(changePar.equalsIgnoreCase(CHANGE_VIEW_3D)){
@@ -255,6 +261,7 @@ public class SimplePie extends PieCharts{
 	/* (non-Javadoc)
 	 * @see it.eng.spagobi.engines.chart.bo.ChartImpl#getPossibleChangePars()
 	 */
+	@Override
 	public List getPossibleChangePars() {
 		List l=new Vector();
 		if(!isThreedViewConfigured)	{l.add(CHANGE_VIEW_3D); }

@@ -23,6 +23,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
+import org.owasp.esapi.HTTPUtilities;
+import org.owasp.esapi.reference.DefaultHTTPUtilities;
 
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.dispatching.action.AbstractHttpAction;
@@ -35,7 +37,8 @@ import it.eng.spagobi.utilities.mime.MimeUtils;
 
 public class GetOfficeContentAction extends AbstractHttpAction {
 
-	private static transient Logger logger = Logger.getLogger(GetOfficeContentAction.class);
+    private static transient Logger logger=Logger.getLogger(GetOfficeContentAction.class);
+    private static HTTPUtilities httpUtils = new DefaultHTTPUtilities();
 
 	/*
 	 * (non-Javadoc)
@@ -87,9 +90,9 @@ public class GetOfficeContentAction extends AbstractHttpAction {
 				templateFileName = "";
 			}
 
-			response.setHeader("Cache-Control", ""); // leave blank to avoid IE errors
-			response.setHeader("Pragma", ""); // leave blank to avoid IE errors
-			response.setHeader("content-disposition", "inline; filename=" + templateFileName);
+			httpUtils.setHeader(response,"Cache-Control", ""); // leave blank to avoid IE errors
+			httpUtils.setHeader(response,"Pragma", ""); // leave blank to avoid IE errors
+			httpUtils.setHeader(response,"content-disposition","inline; filename="+templateFileName);
 
 			String mimeType = MimeUtils.getMimeType(templateFileName);
 			logger.debug("Mime type is = " + mimeType);

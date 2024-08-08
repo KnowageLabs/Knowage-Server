@@ -32,6 +32,7 @@ public abstract class AbstractDataStoreDecorator implements IDataStoreDecorator 
 	IDataStoreDecorator nextDecoratr;
 	
 
+	@Override
 	public void decorate(IDataStore dataStore) {
 		Iterator<IRecord> it = dataStore.iterator();
 		while(it.hasNext()) {
@@ -40,6 +41,7 @@ public abstract class AbstractDataStoreDecorator implements IDataStoreDecorator 
 		}
 	}
 	
+	@Override
 	public void updateDecoration(IDataStore dataStore, IRecord record) {
 		if( getNextDecoratr() != null) {
 			getNextDecoratr().updateDecoration(dataStore, record);

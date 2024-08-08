@@ -39,7 +39,7 @@ public class MeasureCatalogueSearchManager {
 	 * @return
 	 */
 	public static List<MeasureCatalogueMeasure> searchMeasureByPropery(MeasureCatalogue measureCatalogue, String propertyName, Object propertyValue) {
-		List<MeasureCatalogueMeasure> toreturn = new ArrayList<MeasureCatalogueMeasure>();
+		List<MeasureCatalogueMeasure> toreturn = new ArrayList<>();
 		for (Iterator<MeasureCatalogueMeasure> iterator = measureCatalogue.getMeasures().iterator(); iterator.hasNext();) {
 			MeasureCatalogueMeasure measure = iterator.next();
 			Object property = measure.getProperty(propertyName);
@@ -58,7 +58,7 @@ public class MeasureCatalogueSearchManager {
 	 * @return
 	 */
 	public static List<MeasureCatalogueMeasure> searchMeasureByAlias(MeasureCatalogue measureCatalogue, String alias) {
-		List<MeasureCatalogueMeasure> toreturn = new ArrayList<MeasureCatalogueMeasure>();
+		List<MeasureCatalogueMeasure> toreturn = new ArrayList<>();
 		for (Iterator<MeasureCatalogueMeasure> iterator = measureCatalogue.getMeasures().iterator(); iterator.hasNext();) {
 			MeasureCatalogueMeasure measure = iterator.next();
 			if (measure.getAlias().equals(alias)) {

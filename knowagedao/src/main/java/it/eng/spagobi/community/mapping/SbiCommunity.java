@@ -96,7 +96,7 @@ public class SbiCommunity extends SbiHibernateModel {
 		return this.communityId;
 	}
 
-	public void setCommunityId(Integer communityId) {
+	private void setCommunityId(Integer communityId) {
 		this.communityId = communityId;
 	}
 

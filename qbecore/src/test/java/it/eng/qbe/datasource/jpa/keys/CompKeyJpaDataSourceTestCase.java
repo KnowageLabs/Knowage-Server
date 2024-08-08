@@ -49,6 +49,7 @@ public class CompKeyJpaDataSourceTestCase extends AbstractKeyJpaDataSourceTestCa
 		doTests() ;
 	}
 	
+	@Override
 	public void doTests() {
 		super.doTests();
 		// add custom tests here

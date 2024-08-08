@@ -29,7 +29,7 @@ import it.eng.spagobi.tools.dataset.cache.SimpleCacheConfiguration;
  */
 public class SQLDBCacheConfiguration extends SimpleCacheConfiguration {
 	
-	private List<Properties> objectsTypeDimension = new ArrayList<Properties>();
+	private List<Properties> objectsTypeDimension = new ArrayList<>();
 	
 	
 	public static final String CACHE_TABLE_NAME_PREFIX = "CACHE_NAME_PREFIX_CONFIG";

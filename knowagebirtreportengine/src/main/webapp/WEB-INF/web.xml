@@ -203,6 +203,20 @@
 		<url-pattern>/BirtReportServletBackEnd</url-pattern>
 	</filter-mapping>   
 
+	<!--  ANTI CSRF FILTER -->
+	<filter>
+      <filter-name>KnowageAntiCsrfFilter</filter-name> 
+      <filter-class>it.eng.spagobi.security.utils.AntiCsrfFilter</filter-class> 
+     </filter>
+     
+     <filter-mapping>
+		<filter-name>KnowageAntiCsrfFilter</filter-name>
+		<url-pattern>/BirtReportServlet</url-pattern>
+		<url-pattern>/servlet/AdapterHTTP</url-pattern>
+		<dispatcher>REQUEST</dispatcher>
+		<dispatcher>FORWARD</dispatcher>
+	</filter-mapping>
+	
 	<!-- START-CAS  ${enable.cas.end}
 	<filter>
 		<filter-name>CAS Authentication Filter</filter-name>
@@ -302,6 +316,8 @@
 		<servlet-class>org.eclipse.birt.report.servlet.BirtEngineServlet</servlet-class>
 	</servlet>
 	-->
+
+	
 
 	<servlet>
 		<servlet-name>BirtReportServlet</servlet-name>

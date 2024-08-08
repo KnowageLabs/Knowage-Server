@@ -20,6 +20,7 @@ package it.eng.spagobi.tools.scheduler.to;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -801,5 +802,8 @@ public class DispatchContext implements Serializable {
 		this.sequence = sequence;
 	}
 
-
+	
+	private final void writeObject(ObjectOutputStream aOutputStream) {
+		  throw new UnsupportedOperationException("Security violation : cannot serialize object to a stream");
+	}
 }

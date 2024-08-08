@@ -191,7 +191,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 								if(typeof cockpitModule_properties.VARIABLES[variableUsage.variable] == 'object' && typeof cockpitModule_properties.VARIABLES[variableUsage.variable][variableUsage.key] != 'undefined') {
 									variableValue = cockpitModule_properties.VARIABLES[variableUsage.variable][variableUsage.key];
 								}
-								if(variableUsage.action == 'hide' && eval(escapeIfString(variableValue) + variableUsage.condition + escapeIfString(variableUsage.value))) tempCol.hide = true;
+								var evalFunc = Function("return " + escapeIfString(variableValue) + variableUsage.condition + escapeIfString(variableUsage.value))();
+								if(variableUsage.action == 'hide' && evalFunc) tempCol.hide = true;
 								if(variableUsage.action == 'header' && variableValue) {
 									tempCol.headerName = variableValue;
 									if(!tempCol.headerTooltip) tempCol.headerTooltip = tempCol.headerName;
@@ -431,7 +432,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						var parameterKey = cockpitModule_analyticalDrivers[range.value+'_description'] ? range.value+'_description' : range.value;
 						valueToCompare = cockpitModule_analyticalDrivers[parameterKey];
 					}
-					if (params.value!="" && eval(params.value + range.operator + valueToCompare)) {
+					var evalFunc = Function("return " + params.value + range.operator + valueToCompare)();
+					if (params.value!="" && evalFunc()) {
 						tempStyle['background-color'] = range['background-color'] || (tempStyle['background-color'] || '');
 						tempStyle['color'] = range['color'] || (tempStyle['color'] || '');
                         if (range.operator == '==') break;
@@ -542,7 +544,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 							}
 							break;
 						}
-						if (typeof params.value != "undefined" && eval((typeof params.value == 'string' ? "'"+params.value+"'": params.value) + range.operator + valueToCompare)) {
+						var evalFunc = Function("return " + (typeof params.value == 'string' ? "'"+params.value+"'": params.value) + range.operator + valueToCompare)();
+						if (typeof params.value != "undefined" && evalFunc) {
 							if(range['background-color']) {
 								if(params.colDef.visType && (params.colDef.visType.toLowerCase() == 'chart' || params.colDef.visType.toLowerCase() == 'text & chart')) {
 									this.eGui.innerHTML = this.eGui.innerHTML.replace(/background-color:([\#a-z0-9\(\)\,]+);/g,function(match,p1){
@@ -780,7 +783,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				var threshold = angular.copy($scope.ngModel.settings.rowThresholds.list[k]);
 				if(typeof threshold.formula != 'undefined'){
 					threshold.formula = replacePlaceholders(threshold.formula, data);
-					if(eval(threshold.formula)){
+					var evalFunc = Function("return " + threshold.formula)();
+					if(evalFunc){
 						// changing border color property to override ag-grid default behaviour
 						if(threshold.style['border-bottom-color']) threshold.style['border-bottom'] = "1px solid "+threshold.style['border-bottom-color'];
 						if(threshold.style['border-top-color']) threshold.style['border-top'] = "1px solid "+threshold.style['border-top-color'];

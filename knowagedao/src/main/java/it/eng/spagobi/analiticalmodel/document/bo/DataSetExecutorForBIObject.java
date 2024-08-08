@@ -20,7 +20,6 @@ package it.eng.spagobi.analiticalmodel.document.bo;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.Parameter;
-import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.common.behaviour.UserProfileUtils;
@@ -67,7 +66,7 @@ public class DataSetExecutorForBIObject {
 		Assert.assertNotNull(biObject, "The BIObject must be specified before the execution of this method");
 		Assert.assertNotNull(biObject, "The user profile  must be specified before the execution of this method");
 		
-		dataSet.setUserProfileAttributes(UserProfileUtils.getProfileAttributes( (UserProfile) profile));
+		dataSet.setUserProfileAttributes(UserProfileUtils.getProfileAttributes( profile));
 		dataSet.setParamsMap(getParameters());
 		dataSet.loadData();
 		IDataStore dataStore = dataSet.getDataStore();

@@ -20,7 +20,7 @@ public class SbiWhatifWorkflow extends SbiHibernateModel {
 		return id;
 	}
 
-	public void setId(int id) {
+	private void setId(int id) {
 		this.id = id;
 	}
 
@@ -70,6 +70,11 @@ public class SbiWhatifWorkflow extends SbiHibernateModel {
 
 	public void setModelId(int modelId) {
 		this.modelId = modelId;
+	}
+
+	public void changeId(int id) {
+		this.setId(id);
+		
 	}
 
 }

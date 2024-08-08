@@ -35,7 +35,7 @@ public class QueryValidator {
 	public static final String FILTER_ROLES_ERROR = "FILTER_ROLES_ERROR";
 	
 	public static List<String> validate(Query query,IDataSource dataSource){
-		List<String> errors = new ArrayList<String>();
+		List<String> errors = new ArrayList<>();
 		
 		if(!validateFiltersWithRoles(query, dataSource)){
 			errors.add(FILTER_ROLES_ERROR);
@@ -48,14 +48,14 @@ public class QueryValidator {
 	private static boolean validateFiltersWithRoles(Query query,IDataSource dataSource){
 	
 		//get all the where filters
-		Map<IModelField, Set<IQueryField>> fieldsInvolved = new  HashMap<IModelField, Set<IQueryField>>();
+		Map<IModelField, Set<IQueryField>> fieldsInvolved = new  HashMap<>();
 		query.getWhereIModelFields(fieldsInvolved,  dataSource);
 		
 		//iterate on the fields involved in the where filter clause
 		Set<IModelField> qf = fieldsInvolved.keySet();
 		Iterator<IModelField> setIterator = qf.iterator();
 		while (setIterator.hasNext()) {
-			IModelField aModelField = (IModelField) setIterator.next();
+			IModelField aModelField = setIterator.next();
 			IModelEntity aModelFieldEntity = aModelField.getParent();
 			Map<IModelEntity, List<String>> entityFieldFromRoleMap = query.getEntityFieldFromRoleMap(dataSource);
 			

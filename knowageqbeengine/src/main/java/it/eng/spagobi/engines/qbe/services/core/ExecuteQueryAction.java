@@ -197,7 +197,7 @@ public class ExecuteQueryAction extends AbstractQbeEngineAction {
 		SimpleModule simpleModule = new SimpleModule("SimpleModule", new Version(1, 0, 0, null));
 		simpleModule.addDeserializer(ModelFieldPaths.class, new ModelFieldPathsJSONDeserializer(relationShips, modelStructure, query));
 		mapper.registerModule(simpleModule);
-		TypeReference<List<ModelFieldPaths>> type = new TypeReference<List<ModelFieldPaths>>() {
+		TypeReference<List<ModelFieldPaths>> type = new TypeReference<>() {
 		};
 		try {
 			return mapper.readValue(serialized, type);

@@ -149,7 +149,7 @@ public class SbiViewHierarchy extends SbiHibernateModel implements Comparable<Sb
 	/**
 	 * @param id the id to set
 	 */
-	public void setId(String id) {
+	private void setId(String id) {
 		this.id = id;
 	}
 

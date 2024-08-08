@@ -45,6 +45,7 @@ public class SbiDataSetId implements java.io.Serializable {
 		this.organization = organization;
 	}
 
+	
 	// Property accessors
 
 	@Override
@@ -73,10 +74,13 @@ public class SbiDataSetId implements java.io.Serializable {
 	/**
 	 * @param dsId the dsId to set
 	 */
-	public void setDsId(Integer dsId) {
+	private void setDsId(Integer dsId) {
 		this.dsId = dsId;
 	}
 
+	public void changeDsId(Integer dsId) {
+		this.setDsId(dsId);
+	}
 	/**
 	 * @return the versionNum
 	 */
@@ -87,8 +91,12 @@ public class SbiDataSetId implements java.io.Serializable {
 	/**
 	 * @param versionNum the versionNum to set
 	 */
-	public void setVersionNum(Integer versionNum) {
+	private void setVersionNum(Integer versionNum) {
 		this.versionNum = versionNum;
+	}
+
+	public void changeVersionNum(Integer versionNum) {
+		this.setVersionNum(versionNum);
 	}
 
 	/**

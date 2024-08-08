@@ -62,11 +62,15 @@ public class SbiConfig extends SbiHibernateModel {
 
 	// Property accessors
 
+	public SbiConfig(Integer id) {
+		this.id = id;
+	}
+
 	public Integer getId() {
 		return this.id;
 	}
 
-	public void setId(Integer id) {
+	private void setId(Integer id) {
 		this.id = id;
 	}
 

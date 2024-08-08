@@ -13,10 +13,8 @@ import it.eng.spagobi.utilities.engines.EngineStartServletIOManager;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineException;
 
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 /**
  * @author Andrea Gioia
@@ -31,15 +29,16 @@ public class EngineInfoService extends AbstractEngineStartServlet {
 	
 	private static final long serialVersionUID = 1L;
 	
-	private static final Logger logger = Logger.getLogger(EngineInfoService.class);
+	private static final Logger LOGGER = LogManager.getLogger(EngineInfoService.class);
 	
 	
-	public void doService(EngineStartServletIOManager servletIOManager) throws SpagoBIEngineException {
+	@Override
+	public void service(EngineStartServletIOManager servletIOManager) throws SpagoBIEngineException {
 		
 		String infoType;
 		String responseMessage;
 		
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		
 		try {	
 				
@@ -58,20 +57,20 @@ public class EngineInfoService extends AbstractEngineStartServlet {
 			servletIOManager.tryToWriteBackToClient( responseMessage );
 			
 		} finally {
-			logger.debug("OUT");
+			LOGGER.debug("OUT");
 		}		
 	}
 	
 	public void auditServiceStartEvent() {
-		logger.info("EXECUTION_STARTED: " + new Date(System.currentTimeMillis()));
+		LOGGER.info("EXECUTION_STARTED: {}", new Date(System.currentTimeMillis()));
 	}
 
-	public void auditServiceErrorEvent(String msg) {
-		logger.info("EXECUTION_FAILED: " + new Date(System.currentTimeMillis()));
+	public void auditServiceErrorEvent() {
+		LOGGER.info("EXECUTION_FAILED: {}", new Date(System.currentTimeMillis()));
 	}
 
 	public void auditServiceEndEvent() {
-		logger.info("EXECUTION_PERFORMED: " + new Date(System.currentTimeMillis()));	
+		LOGGER.info("EXECUTION_PERFORMED: {}", new Date(System.currentTimeMillis()));	
 	}
 	
 	

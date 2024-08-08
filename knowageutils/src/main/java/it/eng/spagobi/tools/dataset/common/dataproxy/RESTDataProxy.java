@@ -57,7 +57,7 @@ public class RESTDataProxy extends AbstractDataProxy {
 
 	private String unparametrizedRequestBody;
 	private String unparametrizedAddress;
-	private final Map<String, String> unparametrizedRequestHeaders = new HashMap<String, String>();
+	private final Map<String, String> unparametrizedRequestHeaders = new HashMap<>();
 
 	protected final HttpMethod method;
 
@@ -93,7 +93,7 @@ public class RESTDataProxy extends AbstractDataProxy {
 
 		this.requestBody = requestBody;
 		this.address = address;
-		this.requestHeaders = new HashMap<String, String>(requestHeaders);
+		this.requestHeaders = new HashMap<>(requestHeaders);
 
 		/*
 		 * Initialize with same values. The parameters replacement will happen
@@ -150,7 +150,7 @@ public class RESTDataProxy extends AbstractDataProxy {
 	}
 
 	protected List<NameValuePair> getQuery() {
-		List<NameValuePair> res = new ArrayList<NameValuePair>();
+		List<NameValuePair> res = new ArrayList<>();
 		if (offsetParam != null) {
 			if (offset != OFFSET_NOT_DEFINED) {
 				res.add(new NameValuePair(offsetParam, Integer.toString(offset)));

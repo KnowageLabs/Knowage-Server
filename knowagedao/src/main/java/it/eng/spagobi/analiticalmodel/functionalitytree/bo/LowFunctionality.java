@@ -288,5 +288,5 @@ public class LowFunctionality implements Serializable {
 	public void setProg(Integer prog) {
 		this.prog = prog;
 	}
-
+	
 }

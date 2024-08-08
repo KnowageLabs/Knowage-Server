@@ -116,7 +116,7 @@ public abstract class AbstractDataBase implements IDataBase {
 								String param4 = tabCol.getString(4);
 
 
-								tableContent.putIfAbsent(tableName, new LinkedHashMap<String, String>());
+								tableContent.putIfAbsent(tableName, new LinkedHashMap<>());
 								tableContent.get(tableName).put(param4, param2);
 							}
 

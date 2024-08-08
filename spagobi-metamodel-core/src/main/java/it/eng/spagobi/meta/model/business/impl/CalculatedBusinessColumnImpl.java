@@ -57,8 +57,9 @@ public class CalculatedBusinessColumnImpl extends BusinessColumnImpl implements 
 		return BusinessModelPackage.Literals.CALCULATED_BUSINESS_COLUMN;
 	}
 	
+	@Override
 	public List<SimpleBusinessColumn> getReferencedColumns() throws SpagoBIPluginException{
-		List<SimpleBusinessColumn> columnsReferenced = new ArrayList<SimpleBusinessColumn>();
+		List<SimpleBusinessColumn> columnsReferenced = new ArrayList<>();
 		BusinessColumnSet businessColumnSet = this.getTable();
 
 		//get Expression String

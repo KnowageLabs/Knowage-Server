@@ -46,6 +46,7 @@ public class SbiI18NMessagesId implements java.io.Serializable {
 		this.label = label;
 	}
 
+	@Override
 	public boolean equals(Object other) {
 		if ((this == other))
 			return true;
@@ -63,6 +64,7 @@ public class SbiI18NMessagesId implements java.io.Serializable {
 						.equals(castOther.getLabel())));
 	}
 
+	@Override
 	public int hashCode() {
 		int result = 17;
 

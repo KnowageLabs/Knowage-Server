@@ -17,8 +17,6 @@
  */
 package it.eng.spagobi.utilities.container;
 
-import it.eng.spagobi.utilities.service.AbstractBaseHttpAction;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,6 +39,7 @@ public abstract class AbstractContainer implements IPropertiesContainer {
     
     
 	
+	@Override
 	public String getPropertyAsString(String propertyName) {
 		if ( containsProperty(propertyName) ) {
 			return getProperty(propertyName).toString();
@@ -49,11 +48,13 @@ public abstract class AbstractContainer implements IPropertiesContainer {
 		return null;
 	}
 	
+	@Override
 	public Boolean getPropertyAsBoolean(String propertyName) {
 		if( !containsProperty(propertyName) ) return null;
 		return getPropertyAsBoolean(propertyName, false);
 	}
 
+	@Override
 	public Boolean getPropertyAsBoolean(String propertyName, boolean defaultValue) {
 		if( !containsProperty(propertyName) ) return new Boolean(defaultValue);
 		return new Boolean(getPropertyAsString(propertyName).equalsIgnoreCase(TRUE));
@@ -66,6 +67,7 @@ public abstract class AbstractContainer implements IPropertiesContainer {
 	 * 
 	 * @return the attribute as integer
 	 */
+	@Override
 	public Integer getPropertyAsInteger(String propertyName) {
 		Integer propertyValue;
 		
@@ -83,6 +85,7 @@ public abstract class AbstractContainer implements IPropertiesContainer {
 		return propertyValue;
 	}
 	
+	@Override
 	public List getPropertyAsStringList(String propertyName) {
 		List propertyValue = null;
 		Object rawPropertyValue;
@@ -105,6 +108,7 @@ public abstract class AbstractContainer implements IPropertiesContainer {
 		return propertyValue;		
 	}
 	
+	@Override
 	public List getPropertyAsCsvStringList(String propertyName, String separator) {
 		List propertyValue = new ArrayList();
 		
@@ -125,6 +129,7 @@ public abstract class AbstractContainer implements IPropertiesContainer {
 		return propertyValue;		
 	}
 	
+	@Override
 	public JSONObject getPropertyAsJSONObject(String propertyName) {
 		JSONObject propertyValue = null;
 		

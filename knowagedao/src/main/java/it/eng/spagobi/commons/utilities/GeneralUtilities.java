@@ -18,15 +18,10 @@
 package it.eng.spagobi.commons.utilities;
 
 import static it.eng.spagobi.commons.constants.ConfigurationConstants.SPAGOBI_SPAGOBI_SERVICE_JNDI;
-import static java.nio.charset.StandardCharsets.UTF_8;
-
 import java.io.File;
-import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.net.URLDecoder;
-import java.net.URLEncoder;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
@@ -45,6 +40,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.owasp.esapi.errors.EncodingException;
+import org.owasp.esapi.reference.DefaultEncoder;
 
 import it.eng.knowage.commons.security.KnowageSystemConfiguration;
 import it.eng.spago.base.RequestContainer;
@@ -79,6 +76,7 @@ public class GeneralUtilities extends SpagoBIUtilities {
 	private static final String VUE_ENVIRONMENT = "vue.environment";
 	private static final int MAX_DEFAULT_FILE_5M_SIZE = 5242880;
 	private static final int MAX_DEFAULT_FILE_10M_SIZE = 10485760; // 10 mega byte
+	private static org.owasp.esapi.Encoder esapiEncoder = DefaultEncoder.getInstance();
 
 	private static boolean isProduction = true;
 
@@ -231,8 +229,8 @@ public class GeneralUtilities extends SpagoBIUtilities {
 	}
 
 	/**
-	 * Gets the default locale from SpagoBI configuration file, the behaviors is the same of getDefaultLocale() function, with difference that if not finds
-	 * returns null
+	 * Gets the default locale from SpagoBI configuration file, the behaviors is the same of getDefaultLocale() function, with difference that if not finds returns
+	 * null
 	 *
 	 * TODO : merge its behaviour with GetDefaultLocale (not done know cause today is release date). Gets the default locale.
 	 *
@@ -259,7 +257,8 @@ public class GeneralUtilities extends SpagoBIUtilities {
 		LOGGER.trace("Getting default locale");
 		Locale locale = null;
 		try {
-			String defaultLanguageTag = SingletonConfig.getInstance().getConfigValue("SPAGOBI.LANGUAGE_SUPPORTED.LANGUAGE.default");
+			String defaultLanguageTag = SingletonConfig.getInstance()
+					.getConfigValue("SPAGOBI.LANGUAGE_SUPPORTED.LANGUAGE.default");
 			String languageTag = StringUtils.isNotBlank(defaultLanguageTag) ? defaultLanguageTag : "en-US";
 			LOGGER.trace("Default locale found: {}", languageTag);
 			locale = Locale.forLanguageTag(languageTag);
@@ -273,12 +272,13 @@ public class GeneralUtilities extends SpagoBIUtilities {
 	public static List<Locale> getSupportedLocales() {
 		LOGGER.trace("Getting supported locales");
 		List<Locale> ret = new ArrayList<>();
-		String supportedLanguages = SingletonConfig.getInstance().getConfigValue("SPAGOBI.LANGUAGE_SUPPORTED.LANGUAGES");
+		String supportedLanguages = SingletonConfig.getInstance()
+				.getConfigValue("SPAGOBI.LANGUAGE_SUPPORTED.LANGUAGES");
 		if (StringUtils.isNotBlank(supportedLanguages)) {
 			for (String supportedLanguageTag : supportedLanguages.split(",", -1)) {
 				Locale locale = Locale.forLanguageTag(supportedLanguageTag);
-				LOGGER.trace("Found locale with language = [{}] and script = [{}] and country = [{}]", locale.getLanguage(), locale.getScript(),
-						locale.getCountry());
+				LOGGER.trace("Found locale with language = [{}] and script = [{}] and country = [{}]",
+						locale.getLanguage(), locale.getScript(), locale.getCountry());
 				ret.add(locale);
 			}
 
@@ -411,7 +411,8 @@ public class GeneralUtilities extends SpagoBIUtilities {
 		String ret = null;
 		// if a particular language is specified take the corrisponding date-format
 		if (locale != null) {
-			ret = SingletonConfig.getInstance().getConfigValue("SPAGOBI.DATE-FORMAT-" + locale.toLanguageTag() + ".format");
+			ret = SingletonConfig.getInstance()
+					.getConfigValue("SPAGOBI.DATE-FORMAT-" + locale.toLanguageTag() + ".format");
 		}
 		if (ret == null) {
 			ret = SingletonConfig.getInstance().getConfigValue("SPAGOBI.DATE-FORMAT.format");
@@ -578,13 +579,14 @@ public class GeneralUtilities extends SpagoBIUtilities {
 
 	/**
 	 * Returns an url starting with the given base url and adding parameters retrieved by the input parameters map. Each parameter value is encoded using
-	 * URLEncoder.encode(value, StandardCharsets.UTF_8);
+	 * esapiEncoder.encodeForURL(value, StandardCharsets.UTF_8);
 	 *
 	 * @param baseUrl The base url
 	 * @param mapPars The parameters map; those parameters will be added to the base url (values will be encoded using UTF-8 encoding)
 	 * @return an url starting with the given base url and adding parameters retrieved by the input parameters map
+	 * @throws EncodingException 
 	 */
-	public static String getUrl(String baseUrl, Map mapPars) {
+	public static String getUrl(String baseUrl, Map mapPars) throws EncodingException {
 		LOGGER.debug("Getting URL (???) from {} base URL and parameters {}", baseUrl, mapPars);
 		Assert.assertNotNull(baseUrl, "Base url in input is null");
 		StringBuilder sb = new StringBuilder();
@@ -600,7 +602,7 @@ public class GeneralUtilities extends SpagoBIUtilities {
 					String value = valueObj.toString();
 					// encoding value
 					try {
-						value = URLEncoder.encode(value, UTF_8.name());
+						value = esapiEncoder.encodeForURL(value);
 
 						// put all + to space! that is because
 						// otherwise %2B (encoding of plus) and + (substitution of white space in an url)
@@ -608,10 +610,10 @@ public class GeneralUtilities extends SpagoBIUtilities {
 						// and when using exporter I would no more be able to distinguish + from ' '
 						// value = value.replaceAll(Pattern.quote("+") , " ");
 
-					} catch (UnsupportedEncodingException e) {
+					} catch (EncodingException e) {
 						LOGGER.warn("UTF-8 encoding is not supported!!!", e);
 						LOGGER.warn("Using system encoding...");
-						value = URLEncoder.encode(value);
+						value = esapiEncoder.encodeForURL(value);
 					}
 
 					sb.append(key + "=" + value);
@@ -656,16 +658,19 @@ public class GeneralUtilities extends SpagoBIUtilities {
 
 			// do the decode
 			try {
-				parameterValue = URLDecoder.decode(parameterValueEncoded, UTF_8.name());
-			} catch (UnsupportedEncodingException e) {
-				LOGGER.error("Error in decoding parameter: UTF 8 not supported {}; use previous value {}", parameterName, parameterValueEncoded, e);
+				parameterValue = esapiEncoder.decodeFromURL(parameterValueEncoded);
+			} catch (EncodingException e) {
+				LOGGER.error("Error in decoding parameter: UTF 8 not supported {}; use previous value {}",
+						parameterName, parameterValueEncoded, e);
 				parameterValue = parameterValueEncoded;
 			} catch (java.lang.IllegalArgumentException e) { // can happen when in document composition a '%' char is given
-				LOGGER.warn("Error in decoding parameter, illegal argument for (probably value % is present); use preceding value {}", parameterName,
-						parameterValueEncoded);
+				LOGGER.warn(
+						"Error in decoding parameter, illegal argument for (probably value % is present); use preceding value {}",
+						parameterName, parameterValueEncoded);
 				parameterValue = parameterValueEncoded;
 			} catch (Exception e) {
-				LOGGER.warn("Generic Error in decoding parameter {} ; use previous value {}", parameterName, parameterValueEncoded);
+				LOGGER.warn("Generic Error in decoding parameter {} ; use previous value {}", parameterName,
+						parameterValueEncoded);
 				parameterValue = parameterValueEncoded;
 			}
 
@@ -698,7 +703,8 @@ public class GeneralUtilities extends SpagoBIUtilities {
 		if (maxResultsStr != null) {
 			maxResults = Integer.parseInt(maxResultsStr);
 		} else {
-			LOGGER.warn("Dataset max results configuration not found. Check spagobi.xml, SPAGOBI.DATASET.maxResults attribute");
+			LOGGER.warn(
+					"Dataset max results configuration not found. Check spagobi.xml, SPAGOBI.DATASET.maxResults attribute");
 			LOGGER.debug("Using default value that is Integer.MAX_VALUE = {}", Integer.MAX_VALUE);
 		}
 		return maxResults;
@@ -766,7 +772,8 @@ public class GeneralUtilities extends SpagoBIUtilities {
 			}
 			return propertyValue;
 		} catch (Throwable t) {
-			throw new SpagoBIRuntimeException("An unexpected exception occured while loading spagobi property [" + propertyName + "]", t);
+			throw new SpagoBIRuntimeException(
+					"An unexpected exception occured while loading spagobi property [" + propertyName + "]", t);
 		}
 	}
 
@@ -775,7 +782,8 @@ public class GeneralUtilities extends SpagoBIUtilities {
 		String urlEngine = getExternalEngineContextPath(eng);
 		LOGGER.debug("Engine url is {}", urlEngine);
 		if (!"it.eng.spagobi.engines.drivers.dashboard.DashboardDriver".equals(eng.getDriverName())) {
-			Assert.assertTrue(urlEngine != null && !urlEngine.trim().equals(""), "External engine url is not defined!!");
+			Assert.assertTrue(urlEngine != null && !urlEngine.trim().equals(""),
+					"External engine url is not defined!!");
 		}
 		if ("it.eng.spagobi.engines.drivers.dashboard.DashboardDriver".equals(eng.getDriverName())) {
 			urlEngine = resolveRelativeUrlsForVue(urlEngine);
@@ -826,7 +834,8 @@ public class GeneralUtilities extends SpagoBIUtilities {
 	}
 
 	public static String getServiceHostUrl() {
-		String serviceURL = SpagoBIUtilities.readJndiResource(SingletonConfig.getInstance().getConfigValue(SPAGOBI_SPAGOBI_SERVICE_JNDI));
+		String serviceURL = SpagoBIUtilities
+				.readJndiResource(SingletonConfig.getInstance().getConfigValue(SPAGOBI_SPAGOBI_SERVICE_JNDI));
 		serviceURL = serviceURL.substring(0, serviceURL.lastIndexOf('/'));
 
 		return serviceURL;
@@ -849,7 +858,8 @@ public class GeneralUtilities extends SpagoBIUtilities {
 		return sb.toString();
 	}
 
-	public static String getAngularPropertiesFileName(String currLanguage, String currScript, String currCountry, String separator) {
+	public static String getAngularPropertiesFileName(String currLanguage, String currScript, String currCountry,
+			String separator) {
 		Locale locale = new Builder().setLanguage(currLanguage).setRegion(currCountry).setScript(currScript).build();
 		return "/js/lib/angular-localization/" + getAngularPropertiesFileName(locale, separator) + ".js";
 	}

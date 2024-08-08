@@ -40,6 +40,7 @@ import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 
+import it.eng.knowage.commons.zip.SonarZipCommons;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.api.AbstractSpagoBIResource;
 import it.eng.spagobi.commons.bo.UserProfile;
@@ -53,7 +54,7 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 
 @Path("/selfservicedatasetupload")
 public class UploadDatasetFileResource extends AbstractSpagoBIResource {
-	private static transient Logger logger = Logger.getLogger(UploadDatasetFileResource.class);
+	private static final Logger logger = Logger.getLogger(UploadDatasetFileResource.class);
 
 	private static final String UPLOADED_FILE = "UPLOADED_FILE";
 	private static final String SKIP_CHECKS = "SKIP_CHECKS";
@@ -99,10 +100,10 @@ public class UploadDatasetFileResource extends AbstractSpagoBIResource {
 			jsonMap.put("fileType", extension);
 
 			return jsonMap;
-		} catch (Throwable t) {
-			String s = t.getMessage();
-			logger.error("Error while uploading dataset file", t);
-			throw new SpagoBIRestServiceException(s, buildLocaleFromSession(), t);
+		} catch (Exception e) {
+			String s = e.getMessage();
+			logger.error("Error while uploading dataset file", e);
+			throw new SpagoBIRestServiceException(s, buildLocaleFromSession(), e);
 		} finally {
 			logger.debug("OUT");
 		}
@@ -174,9 +175,9 @@ public class UploadDatasetFileResource extends AbstractSpagoBIResource {
 			}
 
 			return new File(datasetFileDir, fileName);
-		} catch (Throwable t) {
-			logger.error("Error while saving file into server: " + t);
-			throw new SpagoBIServiceException(getActionName(), "Error while saving file into server", t);
+		} catch (Exception e) {
+			logger.error("Error while saving file into server: " + e);
+			throw new SpagoBIServiceException(getActionName(), "Error while saving file into server", e);
 		} finally {
 			logger.debug("OUT");
 		}
@@ -186,9 +187,9 @@ public class UploadDatasetFileResource extends AbstractSpagoBIResource {
 		logger.debug("IN");
 		try {
 			uploaded.write(saveTo);
-		} catch (Throwable t) {
-			logger.error("Error while saving file into server: " + t);
-			throw new SpagoBIServiceException(getActionName(), "Error while saving file into server", t);
+		} catch (Exception e) {
+			logger.error("Error while saving file into server: " + e);
+			throw new SpagoBIServiceException(getActionName(), "Error while saving file into server", e);
 		} finally {
 			logger.debug("OUT");
 		}
@@ -275,35 +276,40 @@ public class UploadDatasetFileResource extends AbstractSpagoBIResource {
 
 		try {
 			ZipInputStream zippedInputStream = new ZipInputStream(uploaded.getInputStream());
-			ZipEntry zipEntry = null;
+			ZipEntry zipEntry = null;			
 
-			if ((zipEntry = zippedInputStream.getNextEntry()) != null) {
-
-				String zipItemName = zipEntry.getName();
-
-				logger.debug("Method unzipUploadedFile(): Zip entry [ " + zipItemName + " ]");
-
-				if (zipEntry.isDirectory()) {
-					throw new SpagoBIServiceException(getActionName(), "The uploaded file is a folder. Zip directly the file.");
-				}
-
-				DiskFileItemFactory factory = new DiskFileItemFactory();
-				tempFileItem = factory.createItem(uploaded.getFieldName(), "application/octet-stream", uploaded.isFormField(), zipItemName);
-				OutputStream tempFileItemOutStream = tempFileItem.getOutputStream();
-
-				IOUtils.copy(zippedInputStream, tempFileItemOutStream);
-
-				tempFileItemOutStream.close();
-			}
-
+			while((zipEntry = zippedInputStream.getNextEntry()) != null) {	
+				SonarZipCommons sonarZipCommons = new SonarZipCommons();
+				
+				if(sonarZipCommons.doThresholdCheck(uploaded.getName())) {
+					String zipItemName = zipEntry.getName();
+					
+					logger.debug("Method unzipUploadedFile(): Zip entry [ " + zipItemName + " ]");
+					
+					if (zipEntry.isDirectory()) {
+						throw new SpagoBIServiceException(getActionName(), "The uploaded file is a folder. Zip directly the file.");
+					}
+					
+					DiskFileItemFactory factory = new DiskFileItemFactory();
+					tempFileItem = factory.createItem(uploaded.getFieldName(), "application/octet-stream", uploaded.isFormField(), zipItemName);
+					OutputStream tempFileItemOutStream = tempFileItem.getOutputStream();
+					
+					IOUtils.copy(zippedInputStream, tempFileItemOutStream);
+					tempFileItemOutStream.close();					
+				} else {
+					logger.error("Error while unzip file. Invalid archive file");
+					throw new SpagoBIServiceException(getActionName(), "Error while unzip file. Invalid archive file");
+				}				 
+			}			
+			
 			zippedInputStream.close();
 
 			logger.debug("Method unzipUploadedFile(): End");
 			return tempFileItem;
 
-		} catch (Throwable t) {
-			logger.error("Error while unzip file. Invalid archive file: " + t);
-			throw new SpagoBIServiceException(getActionName(), "Error while unzip file. Invalid archive file", t);
+		} catch (Exception e) {
+			logger.error("Error while unzip file. Invalid archive file: " + e);
+			throw new SpagoBIServiceException(getActionName(), "Error while unzip file. Invalid archive file", e);
 
 		}
 	}
@@ -336,9 +342,9 @@ public class UploadDatasetFileResource extends AbstractSpagoBIResource {
 			logger.debug("Method ungzipUploadedFile(): End");
 			return tempFileItem;
 
-		} catch (Throwable t) {
-			logger.error("Error while unzip file. Invalid archive file: " + t);
-			throw new SpagoBIServiceException(getActionName(), "Error while unzip file. Invalid archive file", t);
+		} catch (Exception e) {
+			logger.error("Error while unzip file. Invalid archive file: " + e);
+			throw new SpagoBIServiceException(getActionName(), "Error while unzip file. Invalid archive file", e);
 
 		}
 	}
@@ -387,9 +393,9 @@ public class UploadDatasetFileResource extends AbstractSpagoBIResource {
 			}
 
 			logger.debug("Method checkDatasetFileMaxSize(): End");
-		} catch (Throwable t) {
-			logger.error("Error retrieving user attribute [ " + DATASET_FILE_MAX_SIZE + " ] " + t);
-			throw new SpagoBIServiceException(getActionName(), "The uploaded file exceeds the maximum size", t);
+		} catch (Exception e) {
+			logger.error("Error retrieving user attribute [ " + DATASET_FILE_MAX_SIZE + " ] " + e);
+			throw new SpagoBIServiceException(getActionName(), "The uploaded file exceeds the maximum size", e);
 
 		}
 

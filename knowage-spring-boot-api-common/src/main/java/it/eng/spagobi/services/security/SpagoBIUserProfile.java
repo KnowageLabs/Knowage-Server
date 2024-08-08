@@ -17,6 +17,7 @@
  */
 package it.eng.spagobi.services.security;
 
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -133,7 +134,7 @@ public class SpagoBIUserProfile {
 	 */
 	public List<String> getFunctions() {
 		if (functions == null) {
-			functions = new ArrayList<String>();
+			functions = new ArrayList<>();
 		}
 		return this.functions;
 	}
@@ -200,7 +201,7 @@ public class SpagoBIUserProfile {
 	 */
 	public List<String> getRoles() {
 		if (roles == null) {
-			roles = new ArrayList<String>();
+			roles = new ArrayList<>();
 		}
 		return this.roles;
 	}
@@ -325,7 +326,7 @@ public class SpagoBIUserProfile {
 		 */
 		public List<SpagoBIUserProfile.Attributes.Entry> getEntry() {
 			if (entry == null) {
-				entry = new ArrayList<SpagoBIUserProfile.Attributes.Entry>();
+				entry = new ArrayList<>();
 			}
 			return this.entry;
 		}
@@ -402,5 +403,10 @@ public class SpagoBIUserProfile {
 		}
 
 	}
+	
+	public void writeObject(ObjectOutputStream aOutputStream) {
+		  throw new UnsupportedOperationException("Security violation : cannot serialize object to a stream");
+	}
+
 
 }

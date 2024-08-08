@@ -190,9 +190,10 @@ public class Signup {
 
 					SbiUserAttributesId pk = new SbiUserAttributesId();
 					if (attributeId != null) {
-						pk.setAttributeId(attributeId);
+						//pk.setAttributeId(attributeId);
+						pk = new SbiUserAttributesId(attributeId);
 					}
-					pk.setId(id);
+					pk.changeId(id);
 					userAttribute.setId(pk);
 				}
 				userAttribute.setAttributeValue(attributeValue);
@@ -486,7 +487,7 @@ public class Signup {
 				return Response.ok(errObj.toString()).build();
 			}
 
-			r.setExtRoleId(signupRole.getId());
+			r.changeExtRoleId(signupRole.getId());
 			r.getCommonInfo().setOrganization(defaultTenant);
 			roles.add(r);
 			user.setSbiExtUserRoleses(roles);
@@ -511,7 +512,7 @@ public class Signup {
 
 			user.setSbiUserAttributeses(attributes);
 			if (userRegistrationFromExpiredToken)
-				user.setId(existingUserId);
+				user.changeId(existingUserId);
 
 			int id = userDao.fullSaveOrUpdateSbiUser(user);
 
@@ -585,8 +586,7 @@ public class Signup {
 		if (attrValue != null) {
 			SbiUserAttributes a = new SbiUserAttributes();
 			a.getCommonInfo().setOrganization(DEFAULT_TENANT);
-			SbiUserAttributesId id = new SbiUserAttributesId();
-			id.setAttributeId(attrId);
+			SbiUserAttributesId id = new SbiUserAttributesId(attrId);
 			a.setId(id);
 			a.setAttributeValue(attrValue);
 			attributes.add(a);

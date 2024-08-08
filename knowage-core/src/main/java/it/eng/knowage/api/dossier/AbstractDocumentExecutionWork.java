@@ -11,8 +11,6 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URISyntaxException;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Collection;
@@ -39,6 +37,7 @@ import org.apache.logging.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.owasp.esapi.reference.DefaultEncoder;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -88,6 +87,7 @@ public class AbstractDocumentExecutionWork extends DossierExecutionClient implem
 	IProgressThreadDAO progressThreadDAO;
 	protected AbstractDossierTemplate dossierTemplate = null;
 	protected JSONObject jsonObjectTemplate = new JSONObject();
+	
 
 	@Override
 	public void run() {
@@ -686,12 +686,15 @@ public class AbstractDocumentExecutionWork extends DossierExecutionClient implem
 											currValue2AsString = currValue2AsString.substring(1,
 													currValue2AsString.length() - 1);
 										}
-
-										paramValue.put("value", URLEncoder.encode(currValue2AsString,
-												StandardCharsets.UTF_8.toString()));
+										
+										paramValue.put("value", 
+												DefaultEncoder.getInstance().encodeForHTML(currValue2AsString));
+												//URLEncoder.encode(currValue2AsString,
+												//StandardCharsets.UTF_8.toString()));
 										paramValue.put("description",
-												URLEncoder.encode(templateParameter.getUrlNameDescription(),
-														StandardCharsets.UTF_8.toString()));
+												DefaultEncoder.getInstance().encodeForHTML(templateParameter.getUrlNameDescription()));
+												//URLEncoder.encode(templateParameter.getUrlNameDescription(),
+												//		StandardCharsets.UTF_8.toString()));
 
 										paramValueArray.put(paramValue);
 									}
@@ -756,5 +759,4 @@ public class AbstractDocumentExecutionWork extends DossierExecutionClient implem
 		}
 
 	}
-
 }

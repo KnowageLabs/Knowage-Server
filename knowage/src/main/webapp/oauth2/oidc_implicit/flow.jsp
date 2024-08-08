@@ -16,15 +16,6 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 --%>
 
-<%@page import="it.eng.spagobi.services.oauth2.Oauth2SsoService"%>
-<%@page import="it.eng.spagobi.security.OAuth2.OAuth2Client"%>
-<%@page import="it.eng.spagobi.security.OAuth2.OAuth2Config"%>
-<%@page import="org.apache.commons.lang.StringEscapeUtils"%>
-<%@page import="org.json.JSONObject"%>
-
-<%
-OAuth2Config oauth2Config = OAuth2Config.getInstance();
-%>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -35,11 +26,49 @@ OAuth2Config oauth2Config = OAuth2Config.getInstance();
   <body>
     <script>
     
-    const authorizeEndpoint = '<%= StringEscapeUtils.escapeJavaScript(oauth2Config.getAuthorizeUrl()) %>';
-    const clientId = '<%= StringEscapeUtils.escapeJavaScript(oauth2Config.getClientId()) %>';
-    const scope = '<%= StringEscapeUtils.escapeJavaScript(oauth2Config.getScopes()) %>';
-    const redirectUri = '<%= StringEscapeUtils.escapeJavaScript(oauth2Config.getRedirectUrl()) %>';
-    const nonce = '<%= StringEscapeUtils.escapeJavaScript((String) session.getAttribute(Oauth2SsoService.NONCE)) %>';
+    var oauth2Config = null;
+	
+    var xhrOAuth2C = new XMLHttpRequest();
+
+    xhrOAuth2C.onload = function() {
+        var response = xhrOAuth2C.response;
+
+        if (xhrOAuth2C.status == 200) {
+        	oauthConfig = response;
+        } else {
+            alert("Error: " + response.error_description + " (" + response.error + ")");
+        }
+    };
+    xhrOAuth2C.responseType = 'json';
+    xhrOAuth2C.open("GET", '/oauth2configservice', true);
+    //xhrOAuth2C.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+    xhrOAuth2C.send();
+
+    const authorizeEndpoint = oauth2Config.authorizeUrl;
+    const tokenEndpoint = oauth2Config.accessTokenUrl;
+    const clientId = oauth2Config.clientId;
+    const redirectUri = oauth2Config.redirectUrl;
+    const scope = oauth2Config.scopes;
+
+    const nonce;
+	
+    var xhrOAuth2Sso = new XMLHttpRequest();
+
+    xhrOAuth2Sso.onload = function() {
+        var response = xhrOAuth2Sso.response;
+
+        if (xhrOAuth2Sso.status == 200) {
+        	nonce = response;
+        } else {
+            alert("Error: " + response.error_description + " (" + response.error + ")");
+        }
+    };
+    xhrOAuth2Sso.responseType = 'text';
+    xhrOAuth2Sso.open("GET", '/oauth2ssoservice', true);
+    //xhrOAuth2C.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+    xhrOAuth2Sso.send();
+    
+    
     const authorization_endpoint = new URL(authorizeEndpoint);
     
     window.sessionStorage.setItem("client_id", clientId);

@@ -1,10 +1,9 @@
 package it.eng.spagobi.utilities.database;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
-
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 
 // https://stackoverflow.com/questions/47037849/hive-connection-using-hibernate-in-spring-boot
@@ -22,9 +21,9 @@ public class Hive2DataBase extends HiveDataBase implements MetaDataBase {
 
 	@Override
 	public String getSchema(Connection conn) throws SQLException {
-		Statement stmt = conn.createStatement();
+		PreparedStatement stmt = conn.prepareStatement("SELECT current_database()");
 		try {
-			ResultSet rs = stmt.executeQuery("SELECT current_database()");
+			ResultSet rs = stmt.executeQuery();
 			try {
 				rs.next();
 				return rs.getString(1);

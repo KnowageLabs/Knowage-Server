@@ -21,11 +21,11 @@ public class CatalogFunction {
 	private String owner;
 	private String label;
 	private String type;
-	private Map<String, IInputVariable> inputVariables = new HashMap<String, IInputVariable>();
-	private Map<String, String> inputColumns = new HashMap<String, String>();
-	private Map<String, IOutputColumn> outputColumns = new HashMap<String, IOutputColumn>();
+	private Map<String, IInputVariable> inputVariables = new HashMap<>();
+	private Map<String, String> inputColumns = new HashMap<>();
+	private Map<String, IOutputColumn> outputColumns = new HashMap<>();
 
-	private List<String> keywords = new ArrayList<String>();
+	private List<String> keywords = new ArrayList<>();
 
 	public CatalogFunction() {
 	}

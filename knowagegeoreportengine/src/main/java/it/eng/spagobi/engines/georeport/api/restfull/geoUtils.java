@@ -23,7 +23,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.geotools.data.DataUtilities;
 import org.geotools.feature.FeatureCollection;
 import org.geotools.feature.FeatureIterator;
@@ -38,6 +39,7 @@ import org.opengis.feature.simple.SimpleFeatureType;
 import it.eng.knowage.commons.security.PathTraversalChecker;
 import it.eng.spago.base.SourceBean;
 import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
 import it.eng.spagobi.engines.georeport.dao.FeaturesProviderDAOFileImpl;
 import it.eng.spagobi.engines.georeport.dao.FeaturesProviderDAOWFSImpl;
 import it.eng.spagobi.engines.georeport.utils.LayerCache;
@@ -66,7 +68,7 @@ public class geoUtils {
 	public static final String LAYER_URL = "layerUrl";
 	public static final String NO_DATASET = "noDataset";
 
-	private static Logger logger = Logger.getLogger(geoUtils.class);
+	private static Logger logger = LogManager.getLogger(geoUtils.class);
 
 	public static FieldType getDsFieldType(String xml, String fieldName) throws Exception {
 		FieldType toReturn = IFieldMetaData.FieldType.ATTRIBUTE;
@@ -149,6 +151,9 @@ public class geoUtils {
 							: layerDef.getString("layer_url");
 
 					if (geoLayer.getType().equals("File")) {
+
+						PathTraversalChecker.get(SpagoBIUtilities.getResourcePath(), source);
+
 						FeaturesProviderDAOFileImpl featuresProviderDAOFileImpl = new FeaturesProviderDAOFileImpl();
 						outputFeatureCollection = featuresProviderDAOFileImpl.getAllFeatures(source);
 					} else {

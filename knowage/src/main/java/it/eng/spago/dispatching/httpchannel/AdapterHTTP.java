@@ -34,6 +34,8 @@ import org.apache.commons.fileupload.FileItemFactory;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.fileupload.servlet.ServletRequestContext;
+import org.owasp.esapi.HTTPUtilities;
+import org.owasp.esapi.reference.DefaultHTTPUtilities;
 
 import com.jamonapi.Monitor;
 import com.jamonapi.MonitorFactory;
@@ -141,6 +143,8 @@ public class AdapterHTTP extends HttpServlet {
 	public static final String XMLHTTPREQUEST = "XMLHttpRequest";
 
 	private static final String SERIALIZE_SESSION_ATTRIBUTE = "COMMON.SERIALIZE_SESSION";
+	
+	private static HTTPUtilities httpUtils = new DefaultHTTPUtilities();
 
 	private void handleQueryStringField(HttpServletRequest request, SourceBean serviceReq, String queryStringFieldName)
 			throws SourceBeanException {
@@ -579,14 +583,14 @@ public class AdapterHTTP extends HttpServlet {
 		requestContainer.setAttribute(HTTP_REQUEST_REMOTE_ADDR, request.getRemoteAddr());
 		requestContainer.setAttribute(HTTP_REQUEST_REMOTE_HOST, request.getRemoteHost());
 		requestContainer.setAttribute(HTTP_REQUEST_REMOTE_USER, request.getRemoteUser());
-		requestContainer.setAttribute(HTTP_REQUEST_REQUESTED_SESSION_ID, request.getRequestedSessionId());
+//		requestContainer.setAttribute(HTTP_REQUEST_REQUESTED_SESSION_ID, request.getRequestedSessionId());
 		requestContainer.setAttribute(HTTP_REQUEST_REQUEST_URI, request.getRequestURI());
 		requestContainer.setAttribute(HTTP_REQUEST_SCHEME, request.getScheme());
 		requestContainer.setAttribute(HTTP_REQUEST_SERVER_NAME, request.getServerName());
 		requestContainer.setAttribute(HTTP_REQUEST_SERVER_PORT, String.valueOf(request.getServerPort()));
 		requestContainer.setAttribute(HTTP_REQUEST_SERVLET_PATH, request.getServletPath());
-		if (request.getUserPrincipal() != null)
-			requestContainer.setAttribute(HTTP_REQUEST_USER_PRINCIPAL, request.getUserPrincipal());
+		//if (request.getUserPrincipal() != null)
+		//	requestContainer.setAttribute(HTTP_REQUEST_USER_PRINCIPAL, request.getUserPrincipal());
 		requestContainer.setAttribute(HTTP_REQUEST_REQUESTED_SESSION_ID_FROM_COOKIE,
 				String.valueOf(request.isRequestedSessionIdFromCookie()));
 		requestContainer.setAttribute(HTTP_REQUEST_REQUESTED_SESSION_ID_FROM_URL,

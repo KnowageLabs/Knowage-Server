@@ -64,12 +64,14 @@ public class FeaturesProviderDAOWFSImpl extends AbstractHibernateDAO implements 
 			geoIdPValue = (String) parameters.get(GEOID_PVALUE);
 			LOGGER.debug("Parameter [" + GEOID_PVALUE + "] is equal to [" + geoIdPValue + "]");
 
-			wfsUrl += "?request=GetFeature" + "&typename=" + layerName + "&Filter=<Filter><PropertyIsEqualTo><PropertyName>" + geoIdPName
-					+ "</PropertyName><Literal>" + geoIdPValue + "</Literal></PropertyIsEqualTo></Filter>" + "&outputformat=json" + "&version=1.0.0";
+			wfsUrl += "?request=GetFeature" + "&typename=" + layerName
+					+ "&Filter=<Filter><PropertyIsEqualTo><PropertyName>" + geoIdPName + "</PropertyName><Literal>"
+					+ geoIdPValue + "</Literal></PropertyIsEqualTo></Filter>" + "&outputformat=json" + "&version=1.0.0";
 
 			featureCollection = getFeatures(wfsUrl);
 		} catch (Throwable t) {
-			throw new SpagoBIRuntimeException("An unexpected error occured while executing service call [" + wfsUrl + "]", t);
+			throw new SpagoBIRuntimeException(
+					"An unexpected error occured while executing service call [" + wfsUrl + "]", t);
 		} finally {
 			LOGGER.debug("OUT");
 		}
@@ -97,7 +99,8 @@ public class FeaturesProviderDAOWFSImpl extends AbstractHibernateDAO implements 
 
 			featureCollection = getFeatures(wfsUrl);
 		} catch (Throwable t) {
-			throw new SpagoBIRuntimeException("An unexpected error occured while executing service call [" + wfsUrl + "]", t);
+			throw new SpagoBIRuntimeException(
+					"An unexpected error occured while executing service call [" + wfsUrl + "]", t);
 		} finally {
 			LOGGER.debug("OUT");
 		}
@@ -114,7 +117,8 @@ public class FeaturesProviderDAOWFSImpl extends AbstractHibernateDAO implements 
 		try {
 			featureCollection = getFeatures(wfsUrl);
 		} catch (Throwable t) {
-			throw new SpagoBIRuntimeException("An unexpected error occured while executing service call [" + wfsUrl + "]", t);
+			throw new SpagoBIRuntimeException(
+					"An unexpected error occured while executing service call [" + wfsUrl + "]", t);
 		} finally {
 			LOGGER.debug("OUT");
 		}
@@ -156,7 +160,8 @@ public class FeaturesProviderDAOWFSImpl extends AbstractHibernateDAO implements 
 			}
 
 		} catch (Throwable t) {
-			throw new SpagoBIRuntimeException("An unexpected error occured while executing service call [" + wfsUrl + "]", t);
+			throw new SpagoBIRuntimeException(
+					"An unexpected error occured while executing service call [" + wfsUrl + "]", t);
 		} finally {
 			LOGGER.debug("OUT");
 		}

@@ -27,7 +27,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		    curr_country: '<%= curr_country %>',
 	    	curr_language: '<%= curr_language%>',
 	    	curr_script: '<%= curr_script%>'
-			contextName: '/<%= request.getContextPath().startsWith("/")||request.getContextPath().startsWith("\\")?request.getContextPath().substring(1): request.getContextPath()%>',
+			contextName: '/<%= request.getContextPath().startsWith("/")||request.getContextPath().startsWith("\\")?request.getContextPath().substring(1): request.getContextPath() %>',
 	    	externalBasePath:"<%= KnowageSystemConfiguration.getKnowageContext()%>"	,
 	    	thous: '<%= GeneralUtilities.getGroupingSeparator(locale)%>',
 	        dec: '<%= GeneralUtilities.getDecimalSeparator(locale)%>',
@@ -482,7 +482,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		return {
 		        request: function (config) {
 					config.params = {};
-		            config.params.SBI_EXECUTION_ID=<%=request.getParameter("SBI_EXECUTION_ID")!=null? "'"+request.getParameter("SBI_EXECUTION_ID")+"'" : "null"%>;
+		            config.params.SBI_EXECUTION_ID=<%=esapiEncoder.encodeForJavaScript(request.getParameter("SBI_EXECUTION_ID")!=null? "'"+request.getParameter("SBI_EXECUTION_ID")+"'" : "null")%>;
 		            return config;
 		        }
 

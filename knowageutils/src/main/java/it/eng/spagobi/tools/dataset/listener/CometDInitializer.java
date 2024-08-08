@@ -62,6 +62,7 @@ public class CometDInitializer extends GenericServlet {
 
 	private static BayeuxServer server;
 
+	@Override
 	public void init() throws ServletException {
 		server = (BayeuxServer) getServletContext().getAttribute(BayeuxServer.ATTRIBUTE);
 		CometDSpagoBIAuthenticationPolicy authenticator = new CometDSpagoBIAuthenticationPolicy();

@@ -1,14 +1,12 @@
 package it.eng.spagobi.analiticalmodel.document.handlers;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
-
-import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 
 import org.apache.log4j.Logger;
+import org.owasp.esapi.reference.DefaultEncoder;
 
 import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFUserError;
@@ -36,7 +34,7 @@ public class DriversValidationAPI {
 
 	private static Logger logger = Logger.getLogger(DriversValidationAPI.class);
 	private static final String TREE_INNER_LOV_TYPE = "treeinner";
-
+	private static org.owasp.esapi.Encoder esapiEncoder = DefaultEncoder.getInstance();
 	private IEngUserProfile userProfile = null;
 	private Locale locale = null;
 
@@ -340,7 +338,7 @@ public class DriversValidationAPI {
 				if (val.equalsIgnoreCase("%")) {
 					value = "%";
 				} else {
-					value = URLDecoder.decode(val, UTF_8.name());
+					value = esapiEncoder.decodeFromURL(val);
 				}
 				String description = null;
 				if (value.equals("")) {

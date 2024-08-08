@@ -38,6 +38,7 @@ public class SimpleCluster extends ClusterCharts {
 	
 	
 
+	@Override
 	public JFreeChart createChart(DatasetMap datasets) {
 
 		DefaultXYZDataset dataset=(DefaultXYZDataset)datasets.getDatasets().get("1");

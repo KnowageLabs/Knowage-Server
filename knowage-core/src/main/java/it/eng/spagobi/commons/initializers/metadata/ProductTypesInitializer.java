@@ -229,9 +229,7 @@ public class ProductTypesInitializer extends SpagoBIInitializer {
 
 			association.setCommonInfo(commonInfo);
 
-			SbiProductTypeEngineId id = new SbiProductTypeEngineId();
-			id.setProductTypeId(aProductType.getProductTypeId());
-			id.setEngineId(anEngine.getEngineId());
+			SbiProductTypeEngineId id = new SbiProductTypeEngineId(anEngine.getEngineId(),aProductType.getProductTypeId());
 			association.setId(id);
 
 			aSession.save(association);
@@ -264,9 +262,7 @@ public class ProductTypesInitializer extends SpagoBIInitializer {
 
 				association.setCommonInfo(commonInfo);
 
-				SbiProductTypeEngineId id = new SbiProductTypeEngineId();
-				id.setProductTypeId(aProductType.getProductTypeId());
-				id.setEngineId(anEngine.getEngineId());
+				SbiProductTypeEngineId id = new SbiProductTypeEngineId(anEngine.getEngineId(),aProductType.getProductTypeId());
 				association.setId(id);
 
 				aSession.save(association);

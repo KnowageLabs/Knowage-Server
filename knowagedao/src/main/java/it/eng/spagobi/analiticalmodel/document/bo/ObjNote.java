@@ -17,6 +17,7 @@
  */
 package it.eng.spagobi.analiticalmodel.document.bo;
 
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -209,5 +210,8 @@ public class ObjNote implements Serializable {
 		this.isDeletable = isDeletable;
 	}
 	
-	
+	 private final void writeObject(ObjectOutputStream aOutputStream) {
+		  throw new UnsupportedOperationException("Security violation : cannot serialize object to a stream");
+	}
+
 }

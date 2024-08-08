@@ -26,8 +26,10 @@ import java.util.Enumeration;
 import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
 
+import it.eng.knowage.commons.zip.SonarZipCommons;
 import it.eng.spagobi.utilities.DynamicClassLoader;
 import it.eng.spagobi.utilities.SpagoBIAccessUtils;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
@@ -64,34 +66,39 @@ public class JasperReportEngineTemplate {
 				Enumeration totalZipEntries = zipFile.entries();
 				File jarFile = null;
 				while (totalZipEntries.hasMoreElements()) {
-					ZipEntry entry = (ZipEntry) totalZipEntries.nextElement();
-					if (entry.getName().endsWith(".jar")) {
-						jarFile = new File(tempDir, entry.getName());
-						// set classloader with jar
-						ClassLoader previous = Thread.currentThread().getContextClassLoader();
-						DynamicClassLoader dcl = new DynamicClassLoader(jarFile, previous);
-						Thread.currentThread().setContextClassLoader(dcl);
-					}
-					else if (entry.getName().endsWith(".jrxml")) {
-						// set InputStream with jrxml
-						File jrxmlFile = new File(tempDir, entry.getName());
-						InputStream isJrxml = new FileInputStream(jrxmlFile);
-						byte[] templateJrxml = new byte[0];
-						templateJrxml = util.getByteArrayFromInputStream(isJrxml);
-						is = new ByteArrayInputStream(templateJrxml);
-					}
 					
-					if (entry.getName().endsWith(".properties")) {
-						propertiesLoaded = true;
-					}					
+					SonarZipCommons sonarZipCommons = new SonarZipCommons();
+					
+					if(sonarZipCommons.doThresholdCheck(JS_FILE_ZIP + JS_EXT_ZIP)) {
+						ZipEntry entry = (ZipEntry) totalZipEntries.nextElement();
+						if (entry.getName().endsWith(".jar")) {
+							jarFile = new File(tempDir, entry.getName());
+							// set classloader with jar
+							ClassLoader previous = Thread.currentThread().getContextClassLoader();
+							DynamicClassLoader dcl = new DynamicClassLoader(jarFile, previous);
+							Thread.currentThread().setContextClassLoader(dcl);
+						}
+						else if (entry.getName().endsWith(".jrxml")) {
+							// set InputStream with jrxml
+							File jrxmlFile = new File(tempDir, entry.getName());
+							InputStream isJrxml = new FileInputStream(jrxmlFile);
+							byte[] templateJrxml = new byte[0];
+							templateJrxml = util.getByteArrayFromInputStream(isJrxml);
+							is = new ByteArrayInputStream(templateJrxml);
+						}
+						
+						if (entry.getName().endsWith(".properties")) {
+							propertiesLoaded = true;
+						}
+					} else {
+						throw new SpagoBIRuntimeException("Error while unzip file. Invalid archive file");
+					}
 				}
 			} else {
 				is = new ByteArrayInputStream( content );
 			}
-		} catch(Throwable t) {
-			throw new JasperReportEngineRuntimeException("Impossible to load template", t);
-		} finally {
-			
+		} catch(Exception e) {
+			throw new JasperReportEngineRuntimeException("Impossible to load template", e);
 		}
 		
 		return is;

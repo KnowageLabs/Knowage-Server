@@ -99,7 +99,7 @@ public class CrosstabJSONDeserializer implements IDeserializer {
 	}
 
 	private void deserializeRows(JSONObject crosstabDefinitionJSON, CrosstabDefinition crosstabDefinition) throws Exception {
-		List<Row> rows = new ArrayList<Row>();
+		List<Row> rows = new ArrayList<>();
 		JSONArray rowsJSON = crosstabDefinitionJSON.optJSONArray(CrosstabSerializationConstants.ROWS);
 
 		AttributeJSONDeserializer attributeJSONDeserializer = (AttributeJSONDeserializer) AttributeDeserializerFactory.getInstance().getDeserializer(
@@ -118,7 +118,7 @@ public class CrosstabJSONDeserializer implements IDeserializer {
 	}
 
 	private void deserializeMeasures(JSONObject crosstabDefinitionJSON, CrosstabDefinition crosstabDefinition) throws Exception {
-		List<Measure> measures = new ArrayList<Measure>();
+		List<Measure> measures = new ArrayList<>();
 		JSONArray measuresJSON = crosstabDefinitionJSON.optJSONArray(CrosstabSerializationConstants.MEASURES);
 
 		MeasureJSONDeserializer measureJSONDeserializer = (MeasureJSONDeserializer) MeasureDeserializerFactory.getInstance()
@@ -137,7 +137,7 @@ public class CrosstabJSONDeserializer implements IDeserializer {
 	}
 
 	private void deserializeColumns(JSONObject crosstabDefinitionJSON, CrosstabDefinition crosstabDefinition) throws Exception {
-		List<Column> columns = new ArrayList<Column>();
+		List<Column> columns = new ArrayList<>();
 		JSONArray columnsJSON = crosstabDefinitionJSON.optJSONArray(CrosstabSerializationConstants.COLUMNS);
 		// Assert.assertTrue(rows != null && rows.length() > 0,
 		// "No columns specified!");

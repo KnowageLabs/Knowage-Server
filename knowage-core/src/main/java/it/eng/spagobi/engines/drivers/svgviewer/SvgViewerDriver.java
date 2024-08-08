@@ -49,7 +49,7 @@ public class SvgViewerDriver extends GenericDriver {
 
 	@Override
 	public ArrayList<String> getDatasetAssociated(byte[] contentTemplate) throws JSONException {
-		ArrayList<String> associatedDatasets = new ArrayList<String>();
+		ArrayList<String> associatedDatasets = new ArrayList<>();
 
 		SourceBean templateSB = null;
 		try {

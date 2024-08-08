@@ -180,9 +180,9 @@ public class QbeEngineFromFederationStartResource extends QbeEngineStartResource
 
 		// loading the source datasets
 		logger.debug("Loading source datasets");
-		List<IDataSet> dataSets = new ArrayList<IDataSet>();
-		List<IDataSet> originalDataSets = new ArrayList<IDataSet>();
-		List<String> dsLabels = new ArrayList<String>();
+		List<IDataSet> dataSets = new ArrayList<>();
+		List<IDataSet> originalDataSets = new ArrayList<>();
+		List<String> dsLabels = new ArrayList<>();
 
 		Iterator<IDataSet> sourceDatasets = dsf.getSourceDatasets().iterator();
 		while (sourceDatasets.hasNext()) {
@@ -192,8 +192,8 @@ public class QbeEngineFromFederationStartResource extends QbeEngineStartResource
 		}
 
 		// update profile attributes into dataset
-		Map<String, Object> userAttributes = new HashMap<String, Object>();
-		Map<String, String> mapNameTable = new HashMap<String, String>();
+		Map<String, Object> userAttributes = new HashMap<>();
+		Map<String, String> mapNameTable = new HashMap<>();
 		UserProfile profile = (UserProfile) this.getEnv().get(EngineConstants.ENV_USER_PROFILE);
 		userAttributes.putAll(profile.getUserAttributes());
 		userAttributes.put(SsoServiceInterface.USER_ID, profile.getUserId().toString());

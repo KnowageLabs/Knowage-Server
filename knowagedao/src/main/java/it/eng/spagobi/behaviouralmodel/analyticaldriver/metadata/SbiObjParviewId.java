@@ -108,6 +108,7 @@ public class SbiObjParviewId  implements java.io.Serializable {
 	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
 	 */
+	@Override
 	public int hashCode() {
 		int result = 17;
 		result = 37 * result + this.getCompareValue().hashCode();
@@ -121,6 +122,7 @@ public class SbiObjParviewId  implements java.io.Serializable {
 	/* (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
+	@Override
 	public boolean equals(Object other) {
 		if ( (this == other ) ) return true;
 		if ( (other == null ) ) return false;

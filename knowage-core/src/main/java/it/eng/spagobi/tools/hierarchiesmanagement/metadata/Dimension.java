@@ -38,7 +38,7 @@ public class Dimension {
 	 * @param nodeName
 	 */
 	public Dimension(String label) {
-		this(label, "", "", "", "", new ArrayList<Field>(), new ArrayList<Filter>());
+		this(label, "", "", "", "", new ArrayList<>(), new ArrayList<>());
 	}
 
 	public Dimension(String label, String name, String datasource, String hierarchyTable, String fkName, ArrayList<Field> metadataFields,

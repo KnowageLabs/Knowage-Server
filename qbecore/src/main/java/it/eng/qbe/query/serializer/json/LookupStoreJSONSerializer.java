@@ -28,6 +28,8 @@ import it.eng.spagobi.utilities.assertion.Assert;
 
 import java.math.BigInteger;
 import java.text.SimpleDateFormat;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.TemporalAccessor;
 import java.util.Date;
 import java.util.Iterator;
 
@@ -39,12 +41,15 @@ import org.json.JSONObject;
  * @author Andrea Gioia (andrea.gioia@eng.it)
  * @deprecated Use JSONDataWriter instead
  */
+@Deprecated
 public class LookupStoreJSONSerializer {
 	
 	public static final String TOTAL_PROPERTY = "results";
 	public static final String ROOT = "rows";
-	
+	@Deprecated
 	private static final SimpleDateFormat DATE_FORMATTER = new SimpleDateFormat( "dd/MM/yyyy hh:mm:ss" );
+	
+	private static final DateTimeFormatter DATE_FORMATTER_V2 = DateTimeFormatter.ofPattern( "dd/MM/yyyy hh:mm:ss" );
 
 	
 	/** Logger component. */
@@ -183,7 +188,7 @@ public class LookupStoreJSONSerializer {
 					String fieldValue = "";
 					if(field.getValue() != null && !field.getValue().equals("")) {
 						if(Date.class.isAssignableFrom(fieldMetaData.getType())) {
-							fieldValue =  DATE_FORMATTER.format(  field.getValue() );
+							fieldValue =  DATE_FORMATTER_V2.format((TemporalAccessor) field.getValue());
 						} else {
 							fieldValue =  field.getValue().toString();
 						}

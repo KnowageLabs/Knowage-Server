@@ -115,9 +115,7 @@ public class OAuth2TenantInitializer extends SpagoBIInitializer {
 
 				association.setCommonInfo(commonInfo);
 
-				SbiOrganizationProductTypeId id = new SbiOrganizationProductTypeId();
-				id.setProductTypeId(aProductType.getProductTypeId());
-				id.setOrganizationId(aTenant.getId());
+				SbiOrganizationProductTypeId id = new SbiOrganizationProductTypeId(aProductType.getProductTypeId(),aTenant.getId());
 				association.setId(id);
 
 				hibernateSession.save(association);
@@ -140,9 +138,7 @@ public class OAuth2TenantInitializer extends SpagoBIInitializer {
 
 			association.setCommonInfo(commonInfo);
 
-			SbiOrganizationDatasourceId id = new SbiOrganizationDatasourceId();
-			id.setDatasourceId(dataSource.getDsId());
-			id.setOrganizationId(aTenant.getId());
+			SbiOrganizationDatasourceId id = new SbiOrganizationDatasourceId(dataSource.getDsId(),aTenant.getId());
 			association.setId(id);
 
 			hibernateSession.save(association);

@@ -95,7 +95,7 @@ public class Connection implements IConnection {
 			dataSetServiceProxy = getDataSetProxy();
 			logger.debug("DataSetServiceProxy obtained correctly");
 		} catch (RuntimeException e) {
-			e.printStackTrace();
+			logger.error("open",e);
 			throw (OdaException) new OdaException("Impossible to open connection").initCause(e);
 		}
 		logger.debug("Data source initialized");

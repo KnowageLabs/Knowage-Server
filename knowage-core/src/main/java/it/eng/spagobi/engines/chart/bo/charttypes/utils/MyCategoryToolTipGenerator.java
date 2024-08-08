@@ -17,8 +17,6 @@
  */
 package it.eng.spagobi.engines.chart.bo.charttypes.utils;
 
-import it.eng.spagobi.engines.chart.bo.charttypes.barcharts.CombinedCategoryBar;
-
 import java.util.HashMap;
 
 import org.apache.log4j.Logger;
@@ -47,14 +45,15 @@ public class MyCategoryToolTipGenerator extends StandardCategoryToolTipGenerator
 	}
 
 
+	@Override
 	public String generateToolTip(CategoryDataset dataset, int row, int column) {
 		logger.debug("IN");
 		//String tooltip=super.generateToolTip(dataset, row, column);
 		String rowName="";
 		String columnName="";
 		try{
-			Comparable rowNameC=(String)dataset.getRowKey(row);
-			Comparable columnNameC=(String)dataset.getColumnKey(column);
+			Comparable rowNameC=dataset.getRowKey(row);
+			Comparable columnNameC=dataset.getColumnKey(column);
 			if(rowNameC!=null)rowName=rowNameC.toString();
 			if(columnNameC!=null)columnName=columnNameC.toString();
 

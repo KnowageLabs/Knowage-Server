@@ -22,7 +22,7 @@ public class CardinalityBuilder {
 	public void addAttribute(Integer ruleId, Integer ruleVersion, String name) {
 		Rule rule = new Rule(ruleId, ruleVersion);
 		if (!attributeMap.containsKey(rule)) {
-			attributeMap.put(rule, new HashMap<String, Boolean>());
+			attributeMap.put(rule, new HashMap<>());
 		}
 		attributeMap.get(rule).put(name, false);
 	}

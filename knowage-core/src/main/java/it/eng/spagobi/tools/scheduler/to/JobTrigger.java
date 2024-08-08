@@ -24,6 +24,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.ISODateTimeFormat;
@@ -31,6 +32,7 @@ import org.joda.time.format.ISODateTimeFormat;
 public class JobTrigger implements Serializable {
 
 	private static final long serialVersionUID = 1L;
+	private static final Logger LOGGER = Logger.getLogger(JobTrigger.class);
 
 	public static final String TRIGGER_NAME = "triggerName";
 	public static final String TRIGGER_GROUP = "triggerGroup";
@@ -175,8 +177,7 @@ public class JobTrigger implements Serializable {
 					Date date = formatter.parse(endDate);
 					this.endDate = formatterF.format(date);
 				} catch (ParseException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
+					LOGGER.error("Error while formatting end date", e1);
 				}
 
 			}
@@ -269,8 +270,7 @@ public class JobTrigger implements Serializable {
 					Date date = formatter.parse(startDate);
 					this.startDate = formatterF.format(date);
 				} catch (ParseException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
+					LOGGER.error("Error while formatting start date", e1);
 				}
 
 			}

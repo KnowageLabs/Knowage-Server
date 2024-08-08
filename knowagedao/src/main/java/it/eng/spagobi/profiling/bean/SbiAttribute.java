@@ -42,7 +42,7 @@ public class SbiAttribute extends SbiHibernateModel {
 	private String lovColumns;
 	private ProfileAttributesValueTypes value;
 
-	private Set<SbiUserAttributes> sbiUserAttributeses = new HashSet<SbiUserAttributes>(0);
+	private Set<SbiUserAttributes> sbiUserAttributeses = new HashSet<>(0);
 
 	public SbiAttribute() {
 	}
@@ -77,7 +77,7 @@ public class SbiAttribute extends SbiHibernateModel {
 		return this.attributeId;
 	}
 
-	public void setAttributeId(int attributeId) {
+	private void setAttributeId(int attributeId) {
 		this.attributeId = attributeId;
 	}
 
@@ -167,6 +167,11 @@ public class SbiAttribute extends SbiHibernateModel {
 
 	public void setLovColumns(String lovColumns) {
 		this.lovColumns = lovColumns;
+	}
+
+	public void changeAttributeId(int intValue) {
+		this.setAttributeId(intValue);
+		
 	}
 
 }

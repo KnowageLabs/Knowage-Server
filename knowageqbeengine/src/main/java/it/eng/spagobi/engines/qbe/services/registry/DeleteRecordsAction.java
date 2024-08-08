@@ -83,7 +83,7 @@ public class DeleteRecordsAction extends AbstractQbeEngineAction {
 					}
 				}
 
-				Map<String, Object> properties = new HashMap<String, Object>();
+				Map<String, Object> properties = new HashMap<>();
 				properties.put("keyField", keyColumn);
 				properties.put("ids", arrays);
 
@@ -140,7 +140,7 @@ public class DeleteRecordsAction extends AbstractQbeEngineAction {
 		Assert.assertNotNull(registryConf,
 				"It's not possible to execute " + this.getActionName() + " service before having properly created an instance of RegistryConfiguration class");
 
-		idsToReturn = new Vector<Integer>();
+		idsToReturn = new Vector<>();
 
 		for (int i = 0; i < selectedRecords.length(); i++) {
 			JSONObject aRecord = selectedRecords.getJSONObject(i);

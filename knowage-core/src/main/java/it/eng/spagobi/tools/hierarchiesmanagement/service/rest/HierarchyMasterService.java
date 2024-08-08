@@ -23,7 +23,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -77,7 +76,17 @@ import it.eng.spagobi.utilities.rest.RestUtilities;
 public class HierarchyMasterService {
 
 	private static Logger logger = Logger.getLogger(HierarchyService.class);
-
+	private static final String START = "START";
+	private static final String VALIDITY_DATE = "validityDate";
+	private static final String FILTER_DATE = "filterDate";
+	private static final String FILTER_HIERARCHY = "filterHierarchy";
+	private static final String FILTER_HIER_TYPE = "filterHierType";
+	private static final String OPTIONAL_FILTER = "optionalFilters";
+	private static final String LEVELS = "levels";
+	private static final String HIERARCHY_TABLE = "hierarchyTable";
+	private static final String HIER_TARGET_NAME = "hierTargetName";
+	private static final String HIER_TARGET_TYPE = "hierTargetType";
+	
 	// get hierarchies names of a dimension
 	@GET
 	@Path("/getHierarchiesMaster")
@@ -85,7 +94,7 @@ public class HierarchyMasterService {
 	@UserConstraint(functionalities = { CommunityFunctionalityConstants.HIERARCHIES_MANAGEMENT })
 	public String getHierarchiesMaster(@QueryParam("dimension") String dimension) {
 		JSONArray hierarchiesJSONArray = new JSONArray();
-		logger.debug("START");
+		logger.debug(START);
 
 		try {
 			// 1 - get hierarchy table
@@ -108,11 +117,8 @@ public class HierarchyMasterService {
 					dataSource);
 			String bkpColumn = AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.BKP_COLUMN, dataSource);
 			String columns = hierarchyNameColumn + "," + typeColumn + "," + hierarchyDescriptionColumn + " ";
-			String queryText = "SELECT DISTINCT(" + hierarchyCodeColumn + ")," + columns + " FROM " + tableName
-					+ " WHERE " + typeColumn + "=\'MASTER\' AND (" + bkpColumn + "= 0 OR " + bkpColumn
-					+ " IS NULL) ORDER BY " + hierarchyCodeColumn;
-			// IDataStore dataStore = dataSource.executeStatement("SELECT DISTINCT(" + hierarchyCodeColumn + ")," + columns + " FROM " + tableName + " WHERE "
-			// + typeColumn + "=\'MASTER\' AND (" + bkpColumn + "= 0 OR " + bkpColumn + " IS NULL) ORDER BY " + hierarchyCodeColumn, null, null);
+			String queryText = String.format("SELECT DISTINCT(%s), %s FROM %s WHERE %s=\'MASTER\' AND (%s= 0 OR %s IS NULL) ORDER BY %s", 
+					hierarchyCodeColumn, columns, tableName, typeColumn, bkpColumn, bkpColumn, hierarchyCodeColumn);
 			IDataStore dataStore = dataSource.executeStatement(queryText, 0, 0);
 
 			for (Iterator<IRecord> iterator = dataStore.iterator(); iterator.hasNext();) {
@@ -135,10 +141,10 @@ public class HierarchyMasterService {
 
 			}
 
-		} catch (Throwable t) {
+		} catch (Exception e) {
 			logger.error("An unexpected error occured while retriving automatic hierarchies names");
 			throw new SpagoBIServiceException("An unexpected error occured while retriving automatic hierarchies names",
-					t);
+					e);
 		}
 		logger.debug("END");
 		return hierarchiesJSONArray.toString();
@@ -150,7 +156,7 @@ public class HierarchyMasterService {
 	@UserConstraint(functionalities = { CommunityFunctionalityConstants.HIERARCHIES_MANAGEMENT })
 	public String createHierarchyMaster(@Context HttpServletRequest req) throws SQLException {
 
-		logger.debug("START");
+		logger.debug(START);
 
 		Connection dbConnection = null;
 
@@ -159,14 +165,14 @@ public class HierarchyMasterService {
 			JSONObject requestVal = RestUtilities.readBodyAsJSONObject(req);
 
 			String dimensionLabel = requestVal.getString("dimension");
-			String validityDate = (requestVal.isNull("validityDate")) ? null : requestVal.getString("validityDate");
-			String filterDate = (requestVal.isNull("filterDate")) ? null : requestVal.getString("filterDate");
-			String filterHierarchy = (requestVal.isNull("filterHierarchy")) ? null
-					: requestVal.getString("filterHierarchy");
-			String filterHierType = (requestVal.isNull("filterHierType")) ? null
-					: requestVal.getString("filterHierType");
-			String optionalFilters = (requestVal.isNull("optionalFilters")) ? null
-					: requestVal.getString("optionalFilters");
+			String validityDate = (requestVal.isNull(VALIDITY_DATE)) ? null : requestVal.getString(VALIDITY_DATE);
+			String filterDate = (requestVal.isNull(FILTER_DATE)) ? null : requestVal.getString(FILTER_DATE);
+			String filterHierarchy = (requestVal.isNull(FILTER_HIERARCHY)) ? null
+					: requestVal.getString(FILTER_HIERARCHY);
+			String filterHierType = (requestVal.isNull(FILTER_HIER_TYPE)) ? null
+					: requestVal.getString(FILTER_HIER_TYPE);
+			String optionalFilters = (requestVal.isNull(OPTIONAL_FILTER)) ? null
+					: requestVal.getString(OPTIONAL_FILTER);
 
 			if (dimensionLabel == null) {
 				throw new SpagoBIServiceException("An unexpected error occured while creating hierarchy master",
@@ -198,7 +204,7 @@ public class HierarchyMasterService {
 				}
 
 				// add the hierarchy nm as first level
-				JSONArray origLvls = requestVal.getJSONArray("levels");
+				JSONArray origLvls = requestVal.getJSONArray(LEVELS);
 				JSONArray lvls = new JSONArray();
 				JSONObject firstLevel = new JSONObject();
 				firstLevel.put("CD", hierNm); // put the name into the code
@@ -208,7 +214,7 @@ public class HierarchyMasterService {
 					JSONObject origLev = origLvls.getJSONObject(li);
 					lvls.put(li + 1, origLev);
 				}
-				requestVal.put("levels", lvls);
+				requestVal.put(LEVELS, lvls);
 			}
 
 			dbConnection = dataSource.getConnection();
@@ -234,7 +240,7 @@ public class HierarchyMasterService {
 
 			List<Field> generalFields = new ArrayList<>(hierarchy.getMetadataGeneralFields());
 			List<Field> nodeFields = new ArrayList<>(hierarchy.getMetadataNodeFields());
-			boolean exludeHierLeaf = (filterHierarchy != null) ? true : false;
+			boolean exludeHierLeaf = (filterHierarchy != null);
 			IDataStore dataStore = HierarchyUtils.getDimensionDataStore(dataSource, dimensionName, metadataFields,
 					validityDate, optionalFilters, filterDate, filterHierarchy, filterHierType, hierTableName, prefix,
 					exludeHierLeaf);
@@ -253,12 +259,12 @@ public class HierarchyMasterService {
 
 			dbConnection.commit();
 
-		} catch (Throwable t) {
+		} catch (Exception e) {
 			if (dbConnection != null && !dbConnection.isClosed()) {
 				dbConnection.rollback();
 			}
 			logger.error("An unexpected error occured while retriving dimension data");
-			throw new SpagoBIServiceException("An unexpected error occured while retriving dimension data", t);
+			throw new SpagoBIServiceException("An unexpected error occured while retriving dimension data", e);
 		} finally {
 			dbConnection.close();
 		}
@@ -274,7 +280,7 @@ public class HierarchyMasterService {
 	@UserConstraint(functionalities = { CommunityFunctionalityConstants.HIERARCHIES_MANAGEMENT })
 	public String syncronizeHierarchyMaster(@Context HttpServletRequest req) throws SQLException {
 
-		logger.debug("START");
+		logger.debug(START);
 
 		Connection dbConnection = null;
 
@@ -284,19 +290,15 @@ public class HierarchyMasterService {
 
 			String dimensionLabel = requestVal.getString("dimension");
 			String validityTreeDate = requestVal.getString("validityTreeDate");
-			String validityDate = (requestVal.isNull("validityDate")) ? null : requestVal.getString("validityDate");
-			String filterDate = (requestVal.isNull("filterDate")) ? null : requestVal.getString("filterDate");
-			String filterHierarchy = (requestVal.isNull("filterHierarchy")) ? null
-					: requestVal.getString("filterHierarchy");
-			String filterHierType = (requestVal.isNull("filterHierType")) ? null
-					: requestVal.getString("filterHierType");
-			String optionalFilters = (requestVal.isNull("optionalFilters")) ? null
-					: requestVal.getString("optionalFilters");
-			String optionDate = (requestVal.isNull("optionDate")) ? null : requestVal.getString("optionDate");
+			String validityDate = (requestVal.isNull(VALIDITY_DATE)) ? null : requestVal.getString(VALIDITY_DATE);
+			String filterHierarchy = (requestVal.isNull(FILTER_HIERARCHY)) ? null
+					: requestVal.getString(FILTER_HIERARCHY);
+			String filterHierType = (requestVal.isNull(FILTER_HIER_TYPE)) ? null
+					: requestVal.getString(FILTER_HIER_TYPE);
+			String optionalFilters = (requestVal.isNull(OPTIONAL_FILTER)) ? null
+					: requestVal.getString(OPTIONAL_FILTER);
 			String optionHierarchy = (requestVal.isNull("optionHierarchy")) ? null
 					: requestVal.getString("optionHierarchy");
-			String optionHierType = (requestVal.isNull("optionHierType")) ? null
-					: requestVal.getString("optionHierType");
 
 			if (dimensionLabel == null) {
 				throw new SpagoBIServiceException("An unexpected error occured while syncronize hierarchy master",
@@ -409,7 +411,7 @@ public class HierarchyMasterService {
 				IRecord hierRecord = (IRecord) iterFromHier.next();
 				IField f = hierRecord.getFieldAt(posID);
 				List recs = dsNewDimensions.findRecords(posID, f.getValue());
-				if (recs.size() == 0) {
+				if (recs.isEmpty()) {
 					dsNewDimensions.appendRecord(hierRecord);
 				}
 			}
@@ -419,10 +421,10 @@ public class HierarchyMasterService {
 			dbConnection.setAutoCommit(false);
 			// 1 - Backup the original hierarchy (always)
 			HashMap paramsMap = new HashMap();
-			paramsMap.put("validityDate", validityTreeDate);
-			paramsMap.put("hierarchyTable", hierTableName);
-			paramsMap.put("hierTargetName", filterHierarchy);
-			paramsMap.put("hierTargetType", filterHierType);
+			paramsMap.put(VALIDITY_DATE, validityTreeDate);
+			paramsMap.put(HIERARCHY_TABLE, hierTableName);
+			paramsMap.put(HIER_TARGET_NAME, filterHierarchy);
+			paramsMap.put(HIER_TARGET_TYPE, filterHierType);
 			paramsMap.put("doPropagation", true);
 
 			String backupHierName = HierarchyUtils.updateHierarchyForBackup(dataSource, dbConnection, paramsMap, true);
@@ -441,7 +443,7 @@ public class HierarchyMasterService {
 			}
 			logger.error("#Records inserted into master hierarchy: " + cont);
 
-			if (orderFields != null && orderFields.size() > 0) {
+			if (orderFields != null && !orderFields.isEmpty()) {
 				paramsMap.put("prefix", prefix);
 				paramsMap.put("backupHierName", backupHierName);
 				updateOrderField(dataSource, dbConnection, paramsMap, orderFields);
@@ -449,12 +451,12 @@ public class HierarchyMasterService {
 
 			dbConnection.commit();
 
-		} catch (Throwable t) {
+		} catch (Exception e) {
 			if (!dbConnection.getAutoCommit() && dbConnection != null && !dbConnection.isClosed()) {
 				dbConnection.rollback();
 			}
 			logger.error("An unexpected error occured while retriving dimension data");
-			throw new SpagoBIServiceException("An unexpected error occured while retriving dimension data", t);
+			throw new SpagoBIServiceException("An unexpected error occured while retriving dimension data", e);
 		} finally {
 			dbConnection.close();
 		}
@@ -466,7 +468,7 @@ public class HierarchyMasterService {
 
 	public static void updateOrderField(IDataSource dataSource, Connection databaseConnection, HashMap paramsMap,
 			List<String> listField) {
-		logger.debug("START");
+		logger.debug(START);
 
 		String hierNameColumn = AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.HIER_NM, dataSource);
 		String beginDtColumn = AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.BEGIN_DT, dataSource);
@@ -475,12 +477,11 @@ public class HierarchyMasterService {
 		String leafIdColumn = AbstractJDBCDataset.encapsulateColumnName(
 				((String) paramsMap.get("prefix")) + "_" + HierarchyConstants.LEAF_ID, dataSource);
 
-		Date vDateConverted = Date.valueOf((String) paramsMap.get("validityDate"));
+		Date vDateConverted = Date.valueOf((String) paramsMap.get(VALIDITY_DATE));
 
-		String srcTable = "(SELECT * FROM " + (String) paramsMap.get("hierarchyTable") + " WHERE " + hierNameColumn
-				+ "=?) SRC ";
+		String srcTable = String.format("(SELECT * FROM %s WHERE %s=?) SRC ", paramsMap.get(HIERARCHY_TABLE), hierNameColumn);
 
-		String updatePart = "UPDATE " + (String) paramsMap.get("hierarchyTable") + " DST, " + srcTable;
+		String updatePart = String.format("UPDATE %s DST, %s", paramsMap.get(HIERARCHY_TABLE), srcTable);
 
 		StringBuilder sb = new StringBuilder();
 
@@ -490,22 +491,22 @@ public class HierarchyMasterService {
 			sb.append("DST." + orderField + "=SRC." + orderField + sep);
 		}
 
-		String setPart = "SET " + sb.toString();
+		String setPart = String.format("SET %s", sb.toString());
 
-		String vDateWhereClause = " ? >= DST." + beginDtColumn + " AND ? <= DST." + endDtColumn;
-		String joinClause = " DST." + leafIdColumn + " = SRC." + leafIdColumn;
-		String wherePart = " WHERE DST." + hierNameColumn + "=? AND DST." + hierTypeColumn + "= ? AND "
-				+ vDateWhereClause + "AND " + joinClause;
+		String vDateWhereClause = String.format(" ? >= DST.%s AND ? <= DST.%s", beginDtColumn, endDtColumn);
+		String joinClause = String.format(" DST.%s = SRC.%s", leafIdColumn, leafIdColumn);
+		String wherePart = String.format(" WHERE DST.%s=? AND DST.%s= ? AND %s AND %s", 
+				hierNameColumn, hierTypeColumn, vDateWhereClause, joinClause);
 
-		String updateQuery = updatePart + setPart + wherePart;
+		String updateQuery = String.format("%s%s%s", updatePart, setPart, wherePart);
 
 		logger.debug("The update query is [" + updateQuery + "]");
 
 		try (Statement stmt = databaseConnection.createStatement();
 				PreparedStatement preparedStatement = databaseConnection.prepareStatement(updateQuery)) {
 			preparedStatement.setString(1, (String) paramsMap.get("backupHierName"));
-			preparedStatement.setString(2, (String) paramsMap.get("hierTargetName"));
-			preparedStatement.setString(3, (String) paramsMap.get("hierTargetType"));
+			preparedStatement.setString(2, (String) paramsMap.get(HIER_TARGET_NAME));
+			preparedStatement.setString(3, (String) paramsMap.get(HIER_TARGET_TYPE));
 			preparedStatement.setDate(4, vDateConverted);
 			preparedStatement.setDate(5, vDateConverted);
 
@@ -514,9 +515,9 @@ public class HierarchyMasterService {
 			logger.debug("Update query successfully executed");
 			logger.debug("END");
 
-		} catch (Throwable t) {
+		} catch (Exception e) {
 			logger.error("An unexpected error occured while updating hierarchy for order");
-			throw new SpagoBIServiceException("An unexpected error occured while updating hierarchy for order", t);
+			throw new SpagoBIServiceException("An unexpected error occured while updating hierarchy for order", e);
 		}
 
 	}
@@ -535,8 +536,7 @@ public class HierarchyMasterService {
 
 		String insertClause = idColumn + "," + hierCdColumn + "," + hierNmColumn + "," + confColumn;
 
-		String saveConfQuery = "INSERT INTO " + HierarchyConstants.HIER_MASTERS_CONFIG_TABLE + " (" + insertClause
-				+ ") VALUES (?,?,?,?)";
+		String saveConfQuery = String.format("INSERT INTO %s (%s) VALUES (?,?,?,?)", HierarchyConstants.HIER_MASTERS_CONFIG_TABLE, insertClause);
 
 		logger.debug("Insert query is [" + saveConfQuery + "]");
 
@@ -564,7 +564,7 @@ public class HierarchyMasterService {
 			Map<String, Integer> metatadaFieldsMap, JSONObject requestVal, String prefix, String dimensionName,
 			String validityDate, HashMap hierConfig, String primaryKey, int primaryKeyCount) {
 
-		logger.debug("START");
+		logger.debug(START);
 
 		try {
 
@@ -699,9 +699,9 @@ public class HierarchyMasterService {
 
 			logger.debug("Insert correctly executed");
 
-		} catch (Throwable t) {
+		} catch (Exception e) {
 			logger.error("An unexpected error occured while inserting a new hierarchy");
-			throw new SpagoBIServiceException("An unexpected error occured while inserting a new hierarchy", t);
+			throw new SpagoBIServiceException("An unexpected error occured while inserting a new hierarchy", e);
 		}
 
 		logger.debug("END");
@@ -710,7 +710,7 @@ public class HierarchyMasterService {
 	private void manageGeneralFieldsSection(IDataSource dataSource, List<Field> generalFields, IRecord recordToManage,
 			Map<String, Integer> metatadaFieldsMap, Map<Integer, Object> fieldsMap, Map<Integer, String> typesMap,
 			JSONObject requestVal, StringBuffer columnsClause, StringBuffer valuesClause, String sep)
-			throws JSONException, ParseException {
+			throws JSONException {
 
 		int index = fieldsMap.size();
 
@@ -788,7 +788,7 @@ public class HierarchyMasterService {
 			FillConfiguration fillConfiguration, HashMap hierConfig) throws JSONException {
 
 		// retrieve levels from request json
-		if (requestVal.isNull("levels")) {
+		if (requestVal.isNull(LEVELS)) {
 			// if levels isn't in the json, just return lvl index
 			return;
 		}
@@ -796,7 +796,7 @@ public class HierarchyMasterService {
 		String hierNm = requestVal.getString(HierarchyConstants.HIER_NM);
 		String concatNmValues = hierNm; // will be converted in hashcode if requested
 		// // add the hierarchy nm as first level
-		JSONArray lvls = requestVal.getJSONArray("levels");
+		JSONArray lvls = requestVal.getJSONArray(LEVELS);
 
 		int index = fieldsMap.size();
 		int lvlIndex = levelsMap.size();
@@ -873,7 +873,6 @@ public class HierarchyMasterService {
 					Field f = nodeFields.get(n);
 					if (f.isUniqueCode()) {
 						cdUniqueColumn = AbstractJDBCDataset.encapsulateColumnName(f.getId() + lvlIndex, dataSource);
-						// cdUniqueValue = (cdValue == null || cdValue.equals("")) ? null : Helper.sha256(String.valueOf(Math.random()) + concatNmValues);
 						cdUniqueValue = (cdValue == null || cdValue.equals("")) ? null : Helper.sha256(concatNmValues);
 						break;
 					}
@@ -1169,7 +1168,7 @@ public class HierarchyMasterService {
 			String dimensionName, String jsonRecursiveCd, String jsonRecursiveNm, String jsonRecursiveParentCd,
 			String jsonRecursiveParentNm, String validityDate) throws SQLException {
 
-		logger.debug("START");
+		logger.debug(START);
 
 		String cdParentColumn = AbstractJDBCDataset.encapsulateColumnName(jsonRecursiveParentCd, dataSource);
 		String nmParentColumn = AbstractJDBCDataset.encapsulateColumnName(jsonRecursiveParentNm, dataSource);
@@ -1187,11 +1186,10 @@ public class HierarchyMasterService {
 			String vDateConverted = HierarchyUtils.getConvertedDate(validityDate, dataSource);
 			vDateWhereClause = vDateConverted + ">= " + beginDtColumn + " AND " + vDateConverted + " <= " + endDtColumn;
 		}
-		String recursiveSelectClause = cdRecursiveColumn + "," + nmRecursiveColumn + "," + cdParentColumn + ","
-				+ nmParentColumn;
+		String recursiveSelectClause = String.format("%s,%s,%s,%s", cdRecursiveColumn, nmRecursiveColumn, cdParentColumn, nmParentColumn);
 
-		String recurisveSelect = "SELECT " + recursiveSelectClause + " FROM " + dimensionName + " WHERE "
-				+ cdRecursiveColumn + " = ? AND " + nmRecursiveColumn + " = ? AND " + vDateWhereClause;
+		String recurisveSelect = String.format("SELECT %s FROM %s WHERE %s = ? AND %s = ? AND %s", 
+				recursiveSelectClause, dimensionName, cdRecursiveColumn, nmRecursiveColumn, vDateWhereClause);
 
 		logger.debug("Select query is [" + recurisveSelect + "]");
 
@@ -1259,7 +1257,7 @@ public class HierarchyMasterService {
 	}
 
 	private String getHierMasterConfig(IDataSource dataSource, Connection dbConnection, String hierarchyName) {
-		logger.debug("START");
+		logger.debug(START);
 		String toReturn = null;
 
 		String hierCdColumn = AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.HIER_CD, dataSource);
@@ -1267,10 +1265,9 @@ public class HierarchyMasterService {
 		String confColumn = AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.HIER_MASTERS_CONFIG,
 				dataSource);
 
-		String selectClause = hierCdColumn + "," + hierNmColumn + "," + confColumn;
+		String selectClause = String.format("%s,%s,%s", hierCdColumn, hierNmColumn, confColumn);
 
-		String selectQuery = "SELECT " + selectClause + " FROM " + HierarchyConstants.HIER_MASTERS_CONFIG_TABLE
-				+ " WHERE HIER_NM = ?  ORDER BY TIME_IN DESC ";
+		String selectQuery = String.format("SELECT %s FROM %s WHERE HIER_NM = ?  ORDER BY TIME_IN DESC ", selectClause, HierarchyConstants.HIER_MASTERS_CONFIG_TABLE);
 
 		try (Statement stmt = dbConnection.createStatement();
 				PreparedStatement selectPs = dbConnection.prepareStatement(selectQuery)) {
@@ -1287,9 +1284,9 @@ public class HierarchyMasterService {
 				toReturn = rs.getString(HierarchyConstants.HIER_MASTERS_CONFIG);
 				logger.debug("Getted master configuration fron syncronize: " + toReturn);
 			}
-		} catch (Throwable t) {
+		} catch (Exception e) {
 			logger.error("An unexpected error occured while restoring hierarchy backup");
-			throw new SpagoBIServiceException("An unexpected error occured while restoring hierarchy backup", t);
+			throw new SpagoBIServiceException("An unexpected error occured while restoring hierarchy backup", e);
 		}
 
 		logger.debug("Getted configuration for hierarchy master: " + hierarchyName + " - " + toReturn);

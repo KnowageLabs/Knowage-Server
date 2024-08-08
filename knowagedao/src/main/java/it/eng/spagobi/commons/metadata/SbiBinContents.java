@@ -23,6 +23,13 @@ public class SbiBinContents  extends SbiHibernateModel {
      private Integer id;
      private byte[] content;
      
+	public SbiBinContents(Integer id) {
+		this.id=id;
+	}
+
+	public SbiBinContents() {
+	}
+
 	/**
 	 * Gets the id.
 	 * 
@@ -37,7 +44,11 @@ public class SbiBinContents  extends SbiHibernateModel {
 	 * 
 	 * @param id the new id
 	 */
-	public void setId(Integer id) {
+	private void setId(Integer id) {
+		this.id = id;
+	}
+	
+	public void changeId(Integer id) {
 		this.id = id;
 	}
 	

@@ -92,7 +92,7 @@ public class SbiGeoFeatures extends SbiHibernateModel {
 	 * 
 	 * @param featureId the new feature id
 	 */
-	public void setFeatureId(int featureId) {
+	private void setFeatureId(int featureId) {
 		this.featureId = featureId;
 	}
 

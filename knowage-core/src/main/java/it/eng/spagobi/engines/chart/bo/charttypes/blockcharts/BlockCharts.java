@@ -19,7 +19,6 @@ package it.eng.spagobi.engines.chart.bo.charttypes.blockcharts;
 
 import java.awt.Color;
 import java.text.DateFormat;
-import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -32,7 +31,6 @@ import org.apache.log4j.Logger;
 
 import it.eng.spago.base.SourceBean;
 import it.eng.spagobi.engines.chart.bo.ChartImpl;
-import it.eng.spagobi.engines.chart.bo.charttypes.barcharts.BarCharts;
 import it.eng.spagobi.engines.chart.bo.charttypes.blockcharts.util.RangeBlocks;
 import it.eng.spagobi.engines.chart.utils.StyleLabel;
 
@@ -188,7 +186,7 @@ logger.debug("IN");
 		}
 
 
-		ranges=new ArrayList<RangeBlocks>();
+		ranges=new ArrayList<>();
 		SourceBean rangesSB = (SourceBean)content.getAttribute("RANGES");
 		List rangesList = rangesSB.getAttributeAsList("RANGE");
 		Iterator rangesIter = rangesList.iterator();

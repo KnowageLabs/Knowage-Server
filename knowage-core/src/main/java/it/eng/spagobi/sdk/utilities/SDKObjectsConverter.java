@@ -745,8 +745,7 @@ public class SDKObjectsConverter {
 		}
 		SbiGeoFeatures sbiFeature = null;
 		try {
-			sbiFeature = new SbiGeoFeatures();
-			sbiFeature.setFeatureId(feature.getFeatureId());
+			sbiFeature = new SbiGeoFeatures(feature.getFeatureId());
 			sbiFeature.setName(feature.getName());
 			sbiFeature.setDescr(feature.getDescr());
 			sbiFeature.setType(feature.getType());
@@ -791,8 +790,7 @@ public class SDKObjectsConverter {
 		}
 		SbiGeoMaps sbiMap = null;
 		try {
-			sbiMap = new SbiGeoMaps();
-			sbiMap.setMapId(map.getMapId());
+			sbiMap = new SbiGeoMaps(map.getMapId());
 			sbiMap.setName(map.getName());
 			sbiMap.setDescr(map.getDescr());
 			sbiMap.setFormat(map.getFormat());
@@ -802,8 +800,8 @@ public class SDKObjectsConverter {
 			byte[] binContentsContent = binContentDAO.getBinContent(map.getBinId());
 			if (binContentsContent != null) {
 				Integer contentId = map.getBinId();
-				SbiBinContents sbiBinContents = new SbiBinContents();
-				sbiBinContents.setId(contentId);
+				SbiBinContents sbiBinContents = new SbiBinContents(contentId);
+				
 				sbiBinContents.setContent(binContentsContent);
 				sbiMap.setBinContents(sbiBinContents);
 			}

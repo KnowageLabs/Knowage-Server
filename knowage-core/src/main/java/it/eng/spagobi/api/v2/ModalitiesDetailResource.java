@@ -17,10 +17,7 @@
  */
 package it.eng.spagobi.api.v2;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
-
 import java.net.URI;
-import java.net.URLEncoder;
 import java.util.List;
 
 import javax.validation.Valid;
@@ -48,13 +45,16 @@ import it.eng.spagobi.services.rest.annotations.UserConstraint;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
+import org.owasp.esapi.reference.DefaultEncoder; 
+
+
 @Path("/2.0/customChecks")
 @ManageAuthorization
 public class ModalitiesDetailResource extends AbstractSpagoBIResource {
 
 	private static final Logger LOGGER = LogManager.getLogger(ModalitiesDetailResource.class);
 	private static final String CHARSET = "; charset=UTF-8";
-
+	private static org.owasp.esapi.Encoder esapiEncoder = DefaultEncoder.getInstance();
 	@GET
 	@UserConstraint(functionalities = { CommunityFunctionalityConstants.CONTSTRAINT_MANAGEMENT })
 	@Path("/")
@@ -114,7 +114,7 @@ public class ModalitiesDetailResource extends AbstractSpagoBIResource {
 			checksDao = DAOFactory.getChecksDAO();
 			checksDao.setUserProfile(getUserProfile());
 			Integer id = checksDao.insertCheck(check);
-			String encodedCheck = URLEncoder.encode("" + id, UTF_8.name());
+			String encodedCheck = esapiEncoder.encodeForURL("" + id);
 			return Response.created(new URI("2.0/customChecks/" + encodedCheck)).entity(encodedCheck).build();
 		} catch (Exception e) {
 			LOGGER.error("Error while inserting resource", e);
@@ -139,7 +139,7 @@ public class ModalitiesDetailResource extends AbstractSpagoBIResource {
 			checksDao = DAOFactory.getChecksDAO();
 			checksDao.setUserProfile(getUserProfile());
 			checksDao.modifyCheck(check);
-			String encodedCheck = URLEncoder.encode("" + check.getCheckId(), UTF_8.name());
+			String encodedCheck = esapiEncoder.encodeForURL("" + check.getCheckId());
 			return Response.created(new URI("2.0/customChecks/" + encodedCheck)).entity(encodedCheck).build();
 		} catch (Exception e) {
 			LOGGER.error("Error while modifying resource with id: " + id, e);
@@ -160,7 +160,7 @@ public class ModalitiesDetailResource extends AbstractSpagoBIResource {
 			checksDao = DAOFactory.getChecksDAO();
 			checksDao.setUserProfile(getUserProfile());
 			checksDao.eraseCheck(check);
-			String encodedCheck = URLEncoder.encode("" + check.getCheckId(), UTF_8.name());
+			String encodedCheck = esapiEncoder.encodeForURL("" + check.getCheckId());
 			return Response.ok().entity(encodedCheck).build();
 		} catch (Exception e) {
 			LOGGER.error("Error with deleting resource with id: " + id, e);

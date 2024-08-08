@@ -133,13 +133,15 @@ angular.module('chartRendererModule')
 							if(isRealtime && nature){
 								jsonChartTemplate.readChartTemplateForCockpit(chartTemplate,false,jsonData)
 								.then(function(data){
-									scope.chartConf = eval("(" + data + ")");
+									var eFunc = Function("return (" + data + ")")();
+									scope.chartConf = eFunc;
 									scope.renderChart(scope.chartConf, jsonData,selectionsAndParams);
 								})
 							}
 							else {
 								if(!scope.initializer) scope.init({ data:jsonData,isRealtime:isRealtime,chartConf:dataAndChartConf.chartConf,selectionsAndParams:selectionsAndParams },true);
-								scope.chartConf = eval("(" + dataAndChartConf.chartConf + ")");
+								var eFunc = Function("return (" +  dataAndChartConf.chartConf + ")")();
+								scope.chartConf = eFunc;//eval("(" + dataAndChartConf.chartConf + ")");
 								scope.renderChart(scope.chartConf, jsonData,selectionsAndParams);
 							}
 
@@ -155,7 +157,8 @@ angular.module('chartRendererModule')
 							}
 							jsonChartTemplate.readChartTemplate(chartTemplate,false,datesetLabel,jsonData)
 							.then(function(data){
-								scope.chartConf = eval("(" + data + ")");
+								var eFunc = Function("return (" + data + ")")();
+								scope.chartConf = eFunc;
 								scope.renderChart(scope.chartConf, jsonData);
 							});
 						}
@@ -175,7 +178,14 @@ angular.module('chartRendererModule')
 
 			scope.$on('refresh',function(event,data,isRealtime,changedChartType,chartConf,selectionsAndParams, shouldUpdate){
 				if(scope.updateble){
-					var dataForSending = isRealtime ? data : eval("(" + data.jsonData + ")");
+					//var dataForSending = isRealtime ? data : eval("(" + data.jsonData + ")");
+					var dataForSending;
+					if(isRealtime){
+						dataForSending = data;
+					}else {
+						var eFunc = Function("return (" + data.jsonData + ")")();
+						dataForSending = eFunc;
+					}
 					if(scope.chartInitializer != undefined && scope.chartInitializer.updateData && shouldUpdate!=undefined && !shouldUpdate){
 						scope.updateChart(scope.widgetData,dataForSending);
 					}else{

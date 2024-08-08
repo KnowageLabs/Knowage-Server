@@ -19,6 +19,7 @@ package it.eng.knowage.meta.initializer.properties;
 
 import java.io.InputStream;
 
+import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.xpath.XPath;
@@ -74,7 +75,7 @@ public class BusinessModelPropertiesFromFileInitializer implements IPropertiesIn
 
 	public static final String TABLE_TYPE = "structural.tabletype";
 
-	public static ModelFactory FACTORY = ModelFactory.eINSTANCE;
+	public static final ModelFactory FACTORY = ModelFactory.eINSTANCE;
 
 	private static Logger logger = LoggerFactory.getLogger(BusinessModelPropertiesFromFileInitializer.class);
 
@@ -85,13 +86,15 @@ public class BusinessModelPropertiesFromFileInitializer implements IPropertiesIn
 			/**
 			 * TODO REVIEW FOR PORTING
 			 */
-			// File propertiesFile = RL.getFile("properties/customProperties.xml");
+			// File propertiesFile = RL.getFile("properties/customProperties.xml") here before
 			InputStream is = getClass().getClassLoader().getResourceAsStream("it/eng/knowage/meta/initializer/properties/custom/customProperties.xml");
 			DocumentBuilderFactory domFactory = DocumentBuilderFactory.newInstance();
+			domFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
+			domFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_SCHEMA, "");
 			DocumentBuilder builder = domFactory.newDocumentBuilder();
 			document = builder.parse(is);
-		} catch (Throwable t) {
-			throw new InitializationException("Impossible to load properties from configuration file", t);
+		} catch (Exception e) {
+			throw new InitializationException("Impossible to load properties from configuration file", e);
 		} finally {
 			logger.trace("OUT");
 		}
@@ -114,8 +117,6 @@ public class BusinessModelPropertiesFromFileInitializer implements IPropertiesIn
 			initIdentifierProperties((BusinessIdentifier) o);
 		} else if (o instanceof BusinessRelationship) {
 			initRelationshipProperties((BusinessRelationship) o);
-		} else {
-
 		}
 	}
 
@@ -136,7 +137,7 @@ public class BusinessModelPropertiesFromFileInitializer implements IPropertiesIn
 			initModelAdmissibleValues(nodes, o.getParentModel());
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("initModelProperties",e);
 		}
 
 	}
@@ -155,7 +156,7 @@ public class BusinessModelPropertiesFromFileInitializer implements IPropertiesIn
 			nodes = readXMLNodes(document, "/properties/table/typesValues/admissibleValuesOf");
 			initModelAdmissibleValues(nodes, o.getModel().getParentModel());
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("initTableProperties",e);
 		}
 	}
 
@@ -173,7 +174,7 @@ public class BusinessModelPropertiesFromFileInitializer implements IPropertiesIn
 			nodes = readXMLNodes(document, "/properties/table/typesValues/admissibleValuesOf");
 			initModelAdmissibleValues(nodes, o.getModel().getParentModel());
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("initViewProperties",e);
 		}
 	}
 
@@ -236,7 +237,7 @@ public class BusinessModelPropertiesFromFileInitializer implements IPropertiesIn
 			// **************************************************************************
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("initColumnProperties",e);
 		}
 
 	}
@@ -264,7 +265,7 @@ public class BusinessModelPropertiesFromFileInitializer implements IPropertiesIn
 			initModelAdmissibleValues(nodes, rootModel);
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("initCalculatedColumnProperties",e);
 		}
 
 	}
@@ -287,7 +288,7 @@ public class BusinessModelPropertiesFromFileInitializer implements IPropertiesIn
 			nodes = readXMLNodes(document, "/properties/relationship/typesValues/admissibleValuesOf");
 			initModelAdmissibleValues(nodes, o.getModel().getParentModel());
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("initRelationshipProperties",e);
 		}
 	}
 

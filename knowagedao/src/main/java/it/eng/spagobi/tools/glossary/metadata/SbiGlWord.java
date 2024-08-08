@@ -101,10 +101,13 @@ public class SbiGlWord extends SbiHibernateModel {
 	 * @param wordId
 	 *            the wordId to set
 	 */
-	public void setWordId(Integer wordId) {
+	private void setWordId(Integer wordId) {
 		this.wordId = wordId;
 	}
 
+	public void changeWordId(Integer wordId) {
+		this.wordId = wordId;
+	}
 	/**
 	 * @return the word
 	 */

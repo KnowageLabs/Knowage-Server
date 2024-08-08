@@ -17,6 +17,7 @@
  */
 package it.eng.spagobi.analiticalmodel.document.bo;
 
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -258,6 +259,10 @@ public class ObjTemplate implements Serializable, Cloneable {
 		clone.setDimension(dimension);
 		clone.setCreationUser(creationUser);
 		return clone;
+	}
+
+	private final void writeObject(ObjectOutputStream aOutputStream) {
+		  throw new UnsupportedOperationException("Security violation : cannot serialize object to a stream");
 	}
 
 }

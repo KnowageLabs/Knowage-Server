@@ -37,6 +37,7 @@ public class DomainJSONSerializer implements Serializer {
 	public static final String VALUE_DECRIPTION = "VALUE_DS";
 	
 	
+	@Override
 	public Object serialize(Object o, Locale locale) throws SerializationException {
 		JSONObject  result = null;
 		

@@ -244,7 +244,7 @@ public class DynamicClassLoader extends URLClassLoader {
 				//final URL jarUrl = new URL("jar","",-1,"file:/"+s+"!/META-INF/persistence.xml");  // this works only on Windows!!
 
 				//build the enumeration with only the URL with the location of the persistence.xml
-				return new Enumeration<URL>() {
+				return new Enumeration<>() {
 					private int position = 0;
 
 					@Override

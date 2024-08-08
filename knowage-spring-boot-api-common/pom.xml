@@ -6,7 +6,7 @@
 	<parent>
 		<groupId>it.eng.knowage</groupId>
 		<artifactId>knowage-ce-parent</artifactId>
-		<version>8.2.0-SNAPSHOT</version>
+		<version>9.0.0-SNAPSHOT</version>
 		<relativePath>../knowage-ce-parent/pom.xml</relativePath>
 	</parent>
 	
@@ -15,12 +15,14 @@
 	<name>knowage-spring-boot-api-common</name>
 	<description>Data preparation API for Enterprise Edition</description>
 	
+	<!--
 	<properties>
 		<java.version>1.8</java.version>
 		<log4j.version>2.17.1</log4j.version>
 		<maven.build.timestamp.format>yyyy/MM/dd</maven.build.timestamp.format>
 		<timestamp>${maven.build.timestamp}</timestamp>
 	</properties>
+	-->
 	
 	<dependencyManagement>
 		<dependencies>
@@ -118,7 +120,7 @@
 		<dependency>
 			<groupId>com.thoughtworks.xstream</groupId>
 			<artifactId>xstream</artifactId>
-			<version>1.4.19</version>
+			<version>1.4.20</version>
 		</dependency>
 		<dependency>
 			<groupId>com.googlecode.owasp-java-html-sanitizer</groupId>
@@ -136,6 +138,9 @@
 		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-text</artifactId>
+		</dependency><dependency>
+			<groupId>com.sun.xml.ws</groupId>
+			<artifactId>jaxws-rt</artifactId>
 		</dependency>
 		<!-- 
 			   ____        _          __             _            _       

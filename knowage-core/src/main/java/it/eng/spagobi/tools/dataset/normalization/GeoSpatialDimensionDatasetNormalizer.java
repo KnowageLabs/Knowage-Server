@@ -286,7 +286,7 @@ public class GeoSpatialDimensionDatasetNormalizer implements IDatasetNormalizer 
 		try {
 			type = Class.forName(newColumnType);
 		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
+			logger.error("modifyDatasetMetadata",e);
 		}
 		newFieldMetaData.setType(type);
 		newFieldMetaData.setProperty("hierarchy", GEO_HIERARCHY_NAME);

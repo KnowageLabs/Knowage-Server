@@ -36,6 +36,7 @@ public class SpagoBIWidgetInternalEngine extends SpagoBIAbstractInternalEngine {
 
 	private static transient Logger logger = Logger.getLogger(SpagoBIWidgetInternalEngine.class);
 
+	@Override
 	public void doExecute() {
 		JSONObject jsonResponse;
 		IDataSet  dataSet = getDataSet();
@@ -81,15 +82,18 @@ public class SpagoBIWidgetInternalEngine extends SpagoBIAbstractInternalEngine {
 		
 	}
 	
+	@Override
 	public void doExecuteSubObject() {
 		throw new  SpagoBIEngineRuntimeException("Unsupported functionality");	
 		
 	}
 
+	@Override
 	public void doCreateDocumentTemplate() {
 		throw new  SpagoBIEngineRuntimeException("Unsupported functionality");	
 	}
 
+	@Override
 	public void doModifyDocumentTemplate() {
 		throw new  SpagoBIEngineRuntimeException("Unsupported functionality");		
 	}

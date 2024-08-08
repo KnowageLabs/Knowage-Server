@@ -41,6 +41,11 @@ public class SbiTriggerPaused extends SbiHibernateModel{
     	
     }
 
+	public SbiTriggerPaused(Integer id) {
+		super();
+		this.id = id;
+	}
+
 	/**
 	 * @param id
 	 * @param triggerName
@@ -69,7 +74,7 @@ public class SbiTriggerPaused extends SbiHibernateModel{
 	/**
 	 * @param id the id to set
 	 */
-	public void setId(Integer id) {
+	private void setId(Integer id) {
 		this.id = id;
 	}
 

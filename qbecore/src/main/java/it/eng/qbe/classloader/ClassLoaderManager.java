@@ -27,6 +27,9 @@ import java.util.jar.JarFile;
 
 import org.apache.log4j.Logger;
 
+import it.eng.knowage.commons.zip.SonarZipCommons;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
  *
@@ -97,7 +100,7 @@ public class ClassLoaderManager {
 				if (!previousCL.equals(genericClassLoader)) {
 					currentClassLoaders.add(aDynClassLoader);
 				}
-				genericClassLoader = start.getParent();
+				genericClassLoader = genericClassLoader.getParent();
 			}
 			root = genericClassLoader;
 
@@ -145,24 +148,31 @@ public class ClassLoaderManager {
 			jarFile = new JarFile(file);
 			Enumeration<JarEntry> entries = jarFile.entries();
 			while (entries.hasMoreElements()) {
-				JarEntry entry = entries.nextElement();
-				if (entry.getName().endsWith(".class")) {
-					String entryName = entry.getName();
-					String className = entryName.substring(0, entryName.lastIndexOf(".class"));
-					className = className.replaceAll("/", ".");
-					className = className.replaceAll("\\\\", ".");
-					try {
-						LOGGER.debug("loading class [" + className + "]" + " with class loader ["
-								+ Thread.currentThread().getContextClassLoader().getClass().getName() + "]");
-						Thread.currentThread().getContextClassLoader().loadClass(className);
-						wasAlreadyLoaded = true;
-						LOGGER.debug("Class [" + className + "] has been already loaded (?)");
-						break;
-					} catch (Exception e) {
-						wasAlreadyLoaded = false;
-						LOGGER.debug("Class [" + className + "] hasn't be loaded yet (?)");
-						break;
+				SonarZipCommons sonarZipCommons = new SonarZipCommons();
+				
+				if(sonarZipCommons.doThresholdCheck(file.getName())) {
+					JarEntry entry = entries.nextElement();
+					if (entry.getName().endsWith(".class")) {
+						String entryName = entry.getName();
+						String className = entryName.substring(0, entryName.lastIndexOf(".class"));
+						className = className.replaceAll("/", ".");
+						className = className.replaceAll("\\\\", ".");
+						try {
+							LOGGER.debug("loading class [" + className + "]" + " with class loader ["
+									+ Thread.currentThread().getContextClassLoader().getClass().getName() + "]");
+							Thread.currentThread().getContextClassLoader().loadClass(className);
+							wasAlreadyLoaded = true;
+							LOGGER.debug("Class [" + className + "] has been already loaded (?)");
+							break;
+						} catch (Exception e) {
+							wasAlreadyLoaded = false;
+							LOGGER.debug("Class [" + className + "] hasn't be loaded yet (?)");
+							break;
+						}
 					}
+				} else {
+					LOGGER.error("Error while unzip file. Invalid archive file");
+					throw new SpagoBIRuntimeException("Error while unzip file. Invalid archive file");
 				}
 			}
 

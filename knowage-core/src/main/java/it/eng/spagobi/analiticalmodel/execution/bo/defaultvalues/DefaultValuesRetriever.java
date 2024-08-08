@@ -115,7 +115,7 @@ public class DefaultValuesRetriever {
 
 			columnName = lovProvDet.getValueColumnName();
 		} catch (Exception e) {
-			e.printStackTrace();
+			LOGGER.error("getLovResult",e);
 		}
 
 		// get all the rows of the result
@@ -123,7 +123,7 @@ public class DefaultValuesRetriever {
 		try {
 			lovResultHandler = new LovResultHandler(lovResult);
 		} catch (SourceBeanException e) {
-			e.printStackTrace();
+			LOGGER.error("getLovResult",e);
 		}
 
 		DefaultValuesList defaultValuesList = new DefaultValuesList();

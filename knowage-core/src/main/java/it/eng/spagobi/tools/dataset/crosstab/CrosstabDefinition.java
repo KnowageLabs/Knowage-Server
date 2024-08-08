@@ -17,9 +17,6 @@
  */
 package it.eng.spagobi.tools.dataset.crosstab;
 
-import it.eng.spago.configuration.ConfigSingleton;
-
-
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -37,9 +34,9 @@ public class CrosstabDefinition  {
 	
 	static {
 		EMPTY_CROSSTAB = new CrosstabDefinition();
-		EMPTY_CROSSTAB.setColumns(new ArrayList<CrosstabDefinition.Column>());
-		EMPTY_CROSSTAB.setRows(new ArrayList<CrosstabDefinition.Row>());
-		EMPTY_CROSSTAB.setMeasures(new ArrayList<Measure>());
+		EMPTY_CROSSTAB.setColumns(new ArrayList<>());
+		EMPTY_CROSSTAB.setRows(new ArrayList<>());
+		EMPTY_CROSSTAB.setMeasures(new ArrayList<>());
 		EMPTY_CROSSTAB.setConfig(new JSONObject());
 		EMPTY_CROSSTAB.setCalculatedFields(new JSONArray());
 	}
@@ -142,7 +139,7 @@ public class CrosstabDefinition  {
 
 	
 	public List<Attribute> getFiltersOnDomainValues() {
-		List<Attribute> toReturn = new ArrayList<Attribute>();
+		List<Attribute> toReturn = new ArrayList<>();
 		List<Row> rows = getRows();
 		Iterator<Row> rowsIt = rows.iterator();
 		while (rowsIt.hasNext()) {
@@ -168,7 +165,7 @@ public class CrosstabDefinition  {
 
 	
 	public List<Field> getAllFields() {
-		List<Field> toReturn = new ArrayList<Field>();
+		List<Field> toReturn = new ArrayList<>();
 		toReturn.addAll(getColumns());
 		toReturn.addAll(getRows());
 		toReturn.addAll(getMeasures());

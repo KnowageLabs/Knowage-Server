@@ -506,8 +506,7 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 
 					SbiAuthorizationsRoles fr = new SbiAuthorizationsRoles();
 					SbiAuthorizationsRolesId id = new SbiAuthorizationsRolesId(authI.getId(), hibRole.getExtRoleId());
-					id.setRoleId(hibRole.getExtRoleId());
-					id.setAuthorizationId(authI.getId());
+					
 
 					fr.setSbiExtRoles(hibRole);
 					fr.setSbiAuthorizations(authI);

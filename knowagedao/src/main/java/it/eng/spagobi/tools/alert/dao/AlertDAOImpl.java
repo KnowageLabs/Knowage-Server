@@ -110,8 +110,7 @@ public class AlertDAOImpl extends AbstractHibernateDAO implements IAlertDAO {
 	}
 
 	private SbiAlert from(Alert alert) {
-		SbiAlert sbiAlert = new SbiAlert();
-		sbiAlert.setId(alert.getId());
+		SbiAlert sbiAlert = new SbiAlert(alert.getId());
 		sbiAlert.setName(alert.getName());
 		sbiAlert.setSingleExecution(alert.isSingleExecution() ? 'T' : 'F');
 		sbiAlert.setEventBeforeTriggerAction(alert.getEventBeforeTriggerAction());

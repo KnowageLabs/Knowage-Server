@@ -25,34 +25,42 @@ import org.olap4j.metadata.Property;
 
 public class LeafProperty implements Property {
 
+	@Override
 	public boolean isVisible() {
 		return true;
 	}
 
+	@Override
 	public String getUniqueName() {
 		return "leafsNumber";
 	}
 
+	@Override
 	public String getName() {
 		return "leafsNumber";
 	}
 
+	@Override
 	public String getDescription() {
 		return "leafsNumber";
 	}
 
+	@Override
 	public String getCaption() {
 		return "leafsNumber";
 	}
 
+	@Override
 	public Set<TypeFlag> getType() {
-		return new HashSet<Property.TypeFlag>();
+		return new HashSet<>();
 	}
 
+	@Override
 	public Datatype getDatatype() {
 		return Datatype.STRING;
 	}
 
+	@Override
 	public ContentType getContentType() {
 		return ContentType.ID;
 	}

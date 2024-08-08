@@ -229,8 +229,7 @@ public class LayerCRUD {
 				jo.put("id", aRole.getId());
 				jo.put("name", aRole.getName());
 			} catch (JSONException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				logger.error("getRoles",e);
 			}
 
 			roles_get.add(jo);
@@ -309,8 +308,7 @@ public class LayerCRUD {
 				jo.put("id", aRole.getId());
 				jo.put("name", aRole.getName());
 			} catch (JSONException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				logger.error("put",e);
 			}
 
 			roles_get.add(jo);

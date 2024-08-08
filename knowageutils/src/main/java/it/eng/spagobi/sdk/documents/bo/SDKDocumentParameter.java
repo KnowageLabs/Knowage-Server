@@ -18,6 +18,8 @@
 
 package it.eng.spagobi.sdk.documents.bo;
 
+import java.io.ObjectOutputStream;
+
 public class SDKDocumentParameter implements java.io.Serializable {
 	private it.eng.spagobi.sdk.documents.bo.SDKConstraint[] constraints;
 
@@ -222,6 +224,9 @@ public class SDKDocumentParameter implements java.io.Serializable {
 		}
 		__hashCodeCalc = false;
 		return _hashCode;
+	}
+	private final void writeObject(ObjectOutputStream aOutputStream) {
+		  throw new UnsupportedOperationException("Security violation : cannot serialize object to a stream");
 	}
 
 }

@@ -166,7 +166,7 @@ public abstract class AbstractQbeDataSet extends AbstractDataSet {
 			ScriptEngineManager scriptManager = new ScriptEngineManager();
 			// ScriptEngine groovyScriptEngine = scriptManager.getEngineByName("groovy");
 
-			Map<String, Object> groovyBindings = new HashMap<String, Object>();
+			Map<String, Object> groovyBindings = new HashMap<>();
 			// handle bindings
 			// ... static bindings first
 			Iterator it = bindings.keySet().iterator();
@@ -204,7 +204,7 @@ public abstract class AbstractQbeDataSet extends AbstractDataSet {
 
 			} catch (Exception ex) {
 				calculatedValue = "NA";
-				ex.printStackTrace();
+				logger.error("GroovySandbox",ex);
 			}
 
 			logger.debug("Field [" + fieldMeta.getName() + "] is equals to [" + calculatedValue + "]");
@@ -300,7 +300,7 @@ public abstract class AbstractQbeDataSet extends AbstractDataSet {
 	}
 
 	private List<String> getDataSetSelectedFields(Query qbeQuery) {
-		List<String> toReturn = new ArrayList<String>();
+		List<String> toReturn = new ArrayList<>();
 		List<ISelectField> selectFieldsNames = qbeQuery.getSelectFields(true);
 		for (int i = 0; i < selectFieldsNames.size(); i++) {
 			ISelectField selectField = selectFieldsNames.get(i);

@@ -190,12 +190,12 @@ public class SbiDsBcDAOHibImpl extends AbstractHibernateDAO implements ISbiDsBcD
 		try {
 			aSession = getSession();
 			tx = aSession.beginTransaction();
-			SbiMetaDsBcId hibId = new SbiMetaDsBcId();
-			hibId.setBcId(aMeta.getId().getBcId());
+			SbiMetaDsBcId hibId = new SbiMetaDsBcId(aMeta.getId().getDsId(),aMeta.getId().getVersionNum(), aMeta.getId().getOrganization(), aMeta.getId().getBcId());
+			/*hibId.setBcId(aMeta.getId().getBcId());
 			hibId.setDsId(aMeta.getId().getDsId());
 			hibId.setOrganization(aMeta.getId().getOrganization());
 			hibId.setVersionNum(aMeta.getId().getVersionNum());
-
+            */ 
 			updateSbiCommonInfo4Update(hibId);
 			tx.commit();
 		} catch (HibernateException he) {
@@ -240,12 +240,12 @@ public class SbiDsBcDAOHibImpl extends AbstractHibernateDAO implements ISbiDsBcD
 			aSession = getSession();
 			tx = aSession.beginTransaction();
 
-			SbiMetaDsBcId hibId = new SbiMetaDsBcId();
-			hibId.setBcId(aMeta.getId().getBcId());
+			SbiMetaDsBcId hibId = new SbiMetaDsBcId(aMeta.getId().getDsId(),aMeta.getId().getVersionNum(), aMeta.getId().getOrganization(), aMeta.getId().getBcId());
+			/*hibId.setBcId(aMeta.getId().getBcId());
 			hibId.setDsId(aMeta.getId().getDsId());
 			hibId.setOrganization(aMeta.getId().getOrganization());
 			hibId.setVersionNum(aMeta.getId().getVersionNum());
-
+            */
 			SbiMetaDsBc hib = (SbiMetaDsBc) aSession.load(SbiMetaDsBc.class, hibId);
 
 			aSession.delete(hib);

@@ -81,7 +81,7 @@ public class ModelAdapterFactory extends AdapterFactoryImpl {
 	 * @generated
 	 */
 	protected ModelSwitch<Adapter> modelSwitch =
-		new ModelSwitch<Adapter>() {
+		new ModelSwitch<>() {
 			@Override
 			public Adapter caseModelPropertyCategory(ModelPropertyCategory object) {
 				return createModelPropertyCategoryAdapter();

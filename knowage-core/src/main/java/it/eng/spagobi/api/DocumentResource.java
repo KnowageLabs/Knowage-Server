@@ -545,9 +545,15 @@ public class DocumentResource extends AbstractDocumentResource {
 				}
 			}
 
-		} catch (JSONException | TransformerFactoryConfigurationError | TransformerException e1) {
-			LOGGER.warn("Non-fatal error", e1);
-		}
+
+		} catch (JSONException e1) {
+			LOGGER.error("JSONException",e1);
+		} catch (TransformerFactoryConfigurationError e1) {
+			LOGGER.error("TransformerFactoryConfigurationError",e1);
+		} catch (TransformerException e1) {
+			LOGGER.error("TransformerException",e1);
+
+		} 
 
 		try {
 			IBIObjectDAO biObjectDao;

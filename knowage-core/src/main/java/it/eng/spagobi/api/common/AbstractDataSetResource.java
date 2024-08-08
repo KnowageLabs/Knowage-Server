@@ -246,7 +246,7 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 				Map<String, Object> optionMap;
 				if (options != null && !options.isEmpty()) {
 					ObjectMapper objectMapper = new ObjectMapper();
-					optionMap = new HashMap<>((Map<? extends String, ?>) objectMapper.readValue(options,
+					optionMap = new HashMap<>(objectMapper.readValue(options,
 							new TypeReference<Map<String, Object>>() {
 							}));
 				} else {
@@ -913,7 +913,7 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 
 	protected List<String> getColumnList(String columns, IDataSet dataSet,
 			Map<String, String> columnAliasToColumnName) {
-		List<String> columnList = new ArrayList<>(Arrays.asList(columns.trim().split("\\s*,\\s*"))); // trim spaces while splitting
+		List<String> columnList = new ArrayList<>(Arrays.asList(columns.trim().replaceAll("\\s+", " ").split("\\s,\\s")));
 
 		// transform QBE columns
 		for (int i = 0; i < columnList.size(); i++) {

@@ -564,8 +564,8 @@ public class TemplateBuilder {
 				buffer.append(line + "\n");
 			}
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			//e.printStackTrace();
+			logger.error("while",e);
 		}
 		return buffer.toString();
 	}

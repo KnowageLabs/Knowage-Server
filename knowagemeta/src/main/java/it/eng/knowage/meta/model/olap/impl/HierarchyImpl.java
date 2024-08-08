@@ -187,7 +187,7 @@ public class HierarchyImpl extends ModelObjectImpl implements Hierarchy {
 	@Override
 	public EList<Level> getLevels() {
 		if (levels == null) {
-			levels = new EObjectContainmentWithInverseEList<Level>(Level.class, this, OlapModelPackage.HIERARCHY__LEVELS, OlapModelPackage.LEVEL__HIERARCHY);
+			levels = new EObjectContainmentWithInverseEList<>(Level.class, this, OlapModelPackage.HIERARCHY__LEVELS, OlapModelPackage.LEVEL__HIERARCHY);
 		}
 		return levels;
 	}
@@ -371,7 +371,7 @@ public class HierarchyImpl extends ModelObjectImpl implements Hierarchy {
 		BusinessColumnSet table;
 		PhysicalTable physicalTable;
 		String tableName, query;
-		Map<Object, Object> toReturn = new HashMap<Object, Object>();
+		Map<Object, Object> toReturn = new HashMap<>();
 
 		table = getTable();
 		physicalTable = ((BusinessTableImpl) table).getPhysicalTable();

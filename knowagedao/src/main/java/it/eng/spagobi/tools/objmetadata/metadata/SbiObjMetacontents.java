@@ -79,7 +79,7 @@ public class SbiObjMetacontents extends SbiHibernateModel {
 		return this.objMetacontentId;
 	}
 
-	public void setObjMetacontentId(Integer objMetacontentId) {
+	private void setObjMetacontentId(Integer objMetacontentId) {
 		this.objMetacontentId = objMetacontentId;
 	}
 

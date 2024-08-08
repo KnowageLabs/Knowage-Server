@@ -111,7 +111,7 @@ public class SpagoBIScriptManager {
 
 			final String _script = script;
 
-			results = AccessController.doPrivileged(new PrivilegedExceptionAction<Object>() {
+			results = AccessController.doPrivileged(new PrivilegedExceptionAction<>() {
 
 				@Override
 				public Object run() throws ScriptException {
@@ -191,7 +191,7 @@ public class SpagoBIScriptManager {
 		ScriptEngineManager scriptEngineManager = new ScriptEngineManager();
 		List<ScriptEngineFactory> scriptEngineFactories = scriptEngineManager.getEngineFactories();
 
-		Set<String> languages = new HashSet<String>();
+		Set<String> languages = new HashSet<>();
 		for (ScriptEngineFactory scriptEngineFactory : scriptEngineFactories) {
 			languages.add(scriptEngineFactory.getLanguageName());
 		}
@@ -206,7 +206,7 @@ public class SpagoBIScriptManager {
 		ScriptEngineManager scriptEngineManager = new ScriptEngineManager();
 		List<ScriptEngineFactory> scriptEngineFactories = scriptEngineManager.getEngineFactories();
 
-		Set<String> engineNames = new HashSet<String>();
+		Set<String> engineNames = new HashSet<>();
 		for (ScriptEngineFactory scriptEngineFactory : scriptEngineFactories) {
 			engineNames.addAll(scriptEngineFactory.getNames());
 		}

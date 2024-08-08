@@ -31,6 +31,16 @@ public class SbiCategory extends SbiHibernateModel {
 
 	private String type;
 
+
+	public SbiCategory(Integer id) {
+		this.id=id;
+	}
+
+	public SbiCategory() {
+	}
+
+
+
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)

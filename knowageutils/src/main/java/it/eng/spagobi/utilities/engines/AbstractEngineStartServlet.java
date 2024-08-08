@@ -24,7 +24,8 @@ import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import it.eng.spago.configuration.ConfigSingleton;
 import it.eng.spago.configuration.FileCreatorConfiguration;
@@ -35,11 +36,13 @@ import it.eng.spagobi.utilities.service.AbstractBaseServlet;
  *
  */
 public abstract class AbstractEngineStartServlet extends AbstractBaseServlet {
+	
+	private static final String MSG_OK = "msgKO";
 
 	/**
 	 * Logger component
 	 */
-	private static transient Logger logger = Logger.getLogger(AbstractEngineStartServlet.class);
+	private static final Logger LOGGER = LogManager.getLogger(AbstractEngineStartServlet.class);
 
 	@Override
 	public void init(ServletConfig config) throws ServletException {
@@ -52,31 +55,33 @@ public abstract class AbstractEngineStartServlet extends AbstractBaseServlet {
 	}
 
 	@Override
-	public void doService(BaseServletIOManager servletIOManager) throws SpagoBIEngineException {
+	public final void doService(BaseServletIOManager servletIOManager) {
 
 		EngineStartServletIOManager engineServletIOManager;
 
 		engineServletIOManager = new EngineStartServletIOManager(servletIOManager);
 
 		try {
-			this.doService(engineServletIOManager);
-		} catch (Throwable t) {
-			handleException(servletIOManager, t);
+			this.service(engineServletIOManager);
+		} catch (Exception e) {
+			handleException(servletIOManager, e);
 		}
 
 	}
+	
+	public abstract void service(EngineStartServletIOManager servletIOManager) throws SpagoBIEngineException;
 
-	public void doService(EngineStartServletIOManager servletIOManager) throws SpagoBIEngineException {
+	public final void doService(EngineStartServletIOManager servletIOManager) {
 
-		logger.debug("User Id: " + servletIOManager.getUserId());
-		logger.debug("Audit Id: " + servletIOManager.getAuditId());
-		logger.debug("Document Id: " + servletIOManager.getDocumentId());
-		logger.debug("Template: " + servletIOManager.getTemplateAsSourceBean());
+		LOGGER.debug("User Id: {}", servletIOManager.getUserId());
+		LOGGER.debug("Audit Id: {}", servletIOManager.getAuditId());
+		LOGGER.debug("Document Id: {}", servletIOManager.getDocumentId());
+		LOGGER.debug("Template: {}", servletIOManager.getTemplateAsSourceBean());
 
 	}
 
 	public void handleException(EngineStartServletIOManager servletIOManager, Throwable t) {
-		logger.error("Service execution failed", t);
+		LOGGER.error("Service execution failed", t);
 
 		servletIOManager.auditServiceErrorEvent(t.getMessage());
 
@@ -92,9 +97,9 @@ public abstract class AbstractEngineStartServlet extends AbstractBaseServlet {
 			String nextJSP = "/jsp/errors/error.jsp";
 			RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(nextJSP);
 			HttpServletRequest req = servletIOManager.getRequest();
-			if (req.getAttribute("msgKO") != null)
-				req.removeAttribute("msgKO");
-			req.setAttribute("msgKO", (reponseMessage));
+			if (req.getAttribute(MSG_OK) != null)
+				req.removeAttribute(MSG_OK);
+			req.setAttribute(MSG_OK, (reponseMessage));
 			servletIOManager.setRequest(req);
 
 			try {

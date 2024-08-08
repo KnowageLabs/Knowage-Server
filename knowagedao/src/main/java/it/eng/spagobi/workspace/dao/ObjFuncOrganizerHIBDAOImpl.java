@@ -161,12 +161,13 @@ public class ObjFuncOrganizerHIBDAOImpl extends AbstractHibernateDAO implements 
 
 			hibDoc = new SbiObjFuncOrganizer();
 
-			SbiFunctionsOrganizer sfo = new SbiFunctionsOrganizer();
+			
 			Integer funcId = findRootFolder(userId);
-			sfo.setFunctId(funcId);
+			SbiFunctionsOrganizer sfo = new SbiFunctionsOrganizer(funcId);
+			
 
-			SbiObjects so = new SbiObjects();
-			so.setBiobjId(documentId);
+			SbiObjects so = new SbiObjects(documentId);
+			
 
 			SbiObjFuncOrganizerId compId = new SbiObjFuncOrganizerId();
 			compId.setSbiFunctionsOrganizer(sfo);
@@ -239,11 +240,10 @@ public class ObjFuncOrganizerHIBDAOImpl extends AbstractHibernateDAO implements 
 	public void deleteOrganizerDocumentById(Integer folderId, Integer docId, Session aSession) throws Exception {
 		LOGGER.debug("IN");
 
-		SbiFunctionsOrganizer sfo = new SbiFunctionsOrganizer();
-		sfo.setFunctId(folderId);
+		SbiFunctionsOrganizer sfo = new SbiFunctionsOrganizer(folderId);
 
-		SbiObjects so = new SbiObjects();
-		so.setBiobjId(docId);
+		SbiObjects so = new SbiObjects(docId);
+		
 
 		SbiObjFuncOrganizerId compId = new SbiObjFuncOrganizerId();
 		compId.setSbiFunctionsOrganizer(sfo);
@@ -374,11 +374,11 @@ public class ObjFuncOrganizerHIBDAOImpl extends AbstractHibernateDAO implements 
 		try {
 			hibDoc = new SbiObjFuncOrganizer();
 
-			SbiFunctionsOrganizer sfo = new SbiFunctionsOrganizer();
-			sfo.setFunctId(destId);
+			SbiFunctionsOrganizer sfo = new SbiFunctionsOrganizer(destId);
+			
 
-			SbiObjects so = new SbiObjects();
-			so.setBiobjId(documentId);
+			SbiObjects so = new SbiObjects(documentId);
+			
 
 			SbiObjFuncOrganizerId compId = new SbiObjFuncOrganizerId();
 			compId.setSbiFunctionsOrganizer(sfo);

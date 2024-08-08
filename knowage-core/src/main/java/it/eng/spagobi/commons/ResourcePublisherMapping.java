@@ -5,7 +5,7 @@ import java.util.Map;
 
 public class ResourcePublisherMapping {
 
-	private static final Map<String, String> resourceMap = new HashMap<String, String>() {
+	private static final Map<String, String> resourceMap = new HashMap<>() {
 		{
 			// Sorted by alphabetical order
 			put("documentExecutionNg", "/WEB-INF/jsp/tools/documentexecution/documentExecutionNg.jsp"); // Temporary restored

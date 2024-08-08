@@ -112,7 +112,7 @@ public class SbiEs implements Serializable {
 	/**
 	 * @param prog the prog to set
 	 */
-	public void setProg(Long prog) {
+	private void setProg(Long prog) {
 		this.prog = prog;
 	}
 

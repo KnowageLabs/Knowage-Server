@@ -35,12 +35,14 @@ import org.json.JSONObject;
 public class GetAnalysisMetaAction extends AbstractQbeEngineAction {
 
 	public static final String SERVICE_NAME = "GET_ANALYSIS_META_ACTION";
+	@Override
 	public String getActionName(){return SERVICE_NAME;}
 	
 	/** Logger component. */
     public static transient Logger logger = Logger.getLogger(GetAnalysisMetaAction.class);
     
     
+	@Override
 	public void service(SourceBean request, SourceBean response) {
 		EngineAnalysisMetadata analysisMetadata = null;
 		JSONObject meta;

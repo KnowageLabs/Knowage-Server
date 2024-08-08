@@ -112,7 +112,7 @@ public class SbiViewpoints  extends SbiHibernateModel {
      * 
      * @param vpId the new vp id
      */
-    public void setVpId(Integer vpId) {
+    private void setVpId(Integer vpId) {
         this.vpId = vpId;
     }
 /*

@@ -286,7 +286,7 @@ public final class CKANClient {
 	}
 
 	public List<Resource> getAllAvailableResources(String filter, String offset) throws CKANException {
-		List<Resource> resources = new ArrayList<Resource>();
+		List<Resource> resources = new ArrayList<>();
 		for (Dataset ds : getAllAccessibleDatasetList(filter, offset)) {
 			List<Resource> rs = ds.getResources();
 			if (rs != null && rs.size() > 0)
@@ -296,7 +296,7 @@ public final class CKANClient {
 	}
 
 	public List<Resource> getAllResourcesCompatibleWithSpagoBI(String filter, String offset) throws CKANException {
-		List<Resource> resources = new ArrayList<Resource>();
+		List<Resource> resources = new ArrayList<>();
 		for (Dataset ds : getAllAccessibleDatasetList(filter, offset)) {
 			if (ds.getState().equals("active")) {
 				List<Resource> rsList = ds.getResources();
@@ -320,7 +320,7 @@ public final class CKANClient {
 
 	public List<Dataset> getAllAccessibleDatasetList(String filter, String offset) throws CKANException {
 
-		List<Dataset> accessibleDatasets = new ArrayList<Dataset>();
+		List<Dataset> accessibleDatasets = new ArrayList<>();
 
 		String userId = connection.getUserId();
 		boolean isAuthenticated = connection.getApiKey() != null && userId != null;
@@ -544,7 +544,7 @@ public final class CKANClient {
 		 * Dismax query fields not figured out yet
 		 */
 		if (facetField == null) {
-			facetField = new ArrayList<String>();
+			facetField = new ArrayList<>();
 		}
 		return getObjectFromJson(
 				DatasetSearchResult.class,

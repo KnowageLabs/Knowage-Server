@@ -117,10 +117,11 @@ public class FoldersResource {
 		SpagoBIUserProfile profile = businessContext.getUserProfile();
 		java.nio.file.Path exportArchive = null;
 		String key = dto.getKey();
+		String filename = "";
 		try {
 			String path = resourceManagerAPIservice.getFolderByKey(key, profile);
 			exportArchive = resourceManagerAPIservice.getDownloadFolderPath(key, path, profile);
-			String filename = exportArchive.getFileName() + ".zip";
+			filename = exportArchive.getFileName() + ".zip";
 
 			return Response.ok(exportArchive.toFile()).header("Content-length", "" + Files.size(exportArchive))
 					.header("Content-Disposition", String.format("attachment; filename=\"%s\"", filename)).build();
@@ -128,7 +129,7 @@ public class FoldersResource {
 		} catch (KnowageBusinessException e) {
 			throw new KnowageBusinessException(e, businessContext.getLocale());
 		} catch (IOException e) {
-			throw new KnowageRuntimeException("Error calculating file size for " + exportArchive, e);
+			throw new KnowageRuntimeException("Error calculating file size for " + filename, e);
 		} catch (Exception e) {
 			throw new KnowageRuntimeException(e);
 		}

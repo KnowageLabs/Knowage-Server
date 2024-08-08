@@ -49,7 +49,7 @@ public class WhiteList implements IWhiteList {
 
 	private List<String> getProperties(String property) {
 		LOGGER.debug("IN");
-		List<String> services = new ArrayList<String>();
+		List<String> services = new ArrayList<>();
 		FileInputStream stream = null;
 		try {
 			String servicesWhitelist = SpagoBIUtilities.getRootResourcePath() + "/" + WHITELIST_FILE;
@@ -114,7 +114,8 @@ public class WhiteList implements IWhiteList {
 
 	@Override
 	public List<String> getExternalServices() {
-		return getProperties("baseurl");
+		List<String>  lStr = getProperties("baseurl");
+		return lStr;
 	}
 
 }

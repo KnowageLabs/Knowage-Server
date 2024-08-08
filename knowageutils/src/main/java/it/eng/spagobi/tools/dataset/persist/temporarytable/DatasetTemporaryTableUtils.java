@@ -18,8 +18,8 @@
 package it.eng.spagobi.tools.dataset.persist.temporarytable;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -52,11 +52,11 @@ public class DatasetTemporaryTableUtils {
 		logger.debug("IN");
 
 		DataSetTableDescriptor dstd = null;
-		Statement st = null;
+		PreparedStatement st = null;
 		String sqlQuery = null;
 
 		if (selectedFields == null) {
-			selectedFields = new ArrayList<String>();
+			selectedFields = new ArrayList<>();
 		}
 
 		try {
@@ -78,8 +78,8 @@ public class DatasetTemporaryTableUtils {
 
 			// execute
 			logger.debug("Executing the query " + sqlQuery + "...");
-			st = conn.createStatement();
-			st.execute(sqlQuery);
+			st = conn.prepareStatement(sqlQuery);
+			st.execute();
 			logger.debug("Query executed");
 			dstd = createTableCommand.getDsTableDescriptor();
 			LogMF.debug(logger, "The query descriptor is {0}", dstd);

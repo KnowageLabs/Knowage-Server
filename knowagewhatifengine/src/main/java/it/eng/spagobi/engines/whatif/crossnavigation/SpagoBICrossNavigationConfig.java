@@ -52,7 +52,7 @@ public class SpagoBICrossNavigationConfig {
 	}
 
 	private void init(SourceBean node) {
-		parameters = new ArrayList<TargetParameter>();
+		parameters = new ArrayList<>();
 		List parametersSB = node.getAttributeAsList(AbstractInitializer.TAG_TN_PARAMETERS);
 		List parameterSB = ((SourceBean) parametersSB.get(0)).getAttributeAsList(AbstractInitializer.TAG_TN_PARAMETER);
 

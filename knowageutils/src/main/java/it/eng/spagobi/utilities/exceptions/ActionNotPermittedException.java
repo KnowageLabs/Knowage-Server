@@ -17,8 +17,6 @@
  */
 package it.eng.spagobi.utilities.exceptions;
 
-import it.eng.spagobi.utilities.exceptions.SpagoBIException;
-
 public class ActionNotPermittedException extends SpagoBIException {
 
 	private static final long serialVersionUID = -8996385076577739309L;

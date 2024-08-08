@@ -45,6 +45,10 @@ public class SbiGeoLayers extends SbiHibernateModel {
 		super();
 	}
 
+	public SbiGeoLayers(int layerId) {
+		this.layerId=layerId;
+	}
+
 	public String getName() {
 		return name;
 	}
@@ -81,7 +85,11 @@ public class SbiGeoLayers extends SbiHibernateModel {
 		return layerId;
 	}
 
-	public void setLayerId(int layerId) {
+	private void setLayerId(int layerId) {
+		this.layerId = layerId;
+	}
+	
+	public void changeLayerId(int layerId) {
 		this.layerId = layerId;
 	}
 

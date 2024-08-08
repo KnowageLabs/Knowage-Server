@@ -6,7 +6,7 @@
 	<parent>
 		<groupId>it.eng.knowage</groupId>
 		<artifactId>knowage-ce-parent</artifactId>
-		<version>8.2.0-SNAPSHOT</version>
+		<version>9.0.0-SNAPSHOT</version>
 		<relativePath>../knowage-ce-parent/pom.xml</relativePath>
 	</parent>
 	
@@ -24,6 +24,10 @@
 				<exclusion>
 					<artifactId>cometd-java-server</artifactId>
 					<groupId>org.cometd.java</groupId>
+				</exclusion>
+				<exclusion>
+					<groupId>xml-apis</groupId>
+					<artifactId>xml-apis</artifactId>
 				</exclusion>
 			</exclusions>
 		</dependency>
@@ -54,7 +58,7 @@
 		<dependency>
 			<groupId>net.sf.jasperreports</groupId>
 			<artifactId>jasperreports</artifactId>
-			<version>4.0.0</version>
+			<version>6.21.3</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
@@ -72,12 +76,17 @@
 		<dependency>
 			<groupId>xalan</groupId>
 			<artifactId>xalan</artifactId>
-			<version>2.7.2</version>
+			<version>2.7.3</version>
 		</dependency>
 		<!-- Provides support for Graylog in log4j2 -->
 		<dependency>
 			<groupId>biz.paluch.logging</groupId>
 			<artifactId>logstash-gelf</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.owasp</groupId>
+			<artifactId>csrfguard</artifactId>
+			<version>3.0.0</version>
 		</dependency>
 	</dependencies>
 	
@@ -117,20 +126,6 @@
 						<configuration>
 							<attachClasses>true</attachClasses>
 							<classesClassifier>classes</classesClassifier>
-							<warSourceExcludes>js/src/**</warSourceExcludes>
-							<webResources>
-								<resource>
-									<directory>src/main/webapp</directory>
-									<filtering>true</filtering>
-									<includes>
-										<include>**/angularImport.jsp</include>
-									</includes>
-								</resource>
-								<resource>
-									<directory>src/main/webapp/js/src</directory>
-									<targetPath>js/src-${project.version}</targetPath>
-								</resource>
-							</webResources>
 						</configuration>
 					</plugin>
 				</plugins>

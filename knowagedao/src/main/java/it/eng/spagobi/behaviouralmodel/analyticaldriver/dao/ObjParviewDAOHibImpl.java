@@ -86,7 +86,7 @@ public class ObjParviewDAOHibImpl extends AbstractHibernateDAO implements IObjPa
 			sbiObjParview.setSbiObjParFather(sbiObjParFather);
 			sbiObjParview.setOperation(aObjParview.getOperation());
 			sbiObjParview.setCompareValue(aObjParview.getCompareValue());
-			sbiObjParview.setId(aObjParview.getId());
+			sbiObjParview.changeId(aObjParview.getId());
 			sbiObjParview.setProg(aObjParview.getProg());
 			sbiObjParview.setViewLabel(aObjParview.getViewLabel());
 
@@ -140,7 +140,7 @@ public class ObjParviewDAOHibImpl extends AbstractHibernateDAO implements IObjPa
 			view.setProg(aObjParview.getProg());
 			view.setViewLabel(aObjParview.getViewLabel());
 			updateSbiCommonInfo4Insert(view);
-			view.setId((Integer) aSession.save(view));
+			view.changeId((Integer) aSession.save(view));
 			tx.commit();
 		} catch (HibernateException he) {
 			logException(he);

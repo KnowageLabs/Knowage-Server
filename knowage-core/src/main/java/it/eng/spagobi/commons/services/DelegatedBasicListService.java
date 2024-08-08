@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Vector;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.log4j.Logger;
 
 import it.eng.spago.base.Constants;
 import it.eng.spago.base.RequestContainer;
@@ -65,6 +66,9 @@ import it.eng.spagobi.utilities.assertion.Assert;
  * @author sulis
  */
 public class DelegatedBasicListService {
+	
+	private static final Logger LOGGER = Logger.getLogger(DelegatedBasicListService.class);
+	
 	public static final String LIST_PAGE = "LIST_PAGE";
 	public static final String LIST_FIRST = "LIST_FIRST";
 	public static final String LIST_PREV = "LIST_PREV";
@@ -568,7 +572,7 @@ public class DelegatedBasicListService {
 					else
 						doesRowSatisfyCondition = true;
 				} catch (EMFValidationError error) {
-					error.printStackTrace();
+					LOGGER.warn("EMFValidationError", error);
 					return list;
 				}
 				if (doesRowSatisfyCondition)
@@ -612,7 +616,7 @@ public class DelegatedBasicListService {
 				doesRowSatisfyCondition = doesRowSatisfyCondition(row, valuefilter, valuetypefilter, columnfilter,
 						typeFilter);
 			} catch (EMFValidationError error) {
-				error.printStackTrace();
+				LOGGER.warn("EMFValidationError", error);
 				return list;
 			}
 			if (doesRowSatisfyCondition)

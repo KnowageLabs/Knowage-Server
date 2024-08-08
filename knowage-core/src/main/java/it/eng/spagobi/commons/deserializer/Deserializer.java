@@ -17,8 +17,6 @@
  */
 package it.eng.spagobi.commons.deserializer;
 
-import it.eng.spagobi.commons.serializer.SerializationException;
-
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
  */

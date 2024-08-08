@@ -76,13 +76,16 @@ public class SbiEngines extends SbiHibernateModel {
 		return this.engineId;
 	}
 
+	public void changeEngineId(Integer engineId) {
+		this.setEngineId(engineId);
+	}
 	/**
 	 * Sets the engine id.
 	 *
 	 * @param engineId
 	 *            the new engine id
 	 */
-	public void setEngineId(Integer engineId) {
+	private void setEngineId(Integer engineId) {
 		this.engineId = engineId;
 	}
 

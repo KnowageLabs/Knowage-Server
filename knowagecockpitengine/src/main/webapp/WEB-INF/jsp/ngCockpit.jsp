@@ -48,7 +48,7 @@ angular.module("cockpitModule").factory("cockpitModule_properties",function(){
 		STARTING_SELECTIONS:[],
 		STARTING_FILTERS:[],
 		CURRENT_SHEET: <%=initialSheet%>,
-		FOLDER_ID: "<%=folderId%>",
+		FOLDER_ID: "<%= StringEscapeUtils.escapeJavaScript(folderId)%>",
 		EXPORT_MODE: <%=exportMode%>,
 		INITIALIZED_WIDGETS : [],
 		DIRTY_WIDGETS : [],
@@ -109,7 +109,7 @@ angular.module("cockpitModule").factory("cockpitModule_template",function(sbiMod
 		template.configuration.variables=[];
 	}
 
-    var cockpitSelections = JSON.parse('<%=initialSelections%>');
+    var cockpitSelections = JSON.parse('<%=esapiEncoder.encodeForJavaScript(initialSelections)%>');
 	if(cockpitSelections.aggregations && cockpitSelections.aggregations.length > 0) {
 	    angular.merge(template.configuration.aggregations, cockpitSelections.aggregations);
 	}

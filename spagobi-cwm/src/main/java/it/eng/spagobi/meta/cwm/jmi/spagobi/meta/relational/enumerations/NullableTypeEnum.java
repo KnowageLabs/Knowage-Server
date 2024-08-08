@@ -53,7 +53,8 @@ public final class NullableTypeEnum
 
 
 
-  public List refTypeName()
+  @Override
+public List refTypeName()
   {
     return typeName;
   }
@@ -61,7 +62,8 @@ public final class NullableTypeEnum
 
 
 
-  public String toString()
+  @Override
+public String toString()
   {
     return literalName;
   }
@@ -69,7 +71,8 @@ public final class NullableTypeEnum
 
 
 
-  public int hashCode()
+  @Override
+public int hashCode()
   {
     return literalName.hashCode();
   }
@@ -79,7 +82,8 @@ public final class NullableTypeEnum
 
 
 
-  public boolean equals(Object o)
+  @Override
+public boolean equals(Object o)
   {
     if ((o instanceof NullableTypeEnum)) return o == this;
     if ((o instanceof NullableType)) return o.toString().equals(literalName);

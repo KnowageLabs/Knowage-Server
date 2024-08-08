@@ -197,9 +197,9 @@ public class ConfigDAOHibImpl extends AbstractHibernateDAO implements IConfigDAO
 	}
 
 	public SbiConfig fromConfig(Config config) {
-		SbiConfig hibConfig = new SbiConfig();
+		SbiConfig hibConfig = new SbiConfig(config.getId());
 		hibConfig.setValueCheck(config.getValueCheck());
-		hibConfig.setId(config.getId());
+		
 		hibConfig.setName(config.getName());
 		hibConfig.setLabel(config.getLabel());
 		hibConfig.setDescription(config.getDescription());

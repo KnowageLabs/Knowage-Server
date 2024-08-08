@@ -17,6 +17,7 @@
  */
 package it.eng.spagobi.events.bo;
 
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
 
 /**
@@ -64,5 +65,10 @@ public class Event implements Serializable {
 	 */
 	public void setUser(String user) {
 		this.user = user;
-	}	 
+	}	
+	
+	private final void writeObject(ObjectOutputStream aOutputStream) {
+		  throw new UnsupportedOperationException("Security violation : cannot serialize object to a stream");
+	}
+
 }

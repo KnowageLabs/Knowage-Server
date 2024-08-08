@@ -323,7 +323,7 @@ public class HQLStatement extends AbstractStatement {
 		StringBuffer buffer;
 		List selectFields;
 		List allSelectFields;
-		List<InLineCalculatedSelectField> selectInLineCalculatedFields = new ArrayList<InLineCalculatedSelectField>();
+		List<InLineCalculatedSelectField> selectInLineCalculatedFields = new ArrayList<>();
 		AbstractSelectField selectAbstractField;
 		SimpleSelectField selectField;
 		InLineCalculatedSelectField selectInLineField;
@@ -400,7 +400,7 @@ public class HQLStatement extends AbstractStatement {
 
 				} while (true);
 
-				aliasEntityMapping = new ArrayList<String>();
+				aliasEntityMapping = new ArrayList<>();
 				for (int k = 0; k < selectInLineCalculatedFields.size(); k++) {
 					selectInLineField = selectInLineCalculatedFields.get(k);
 
@@ -905,8 +905,8 @@ public class HQLStatement extends AbstractStatement {
 		String queryName;
 		String rootEntityAlias;
 		Map entityAliases = (Map) entityAliasesMaps.get(query.getId());
-		List<String> aliasEntityMapping = new ArrayList<String>();
-		List<String> aliases = new ArrayList<String>();
+		List<String> aliasEntityMapping = new ArrayList<>();
+		List<String> aliases = new ArrayList<>();
 
 		StatementTockenizer stk = new StatementTockenizer(expr);
 		while (stk.hasMoreTokens()) {

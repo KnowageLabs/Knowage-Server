@@ -19,7 +19,6 @@ package it.eng.qbe.model.properties.initializer;
 
 import it.eng.qbe.datasource.IDataSource;
 import it.eng.qbe.datasource.hibernate.IHibernateDataSource;
-import it.eng.qbe.datasource.jpa.IJpaDataSource;
 import it.eng.qbe.datasource.jpa.JPADataSource;
 
 
@@ -34,9 +33,9 @@ public class ModelStructurePropertiesInitializerFactory {
 		initializer = null;
 		
 		if(dataSource instanceof IHibernateDataSource) {
-			initializer = new SimpleModelStructurePropertiesInitializer((IHibernateDataSource)dataSource);
+			initializer = new SimpleModelStructurePropertiesInitializer(dataSource);
 		} else if (dataSource instanceof JPADataSource) {
-			initializer = new SimpleModelStructurePropertiesInitializer((IJpaDataSource)dataSource);
+			initializer = new SimpleModelStructurePropertiesInitializer(dataSource);
 		} else {
 			throw new RuntimeException("Impossible to load datamart structure from a datasource of type [" + dataSource.getClass().getName() + "]");
 		}

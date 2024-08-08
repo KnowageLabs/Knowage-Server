@@ -56,7 +56,11 @@ public class SbiObjDataSet extends SbiHibernateModel {
 		return biObjDsId;
 	}
 
-	public void setBiObjDsId(Integer biObjDsId) {
+	private void setBiObjDsId(Integer biObjDsId) {
+		this.biObjDsId = biObjDsId;
+	}
+	
+	public void changeBiObjDsId(Integer biObjDsId) {
 		this.biObjDsId = biObjDsId;
 	}
 

@@ -1,5 +1,6 @@
 package it.eng.spagobi.commons.bo;
 
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
 
 public class AccessibilityPreferences implements Serializable {
@@ -81,6 +82,10 @@ public class AccessibilityPreferences implements Serializable {
 
 	public void setPreferences(String preferences) {
 		this.preferences = preferences;
+	}
+
+	private final void writeObject(ObjectOutputStream aOutputStream) {
+		  throw new UnsupportedOperationException("Security violation : cannot serialize object to a stream");
 	}
 
 }

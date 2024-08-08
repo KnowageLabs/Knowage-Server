@@ -442,9 +442,9 @@ public class DomainDAOHibImpl extends AbstractHibernateDAO implements IDomainDAO
 	 * @return The corrispondent <code>SbiDomain</code>
 	 */
 	public SbiDomains fromDomain(Domain domain) {
-		SbiDomains hibDomain = new SbiDomains();
+		SbiDomains hibDomain = new SbiDomains(domain.getValueId());
 		hibDomain.setValueCd(domain.getValueCd());
-		hibDomain.setValueId(domain.getValueId());
+		
 		hibDomain.setValueNm(domain.getValueName());
 		hibDomain.setDomainCd(domain.getDomainCode());
 		hibDomain.setDomainNm(domain.getDomainName());
@@ -509,14 +509,14 @@ public class DomainDAOHibImpl extends AbstractHibernateDAO implements IDomainDAO
 			hibDomains.setDomainNm(domain.getDomainName());
 			hibDomains.setValueCd(domain.getValueCd());
 			hibDomains.setValueDs(domain.getValueDescription());
-			hibDomains.setValueId(domain.getValueId());
+			hibDomains.changeValueId(domain.getValueId());
 			hibDomains.setValueNm(domain.getValueName());
 		} else {
 			// insertion
 			LOGGER.debug("Insert new Domain");
 			hibDomains = fromDomain(domain);
 			updateSbiCommonInfo4Insert(hibDomains);
-			hibDomains.setValueId(domain.getValueId());
+			hibDomains.changeValueId(domain.getValueId());
 		}
 
 		return (Integer) aSession.save(hibDomains);

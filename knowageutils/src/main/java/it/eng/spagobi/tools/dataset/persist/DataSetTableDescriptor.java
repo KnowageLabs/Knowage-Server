@@ -37,9 +37,9 @@ public class DataSetTableDescriptor implements IDataSetTableDescriptor {
 	private IDataSource dataSource;
 	
 	public DataSetTableDescriptor() {
-		this.field2ColumnMap = new HashMap<String, String>();
-		this.field2ClassMap = new HashMap<String, Class>();
-		this.column2fieldMap = new HashMap<String, String>();
+		this.field2ColumnMap = new HashMap<>();
+		this.field2ClassMap = new HashMap<>();
+		this.column2fieldMap = new HashMap<>();
 	}
 	
 	public DataSetTableDescriptor(IDataSet dataSet) {
@@ -84,30 +84,37 @@ public class DataSetTableDescriptor implements IDataSetTableDescriptor {
 		this.column2fieldMap.put(columnName, fieldName);
 	}
 
+	@Override
 	public String getColumnName(String fieldName) {
 		return this.field2ColumnMap.get(fieldName);
 	}
 	
+	@Override
 	public String getFieldName(String columnName) {
 		return this.column2fieldMap.get(columnName);
 	}
 	
+	@Override
 	public Class getColumnType(String fieldName) {
 		return this.field2ClassMap.get(fieldName);
 	}
 	
+	@Override
 	public void setTableName(String tableName) {
 		this.tableName = tableName;
 	}
 	
+	@Override
 	public String getTableName() {
 		return this.tableName;
 	}
 	
+	@Override
 	public IDataSource getDataSource() {
 		return dataSource;
 	}
 
+	@Override
 	public void setDataSource(IDataSource dataSource) {
 		this.dataSource = dataSource;
 	}
@@ -122,6 +129,7 @@ public class DataSetTableDescriptor implements IDataSetTableDescriptor {
 	/* (non-Javadoc)
 	 * @see it.eng.spagobi.tools.dataset.persist.IDataSetTableDescriptor#getColumnNames()
 	 */
+	@Override
 	public Set<String> getColumnNames() {
 		Set<String> columnNames = null;
 		if(column2fieldMap!=null){

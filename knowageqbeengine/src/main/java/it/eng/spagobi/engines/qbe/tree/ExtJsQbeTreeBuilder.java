@@ -27,7 +27,9 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
+import org.apache.log4j.Logger;
 import org.apache.commons.lang3.StringUtils;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -77,7 +79,7 @@ public class ExtJsQbeTreeBuilder {
 	public static final String NODE_TYPE_HIERARCHY_LEVEL_FIELD = "hierarchyLevelField";
 	public static final String NODE_TYPE_INLINE_CALCULATED_FIELD = "inLineCalculatedField";
 	public static final String NODE_TYPE_RELATION_FIELD = "relation";
-
+	private static Logger logger = Logger.getLogger(ExtJsQbeTreeBuilder.class);
 	/**
 	 * Instantiates a new ext js qbe tree builder.
 	 *
@@ -144,7 +146,7 @@ public class ExtJsQbeTreeBuilder {
 		try {
 			writer = new PrintWriter(new FileWriter(file));
 		} catch (IOException e) {
-			e.printStackTrace();
+			logger.error("PrintWriter",e);
 			writer = new PrintWriter(new CharArrayWriter());
 		}
 		addEntityNodes(nodes, datamartName, userProfile);
@@ -415,7 +417,7 @@ public class ExtJsQbeTreeBuilder {
 			nodeAttributes.put("subjectId", subjectId);
 			fieldNode.put("attributes", nodeAttributes);
 		} catch (JSONException e) {
-			e.printStackTrace();
+			logger.error(e);
 		}
 
 		return fieldNode;
@@ -468,7 +470,7 @@ public class ExtJsQbeTreeBuilder {
 			fieldNode.put("children", jsonlevels);
 
 		} catch (JSONException e) {
-			e.printStackTrace();
+			logger.error(e);
 		}
 		return fieldNode;
 	}
@@ -537,7 +539,7 @@ public class ExtJsQbeTreeBuilder {
 			nodeAttributes.put("formState", formState);
 			fieldNode.put("attributes", nodeAttributes);
 		} catch (JSONException e) {
-			e.printStackTrace();
+			logger.error(e);
 		}
 
 		return fieldNode;
@@ -593,7 +595,7 @@ public class ExtJsQbeTreeBuilder {
 			nodeAttributes.put("longDescription", relationString);
 			fieldNode.put("attributes", nodeAttributes);
 		} catch (JSONException e) {
-			e.printStackTrace();
+			logger.error(e);
 		}
 
 		return fieldNode;

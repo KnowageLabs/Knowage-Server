@@ -17,13 +17,8 @@
  */
 package it.eng.spagobi.engines.documentcomposition.exporterUtils;
 
-import it.eng.spago.util.GeneralUtilities;
-
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.StringTokenizer;
 
 /**
  * 
@@ -40,7 +35,7 @@ public class CurrentConfigurationDocComp {
 	public CurrentConfigurationDocComp(String label) {
 		super();
 		this.label = label;
-		this.parameters = new HashMap<String, Object>();
+		this.parameters = new HashMap<>();
 	}
 
 	

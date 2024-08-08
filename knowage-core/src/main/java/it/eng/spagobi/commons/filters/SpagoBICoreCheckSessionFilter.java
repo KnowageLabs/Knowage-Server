@@ -51,17 +51,20 @@ public class SpagoBICoreCheckSessionFilter implements Filter {
 	
 	private static transient Logger logger = Logger.getLogger(SpagoBICoreCheckSessionFilter.class);
 
-    public void init(FilterConfig config) throws ServletException {
+    @Override
+	public void init(FilterConfig config) throws ServletException {
     	// do nothing
     }
 	
-    public void destroy() {
+    @Override
+	public void destroy() {
     	// do nothing
     }
     protected String getSessionExpiredUrl(){
     	return GeneralUtilities.getSessionExpiredURL();
     }
-    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) 
+    @Override
+	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) 
     	throws IOException, ServletException {
     	
     	//logger.debug("IN");
@@ -105,7 +108,7 @@ public class SpagoBICoreCheckSessionFilter implements Filter {
 				logger.error(" msg: ["+ z.getMessage() + "]"); 
 				logger.error(" stacktrace:");
 			}
-			t.printStackTrace(); 
+			logger.error("doFilter",t); 
 	    	throw new ServletException(t);
 		} finally {
 			//logger.debug("OUT");

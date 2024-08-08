@@ -34,14 +34,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <%@page import="it.eng.spagobi.commons.utilities.urls.IUrlBuilder"%>
 <%@page import="it.eng.spago.navigation.LightNavigationManager"%>
 <%@page import="it.eng.spagobi.utilities.themes.ThemesManager"%>
+<%@page import="org.apache.commons.lang.StringEscapeUtils"%>
 <%@page import="java.util.HashMap"%>
 <%@page import="java.util.Map"%>
 
-<%      
-	String userId = (request.getParameter("user_id") == null) ? "" : request.getParameter("user_id");
+<%
+String userId = (request.getParameter("user_id") == null) ? "" : request.getParameter("user_id");
 	String contextName = ChannelUtilities.getSpagoBIContextName(request);
 	String authFailed = (request.getAttribute(SpagoBIConstants.AUTHENTICATION_FAILED_MESSAGE) == null) ? ""
-			: (String) request.getAttribute(SpagoBIConstants.AUTHENTICATION_FAILED_MESSAGE);
+	: (String) request.getAttribute(SpagoBIConstants.AUTHENTICATION_FAILED_MESSAGE);
 	
 	String oldEncMethodMessage = (request.getParameter("old_enc_method_message") == null) ? "" : request.getParameter("old_enc_method_message");
 	
@@ -52,27 +53,32 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	if (requestContainer != null) {
 		currTheme = ThemesManager.getCurrentTheme(requestContainer);
 		if (currTheme == null)
-			currTheme = ThemesManager.getDefaultTheme();
+	currTheme = ThemesManager.getDefaultTheme();
 	
 		if (responseContainer != null) {
-			SourceBean aServiceResponse = responseContainer.getServiceResponse();
-			if (aServiceResponse != null) {
-				SourceBean loginModuleResponse = (SourceBean) aServiceResponse.getAttribute("LoginModule");
-				if (loginModuleResponse != null) {
-					userId = (String) loginModuleResponse.getAttribute("user_id");
-					String authFailedMessage = (String) loginModuleResponse.getAttribute(SpagoBIConstants.AUTHENTICATION_FAILED_MESSAGE);
-					if (authFailedMessage != null)
-						authFailed = authFailedMessage;
+	SourceBean aServiceResponse = responseContainer.getServiceResponse();
+	if (aServiceResponse != null) {
+		SourceBean loginModuleResponse = (SourceBean) aServiceResponse.getAttribute("LoginModule");
+		if (loginModuleResponse != null) {
+			userId = (String) loginModuleResponse.getAttribute("user_id");
+			String authFailedMessage = (String) loginModuleResponse.getAttribute(SpagoBIConstants.AUTHENTICATION_FAILED_MESSAGE);
+			if (authFailedMessage != null)
+				authFailed = authFailedMessage;
 	
-					String tmpOldEncMethodMessage = (String) loginModuleResponse.getAttribute("old_enc_method_message");
-					if (tmpOldEncMethodMessage != null)
-						oldEncMethodMessage = tmpOldEncMethodMessage;
+			String tmpOldEncMethodMessage = (String) loginModuleResponse.getAttribute("old_enc_method_message");
+			if (tmpOldEncMethodMessage != null)
+				oldEncMethodMessage = tmpOldEncMethodMessage;
 	
-				}
-			}
+		}
+	}
 		}
 	
 	}
+	// safeSink for XSS security
+	oldEncMethodMessage = StringEscapeUtils.escapeHtml(oldEncMethodMessage);
+	userId = StringEscapeUtils.escapeHtml(userId);
+	authFailed = StringEscapeUtils.escapeHtml(authFailed);
+	
 	
 	IMessageBuilder msgBuilder = MessageBuilderFactory.getMessageBuilder();
 	

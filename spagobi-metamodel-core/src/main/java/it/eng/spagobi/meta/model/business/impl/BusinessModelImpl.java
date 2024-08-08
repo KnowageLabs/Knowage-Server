@@ -224,7 +224,7 @@ public class BusinessModelImpl extends ModelObjectImpl implements BusinessModel 
 	@Override
 	public EList<BusinessColumnSet> getTables() {
 		if (tables == null) {
-			tables = new EObjectContainmentWithInverseEList<BusinessColumnSet>(BusinessColumnSet.class, this, BusinessModelPackage.BUSINESS_MODEL__TABLES,
+			tables = new EObjectContainmentWithInverseEList<>(BusinessColumnSet.class, this, BusinessModelPackage.BUSINESS_MODEL__TABLES,
 					BusinessModelPackage.BUSINESS_COLUMN_SET__MODEL);
 		}
 		return tables;
@@ -238,7 +238,7 @@ public class BusinessModelImpl extends ModelObjectImpl implements BusinessModel 
 	@Override
 	public EList<BusinessRelationship> getRelationships() {
 		if (relationships == null) {
-			relationships = new EObjectContainmentWithInverseEList<BusinessRelationship>(BusinessRelationship.class, this,
+			relationships = new EObjectContainmentWithInverseEList<>(BusinessRelationship.class, this,
 					BusinessModelPackage.BUSINESS_MODEL__RELATIONSHIPS, BusinessModelPackage.BUSINESS_RELATIONSHIP__MODEL);
 		}
 		return relationships;
@@ -252,7 +252,7 @@ public class BusinessModelImpl extends ModelObjectImpl implements BusinessModel 
 	@Override
 	public EList<BusinessIdentifier> getIdentifiers() {
 		if (identifiers == null) {
-			identifiers = new EObjectContainmentWithInverseEList<BusinessIdentifier>(BusinessIdentifier.class, this,
+			identifiers = new EObjectContainmentWithInverseEList<>(BusinessIdentifier.class, this,
 					BusinessModelPackage.BUSINESS_MODEL__IDENTIFIERS, BusinessModelPackage.BUSINESS_IDENTIFIER__MODEL);
 		}
 		return identifiers;
@@ -266,7 +266,7 @@ public class BusinessModelImpl extends ModelObjectImpl implements BusinessModel 
 	@Override
 	public EList<BusinessDomain> getDomains() {
 		if (domains == null) {
-			domains = new EObjectContainmentWithInverseEList<BusinessDomain>(BusinessDomain.class, this, BusinessModelPackage.BUSINESS_MODEL__DOMAINS,
+			domains = new EObjectContainmentWithInverseEList<>(BusinessDomain.class, this, BusinessModelPackage.BUSINESS_MODEL__DOMAINS,
 					BusinessModelPackage.BUSINESS_DOMAIN__MODEL);
 		}
 		return domains;
@@ -280,7 +280,7 @@ public class BusinessModelImpl extends ModelObjectImpl implements BusinessModel 
 	@Override
 	public EList<BusinessViewInnerJoinRelationship> getJoinRelationships() {
 		if (joinRelationships == null) {
-			joinRelationships = new EObjectContainmentWithInverseEList<BusinessViewInnerJoinRelationship>(BusinessViewInnerJoinRelationship.class, this,
+			joinRelationships = new EObjectContainmentWithInverseEList<>(BusinessViewInnerJoinRelationship.class, this,
 					BusinessModelPackage.BUSINESS_MODEL__JOIN_RELATIONSHIPS, BusinessModelPackage.BUSINESS_VIEW_INNER_JOIN_RELATIONSHIP__MODEL);
 		}
 		return joinRelationships;
@@ -529,7 +529,7 @@ public class BusinessModelImpl extends ModelObjectImpl implements BusinessModel 
 	public List<BusinessTable> getBusinessTables() {
 		List<BusinessTable> businessTables;
 
-		businessTables = new ArrayList<BusinessTable>();
+		businessTables = new ArrayList<>();
 		for (int i = 0; i < getTables().size(); i++) {
 			if (getTables().get(i) instanceof BusinessTable) {
 				businessTables.add((BusinessTable) getTables().get(i));
@@ -554,7 +554,7 @@ public class BusinessModelImpl extends ModelObjectImpl implements BusinessModel 
 
 	@Override
 	public List<BusinessTable> getBusinessTableByName(String name) {
-		List<BusinessTable> tables = new ArrayList<BusinessTable>();
+		List<BusinessTable> tables = new ArrayList<>();
 
 		if (name == null)
 			return tables;
@@ -568,7 +568,7 @@ public class BusinessModelImpl extends ModelObjectImpl implements BusinessModel 
 
 	@Override
 	public List<BusinessTable> getBusinessTableByPhysicalTable(PhysicalTable physicalTable) {
-		List<BusinessTable> tables = new ArrayList<BusinessTable>();
+		List<BusinessTable> tables = new ArrayList<>();
 
 		if (physicalTable == null)
 			return tables;
@@ -582,7 +582,7 @@ public class BusinessModelImpl extends ModelObjectImpl implements BusinessModel 
 
 	@Override
 	public List<BusinessTable> getBusinessTableByPhysicalTable(String name) {
-		List<BusinessTable> tables = new ArrayList<BusinessTable>();
+		List<BusinessTable> tables = new ArrayList<>();
 		PhysicalModel physicalModel = this.getPhysicalModel();
 		if (physicalModel == null)
 			return tables;
@@ -621,7 +621,7 @@ public class BusinessModelImpl extends ModelObjectImpl implements BusinessModel 
 	public List<BusinessView> getBusinessViews() {
 		List<BusinessView> businessViews;
 
-		businessViews = new ArrayList<BusinessView>();
+		businessViews = new ArrayList<>();
 		for (int i = 0; i < getTables().size(); i++) {
 			if (getTables().get(i) instanceof BusinessView) {
 				businessViews.add((BusinessView) getTables().get(i));

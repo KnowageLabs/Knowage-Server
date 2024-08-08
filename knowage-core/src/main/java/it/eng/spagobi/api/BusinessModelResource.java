@@ -19,11 +19,7 @@
 package it.eng.spagobi.api;
 
 import static it.eng.spagobi.analiticalmodel.document.DocumentExecutionUtils.createParameterValuesMap;
-import static java.nio.charset.StandardCharsets.UTF_8;
-
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -48,6 +44,8 @@ import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.owasp.esapi.errors.EncodingException;
+import org.owasp.esapi.reference.DefaultEncoder;
 
 import com.google.common.collect.BiMap;
 
@@ -120,9 +118,12 @@ public class BusinessModelResource {
 	 * @deprecated Replaced by {@link MetaUtils#NODE_ID_SEPARATOR}
 	 */
 	@Deprecated
-	public static final String NODE_ID_SEPARATOR = "___SEPA__";
-	public static final String START = "start";
-	public static final String LIMIT = "limit";
+
+	public static String NODE_ID_SEPARATOR = "___SEPA__";
+	public static String START = "start";
+	public static String LIMIT = "limit";
+	private static org.owasp.esapi.Encoder esapiEncoder = DefaultEncoder.getInstance();
+
 
 	@Context
 	protected HttpServletRequest request;
@@ -635,10 +636,10 @@ public class BusinessModelResource {
 						try {
 							// % character breaks decode method
 							if (!itemVal.contains("%")) {
-								itemVal = URLDecoder.decode(itemVal, UTF_8.name());
+								itemVal = esapiEncoder.decodeFromURL(itemVal);
 							}
 							if (!itemDescr.contains("%")) {
-								itemDescr = URLDecoder.decode(itemDescr, UTF_8.name());
+								itemDescr = esapiEncoder.decodeFromURL(itemDescr);
 							}
 
 							// check input value and convert if it's an old multivalue syntax({;{xxx;yyy}STRING}) to list of values :["A-OMP", "A-PO", "CL"]
@@ -658,17 +659,21 @@ public class BusinessModelResource {
 								paramDescrLst.add(itemDescr);
 
 							}
-						} catch (UnsupportedEncodingException e) {
+
+						} catch (EncodingException e) {
 							LOGGER.debug("An error occured while decoding parameter with value[" + itemVal + "]" + e);
+
 						}
 					}
 				} else if (paramValues instanceof String) {
 					// % character breaks decode method
 					if (!((String) paramValues).contains("%")) {
 						try {
-							paramValues = URLDecoder.decode((String) paramValues, UTF_8.name());
-						} catch (UnsupportedEncodingException e) {
+
+							paramValues = esapiEncoder.decodeFromURL((String) paramValues);
+						} catch (EncodingException e) {
 							LOGGER.debug(e.getCause(), e);
+
 							throw new SpagoBIRuntimeException(e.getMessage(), e);
 						}
 					}
@@ -679,9 +684,11 @@ public class BusinessModelResource {
 							: paramValues.toString();
 					if (!parDescrVal.contains("%")) {
 						try {
-							parDescrVal = URLDecoder.decode(parDescrVal, UTF_8.name());
-						} catch (UnsupportedEncodingException e) {
+
+							parDescrVal = esapiEncoder.decodeFromURL(parDescrVal);
+						} catch (EncodingException e) {
 							LOGGER.debug(e.getCause(), e);
+
 							throw new SpagoBIRuntimeException(e.getMessage(), e);
 						}
 					}

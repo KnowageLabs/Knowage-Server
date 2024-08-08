@@ -58,5 +58,7 @@ public class SessionDTO implements Serializable {
 	public String toString() {
 		return ToStringBuilder.reflectionToString(this);
 	}
+	
+	
 
 }

@@ -26,7 +26,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.lang3.StringEscapeUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -77,11 +76,11 @@ public class GridMetadataContainerJSONSerializer extends JsonSerializer<GridMeta
 			List<Map<String,String>> values = value.getValues();
 			jgen.writeArrayFieldStart(value.getRootPropery());
 				for (Iterator<Map<String,String>> iterator3 = values.iterator(); iterator3.hasNext();) {
-					Map<String,String> object =  (Map<String,String>)iterator3.next();
+					Map<String,String> object =  iterator3.next();
 					Set<String> keys = object.keySet();
 					if(keys!=null){
 						Iterator<String> iter = keys.iterator();
-						Map<String,String> objectescaped = new HashMap<String, String>();
+						Map<String,String> objectescaped = new HashMap<>();
 						while(iter.hasNext()){
 							String mapKey = iter.next();
 							String mapValue = object.get(mapKey);
@@ -128,7 +127,7 @@ public class GridMetadataContainerJSONSerializer extends JsonSerializer<GridMeta
 		for (Iterator<Object>  iterator2 = iteratorFields.iterator(); iterator2.hasNext();) {
 			Object object = iterator2.next();
 			if(object instanceof String) {
-				fields.put((String)object);
+				fields.put(object);
 			}else if(object instanceof Map) {
 				JSONObject field = new JSONObject();
 				iterator = ((Map)object).keySet().iterator();
@@ -146,7 +145,7 @@ public class GridMetadataContainerJSONSerializer extends JsonSerializer<GridMeta
 		JSONArray root = new JSONArray();
 
 		for (Iterator<Map<String,String>> iterator3 = values.iterator(); iterator3.hasNext();) {
-			Map<String,String> object =  (Map<String,String>)iterator3.next();
+			Map<String,String> object =  iterator3.next();
 			JSONObject field = new JSONObject();
 			iterator = (object).keySet().iterator();
 			while(iterator.hasNext()){

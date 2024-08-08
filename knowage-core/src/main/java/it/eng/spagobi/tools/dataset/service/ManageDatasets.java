@@ -354,16 +354,16 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 				try {
 					AuditLogUtilities.updateAudit(getHttpRequest(), profile, "DATA_SET.ADD", logParam, "KO");
 				} catch (Exception es1) {
-					// TODO Auto-generated catch block
-					es1.printStackTrace();
+					//es1.printStackTrace();
+					LOGGER.error("AuditLogUtilities.updateAudit ",es1);
 				}
 				throw new SpagoBIServiceException(SERVICE_NAME, es.getMessage(), es);
 			} catch (Throwable e) {
 				try {
 					AuditLogUtilities.updateAudit(getHttpRequest(), profile, "DATA_SET.ADD", logParam, "KO");
 				} catch (Exception e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
+					//e1.printStackTrace();
+					LOGGER.error("AuditLogUtilities.updateAudit ",e1);
 				}
 				LOGGER.error(e.getMessage(), e);
 				throw new SpagoBIServiceException(SERVICE_NAME, "sbi.ds.saveDsError", e);
@@ -372,8 +372,8 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 			try {
 				AuditLogUtilities.updateAudit(getHttpRequest(), profile, "DATA_SET.ADD/MODIFY", logParam, "ERR");
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				//e.printStackTrace();
+				LOGGER.error("AuditLogUtilities.updateAudit ",e);
 			}
 			LOGGER.error("DataSet name, label or type are missing");
 			throw new SpagoBIServiceException(SERVICE_NAME, "sbi.ds.fillFieldsError");
@@ -433,7 +433,8 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 							AuditLogUtilities.updateAudit(getHttpRequest(), profile, "SCHED_JOB.DELETE", logParam,
 									"KO");
 						} catch (Exception e) {
-							e.printStackTrace();
+							//e.printStackTrace();
+							LOGGER.error("AuditLogUtilities.updateAudit ",e);
 						}
 						throw new SpagoBIServiceException(SERVICE_NAME,
 								"Job " + ds.getLabel() + " not deleted by the web service");
@@ -560,7 +561,8 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 					try {
 						AuditLogUtilities.updateAudit(getHttpRequest(), profile, "SCHED_JOB.DELETE", logParam, "KO");
 					} catch (Exception e) {
-						e.printStackTrace();
+						//e.printStackTrace();
+						LOGGER.error("AuditLogUtilities.updateAudit ",e);
 					}
 					throw new SpagoBIServiceException(SERVICE_NAME,
 							"Job " + ds.getLabel() + " not deleted by the web service");
@@ -569,7 +571,8 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 			try {
 				AuditLogUtilities.updateAudit(getHttpRequest(), profile, "SCHED_JOB.DELETE", logParam, "OK");
 			} catch (Exception e) {
-				e.printStackTrace();
+				//e.printStackTrace();
+				LOGGER.error("AuditLogUtilities.updateAudit ",e);
 			}
 			AuditLogUtilities.updateAudit(getHttpRequest(), profile, "DATA_SET.DELETE", logParam, "OK");
 			writeBackToClient(new JSONAcknowledge("Operation succeded"));
@@ -577,8 +580,8 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 			try {
 				AuditLogUtilities.updateAudit(getHttpRequest(), profile, "DATA_SET.DELETE", logParam, "KO");
 			} catch (Exception e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
+				//e1.printStackTrace();
+				LOGGER.error("AuditLogUtilities.updateAudit ",e1);
 			}
 			if (e instanceof DatasetInUseException) {
 				DatasetInUseException duie = (DatasetInUseException) e;
@@ -1181,7 +1184,7 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 			dataSet = new FileDataSet();
 			((FileDataSet) dataSet).setResourcePath(DAOConfig.getResourcePath());
 
-			String fileName = getAttributeAsString(DataSetConstants.FILE_NAME);
+			String fileName = getAttributeAsString(DataSetConstants.FILE_NAME); 
 			File pathFile = new File(fileName);
 			fileName = pathFile.getName();
 			if (savingDataset) {
@@ -1223,11 +1226,16 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 				String realName = configuration.getString("fileName");
 				if (dsLabel != null && !realName.equals(dsLabel)) {
 
-					File dest = new File(SpagoBIUtilities.getResourcePath() + File.separatorChar + "dataset"
+					File dest = PathTraversalChecker.get(SpagoBIUtilities.getResourcePath(), SpagoBIUtilities.getResourcePath() + File.separatorChar + "dataset"
 							+ File.separatorChar + "files" + File.separatorChar + dsLabel + "."
 							+ configuration.getString("fileType").toLowerCase());
-					File source = new File(SpagoBIUtilities.getResourcePath() + File.separatorChar + "dataset"
+					// File dest = new File(SpagoBIUtilities.getResourcePath() + File.separatorChar + "dataset"
+					//		+ File.separatorChar + "files" + File.separatorChar + dsLabel + "."
+					//		+ configuration.getString("fileType").toLowerCase());
+					File source = PathTraversalChecker.get(SpagoBIUtilities.getResourcePath(), SpagoBIUtilities.getResourcePath() + File.separatorChar + "dataset"
 							+ File.separatorChar + "files" + File.separatorChar + realName);
+					// File source = new File(SpagoBIUtilities.getResourcePath() + File.separatorChar + "dataset"
+					//		+ File.separatorChar + "files" + File.separatorChar + realName);
 
 					if (!source.getCanonicalPath().equals(dest.getCanonicalPath())) {
 						LOGGER.debug("Source and destination are not the same. Copying from source to dest");
@@ -1395,7 +1403,7 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 					}
 				} catch (EMFUserError e) {
 					LOGGER.error("Error while retrieving Datasource with label=" + dataSourceLabel, e);
-					e.printStackTrace();
+					//e.printStackTrace();
 				}
 			}
 
@@ -1600,10 +1608,12 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 	}
 
 	private void deleteDatasetFile(String fileName, String resourcePath, String fileType) {
-		String filePath = resourcePath + File.separatorChar + "dataset" + File.separatorChar + "files"
-				+ File.separatorChar + "temp" + File.separatorChar;
+		//String filePath = resourcePath + File.separatorChar + "dataset" + File.separatorChar + "files"
+		//		+ File.separatorChar + "temp" + File.separatorChar;
 
-		File datasetFile = new File(filePath + fileName);
+		File datasetFile = PathTraversalChecker.get(resourcePath, resourcePath + File.separatorChar + "dataset" + File.separatorChar + "files"
+				+ File.separatorChar + "temp" + File.separatorChar + fileName);
+		//File datasetFile = new File(filePath + fileName);
 		if (datasetFile.exists()) {
 			datasetFile.delete();
 		}

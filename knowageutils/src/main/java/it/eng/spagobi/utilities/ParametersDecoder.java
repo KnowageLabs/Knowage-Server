@@ -165,5 +165,4 @@ public class ParametersDecoder extends BaseParametersDecoder {
 		LOGGER.debug("OUT");
 		return requestParameters;
 	}
-
 }

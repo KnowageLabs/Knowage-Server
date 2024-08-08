@@ -212,6 +212,7 @@ public class ChartImpl implements IChart {
 	 * 
 	 * @param content the content
 	 */
+	@Override
 	public void configureChart(SourceBean content) {
 		logger.debug("IN");
 		// common part for all charts
@@ -441,7 +442,7 @@ public class ChartImpl implements IChart {
 				String serieLabel="";
 				for (Iterator iterator = atts.iterator(); iterator.hasNext();) {
 					SourceBeanAttribute object = (SourceBeanAttribute) iterator.next();
-					String serieName=(String)object.getKey();
+					String serieName=object.getKey();
 					serieLabel=new String((String)object.getValue());
 					if(serieLabel!=null){
 						seriesLabelsMap.put(serieName, serieLabel); 
@@ -471,7 +472,7 @@ public class ChartImpl implements IChart {
 			
 		}
 		catch (Exception e) {
-			logger.error(e.getCause()+" "+e.getStackTrace());
+			logger.error(e.getCause()+" "+e);
 			logger.error("many error in reading data source parameters",e);
 		}
 
@@ -487,6 +488,7 @@ public class ChartImpl implements IChart {
 	 * @return the j free chart
 	 */
 
+	@Override
 	public JFreeChart createChart(DatasetMap dataset) {
 		return null;
 	}
@@ -607,6 +609,7 @@ public class ChartImpl implements IChart {
 	/* (non-Javadoc)
 	 * @see it.eng.spagobi.engines.chart.bo.IChart#getData()
 	 */
+	@Override
 	public String getData() {
 		return data;
 	}
@@ -614,6 +617,7 @@ public class ChartImpl implements IChart {
 	/* (non-Javadoc)
 	 * @see it.eng.spagobi.engines.chart.bo.IChart#getHeight()
 	 */
+	@Override
 	public int getHeight() {
 		return height;
 	}
@@ -621,6 +625,7 @@ public class ChartImpl implements IChart {
 	/* (non-Javadoc)
 	 * @see it.eng.spagobi.engines.chart.bo.IChart#getName()
 	 */
+	@Override
 	public String getName() {
 		return name;
 	}
@@ -628,6 +633,7 @@ public class ChartImpl implements IChart {
 	/* (non-Javadoc)
 	 * @see it.eng.spagobi.engines.chart.bo.IChart#getWidth()
 	 */
+	@Override
 	public int getWidth() {
 		return width;
 
@@ -636,6 +642,7 @@ public class ChartImpl implements IChart {
 	/* (non-Javadoc)
 	 * @see it.eng.spagobi.engines.chart.bo.IChart#setData(java.lang.String)
 	 */
+	@Override
 	public void setData(String _data) {
 		data=_data;		
 	}
@@ -643,6 +650,7 @@ public class ChartImpl implements IChart {
 	/* (non-Javadoc)
 	 * @see it.eng.spagobi.engines.chart.bo.IChart#setHeight(int)
 	 */
+	@Override
 	public void setHeight(int _height) {
 		height=_height;
 	}
@@ -650,6 +658,7 @@ public class ChartImpl implements IChart {
 	/* (non-Javadoc)
 	 * @see it.eng.spagobi.engines.chart.bo.IChart#setName(java.lang.String)
 	 */
+	@Override
 	public void setName(String _name) {
 		name=_name;		
 	}
@@ -668,6 +677,7 @@ public class ChartImpl implements IChart {
 	/* (non-Javadoc)
 	 * @see it.eng.spagobi.engines.chart.bo.IChart#setWidth(int)
 	 */
+	@Override
 	public void setWidth(int _width) {
 		width=_width;
 	}
@@ -675,6 +685,7 @@ public class ChartImpl implements IChart {
 	/* (non-Javadoc)
 	 * @see it.eng.spagobi.engines.chart.bo.IChart#calculateValue()
 	 */
+	@Override
 	public DatasetMap calculateValue() throws Exception {
 		return null;
 	}
@@ -736,6 +747,7 @@ public class ChartImpl implements IChart {
 	/* (non-Javadoc)
 	 * @see it.eng.spagobi.engines.chart.bo.IChart#isLinkable()
 	 */
+	@Override
 	public boolean isLinkable() {
 		return false;
 	}
@@ -779,6 +791,7 @@ public class ChartImpl implements IChart {
 	/* (non-Javadoc)
 	 * @see it.eng.spagobi.engines.chart.bo.IChart#isChangeableView()
 	 */
+	@Override
 	public boolean isChangeableView() {
 		return false;
 	}
@@ -798,12 +811,14 @@ public class ChartImpl implements IChart {
 	/* (non-Javadoc)
 	 * @see it.eng.spagobi.engines.chart.bo.IChart#setChangeViewChecked(boolean)
 	 */
+	@Override
 	public void setChangeViewChecked(boolean b) {
 	}
 
 	/* (non-Javadoc)
 	 * @see it.eng.spagobi.engines.chart.bo.IChart#getPossibleChangePars()
 	 */
+	@Override
 	public List getPossibleChangePars() {
 		return new Vector();
 	}
@@ -811,6 +826,7 @@ public class ChartImpl implements IChart {
 	/* (non-Javadoc)
 	 * @see it.eng.spagobi.engines.chart.bo.IChart#setChangeViewsParameter(java.lang.String, boolean)
 	 */
+	@Override
 	public void setChangeViewsParameter(String changePar, boolean how) {
 
 
@@ -819,6 +835,7 @@ public class ChartImpl implements IChart {
 	/* (non-Javadoc)
 	 * @see it.eng.spagobi.engines.chart.bo.IChart#getChangeViewParameter(java.lang.String)
 	 */
+	@Override
 	public boolean getChangeViewParameter(String changePar) {
 		return false;		
 	}
@@ -826,6 +843,7 @@ public class ChartImpl implements IChart {
 	/* (non-Javadoc)
 	 * @see it.eng.spagobi.engines.chart.bo.IChart#getChangeViewParameterLabel(java.lang.String, int)
 	 */
+	@Override
 	public String getChangeViewParameterLabel(String changePar, int i) {
 		return null;
 	}
@@ -851,6 +869,7 @@ public class ChartImpl implements IChart {
 	/* (non-Javadoc)
 	 * @see it.eng.spagobi.engines.chart.bo.IChart#filterDataset(org.jfree.data.general.Dataset, java.util.HashMap, int, int)
 	 */
+	@Override
 	public Dataset filterDataset(Dataset dataset, HashMap categories, int catSelected, int numberCatsVisualization) {
 
 		return null;
@@ -859,6 +878,7 @@ public class ChartImpl implements IChart {
 	/* (non-Javadoc)
 	 * @see it.eng.spagobi.engines.chart.bo.IChart#isLegend()
 	 */
+	@Override
 	public boolean isLegend() {
 		return legend;
 	}
@@ -866,6 +886,7 @@ public class ChartImpl implements IChart {
 	/* (non-Javadoc)
 	 * @see it.eng.spagobi.engines.chart.bo.IChart#setLegend(boolean)
 	 */
+	@Override
 	public void setLegend(boolean legend) {
 		this.legend = legend;
 	}
@@ -873,6 +894,7 @@ public class ChartImpl implements IChart {
 	/* (non-Javadoc)
 	 * @see it.eng.spagobi.engines.chart.bo.IChart#getParametersObject()
 	 */	
+	@Override
 	public Map getParametersObject() {
 		return parametersObject;
 	}
@@ -880,6 +902,7 @@ public class ChartImpl implements IChart {
 	/* (non-Javadoc)
 	 * @see it.eng.spagobi.engines.chart.bo.IChart#setParametersObject(java.util.Map)
 	 */
+	@Override
 	public void setParametersObject(Map parametersObject) {
 		this.parametersObject = parametersObject;
 	}
@@ -1041,10 +1064,12 @@ public class ChartImpl implements IChart {
 	}
 	
 
+	@Override
 	public int getTitleDimension() {
 		return titleDimension;
 	}
 
+	@Override
 	public void setTitleDimension(int titleDimension) {
 		this.titleDimension = titleDimension;
 	}
@@ -1126,6 +1151,7 @@ public class ChartImpl implements IChart {
 		
 		}
 
+	@Override
 	public void setLocalizedTitle() {
 		if(name!=null){
 		IMessageBuilder msgBuilder = MessageBuilderFactory.getMessageBuilder();

@@ -103,7 +103,7 @@ public class PythonDataSet extends ConfigurableDataSet {
 
 	public void initConf(JSONObject jsonConf) {
 		initDataProxy(jsonConf);
-		setDataReader(new JSONPathDataReader("$[*]", new ArrayList<JSONPathAttribute>(), true, false));
+		setDataReader(new JSONPathDataReader("$[*]", new ArrayList<>(), true, false));
 	}
 
 	private void initDataProxy(JSONObject jsonConf) {
@@ -140,7 +140,7 @@ public class PythonDataSet extends ConfigurableDataSet {
 			} else {
 				throw new IllegalStateException("Invalid Python Dataset Type: " + pythonDatasetType);
 			}
-			toReturn = pythonAddress.replaceAll("/+$", "") + "/dataset";
+			toReturn = pythonAddress.replace("/+$", "") + "/dataset";
 		} catch (Exception e) {
 			logger.error("Cannot retrieve python address from configuration.", e);
 			return "";
@@ -149,8 +149,7 @@ public class PythonDataSet extends ConfigurableDataSet {
 	}
 
 	private JSONObject getJSONConfig() {
-		JSONObject jsonConf = ObjectUtils.toJSONObject(getConfiguration());
-		return jsonConf;
+		return ObjectUtils.toJSONObject(getConfiguration());
 	}
 
 	protected List<JSONPathAttribute> getJsonPathAttributes(String propName, JSONObject conf) throws JSONException {
@@ -162,7 +161,7 @@ public class PythonDataSet extends ConfigurableDataSet {
 		}
 		Assert.assertNotNull(sub, "property is null");
 		JSONArray subs = (JSONArray) sub;
-		List<JSONPathAttribute> res = new ArrayList<JSONPathDataReader.JSONPathAttribute>(subs.length());
+		List<JSONPathAttribute> res = new ArrayList<>(subs.length());
 		for (int i = 0; i < subs.length(); i++) {
 			Object o = subs.get(i);
 			if (!(o instanceof JSONObject)) {
@@ -189,7 +188,7 @@ public class PythonDataSet extends ConfigurableDataSet {
 		}
 		Assert.assertNotNull(c, "property is null");
 		JSONObject r = (JSONObject) c;
-		Map<String, String> res = new HashMap<String, String>(r.length());
+		Map<String, String> res = new HashMap<>(r.length());
 		Iterator<String> it = r.keys();
 		while (it.hasNext()) {
 			String key = it.next();
@@ -256,8 +255,7 @@ public class PythonDataSet extends ConfigurableDataSet {
 			return null;
 		}
 
-		String uuid = (String) up.getUserId();
-		return uuid;
+		return (String) up.getUserId();
 	}
 
 	private UserProfile getCurrentUserProfile() {
@@ -312,7 +310,7 @@ public class PythonDataSet extends ConfigurableDataSet {
 		String paramValue = paramValues.get(paramName);
 		String[] values = null;
 		if (isMultiValue) {
-			List<String> list = new ArrayList<String>();
+			List<String> list = new ArrayList<>();
 			boolean paramValueConsumed = false;
 			try {
 				JSONArray jsonArray = new JSONArray(paramValue);

@@ -30,7 +30,7 @@ public class SbiObjFunction extends SbiHibernateModel {
 		return biObjFunctionId;
 	}
 
-	public void setBiObjFunctionId(Integer biObjFunctionId) {
+	private void setBiObjFunctionId(Integer biObjFunctionId) {
 		this.biObjFunctionId = biObjFunctionId;
 	}
 

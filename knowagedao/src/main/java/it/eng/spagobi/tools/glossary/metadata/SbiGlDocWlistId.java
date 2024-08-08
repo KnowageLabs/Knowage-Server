@@ -55,7 +55,7 @@ public class SbiGlDocWlistId implements Serializable {
 	/**
 	 * @param wordId the wordId to set
 	 */
-	public void setWordId(int wordId) {
+	private void setWordId(int wordId) {
 		this.wordId = wordId;
 	}
 
@@ -80,7 +80,7 @@ public class SbiGlDocWlistId implements Serializable {
 	/**
 	 * @param documentId the documentId to set
 	 */
-	public void setDocumentId(int documentId) {
+	private void setDocumentId(int documentId) {
 		this.documentId = documentId;
 	}
 

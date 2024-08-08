@@ -71,12 +71,12 @@ public class ImportMetadata extends AbstractHibernateDAO {
 			// 1 - Create or update Job (SBI_META_JOB)
 			SbiMetaJob aJob = new SbiMetaJob(jobName, false);
 			Integer jobId = saveJob(aSession, aJob);
-			aJob.setJobId(jobId);
+			aJob.changeJobId(jobId);
 
 			// 2 - Retrieve rdbms data sources of the job
 			Set<ETLRDBMSSource> sources = etlMetadata.getRdbmsSources();
 			// get corresponding source record from db
-			HashMap<String, SbiMetaSource> sourcesMap = new HashMap<String, SbiMetaSource>();
+			HashMap<String, SbiMetaSource> sourcesMap = new HashMap<>();
 			for (ETLRDBMSSource source : sources) {
 				String sourceUniqueName = source.getUniqueName();
 				// get corresponding source name on SBI_META_SOURCE mapped by .properties file
@@ -148,7 +148,7 @@ public class ImportMetadata extends AbstractHibernateDAO {
 				sbiMetaSource.setRole(ROLE_SOURCE);
 				// save to db SBI_META_SOURCE
 				Integer sourceId = saveSource(aSession, sbiMetaSource);
-				sbiMetaSource.setSourceId(sourceId);
+				sbiMetaSource.changeSourceId(sourceId);
 				// save association job-source to SBI_META_JOB_SOURCE
 				SbiMetaJobSource jobSource = new SbiMetaJobSource();
 				jobSource.setSbiMetaJob(aJob);
@@ -167,7 +167,7 @@ public class ImportMetadata extends AbstractHibernateDAO {
 				sbiMetaSource.setRole(ROLE_TARGET);
 				// save to db SBI_META_SOURCE
 				Integer sourceId = saveSource(aSession, sbiMetaSource);
-				sbiMetaSource.setSourceId(sourceId);
+				sbiMetaSource.changeSourceId(sourceId);
 				// save association job-source to SBI_META_JOB_SOURCE
 				SbiMetaJobSource jobSource = new SbiMetaJobSource();
 				jobSource.setSbiMetaJob(aJob);
@@ -204,13 +204,13 @@ public class ImportMetadata extends AbstractHibernateDAO {
 			aSession = getSession();
 			tx = aSession.beginTransaction();
 
-			HashMap<String, SbiMetaTable> tablesMap = new HashMap<String, SbiMetaTable>();
-			HashMap<String, SbiMetaTableColumn> columnsMap = new HashMap<String, SbiMetaTableColumn>();
+			HashMap<String, SbiMetaTable> tablesMap = new HashMap<>();
+			HashMap<String, SbiMetaTableColumn> columnsMap = new HashMap<>();
 
 			// get informations and call DAO insert methods
 			// SBI_META_SOURCE
 			Integer sourceId = saveSource(aSession, aMetaSource);
-			aMetaSource.setSourceId(sourceId);
+			aMetaSource.changeSourceId(sourceId);
 			Integer tableId = null;
 
 			Set<SbiMetaTable> metaTbs = aMetaSource.getSbiMetaTables();
@@ -218,7 +218,7 @@ public class ImportMetadata extends AbstractHibernateDAO {
 				// SBI_META_TABLE
 				metaTb.setSbiMetaSource(aMetaSource);
 				tableId = saveTable(aSession, metaTb);
-				metaTb.setTableId(tableId);
+				metaTb.changeTableId(tableId);
 				tablesMap.put(metaTb.getName(), metaTb);
 
 				Set<SbiMetaTableColumn> metaTbCols = metaTb.getSbiMetaTableColumns();
@@ -235,7 +235,7 @@ public class ImportMetadata extends AbstractHibernateDAO {
 					// SBI_META_TABLE_COLUMN
 					metaTbCol.setSbiMetaTable(metaTb);
 					Integer idTbCol = saveTableColumn(aSession, metaTbCol);
-					metaTbCol.setColumnId(idTbCol);
+					metaTbCol.changeColumnId(idTbCol);
 					columnsMap.put(metaTbCol.getName(), metaTbCol);
 
 				}
@@ -272,7 +272,7 @@ public class ImportMetadata extends AbstractHibernateDAO {
 
 				// SBI_META_BC
 				Integer bcId = saveBC(aSession, aMetaBc);
-				aMetaBc.setBcId(bcId);
+				aMetaBc.changeBcId(bcId);
 
 				Set<SbiMetaBcAttribute> metaAttrs = aMetaBc.getSbiMetaBcAttributes();
 				for (SbiMetaBcAttribute metaAttr : metaAttrs) {
@@ -284,15 +284,13 @@ public class ImportMetadata extends AbstractHibernateDAO {
 					metaAttr.setSbiMetaBc(aMetaBc);
 					// SBI_META_BC_ATTRIBUTES
 					Integer bcAttrId = saveBCAttribute(aSession, metaAttr);
-					metaAttr.setAttributeId(bcAttrId);
+					metaAttr.changeAttributeId(bcAttrId);
 				}
 				aMetaBc.setSbiMetaBcAttributes(metaAttrs);
 
 				// SBI_META_TABLE_BC
 				SbiMetaTableBc smTableBc = new SbiMetaTableBc();
-				SbiMetaTableBcId smTableBcId = new SbiMetaTableBcId();
-				smTableBcId.setTableId(tablesMap.get(tableName).getTableId());
-				smTableBcId.setBcId(aMetaBc.getBcId());
+				SbiMetaTableBcId smTableBcId = new SbiMetaTableBcId(tablesMap.get(tableName).getTableId(),aMetaBc.getBcId());
 				smTableBc.setId(smTableBcId);
 				smTableBc.setSbiMetaBc(aMetaBc);
 				smTableBc.setSbiMetaTable(tablesMap.get(tableName));
@@ -367,7 +365,7 @@ public class ImportMetadata extends AbstractHibernateDAO {
 			else {
 				// update the existing...
 				idJob = sbiJob.getJobId();
-				aMetaJob.setJobId(idJob);
+				aMetaJob.changeJobId(idJob);
 				mjDao.modifyJob(session, aMetaJob);
 			}
 			return idJob;
@@ -454,7 +452,7 @@ public class ImportMetadata extends AbstractHibernateDAO {
 			else {
 				// update the existing...
 				idSource = sbm.getSourceId();
-				aMetaSource.setSourceId(idSource);
+				aMetaSource.changeSourceId(idSource);
 				msDao.modifySource(session, aMetaSource);
 			}
 			return idSource;
@@ -483,7 +481,7 @@ public class ImportMetadata extends AbstractHibernateDAO {
 			else {
 				// update the existing...
 				idBc = sbm.getBcId();
-				aMetaBC.setBcId(idBc);
+				aMetaBC.changeBcId(idBc);
 				msDao.modifyBc(session, aMetaBC);
 			}
 			return idBc;
@@ -512,7 +510,7 @@ public class ImportMetadata extends AbstractHibernateDAO {
 			else {
 				// update the existing...
 				idBcAttribute = sbm.getAttributeId();
-				aMetaBCAttribute.setAttributeId(idBcAttribute);
+				aMetaBCAttribute.changeAttributeId(idBcAttribute);
 				msDao.modifyBcAttribute(session, aMetaBCAttribute);
 			}
 			return idBcAttribute;
@@ -542,7 +540,7 @@ public class ImportMetadata extends AbstractHibernateDAO {
 			} else {
 				// update the existing...
 				idTable = sbm.getTableId();
-				newTable.setTableId(idTable);
+				newTable.changeTableId(idTable);
 				msDao.modifyTable(session, newTable);
 				setExistElement(true);
 			}
@@ -600,7 +598,7 @@ public class ImportMetadata extends AbstractHibernateDAO {
 			else {
 				// update the existing...
 				idColumn = sbm.getColumnId();
-				newColumn.setColumnId(idColumn);
+				newColumn.changeColumnId(idColumn);
 				msDao.modifyTableColumn(session, newColumn);
 			}
 			return idColumn;
@@ -618,7 +616,7 @@ public class ImportMetadata extends AbstractHibernateDAO {
 		logger.debug("IN");
 
 		ISbiMetaTableColumnDAO msDao = DAOFactory.getSbiMetaTableColumnDAO();
-		HashMap<String, SbiMetaTableColumn> toReturn = new HashMap<String, SbiMetaTableColumn>();
+		HashMap<String, SbiMetaTableColumn> toReturn = new HashMap<>();
 
 		try {
 			List<SbiMetaTableColumn> cols = msDao.loadTableColumnsFromTable(session, tableId);
@@ -673,7 +671,7 @@ public class ImportMetadata extends AbstractHibernateDAO {
 
 	private HashMap convertListBCInMap(List<SbiMetaBc> lstBCs) {
 		// convert the BC list in map
-		HashMap<String, SbiMetaBc> toReturn = new HashMap<String, SbiMetaBc>();
+		HashMap<String, SbiMetaBc> toReturn = new HashMap<>();
 
 		for (SbiMetaBc bc : lstBCs) {
 			toReturn.put(bc.getName(), bc);

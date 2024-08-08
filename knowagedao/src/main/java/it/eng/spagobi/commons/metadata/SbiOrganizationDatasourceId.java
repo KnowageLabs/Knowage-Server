@@ -35,11 +35,13 @@ public class SbiOrganizationDatasourceId implements java.io.Serializable {
 		this.organizationId = organizationId;
 	}
 
+	
+	
 	public int getDatasourceId() {
 		return this.datasourceId;
 	}
 
-	public void setDatasourceId(int datasourceId) {
+	private void setDatasourceId(int datasourceId) {
 		this.datasourceId = datasourceId;
 	}
 
@@ -47,10 +49,11 @@ public class SbiOrganizationDatasourceId implements java.io.Serializable {
 		return this.organizationId;
 	}
 
-	public void setOrganizationId(int organizationId) {
+	private void setOrganizationId(int organizationId) {
 		this.organizationId = organizationId;
 	}
 
+	@Override
 	public boolean equals(Object other) {
 		if ((this == other))
 			return true;
@@ -64,6 +67,7 @@ public class SbiOrganizationDatasourceId implements java.io.Serializable {
 				&& (this.getOrganizationId() == castOther.getOrganizationId());
 	}
 
+	@Override
 	public int hashCode() {
 		int result = 17;
 

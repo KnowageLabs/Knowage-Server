@@ -41,7 +41,7 @@ public class SbiCommunityUsersId extends SbiHibernateModel{
 		return this.communityId;
 	}
 
-	public void setCommunityId(int communityId) {
+	private void setCommunityId(int communityId) {
 		this.communityId = communityId;
 	}
 
@@ -49,10 +49,11 @@ public class SbiCommunityUsersId extends SbiHibernateModel{
 		return this.userId;
 	}
 
-	public void setUserId(String userId) {
+	private void setUserId(String userId) {
 		this.userId = userId;
 	}
 
+	@Override
 	public boolean equals(Object other) {
 		if ((this == other))
 			return true;
@@ -68,6 +69,7 @@ public class SbiCommunityUsersId extends SbiHibernateModel{
 						.getUserId().equals(castOther.getUserId())));
 	}
 
+	@Override
 	public int hashCode() {
 		int result = 17;
 

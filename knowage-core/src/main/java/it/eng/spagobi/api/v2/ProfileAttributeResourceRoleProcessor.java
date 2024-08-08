@@ -46,7 +46,8 @@ public class ProfileAttributeResourceRoleProcessor extends AbstractSpagoBIResour
 				SbiUserAttributesId attid = new SbiUserAttributesId();
 				if (hiddenAttribute.getAllowUser() != null && hiddenAttribute.getAllowUser() == 0
 						&& userAttribute.getId().getAttributeId() == hiddenAttribute.getAttributeId()) {
-					attid.setAttributeId(hiddenAttribute.getAttributeId());
+					//attid.setAttributeId(hiddenAttribute.getAttributeId());
+					attid = new SbiUserAttributesId(hiddenAttribute.getAttributeId());
 					attributeHidden.setId(attid);
 					attributeHidden.setAttributeValue(userAttribute.getAttributeValue());
 					attributes.add(attributeHidden);

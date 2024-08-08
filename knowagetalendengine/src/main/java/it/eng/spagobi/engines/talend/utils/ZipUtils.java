@@ -20,6 +20,9 @@ import java.util.zip.ZipFile;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import it.eng.knowage.commons.zip.SonarZipCommons;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+
 /**
  * @author Andrea Gioia
  *
@@ -60,20 +63,27 @@ public class ZipUtils {
 			Enumeration<? extends ZipEntry> entries = zipFile.entries();
 
 			while (entries.hasMoreElements()) {
-				ZipEntry entry = entries.nextElement();
-
-				if (!entry.isDirectory()) {
-					File destFile = new File(destDir, entry.getName());
-					File destFileDir = destFile.getParentFile();
-					if (!destFileDir.exists()) {
-						LOGGER.warn("Extracting directory: {}",
-								entry.getName().substring(0, entry.getName().lastIndexOf('/')));
-						destFileDir.mkdirs();
+				SonarZipCommons sonarZipCommons = new SonarZipCommons();
+				
+				if(sonarZipCommons.doThresholdCheck(zipFile.getName())) {
+					ZipEntry entry = entries.nextElement();
+	
+					if (!entry.isDirectory()) {
+						File destFile = new File(destDir, entry.getName());
+						File destFileDir = destFile.getParentFile();
+						if (!destFileDir.exists()) {
+							LOGGER.warn("Extracting directory: {}",
+									entry.getName().substring(0, entry.getName().lastIndexOf('/')));
+							destFileDir.mkdirs();
+						}
+	
+						LOGGER.warn("Extracting file: {}", entry.getName());
+						copyInputStream(zipFile.getInputStream(entry),
+								new BufferedOutputStream(new FileOutputStream(new File(destDir, entry.getName()))));
 					}
-
-					LOGGER.warn("Extracting file: {}", entry.getName());
-					copyInputStream(zipFile.getInputStream(entry),
-							new BufferedOutputStream(new FileOutputStream(new File(destDir, entry.getName()))));
+				} else {
+					LOGGER.error("Error while unzip file. Invalid archive file");
+					throw new SpagoBIRuntimeException("Error while unzip file. Invalid archive file");
 				}
 			}
 
@@ -94,26 +104,33 @@ public class ZipUtils {
 		try {
 			Enumeration<? extends ZipEntry> entries = zipFile.entries();
 			while (entries.hasMoreElements()) {
-				ZipEntry entry = entries.nextElement();
-
-				if (!entry.isDirectory()) {
-					String destFileStr = entry.getName();
-
-					destFileStr = (destFileStr.indexOf('/') > 0) ? destFileStr.substring(destFileStr.indexOf('/'))
-							: null;
-					if (destFileStr == null)
-						continue;
-					File destFile = new File(destDir, destFileStr);
-					File destFileDir = destFile.getParentFile();
-					if (!destFileDir.exists()) {
-						LOGGER.warn("Extracting directory: {}",
-								entry.getName().substring(0, entry.getName().lastIndexOf('/')));
-						destFileDir.mkdirs();
+				SonarZipCommons sonarZipCommons = new SonarZipCommons();
+				
+				if(sonarZipCommons.doThresholdCheck(zipFile.getName())) {
+					ZipEntry entry = entries.nextElement();
+	
+					if (!entry.isDirectory()) {
+						String destFileStr = entry.getName();
+	
+						destFileStr = (destFileStr.indexOf('/') > 0) ? destFileStr.substring(destFileStr.indexOf('/'))
+								: null;
+						if (destFileStr == null)
+							continue;
+						File destFile = new File(destDir, destFileStr);
+						File destFileDir = destFile.getParentFile();
+						if (!destFileDir.exists()) {
+							LOGGER.warn("Extracting directory: {}",
+									entry.getName().substring(0, entry.getName().lastIndexOf('/')));
+							destFileDir.mkdirs();
+						}
+	
+						LOGGER.warn("Extracting file: {}", entry.getName());
+						copyInputStream(zipFile.getInputStream(entry),
+								new BufferedOutputStream(new FileOutputStream(new File(destDir, destFileStr))));
 					}
-
-					LOGGER.warn("Extracting file: {}", entry.getName());
-					copyInputStream(zipFile.getInputStream(entry),
-							new BufferedOutputStream(new FileOutputStream(new File(destDir, destFileStr))));
+				} else {
+					LOGGER.error("Error while unzip file. Invalid archive file");
+					throw new SpagoBIRuntimeException("Error while unzip file. Invalid archive file");
 				}
 			}
 
@@ -141,18 +158,25 @@ public class ZipUtils {
 			Enumeration<? extends ZipEntry> entries = zipFile.entries();
 
 			while (entries.hasMoreElements()) {
-				ZipEntry entry = entries.nextElement();
-
-				if (!entry.isDirectory()) {
-					String fileName = entry.getName();
-					String[] components = fileName.split("/");
-
-					if (components.length == (levelNo + 1)) {
-						String dirNam = components[components.length - 2];
-						names.add(dirNam);
+				SonarZipCommons sonarZipCommons = new SonarZipCommons();
+				
+				if(sonarZipCommons.doThresholdCheck(zipFile.getName())) {
+					ZipEntry entry = entries.nextElement();
+	
+					if (!entry.isDirectory()) {
+						String fileName = entry.getName();
+						String[] components = fileName.split("/");
+	
+						if (components.length == (levelNo + 1)) {
+							String dirNam = components[components.length - 2];
+							names.add(dirNam);
+						}
+	
+						LOGGER.warn("Current entry is {}", entry.getName());
 					}
-
-					LOGGER.warn("Current entry is {}", entry.getName());
+				} else {
+					LOGGER.error("Error while unzip file. Invalid archive file");
+					throw new SpagoBIRuntimeException("Error while unzip file. Invalid archive file");
 				}
 			}
 

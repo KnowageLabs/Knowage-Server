@@ -42,9 +42,9 @@ import it.eng.spagobi.utilities.assertion.Assert;
  * @author Antonella Giachino
  */
 public class InLineFunctionsDAOFileImpl implements IInLineFunctionsDAO {
-	HashMap<String, InLineFunction> mapInLineFunctions = new HashMap<String, InLineFunction>();
+	HashMap<String, InLineFunction> mapInLineFunctions = new HashMap<>();
 
-	public static transient Logger logger = Logger.getLogger(ViewsDAOFileImpl.class);
+	public static final Logger logger = Logger.getLogger(ViewsDAOFileImpl.class);
 
 	public static final String FUNCTIONS_FILE_NAME = "functions.xml";
 	public static final String ROOT_TAG = "INLINE_FUNCTIONS";
@@ -148,10 +148,10 @@ public class InLineFunctionsDAOFileImpl implements IInLineFunctionsDAO {
 				logger.debug("Function [" + mapInLineFunctions.get(func.name) + "] loaded succesfully");
 			}
 
-		} catch (Throwable t) {
-			if (t instanceof DAOException)
-				throw (DAOException) t;
-			throw new DAOException("An unpredicted error occurred while loading functions on file [" + FUNCTIONS_FILE_NAME + "]", t);
+		} catch (Exception e) {
+			if (e instanceof DAOException)
+				throw (DAOException) e;
+			throw new DAOException("An unpredicted error occurred while loading functions on file [" + FUNCTIONS_FILE_NAME + "]", e);
 		} finally {
 			if (in != null) {
 				try {
@@ -176,6 +176,8 @@ public class InLineFunctionsDAOFileImpl implements IInLineFunctionsDAO {
 
 		try {
 			reader = new SAXReader();
+			reader.setFeature("http://xml.org/sax/features/external-general-entities", false);	
+			reader.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
 			try {
 				document = reader.read(in);
 			} catch (DocumentException de) {
@@ -184,10 +186,10 @@ public class InLineFunctionsDAOFileImpl implements IInLineFunctionsDAO {
 				throw e;
 			}
 			Assert.assertNotNull(document, "Document cannot be null");
-		} catch (Throwable t) {
-			if (t instanceof DAOException)
-				throw (DAOException) t;
-			throw new DAOException("An unpredicetd error occurred while reading from inputStream: ", t);
+		} catch (Exception e) {
+			if (e instanceof DAOException)
+				throw (DAOException) e;
+			throw new DAOException("An unpredicetd error occurred while reading from inputStream: ", e);
 		} finally {
 			if (in != null) {
 				try {

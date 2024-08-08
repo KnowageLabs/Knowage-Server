@@ -140,7 +140,7 @@ public class DesignerResource extends AbstractWhatIfEngineService {
 		JSONObject obj = new JSONObject(body);
 		String currentArtifactId = obj.getString("mondrianSchemaId");
 		String artifactId = obj.getString("id");
-		List<String> userProfileAttributes = new ArrayList<String>();
+		List<String> userProfileAttributes = new ArrayList<>();
 
 		WhatIfTemplate template = new WhatIfTemplate();
 		template.setMondrianSchema(obj.getString("mondrianSchema"));

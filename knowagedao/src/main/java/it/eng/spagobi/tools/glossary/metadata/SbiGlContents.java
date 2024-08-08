@@ -78,10 +78,13 @@ public class SbiGlContents extends SbiHibernateModel {
 	 * @param contentId
 	 *            the contentId to set
 	 */
-	public void setContentId(Integer contentId) {
+	private void setContentId(Integer contentId) {
 		this.contentId = contentId;
 	}
 
+	public void changeContentId(Integer contentId) {
+		this.contentId = contentId;
+	}
 	/**
 	 * @return the contentCd
 	 */

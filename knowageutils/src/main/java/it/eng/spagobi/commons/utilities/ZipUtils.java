@@ -39,6 +39,9 @@ import java.util.zip.ZipOutputStream;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import it.eng.knowage.commons.zip.SonarZipCommons;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+
 /**
  * Class di utilita' per zip ed unzip di file
  *
@@ -288,7 +291,14 @@ public class ZipUtils {
 		try (FileInputStream fis = new FileInputStream(filePath);
 				ZipInputStream zipIs = new ZipInputStream(new BufferedInputStream(fis))) {
 			while ((zEntry = zipIs.getNextEntry()) != null) {
-				unzipEntry(filePath, zEntry, zipIs);
+				SonarZipCommons sonarZipCommons = new SonarZipCommons();
+				
+				if(sonarZipCommons.doThresholdCheck(filePath)) {
+					unzipEntry(filePath, zEntry, zipIs);
+				} else {
+					LOGGER.error("Error while unzip file. Invalid archive file");
+					throw new SpagoBIRuntimeException("Error while unzip file. Invalid archive file");
+				}
 			}
 		} catch (IOException e) {
 			LOGGER.warn("Non-fatal error unzipping {}", filePath, e);
@@ -309,10 +319,5 @@ public class ZipUtils {
 		}
 	}
 
-	public static void main(String[] args) throws IOException {
-		String zipname = "c:\\test.zip";
-		zip(new File(zipname), "C:\\ENEL\\TEST\\src\\Test.java",
-				"c:\\excel\\3039_3035303332363330393633_454e4750473034_32372f30342f323031322031393a31333a3032.xls");
-	}
 
 }

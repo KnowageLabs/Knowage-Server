@@ -59,10 +59,12 @@ public class SpagoBISourceBeanContainer
 		return sourceBean;
 	}
 	
+	@Override
 	public Object get(String key) {
 		return getSourceBean().getAttribute(key);
 	}
 
+	@Override
 	public List getKeys() {
 		logger.debug("IN");
 		List toReturn = new ArrayList();
@@ -77,6 +79,7 @@ public class SpagoBISourceBeanContainer
 		return toReturn;
 	}
 
+	@Override
 	public void remove(String key) {
 		try {
 			getSourceBean().delAttribute(key);
@@ -85,6 +88,7 @@ public class SpagoBISourceBeanContainer
 		}
 	}
 
+	@Override
 	public void set(String key, Object value) {
 		try {
 			getSourceBean().setAttribute(key, value);

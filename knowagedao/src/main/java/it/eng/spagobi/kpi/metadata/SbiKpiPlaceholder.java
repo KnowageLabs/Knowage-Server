@@ -36,7 +36,10 @@ public class SbiKpiPlaceholder extends SbiHibernateModel {
 
 	public SbiKpiPlaceholder() {
 	}
-
+	public SbiKpiPlaceholder(Integer id) {
+		super();
+		this.setId(id);
+	}
 	/**
 	 * @return the id
 	 */
@@ -48,10 +51,13 @@ public class SbiKpiPlaceholder extends SbiHibernateModel {
 	 * @param id
 	 *            the id to set
 	 */
-	public void setId(Integer id) {
+	private void setId(Integer id) {
 		this.id = id;
 	}
 
+	public void changeId(Integer id) {
+		this.id = id;
+	}
 	/**
 	 * @return the name
 	 */

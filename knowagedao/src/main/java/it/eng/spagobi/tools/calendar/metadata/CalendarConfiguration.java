@@ -30,7 +30,7 @@ public class CalendarConfiguration extends SbiHibernateModel {
 		return idCalComposition;
 	}
 
-	public void setIdCalComposition(Integer idCalComposition) {
+	private void setIdCalComposition(Integer idCalComposition) {
 		this.idCalComposition = idCalComposition;
 	}
 

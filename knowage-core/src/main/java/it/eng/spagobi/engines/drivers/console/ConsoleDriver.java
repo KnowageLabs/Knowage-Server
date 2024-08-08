@@ -203,7 +203,7 @@ public class ConsoleDriver extends GenericDriver {
 	public ArrayList<String> getDatasetAssociated(byte[] contentTemplate) throws JSONException {
 		logger.debug("IN");
 
-		ArrayList<String> datasetsLabel = new ArrayList<String>();
+		ArrayList<String> datasetsLabel = new ArrayList<>();
 		JSONObject templateContent = getTemplateAsJsonObject(contentTemplate);
 
 		// get datasets from template

@@ -31,7 +31,7 @@ public class CometServiceManager {
 
 	private static final Logger log = LogManager.getLogger(CometServiceManager.class);
 
-	private final Map<String, Map<String, Map<String, CometService>>> servicesByIdByLabelByUUId = new HashMap<String, Map<String, Map<String, CometService>>>();
+	private final Map<String, Map<String, Map<String, CometService>>> servicesByIdByLabelByUUId = new HashMap<>();
 
 	public void dataStoreChanged(String uuid, String dataSetLabel, DataStoreChangedEvent event,String serviceId) {
 		Helper.checkNotNull(event, "event");
@@ -68,13 +68,13 @@ public class CometServiceManager {
 	private synchronized void addServiceIfAbsent(String uuid, String dataSetLabel, String id) {
 		Map<String, Map<String, CometService>> a = servicesByIdByLabelByUUId.get(uuid);
 		if (a == null) {
-			a = new HashMap<String, Map<String, CometService>>();
+			a = new HashMap<>();
 			servicesByIdByLabelByUUId.put(uuid, a);
 		}
 
 		Map<String, CometService> b = a.get(dataSetLabel);
 		if (b == null) {
-			b = new HashMap<String, CometService>();
+			b = new HashMap<>();
 			a.put(dataSetLabel, b);
 		}
 

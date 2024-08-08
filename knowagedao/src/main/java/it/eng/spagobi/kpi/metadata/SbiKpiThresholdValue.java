@@ -40,6 +40,11 @@ public class SbiKpiThresholdValue extends SbiHibernateModel implements java.io.S
 
 	public SbiKpiThresholdValue() {
 	}
+	
+	public SbiKpiThresholdValue(Integer id) {
+		super();
+		this.setId(id);
+	}
 
 	/**
 	 * @return the id
@@ -52,7 +57,7 @@ public class SbiKpiThresholdValue extends SbiHibernateModel implements java.io.S
 	 * @param id
 	 *            the id to set
 	 */
-	public void setId(Integer id) {
+	private void setId(Integer id) {
 		this.id = id;
 	}
 

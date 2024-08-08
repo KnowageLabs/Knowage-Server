@@ -68,13 +68,16 @@ public class SbiLov extends SbiHibernateModel {
 		return this.lovId;
 	}
 
+	public void changeLovId(Integer lovId) {
+		this.setLovId(lovId);
+	}
 	/**
 	 * Sets the lov id.
 	 *
 	 * @param lovId
 	 *            the new lov id
 	 */
-	public void setLovId(Integer lovId) {
+	private void setLovId(Integer lovId) {
 		this.lovId = lovId;
 	}
 

@@ -56,6 +56,10 @@ public class SbiCacheItem extends SbiHibernateModel {
 		this.properties = properties;
 	}
 
+	public SbiCacheItem(String signature) {
+		this.signature = signature;
+	}
+	
 	public String getTableName() {
 		return this.tableName;
 	}
@@ -68,10 +72,14 @@ public class SbiCacheItem extends SbiHibernateModel {
 		return this.signature;
 	}
 
-	public void setSignature(String signature) {
+	private void setSignature(String signature) {
 		this.signature = signature;
 	}
 
+	public void changeSignature(String signature) {
+		this.setSignature(signature);
+	}
+	
 	public String getName() {
 		return this.name;
 	}

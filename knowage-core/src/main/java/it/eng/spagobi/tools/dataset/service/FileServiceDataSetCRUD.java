@@ -66,6 +66,7 @@ import it.eng.spagobi.tools.dataset.utils.DatasetMetadataParser;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.SpagoBIAccessUtils;
 import it.eng.spagobi.utilities.assertion.Assert;
+import it.eng.spagobi.utilities.rest.RestUtilities;
 
 /*
  DB UPDATES TO DO to apply patch
@@ -355,6 +356,8 @@ public class FileServiceDataSetCRUD {
 		// logger.debug("proxy set");
 		// cancel
 
+		RestUtilities.checkIfAddressIsInWhitelist(url);
+		
 		GetMethod httpGet = new GetMethod(url);
 		int statusCode = client.executeMethod(httpGet);
 		LOGGER.debug("Status code after request to remote URL is " + statusCode);

@@ -43,6 +43,7 @@ public class WekaRolesHandler implements IRolesHandler {
      * @throws EMFInternalError the EMF internal error
      * @throws EMFUserError the EMF user error
      */
+	@Override
 	public List calculateRoles(String parameters) throws EMFInternalError, EMFUserError {
 		logger.debug("IN");
 		String[] splittedParameters = parameters.split("&");

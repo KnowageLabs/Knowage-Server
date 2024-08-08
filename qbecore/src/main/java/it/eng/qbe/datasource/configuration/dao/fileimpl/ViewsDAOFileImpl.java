@@ -59,11 +59,12 @@ public class ViewsDAOFileImpl implements IViewsDAO {
 	}
 	
 
+	@Override
 	public List<IModelViewEntityDescriptor> loadModelViews() {
 		List<IModelViewEntityDescriptor> views; 
 		JSONObject viewsConfJSON = null;
 		
-		views = new ArrayList<IModelViewEntityDescriptor>();
+		views = new ArrayList<>();
 		
 		JarFile jarFile = null;
 		try {
@@ -78,7 +79,7 @@ public class ViewsDAOFileImpl implements IViewsDAO {
 			}
 			jarFile.close();
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("loadModelViews",e);
 		}				
 		
 		return views;	
@@ -98,7 +99,7 @@ public class ViewsDAOFileImpl implements IViewsDAO {
 				viewsJSON = new JSONObject();
 			}
 		} catch(Exception ioe){
-			ioe.printStackTrace();
+			logger.error("loadViewsFormJarFile",ioe);
 			viewsJSON = new JSONObject();
 		}finally{
 			try {
@@ -128,6 +129,7 @@ public class ViewsDAOFileImpl implements IViewsDAO {
 	/* (non-Javadoc)
 	 * @see it.eng.qbe.dao.DatamartPropertiesDAO#saveModelViews()
 	 */
+	@Override
 	public void saveModelViews(List<JSONObject> views) {
 		throw new SpagoBIRuntimeException("saveModelViews method not supported");
 	}

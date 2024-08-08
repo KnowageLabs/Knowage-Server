@@ -134,22 +134,6 @@ public class SqlUtils {
 		return selectFields;
 	}
 
-	public static final void main(String[] args) {
-		List<String[]> results;
-
-		String query = "   select colonna1, " + "colonna2 as Colonna2, " + "colonna3 as 'Colonna 3', "
-				+ "colonna4 as \"Colonna 4\", " + "\"colonna5\" as \"Colonna 4\", " + "'colonna6' as 'Colonna 4', "
-				+ "'colonna7', " + "\"colonna8\", " + "colonna9 Colonna9, " + "colonna10 'Colonna 10', "
-				+ "colonna11 \"Colonna 11\", " + "\"colonna12\" \"Colonna 12\", " + "'colonna13' 'Colonna 13' "
-				+ "from table1 where colonna9 = 'pippo'";
-
-		results = getSelectFields(query);
-		for (int i = 0; i < results.size(); i++) {
-			logger.debug(results.get(i)[0] + " - " + results.get(i)[1]);
-		}
-
-	}
-
 	public static String fromObjectToString(Object obj, String dialect) {
 
 		String toReturn = obj.toString();

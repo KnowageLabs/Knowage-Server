@@ -21,10 +21,13 @@ import net.sf.jasperreports.engine.JRExporter;
 
 import it.eng.spago.base.SourceBean;
 import it.eng.spagobi.services.common.EnginConf;
+
+import org.apache.log4j.Logger;
 /**
  * 
  * @deprecated
  */
+@Deprecated
 public class ExporterFactory {	
 	
 	/**
@@ -34,6 +37,8 @@ public class ExporterFactory {
 	 * 
 	 * @return the exporter
 	 */
+	private static Logger logger = Logger.getLogger(ExporterFactory.class);
+
 	public static JRExporter getExporter(String format) {
 		JRExporter exporter = null;
 		
@@ -46,8 +51,8 @@ public class ExporterFactory {
 		try {
 			exporter = (JRExporter)Class.forName(exporterClassName).newInstance();
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			//e.printStackTrace();
+			logger.error("Class.forName",e);
 		} 
 		
 		return exporter;

@@ -41,10 +41,12 @@ import java.util.zip.ZipOutputStream;
 import javax.activation.DataHandler;
 import javax.activation.FileDataSource;
 
+import org.apache.commons.compress.archivers.zip.ZipFile;
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.LogMF;
 import org.apache.log4j.Logger;
 
+import it.eng.knowage.commons.zip.SonarZipCommons;
 import it.eng.spago.base.RequestContainer;
 import it.eng.spago.base.ResponseContainer;
 import it.eng.spago.base.SessionContainer;
@@ -1193,19 +1195,23 @@ public class DocumentsServiceImpl extends AbstractSDKService implements Document
 			jar = new JarFile(filee);
 			logger.debug("jar file created ");
 
-			Enumeration enumEntries = jar.entries();
+			Enumeration<JarEntry> enumEntries = jar.entries();
 			while (enumEntries.hasMoreElements()) {
-				JarEntry fileEntry = (java.util.jar.JarEntry) enumEntries.nextElement();
-				logger.debug("jar content " + fileEntry.getName());
-
-				if (fileEntry.getName().endsWith("sbimodel")) {
-					logger.debug("found model file " + fileEntry.getName());
-					is = jar.getInputStream(fileEntry);
-					byte[] byteContent = SpagoBIUtilities.getByteArrayFromInputStream(is);
-					return byteContent;
-
+				SonarZipCommons sonarZipCommons = new SonarZipCommons();
+				
+				if(sonarZipCommons.doThresholdCheck(path)) {
+					JarEntry fileEntry = enumEntries.nextElement();
+					logger.debug("jar content " + fileEntry.getName());
+	
+					if (fileEntry.getName().endsWith("sbimodel")) {
+						logger.debug("found model file " + fileEntry.getName());
+						is = jar.getInputStream(fileEntry);
+						return SpagoBIUtilities.getByteArrayFromInputStream(is);	
+					}
+				} else {
+					logger.error("Error while unzip file. Invalid archive file");
+					throw new SpagoBIRuntimeException("Error while unzip file. Invalid archive file");
 				}
-
 			}
 		} catch (IOException e1) {
 			logger.error(

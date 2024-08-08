@@ -43,7 +43,7 @@ public class CrossNavigationInitializerImpl extends AbstractInitializer {
 			SpagoBICrossNavigationConfig cninfo = new SpagoBICrossNavigationConfig(crossNavigation);
 			toReturn.setCrossNavigation(cninfo);
 			if (toReturn.getToolbarVisibleButtons() == null) {
-				toReturn.setToolbarVisibleButtons(new ArrayList<String>());
+				toReturn.setToolbarVisibleButtons(new ArrayList<>());
 			}
 			toReturn.getToolbarVisibleButtons().add(new String("BUTTON_CROSS_NAVIGATION"));
 

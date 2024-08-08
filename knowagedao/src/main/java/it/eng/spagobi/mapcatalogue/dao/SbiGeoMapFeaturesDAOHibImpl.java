@@ -326,9 +326,7 @@ public class SbiGeoMapFeaturesDAOHibImpl extends AbstractHibernateDAO implements
 		try {
 			aSession = getSession();
 			tx = aSession.beginTransaction();
-			SbiGeoMapFeaturesId hibMapFeatureId = new SbiGeoMapFeaturesId();
-			hibMapFeatureId.setMapId(aMapFeature.getMapId());
-			hibMapFeatureId.setFeatureId(aMapFeature.getFeatureId());
+			SbiGeoMapFeaturesId hibMapFeatureId = new SbiGeoMapFeaturesId(aMapFeature.getMapId(),aMapFeature.getFeatureId());
 
 			SbiGeoMapFeatures hibFeature = (SbiGeoMapFeatures) aSession.load(SbiGeoMapFeatures.class, hibMapFeatureId);
 			hibFeature.setSvgGroup(aMapFeature.getSvgGroup());
@@ -362,9 +360,7 @@ public class SbiGeoMapFeaturesDAOHibImpl extends AbstractHibernateDAO implements
 			tx = aSession.beginTransaction();
 			SbiGeoMapFeatures hibMapFeature = new SbiGeoMapFeatures();
 
-			SbiGeoMapFeaturesId hibMapFeatureId = new SbiGeoMapFeaturesId();
-			hibMapFeatureId.setMapId(aMapFeature.getMapId());
-			hibMapFeatureId.setFeatureId(aMapFeature.getFeatureId());
+			SbiGeoMapFeaturesId hibMapFeatureId = new SbiGeoMapFeaturesId(aMapFeature.getMapId(),aMapFeature.getFeatureId());
 			hibMapFeature.setId(hibMapFeatureId);
 
 			hibMapFeature.setSvgGroup(aMapFeature.getSvgGroup());
@@ -398,9 +394,7 @@ public class SbiGeoMapFeaturesDAOHibImpl extends AbstractHibernateDAO implements
 			aSession = getSession();
 			tx = aSession.beginTransaction();
 
-			SbiGeoMapFeaturesId hibMapFeatureId = new SbiGeoMapFeaturesId();
-			hibMapFeatureId.setMapId(aMapFeature.getMapId());
-			hibMapFeatureId.setFeatureId(aMapFeature.getFeatureId());
+			SbiGeoMapFeaturesId hibMapFeatureId = new SbiGeoMapFeaturesId(aMapFeature.getMapId(),aMapFeature.getFeatureId());
 
 			SbiGeoMapFeatures hibMapFeature = (SbiGeoMapFeatures) aSession.load(SbiGeoMapFeatures.class,
 					hibMapFeatureId);

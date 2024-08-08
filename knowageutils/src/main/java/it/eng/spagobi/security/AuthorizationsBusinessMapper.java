@@ -21,8 +21,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.regex.Pattern;
-
 import org.apache.log4j.Logger;
 
 import it.eng.spago.base.SourceBean;
@@ -66,7 +64,7 @@ public class AuthorizationsBusinessMapper {
 					_mapActions.put(actStr.toUpperCase(), businessProcessNames);
 				} else {
 					// Action not present, create a new List for this Action and put the businessProcess
-					List<String> businessProcessNames = new ArrayList<String>();
+					List<String> businessProcessNames = new ArrayList<>();
 					businessProcessNames.add(businessProcessName);
 					_mapActions.put(actStr.toUpperCase(), businessProcessNames);
 				}
@@ -164,8 +162,4 @@ public class AuthorizationsBusinessMapper {
 		return businessProcessName;
 	}
 
-	public static void main(String[] args) {
-		logger.debug(Pattern.matches("SERVICE\\[/DATASETS.*\\]", "SERVICE[/DATASETS]"));
-
-	}
 }

@@ -42,9 +42,10 @@ public class SimpleDataSourceNamingStrategy implements IDataSourceNamingStrategy
     /* (non-Javadoc)
 	 * @see it.eng.qbe.naming.NamingStrategy#getDatasourceName(java.util.List, it.eng.qbe.datasource.DBConnection)
 	 */
+	@Override
 	public String getDataSourceName(IDataSourceConfiguration configuration) {
 		IDataSource connection = (IDataSource)configuration.loadDataSourceProperties().get("datasource");
-		List<String> modelNames = new ArrayList<String>();
+		List<String> modelNames = new ArrayList<>();
 		if(configuration instanceof CompositeDataSourceConfiguration){
 			CompositeDataSourceConfiguration cc = (CompositeDataSourceConfiguration)configuration;
 			Iterator<IDataSourceConfiguration> it = cc.getSubConfigurations().iterator();

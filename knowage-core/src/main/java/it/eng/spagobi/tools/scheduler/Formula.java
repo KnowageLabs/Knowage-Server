@@ -101,7 +101,7 @@ public class Formula {
 	 */
 	public static List<Formula> getAvailableFormulas() {
 		logger.debug("IN");
-		List<Formula> toReturn = new ArrayList<Formula>();
+		List<Formula> toReturn = new ArrayList<>();
 		List formulasList = ConfigSingleton.getInstance().getAttributeAsList("FORMULAS.FORMULA");
 		if (formulasList == null || formulasList.isEmpty()) {
 			logger.debug("No formulas configured.");

@@ -83,7 +83,8 @@ public class DatasetPersistenceUtils {
 					AuditLogUtilities.updateAudit(request, profile, "SCHEDULER.SAVE", logParam, "KO");
 				}
 			} catch (Exception e) {
-				e.printStackTrace();
+				//e.printStackTrace();
+				logger.error("AuditLogUtilities.updateAudit",e);
 			}
 			throw new SpagoBIServiceException(serviceName,
 					"Incomplete response returned by the Web service " + "during job " + jobInfo.getJobName() + " creation");
@@ -96,7 +97,8 @@ public class DatasetPersistenceUtils {
 				AuditLogUtilities.updateAudit(request, profile, "SCHEDULER.SAVE", logParam, "OK");
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			//e.printStackTrace();
+			logger.error("AuditLogUtilities.updateAudit",e);
 		}
 
 		return jobInfo.getJobName();
@@ -134,7 +136,8 @@ public class DatasetPersistenceUtils {
 					try {
 						AuditLogUtilities.updateAudit(request, profile, "SCHED_TRIGGER.SAVE", logParam, "KO");
 					} catch (Exception e) {
-						e.printStackTrace();
+						//e.printStackTrace();
+						logger.error("AuditLogUtilities.updateAudit",e);
 					}
 					throw new SpagoBIServiceException(serviceName, "Trigger " + triggerInfo.getTriggerName() + " not created by the web service");
 				}
@@ -143,14 +146,16 @@ public class DatasetPersistenceUtils {
 				if (request != null)
 					AuditLogUtilities.updateAudit(request, profile, "SCHED_TRIGGER.SAVE", logParam, "OK");
 			} catch (Exception e) {
-				e.printStackTrace();
+				//e.printStackTrace();
+				logger.error("AuditLogUtilities.updateAudit",e);
 			}
 		} catch (Exception ex) {
 			try {
 				if (request != null)
 					AuditLogUtilities.updateAudit(request, profile, "SCHED_TRIGGER.SAVE", logParam, "KO");
 			} catch (Exception e) {
-				e.printStackTrace();
+				//e.printStackTrace();
+				logger.error("AuditLogUtilities.updateAudit",e);
 			}
 			String errorMsgToUser = "Error while saving schedule for job";
 			if (quartzMsg != null && !quartzMsg.isEmpty()) {

@@ -43,7 +43,7 @@ public class DocumentDispatcher {
 		this.disposed = false;
 		this.dispatchContext = dispatchContext;
 
-		this.documentDispatchChannels = new ArrayList<IDocumentDispatchChannel>();
+		this.documentDispatchChannels = new ArrayList<>();
 
 		IDocumentDispatchChannel dispatchChannel;
 		if (dispatchContext.isSnapshootDispatchChannelEnabled()) {

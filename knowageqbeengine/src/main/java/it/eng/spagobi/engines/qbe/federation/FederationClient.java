@@ -78,7 +78,7 @@ public class FederationClient extends SimpleRestClient {
 		toReturn.setRelationships(jo.optString("relationships"));
 
 		JSONArray datasetsArray = jo.optJSONArray("sourceDataset");
-		Set<IDataSet> datasest = new java.util.HashSet<IDataSet>();
+		Set<IDataSet> datasest = new java.util.HashSet<>();
 
 		if (datasetsArray != null) {
 			for (int i = 0; i < datasetsArray.length(); i++) {
@@ -97,7 +97,7 @@ public class FederationClient extends SimpleRestClient {
 	public FederationDefinition addFederation(FederationDefinition federation, String userId) throws Exception {
 		logger.debug("IN");
 
-		Map<String, Object> parameters = new java.util.HashMap<String, Object>();
+		Map<String, Object> parameters = new java.util.HashMap<>();
 
 		logger.debug("Call persist service in post");
 		Response resp = executePostService(parameters, addServiceUrl, userId, MediaType.TEXT_HTML, serialize(federation).toString());

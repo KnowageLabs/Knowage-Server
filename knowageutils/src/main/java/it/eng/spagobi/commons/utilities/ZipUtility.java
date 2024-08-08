@@ -19,7 +19,7 @@ public class ZipUtility {
 	private static Logger logger = Logger.getLogger(ZipUtility.class);
 
 	public ZipUtility(String sourcePath) {
-		fileList = new ArrayList<String>();
+		fileList = new ArrayList<>();
 		this.sourcePath = sourcePath;
 	}
 

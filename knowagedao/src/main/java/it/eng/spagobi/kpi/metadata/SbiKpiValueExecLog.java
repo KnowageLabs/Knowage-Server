@@ -38,7 +38,7 @@ public class SbiKpiValueExecLog extends SbiHibernateModel implements java.io.Ser
 		return id;
 	}
 
-	public void setId(int id) {
+	private void setId(int id) {
 		this.id = id;
 	}
 

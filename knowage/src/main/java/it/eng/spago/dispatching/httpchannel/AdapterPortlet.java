@@ -132,7 +132,7 @@ public class AdapterPortlet extends GenericPortlet {
 					url = new URL(resourceName);
 					resourcesStream = url.openStream();
 				} catch (Exception e) {
-					e.printStackTrace();
+					logger.error("getInputStream",e);
 				}
 			} else {
 				resourcesStream = getPortletContext().getResourceAsStream(resourceName);

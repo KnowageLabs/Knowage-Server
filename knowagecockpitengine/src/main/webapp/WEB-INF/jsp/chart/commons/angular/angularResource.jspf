@@ -30,6 +30,8 @@ author: Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 <%@page import="org.apache.commons.lang.StringEscapeUtils"%>
 <%@page import="it.eng.spago.base.SourceBean"%>
 <%@page import="it.eng.spagobi.services.common.EnginConf"%>
+<%@page import="org.owasp.esapi.reference.DefaultEncoder"%>	
+<%@page import="org.owasp.esapi.Encoder"%>	
 <%@page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 
@@ -55,6 +57,7 @@ author: Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 <%@page import="it.eng.knowage.commons.utilities.urls.UrlBuilder"%>
 
 <%
+    Encoder esapiEncoder = DefaultEncoder.getInstance();
 	String spagoBiContext = KnowageSystemConfiguration.getKnowageContext(); 							//  /knowage
 	String cockpitEngineContext = request.getContextPath(); 	    						//  /cockpitengine
 	UrlBuilder urlBuilder = new UrlBuilder(spagoBiContext, cockpitEngineContext);

@@ -19,6 +19,7 @@ package it.eng.spagobi.utilities.service;
 
 import java.io.IOException;
 
+import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -34,6 +35,11 @@ public class JSONResponse implements IServiceResponse {
 	int statusCode;
 	String content;
 	String callback;
+	
+	/**
+	 * Logger component
+	 */
+	private static final Logger LOGGER = Logger.getLogger(JSONResponse.class);
 	
 	
 	public String getCallback() {
@@ -83,7 +89,7 @@ public class JSONResponse implements IServiceResponse {
 		try {
 			o = new JSONObject("{text: " + content + "}");
 		} catch (JSONException e) {
-			e.printStackTrace();
+			LOGGER.error(e);
 			Assert.assertUnreachable("Default json object generated to wrap a simple text response is not well formed");
 		}
 		setContent( o.toString() );
@@ -93,6 +99,7 @@ public class JSONResponse implements IServiceResponse {
 		this.statusCode = statusCode;
 	}
 	
+	@Override
 	public int getStatusCode() {
 		return statusCode;
 	}
@@ -101,6 +108,7 @@ public class JSONResponse implements IServiceResponse {
 		this.content = content;
 	}
 	
+	@Override
 	public String getContent() throws IOException {
 		String str = "";
 		if(callback != null) str += callback + "(";
@@ -112,6 +120,7 @@ public class JSONResponse implements IServiceResponse {
 	
 
 	
+	@Override
 	public String getContentType() {		
 		String contentType;
 		
@@ -121,10 +130,12 @@ public class JSONResponse implements IServiceResponse {
 		return contentType;
 	}
 
+	@Override
 	public boolean isInline() {
 		return true;
 	}
 	
+	@Override
 	public String getFileName() {
 		return "response";
 	}

@@ -98,7 +98,7 @@ public class SbiUdpJSONDeserializer implements Deserializer {
 				}
 			}
 
-			sbiUdp.setUdpId(udpId);
+			sbiUdp.changeUdpId(udpId);
 			sbiUdp.setName(name);
 			sbiUdp.setLabel(label);
 			sbiUdp.setDescription(description);

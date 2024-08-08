@@ -20,6 +20,13 @@ public class SbiKpiScorecard extends SbiHibernateModel {
 
 	private String options = null;
 
+	public SbiKpiScorecard() {
+		super();
+	}
+	public SbiKpiScorecard(Integer id) {
+		super();
+		this.setId(id);
+	}
 	/**
 	 * @return the id
 	 */
@@ -31,7 +38,7 @@ public class SbiKpiScorecard extends SbiHibernateModel {
 	 * @param id
 	 *            the id to set
 	 */
-	public void setId(Integer id) {
+	private void setId(Integer id) {
 		this.id = id;
 	}
 

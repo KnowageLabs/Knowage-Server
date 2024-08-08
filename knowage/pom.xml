@@ -6,7 +6,7 @@
 	<parent>
 		<groupId>it.eng.knowage</groupId>
 		<artifactId>knowage-ce-parent</artifactId>
-		<version>8.2.0-SNAPSHOT</version>
+		<version>9.0.0-SNAPSHOT</version>
 		<relativePath>../knowage-ce-parent/pom.xml</relativePath>
 	</parent>
 	
@@ -57,18 +57,22 @@
 					<artifactId>hadoop-common</artifactId>
 					<groupId>org.apache.hadoop</groupId>
 				</exclusion>
+				<exclusion>
+					<groupId>xml-apis</groupId>
+					<artifactId>xml-apis</artifactId>
+				</exclusion>
 			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>xalan</groupId>
 			<artifactId>xalan</artifactId>
-			<version>2.7.2</version>
+			<version>2.7.3</version>
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>
 			<groupId>xalan</groupId>
 			<artifactId>serializer</artifactId>
-			<version>2.7.2</version>
+			<version>2.7.3</version>
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>
@@ -157,6 +161,12 @@
 			<groupId>biz.paluch.logging</groupId>
 			<artifactId>logstash-gelf</artifactId>
 		</dependency>
+		<dependency>
+           <groupId>org.owasp</groupId>
+           <artifactId>csrfguard</artifactId>
+           <version>3.0.0</version>
+         </dependency>
+
 	</dependencies>
 	
 	<build>

@@ -39,15 +39,12 @@ import org.jfree.chart.axis.CategoryAxis;
 import org.jfree.chart.axis.CategoryLabelPositions;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.labels.CategorySeriesLabelGenerator;
-import org.jfree.chart.labels.ItemLabelAnchor;
-import org.jfree.chart.labels.ItemLabelPosition;
 import org.jfree.chart.labels.StandardCategorySeriesLabelGenerator;
 import org.jfree.chart.plot.CategoryPlot;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.renderer.category.BarRenderer;
 import org.jfree.chart.title.TextTitle;
 import org.jfree.data.category.CategoryDataset;
-import org.jfree.ui.TextAnchor;
 
 /**   @author Giulio Gavardi
  *     giulio.gavardi@eng.it
@@ -72,6 +69,7 @@ public class SimpleBar extends BarCharts{
 	/* (non-Javadoc)
 	 * @see it.eng.spagobi.engines.chart.bo.charttypes.barcharts.BarCharts#configureChart(it.eng.spago.base.SourceBean)
 	 */
+	@Override
 	public void configureChart(SourceBean content) {
 		logger.debug("IN");
 		super.configureChart(content);
@@ -94,6 +92,7 @@ public class SimpleBar extends BarCharts{
 	/* (non-Javadoc)
 	 * @see it.eng.spagobi.engines.chart.bo.charttypes.barcharts.BarCharts#createChart(java.lang.String, org.jfree.data.general.Dataset)
 	 */
+	@Override
 	public JFreeChart createChart(DatasetMap datasets) {
 		logger.debug("IN");
 		CategoryDataset dataset=(CategoryDataset)datasets.getDatasets().get("1");
@@ -305,6 +304,7 @@ public class SimpleBar extends BarCharts{
 	/* (non-Javadoc)
 	 * @see it.eng.spagobi.engines.chart.bo.ChartImpl#isChangeableView()
 	 */
+	@Override
 	public boolean isChangeableView() {
 		return true;
 	}
@@ -315,6 +315,7 @@ public class SimpleBar extends BarCharts{
 	/* (non-Javadoc)
 	 * @see it.eng.spagobi.engines.chart.bo.ChartImpl#getPossibleChangePars()
 	 */
+	@Override
 	public List getPossibleChangePars() {
 		List l=new Vector();
 		if(!horizontalViewConfigured){
@@ -326,6 +327,7 @@ public class SimpleBar extends BarCharts{
 	/* (non-Javadoc)
 	 * @see it.eng.spagobi.engines.chart.bo.ChartImpl#setChangeViewsParameter(java.lang.String, boolean)
 	 */
+	@Override
 	public void setChangeViewsParameter(String changePar, boolean how) {
 		if(changePar.equalsIgnoreCase(CHANGE_VIEW_HORIZONTAL)){
 			horizontalView=how;
@@ -336,6 +338,7 @@ public class SimpleBar extends BarCharts{
 	/* (non-Javadoc)
 	 * @see it.eng.spagobi.engines.chart.bo.ChartImpl#getChangeViewParameter(java.lang.String)
 	 */
+	@Override
 	public boolean getChangeViewParameter(String changePar) {
 		boolean ret=false;
 		if(changePar.equalsIgnoreCase(CHANGE_VIEW_HORIZONTAL)){
@@ -347,6 +350,7 @@ public class SimpleBar extends BarCharts{
 	/* (non-Javadoc)
 	 * @see it.eng.spagobi.engines.chart.bo.ChartImpl#getChangeViewParameterLabel(java.lang.String, int)
 	 */
+	@Override
 	public String getChangeViewParameterLabel(String changePar, int i) {
 		String ret="";
 		if(changePar.equalsIgnoreCase(CHANGE_VIEW_HORIZONTAL)){
