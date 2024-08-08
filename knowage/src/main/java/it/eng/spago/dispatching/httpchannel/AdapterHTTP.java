@@ -597,7 +597,7 @@ public class AdapterHTTP extends HttpServlet {
 				String.valueOf(request.isRequestedSessionIdFromURL()));
 		requestContainer.setAttribute(HTTP_REQUEST_REQUESTED_SESSION_ID_VALID,
 				String.valueOf(request.isRequestedSessionIdValid()));
-		requestContainer.setAttribute(HTTP_REQUEST_SECURE, String.valueOf(request.isSecure()));
+		//requestContainer.setAttribute(HTTP_REQUEST_SECURE, String.valueOf(request.isSecure()));
 		Enumeration headerNames = request.getHeaderNames();
 		while (headerNames.hasMoreElements()) {
 			String headerName = (String) headerNames.nextElement();
