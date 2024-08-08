@@ -41,8 +41,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <%
 
-	//SessionContainer permanentSession = aSessionContainer.getPermanentContainer();
-	IEngUserProfile profile = (IEngUserProfile)permanentSession.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+	IEngUserProfile profile = (IEngUserProfile) session.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 	Collection roles = null;
 	roles = ((UserProfile)profile).getRolesForUse();
 	

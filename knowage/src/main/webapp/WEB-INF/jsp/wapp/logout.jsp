@@ -42,13 +42,8 @@ if(session.getAttribute(SpagoBIConstants.BACK_URL)!=null){
 	backUrlB=true;
 }
 
-RequestContainer reqCont = RequestContainer.getRequestContainer();
-SessionContainer sessCont = reqCont.getSessionContainer();
-SessionContainer permSess = sessCont.getPermanentContainer();
-IEngUserProfile profile = (IEngUserProfile) permSess.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+IEngUserProfile profile = (IEngUserProfile) session.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 if (profile != null) {
-	// removing user profile object from permanent container
-	permSess.setAttribute(IEngUserProfile.ENG_USER_PROFILE, null);
 	HashMap<String, String> logParam = new HashMap<String, String>();
 	logParam.put("USER", profile.toString());
 	AuditLogUtilities.updateAudit(request, profile, "SPAGOBI.Logout", logParam, "OK");

@@ -70,16 +70,15 @@ public class FolderContentUtil {
 	private JSONObject documents;
 	private JSONObject folders;
 
-	public JSONObject getFolderContent(LowFunctionality folder, SourceBean request, SourceBean response,
-			HttpServletRequest httpRequest, SessionContainer sessCont) throws Exception {
+	public JSONObject getFolderContent(LowFunctionality folder, SourceBean request, SourceBean response, HttpServletRequest httpRequest,
+			SessionContainer sessCont) throws Exception {
 
 		List<LowFunctionality> functionalities;
 		List<BIObject> objects;
 		boolean isHome = false;
 		// Check if there is folder specified as home for the document browser (Property in SBI_CONFIG with label SPAGOBI.DOCUMENTBROWSER.HOME)
 		if (folder == null) {
-			Config documentBrowserHomeConfig = DAOFactory.getSbiConfigDAO()
-					.loadConfigParametersByLabel("SPAGOBI.DOCUMENTBROWSER.HOME");
+			Config documentBrowserHomeConfig = DAOFactory.getSbiConfigDAO().loadConfigParametersByLabel("SPAGOBI.DOCUMENTBROWSER.HOME");
 			if (documentBrowserHomeConfig != null) {
 				if (documentBrowserHomeConfig.isActive()) {
 
@@ -100,8 +99,7 @@ public class FolderContentUtil {
 			folder = DAOFactory.getLowFunctionalityDAO().loadRootLowFunctionality(false);
 		}
 
-		SessionContainer permCont = sessCont.getPermanentContainer();
-		IEngUserProfile profile = (IEngUserProfile) permCont.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+		IEngUserProfile profile = (IEngUserProfile) httpRequest.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 
 		if (UserUtilities.isAdministrator(profile)) {
 			isHome = UserUtilities.isAPersonalFolder(folder);
@@ -111,8 +109,7 @@ public class FolderContentUtil {
 
 		// Recursive view Management: Get all the documents inside a folder and his subfolders with a recursive visit
 		List<BIObject> allSubDocuments = null;
-		Config documentBrowserRecursiveConfig = DAOFactory.getSbiConfigDAO()
-				.loadConfigParametersByLabel("SPAGOBI.DOCUMENTBROWSER.RECURSIVE");
+		Config documentBrowserRecursiveConfig = DAOFactory.getSbiConfigDAO().loadConfigParametersByLabel("SPAGOBI.DOCUMENTBROWSER.RECURSIVE");
 		if (documentBrowserRecursiveConfig.isActive()) {
 			String propertyValue = documentBrowserRecursiveConfig.getValueCheck();
 			if ((!StringUtils.isEmpty(propertyValue)) && (propertyValue.equalsIgnoreCase("true"))) {
@@ -139,16 +136,14 @@ public class FolderContentUtil {
 
 		MessageBuilder m = new MessageBuilder();
 		Locale locale = m.getLocale(httpRequest);
-		JSONArray documentsJSON = (JSONArray) SerializerFactory.getSerializer("application/json").serialize(objects,
-				locale);
+		JSONArray documentsJSON = (JSONArray) SerializerFactory.getSerializer("application/json").serialize(objects, locale);
 		DocumentsJSONDecorator.decorateDocuments(documentsJSON, profile, folder);
 
 		JSONObject documentsResponseJSON = createJSONResponseDocuments(documentsJSON);
 
 		functionalities = DAOFactory.getLowFunctionalityDAO().loadUserFunctionalities(folder.getId(), false, profile);
 
-		JSONArray foldersJSON = (JSONArray) SerializerFactory.getSerializer("application/json")
-				.serialize(functionalities, locale);
+		JSONArray foldersJSON = (JSONArray) SerializerFactory.getSerializer("application/json").serialize(functionalities, locale);
 
 		JSONObject exportAction = new JSONObject();
 		exportAction.put("name", "export");
@@ -160,8 +155,7 @@ public class FolderContentUtil {
 
 		// Flat View Management: show only documents inside a folder and no subfolders
 		JSONObject foldersResponseJSON;
-		Config documentBrowserFlatConfig = DAOFactory.getSbiConfigDAO()
-				.loadConfigParametersByLabel("SPAGOBI.DOCUMENTBROWSER.FLAT");
+		Config documentBrowserFlatConfig = DAOFactory.getSbiConfigDAO().loadConfigParametersByLabel("SPAGOBI.DOCUMENTBROWSER.FLAT");
 		if (documentBrowserFlatConfig.isActive()) {
 			String propertyValue = documentBrowserFlatConfig.getValueCheck();
 			if ((!StringUtils.isEmpty(propertyValue)) && (propertyValue.equalsIgnoreCase("true"))) {
@@ -198,8 +192,7 @@ public class FolderContentUtil {
 
 		allDocuments.addAll(objects);
 
-		List<LowFunctionality> functionalities = DAOFactory.getLowFunctionalityDAO()
-				.loadUserFunctionalities(Integer.valueOf(functID), true, profile);
+		List<LowFunctionality> functionalities = DAOFactory.getLowFunctionalityDAO().loadUserFunctionalities(Integer.valueOf(functID), true, profile);
 		for (LowFunctionality functionality : functionalities) {
 			Set<BIObject> folderDocuments = new HashSet<>();
 			Set<BIObject> subDocuments = visitFolder(functionality.getId(), folderDocuments, profile);
@@ -226,8 +219,7 @@ public class FolderContentUtil {
 
 		allDocuments.addAll(objects);
 
-		List<LowFunctionality> functionalities = DAOFactory.getLowFunctionalityDAO().loadUserFunctionalities(functID,
-				true, profile);
+		List<LowFunctionality> functionalities = DAOFactory.getLowFunctionalityDAO().loadUserFunctionalities(functID, true, profile);
 		for (LowFunctionality functionality : functionalities) {
 			Set<BIObject> subDocuments = visitFolder(functionality.getId(), allDocuments, profile);
 			allDocuments.addAll(subDocuments);
@@ -280,8 +272,7 @@ public class FolderContentUtil {
 	 * @return
 	 * @throws JSONException
 	 */
-	public JSONObject createJSONResponse(JSONObject folders, JSONObject documents, JSONObject canAdd)
-			throws JSONException {
+	public JSONObject createJSONResponse(JSONObject folders, JSONObject documents, JSONObject canAdd) throws JSONException {
 		JSONObject results = new JSONObject();
 		JSONArray folderContent = new JSONArray();
 

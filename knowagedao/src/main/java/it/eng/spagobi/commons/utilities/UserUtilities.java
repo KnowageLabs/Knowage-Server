@@ -23,7 +23,6 @@ import static java.util.stream.Collectors.toList;
 
 import java.io.IOException;
 import java.lang.reflect.Method;
-import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -35,7 +34,6 @@ import java.util.Locale;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import javax.portlet.PortletRequest;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.ArrayUtils;
@@ -47,8 +45,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jamonapi.Monitor;
 import com.jamonapi.MonitorFactory;
 
-import it.eng.spago.base.RequestContainer;
-import it.eng.spago.base.SessionContainer;
 import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
@@ -93,26 +89,6 @@ public class UserUtilities {
 
 	private static final Logger LOGGER = Logger.getLogger(UserUtilities.class);
 
-	public static String getSchema(String ente, RequestContainer aRequestContainer) {
-
-		LOGGER.debug("Ente: " + ente);
-		SessionContainer aSessionContainer = aRequestContainer.getSessionContainer();
-		SessionContainer permanentSession = aSessionContainer.getPermanentContainer();
-
-		IEngUserProfile userProfile = (IEngUserProfile) permanentSession.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
-
-		if (userProfile != null) {
-			try {
-				return (String) userProfile.getUserAttribute(ente);
-			} catch (EMFInternalError e) {
-				LOGGER.error("User profile is NULL!!!!");
-			}
-		} else {
-			LOGGER.warn("User profile is NULL!!!!");
-		}
-		return null;
-	}
-
 	public static String getSchema(String ente, IEngUserProfile userProfile) {
 		LOGGER.debug("Ente: " + ente);
 		if (userProfile != null) {
@@ -125,46 +101,6 @@ public class UserUtilities {
 			LOGGER.warn("User profile is NULL!!!!");
 		}
 		return null;
-	}
-
-	/**
-	 * Gets the user profile.
-	 *
-	 * @return the user profile
-	 * @throws Exception the exception
-	 */
-	public static IEngUserProfile getUserProfile() throws Exception {
-		RequestContainer aRequestContainer = RequestContainer.getRequestContainer();
-		SessionContainer aSessionContainer = aRequestContainer.getSessionContainer();
-		SessionContainer permanentSession = aSessionContainer.getPermanentContainer();
-
-		IEngUserProfile userProfile = (IEngUserProfile) permanentSession.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
-
-		if (userProfile == null) {
-
-			String userId = null;
-			PortletRequest portletRequest = PortletUtilities.getPortletRequest();
-			Principal principal = portletRequest.getUserPrincipal();
-			userId = principal.getName();
-			LOGGER.debug("got userId from Principal=" + userId);
-
-			userProfile = UserUtilities.getUserProfile(userId);
-
-			LOGGER.debug("User profile created. User id: " + (String) ((UserProfile) userProfile).getUserId());
-			LOGGER.debug("Attributes name of the user profile: " + userProfile.getUserAttributeNames());
-			LOGGER.debug("Functionalities of the user profile: " + userProfile.getFunctionalities());
-			LOGGER.debug("Roles of the user profile: " + userProfile.getRoles());
-
-			permanentSession.setAttribute(IEngUserProfile.ENG_USER_PROFILE, userProfile);
-
-			String username = ((UserProfile) userProfile).getUserId().toString();
-			if (!UserUtilities.userFunctionalityRootExists(username)) {
-				UserUtilities.createUserFunctionalityRoot(userProfile);
-			}
-
-		}
-
-		return userProfile;
 	}
 
 	public static IEngUserProfile getUserProfile(HttpServletRequest req) throws Exception {
@@ -321,8 +257,7 @@ public class UserUtilities {
 	}
 
 	private static boolean importUsersIsEnabled() {
-		String importUserIsEnabled = SingletonConfig.getInstance()
-				.getConfigValue(ConfigurationConstants.INTERNAL_SECURITY_LOGIN_IMPORT_USER_IF_NOT_EXISTING);
+		String importUserIsEnabled = SingletonConfig.getInstance().getConfigValue(ConfigurationConstants.INTERNAL_SECURITY_LOGIN_IMPORT_USER_IF_NOT_EXISTING);
 		return "true".equalsIgnoreCase(importUserIsEnabled);
 	}
 
@@ -336,8 +271,7 @@ public class UserUtilities {
 	 * @param user the user profile object to be initialized with the default role
 	 */
 	private static void setDefaultRole(SpagoBIUserProfile user) {
-		String defaultRole = SingletonConfig.getInstance()
-				.getConfigValue(ConfigurationConstants.INTERNAL_SECURITY_USERS_DEFAULT_ROLE);
+		String defaultRole = SingletonConfig.getInstance().getConfigValue(ConfigurationConstants.INTERNAL_SECURITY_USERS_DEFAULT_ROLE);
 		if (ArrayUtils.isEmpty(user.getRoles()) && StringUtils.isNotEmpty(defaultRole)) {
 			LOGGER.debug("User profile object has no roles, setting the default one that is [" + defaultRole + "]");
 			user.setRoles(new String[] { defaultRole });
@@ -527,8 +461,8 @@ public class UserUtilities {
 	}
 
 	/**
-	 * Load the user personal folder as a LowFunctionality object. If the personal folder exists, it is returned; if it does not exist and create is false, null is
-	 * returned, otherwise the personal folder is created and then returned.
+	 * Load the user personal folder as a LowFunctionality object. If the personal folder exists, it is returned; if it does not exist and create is false, null
+	 * is returned, otherwise the personal folder is created and then returned.
 	 *
 	 * @param userProfile         UserProfile the user profile object
 	 * @param createIfNotExisting Boolean that specifies if the personal folder must be created if it doesn't exist
@@ -541,8 +475,7 @@ public class UserUtilities {
 			try {
 				createUserFunctionalityRoot(userProfile);
 			} catch (Exception e) {
-				throw new SpagoBIRuntimeException(
-						"Cannot create personal functionality for user with id [" + userId + "]", e);
+				throw new SpagoBIRuntimeException("Cannot create personal functionality for user with id [" + userId + "]", e);
 			}
 		}
 		LowFunctionality lf = null;
@@ -861,8 +794,7 @@ public class UserUtilities {
 		try {
 			Class<?> licenseManager = Class.forName("it.eng.knowage.tools.servermanager.utils.LicenseManager");
 			Method getInstanceMethod = licenseManager.getMethod("getInstance");
-			Method readFunctionalitiesMethod = licenseManager.getMethod("readFunctionalityByLicense",
-					SpagoBIUserProfile.class);
+			Method readFunctionalitiesMethod = licenseManager.getMethod("readFunctionalityByLicense", SpagoBIUserProfile.class);
 			Object instance = getInstanceMethod.invoke(null);
 			Set<String> functionalities = (Set<String>) readFunctionalitiesMethod.invoke(instance, user);
 			if (functionalities != null) {
@@ -1074,8 +1006,7 @@ public class UserUtilities {
 						virtualRole.setAbleToCreateSelfServiceCockpit(true);
 					}
 					if (anotherRole.getAbleToCreateSelfServiceGeoreport()) {
-						LOGGER.debug("User has role " + roleName
-								+ " that is able to create self service geographic report.");
+						LOGGER.debug("User has role " + roleName + " that is able to create self service geographic report.");
 						virtualRole.setAbleToCreateSelfServiceGeoreport(true);
 					}
 					if (anotherRole.getAbleToCreateSelfServiceKpi()) {
@@ -1113,8 +1044,8 @@ public class UserUtilities {
 				throw new SpagoBIRuntimeException("No tenants found on database");
 			}
 			if (tenants.size() > 1) {
-				throw new SpagoBIRuntimeException("Tenants are more than one, cannot associate input user profile ["
-						+ profile.getUserId() + "] to a single tenant!!!");
+				throw new SpagoBIRuntimeException(
+						"Tenants are more than one, cannot associate input user profile [" + profile.getUserId() + "] to a single tenant!!!");
 			}
 			SbiTenant tenant = tenants.get(0);
 			LOGGER.warn("Associating user profile [" + profile.getUserId() + "] to tenant [" + tenant.getName() + "]");
@@ -1136,16 +1067,13 @@ public class UserUtilities {
 
 		try {
 			SingletonConfig configSingleton = SingletonConfig.getInstance();
-			engUserProfileFactoryClass = configSingleton
-					.getConfigValue("SPAGOBI.SECURITY.USER-PROFILE-FACTORY-CLASS.className");
+			engUserProfileFactoryClass = configSingleton.getConfigValue("SPAGOBI.SECURITY.USER-PROFILE-FACTORY-CLASS.className");
 			if (engUserProfileFactoryClass != null) {
 				engUserProfileFactoryClass = engUserProfileFactoryClass.trim();
 				try {
-					securityServiceSupplier = (ISecurityServiceSupplier) Class.forName(engUserProfileFactoryClass)
-							.newInstance();
+					securityServiceSupplier = (ISecurityServiceSupplier) Class.forName(engUserProfileFactoryClass).newInstance();
 				} catch (Throwable t) {
-					throw new DAORuntimeException(
-							"Impossible to instatiate supplier class [" + engUserProfileFactoryClass + "]", t);
+					throw new DAORuntimeException("Impossible to instatiate supplier class [" + engUserProfileFactoryClass + "]", t);
 				}
 			} else {
 				throw new DAORuntimeException(
@@ -1154,16 +1082,15 @@ public class UserUtilities {
 		} catch (DAORuntimeException e) {
 			throw e;
 		} catch (Throwable t) {
-			throw new DAORuntimeException(
-					"Impossible to instatiate supplier class [" + engUserProfileFactoryClass + "]", t);
+			throw new DAORuntimeException("Impossible to instatiate supplier class [" + engUserProfileFactoryClass + "]", t);
 		}
 
 		return securityServiceSupplier;
 	}
 
 	/**
-	 * Clones the input profile object. We don't implement the SpagoBIUserProfile.clone method because SpagoBIUserProfile is created by Axis tools, and therefore,
-	 * when generating the class we may lost that method.
+	 * Clones the input profile object. We don't implement the SpagoBIUserProfile.clone method because SpagoBIUserProfile is created by Axis tools, and
+	 * therefore, when generating the class we may lost that method.
 	 *
 	 * @param profile The input SpagoBIUserProfile object
 	 * @return a clone of the input SpagoBIUserProfile object
@@ -1228,8 +1155,7 @@ public class UserUtilities {
 				rolesDao = DAOFactory.getRoleDAO();
 				rolesDao.setUserProfile(profile);
 				ICategoryDAO categoryDao = DAOFactory.getCategoryDAO();
-				List<Domain> array = categoryDao.getCategoriesForDataset().stream().map(Domain::fromCategory)
-						.collect(toList());
+				List<Domain> array = categoryDao.getCategoriesForDataset().stream().map(Domain::fromCategory).collect(toList());
 				for (String roleName : roleNames) {
 					Role role = rolesDao.loadByName(roleName);
 					List<RoleMetaModelCategory> ds = rolesDao.getMetaModelCategoriesForRole(role.getId());
@@ -1247,8 +1173,7 @@ public class UserUtilities {
 			return categories;
 		} catch (Exception e) {
 			LOGGER.error("Impossible to get role dataset categories for user [" + profile + "]", e);
-			throw new SpagoBIRuntimeException("Impossible to get role dataset categories for user [" + profile + "]",
-					e);
+			throw new SpagoBIRuntimeException("Impossible to get role dataset categories for user [" + profile + "]", e);
 		}
 	}
 
@@ -1264,8 +1189,7 @@ public class UserUtilities {
 				rolesDao = DAOFactory.getRoleDAO();
 				rolesDao.setUserProfile(profile);
 				ICategoryDAO categoryDao = DAOFactory.getCategoryDAO();
-				List<Domain> allCategories = categoryDao.getCategoriesForBusinessModel().stream()
-						.map(Domain::fromCategory).collect(toList());
+				List<Domain> allCategories = categoryDao.getCategoriesForBusinessModel().stream().map(Domain::fromCategory).collect(toList());
 				for (String roleName : roleNames) {
 					Role role = rolesDao.loadByName(roleName);
 					List<RoleMetaModelCategory> roles = rolesDao.getMetaModelCategoriesForRole(role.getId());
@@ -1283,8 +1207,7 @@ public class UserUtilities {
 			return toReturn;
 		} catch (Exception e) {
 			LOGGER.error("Impossible to get role dataset categories for user [" + profile + "]", e);
-			throw new SpagoBIRuntimeException("Impossible to get role dataset categories for user [" + profile + "]",
-					e);
+			throw new SpagoBIRuntimeException("Impossible to get role dataset categories for user [" + profile + "]", e);
 		}
 	}
 
@@ -1295,8 +1218,7 @@ public class UserUtilities {
 			String userId = (String) ((UserProfile) user).getUserId();
 
 			try {
-				it.eng.spagobi.profiling.dao.ISbiAccessibilityPreferencesDAO dao = DAOFactory
-						.getSiAccessibilityPreferencesDAO();
+				it.eng.spagobi.profiling.dao.ISbiAccessibilityPreferencesDAO dao = DAOFactory.getSiAccessibilityPreferencesDAO();
 				SbiAccessibilityPreferences ap = dao.readUserAccessibilityPreferences(userId);
 				if (ap != null) {
 					preferences = new AccessibilityPreferences();
@@ -1349,8 +1271,7 @@ public class UserUtilities {
 			for (String role : roles) {
 				Role r = roleDAO.loadByName(role);
 				String roleCode = r.getRoleTypeCD();
-				if (roleCode.equalsIgnoreCase(SpagoBIConstants.ADMIN_ROLE_TYPE)
-						|| roleCode.equalsIgnoreCase(SpagoBIConstants.ROLE_TYPE_MODEL_ADMIN)) {
+				if (roleCode.equalsIgnoreCase(SpagoBIConstants.ADMIN_ROLE_TYPE) || roleCode.equalsIgnoreCase(SpagoBIConstants.ROLE_TYPE_MODEL_ADMIN)) {
 					listRoles.add(r);
 				}
 			}
@@ -1372,8 +1293,7 @@ public class UserUtilities {
 			for (String role : roles) {
 				Role r = roleDAO.loadByName(role);
 				String roleCode = r.getRoleTypeCD();
-				if (roleCode.equalsIgnoreCase(SpagoBIConstants.ADMIN_ROLE_TYPE)
-						|| roleCode.equalsIgnoreCase(SpagoBIConstants.ROLE_TYPE_MODEL_ADMIN)) {
+				if (roleCode.equalsIgnoreCase(SpagoBIConstants.ADMIN_ROLE_TYPE) || roleCode.equalsIgnoreCase(SpagoBIConstants.ROLE_TYPE_MODEL_ADMIN)) {
 					listRoles.add(r.getName());
 				}
 			}

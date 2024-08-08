@@ -37,13 +37,13 @@ import java.util.zip.InflaterInputStream;
 
 import javax.naming.NamingException;
 
-import org.apache.livy.shaded.kryo.kryo.Kryo;
-import org.apache.livy.shaded.kryo.kryo.io.UnsafeInput;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.esotericsoftware.kryo.Kryo;
+import com.esotericsoftware.kryo.io.UnsafeInput;
 import com.jamonapi.Monitor;
 import com.jamonapi.MonitorFactory;
 
@@ -106,6 +106,7 @@ import it.eng.spagobi.utilities.database.DataBaseException;
 import it.eng.spagobi.utilities.exceptions.ActionNotPermittedException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.threadmanager.WorkManager;
+import it.eng.spagobi.utilities.trove.TLongHashSetSerializer;
 
 /**
  * DataLayer facade class. It manage the access to SpagoBI's datasets. It is built on top of the dao. It manages all complex operations that involve more than a
@@ -697,7 +698,6 @@ public class DatasetManagementAPI {
 							}
 							String newValuesString = KnowageStringUtils.join(newValues, ",");
 							newValuesString = newValuesString.replaceAll("&comma;", ",");
-
 							paramValues.put(paramName, newValuesString);
 							break;
 						}
@@ -762,10 +762,8 @@ public class DatasetManagementAPI {
 //									}
 								}
 							}
-
 							String newValuesString = KnowageStringUtils.join(newValues, ",");
 							newValuesString = newValuesString.replaceAll("&comma;", ",");
-
 							paramValues.put(paramName, newValuesString);
 							break;
 						}
@@ -791,7 +789,7 @@ public class DatasetManagementAPI {
 		UnsafeInput input = null;
 		try {
 			Kryo kryo = new Kryo();
-			kryo.register(TLongHashSet.class);
+			kryo.register(TLongHashSet.class, new TLongHashSetSerializer());
 			String filepath = path + File.separatorChar + hashSignature + DataSetConstants.DOMAIN_VALUES_EXTENSION;
 			File file = new File(filepath);
 			if (!file.exists()) {

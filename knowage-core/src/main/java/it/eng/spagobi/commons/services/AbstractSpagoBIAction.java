@@ -89,7 +89,6 @@ public abstract class AbstractSpagoBIAction extends AbstractBaseHttpAction {
 		} catch (Throwable t) {
 			handleException(t);
 		}
-		;
 	}
 
 	protected void writeErrorsBackToClient() {
@@ -107,7 +106,7 @@ public abstract class AbstractSpagoBIAction extends AbstractBaseHttpAction {
 	public abstract void doService();
 
 	public IEngUserProfile getUserProfile() {
-		return (IEngUserProfile) getSessionContainer().getPermanentContainer().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+		return (IEngUserProfile) getHttpSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 	}
 
 	public CoreContextManager getContext() {

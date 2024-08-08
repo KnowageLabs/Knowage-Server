@@ -40,10 +40,10 @@ public class SbiExtRoles extends SbiHibernateModel {
 
 	private Set sbiFuncRoles;
 	private Set sbiParuseDets;
-	private Set<SbiCategory> sbiMetaModelCategories;
+	private Set<SbiCategory> sbiMetaModelCategories = new HashSet<>();
 	private Set sbiDataSetCategories;
-	private Set sbiAuthorizationsRoleses = new HashSet(0);
-	private Set sbiNewsRoles = new HashSet(0);
+	private Set sbiAuthorizationsRoleses = new HashSet();
+	private Set sbiNewsRoles = new HashSet();
 
 	// Constructors
 

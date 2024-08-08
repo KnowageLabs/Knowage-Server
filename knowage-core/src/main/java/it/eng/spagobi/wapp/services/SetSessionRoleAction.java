@@ -46,10 +46,6 @@ public class SetSessionRoleAction extends AbstractSpagoBIAction {
 	// REQUEST PARAMETERS
 	public static final String SELECTED_ROLE = "SELECTED_ROLE";
 
-	/**
-	 * Returns Default role if present
-	 */
-
 	@Override
 	public void doService() {
 		logger.debug("IN on service");
@@ -127,7 +123,6 @@ public class SetSessionRoleAction extends AbstractSpagoBIAction {
 
 	private void storeProfileInSession(IEngUserProfile userProfile) {
 		logger.debug("IN");
-		getSessionContainer().getPermanentContainer().setAttribute(IEngUserProfile.ENG_USER_PROFILE, userProfile);
 		getHttpRequest().getSession().setAttribute(IEngUserProfile.ENG_USER_PROFILE, userProfile);
 		logger.debug("OUT");
 	}

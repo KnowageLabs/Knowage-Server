@@ -32,6 +32,7 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.UUID;
 
+import org.apache.commons.collections4.ListUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.hibernate.Criteria;
@@ -1929,10 +1930,17 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 				hibQuery.setMaxResults(itemPerPage);
 			}
 
-			List ids = hibQuery.list();
+			List<Object> ids = hibQuery.list();
 			if (!ids.isEmpty()) {
 				Criteria mainC = aSession.createCriteria(SbiObjects.class);
-				mainC.add(Restrictions.in("biobjId", ids));
+
+				List<List<Object>> partitions = ListUtils.partition(ids, 1000);
+				Disjunction allInClauses = Restrictions.disjunction();
+				for (List<Object> partition : partitions) {
+					allInClauses.add(Restrictions.in("biobjId", partition));
+				}
+
+				mainC.add(allInClauses);
 				mainC.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
 
 				List<SbiObjects> lso = mainC.list();

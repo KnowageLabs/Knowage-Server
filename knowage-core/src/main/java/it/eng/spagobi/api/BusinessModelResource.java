@@ -443,8 +443,9 @@ public class BusinessModelResource {
 		mode = (String) requestVal.opt("mode");
 
 		DriversRuntimeLoader driversRuntimeLoader = DriversRuntimeLoaderFactory.getDriversRuntimeLoader();
-		MetaModel datasetMetaModel = DAOFactory.getMetaModelsDAO().loadMetaModelByName(qbeDatamart);
-		List<BIMetaModelParameter> drivers = datasetMetaModel.getDrivers();
+		//MetaModel datasetMetaModel = DAOFactory.getMetaModelsDAO().loadMetaModelByName(qbeDatamart);
+		//List<BIMetaModelParameter> drivers = datasetMetaModel.getDrivers();
+		List<BIMetaModelParameter> drivers = driversRuntimeLoader.getBusinessModelDrivers(qbeDatamart, role);
 
 		BIMetaModelParameter biObjectParameter = null;
 		List<? extends AbstractDriver> parameters = drivers;
@@ -478,8 +479,7 @@ public class BusinessModelResource {
 			resultAsMap.put("rows", result);
 		} else {
 			MetaModel loadMetaModelByName = DAOFactory.getMetaModelsDAO().loadMetaModelByName(qbeDatamart);
-
-			List errorList = DocumentExecutionUtils.handleNormalExecutionError(this.getUserProfile(), datasetMetaModel,
+			List errorList = DocumentExecutionUtils.handleNormalExecutionError(this.getUserProfile(), loadMetaModelByName,
 					req, this.getAttributeAsString("SBI_ENVIRONMENT"), role,
 					biObjectParameter.getParameter().getModalityValue().getSelectionType(), null, locale);
 

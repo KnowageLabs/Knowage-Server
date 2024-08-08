@@ -17,6 +17,7 @@
  */
 package it.eng.knowage.engine.cockpit.api.page;
 
+import static it.eng.knowage.commons.security.KnowageSystemConfiguration.getKnowageVueContext;
 import static it.eng.spagobi.commons.constants.ConfigurationConstants.SPAGOBI_SPAGOBI_SERVICE_JNDI;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
@@ -447,7 +448,7 @@ public class PageResource extends AbstractCockpitEngineResource {
 	private String getRequestUrlWithViewHandling(String documentLabel) {
 		URIBuilder externalUrl = getExternalUrl(documentLabel);
 
-		externalUrl.setPath("/knowage-vue/workspace/dashboard-view/" + documentLabel);
+		externalUrl.setPath(getKnowageVueContext() + "/workspace/dashboard-view/" + documentLabel);
 
 		request.getParameterMap().forEach((k, v) -> {
 
@@ -601,7 +602,7 @@ public class PageResource extends AbstractCockpitEngineResource {
 	private void manageParametersForDashboards(BIObject biObject, String documentLabel, URIBuilder uriBuilder)
 			throws JSONException {
 
-		uriBuilder.setPath("/knowage-vue/dashboard/" + documentLabel);
+		uriBuilder.setPath(getKnowageVueContext() + "/dashboard/" + documentLabel);
 		uriBuilder.setParameter("params", createJsonFromParemeters(biObject));
 		uriBuilder.setParameter("role", getExecutionRoleForDashboard());
 		addParametersToHideToolbarAndMenuInVue(uriBuilder);

@@ -40,6 +40,7 @@ import it.eng.spagobi.engines.InternalEngineIFace;
 import it.eng.spagobi.engines.drivers.exceptions.InvalidOperationRequest;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
+import it.eng.spagobi.user.UserProfileManager;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 
 /**
@@ -52,7 +53,7 @@ public abstract class SpagoBIAbstractInternalEngine implements InternalEngineIFa
 	SourceBean response;
 	Object subObjectInfo;
 
-	private static transient Logger logger = Logger.getLogger(SpagoBIAbstractInternalEngine.class);
+	private static Logger logger = Logger.getLogger(SpagoBIAbstractInternalEngine.class);
 
 	@Override
 	public void execute(RequestContainer requestContainer, BIObject obj, SourceBean response) throws EMFUserError {
@@ -142,7 +143,7 @@ public abstract class SpagoBIAbstractInternalEngine implements InternalEngineIFa
 	// UTILITY METHODS
 	// ============================================================================================
 	public IEngUserProfile getUserProfile() {
-		return (IEngUserProfile) getSession().getPermanentContainer().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+		return UserProfileManager.getProfile();
 	}
 
 	public JSONObject getTemplateAsJSONObject() throws JSONException {

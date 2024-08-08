@@ -74,7 +74,6 @@ import it.eng.knowage.features.Feature;
 import it.eng.knowage.rest.annotation.FeatureFlag;
 import it.eng.spago.base.RequestContainer;
 import it.eng.spago.base.RequestContainerAccess;
-import it.eng.spago.base.SessionContainer;
 import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.analiticalmodel.document.BusinessModelOpenUtils;
@@ -149,7 +148,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 	// public static String MODE_COMPLETE = "complete";
 	// public static String START = "start";
 	// public static String LIMIT = "limit";
-	public String runDocumentExecution = SingletonConfig.getInstance() 
+	public String runDocumentExecution = SingletonConfig.getInstance()
 			.getConfigValue("document.execution.startAutomatically");
 
 	public static final String SERVICE_NAME = "DOCUMENT_EXECUTION_RESOURCE";
@@ -214,9 +213,6 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 		if (aRequestContainer == null)
 			return Response.status(Status.UNAUTHORIZED).build();
 
-		SessionContainer aSessionContainer = aRequestContainer.getSessionContainer();
-		SessionContainer permanentSession = aSessionContainer.getPermanentContainer();
-
 		HashMap<String, Object> resultAsMap = new HashMap<>();
 		List errorList = new ArrayList<>();
 		Locale locale = GeneralUtilities.getCurrentLocale(aRequestContainer);
@@ -244,8 +240,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 			Monitor buildJsonParametersMonitor = MonitorFactory
 					.start("Knowage.DocumentExecutionResource.getDocumentExecutionURL.buildJsonParametersMonitor");
 			DocumentRuntime dum = new DocumentRuntime(this.getUserProfile(), locale);
-			JSONObject jsonParametersToSend = buildJsonParameters(jsonParameters, req, role, permanentSession,
-					parameterUseDAO, obj, dum);
+			JSONObject jsonParametersToSend = buildJsonParameters(jsonParameters, req, role, parameterUseDAO, obj, dum);
 			buildJsonParametersMonitor.stop();
 			// BUILD URL
 			Monitor buildJUrlMonitor = MonitorFactory
@@ -367,11 +362,9 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 		return ret;
 	}
 
-	private JSONObject buildJsonParameters(JSONObject jsonParameters, HttpServletRequest req, String role,
-			SessionContainer permanentSession, IParameterUseDAO parameterUseDAO, BIObject obj, DocumentRuntime dum)
-			throws JSONException, EMFUserError {
-		List<DocumentDriverRuntime> parameters = DocumentExecutionUtils.getParameters(obj, role, req.getLocale(), null,
-				null, false, dum);
+	private JSONObject buildJsonParameters(JSONObject jsonParameters, HttpServletRequest req, String role, IParameterUseDAO parameterUseDAO, BIObject obj,
+			DocumentRuntime dum) throws JSONException, EMFUserError {
+		List<DocumentDriverRuntime> parameters = DocumentExecutionUtils.getParameters(obj, role, req.getLocale(), null, null, false, dum);
 		for (DocumentDriverRuntime objParameter : parameters) {
 			Monitor checkingsParameterMonitor = MonitorFactory
 					.start("Knowage.DocumentExecutionResource.buildJsonParameters.checkings");
@@ -650,11 +643,9 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 								// % character breaks decode method
 								if (!itemVal.contains("%")) {
 									itemVal = esapiEncoder.decodeFromURL(itemVal.replace("+", "%2B"));
-									//itemVal = URLDecoder.decode(itemVal.replace("+", "%2B"), UTF_8.name());
 								}
 								if (!itemDescr.contains("%")) {
 									itemDescr = esapiEncoder.decodeFromURL(itemDescr.replace("+", "%2B"));
-									//itemDescr = URLDecoder.decode(itemDescr.replace("+", "%2B"), UTF_8.name());
 								}
 
 								// check input value and convert if it's an old multivalue syntax({;{xxx;yyy}STRING}) to list of values :["A-OMP", "A-PO", "CL"]
@@ -682,7 +673,6 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 					} else if (paramValues instanceof String) {
 						// % character breaks decode method
 						if (!((String) paramValues).contains("%")) {
-							//paramValues = URLDecoder.decode(((String) paramValues).replace("+", "%2B"), UTF_8.name());
 							paramValues = esapiEncoder.decodeFromURL(((String) paramValues).replace("+", "%2B"));
 						}
 						paramValueLst.add(paramValues.toString());
@@ -691,7 +681,6 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 								? paramDescriptionValues.toString()
 								: paramValues.toString();
 						if (!parDescrVal.contains("%")) {
-							//parDescrVal = URLDecoder.decode(parDescrVal.replace("+", "%2B"), UTF_8.name());
 							parDescrVal = esapiEncoder.decodeFromURL(parDescrVal.replace("+", "%2B"));
 						}
 						paramDescrLst.add(parDescrVal);

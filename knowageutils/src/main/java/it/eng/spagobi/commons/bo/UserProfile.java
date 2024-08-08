@@ -305,7 +305,7 @@ public class UserProfile implements IEngUserProfile {
 	private String userUniqueIdentifier = null;
 	private String userId = null;
 	private String userName = null;
-	private final Map<String, Object> userAttributes = new LinkedHashMap<>();
+	private Map<String, Object> userAttributes = new LinkedHashMap<>();
 	private Collection<String> roles = null;
 	private Collection<String> functionalities = null;
 
@@ -525,6 +525,10 @@ public class UserProfile implements IEngUserProfile {
 
 	public Map<String, Object> getUserAttributes() {
 		return userAttributes;
+	}
+
+	public void setUserAttributes(Map<String, Object> userAttributes) {
+		this.userAttributes = userAttributes;
 	}
 
 	/*

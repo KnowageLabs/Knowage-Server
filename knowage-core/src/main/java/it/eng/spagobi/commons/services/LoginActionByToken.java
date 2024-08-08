@@ -25,8 +25,6 @@ import org.apache.log4j.Logger;
 import org.json.JSONObject;
 
 import it.eng.spago.base.Constants;
-import it.eng.spago.base.RequestContainer;
-import it.eng.spago.base.SessionContainer;
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.configuration.ConfigSingleton;
 import it.eng.spago.security.IEngUserProfile;
@@ -73,10 +71,7 @@ public class LoginActionByToken extends AbstractBaseHttpAction {
 		String token;
 		boolean isSSOActive = false;
 
-		RequestContainer requestContainer = this.getRequestContainer();
-		SessionContainer session = requestContainer.getSessionContainer();
-		SessionContainer permanentSession = session.getPermanentContainer();
-		profile = (IEngUserProfile) permanentSession.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+		profile = (IEngUserProfile) this.getHttpSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 
 		logger.debug("IN");
 
@@ -150,7 +145,7 @@ public class LoginActionByToken extends AbstractBaseHttpAction {
 			// in case user has a default role, we get his default user profile object
 			profile = SessionUserProfileBuilder.getDefaultUserProfile((UserProfile) profile);
 			// put user profile into session
-			storeProfileInSession((UserProfile) profile, getSessionContainer().getPermanentContainer(), getHttpRequest().getSession());
+			storeProfileInSession((UserProfile) profile, getHttpRequest().getSession());
 
 			// Propagate BACK URL if present
 			if (!StringUtils.isEmpty(backUrl)) {

@@ -33,10 +33,10 @@ import org.json.JSONObject;
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.commons.utilities.UserUtilities;
 import it.eng.spagobi.mapcatalogue.bo.GeoLayer;
 import it.eng.spagobi.mapcatalogue.dao.ISbiGeoLayersDAO;
 import it.eng.spagobi.services.common.EnginConf;
+import it.eng.spagobi.user.UserProfileManager;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 /**
@@ -184,7 +184,7 @@ public class GeoReportEngineConfig {
 
 			try {
 				ISbiGeoLayersDAO geoLayersDAO = DAOFactory.getSbiGeoLayerDao();
-				geoLayers = geoLayersDAO.loadAllLayers(null, UserUtilities.getUserProfile());
+				geoLayers = geoLayersDAO.loadAllLayers(null, UserProfileManager.getProfile());
 				if (geoLayers != null) {
 					levels = new ArrayList<>();
 					for (int i = 0; i < geoLayers.size(); i++) {

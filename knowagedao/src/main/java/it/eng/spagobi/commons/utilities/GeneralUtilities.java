@@ -46,12 +46,7 @@ import org.owasp.esapi.reference.DefaultEncoder;
 import it.eng.knowage.commons.security.KnowageSystemConfiguration;
 import it.eng.spago.base.RequestContainer;
 import it.eng.spago.base.SessionContainer;
-import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.security.IEngUserProfile;
-import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
-import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
-import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.Parameter;
-import it.eng.spagobi.behaviouralmodel.lov.bo.ModalitiesValue;
 import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.bo.Config;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
@@ -75,6 +70,7 @@ import it.eng.spagobi.utilities.file.FileUtils;
 public class GeneralUtilities extends SpagoBIUtilities {
 
 	private static final Logger LOGGER = LogManager.getLogger(GeneralUtilities.class);
+
 	private static final String PREVIEW_FILE_STORAGE_DIRECTORY = "preview" + File.separatorChar + "images";
 	private static final String BACKEND_EXTENSION = "BackEnd";
 	private static final String VUE_ENVIRONMENT = "vue.environment";
@@ -156,41 +152,6 @@ public class GeneralUtilities extends SpagoBIUtilities {
 		}
 		LOGGER.trace("OUT");
 		return message;
-	}
-
-	/**
-	 * Subsitute bi object parameters lov profile attributes.
-	 *
-	 * @param obj     the obj
-	 * @param session the session
-	 *
-	 * @throws Exception        the exception
-	 * @throws EMFInternalError the EMF internal error
-	 */
-	public static void subsituteBIObjectParametersLovProfileAttributes(BIObject obj, SessionContainer session)
-			throws Exception {
-		LOGGER.trace("IN");
-		List<BIObjectParameter> biparams = obj.getDrivers();
-		Iterator<BIObjectParameter> iterParams = biparams.iterator();
-		while (iterParams.hasNext()) {
-			// if the param is a Fixed Lov, Make the profile attribute
-			// substitution at runtime
-			BIObjectParameter biparam = iterParams.next();
-			Parameter param = biparam.getParameter();
-			ModalitiesValue modVal = param.getModalityValue();
-			if (modVal.getITypeCd().equals(SpagoBIConstants.INPUT_TYPE_FIX_LOV_CODE)) {
-				String value = modVal.getLovProvider();
-				int profileAttributeStartIndex = value.indexOf("${");
-				if (profileAttributeStartIndex != -1) {
-					IEngUserProfile profile = (IEngUserProfile) session.getPermanentContainer()
-							.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
-					value = StringUtilities.substituteProfileAttributesInString(value, profile,
-							profileAttributeStartIndex);
-					biparam.getParameter().getModalityValue().setLovProvider(value);
-				}
-			}
-		}
-		LOGGER.trace("OUT");
 	}
 
 	/**
