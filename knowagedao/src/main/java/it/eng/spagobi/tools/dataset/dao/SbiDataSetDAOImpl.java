@@ -346,7 +346,7 @@ public class SbiDataSetDAOImpl extends AbstractHibernateDAO implements ISbiDataS
 			Query hqlQuery = aSession.createQuery(hql);
 			hqlQuery.setParameter("search", "%" + search + "%");
 			Long temp = (Long) hqlQuery.uniqueResult();
-			resultNumber = Integer.valueOf(temp.intValue());
+			resultNumber = temp.intValue();
 
 		} catch (HibernateException he) {
 			logger.error("Error while loading the list of SbiDataSet", he);

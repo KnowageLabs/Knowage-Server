@@ -18,7 +18,6 @@
 package it.eng.spagobi.tools.dataset.common.dataproxy;
 
 import org.apache.jena.query.QueryExecution;
-import org.apache.jena.query.QueryExecutionFactory;
 import org.apache.jena.sparql.exec.http.QueryExecutionHTTP;
 import org.apache.jena.query.ResultSet;
 import org.apache.log4j.Logger;

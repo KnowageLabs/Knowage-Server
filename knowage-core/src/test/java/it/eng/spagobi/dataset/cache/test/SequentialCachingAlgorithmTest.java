@@ -173,7 +173,7 @@ public class SequentialCachingAlgorithmTest {
 				distinctValues.add(rs.getString(columnName));
 			}
 			Set<String> baseSet = associationValues.get(association);
-			Set<String> intersection = new HashSet<String>(CollectionUtils.intersection(baseSet, distinctValues));
+			Set<String> intersection = new HashSet<>(CollectionUtils.intersection(baseSet, distinctValues));
 			if (!intersection.equals(baseSet)) {
 				associationValues.put(association, intersection);
 				String inClauseValues = "'" + StringUtils.join(associationValues.get(association).iterator(), "','") + "'";
@@ -204,7 +204,7 @@ public class SequentialCachingAlgorithmTest {
 		while (rs_d2.next()) {
 			gender_d3.add(rs_d2.getString("gender"));
 		}
-		Set<String> gender_intersection = new HashSet<String>(CollectionUtils.intersection(gender_d1, gender_d3));
+		Set<String> gender_intersection = new HashSet<>(CollectionUtils.intersection(gender_d1, gender_d3));
 		associationValues.put("GENDER", gender_intersection);
 		// -------------------------------------------------
 
@@ -220,7 +220,7 @@ public class SequentialCachingAlgorithmTest {
 		while (rs_d3.next()) {
 			education_d3.add(rs_d3.getString("education"));
 		}
-		Set<String> education_intersection = new HashSet<String>(CollectionUtils.intersection(education_d1, education_d3));
+		Set<String> education_intersection = new HashSet<>(CollectionUtils.intersection(education_d1, education_d3));
 		associationValues.put("EDUCATION", education_intersection);
 		// -------------------------------------------------
 
@@ -236,7 +236,7 @@ public class SequentialCachingAlgorithmTest {
 		while (rs_d3.next()) {
 			state_d3.add(rs_d3.getString("state_province"));
 		}
-		Set<String> state_intersection = new HashSet<String>(CollectionUtils.intersection(state_d1, state_d3));
+		Set<String> state_intersection = new HashSet<>(CollectionUtils.intersection(state_d1, state_d3));
 		associationValues.put("STATE", state_intersection);
 		// -------------------------------------------------
 	}
