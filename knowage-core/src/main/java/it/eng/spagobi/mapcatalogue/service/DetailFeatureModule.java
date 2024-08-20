@@ -53,6 +53,7 @@ public class DetailFeatureModule extends AbstractHttpModule {
 
 	private String modalita = "";
 	private static Logger logger = Logger.getLogger(DetailFeatureModule.class);
+	private static String loggerMessage = "AuditLogUtilities.updateAudit ";
 	
 	/**
 	 * Method called automatically by Spago framework when the action is invoked.
@@ -173,7 +174,7 @@ public class DetailFeatureModule extends AbstractHttpModule {
 
 			// if there are some validation errors into the errorHandler does not write into DB
 			Collection errors = errorHandler.getErrors();
-			if (errors != null && errors.size() > 0) {
+			if (errors != null && !errors.isEmpty()) {
 				Iterator iterator = errors.iterator();
 				while (iterator.hasNext()) {
 					Object error = iterator.next();
@@ -210,15 +211,13 @@ public class DetailFeatureModule extends AbstractHttpModule {
 				try {
 					AuditLogUtilities.updateAudit(getHttpRequest(), profile, "MAP_CATALOG_FEATURE.ADD", logParam, "ERR");
 				} catch (Exception e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
+					logger.error(loggerMessage, e1);
 				}
 			} else {
 				try {
 					AuditLogUtilities.updateAudit(getHttpRequest(), profile, "MAP_CATALOG_FEATURE.MODIFY", logParam, "ERR");
 				} catch (Exception e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
+					logger.error(loggerMessage, e1);
 				}
 			}
 			HashMap params = new HashMap();
@@ -232,15 +231,13 @@ public class DetailFeatureModule extends AbstractHttpModule {
 				try {
 					AuditLogUtilities.updateAudit(getHttpRequest(), profile, "MAP_CATALOG_FEATURE.ADD", logParam, "KO");
 				} catch (Exception e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
+					logger.error(loggerMessage, e1);
 				}
 			} else {
 				try {
 					AuditLogUtilities.updateAudit(getHttpRequest(), profile, "MAP_CATALOG_FEATURE.MODIFY", logParam, "KO");
 				} catch (Exception e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
+					logger.error(loggerMessage, e1);
 				}
 			}
 			TracerSingleton.log(SpagoBIConstants.NAME_MODULE, TracerSingleton.MAJOR, "Cannot fill response container" + ex.getLocalizedMessage());
@@ -251,15 +248,13 @@ public class DetailFeatureModule extends AbstractHttpModule {
 			try {
 				AuditLogUtilities.updateAudit(getHttpRequest(), profile, "MAP_CATALOG_FEATURE.ADD", logParam, "OK");
 			} catch (Exception e1) {
-				//e1.printStackTrace();
-				logger.error("AuditLogUtilities.updateAudit ",e1);
+				logger.error(loggerMessage, e1);
 			}
 		} else {
 			try {
 				AuditLogUtilities.updateAudit(getHttpRequest(), profile, "MAP_CATALOG_FEATURE.MODIFY", logParam, "OK");
 			} catch (Exception e1) {
-				//e1.printStackTrace();
-				logger.error("AuditLogUtilities.updateAudit ",e1);
+				logger.error(loggerMessage, e1);
 			}
 		}
 
@@ -292,8 +287,7 @@ public class DetailFeatureModule extends AbstractHttpModule {
 			try {
 				AuditLogUtilities.updateAudit(getHttpRequest(), profile, "MAP_CATALOG_FEATURE.DELETE", null, "ERR");
 			} catch (Exception e1) {
-				//e1.printStackTrace();
-				logger.error("AuditLogUtilities.updateAudit ",e1);
+				logger.error(loggerMessage, e1);
 			}
 			HashMap params = new HashMap();
 			params.put(AdmintoolsConstants.PAGE, ListFeaturesModule.MODULE_PAGE);
@@ -303,8 +297,7 @@ public class DetailFeatureModule extends AbstractHttpModule {
 			try {
 				AuditLogUtilities.updateAudit(getHttpRequest(), profile, "MAP_CATALOG_FEATURE.DELETE", null, "KO");
 			} catch (Exception e1) {
-				//e1.printStackTrace();
-				logger.error("AuditLogUtilities.updateAudit ",e1);
+				logger.error(loggerMessage, e1);
 			}
 			TracerSingleton.log(SpagoBIConstants.NAME_MODULE, TracerSingleton.MAJOR, "Cannot fill response container" + ex.getLocalizedMessage());
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
@@ -313,8 +306,7 @@ public class DetailFeatureModule extends AbstractHttpModule {
 		try {
 			AuditLogUtilities.updateAudit(getHttpRequest(), profile, "MAP_CATALOG_FEATURE.DELETE", null, "OK");
 		} catch (Exception e1) {
-			// e1.printStackTrace();
-			logger.error("AuditLogUtilities.updateAudit ",e1);
+			logger.error(loggerMessage, e1);
 		}
 
 	}
@@ -344,15 +336,14 @@ public class DetailFeatureModule extends AbstractHttpModule {
 
 	}
 
-	private GeoFeature recoverFeatureDetails(SourceBean request) throws EMFUserError {
+	private GeoFeature recoverFeatureDetails(SourceBean request) {
 		GeoFeature feature = new GeoFeature();
 		String idStr = (String) request.getAttribute("ID");
-		Integer id = new Integer(idStr);
 		String description = (String) request.getAttribute("DESCR");
 		String name = (String) request.getAttribute("NAME");
 		String type = (String) request.getAttribute("TYPE");
 
-		feature.setFeatureId(id.intValue());
+		feature.setFeatureId(Integer.parseInt(idStr));
 		feature.setName(name);
 		feature.setDescr(description);
 		feature.setType(type);
