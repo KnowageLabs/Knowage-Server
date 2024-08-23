@@ -1,4 +1,4 @@
-import { luxonFormatDate } from '@/helpers/commons/localeHelper';
+import { luxonFormatDate } from '@/helpers/commons/localeHelper'
 import { AxiosResponse } from 'axios'
 import { iParameter } from './KnParameterSidebar'
 
@@ -29,7 +29,7 @@ export async function dataDependencyCheck(loadedParameters: { filterStatus: iPar
     loading = true
 
     resetParameterValueToEmptyValues(parameter)
-    if (resetValue) return
+    if (resetValue || !parameter.parameterValue?.[0]?.value) return
 
     const postData = { label: document?.label, parameters: getFormattedParameters(loadedParameters, userDateFormat), paramId: parameter.urlName, role: sessionRole }
     let url = '2.0/documentExeParameters/admissibleValues'
@@ -95,7 +95,7 @@ const getValueAndDescriptionIndex = (parameter: iParameter) => {
     return { valueIndex: valueIndex ?? '', descriptionIndex: descriptionIndex ?? '' }
 }
 
-export function getFormattedParameters(loadedParameters: { filterStatus: iParameter[], isReadyForExecution: boolean }, userDateFormat: string) {
+export function getFormattedParameters(loadedParameters: { filterStatus: iParameter[]; isReadyForExecution: boolean }, userDateFormat: string) {
     let parameters = [] as any[]
 
     Object.keys(loadedParameters.filterStatus).forEach((key: any) => {
@@ -104,8 +104,7 @@ export function getFormattedParameters(loadedParameters: { filterStatus: iParame
         if (parameter.type === 'DATE') {
             const dateValue = getFormattedDateParameterValue(parameter, userDateFormat)
             parameters.push({ urlName: parameter.urlName, value: dateValue, description: dateValue })
-        }
-        else if (!parameter.multivalue) {
+        } else if (!parameter.multivalue) {
             if (!parameter.parameterValue[0]) parameter.parameterValue[0] = { value: '', description: '' }
             parameters.push({ urlName: parameter.urlName, value: parameter.parameterValue[0].value, description: parameter.parameterValue[0].description })
         } else {
@@ -154,14 +153,16 @@ export function addDefaultValueForSelectionTypeParameters(parameter: iParameter)
     }
 }
 
-function addSingleDriverDefaultValue(parameter: iParameter, valueAndDescriptionIndex: { valueIndex: string, descriptionIndex: string }) {
+function addSingleDriverDefaultValue(parameter: iParameter, valueAndDescriptionIndex: { valueIndex: string; descriptionIndex: string }) {
     if (!parameter.driverDefaultValue[0]) return
     parameter.parameterValue = [{ value: parameter.driverDefaultValue[0][valueAndDescriptionIndex.valueIndex], description: parameter.driverDefaultValue[0][valueAndDescriptionIndex.descriptionIndex] }]
     removeNonCompatibleParameterValues(parameter)
 }
 
-function addMultiDriverDefaultValue(parameter: iParameter, valueAndDescriptionIndex: { valueIndex: string, descriptionIndex: string }) {
-    parameter.parameterValue = parameter.driverDefaultValue.map((defaultValue: any) => { return { value: defaultValue[valueAndDescriptionIndex.valueIndex], description: defaultValue[valueAndDescriptionIndex.descriptionIndex] } })
+function addMultiDriverDefaultValue(parameter: iParameter, valueAndDescriptionIndex: { valueIndex: string; descriptionIndex: string }) {
+    parameter.parameterValue = parameter.driverDefaultValue.map((defaultValue: any) => {
+        return { value: defaultValue[valueAndDescriptionIndex.valueIndex], description: defaultValue[valueAndDescriptionIndex.descriptionIndex] }
+    })
     removeNonCompatibleParameterValues(parameter)
 }
 
