@@ -21,12 +21,9 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
 
-import javax.servlet.http.HttpServletResponse;
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
-import it.eng.knowage.commons.utilities.LocalePropertiesUtilities;
 import it.eng.spago.base.RequestContainer;
 import it.eng.spago.base.SessionContainer;
 import it.eng.spagobi.commons.bo.UserProfile;
@@ -36,7 +33,6 @@ import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.service.JSONAcknowledge;
-import it.eng.knowage.commons.utilities.KnLanguageCookie;
 
 public class ChangeLanguage extends AbstractSpagoBIAction {
 
@@ -68,11 +64,6 @@ public class ChangeLanguage extends AbstractSpagoBIAction {
 		userProfile.setAttributeValue(SpagoBIConstants.LANGUAGE, locale.getLanguage());
 		userProfile.setAttributeValue(SpagoBIConstants.COUNTRY, locale.getCountry());
 		userProfile.setAttributeValue(SpagoBIConstants.SCRIPT, scriptForSession);
-
-		String knLanguage = LocalePropertiesUtilities.getAngularPropertiesFileName(locale, "-");
-		HttpServletResponse resp = getHttpResponse();
-		KnLanguageCookie.setCookie(resp, knLanguage);
-
 
 		try {
 			writeBackToClient(new JSONAcknowledge());
