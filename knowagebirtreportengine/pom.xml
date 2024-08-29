@@ -48,8 +48,8 @@
 					<groupId>org.apache.poi</groupId>
 				</exclusion>
 				<exclusion>
-					<groupId>xml-apis</groupId>
 					<artifactId>xml-apis</artifactId>
+					<groupId>xml-apis</groupId>
 				</exclusion>
 			</exclusions>
 		</dependency>
@@ -70,12 +70,12 @@
 					<groupId>org.eclipse.birt.runtime.3_7_1</groupId>
 				</exclusion>
 				<exclusion>
-					<groupId>xml-apis</groupId>
 					<artifactId>xml-apis</artifactId>
+					<groupId>xml-apis</groupId>
 				</exclusion>
 				<exclusion>
-					<groupId>org.apache.xmlbeans</groupId>
 					<artifactId>xmlbeans</artifactId>
+					<groupId>org.apache.xmlbeans</groupId>
 				</exclusion>
 			</exclusions>
 		</dependency>
@@ -86,8 +86,8 @@
 			<scope>compile</scope>
 			<exclusions>
 				<exclusion>
+					<artifactId>axis</artifactId>
 					<groupId>org.apache.axis</groupId>
-    				<artifactId>axis</artifactId>
 				</exclusion>
 			</exclusions>
 		</dependency>
@@ -107,11 +107,11 @@
 			<groupId>biz.paluch.logging</groupId>
 			<artifactId>logstash-gelf</artifactId>
 		</dependency>
-				<dependency>
-           <groupId>org.owasp</groupId>
-           <artifactId>csrfguard</artifactId>
-           <version>3.0.0</version>
-         </dependency>
+		<dependency>
+			<groupId>org.owasp</groupId>
+			<artifactId>csrfguard</artifactId>
+			<version>3.0.0</version>
+		</dependency>
 	</dependencies>
 	
 	<build>

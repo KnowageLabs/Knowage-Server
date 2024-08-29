@@ -61,7 +61,10 @@
 		<checkstyle.suppressions.location>${project.basedir}/../checkstyle/checkstyle-suppressions.xml</checkstyle.suppressions.location>
 		<commons-lang3.version>3.14.0</commons-lang3.version>
 		<commons-text.version>1.12.0</commons-text.version>
+		<esapi.version>2.5.4.0</esapi.version>
+		<guava.version>33.2.1-jre</guava.version>
 		<hsqldb.version>1.8.0.10</hsqldb.version>
+		<jackson.version>2.17.1</jackson.version>
 		<jasypt.version>1.9.3</jasypt.version>
 		<!-- Minimized version: ixed because in jspf are not dynamic as in pom -->
 		<js.version>${project.version}</js.version>
@@ -80,9 +83,6 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<quartz.version>2.3.2</quartz.version>
 		<resteasy.version>3.6.2.Final</resteasy.version>
-		<guava.version>33.2.1-jre</guava.version>
-		<jackson.version>2.17.1</jackson.version>
-		<esapi.version>2.5.4.0</esapi.version>
 		<!-- if you want run tests overwrite this property with: mvn test -DskipTests=false -->
 		<skipTests>true</skipTests>
 		<!--
@@ -222,31 +222,31 @@
 				<artifactId>hsqldb</artifactId>
 				<version>${hsqldb.version}</version>
 			</dependency>
-
+			
 			<dependency>
 				<groupId>com.google.guava</groupId>
 				<artifactId>guava</artifactId>
 				<version>${guava.version}</version>
 			</dependency>
-
+			
 			<dependency>
 				<groupId>com.fasterxml.jackson.core</groupId>
 				<artifactId>jackson-core</artifactId>
 				<version>${jackson.version}</version>
 			</dependency>
-
+			
 			<dependency>
 				<groupId>com.fasterxml.jackson.core</groupId>
 				<artifactId>jackson-databind</artifactId>
 				<version>${jackson.version}</version>
 			</dependency>
-
+			
 			<dependency>
 				<groupId>com.fasterxml.jackson.core</groupId>
 				<artifactId>jackson-annotations</artifactId>
 				<version>${jackson.version}</version>
 			</dependency>
-
+			
 			<dependency>
 				<groupId>com.fasterxml.jackson.datatype</groupId>
 				<artifactId>jackson-datatype-jsr310</artifactId>
@@ -258,13 +258,13 @@
 				<artifactId>jackson-jaxrs-json-provider</artifactId>
 				<version>${jackson.version}</version>
 			</dependency>
-
+			
 			<dependency>
 				<groupId>org.owasp.esapi</groupId>
 				<artifactId>esapi</artifactId>
 				<version>${esapi.version}</version>
 			</dependency>
-
+			
 		</dependencies>
 	</dependencyManagement>
 	

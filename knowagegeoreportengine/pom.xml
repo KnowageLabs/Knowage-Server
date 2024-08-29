@@ -26,8 +26,8 @@
 					<groupId>org.cometd.java</groupId>
 				</exclusion>
 				<exclusion>
-					<groupId>xml-apis</groupId>
 					<artifactId>xml-apis</artifactId>
+					<groupId>xml-apis</groupId>
 				</exclusion>
 			</exclusions>
 		</dependency>

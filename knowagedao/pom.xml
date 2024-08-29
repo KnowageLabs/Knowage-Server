@@ -21,8 +21,8 @@
 			<scope>compile</scope>
 			<exclusions>
 				<exclusion>
-					<groupId>xml-apis</groupId>
 					<artifactId>xml-apis</artifactId>
+					<groupId>xml-apis</groupId>
 				</exclusion>
 			</exclusions>
 		</dependency>

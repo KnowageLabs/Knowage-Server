@@ -72,8 +72,8 @@
 					<groupId>de.jflex</groupId>
 				</exclusion>
 				<exclusion>
-					<groupId>xml-apis</groupId>
 					<artifactId>xml-apis</artifactId>
+					<groupId>xml-apis</groupId>
 				</exclusion>
 			</exclusions>
 		</dependency>
@@ -129,8 +129,8 @@
 					<groupId>log4j</groupId>
 				</exclusion>
 				<exclusion>
-					<groupId>xml-apis</groupId>
 					<artifactId>xml-apis</artifactId>
+					<groupId>xml-apis</groupId>
 				</exclusion>
 			</exclusions>
 		</dependency>

@@ -39,8 +39,8 @@
 			<artifactId>esapi</artifactId>
 			<exclusions>
 				<exclusion>
-					<groupId>xml-apis</groupId>
 					<artifactId>xml-apis</artifactId>
+					<groupId>xml-apis</groupId>
 				</exclusion>
 			</exclusions>
 		</dependency>
@@ -113,8 +113,8 @@
 					<groupId>log4j</groupId>
 				</exclusion>
 				<exclusion>
-					<groupId>xml-apis</groupId>
 					<artifactId>xml-apis</artifactId>
+					<groupId>xml-apis</groupId>
 				</exclusion>
 			</exclusions>
 		</dependency>
@@ -133,8 +133,8 @@
 					<groupId>portlet-api</groupId>
 				</exclusion>
 				<exclusion>
-					<groupId>commons-io</groupId>
 					<artifactId>commons-io</artifactId>
+					<groupId>commons-io</groupId>
 				</exclusion>
 			</exclusions>
 		</dependency>
@@ -159,8 +159,8 @@
 					<groupId>log4j</groupId>
 				</exclusion>
 				<exclusion>
-					<groupId>xml-apis</groupId>
 					<artifactId>xml-apis</artifactId>
+					<groupId>xml-apis</groupId>
 				</exclusion>
 			</exclusions>
 		</dependency>
@@ -399,8 +399,8 @@
 			<version>2.12.2</version>
 			<exclusions>
 				<exclusion>
-					<groupId>xml-apis</groupId>
 					<artifactId>xml-apis</artifactId>
+					<groupId>xml-apis</groupId>
 				</exclusion>
 			</exclusions>
 		</dependency>
@@ -417,8 +417,8 @@
 			<scope>test</scope>
 			<exclusions>
 				<exclusion>
-					<groupId>commons-io</groupId>
 					<artifactId>commons-io</artifactId>
+					<groupId>commons-io</groupId>
 				</exclusion>
 			</exclusions>
 		</dependency>
@@ -445,8 +445,8 @@
 			<version>2.81</version>
 			<exclusions>
 				<exclusion>
-					<groupId>com.hazelcast</groupId>
 					<artifactId>hazelcast-all</artifactId>
+					<groupId>com.hazelcast</groupId>
 				</exclusion>
 			</exclusions>
 		</dependency>
@@ -477,8 +477,8 @@
 			<version>5.0.0</version>
 			<exclusions>
 				<exclusion>
-					<groupId>commons-io</groupId>
 					<artifactId>commons-io</artifactId>
+					<groupId>commons-io</groupId>
 				</exclusion>
 			</exclusions>
 		</dependency>
@@ -488,8 +488,8 @@
 			<version>7.4.0</version>
 			<exclusions>
 				<exclusion>
-					<groupId>commons-io</groupId>
 					<artifactId>commons-io</artifactId>
+					<groupId>commons-io</groupId>
 				</exclusion>
 			</exclusions>
 		</dependency>
@@ -530,12 +530,11 @@
 			<artifactId>jasypt</artifactId>
 		</dependency>
 		<dependency>
-		    <groupId>commons-io</groupId>
-		    <artifactId>commons-io</artifactId>
-		    <version>2.16.1</version>
+			<groupId>commons-io</groupId>
+			<artifactId>commons-io</artifactId>
+			<version>2.16.1</version>
 		</dependency>
 	</dependencies>
-
 	
 	<profiles>
 		<profile>

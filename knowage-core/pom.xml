@@ -27,8 +27,8 @@
 			<scope>compile</scope>
 			<exclusions>
 				<exclusion>
-					<groupId>xml-apis</groupId>
 					<artifactId>xml-apis</artifactId>
+					<groupId>xml-apis</groupId>
 				</exclusion>
 			</exclusions>
 		</dependency>
@@ -116,8 +116,8 @@
 			<scope>compile</scope>
 			<exclusions>
 				<exclusion>
-					 <groupId>org.apache.xmlbeans</groupId>
-					 <artifactId>xmlbeans</artifactId>
+					<artifactId>xmlbeans</artifactId>
+					<groupId>org.apache.xmlbeans</groupId>
 				</exclusion>
 			</exclusions>
 		</dependency>
@@ -159,12 +159,12 @@
 					<groupId>org.python</groupId>
 				</exclusion>
 				<exclusion>
-					<groupId>xml-apis</groupId>
 					<artifactId>xml-apis</artifactId>
+					<groupId>xml-apis</groupId>
 				</exclusion>
 				<exclusion>
-					<groupId>org.w3c</groupId>
 					<artifactId>dom</artifactId>
+					<groupId>org.w3c</groupId>
 				</exclusion>
 			</exclusions>
 		</dependency>
@@ -258,7 +258,7 @@
 			<artifactId>knowage-utils-json</artifactId>
 			<version>${project.version}</version>
 		</dependency>
-
+		
 	</dependencies>
 	
 	<build>
