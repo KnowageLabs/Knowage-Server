@@ -155,7 +155,9 @@ public class ExcelExporter extends AbstractFormatExporter {
 
 			// avoid sonar security hotspot issue			
 			String cockpitExportExternalProcessName = SingletonConfig.getInstance()
-					.getConfigValue("KNOWAGE.DASHBOARD.EXPORT.EXCEL.EXTERNAL_PROCESS_NAME");
+					.getConfigValue("KNOWAGE.DASHBOARD.EXTERNAL_PROCESS_NAME");
+			LOGGER.info("CONFIG label=\"KNOWAGE.DASHBOARD.EXTERNAL_PROCESS_NAME\": " + cockpitExportExternalProcessName);
+			
 			ProcessBuilder processBuilder = new ProcessBuilder(cockpitExportExternalProcessName, exportScriptFullPath.toString(), 
 					encodedUserId, outputDir.toString(), url.toString());
 

@@ -241,7 +241,9 @@ public abstract class AbstractNodeJSBasedExporter {
 
 		// avoid sonar security hotspot issue			
 		String cockpitExportExternalProcessName = SingletonConfig.getInstance()
-				.getConfigValue("KNOWAGE.DASHBOARD.ABSTRACT.NODEJS.BASED.EXPORTER.EXTERNAL_PROCESS_NAME");
+				.getConfigValue("KNOWAGE.DASHBOARD.EXTERNAL_PROCESS_NAME");
+		LOGGER.info("CONFIG label=\"KNOWAGE.DASHBOARD.EXTERNAL_PROCESS_NAME\": " + cockpitExportExternalProcessName);
+		
 		ProcessBuilder processBuilder = new ProcessBuilder(cockpitExportExternalProcessName, exportScriptFullPath.toString(), url.toString(),
 				encodedUserId, outputDir.toString(), Integer.toString(sheetCount), Integer.toString(sheetWidth),
 				Integer.toString(sheetHeight), Double.toString(deviceScaleFactor), Boolean.toString(isMultiSheet));

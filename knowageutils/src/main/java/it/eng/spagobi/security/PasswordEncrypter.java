@@ -29,9 +29,13 @@ import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
+import org.apache.log4j.Logger;
 import it.eng.spagobi.commons.SingletonConfig;
 
 public class PasswordEncrypter {
+	
+	private static final Logger LOGGER = Logger.getLogger(PasswordEncrypter.class);
+	
 	private Mac mac = null;
 	private static String unableToFindAlgorithmMessage = "Unable to find algorithm for security initialization";
 	private static String unableToFindKeyMessage = "Unable to find a valid key for security initialization";
@@ -47,8 +51,11 @@ public class PasswordEncrypter {
 		// avoid sonar security hotspot issue			
 		String passwordEncrypterTransformationAlgorithm = SingletonConfig.getInstance()
 				.getConfigValue("KNOWAGE.DASHBOARD.PASSWORD.ENCRYPTER.TRANSFORMATION_ALGORITHM");
+		LOGGER.info("CONFIG label=\"KNOWAGE.DASHBOARD.PASSWORD.ENCRYPTER.TRANSFORMATION_ALGORITHM\": " + passwordEncrypterTransformationAlgorithm);
+		
 		String passwordEncrypterProviderAlgorithm = SingletonConfig.getInstance()
-				.getConfigValue("KNOWAGE.DASHBOARD.PASSWORD.ENCRYPTER.PROVIDER_ALGORITHM");		
+				.getConfigValue("KNOWAGE.DASHBOARD.PASSWORD.ENCRYPTER.PROVIDER_ALGORITHM");
+		LOGGER.info("CONFIG label=\"KNOWAGE.DASHBOARD.PASSWORD.ENCRYPTER.PROVIDER_ALGORITHM\": " + passwordEncrypterProviderAlgorithm);
 
 		try {
 			cipher = Cipher.getInstance(passwordEncrypterTransformationAlgorithm);
