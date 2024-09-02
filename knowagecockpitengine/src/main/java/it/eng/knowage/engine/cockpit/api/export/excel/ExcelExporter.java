@@ -153,11 +153,8 @@ public class ExcelExporter extends AbstractFormatExporter {
 			URI url = UriBuilder.fromUri(requestURL).replaceQueryParam("outputType_description", "HTML")
 					.replaceQueryParam("outputType", "HTML").build();
 
-			// avoid sonar security hotspot issue			
-			String cockpitExportExternalProcessName = SingletonConfig.getInstance()
-					.getConfigValue("KNOWAGE.DASHBOARD.EXPORT.EXCEL.EXTERNAL_PROCESS_NAME");
-			ProcessBuilder processBuilder = new ProcessBuilder(cockpitExportExternalProcessName, exportScriptFullPath.toString(), 
-					encodedUserId, outputDir.toString(), url.toString());
+			ProcessBuilder processBuilder = new ProcessBuilder("node", exportScriptFullPath.toString(), encodedUserId,
+					outputDir.toString(), url.toString());
 
 			setWorkingDirectory(cockpitExportScriptPath, processBuilder);
 

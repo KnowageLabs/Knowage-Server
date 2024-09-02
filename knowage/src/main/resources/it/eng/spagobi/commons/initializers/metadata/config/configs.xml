@@ -584,18 +584,7 @@
 	<CONFIG label="KNOWAGE.DASHBOARD.EXPORT.EXCEL.STREAMING_WINDOW_SIZE" name="Apache POI streaming mode window size"
 		description="The number of Excel rows that are kept in memory before flushing." isActive="true"
 		valueCheck="5000" valueType="NUM" category="GENERIC_CONFIGURATION" />
-	<CONFIG label="KNOWAGE.DASHBOARD.EXPORT.EXCEL.EXTERNAL_PROCESS_NAME" name="KNOWAGE.DASHBOARD.EXPORT.EXCEL.EXTERNAL_PROCESS_NAME"
-		description="Avoid sonar security hotspot issue" isActive="true"
-		valueCheck="node" valueType="STRING" category="GENERIC_CONFIGURATION" />
-	<CONFIG label="KNOWAGE.DASHBOARD.ABSTRACT.NODEJS.BASED.EXPORTER.EXTERNAL_PROCESS_NAME" name="KNOWAGE.DASHBOARD.ABSTRACT.NODEJS.BASED.EXPORTER.EXTERNAL_PROCESS_NAME"
-		description="Avoid sonar security hotspot issue" isActive="true"
-		valueCheck="node" valueType="STRING" category="GENERIC_CONFIGURATION" />	
-	<CONFIG label="KNOWAGE.DASHBOARD.PASSWORD.ENCRYPTER.TRANSFORMATION_ALGORITHM" name="KNOWAGE.DASHBOARD.PASSWORD.ENCRYPTER.TRANSFORMATION_ALGORITHM"
-		description="Avoid sonar security hotspot issue" isActive="true"
-		valueCheck="AES/CTR/NoPadding" valueType="STRING" category="GENERIC_CONFIGURATION" />
-	<CONFIG label="KNOWAGE.DASHBOARD.PASSWORD.ENCRYPTER.PROVIDER_ALGORITHM" name="KNOWAGE.DASHBOARD.PASSWORD.ENCRYPTER.PROVIDER_ALGORITHM"
-		description="Avoid sonar security hotspot issue" isActive="true"
-		valueCheck="HmacSHA1" valueType="STRING" category="GENERIC_CONFIGURATION" />	
+		
 	<CONFIG label="SPAGOBI.DATASET.SOLR.FACET_LIMIT" name="SPAGOBI.DATASET.SOLR.FACET_LIMIT"
 		description="Limit the buckets count when Solr dataset execute facet query (-1 for unlimited)" isActive="true"
 		valueCheck="-1" valueType="NUM" category="SOLR_CONFIGURATION" />
