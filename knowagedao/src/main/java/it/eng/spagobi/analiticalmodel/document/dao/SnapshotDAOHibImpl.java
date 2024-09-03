@@ -18,8 +18,9 @@
 package it.eng.spagobi.analiticalmodel.document.dao;
 
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-import java.time.temporal.TemporalAccessor;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -46,8 +47,8 @@ import it.eng.spagobi.commons.metadata.SbiBinContents;
 
 public class SnapshotDAOHibImpl extends AbstractHibernateDAO implements ISnapshotDAO {
 	@Deprecated
-	public static final SimpleDateFormat DATE_FORMATTER = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");	
-	public static final DateTimeFormatter DATE_FORMATTER_V2 = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"); 
+	public static final SimpleDateFormat DATE_FORMATTER = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+	public static final DateTimeFormatter DATE_FORMATTER_V2 = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
 	/*
 	 * (non-Javadoc)
@@ -213,7 +214,7 @@ public class SnapshotDAOHibImpl extends AbstractHibernateDAO implements ISnapsho
 					}
 					if (snapValues[3] != null) {
 						newSnap.setDateCreation((Date) snapValues[3]);
-						newSnap.setTime(DATE_FORMATTER_V2.format((TemporalAccessor)(Date) snapValues[3]));
+						newSnap.setTime(DATE_FORMATTER_V2.format(LocalDateTime.ofInstant(((Date) snapValues[3]).toInstant(), ZoneId.systemDefault())));
 					}
 					if (snapValues[4] != null) {
 						newSnap.setBiobjId(((SbiObjects) snapValues[4]).getBiobjId());
@@ -292,7 +293,7 @@ public class SnapshotDAOHibImpl extends AbstractHibernateDAO implements ISnapsho
 		snap.setSchedulationStartDate(hibSnap.getSchedulationStartDate());
 		snap.setScheduler(hibSnap.getScheduler());
 		snap.setSchedulationStartDate(hibSnap.getSchedulationStartDate());
-		snap.setTime(DATE_FORMATTER_V2.format((TemporalAccessor) hibSnap.getCreationDate()));
+		snap.setTime(DATE_FORMATTER_V2.format(LocalDateTime.ofInstant(hibSnap.getCreationDate().toInstant(), ZoneId.systemDefault())));
 		return snap;
 	}
 
@@ -450,7 +451,7 @@ public class SnapshotDAOHibImpl extends AbstractHibernateDAO implements ISnapsho
 					}
 					if (snapValues[3] != null) {
 						snap.setDateCreation(((Date) snapValues[3]));
-						snap.setTime(DATE_FORMATTER_V2.format((TemporalAccessor)(Date) snapValues[3]));
+						snap.setTime(DATE_FORMATTER_V2.format(LocalDateTime.ofInstant(((Date) snapValues[3]).toInstant(), ZoneId.systemDefault())));
 					}
 					if (snapValues[4] != null) {
 						snap.setBiobjId(((SbiObjects) snapValues[4]).getBiobjId());

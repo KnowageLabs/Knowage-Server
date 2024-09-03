@@ -358,7 +358,7 @@ public class JSONDataWriter implements IDataWriter {
 					Timestamp valueAsTimestamp = (Timestamp) field.getValue();
 					result = TIMESTAMP_FORMATTER_V2.format(valueAsTimestamp.toInstant().atZone(ZoneId.systemDefault()));
 				} else if (Time.class.isAssignableFrom(fieldMetaData.getType())) {
-					result = CACHE_TIMEONLY_FORMATTER_V2.format((TemporalAccessor) field.getValue());
+					result = CACHE_TIMEONLY_FORMATTER_V2.format(((Time) field.getValue()).toLocalTime());
 				} else if (Date.class.isAssignableFrom(fieldMetaData.getType())) {
 					Date valueAsDate = (Date) field.getValue();
 					result = DATE_FORMATTER_V2.format(valueAsDate.toInstant().atZone(ZoneId.systemDefault()));
@@ -421,7 +421,7 @@ public class JSONDataWriter implements IDataWriter {
 
 			Date cacheDate = dataStore.getCacheDate();
 			if (cacheDate != null) {
-				String date = CACHE_TIMESTAMP_FORMATTER_V2.format((TemporalAccessor) cacheDate);
+				String date = CACHE_TIMESTAMP_FORMATTER_V2.format(LocalDateTime.ofInstant(cacheDate.toInstant(), ZoneId.systemDefault()));
 				metadata.put("cacheDate", date);
 			}
 
@@ -562,8 +562,9 @@ public class JSONDataWriter implements IDataWriter {
 				}
 
 				String fieldHeader = getFieldHeader(fieldMetaData);
-				if ("sbicache_row_id".equalsIgnoreCase(fieldHeader))
+				if ("sbicache_row_id".equalsIgnoreCase(fieldHeader)) {
 					continue;
+				}
 
 				String fieldName = getFieldName(fieldMetaData, j++);
 

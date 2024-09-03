@@ -21,8 +21,9 @@ package it.eng.knowage.engine.cockpit.api.crosstable;
 import java.math.BigInteger;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-import java.time.temporal.TemporalAccessor;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -121,7 +122,7 @@ public class CrossTab {
 	private static final DateTimeFormatter DATE_FORMATTER_V2 = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 	private static final DateTimeFormatter TIMESTAMP_FORMATTER_V2 = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
 
-	
+
 	private static Logger logger = Logger.getLogger(CrossTab.class);
 
 	private Node columnsRoot;
@@ -676,15 +677,17 @@ public class CrossTab {
 					orderedColumnsRoot.addChild(n);
 				}
 			}
-			if (!orderedRowsRoot.getChildren().isEmpty())
+			if (!orderedRowsRoot.getChildren().isEmpty()) {
 				rowsRoot = orderedRowsRoot;
-			else
+			} else {
 				rowsRoot.orderedSubtree(rowsSortKeysMap);
+			}
 
-			if (!orderedColumnsRoot.getChildren().isEmpty())
+			if (!orderedColumnsRoot.getChildren().isEmpty()) {
 				columnsRoot = orderedColumnsRoot;
-			else
+			} else {
 				columnsRoot.orderedSubtree(columnsSortKeysMap);
+			}
 		} else {
 			columnsRoot.orderedSubtree(columnsSortKeysMap);
 			rowsRoot.orderedSubtree(rowsSortKeysMap);
@@ -1151,7 +1154,9 @@ public class CrossTab {
 				String columnName = attributeFieldsName.get(indexFields);
 				String valueColumn = getValueFromOrderingId(orderingList, columnName);
 				if (valueColumn == null || valueColumn.equals(""))
+				 {
 					valueColumn = columnName; // value = description
+				}
 				String valueField = datasetRecords.getString(valueColumn);
 				String descriptionField = datasetRecords.getString(columnName);
 				JSONObject jsonObject = dsColumnName2Metadata.get(valueColumn);
@@ -1312,9 +1317,9 @@ public class CrossTab {
 			clazz = String.class;
 		}
 		if (Timestamp.class.isAssignableFrom(clazz)) {
-			fieldValue = TIMESTAMP_FORMATTER_V2.format((TemporalAccessor) obj);
+			fieldValue = TIMESTAMP_FORMATTER_V2.format(LocalDateTime.ofInstant(((Timestamp) obj).toInstant(), ZoneId.systemDefault()));
 		} else if (Date.class.isAssignableFrom(clazz)) {
-			fieldValue = DATE_FORMATTER_V2.format((TemporalAccessor) obj);
+			fieldValue = DATE_FORMATTER_V2.format(LocalDateTime.ofInstant(((Date) obj).toInstant(), ZoneId.systemDefault()));
 		} else {
 			fieldValue = obj.toString();
 		}
@@ -1947,8 +1952,9 @@ public class CrossTab {
 
 	private double getSum(List<Double> values) {
 		double sum = 0;
-		for (Double value : values)
+		for (Double value : values) {
 			sum += value;
+		}
 		return sum;
 	}
 
@@ -2152,8 +2158,9 @@ public class CrossTab {
 		int toReturn = 0;
 
 		for (int c = 0; c < celltypeOfRows.size(); c++) {
-			if (celltypeOfRows.get(c).getValue().equals("partialsum"))
+			if (celltypeOfRows.get(c).getValue().equals("partialsum")) {
 				toReturn++;
+			}
 		}
 		return toReturn;
 	}
@@ -2276,10 +2283,11 @@ public class CrossTab {
 	 */
 	private Node getHeaderTotalSubTree(boolean withMeasures, int deepth, boolean onRows) {
 		String labelTotal = CrossTab.TOTAL;
-		if (onRows && !this.config.optString("rowtotalLabel").equals(""))
+		if (onRows && !this.config.optString("rowtotalLabel").equals("")) {
 			labelTotal = this.config.optString("rowtotalLabel");
-		else if (!onRows && !this.config.optString("columntotalLabel").equals(""))
+		} else if (!onRows && !this.config.optString("columntotalLabel").equals("")) {
 			labelTotal = this.config.optString("columntotalLabel");
+		}
 
 		Node node = new Node(TOTAL, labelTotal);
 		if (withMeasures && deepth == 2) {
@@ -2526,10 +2534,11 @@ public class CrossTab {
 	public Node buildSubtotalNode(int totalHeadersNumber, boolean withMeasures, boolean horizontal) {
 		String labelSubTotal = CrossTab.SUBTOTAL;
 
-		if (horizontal && !this.config.optString("rowsubtotalLabel").equals(""))
+		if (horizontal && !this.config.optString("rowsubtotalLabel").equals("")) {
 			labelSubTotal = this.config.optString("rowsubtotalLabel");
-		else if (!horizontal && !this.config.optString("columnsubtotalLabel").equals(""))
+		} else if (!horizontal && !this.config.optString("columnsubtotalLabel").equals("")) {
 			labelSubTotal = this.config.optString("columnsubtotalLabel");
+		}
 
 		Node node = new Node(SUBTOTAL, labelSubTotal);
 		Node toReturn;
@@ -2876,18 +2885,20 @@ public class CrossTab {
 
 	public boolean isCellFromSubtotalsColumn(int column) {
 		CellType columnType = celltypeOfColumns.get(column);
-		if (columnType.getValue().equalsIgnoreCase("partialsum"))
+		if (columnType.getValue().equalsIgnoreCase("partialsum")) {
 			return true;
-		else
+		} else {
 			return false;
+		}
 	}
 
 	public boolean isCellFromTotalsColumn(int column) {
 		CellType columnType = celltypeOfColumns.get(column);
-		if (columnType.getValue().equalsIgnoreCase("totals"))
+		if (columnType.getValue().equalsIgnoreCase("totals")) {
 			return true;
-		else
+		} else {
 			return false;
+		}
 	}
 
 	public Node getColumnsRoot() {
@@ -3099,8 +3110,9 @@ public class CrossTab {
 			return measures.size();
 		}
 
-		if (treeLeaves == null)
+		if (treeLeaves == null) {
 			initTreeLeavesList();
+		}
 
 		Node n = treeLeaves.get(colIdx);
 		return n.getFirstAncestor().getLeafsNumber();
@@ -3112,8 +3124,9 @@ public class CrossTab {
 	}
 
 	private void recursiveAddLeaves(Node n) {
-		if (n == null)
+		if (n == null) {
 			return;
+		}
 
 		List<Node> children = n.getChildren();
 

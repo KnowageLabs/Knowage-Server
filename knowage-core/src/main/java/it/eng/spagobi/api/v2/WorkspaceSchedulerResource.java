@@ -18,7 +18,8 @@
 package it.eng.spagobi.api.v2;
 
 import java.io.IOException;
-import java.time.temporal.TemporalAccessor;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -84,7 +85,8 @@ public class WorkspaceSchedulerResource extends AbstractSpagoBIResource {
 				JSONArray ids = new JSONArray();
 				for (int i = 0; i < snapshotList.size(); i++) {
 					// obj.put("time", snapshotList.get(i).getDateCreation());
-					obj.put("time", SnapshotDAOHibImpl.DATE_FORMATTER_V2.format((TemporalAccessor)snapshotList.get(i).getDateCreation()));
+					obj.put("time", SnapshotDAOHibImpl.DATE_FORMATTER_V2
+							.format(LocalDateTime.ofInstant(snapshotList.get(i).getDateCreation().toInstant(), ZoneId.systemDefault())));
 					ids.put(snapshotList.get(i).getId());
 					if (snapshotList.get(i).getContentType() == null || !snapshotList.get(i).getContentType().equalsIgnoreCase("application/pdf")) {
 						isAllPDf = false;

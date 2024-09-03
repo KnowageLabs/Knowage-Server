@@ -29,9 +29,9 @@ import java.sql.Date;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-import java.time.temporal.TemporalAccessor;
 
 import org.apache.avro.Conversions;
 import org.apache.avro.LogicalTypes;
@@ -77,10 +77,10 @@ public class AvroExportJob extends AbstractExportJob {
 	private IDataSet dataSet;
 	private IMetaData dsMeta;
 	@Deprecated
-	private SimpleDateFormat dateFormatter = new SimpleDateFormat(DATE_FORMAT);
-	private DateTimeFormatter dateFormatter_v2 = DateTimeFormatter.ofPattern(DATE_FORMAT);
-	 
-	
+	private final SimpleDateFormat dateFormatter = new SimpleDateFormat(DATE_FORMAT);
+	private final DateTimeFormatter dateFormatter_v2 = DateTimeFormatter.ofPattern(DATE_FORMAT);
+
+
 	private Path avroExportFolder;
 
 	@Override
@@ -135,8 +135,9 @@ public class AvroExportJob extends AbstractExportJob {
 	 */
 	private Object getAvroValue(IRecord dataSetRecord, int i) {
 		Object value = dataSetRecord.getFieldAt(i).getValue();
-		if (value == null)
+		if (value == null) {
 			return value;
+		}
 		// convert Date and Timestamp to String and numbers to Double
 		try {
 			Class<?> type = dsMeta.getFieldType(i);
@@ -160,7 +161,7 @@ public class AvroExportJob extends AbstractExportJob {
 				value = String.valueOf(value);
 			} else {
 				if (value instanceof java.util.Date) {
-					value = dateFormatter_v2.format((TemporalAccessor)value);
+					value = dateFormatter_v2.format(LocalDateTime.ofInstant(((Date) value).toInstant(), ZoneId.systemDefault()));
 				}
 				value = value.toString();
 			}

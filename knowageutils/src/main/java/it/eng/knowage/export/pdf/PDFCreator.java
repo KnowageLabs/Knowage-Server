@@ -31,8 +31,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-import java.time.temporal.TemporalAccessor;
 import java.util.List;
 
 import javax.imageio.ImageIO;
@@ -230,7 +231,7 @@ public abstract class PDFCreator {
 	private static void writeFrontpageDetails(PDDocument doc, PDFont font, float fontSize, FrontpageDetails details) throws IOException {
 		String name = "Name: " + details.getName();
 		String description = "Description: " + details.getDescription();
-		String date = "Date: " + DEFAULT_DATE_FORMATTER_V2.format((TemporalAccessor) details.getDate());
+		String date = "Date: " + DEFAULT_DATE_FORMATTER_V2.format(LocalDateTime.ofInstant(details.getDate().toInstant(), ZoneId.systemDefault()));
 		PDPage page = doc.getPage(0);
 		PDRectangle pageSize = page.getMediaBox();
 		float stringWidth = font.getStringWidth(StringUtilities.findLongest(name, description, date)) * fontSize / 1000f;
@@ -258,8 +259,8 @@ public abstract class PDFCreator {
 		}catch (Exception e) {
 			logger.error("FileInputStream",e);
 		}
-		
-		
+
+
 		return (path == null || path.isEmpty())
 				? Thread.currentThread().getContextClassLoader().getResourceAsStream(PDFCreator.DEFAULT_FRONT_PAGE_RESOURCE_PATH)
 				: fileInputStream;
@@ -273,7 +274,7 @@ public abstract class PDFCreator {
 		}catch (Exception e) {
 			logger.error("FileInputStream",e);
 		}
-		
+
 		return (path == null || path.isEmpty()) ? Thread.currentThread().getContextClassLoader().getResourceAsStream(PDFCreator.DEFAULT_BACK_PAGE_RESOURCE_PATH)
 				: fileInputStream;
 	}
