@@ -43,6 +43,7 @@ public class AntiCsrfFilter implements Filter {
 		if (!("LoginPage".equals(page)
 				|| "LOGIN_ACTION_BY_TOKEN".equals(actionName)
 				|| "LOGIN_ACTION_WEB".equals(actionName)
+				|| "READ_HTML_FILE".equals(actionName)		// when the user see the html page in menu		
 				|| "LOGOUT_ACTION".equals(actionName))) {
 		// @formatter:on
 			String cookieVal = "";
