@@ -553,10 +553,9 @@ public class ObjTemplateDAOHibImpl extends AbstractHibernateDAO implements IObjT
 			}
 
 			if (!templates.isEmpty()) {
-				String hqlUpdate = "update SbiObjTemplates sot set sot.active=true where sot.active=false and sot.creationDate=? and sot.sbiObject.biobjId=?";
+				String hqlUpdate = "update SbiObjTemplates sot set sot.active = true where sot.active = false and sot.objTempId=?";
 				query = aSession.createQuery(hqlUpdate);
-				query.setDate(0, templates.get(0).getCreationDate());
-				query.setInteger(1, biObjId);
+				query.setInteger(0, templates.get(0).getId().intValue());
 				try {
 					logger.debug(
 							"Updates the current template of object " + biObjId + " with active = true.");
