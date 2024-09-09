@@ -100,7 +100,7 @@ import it.eng.spagobi.utilities.sql.SqlUtils;
  */
 public class DataSetFactory {
 
-	public static final String JDBC_DS_TYPE = "Query";
+	public static final String JDBC_DS_TYPE = "SbiQueryDataSet";
 	public static final String FILE_DS_TYPE = "File";
 	public static final String CKAN_DS_TYPE = "Ckan";
 	public static final String SCRIPT_DS_TYPE = "Script";
