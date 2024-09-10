@@ -256,8 +256,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
      }
      }, timeoutInMs);
 
-     regexProcess.send({"inStr" : $scope.calculatedField.formulaEditor,  "dataStruct" : cockpitModule_properties});
-     
+     regexProcess.send({"inStr" : $scope.calculatedField.formulaEditor
+                      , "regx" : "/\$V\{([a-zA-Z0-9\-\_]{1,255})(?:.([a-zA-Z0-9\-\_]{1,255}))?\}/g"
+                      , "cback" : "function(match,p1,p2){return p2 ? cockpitModule_properties.VARIABLES[p1][p2] : cockpitModule_properties.VARIABLES[p1];"});
+
 	$scope.calculatedField.formula = repString;			
 				
 				
