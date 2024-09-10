@@ -140,8 +140,9 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 			Criteria criteria = tmpSession.createCriteria(SbiGeoLayers.class);
 			criteria.add(labelCriterrion);
 			SbiGeoLayers hibLayer = (SbiGeoLayers) criteria.uniqueResult();
-			if (hibLayer == null)
+			if (hibLayer == null) {
 				return null;
+			}
 			biLayer = hibLayer.toGeoLayer();
 
 			String resourcePath = SpagoBIUtilities.getResourcePath();
@@ -215,7 +216,7 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 					aLayer.setPathFile(null);
 
 				}
-				
+
 				saveFileOnServer(aLayer, path, false);
 			}
 			// insert properties in a field of layerDef
@@ -361,7 +362,7 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 				aLayer.setPathFile(null);
 
 			}
-			
+
 			saveFileOnServer(aLayer, SpagoBIUtilities.getResourcePath() + File.separator + LAYER, true);
 
 			layerDef.put(LAYER_ID, aLayer.getLayerIdentify());
@@ -453,16 +454,10 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 				return new ArrayList<>();
 			}
 			// load properties of file
-			if (aLayer.getType().equals("File")) {
+			if (aLayer.getType().equals(SbiLayersEnum.GEOJSON.key)) {
 
-				String resourcePath = SpagoBIUtilities.getResourcePath();
-				if (aLayer.getPathFile().startsWith(resourcePath)) {
-					// biLayer.setPathFile(biLayer.getPathFile());
-				} else {
-					aLayer.setPathFile(resourcePath + File.separator + aLayer.getPathFile());
-				}
-				File doc = new File(aLayer.getPathFile());
-				URL path = doc.toURI().toURL();
+				URL path = this.getURL(aLayer);
+
 				try (InputStream inputstream = path.openStream();
 						InputStreamReader isr = new InputStreamReader(inputstream);
 						BufferedReader br = new BufferedReader(isr)) {
@@ -534,6 +529,42 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 						}
 					}
 				}
+			} else if (aLayer.getType().equals(SbiLayersEnum.TOPOJSON.key)) {
+
+				URL path = this.getURL(aLayer);
+
+				try (InputStream inputstream = path.openStream();
+						InputStreamReader isr = new InputStreamReader(inputstream);
+						BufferedReader br = new BufferedReader(isr)) {
+					String c;
+					JSONArray content = new JSONArray();
+
+					do {
+						c = br.readLine();
+						if (c != null) {
+							JSONObject obj = new JSONObject(c);
+							JSONObject objects = obj.getJSONObject("objects");
+							String[] childObjects = JSONObject.getNames(objects);
+							JSONObject itaAdm1 = objects.getJSONObject(childObjects[0]);
+							content = itaAdm1.getJSONArray("geometries");
+
+							for (int j = 0; j < content.length(); j++) {
+								obj = content.getJSONObject(j).getJSONObject(PROPERTIES);
+								Iterator<String> it = obj.keys();
+								while (it.hasNext()) {
+									String key = it.next();
+									if (!keys.contains(key)) {
+										keys.add(key);
+									}
+								}
+							}
+
+						}
+
+					} while (c != null);
+
+				}
+
 			}
 		} catch (Exception e) {
 			throw new IllegalArgumentException("Error during loading properties : " + e.getLocalizedMessage(), e);
@@ -541,6 +572,19 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 			closeSessionIfOpen(tmpSession);
 		}
 		return keys;
+	}
+
+	private URL getURL(GeoLayer aLayer) throws Exception {
+
+		String resourcePath = SpagoBIUtilities.getResourcePath();
+		if (aLayer.getPathFile().startsWith(resourcePath)) {
+			// biLayer.setPathFile(biLayer.getPathFile());
+		} else {
+			aLayer.setPathFile(resourcePath + File.separator + aLayer.getPathFile());
+		}
+		File doc = new File(aLayer.getPathFile());
+		return doc.toURI().toURL();
+
 	}
 
 	/**
@@ -572,7 +616,7 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 			hibLayer.setBaseLayer(aLayer.isBaseLayer());
 			hibLayer.setCategory_id(aLayer.getCategory_id());
 
-			if (hibLayer.getType().equals("File")) {
+			if (hibLayer.getType().equals(SbiLayersEnum.GEOJSON.key) || hibLayer.getType().equals(SbiLayersEnum.TOPOJSON.key)) {
 				String resourcePath = SpagoBIUtilities.getResourcePath();
 				File doc = new File(resourcePath + File.separator + LAYER + File.separator + aLayer.getLabel());
 				if (doc.exists()) {
@@ -953,10 +997,10 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 		}
 		return retLayers;
 	}
-	
+
 	private void saveFileOnServer(GeoLayer aLayer, String path, Boolean separator) {
 		try {
-			if (aLayer.getPathFile() != null) {			
+			if (aLayer.getPathFile() != null) {
 				new File(path).mkdirs();
 				String name = aLayer.getLabel();
 				try (OutputStreamWriter out = new FileWriter(path + (Boolean.TRUE.equals(separator) ? File.separator : "") + name)) {
