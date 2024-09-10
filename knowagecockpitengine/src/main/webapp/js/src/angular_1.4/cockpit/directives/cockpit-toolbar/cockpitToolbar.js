@@ -408,7 +408,7 @@ function cockpitToolbarControllerFunction($scope,$timeout,$q,$location,windowCom
 			});
 		})
 	}
-    /*
+
 	var replaceStringVariables = function (obj){
 		var objString = angular.copy(obj);
 		objString = JSON.stringify(objString);
@@ -417,38 +417,7 @@ function cockpitToolbarControllerFunction($scope,$timeout,$q,$location,windowCom
 				})
 				
 	return JSON.parse(objString);
-	}   */
-
-	var replaceStringVariables = function (obj){
-	var objString = angular.copy(obj);
-	objString = JSON.stringify(objString);
-  	var repString = null;
-  	const { fork } = require('child_process');
-    const processPath = __dirname + '/forkRegexp.js';
-    const regexProcess = fork(processPath);
-    
-
-    regexProcess.on('message', function(data) {
-     //console.log('received message from child:', data);
-     clearTimeout(timeout);
-     repString = data;
-     regexProcess.kill();  
-     });
-
-     const timeoutInMs = 10000;
-     var timeout = setTimeout(() => {
-     if (!repString) {
-     regexProcess.kill(); // or however you want to shut it down.
-     }
-     }, timeoutInMs);
-
-     regexProcess.send({"inStr" : objString,  "dataStruct" : cockpitModule_properties});
-
-  				
-	return JSON.parse(repString);
 	}
-
-
 	
 	var getSpatialAttributesToFilter = function (layers) {
 		toReturn = {};

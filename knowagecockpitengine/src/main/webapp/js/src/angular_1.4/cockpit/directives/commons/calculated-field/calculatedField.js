@@ -235,32 +235,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 		$scope.validateFormula = function(save) {
 			return $q(function(resolve, reject) {
-				
-				var repString = null;
-  	           const { fork } = require('child_process');
-               const processPath = __dirname + '/forkRegexp.js';
-               const regexProcess = fork(processPath);
-    
-
-    regexProcess.on('message', function(data) {
-     //console.log('received message from child:', data);
-     clearTimeout(timeout);
-     repString = data;
-     regexProcess.kill();  
-     });
-
-     const timeoutInMs = 10000;
-     var timeout = setTimeout(() => {
-     if (!repString) {
-     regexProcess.kill(); // or however you want to shut it down.
-     }
-     }, timeoutInMs);
-
-     regexProcess.send({"inStr" : $scope.calculatedField.formulaEditor,  "dataStruct" : cockpitModule_properties});
-     
-	$scope.calculatedField.formula = repString;			
-				
-				
+				$scope.calculatedField.formula =  $scope.calculatedField.formulaEditor.replace(/\$V\{([a-zA-Z0-9\-\_]{1,255})(?:.([a-zA-Z0-9\-\_]{1,255}))?\}/g,function(match,p1,p2){
+					return p2 ? cockpitModule_properties.VARIABLES[p1][p2] : cockpitModule_properties.VARIABLES[p1];
+				})
 				$scope.calculatedField.formula = $scope.calculatedField.formula.replace(/\n/g,'');
 				if(!$scope.calculatedField.formulaEditor) {
 					if(!save) $scope.toastifyMsg('warning',$scope.translate.load("kn.cockpit.calculatedfield.validation.error.noformula"));
