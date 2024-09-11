@@ -190,8 +190,7 @@ chartExecutionWebServiceManagerFactory.service(	'chartExecutionWebServiceManager
     					else {
     						obj = obj.replace(new RegExp("&#39;",'g'),"\\'");
 //    						console.log(obj);
-                            var evalFunc = Function("return (" + obj + ")" )();
-    						return evalFunc;	
+    						return eval("(" + obj + ")");	
     					}
     					
     				}

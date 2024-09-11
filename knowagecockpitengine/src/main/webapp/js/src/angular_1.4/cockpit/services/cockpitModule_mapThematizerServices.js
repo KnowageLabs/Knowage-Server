@@ -457,41 +457,26 @@
 				var isEqualOp = false;
 	
 				for (c in config){
-					var evalText = 9; // to not make confusion between null and false
+					var evalText = "";
 					var thr = config[c];
 					var idx = 0;
 					value= Number(value); //force conversion to number type
 					for (t in thr){
 						if (!isNaN(value) && typeof(thr['operator'+idx]) != 'undefined' && typeof(thr['val'+idx]) != 'undefined'){
-                         
-                           var appoBool = null;
-						   switch(thr['operator'+idx]){
-						     case '==' : appoBool = (value == thr['val'+idx]); break;
-							 case '>'  : appoBool = (value > thr['val'+idx]); break;
-							 case '<'  : appoBool = (value < thr['val'+idx]); break;
-							 case '>='  : appoBool = (value >= thr['val'+idx]); break;
-							 case '<='  : appoBool = (value <= thr['val'+idx]); break;
-						   }
-						   if(evalText == 9){ // first time, evalText is empty
-						     evalText = appoBool;
-						   } else {
-						     evalText = evalText && appoBool;
-						   }
-						   
-						   if(evalText == true && thr['operator'+idx] == '=='){
+							if (evalText != "") evalText += " && ";
+							evalText += "(" + value + " " + thr['operator'+idx] + " " + thr['val'+idx] + " )";
+							if (thr['operator'+idx] == '==' && eval(evalText)) {
 								toReturn = thr['color'];
 								isEqualOp = true; //the equal operator has the priority
 								if (thr['warning'])
 									 props[mts.getActiveIndicator()]['showWarning'] = true;
 								break;
-						   }
-						   
-                        }else
-					      break;
+							}
+						}else
+							break;
 						idx++;
-                    }
-
-					if (!isEqualOp && evalText == true) { //get the last color definition
+					}
+					if (!isEqualOp && eval(evalText) == true) { //get the last color definition
 						toReturn = thr['color'];
 						if (thr['warning'])
 							 props[mts.getActiveIndicator()]['showWarning'] = true;
