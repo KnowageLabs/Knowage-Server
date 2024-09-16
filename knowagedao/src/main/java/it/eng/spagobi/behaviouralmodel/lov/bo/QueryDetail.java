@@ -204,6 +204,14 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 			String[] invisColArr = invisibleColumns.split(",");
 			invisColNames = Arrays.asList(invisColArr);
 		}
+		// WORKAROUND : INVISIBLE-COLUMNS inside SBI_LOV is always empty
+		if (invisColNames.isEmpty()) {
+			Set<String> allKnownCols = new HashSet<>();
+			allKnownCols.add(descriptionColumnName);
+			allKnownCols.add(valueColumnName);
+			allKnownCols.removeAll(visColNames);
+			invisColNames.addAll(allKnownCols);
+		}
 		setInvisibleColumnNames(invisColNames);
 
 		try {
