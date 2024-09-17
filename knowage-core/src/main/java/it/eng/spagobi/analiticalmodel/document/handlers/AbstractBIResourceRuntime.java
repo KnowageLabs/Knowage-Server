@@ -424,6 +424,13 @@ public abstract class AbstractBIResourceRuntime<T extends AbstractDriver> {
 					Object value = jsonObject.get("value");
 					Object description = jsonObject.get("description");
 
+					if (JSONObject.NULL.equals(value)) {
+						value = null;
+					}
+					if (JSONObject.NULL.equals(description)) {
+						description = null;
+					}
+
 					if (value != null) {
 						if (value instanceof JSONArray) {
 							JSONArray valuesArray = (JSONArray) value;
