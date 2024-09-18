@@ -927,7 +927,7 @@ export default defineComponent({
                     element.name = k
                     element.value = decodeURIComponent(postObject.params[k])
                     element.value = element.value.replace(/\+/g, ' ')
-                    inputElement.value = this.replaceNullForDates(k,inputElement.value)
+                    element.value = this.replaceNullForDates(k,element.value)
 
                     postForm.appendChild(element)
                     this.hiddenFormData.append(k, decodeURIComponent(postObject.params[k]).replace(/\+/g, ' '))
