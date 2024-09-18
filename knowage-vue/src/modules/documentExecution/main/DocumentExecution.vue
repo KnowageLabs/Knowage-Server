@@ -872,6 +872,11 @@ export default defineComponent({
             if (!this.urlData || !this.urlData.engineLabel) return
             await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/exporters/config/${this.urlData.engineLabel}`).then((response: AxiosResponse<any>) => (this.exporters = response.data.exporters))
         },
+        replaceNullForDates(par,value){
+            if(value == 'null' && this.filtersData.filterStatus.find((i)=>i.urlName === par && i.type === 'DATE')){
+                return '' 
+            }else return value
+        },
         async sendForm(documentLabel: string | null = null, crossNavigationPopupMode: boolean = false) {
             let tempIndex = this.breadcrumbs.findIndex((el: any) => el.label === this.document.name) as any
             const documentUrl = this.urlData?.url + '&timereloadurl=' + new Date().getTime()
@@ -912,6 +917,7 @@ export default defineComponent({
                 if (inputElement) {
                     inputElement.value = decodeURIComponent(postObject.params[k])
                     inputElement.value = inputElement.value.replace(/\+/g, ' ')
+                    inputElement.value = replaceNullForDates(k,inputElement.value)
 
                     this.hiddenFormData.set(k, decodeURIComponent(postObject.params[k]).replace(/\+/g, ' '))
                 } else {
@@ -921,6 +927,7 @@ export default defineComponent({
                     element.name = k
                     element.value = decodeURIComponent(postObject.params[k])
                     element.value = element.value.replace(/\+/g, ' ')
+                    inputElement.value = replaceNullForDates(k,inputElement.value)
 
                     postForm.appendChild(element)
                     this.hiddenFormData.append(k, decodeURIComponent(postObject.params[k]).replace(/\+/g, ' '))
