@@ -84,17 +84,15 @@ const router = createRouter({
 
 router.beforeEach((to, from, next) => {
     //if (localStorage.getItem('locale')) loadLanguageAsync(localStorage.getItem('locale')).then(() => next())
-    const checkRequired = !('/' == to.path && '/' == from.path)
+    const checkRequired = !('/' == to.fullPath && '/' == from.fullPath)
     const loggedIn = localStorage.getItem('token')
 
     const validRoutes = ['registry', 'document-composite', 'report', 'office-doc', 'olap', 'map', 'report', '/kpi/', 'dossier', 'etl']
     const invalidRoutes = ['olap-designer']
     if (checkRequired && !loggedIn) {
         authHelper.handleUnauthorized()
-    } else if (validRoutes.some((el) => to.fullPath.includes(el)) && !invalidRoutes.some((el) => to.fullPath.includes(el))) {
-        getCorrectRolesForExecutionForType('DOCUMENT', null, to.params.id).then(() => {
-            next()
-        })
+    }if (checkRequired && !to.meta.public && !loggedIn && !to.query.public) {
+        authHelper.handleUnauthorized()
     } else {
         next()
     }
