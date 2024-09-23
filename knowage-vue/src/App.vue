@@ -43,6 +43,7 @@ export default defineComponent({
   },
 
   async beforeCreate() {
+    debugger;
     await this.$http
       .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + "2.0/currentuser")
       .then(async (response) => {
