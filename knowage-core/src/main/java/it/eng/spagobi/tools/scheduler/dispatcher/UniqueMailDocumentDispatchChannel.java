@@ -17,40 +17,27 @@
  */
 package it.eng.spagobi.tools.scheduler.dispatcher;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
-
-import javax.activation.DataHandler;
-import javax.activation.DataSource;
-import javax.mail.Message;
-import javax.mail.Multipart;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeBodyPart;
-import javax.mail.internet.MimeMultipart;
-import javax.mail.util.ByteArrayDataSource;
 
 import org.apache.commons.validator.GenericValidator;
 import org.apache.log4j.Logger;
 
-import it.eng.knowage.mail.MailSessionBuilder;
-import it.eng.knowage.mail.MailSessionBuilder.SessionFacade;
+import it.eng.knowage.mailsender.IMailSender;
+import it.eng.knowage.mailsender.dto.MessageMailDto;
+import it.eng.knowage.mailsender.dto.ProfileNameMailEnum;
+import it.eng.knowage.mailsender.dto.TypeMailEnum;
+import it.eng.knowage.mailsender.factory.FactoryMailSender;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
+import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
@@ -201,7 +188,10 @@ public class UniqueMailDocumentDispatchChannel implements IDocumentDispatchChann
 				return false;
 			}
 
-			SessionFacade facade = MailSessionBuilder.newInstance().usingSchedulerProfile().build();
+			MessageMailDto messageMailDto = new MessageMailDto();
+			messageMailDto.setProfileName((ProfileNameMailEnum.SCHEDULER));
+			messageMailDto.setTypeMailEnum(TypeMailEnum.FOLDER);
+			messageMailDto.setMailOptionFolder(mailOptions);
 
 			String mailSubj = mailOptions.get(MAIL_SUBJECT) != null ? (String) mailOptions.get(MAIL_SUBJECT) : null;
 			Map parametersMap = mailOptions.get(PARAMETERS_MAP) != null ? (Map) mailOptions.get(PARAMETERS_MAP) : null;
@@ -210,14 +200,8 @@ public class UniqueMailDocumentDispatchChannel implements IDocumentDispatchChann
 			String mailTxt = mailOptions.get(MAIL_TXT) != null ? (String) mailOptions.get(MAIL_TXT) : null;
 			String[] recipients = mailOptions.get(RECIPIENTS) != null ? (String[]) mailOptions.get(RECIPIENTS) : null;
 
-			// create a message
-			Message msg = facade.createNewMimeMessage();
 
-			InternetAddress[] addressTo = new InternetAddress[recipients.length];
-			for (int i = 0; i < recipients.length; i++) {
-				addressTo[i] = new InternetAddress(recipients[i]);
-			}
-			msg.setRecipients(Message.RecipientType.TO, addressTo);
+			messageMailDto.setRecipients(recipients);
 			// Setting the Subject and Content Type
 
 			String subject = mailSubj;
@@ -238,12 +222,8 @@ public class UniqueMailDocumentDispatchChannel implements IDocumentDispatchChann
 			if (reportNameInSubject) {
 				subject += " " + nameSuffix;
 			}
-
-			msg.setSubject(subject);
-			// create and fill the first message part
-			MimeBodyPart mbp1 = new MimeBodyPart();
-			mbp1.setText(mailTxt);
-
+			messageMailDto.setSubject(subject);
+			messageMailDto.setText(mailTxt);
 			// attach the file to the message
 
 			boolean isZipDocument = mailOptions.get(IS_ZIP_DOCUMENT) != null
@@ -252,53 +232,13 @@ public class UniqueMailDocumentDispatchChannel implements IDocumentDispatchChann
 			zipFileName = mailOptions.get(ZIP_FILE_NAME) != null ? (String) mailOptions.get(ZIP_FILE_NAME)
 					: "Zipped Documents";
 
-			// create the Multipart and add its parts to it
-			Multipart mp = new MimeMultipart();
-
-			mp.addBodyPart(mbp1);
-
-			if (isZipDocument) {
-				logger.debug("Make zip");
-				// create the second message part
-				MimeBodyPart mbp2 = new MimeBodyPart();
-				mbp2 = zipAttachment(zipFileName, mailOptions, tempFolder);
-				mp.addBodyPart(mbp2);
-			} else {
-				logger.debug("Attach single files");
-				SchedulerDataSource sds = null;
-				MimeBodyPart bodyPart = null;
-				try {
-					String[] entries = tempFolder.list();
-
-					for (int i = 0; i < entries.length; i++) {
-						logger.debug("Attach file " + entries[i]);
-						File f = new File(tempFolder + File.separator + entries[i]);
-
-						byte[] content = getBytesFromFile(f);
-
-						bodyPart = new MimeBodyPart();
-
-						sds = new SchedulerDataSource(content, contentType, entries[i]);
-						// sds = new SchedulerDataSource(content, contentType, entries[i] + fileExtension);
-
-						bodyPart.setDataHandler(new DataHandler(sds));
-						bodyPart.setFileName(sds.getName());
-
-						mp.addBodyPart(bodyPart);
-					}
-
-				} catch (Exception e) {
-					logger.error("Error while attaching files", e);
-				}
-
-			}
-
-			// add the Multipart to the message
-			msg.setContent(mp);
-			logger.debug("Preparing to send mail");
+			messageMailDto.setZipMailDocument(isZipDocument);
+			messageMailDto.setZipFileName(zipFileName);
+			messageMailDto.setTempFolder(tempFolder);
+			messageMailDto.setContentType(contentType);
 
 			// send message
-			facade.sendMessage(msg);
+			FactoryMailSender.getMailSender(SingletonConfig.getInstance().getConfigValue(IMailSender.MAIL_SENDER)).sendMail(messageMailDto);
 
 			logger.info("Mail sent for documents with labels [" + allDocumentLabels + "]");
 
@@ -315,106 +255,6 @@ public class UniqueMailDocumentDispatchChannel implements IDocumentDispatchChann
 		return true;
 	}
 
-	public static MimeBodyPart zipAttachment(String zipFileName, Map mailOptions, File tempFolder) {
-		logger.debug("IN");
-		MimeBodyPart messageBodyPart = null;
-		try {
-
-			String nameSuffix = mailOptions.get(NAME_SUFFIX) != null ? (String) mailOptions.get(NAME_SUFFIX) : "";
-
-			byte[] buffer = new byte[4096]; // Create a buffer for copying
-			int bytesRead;
-
-			// the zip
-			String tempFolderPath = (String) mailOptions.get(TEMP_FOLDER_PATH);
-
-			ByteArrayOutputStream bout = new ByteArrayOutputStream();
-			ZipOutputStream out = new ZipOutputStream(bout);
-
-			logger.debug("File zip to write: " + tempFolderPath + File.separator + "zippedFile.zip");
-
-			// files to zip
-			String[] entries = tempFolder.list();
-
-			for (int i = 0; i < entries.length; i++) {
-				// File f = new File(tempFolder, entries[i]);
-				File f = new File(tempFolder + File.separator + entries[i]);
-				if (f.isDirectory())
-					continue;// Ignore directory
-				logger.debug("insert file: " + f.getName());
-				FileInputStream in = new FileInputStream(f); // Stream to read file
-				ZipEntry entry = new ZipEntry(f.getName()); // Make a ZipEntry
-				out.putNextEntry(entry); // Store entry
-				while ((bytesRead = in.read(buffer)) != -1)
-					out.write(buffer, 0, bytesRead);
-				in.close();
-			}
-			out.close();
-
-			messageBodyPart = new MimeBodyPart();
-			DataSource source = new ByteArrayDataSource(bout.toByteArray(), "application/zip");
-			messageBodyPart.setDataHandler(new DataHandler(source));
-
-			messageBodyPart.setFileName(zipFileName + nameSuffix + ".zip");
-
-		} catch (Exception e) {
-			logger.error("Error while creating the zip", e);
-			return null;
-		}
-
-		logger.debug("OUT");
-
-		return messageBodyPart;
-	}
-
-	private byte[] zipDocument(String fileZipName, byte[] content) {
-		logger.debug("IN");
-
-		ByteArrayOutputStream bos = null;
-		ZipOutputStream zos = null;
-		ByteArrayInputStream in = null;
-		try {
-
-			bos = new ByteArrayOutputStream();
-			zos = new ZipOutputStream(bos);
-			ZipEntry ze = new ZipEntry(fileZipName);
-			zos.putNextEntry(ze);
-			in = new ByteArrayInputStream(content);
-
-			for (int c = in.read(); c != -1; c = in.read()) {
-				zos.write(c);
-			}
-
-			return bos.toByteArray();
-
-		} catch (IOException ex) {
-			logger.error("Error zipping the document", ex);
-			return null;
-		} finally {
-			if (bos != null) {
-				try {
-					bos.close();
-				} catch (IOException e) {
-					logger.error("Error closing output stream", e);
-				}
-			}
-			if (zos != null) {
-				try {
-					zos.close();
-				} catch (IOException e) {
-					logger.error("Error closing output stream", e);
-				}
-			}
-			if (in != null) {
-				try {
-					in.close();
-				} catch (IOException e) {
-					logger.error("Error closing output stream", e);
-				}
-			}
-		}
-
-	}
 
 	public static boolean canDispatch(DispatchContext dispatchContext, BIObject document,
 			IDataStore emailDispatchDataStore) {
@@ -450,8 +290,9 @@ public class UniqueMailDocumentDispatchChannel implements IDocumentDispatchChann
 				logger.error("[" + recipient + "] is not a valid email address.");
 				continue;
 			}
-			if (validRecipients.contains(recipient))
+			if (validRecipients.contains(recipient)) {
 				continue;
+			}
 			validRecipients.add(recipient);
 		}
 		toReturn = validRecipients.toArray(new String[0]);
@@ -557,8 +398,9 @@ public class UniqueMailDocumentDispatchChannel implements IDocumentDispatchChann
 				IField valueField = currRecord.getFieldAt(0);
 				Object valueObj = valueField.getValue();
 				String value = null;
-				if (valueObj != null)
+				if (valueObj != null) {
 					value = valueObj.toString();
+				}
 				if (codeValue.equals(value)) {
 					logger.debug("Found value [" + codeValue + "] on the first field of a record of the dataset.");
 					// recipient address is on the second dataset field
@@ -586,67 +428,4 @@ public class UniqueMailDocumentDispatchChannel implements IDocumentDispatchChann
 		return recipients;
 	}
 
-	private class SchedulerDataSource implements DataSource {
-
-		byte[] content = null;
-		String name = null;
-		String contentType = null;
-
-		@Override
-		public String getContentType() {
-			return contentType;
-		}
-
-		@Override
-		public InputStream getInputStream() throws IOException {
-			ByteArrayInputStream bais = new ByteArrayInputStream(content);
-			return bais;
-		}
-
-		@Override
-		public String getName() {
-			return name;
-		}
-
-		@Override
-		public OutputStream getOutputStream() throws IOException {
-			return null;
-		}
-
-		public SchedulerDataSource(byte[] content, String contentType, String name) {
-			this.content = content;
-			this.contentType = contentType;
-			this.name = name;
-		}
-	}
-
-	// Returns the contents of the file in a byte array.
-	public static byte[] getBytesFromFile(File file) throws IOException {
-		// Get the size of the file
-		long length = file.length();
-
-		// You cannot create an array using a long type.
-		// It needs to be an int type.
-		// Before converting to an int type, check
-		// to ensure that file is not larger than Integer.MAX_VALUE.
-		if (length > Integer.MAX_VALUE) {
-			// File is too large
-			throw new IOException("File is too large!");
-		}
-
-		// Create the byte array to hold the data
-		byte[] bytes = new byte[(int) length];
-
-		// Read in the bytes
-		int offset = 0;
-		int numRead = 0;
-
-		try (InputStream is = new FileInputStream(file)) {
-			while (offset < bytes.length && (numRead = is.read(bytes, offset, bytes.length - offset)) >= 0) {
-				offset += numRead;
-			}
-		}
-
-		return bytes;
-	}
 }
