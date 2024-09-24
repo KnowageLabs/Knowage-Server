@@ -19,8 +19,7 @@ public class SbiMetaBcAttribute extends SbiHibernateModel {
 	public SbiMetaBcAttribute() {
 	}
 
-	public SbiMetaBcAttribute(SbiMetaTableColumn sbiMetaTableColumn, SbiMetaBc sbiMetaBc, String name, String type,
-			boolean deleted) {
+	public SbiMetaBcAttribute(SbiMetaTableColumn sbiMetaTableColumn, SbiMetaBc sbiMetaBc, String name, String type, boolean deleted) {
 		this.sbiMetaTableColumn = sbiMetaTableColumn;
 		this.sbiMetaBc = sbiMetaBc;
 		this.name = name;
@@ -32,7 +31,7 @@ public class SbiMetaBcAttribute extends SbiHibernateModel {
 		return this.attributeId;
 	}
 
-	public void setAttributeId(Integer attributeId) {
+	private void setAttributeId(Integer attributeId) {
 		this.attributeId = attributeId;
 	}
 
@@ -78,7 +77,7 @@ public class SbiMetaBcAttribute extends SbiHibernateModel {
 
 	public void changeAttributeId(Integer bcAttrId) {
 		this.setAttributeId(bcAttrId);
-
+		
 	}
 
 }

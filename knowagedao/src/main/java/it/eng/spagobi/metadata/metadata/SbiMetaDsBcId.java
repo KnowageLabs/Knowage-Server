@@ -28,7 +28,7 @@ public class SbiMetaDsBcId extends SbiHibernateModel {
 		return this.dsId;
 	}
 
-	public void setDsId(int dsId) {
+	private void setDsId(int dsId) {
 		this.dsId = dsId;
 	}
 
@@ -36,7 +36,7 @@ public class SbiMetaDsBcId extends SbiHibernateModel {
 		return this.versionNum;
 	}
 
-	public void setVersionNum(int versionNum) {
+	private void setVersionNum(int versionNum) {
 		this.versionNum = versionNum;
 	}
 
@@ -44,7 +44,7 @@ public class SbiMetaDsBcId extends SbiHibernateModel {
 		return this.organization;
 	}
 
-	public void setOrganization(String organization) {
+	private void setOrganization(String organization) {
 		this.organization = organization;
 	}
 
@@ -52,7 +52,7 @@ public class SbiMetaDsBcId extends SbiHibernateModel {
 		return this.bcId;
 	}
 
-	public void setBcId(int bcId) {
+	private void setBcId(int bcId) {
 		this.bcId = bcId;
 	}
 
@@ -66,11 +66,10 @@ public class SbiMetaDsBcId extends SbiHibernateModel {
 			return false;
 		SbiMetaDsBcId castOther = (SbiMetaDsBcId) other;
 
-		return (this.getDsId() == castOther.getDsId()) && (this.getVersionNum() == castOther.getVersionNum())
-				&& ((this.getOrganization() == castOther.getOrganization())
-						|| (this.getOrganization() != null && castOther.getOrganization() != null
-								&& this.getOrganization().equals(castOther.getOrganization())))
-				&& (this.getBcId() == castOther.getBcId());
+		return (this.getDsId() == castOther.getDsId())
+				&& (this.getVersionNum() == castOther.getVersionNum())
+				&& ((this.getOrganization() == castOther.getOrganization()) || (this.getOrganization() != null && castOther.getOrganization() != null && this
+						.getOrganization().equals(castOther.getOrganization()))) && (this.getBcId() == castOther.getBcId());
 	}
 
 	@Override

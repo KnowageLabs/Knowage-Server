@@ -35,6 +35,7 @@ public class SbiGlTableWlistId implements Serializable {
 	 * @param documentId
 	 */
 	public SbiGlTableWlistId(int wordId, int tableId) {
+		super();
 		this.wordId = wordId;
 		this.tableId = tableId;
 	}
@@ -45,6 +46,7 @@ public class SbiGlTableWlistId implements Serializable {
 	 * @param column_name
 	 */
 	public SbiGlTableWlistId(int wordId, int tableId, String column_name) {
+		super();
 		this.wordId = wordId;
 		this.tableId = tableId;
 		this.column_name = column_name;
@@ -58,9 +60,10 @@ public class SbiGlTableWlistId implements Serializable {
 	}
 
 	/**
-	 * @param wordId the wordId to set
+	 * @param wordId
+	 *            the wordId to set
 	 */
-	public void setWordId(int wordId) {
+	private void setWordId(int wordId) {
 		this.wordId = wordId;
 	}
 
@@ -72,9 +75,10 @@ public class SbiGlTableWlistId implements Serializable {
 	}
 
 	/**
-	 * @param tableId the tableId to set
+	 * @param tableId
+	 *            the tableId to set
 	 */
-	public void setTableId(int tableId) {
+	private void setTableId(int tableId) {
 		this.tableId = tableId;
 	}
 
@@ -86,9 +90,10 @@ public class SbiGlTableWlistId implements Serializable {
 	}
 
 	/**
-	 * @param column_name the column_name to set
+	 * @param column_name
+	 *            the column_name to set
 	 */
-	public void setColumn_name(String column_name) {
+	private void setColumn_name(String column_name) {
 		this.column_name = column_name;
 	}
 

@@ -61,7 +61,7 @@ public class SbiDossierActivity extends SbiHibernateModel {
 		return id;
 	}
 
-	public void setId(Integer id) {
+	private void setId(Integer id) {
 		this.id = id;
 	}
 

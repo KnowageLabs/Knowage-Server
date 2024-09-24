@@ -46,7 +46,7 @@ public class SbiTag extends SbiHibernateModel implements Serializable {
 		return tagId;
 	}
 
-	public void setTagId(Integer tagId) {
+	private void setTagId(Integer tagId) {
 		this.tagId = tagId;
 	}
 

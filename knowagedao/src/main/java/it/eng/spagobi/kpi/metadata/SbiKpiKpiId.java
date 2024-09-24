@@ -23,12 +23,13 @@ public class SbiKpiKpiId implements Serializable {
 	}
 
 	/**
-	 * @param id the id to set
+	 * @param id
+	 *            the id to set
 	 */
-	public void setId(Integer id) {
+	private void setId(Integer id) {
 		this.id = id;
 	}
-
+	
 	public void changeKpiId(Integer id) {
 		this.setId(id);
 	}
@@ -41,15 +42,16 @@ public class SbiKpiKpiId implements Serializable {
 	}
 
 	/**
-	 * @param version the version to set
+	 * @param version
+	 *            the version to set
 	 */
-	public void setVersion(Integer version) {
+	private void setVersion(Integer version) {
 		this.version = version;
 	}
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see java.lang.Object#hashCode()
 	 */
 	@Override
@@ -63,7 +65,7 @@ public class SbiKpiKpiId implements Serializable {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	@Override

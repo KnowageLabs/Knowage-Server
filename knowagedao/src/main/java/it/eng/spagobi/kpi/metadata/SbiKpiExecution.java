@@ -1,10 +1,10 @@
 package it.eng.spagobi.kpi.metadata;
 
+import it.eng.spagobi.commons.metadata.SbiHibernateModel;
+
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
-
-import it.eng.spagobi.commons.metadata.SbiHibernateModel;
 
 public class SbiKpiExecution extends SbiHibernateModel {
 
@@ -17,13 +17,16 @@ public class SbiKpiExecution extends SbiHibernateModel {
 	private Set<SbiKpiKpi> sbiKpiKpis = new HashSet<>();
 	private Set<SbiKpiExecutionFilter> sbiKpiExecutionFilters = new HashSet<>();
 
+	
 	public SbiKpiExecution() {
+		super();
 	}
-
+	
 	public SbiKpiExecution(Integer id) {
+		super();
 		this.setId(id);
 	}
-
+	
 	/**
 	 * @return the id
 	 */
@@ -32,12 +35,13 @@ public class SbiKpiExecution extends SbiHibernateModel {
 	}
 
 	/**
-	 * @param id the id to set
+	 * @param id
+	 *            the id to set
 	 */
-	public void setId(Integer id) {
+	private void setId(Integer id) {
 		this.id = id;
 	}
-
+	
 	public void changeId(Integer id) {
 		this.id = id;
 	}
@@ -50,7 +54,8 @@ public class SbiKpiExecution extends SbiHibernateModel {
 	}
 
 	/**
-	 * @param name the name to set
+	 * @param name
+	 *            the name to set
 	 */
 	public void setName(String name) {
 		this.name = name;
@@ -64,7 +69,8 @@ public class SbiKpiExecution extends SbiHibernateModel {
 	}
 
 	/**
-	 * @param startDate the startDate to set
+	 * @param startDate
+	 *            the startDate to set
 	 */
 	public void setStartDate(Date startDate) {
 		this.startDate = startDate;
@@ -78,7 +84,8 @@ public class SbiKpiExecution extends SbiHibernateModel {
 	}
 
 	/**
-	 * @param endDate the endDate to set
+	 * @param endDate
+	 *            the endDate to set
 	 */
 	public void setEndDate(Date endDate) {
 		this.endDate = endDate;
@@ -99,14 +106,16 @@ public class SbiKpiExecution extends SbiHibernateModel {
 	}
 
 	/**
-	 * @param sbiKpiKpis the sbiKpiKpis to set
+	 * @param sbiKpiKpis
+	 *            the sbiKpiKpis to set
 	 */
 	public void setSbiKpiKpis(Set<SbiKpiKpi> sbiKpiKpis) {
 		this.sbiKpiKpis = sbiKpiKpis;
 	}
 
 	/**
-	 * @param sbiKpiExecutionFilters the sbiKpiExecutionFilters to set
+	 * @param sbiKpiExecutionFilters
+	 *            the sbiKpiExecutionFilters to set
 	 */
 	public void setSbiKpiExecutionFilters(Set<SbiKpiExecutionFilter> sbiKpiExecutionFilters) {
 		this.sbiKpiExecutionFilters = sbiKpiExecutionFilters;
@@ -120,7 +129,8 @@ public class SbiKpiExecution extends SbiHibernateModel {
 	}
 
 	/**
-	 * @param delta the delta to set
+	 * @param delta
+	 *            the delta to set
 	 */
 	public void setDelta(Character delta) {
 		this.delta = delta;

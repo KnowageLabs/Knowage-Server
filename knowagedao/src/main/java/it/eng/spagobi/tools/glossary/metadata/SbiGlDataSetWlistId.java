@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- *
+ * 
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,7 +11,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- *
+ * 
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -27,30 +27,42 @@ public class SbiGlDataSetWlistId implements Serializable {
 	private int datasetId;
 	private String organization;
 	private String column_name;
+	
 
 	public SbiGlDataSetWlistId() {
 	}
+
+
 
 	/**
 	 * @param wordId
 	 * @param datasetId
 	 */
 	public SbiGlDataSetWlistId(int wordId, int datasetId) {
+		super();
 		this.wordId = wordId;
 		this.datasetId = datasetId;
 	}
+
+
 
 	/**
 	 * @param wordId
 	 * @param datasetId
 	 * @param organization
 	 */
-	public SbiGlDataSetWlistId(int wordId, int datasetId, String organization, String column_name) {
+	public SbiGlDataSetWlistId(int wordId, int datasetId, String organization,String column_name) {
+		super();
 		this.wordId = wordId;
 		this.datasetId = datasetId;
 		this.organization = organization;
 		this.column_name = column_name;
 	}
+
+
+
+
+
 
 	/**
 	 * @return the wordId
@@ -59,13 +71,16 @@ public class SbiGlDataSetWlistId implements Serializable {
 		return wordId;
 	}
 
+
+
 	/**
 	 * @param wordId the wordId to set
 	 */
-	public void setWordId(int wordId) {
+	private void setWordId(int wordId) {
 		this.wordId = wordId;
 	}
 
+	
 	/**
 	 * @return the datasetId
 	 */
@@ -73,12 +88,16 @@ public class SbiGlDataSetWlistId implements Serializable {
 		return datasetId;
 	}
 
+
+
 	/**
 	 * @param datasetId the datasetId to set
 	 */
-	public void setDatasetId(int datasetId) {
+	private void setDatasetId(int datasetId) {
 		this.datasetId = datasetId;
 	}
+
+
 
 	/**
 	 * @return the organization
@@ -87,12 +106,16 @@ public class SbiGlDataSetWlistId implements Serializable {
 		return organization;
 	}
 
+
+
 	/**
 	 * @param organization the organization to set
 	 */
-	public void setOrganization(String organization) {
+	private void setOrganization(String organization) {
 		this.organization = organization;
 	}
+
+
 
 	/**
 	 * @return the column_name
@@ -101,32 +124,36 @@ public class SbiGlDataSetWlistId implements Serializable {
 		return column_name;
 	}
 
+
+
 	/**
 	 * @param column_name the column_name to set
 	 */
-	public void setColumn_name(String column_name) {
+	private void setColumn_name(String column_name) {
 		this.column_name = column_name;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
+
+
+	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
 	 */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((column_name == null) ? 0 : column_name.hashCode());
+		result = prime * result
+				+ ((column_name == null) ? 0 : column_name.hashCode());
 		result = prime * result + datasetId;
-		result = prime * result + ((organization == null) ? 0 : organization.hashCode());
+		result = prime * result
+				+ ((organization == null) ? 0 : organization.hashCode());
 		result = prime * result + wordId;
 		return result;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
+
+
+	/* (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	@Override
@@ -155,4 +182,9 @@ public class SbiGlDataSetWlistId implements Serializable {
 		return true;
 	}
 
+
+
+	
+	
 }
+

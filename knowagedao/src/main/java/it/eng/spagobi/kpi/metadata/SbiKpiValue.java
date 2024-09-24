@@ -46,7 +46,7 @@ public class SbiKpiValue extends SbiHibernateModel implements java.io.Serializab
 		return id;
 	}
 
-	public void setId(int id) {
+	private void setId(int id) {
 		this.id = id;
 	}
 
@@ -155,7 +155,7 @@ public class SbiKpiValue extends SbiHibernateModel implements java.io.Serializab
 	}
 
 	private final void writeObject(ObjectOutputStream aOutputStream) {
-		throw new UnsupportedOperationException("Security violation : cannot serialize object to a stream");
+		  throw new UnsupportedOperationException("Security violation : cannot serialize object to a stream");
 	}
 
 }

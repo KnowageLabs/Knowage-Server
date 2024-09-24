@@ -35,12 +35,13 @@ public class SbiObjTemplates extends SbiHibernateModel {
 	private String creationUser = null;
 
 	public SbiObjTemplates() {
+		super();
 	}
-
+	
 	public SbiObjTemplates(Integer objTempId) {
+		super();
 		this.objTempId = objTempId;
 	}
-
 	/**
 	 * Gets the dimension.
 	 *
@@ -53,7 +54,8 @@ public class SbiObjTemplates extends SbiHibernateModel {
 	/**
 	 * Sets the dimension.
 	 *
-	 * @param dimension the new dimension
+	 * @param dimension
+	 *            the new dimension
 	 */
 	public void setDimension(String dimension) {
 		this.dimension = dimension;
@@ -71,7 +73,8 @@ public class SbiObjTemplates extends SbiHibernateModel {
 	/**
 	 * Sets the creation user.
 	 *
-	 * @param creationUser the new creation user
+	 * @param creationUser
+	 *            the new creation user
 	 */
 	public void setCreationUser(String creationUser) {
 		this.creationUser = creationUser;
@@ -89,9 +92,10 @@ public class SbiObjTemplates extends SbiHibernateModel {
 	/**
 	 * Sets the obj temp id.
 	 *
-	 * @param objTempId the new obj temp id
+	 * @param objTempId
+	 *            the new obj temp id
 	 */
-	public void setObjTempId(Integer objTempId) {
+	private void setObjTempId(Integer objTempId) {
 		this.objTempId = objTempId;
 	}
 
@@ -107,7 +111,8 @@ public class SbiObjTemplates extends SbiHibernateModel {
 	/**
 	 * Sets the sbi object.
 	 *
-	 * @param sbiObject the new sbi object
+	 * @param sbiObject
+	 *            the new sbi object
 	 */
 	public void setSbiObject(SbiObjects sbiObject) {
 		this.sbiObject = sbiObject;
@@ -125,7 +130,8 @@ public class SbiObjTemplates extends SbiHibernateModel {
 	/**
 	 * Sets the sbi bin contents.
 	 *
-	 * @param sbiBinContents the new sbi bin contents
+	 * @param sbiBinContents
+	 *            the new sbi bin contents
 	 */
 	public void setSbiBinContents(SbiBinContents sbiBinContents) {
 		this.sbiBinContents = sbiBinContents;
@@ -143,7 +149,8 @@ public class SbiObjTemplates extends SbiHibernateModel {
 	/**
 	 * Sets the prog.
 	 *
-	 * @param prog the new prog
+	 * @param prog
+	 *            the new prog
 	 */
 	public void setProg(Integer prog) {
 		this.prog = prog;
@@ -161,7 +168,8 @@ public class SbiObjTemplates extends SbiHibernateModel {
 	/**
 	 * Sets the creation date.
 	 *
-	 * @param creationDate the new creation date
+	 * @param creationDate
+	 *            the new creation date
 	 */
 	public void setCreationDate(Date creationDate) {
 		this.creationDate = creationDate;
@@ -179,7 +187,8 @@ public class SbiObjTemplates extends SbiHibernateModel {
 	/**
 	 * Sets the active.
 	 *
-	 * @param active the new active
+	 * @param active
+	 *            the new active
 	 */
 	public void setActive(Boolean active) {
 		this.active = active;
@@ -197,7 +206,8 @@ public class SbiObjTemplates extends SbiHibernateModel {
 	/**
 	 * Sets the name.
 	 *
-	 * @param name the new name
+	 * @param name
+	 *            the new name
 	 */
 	public void setName(String name) {
 		this.name = name;

@@ -21,7 +21,7 @@ public class SbiFunctionOutputColumnId implements java.io.Serializable {
 		return this.functionUuid;
 	}
 
-	public void setFunctionUuid(String functionUuid) {
+	private void setFunctionUuid(String functionUuid) {
 		this.functionUuid = functionUuid;
 	}
 
@@ -29,7 +29,7 @@ public class SbiFunctionOutputColumnId implements java.io.Serializable {
 		return this.colName;
 	}
 
-	public void setColName(String colName) {
+	private void setColName(String colName) {
 		this.colName = colName;
 	}
 

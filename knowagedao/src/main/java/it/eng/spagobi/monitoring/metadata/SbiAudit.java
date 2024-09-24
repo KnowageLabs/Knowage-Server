@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- *
+ * 
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,22 +11,22 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- *
+ * 
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package it.eng.spagobi.monitoring.metadata;
-
-import java.util.Date;
 
 import it.eng.spagobi.analiticalmodel.document.metadata.SbiObjects;
 import it.eng.spagobi.analiticalmodel.document.metadata.SbiSubObjects;
 import it.eng.spagobi.commons.metadata.SbiHibernateModel;
 import it.eng.spagobi.engines.config.metadata.SbiEngines;
 
-public class SbiAudit extends SbiHibernateModel {
+import java.util.Date;
 
-	// Fields
+public class SbiAudit extends SbiHibernateModel  {
+
+	//	Fields
 	private Integer id;
 	private String userName;
 	private String userGroup;
@@ -59,27 +59,27 @@ public class SbiAudit extends SbiHibernateModel {
 	private String errorMessage;
 	private String errorCode;
 	private String executionModality;
-
-	// Constructors
-
-	/**
-	 * default constructor.
-	 */
-	public SbiAudit() {
-	}
+	
+    // Constructors
 
 	/**
-	 * constructor with id.
-	 * 
-	 * @param id the id
-	 */
-	public SbiAudit(Integer id) {
-		this.id = id;
-	}
-
+     * default constructor.
+     */
+    public SbiAudit() {
+    }
+    
+    /**
+     * constructor with id.
+     * 
+     * @param id the id
+     */
+    public SbiAudit(Integer id) {
+        this.id = id;
+    }
+    
 	/**
 	 * Gets the document id.
-	 *
+	 * 
 	 * @return the document id
 	 */
 	public Integer getDocumentId() {
@@ -88,16 +88,16 @@ public class SbiAudit extends SbiHibernateModel {
 
 	/**
 	 * Sets the document id.
-	 *
+	 * 
 	 * @param documentId the new document id
 	 */
 	public void setDocumentId(Integer documentId) {
 		this.documentId = documentId;
 	}
-
+    
 	/**
 	 * Gets the document label.
-	 *
+	 * 
 	 * @return the document label
 	 */
 	public String getDocumentLabel() {
@@ -106,7 +106,7 @@ public class SbiAudit extends SbiHibernateModel {
 
 	/**
 	 * Sets the document label.
-	 *
+	 * 
 	 * @param documentLabel the new document label
 	 */
 	public void setDocumentLabel(String documentLabel) {
@@ -115,7 +115,7 @@ public class SbiAudit extends SbiHibernateModel {
 
 	/**
 	 * Gets the document name.
-	 *
+	 * 
 	 * @return the document name
 	 */
 	public String getDocumentName() {
@@ -124,7 +124,7 @@ public class SbiAudit extends SbiHibernateModel {
 
 	/**
 	 * Sets the document name.
-	 *
+	 * 
 	 * @param documentName the new document name
 	 */
 	public void setDocumentName(String documentName) {
@@ -133,7 +133,7 @@ public class SbiAudit extends SbiHibernateModel {
 
 	/**
 	 * Gets the document parameters.
-	 *
+	 * 
 	 * @return the document parameters
 	 */
 	public String getDocumentParameters() {
@@ -142,7 +142,7 @@ public class SbiAudit extends SbiHibernateModel {
 
 	/**
 	 * Sets the document parameters.
-	 *
+	 * 
 	 * @param documentParameters the new document parameters
 	 */
 	public void setDocumentParameters(String documentParameters) {
@@ -151,7 +151,7 @@ public class SbiAudit extends SbiHibernateModel {
 
 	/**
 	 * Gets the document type.
-	 *
+	 * 
 	 * @return the document type
 	 */
 	public String getDocumentType() {
@@ -160,7 +160,7 @@ public class SbiAudit extends SbiHibernateModel {
 
 	/**
 	 * Sets the document type.
-	 *
+	 * 
 	 * @param documentType the new document type
 	 */
 	public void setDocumentType(String documentType) {
@@ -169,7 +169,7 @@ public class SbiAudit extends SbiHibernateModel {
 
 	/**
 	 * Gets the document state.
-	 *
+	 * 
 	 * @return the document state
 	 */
 	public String getDocumentState() {
@@ -178,16 +178,16 @@ public class SbiAudit extends SbiHibernateModel {
 
 	/**
 	 * Sets the document state.
-	 *
+	 * 
 	 * @param documentState the new document state
 	 */
 	public void setDocumentState(String documentState) {
 		this.documentState = documentState;
 	}
-
+	
 	/**
 	 * Gets the engine class.
-	 *
+	 * 
 	 * @return the engine class
 	 */
 	public String getEngineClass() {
@@ -196,7 +196,7 @@ public class SbiAudit extends SbiHibernateModel {
 
 	/**
 	 * Sets the engine class.
-	 *
+	 * 
 	 * @param engineClass the new engine class
 	 */
 	public void setEngineClass(String engineClass) {
@@ -205,7 +205,7 @@ public class SbiAudit extends SbiHibernateModel {
 
 	/**
 	 * Gets the engine driver.
-	 *
+	 * 
 	 * @return the engine driver
 	 */
 	public String getEngineDriver() {
@@ -214,7 +214,7 @@ public class SbiAudit extends SbiHibernateModel {
 
 	/**
 	 * Sets the engine driver.
-	 *
+	 * 
 	 * @param engineDriver the new engine driver
 	 */
 	public void setEngineDriver(String engineDriver) {
@@ -223,7 +223,7 @@ public class SbiAudit extends SbiHibernateModel {
 
 	/**
 	 * Gets the engine id.
-	 *
+	 * 
 	 * @return the engine id
 	 */
 	public Integer getEngineId() {
@@ -232,16 +232,16 @@ public class SbiAudit extends SbiHibernateModel {
 
 	/**
 	 * Sets the engine id.
-	 *
+	 * 
 	 * @param engineId the new engine id
 	 */
 	public void setEngineId(Integer engineId) {
 		this.engineId = engineId;
 	}
-
+	
 	/**
 	 * Gets the engine label.
-	 *
+	 * 
 	 * @return the engine label
 	 */
 	public String getEngineLabel() {
@@ -250,7 +250,7 @@ public class SbiAudit extends SbiHibernateModel {
 
 	/**
 	 * Sets the engine label.
-	 *
+	 * 
 	 * @param engineLabel the new engine label
 	 */
 	public void setEngineLabel(String engineLabel) {
@@ -259,7 +259,7 @@ public class SbiAudit extends SbiHibernateModel {
 
 	/**
 	 * Gets the engine name.
-	 *
+	 * 
 	 * @return the engine name
 	 */
 	public String getEngineName() {
@@ -268,7 +268,7 @@ public class SbiAudit extends SbiHibernateModel {
 
 	/**
 	 * Sets the engine name.
-	 *
+	 * 
 	 * @param engineName the new engine name
 	 */
 	public void setEngineName(String engineName) {
@@ -277,7 +277,7 @@ public class SbiAudit extends SbiHibernateModel {
 
 	/**
 	 * Gets the engine type.
-	 *
+	 * 
 	 * @return the engine type
 	 */
 	public String getEngineType() {
@@ -286,7 +286,7 @@ public class SbiAudit extends SbiHibernateModel {
 
 	/**
 	 * Sets the engine type.
-	 *
+	 * 
 	 * @param engineType the new engine type
 	 */
 	public void setEngineType(String engineType) {
@@ -295,7 +295,7 @@ public class SbiAudit extends SbiHibernateModel {
 
 	/**
 	 * Gets the engine url.
-	 *
+	 * 
 	 * @return the engine url
 	 */
 	public String getEngineUrl() {
@@ -304,7 +304,7 @@ public class SbiAudit extends SbiHibernateModel {
 
 	/**
 	 * Sets the engine url.
-	 *
+	 * 
 	 * @param engineUrl the new engine url
 	 */
 	public void setEngineUrl(String engineUrl) {
@@ -313,7 +313,7 @@ public class SbiAudit extends SbiHibernateModel {
 
 	/**
 	 * Gets the error code.
-	 *
+	 * 
 	 * @return the error code
 	 */
 	public String getErrorCode() {
@@ -322,7 +322,7 @@ public class SbiAudit extends SbiHibernateModel {
 
 	/**
 	 * Sets the error code.
-	 *
+	 * 
 	 * @param errorCode the new error code
 	 */
 	public void setErrorCode(String errorCode) {
@@ -331,7 +331,7 @@ public class SbiAudit extends SbiHibernateModel {
 
 	/**
 	 * Gets the error message.
-	 *
+	 * 
 	 * @return the error message
 	 */
 	public String getErrorMessage() {
@@ -340,7 +340,7 @@ public class SbiAudit extends SbiHibernateModel {
 
 	/**
 	 * Sets the error message.
-	 *
+	 * 
 	 * @param errorMessage the new error message
 	 */
 	public void setErrorMessage(String errorMessage) {
@@ -349,7 +349,7 @@ public class SbiAudit extends SbiHibernateModel {
 
 	/**
 	 * Gets the execution end time.
-	 *
+	 * 
 	 * @return the execution end time
 	 */
 	public Date getExecutionEndTime() {
@@ -358,7 +358,7 @@ public class SbiAudit extends SbiHibernateModel {
 
 	/**
 	 * Sets the execution end time.
-	 *
+	 * 
 	 * @param executionEndTime the new execution end time
 	 */
 	public void setExecutionEndTime(Date executionEndTime) {
@@ -367,7 +367,7 @@ public class SbiAudit extends SbiHibernateModel {
 
 	/**
 	 * Gets the execution modality.
-	 *
+	 * 
 	 * @return the execution modality
 	 */
 	public String getExecutionModality() {
@@ -376,7 +376,7 @@ public class SbiAudit extends SbiHibernateModel {
 
 	/**
 	 * Sets the execution modality.
-	 *
+	 * 
 	 * @param executionModality the new execution modality
 	 */
 	public void setExecutionModality(String executionModality) {
@@ -385,7 +385,7 @@ public class SbiAudit extends SbiHibernateModel {
 
 	/**
 	 * Gets the execution start time.
-	 *
+	 * 
 	 * @return the execution start time
 	 */
 	public Date getExecutionStartTime() {
@@ -394,7 +394,7 @@ public class SbiAudit extends SbiHibernateModel {
 
 	/**
 	 * Sets the execution start time.
-	 *
+	 * 
 	 * @param executionStartTime the new execution start time
 	 */
 	public void setExecutionStartTime(Date executionStartTime) {
@@ -403,7 +403,7 @@ public class SbiAudit extends SbiHibernateModel {
 
 	/**
 	 * Gets the execution state.
-	 *
+	 * 
 	 * @return the execution state
 	 */
 	public String getExecutionState() {
@@ -412,7 +412,7 @@ public class SbiAudit extends SbiHibernateModel {
 
 	/**
 	 * Sets the execution state.
-	 *
+	 * 
 	 * @param executionState the new execution state
 	 */
 	public void setExecutionState(String executionState) {
@@ -421,7 +421,7 @@ public class SbiAudit extends SbiHibernateModel {
 
 	/**
 	 * Gets the id.
-	 *
+	 * 
 	 * @return the id
 	 */
 	public Integer getId() {
@@ -430,16 +430,16 @@ public class SbiAudit extends SbiHibernateModel {
 
 	/**
 	 * Sets the id.
-	 *
+	 * 
 	 * @param id the new id
 	 */
-	public void setId(Integer id) {
+	private void setId(Integer id) {
 		this.id = id;
 	}
 
 	/**
 	 * Gets the request time.
-	 *
+	 * 
 	 * @return the request time
 	 */
 	public Date getRequestTime() {
@@ -448,7 +448,7 @@ public class SbiAudit extends SbiHibernateModel {
 
 	/**
 	 * Sets the request time.
-	 *
+	 * 
 	 * @param requestTime the new request time
 	 */
 	public void setRequestTime(Date requestTime) {
@@ -457,7 +457,7 @@ public class SbiAudit extends SbiHibernateModel {
 
 	/**
 	 * Gets the sbi engine.
-	 *
+	 * 
 	 * @return the sbi engine
 	 */
 	public SbiEngines getSbiEngine() {
@@ -466,7 +466,7 @@ public class SbiAudit extends SbiHibernateModel {
 
 	/**
 	 * Sets the sbi engine.
-	 *
+	 * 
 	 * @param sbiEngine the new sbi engine
 	 */
 	public void setSbiEngine(SbiEngines sbiEngine) {
@@ -475,7 +475,7 @@ public class SbiAudit extends SbiHibernateModel {
 
 	/**
 	 * Gets the sbi object.
-	 *
+	 * 
 	 * @return the sbi object
 	 */
 	public SbiObjects getSbiObject() {
@@ -484,7 +484,7 @@ public class SbiAudit extends SbiHibernateModel {
 
 	/**
 	 * Sets the sbi object.
-	 *
+	 * 
 	 * @param sbiObject the new sbi object
 	 */
 	public void setSbiObject(SbiObjects sbiObject) {
@@ -493,7 +493,7 @@ public class SbiAudit extends SbiHibernateModel {
 
 	/**
 	 * Gets the user group.
-	 *
+	 * 
 	 * @return the user group
 	 */
 	public String getUserGroup() {
@@ -502,7 +502,7 @@ public class SbiAudit extends SbiHibernateModel {
 
 	/**
 	 * Sets the user group.
-	 *
+	 * 
 	 * @param userGroup the new user group
 	 */
 	public void setUserGroup(String userGroup) {
@@ -511,7 +511,7 @@ public class SbiAudit extends SbiHibernateModel {
 
 	/**
 	 * Gets the user name.
-	 *
+	 * 
 	 * @return the user name
 	 */
 	public String getUserName() {
@@ -520,7 +520,7 @@ public class SbiAudit extends SbiHibernateModel {
 
 	/**
 	 * Sets the user name.
-	 *
+	 * 
 	 * @param userName the new user name
 	 */
 	public void setUserName(String userName) {
@@ -529,7 +529,7 @@ public class SbiAudit extends SbiHibernateModel {
 
 	/**
 	 * Gets the error.
-	 *
+	 * 
 	 * @return the error
 	 */
 	public Short getError() {
@@ -538,7 +538,7 @@ public class SbiAudit extends SbiHibernateModel {
 
 	/**
 	 * Sets the error.
-	 *
+	 * 
 	 * @param error the new error
 	 */
 	public void setError(Short error) {
@@ -547,7 +547,7 @@ public class SbiAudit extends SbiHibernateModel {
 
 	/**
 	 * Gets the execution time.
-	 *
+	 * 
 	 * @return the execution time
 	 */
 	public Integer getExecutionTime() {
@@ -556,7 +556,7 @@ public class SbiAudit extends SbiHibernateModel {
 
 	/**
 	 * Sets the execution time.
-	 *
+	 * 
 	 * @param executionTime the new execution time
 	 */
 	public void setExecutionTime(Integer executionTime) {
@@ -565,7 +565,7 @@ public class SbiAudit extends SbiHibernateModel {
 
 	/**
 	 * Gets the sbi sub object.
-	 *
+	 * 
 	 * @return the sbi sub object
 	 */
 	public SbiSubObjects getSbiSubObject() {
@@ -574,7 +574,7 @@ public class SbiAudit extends SbiHibernateModel {
 
 	/**
 	 * Sets the sbi sub object.
-	 *
+	 * 
 	 * @param sbiSubObject the new sbi sub object
 	 */
 	public void setSbiSubObject(SbiSubObjects sbiSubObject) {
@@ -583,7 +583,7 @@ public class SbiAudit extends SbiHibernateModel {
 
 	/**
 	 * Gets the sub obj name.
-	 *
+	 * 
 	 * @return the sub obj name
 	 */
 	public String getSubObjName() {
@@ -592,7 +592,7 @@ public class SbiAudit extends SbiHibernateModel {
 
 	/**
 	 * Sets the sub obj name.
-	 *
+	 * 
 	 * @param subObjName the new sub obj name
 	 */
 	public void setSubObjName(String subObjName) {
@@ -601,7 +601,7 @@ public class SbiAudit extends SbiHibernateModel {
 
 	/**
 	 * Gets the sub obj owner.
-	 *
+	 * 
 	 * @return the sub obj owner
 	 */
 	public String getSubObjOwner() {
@@ -610,7 +610,7 @@ public class SbiAudit extends SbiHibernateModel {
 
 	/**
 	 * Sets the sub obj owner.
-	 *
+	 * 
 	 * @param subObjOwner the new sub obj owner
 	 */
 	public void setSubObjOwner(String subObjOwner) {
@@ -619,7 +619,7 @@ public class SbiAudit extends SbiHibernateModel {
 
 	/**
 	 * Gets the sub obj is public.
-	 *
+	 * 
 	 * @return the sub obj is public
 	 */
 	public Short getSubObjIsPublic() {
@@ -628,7 +628,7 @@ public class SbiAudit extends SbiHibernateModel {
 
 	/**
 	 * Sets the sub obj is public.
-	 *
+	 * 
 	 * @param subObjIsPublic the new sub obj is public
 	 */
 	public void setSubObjIsPublic(Short subObjIsPublic) {
@@ -637,7 +637,7 @@ public class SbiAudit extends SbiHibernateModel {
 
 	/**
 	 * Gets the sub obj id.
-	 *
+	 * 
 	 * @return the sub obj id
 	 */
 	public Integer getSubObjId() {
@@ -646,11 +646,11 @@ public class SbiAudit extends SbiHibernateModel {
 
 	/**
 	 * Sets the sub obj id.
-	 *
+	 * 
 	 * @param subObjId the new sub obj id
 	 */
 	public void setSubObjId(Integer subObjId) {
 		this.subObjId = subObjId;
 	}
-
+	
 }

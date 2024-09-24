@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- *
+ * 
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,7 +11,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- *
+ * 
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -48,7 +48,8 @@ public class SbiChecks extends SbiHibernateModel {
 	/**
 	 * constructor with id.
 	 *
-	 * @param checkId the check id
+	 * @param checkId
+	 *            the check id
 	 */
 	public SbiChecks(Integer checkId) {
 		this.checkId = checkId;
@@ -68,13 +69,13 @@ public class SbiChecks extends SbiHibernateModel {
 	public void changeCheckId(Integer checkId) {
 		this.setCheckId(checkId);
 	}
-
 	/**
 	 * Sets the check id.
 	 *
-	 * @param checkId the new check id
+	 * @param checkId
+	 *            the new check id
 	 */
-	public void setCheckId(Integer checkId) {
+	private void setCheckId(Integer checkId) {
 		this.checkId = checkId;
 	}
 
@@ -90,7 +91,8 @@ public class SbiChecks extends SbiHibernateModel {
 	/**
 	 * Sets the check type.
 	 *
-	 * @param sbiDomains the new check type
+	 * @param sbiDomains
+	 *            the new check type
 	 */
 	public void setCheckType(SbiDomains sbiDomains) {
 		this.checkType = sbiDomains;
@@ -108,7 +110,8 @@ public class SbiChecks extends SbiHibernateModel {
 	/**
 	 * Sets the value type cd.
 	 *
-	 * @param valueTypeCd the new value type cd
+	 * @param valueTypeCd
+	 *            the new value type cd
 	 */
 	public void setValueTypeCd(String valueTypeCd) {
 		this.valueTypeCd = valueTypeCd;
@@ -126,7 +129,8 @@ public class SbiChecks extends SbiHibernateModel {
 	/**
 	 * Sets the value1.
 	 *
-	 * @param value1 the new value1
+	 * @param value1
+	 *            the new value1
 	 */
 	public void setValue1(String value1) {
 		this.value1 = value1;
@@ -144,7 +148,8 @@ public class SbiChecks extends SbiHibernateModel {
 	/**
 	 * Sets the value2.
 	 *
-	 * @param value2 the new value2
+	 * @param value2
+	 *            the new value2
 	 */
 	public void setValue2(String value2) {
 		this.value2 = value2;
@@ -162,7 +167,8 @@ public class SbiChecks extends SbiHibernateModel {
 	/**
 	 * Sets the label.
 	 *
-	 * @param label the new label
+	 * @param label
+	 *            the new label
 	 */
 	public void setLabel(String label) {
 		this.label = label;
@@ -180,7 +186,8 @@ public class SbiChecks extends SbiHibernateModel {
 	/**
 	 * Sets the descr.
 	 *
-	 * @param descr the new descr
+	 * @param descr
+	 *            the new descr
 	 */
 	public void setDescr(String descr) {
 		this.descr = descr;
@@ -198,7 +205,8 @@ public class SbiChecks extends SbiHibernateModel {
 	/**
 	 * Sets the name.
 	 *
-	 * @param name the new name
+	 * @param name
+	 *            the new name
 	 */
 	public void setName(String name) {
 		this.name = name;
@@ -206,7 +214,7 @@ public class SbiChecks extends SbiHibernateModel {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see java.lang.Object#hashCode()
 	 */
 	@Override
@@ -219,7 +227,7 @@ public class SbiChecks extends SbiHibernateModel {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	@Override

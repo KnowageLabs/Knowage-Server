@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- *
+ * 
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,7 +11,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- *
+ * 
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -36,11 +36,13 @@ public class SbiGlContents extends SbiHibernateModel {
 	private Integer parentId;
 	private Integer glossaryId;
 
+
 	public SbiGlContents() {
 		// TODO Auto-generated constructor stub
 	}
 
 	public SbiGlContents(Integer contentId) {
+		super();
 		this.contentId = contentId;
 	}
 
@@ -54,8 +56,8 @@ public class SbiGlContents extends SbiHibernateModel {
 	 * @param parent
 	 * @param sequence
 	 */
-	public SbiGlContents(Integer contentId, String contentCd, String contentNm, String contentDs, Integer depth,
-			SbiGlGlossary glossary, SbiGlContents parent) {
+	public SbiGlContents(Integer contentId, String contentCd, String contentNm, String contentDs, Integer depth, SbiGlGlossary glossary, SbiGlContents parent) {
+		super();
 		this.contentId = contentId;
 		this.contentCd = contentCd;
 		this.contentNm = contentNm;
@@ -73,16 +75,16 @@ public class SbiGlContents extends SbiHibernateModel {
 	}
 
 	/**
-	 * @param contentId the contentId to set
+	 * @param contentId
+	 *            the contentId to set
 	 */
-	public void setContentId(Integer contentId) {
+	private void setContentId(Integer contentId) {
 		this.contentId = contentId;
 	}
 
 	public void changeContentId(Integer contentId) {
 		this.contentId = contentId;
 	}
-
 	/**
 	 * @return the contentCd
 	 */
@@ -91,7 +93,8 @@ public class SbiGlContents extends SbiHibernateModel {
 	}
 
 	/**
-	 * @param contentCd the contentCd to set
+	 * @param contentCd
+	 *            the contentCd to set
 	 */
 	public void setContentCd(String contentCd) {
 		this.contentCd = contentCd;
@@ -105,7 +108,8 @@ public class SbiGlContents extends SbiHibernateModel {
 	}
 
 	/**
-	 * @param contentNm the contentNm to set
+	 * @param contentNm
+	 *            the contentNm to set
 	 */
 	public void setContentNm(String contentNm) {
 		this.contentNm = contentNm;
@@ -119,7 +123,8 @@ public class SbiGlContents extends SbiHibernateModel {
 	}
 
 	/**
-	 * @param contentDs the contentDs to set
+	 * @param contentDs
+	 *            the contentDs to set
 	 */
 	public void setContentDs(String contentDs) {
 		this.contentDs = contentDs;
@@ -133,7 +138,8 @@ public class SbiGlContents extends SbiHibernateModel {
 	}
 
 	/**
-	 * @param depth the depth to set
+	 * @param depth
+	 *            the depth to set
 	 */
 	public void setDepth(Integer depth) {
 		this.depth = depth;
@@ -147,7 +153,8 @@ public class SbiGlContents extends SbiHibernateModel {
 	}
 
 	/**
-	 * @param glossary the glossary to set
+	 * @param glossary
+	 *            the glossary to set
 	 */
 	public void setGlossary(SbiGlGlossary glossary) {
 		this.glossary = glossary;
@@ -161,11 +168,15 @@ public class SbiGlContents extends SbiHibernateModel {
 	}
 
 	/**
-	 * @param parent the parent to set
+	 * @param parent
+	 *            the parent to set
 	 */
 	public void setParent(SbiGlContents parent) {
 		this.parent = parent;
 	}
+
+
+
 
 	/**
 	 * @return the parentId
@@ -175,7 +186,8 @@ public class SbiGlContents extends SbiHibernateModel {
 	}
 
 	/**
-	 * @param parentId the parentId to set
+	 * @param parentId
+	 *            the parentId to set
 	 */
 	public void setParentId(Integer parentId) {
 		this.parentId = parentId;
@@ -189,7 +201,8 @@ public class SbiGlContents extends SbiHibernateModel {
 	}
 
 	/**
-	 * @param glossaryId the glossaryId to set
+	 * @param glossaryId
+	 *            the glossaryId to set
 	 */
 	public void setGlossaryId(Integer glossaryId) {
 		this.glossaryId = glossaryId;
@@ -197,7 +210,8 @@ public class SbiGlContents extends SbiHibernateModel {
 
 	@Override
 	public String toString() {
-		return "SbiGlContents [contentId=" + contentId + ", contentCd=" + contentCd + ", contentNm=" + contentNm
-				+ ", contentDs=" + contentDs + ", depth=" + depth + "]";
+		return "SbiGlContents [contentId=" + contentId + ", contentCd="
+				+ contentCd + ", contentNm=" + contentNm + ", contentDs="
+				+ contentDs + ", depth=" + depth + "]";
 	}
 }

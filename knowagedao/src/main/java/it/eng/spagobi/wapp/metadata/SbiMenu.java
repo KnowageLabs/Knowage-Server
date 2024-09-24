@@ -70,10 +70,10 @@ public class SbiMenu extends SbiHibernateModel implements Comparable<SbiMenu> {
 		this.menuId = menuId;
 	}
 
-	public SbiMenu(Integer menuId, Integer objId, String objParameters, String subObjName, String snapshotName,
-			Integer snapshotHistory, String functionality, String initialPath, String name, String descr,
-			String staticPage, String externalApplicationUrl, Integer parentId, Set sbiMenuRoles, Boolean viewIcons,
-			Boolean hideToolbar, Boolean hideSliders, Integer prog, String icon, String custIcon) {
+	public SbiMenu(Integer menuId, Integer objId, String objParameters, String subObjName, String snapshotName, Integer snapshotHistory, String functionality,
+			String initialPath, String name, String descr, String staticPage, String externalApplicationUrl, Integer parentId, Set sbiMenuRoles,
+			Boolean viewIcons, Boolean hideToolbar, Boolean hideSliders, Integer prog, String icon, String custIcon) {
+		super();
 		this.menuId = menuId;
 		this.objId = objId;
 		this.objParameters = objParameters;
@@ -112,7 +112,7 @@ public class SbiMenu extends SbiHibernateModel implements Comparable<SbiMenu> {
 	 *
 	 * @param menuId the new menu id
 	 */
-	public void setMenuId(Integer menuId) {
+	private void setMenuId(Integer menuId) {
 		this.menuId = menuId;
 	}
 
@@ -320,8 +320,7 @@ public class SbiMenu extends SbiHibernateModel implements Comparable<SbiMenu> {
 			return -1;
 		}
 
-		return Comparator.comparing(SbiMenu::getParentId).thenComparing(SbiMenu::getName)
-				.thenComparing(SbiMenu::getDescr).compare(this, o);
+		return Comparator.comparing(SbiMenu::getParentId).thenComparing(SbiMenu::getName).thenComparing(SbiMenu::getDescr).compare(this, o);
 
 	}
 
