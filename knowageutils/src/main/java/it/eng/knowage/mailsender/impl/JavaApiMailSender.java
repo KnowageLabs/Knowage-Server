@@ -79,6 +79,8 @@ public class JavaApiMailSender implements IMailSender {
 		} else if (messageMailDto.getProfileName().equals(ProfileNameMailEnum.USER_FROM_PWS)) {
 			return MailSessionBuilder.newInstance().usingUserProfile().setFromAddress(messageMailDto.getFrom()).setUser(messageMailDto.getLogin())
 					.setPassword(messageMailDto.getPassword()).build();
+		} else if (messageMailDto.getProfileName().equals(ProfileNameMailEnum.KPI)) {
+			return MailSessionBuilder.newInstance().usingKpiAlarmProfile().withTimeout(5000).withConnectionTimeout(5000).build();
 		} else {
 			throw new IllegalArgumentException("There is not implementation SessionFacade for " + messageMailDto.getProfileName());
 		}
