@@ -34,11 +34,9 @@ public class SbiDataSetFederationId implements java.io.Serializable {
 	private String organization;
 
 	public SbiDataSetFederationId() {
-		super();
 	}
 
 	public SbiDataSetFederationId(int federationId, int dsId, int versionNum, String organization) {
-		super();
 		this.federationId = federationId;
 		this.dsId = dsId;
 		this.versionNum = versionNum;
@@ -49,7 +47,7 @@ public class SbiDataSetFederationId implements java.io.Serializable {
 		return federationId;
 	}
 
-	private void setFederationId(int federationId) {
+	public void setFederationId(int federationId) {
 		this.federationId = federationId;
 	}
 
@@ -57,7 +55,7 @@ public class SbiDataSetFederationId implements java.io.Serializable {
 		return dsId;
 	}
 
-	private void setDsId(int dsId) {
+	public void setDsId(int dsId) {
 		this.dsId = dsId;
 	}
 
@@ -65,7 +63,7 @@ public class SbiDataSetFederationId implements java.io.Serializable {
 		return versionNum;
 	}
 
-	private void setVersionNum(int versionNum) {
+	public void setVersionNum(int versionNum) {
 		this.versionNum = versionNum;
 	}
 
@@ -73,7 +71,7 @@ public class SbiDataSetFederationId implements java.io.Serializable {
 		return organization;
 	}
 
-	private void setOrganization(String organization) {
+	public void setOrganization(String organization) {
 		this.organization = organization;
 	}
 

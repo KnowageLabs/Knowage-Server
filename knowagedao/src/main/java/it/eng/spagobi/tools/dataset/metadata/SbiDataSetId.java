@@ -45,7 +45,6 @@ public class SbiDataSetId implements java.io.Serializable {
 		this.organization = organization;
 	}
 
-	
 	// Property accessors
 
 	@Override
@@ -58,10 +57,11 @@ public class SbiDataSetId implements java.io.Serializable {
 			return false;
 		SbiDataSetId castOther = (SbiDataSetId) other;
 
-		return ((this.getDsId() == castOther.getDsId())
-				|| (this.getDsId() != null && castOther.getDsId() != null && this.getDsId().equals(castOther.getDsId())))
+		return ((this.getDsId() == castOther.getDsId()) || (this.getDsId() != null && castOther.getDsId() != null
+				&& this.getDsId().equals(castOther.getDsId())))
 				&& ((this.getVersionNum() == castOther.getVersionNum())
-						|| (this.getVersionNum() != null && castOther.getVersionNum() != null && this.getVersionNum().equals(castOther.getVersionNum())));
+						|| (this.getVersionNum() != null && castOther.getVersionNum() != null
+								&& this.getVersionNum().equals(castOther.getVersionNum())));
 	}
 
 	/**
@@ -74,13 +74,14 @@ public class SbiDataSetId implements java.io.Serializable {
 	/**
 	 * @param dsId the dsId to set
 	 */
-	private void setDsId(Integer dsId) {
+	public void setDsId(Integer dsId) {
 		this.dsId = dsId;
 	}
 
 	public void changeDsId(Integer dsId) {
 		this.setDsId(dsId);
 	}
+
 	/**
 	 * @return the versionNum
 	 */
@@ -91,7 +92,7 @@ public class SbiDataSetId implements java.io.Serializable {
 	/**
 	 * @param versionNum the versionNum to set
 	 */
-	private void setVersionNum(Integer versionNum) {
+	public void setVersionNum(Integer versionNum) {
 		this.versionNum = versionNum;
 	}
 

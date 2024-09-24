@@ -45,8 +45,8 @@ public class SbiMetaTable extends SbiHibernateModel {
 		this.deleted = deleted;
 	}
 
-	public SbiMetaTable(SbiMetaSource sbiMetaSource, String name, boolean deleted, Set sbiMetaTableColumns, Set sbiMetaDsTables, Set sbiMetaJobTables,
-			Set sbiMetaTableBcs) {
+	public SbiMetaTable(SbiMetaSource sbiMetaSource, String name, boolean deleted, Set sbiMetaTableColumns,
+			Set sbiMetaDsTables, Set sbiMetaJobTables, Set sbiMetaTableBcs) {
 		this.sbiMetaSource = sbiMetaSource;
 		this.name = name;
 		this.deleted = deleted;
@@ -59,7 +59,7 @@ public class SbiMetaTable extends SbiHibernateModel {
 		return this.tableId;
 	}
 
-	private void setTableId(Integer tableId) {
+	public void setTableId(Integer tableId) {
 		this.tableId = tableId;
 	}
 
@@ -113,7 +113,7 @@ public class SbiMetaTable extends SbiHibernateModel {
 
 	public void changeTableId(Integer tableId) {
 		this.setTableId(tableId);
-		
+
 	}
 
 }

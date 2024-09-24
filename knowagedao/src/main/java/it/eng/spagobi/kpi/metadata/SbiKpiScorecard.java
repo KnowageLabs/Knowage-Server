@@ -1,10 +1,10 @@
 package it.eng.spagobi.kpi.metadata;
 
-import it.eng.spagobi.commons.metadata.SbiDomains;
-import it.eng.spagobi.commons.metadata.SbiHibernateModel;
-
 import java.util.HashSet;
 import java.util.Set;
+
+import it.eng.spagobi.commons.metadata.SbiDomains;
+import it.eng.spagobi.commons.metadata.SbiHibernateModel;
 
 public class SbiKpiScorecard extends SbiHibernateModel {
 
@@ -21,12 +21,12 @@ public class SbiKpiScorecard extends SbiHibernateModel {
 	private String options = null;
 
 	public SbiKpiScorecard() {
-		super();
 	}
+
 	public SbiKpiScorecard(Integer id) {
-		super();
 		this.setId(id);
 	}
+
 	/**
 	 * @return the id
 	 */
@@ -35,10 +35,9 @@ public class SbiKpiScorecard extends SbiHibernateModel {
 	}
 
 	/**
-	 * @param id
-	 *            the id to set
+	 * @param id the id to set
 	 */
-	private void setId(Integer id) {
+	public void setId(Integer id) {
 		this.id = id;
 	}
 
@@ -50,8 +49,7 @@ public class SbiKpiScorecard extends SbiHibernateModel {
 	}
 
 	/**
-	 * @param parentId
-	 *            the parentId to set
+	 * @param parentId the parentId to set
 	 */
 	public void setParentId(Integer parentId) {
 		this.parentId = parentId;
@@ -65,8 +63,7 @@ public class SbiKpiScorecard extends SbiHibernateModel {
 	}
 
 	/**
-	 * @param name
-	 *            the name to set
+	 * @param name the name to set
 	 */
 	public void setName(String name) {
 		this.name = name;
@@ -80,8 +77,7 @@ public class SbiKpiScorecard extends SbiHibernateModel {
 	}
 
 	/**
-	 * @param criterionId
-	 *            the criterionId to set
+	 * @param criterionId the criterionId to set
 	 */
 	public void setCriterionId(Integer criterionId) {
 		this.criterionId = criterionId;
@@ -95,8 +91,7 @@ public class SbiKpiScorecard extends SbiHibernateModel {
 	}
 
 	/**
-	 * @param criterion
-	 *            the criterion to set
+	 * @param criterion the criterion to set
 	 */
 	public void setCriterion(SbiDomains criterion) {
 		this.criterion = criterion;
@@ -110,8 +105,7 @@ public class SbiKpiScorecard extends SbiHibernateModel {
 	}
 
 	/**
-	 * @param sbiKpiKpis
-	 *            the sbiKpiKpis to set
+	 * @param sbiKpiKpis the sbiKpiKpis to set
 	 */
 	public void setSbiKpiKpis(Set<SbiKpiKpi> sbiKpiKpis) {
 		this.sbiKpiKpis = sbiKpiKpis;
@@ -125,8 +119,7 @@ public class SbiKpiScorecard extends SbiHibernateModel {
 	}
 
 	/**
-	 * @param subviews
-	 *            the subviews to set
+	 * @param subviews the subviews to set
 	 */
 	public void setSubviews(Set<SbiKpiScorecard> subviews) {
 		this.subviews = subviews;
@@ -140,8 +133,7 @@ public class SbiKpiScorecard extends SbiHibernateModel {
 	}
 
 	/**
-	 * @param options
-	 *            the options to set
+	 * @param options the options to set
 	 */
 	public void setOptions(String options) {
 		this.options = options;

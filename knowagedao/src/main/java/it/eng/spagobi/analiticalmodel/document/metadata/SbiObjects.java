@@ -178,10 +178,10 @@ public class SbiObjects extends SbiHibernateModel {
 	 *
 	 * @param biobjId the new biobj id
 	 */
-	private void setBiobjId(Integer biobjId) {
+	public void setBiobjId(Integer biobjId) {
 		this.biobjId = biobjId;
 	}
-	
+
 	public void changeBiobjId(Integer biobjId) {
 		this.biobjId = biobjId;
 	}

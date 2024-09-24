@@ -35,7 +35,6 @@ public class SbiGlBnessClsWlistId implements Serializable {
 	 * @param documentId
 	 */
 	public SbiGlBnessClsWlistId(int wordId, int bcId) {
-		super();
 		this.wordId = wordId;
 		this.bcId = bcId;
 	}
@@ -46,7 +45,6 @@ public class SbiGlBnessClsWlistId implements Serializable {
 	 * @param column_name
 	 */
 	public SbiGlBnessClsWlistId(int wordId, int bcId, String column_name) {
-		super();
 		this.wordId = wordId;
 		this.bcId = bcId;
 		this.column_name = column_name;
@@ -60,10 +58,9 @@ public class SbiGlBnessClsWlistId implements Serializable {
 	}
 
 	/**
-	 * @param wordId
-	 *            the wordId to set
+	 * @param wordId the wordId to set
 	 */
-	private void setWordId(int wordId) {
+	public void setWordId(int wordId) {
 		this.wordId = wordId;
 	}
 
@@ -75,10 +72,9 @@ public class SbiGlBnessClsWlistId implements Serializable {
 	}
 
 	/**
-	 * @param bcId
-	 *            the bcId to set
+	 * @param bcId the bcId to set
 	 */
-	private void setBcId(int bcId) {
+	public void setBcId(int bcId) {
 		this.bcId = bcId;
 	}
 
@@ -90,16 +86,15 @@ public class SbiGlBnessClsWlistId implements Serializable {
 	}
 
 	/**
-	 * @param column_name
-	 *            the column_name to set
+	 * @param column_name the column_name to set
 	 */
-	private void setColumn_name(String column_name) {
+	public void setColumn_name(String column_name) {
 		this.column_name = column_name;
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see java.lang.Object#hashCode()
 	 */
 	@Override
@@ -114,7 +109,7 @@ public class SbiGlBnessClsWlistId implements Serializable {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	@Override

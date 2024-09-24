@@ -119,9 +119,10 @@ public class SbiDataSource extends SbiHibernateModel {
 	 * @param sbiEngineses               the sbi engineses
 	 * @param sbiOrganizationDatasources the association with tenant
 	 */
-	public SbiDataSource(int dsId, String descr, SbiDomains dialect, String label, String jndi, String url_connection, String user, String pwd, String driver,
-			Set sbiObjectses, Set sbiEngineses, Boolean multiSchema, String schemaAttribute, Boolean readOnly, Boolean writeDefault,
-			Set sbiOrganizationDatasources, Boolean useForDataprep) {
+	public SbiDataSource(int dsId, String descr, SbiDomains dialect, String label, String jndi, String url_connection,
+			String user, String pwd, String driver, Set sbiObjectses, Set sbiEngineses, Boolean multiSchema,
+			String schemaAttribute, Boolean readOnly, Boolean writeDefault, Set sbiOrganizationDatasources,
+			Boolean useForDataprep) {
 		this.dsId = dsId;
 		this.dialect = dialect;
 		this.descr = descr;
@@ -155,7 +156,7 @@ public class SbiDataSource extends SbiHibernateModel {
 	 *
 	 * @param dsId the new ds id
 	 */
-	private void setDsId(int dsId) {
+	public void setDsId(int dsId) {
 		this.dsId = dsId;
 	}
 
@@ -399,7 +400,7 @@ public class SbiDataSource extends SbiHibernateModel {
 
 	public void changeDsId(int dsId) {
 		this.setDsId(dsId);
-		
+
 	}
 
 }

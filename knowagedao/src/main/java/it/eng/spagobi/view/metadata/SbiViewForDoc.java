@@ -119,7 +119,7 @@ public class SbiViewForDoc extends SbiHibernateModel implements Comparable<SbiVi
 	/**
 	 * @param id the id to set
 	 */
-	private void setId(String id) {
+	public void setId(String id) {
 		this.id = id;
 	}
 

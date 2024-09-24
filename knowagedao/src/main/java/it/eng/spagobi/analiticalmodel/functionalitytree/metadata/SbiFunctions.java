@@ -73,12 +73,13 @@ public class SbiFunctions extends SbiHibernateModel {
 	public void changeFunctId(Integer functId) {
 		this.setFunctId(functId);
 	}
+
 	/**
 	 * Sets the funct id.
 	 *
 	 * @param functId the new funct id
 	 */
-	private void setFunctId(Integer functId) {
+	public void setFunctId(Integer functId) {
 		this.functId = functId;
 	}
 

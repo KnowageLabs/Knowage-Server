@@ -47,16 +47,11 @@ public class SbiMetaModelViewpoints extends SbiHibernateModel {
 	/**
 	 * minimal constructor.
 	 *
-	 * @param vpId
-	 *            the vp id
-	 * @param vpOwner
-	 *            the vp owner
-	 * @param vpName
-	 *            the vp name
-	 * @param vpScope
-	 *            the vp scope
-	 * @param vpCreationDate
-	 *            the vp creation date
+	 * @param vpId           the vp id
+	 * @param vpOwner        the vp owner
+	 * @param vpName         the vp name
+	 * @param vpScope        the vp scope
+	 * @param vpCreationDate the vp creation date
 	 */
 	public SbiMetaModelViewpoints(Integer vpId, String vpOwner, String vpName, String vpScope, Date vpCreationDate) {
 		this.vpId = vpId;
@@ -69,22 +64,16 @@ public class SbiMetaModelViewpoints extends SbiHibernateModel {
 	/**
 	 * full constructor.
 	 *
-	 * @param vpId
-	 *            the vp id
-	 * @param vpOwner
-	 *            the vp owner
-	 * @param vpName
-	 *            the vp name
-	 * @param vpDesc
-	 *            the vp desc
-	 * @param vpScope
-	 *            the vp scope
-	 * @param vpValueParams
-	 *            the vp value params
-	 * @param vpCreationDate
-	 *            the vp creation date
+	 * @param vpId           the vp id
+	 * @param vpOwner        the vp owner
+	 * @param vpName         the vp name
+	 * @param vpDesc         the vp desc
+	 * @param vpScope        the vp scope
+	 * @param vpValueParams  the vp value params
+	 * @param vpCreationDate the vp creation date
 	 */
-	public SbiMetaModelViewpoints(Integer vpId, String vpOwner, String vpName, String vpDesc, String vpScope, String vpValueParams, Date vpCreationDate) {
+	public SbiMetaModelViewpoints(Integer vpId, String vpOwner, String vpName, String vpDesc, String vpScope,
+			String vpValueParams, Date vpCreationDate) {
 		this.vpId = vpId;
 		this.vpOwner = vpOwner;
 		this.vpName = vpName;
@@ -108,10 +97,9 @@ public class SbiMetaModelViewpoints extends SbiHibernateModel {
 	/**
 	 * Sets the vp id.
 	 *
-	 * @param vpId
-	 *            the new vp id
+	 * @param vpId the new vp id
 	 */
-	private void setVpId(Integer vpId) {
+	public void setVpId(Integer vpId) {
 		this.vpId = vpId;
 	}
 
@@ -132,8 +120,7 @@ public class SbiMetaModelViewpoints extends SbiHibernateModel {
 	/**
 	 * Sets the vp name.
 	 *
-	 * @param vpName
-	 *            the new vp name
+	 * @param vpName the new vp name
 	 */
 	public void setVpName(String vpName) {
 		this.vpName = vpName;
@@ -151,8 +138,7 @@ public class SbiMetaModelViewpoints extends SbiHibernateModel {
 	/**
 	 * Sets the vp desc.
 	 *
-	 * @param vpDesc
-	 *            the new vp desc
+	 * @param vpDesc the new vp desc
 	 */
 	public void setVpDesc(String vpDesc) {
 		this.vpDesc = vpDesc;
@@ -170,8 +156,7 @@ public class SbiMetaModelViewpoints extends SbiHibernateModel {
 	/**
 	 * Sets the vp scope.
 	 *
-	 * @param vpScope
-	 *            the new vp scope
+	 * @param vpScope the new vp scope
 	 */
 	public void setVpScope(String vpScope) {
 		this.vpScope = vpScope;
@@ -189,8 +174,7 @@ public class SbiMetaModelViewpoints extends SbiHibernateModel {
 	/**
 	 * Sets the vp value params.
 	 *
-	 * @param vpValueParams
-	 *            the new vp value params
+	 * @param vpValueParams the new vp value params
 	 */
 	public void setVpValueParams(String vpValueParams) {
 		this.vpValueParams = vpValueParams;
@@ -208,8 +192,7 @@ public class SbiMetaModelViewpoints extends SbiHibernateModel {
 	/**
 	 * Sets the vp creation date.
 	 *
-	 * @param date
-	 *            the new vp creation date
+	 * @param date the new vp creation date
 	 */
 	public void setVpCreationDate(Date date) {
 		this.vpCreationDate = date;
@@ -227,8 +210,7 @@ public class SbiMetaModelViewpoints extends SbiHibernateModel {
 	/**
 	 * Sets the vp owner.
 	 *
-	 * @param vpOwner
-	 *            the vpOwner to set
+	 * @param vpOwner the vpOwner to set
 	 */
 	public void setVpOwner(String vpOwner) {
 		this.vpOwner = vpOwner;

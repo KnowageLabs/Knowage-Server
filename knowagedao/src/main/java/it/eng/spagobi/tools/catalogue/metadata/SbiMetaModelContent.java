@@ -17,9 +17,9 @@
  */
 package it.eng.spagobi.tools.catalogue.metadata;
 
-import it.eng.spagobi.commons.metadata.SbiHibernateModel;
-
 import java.util.Date;
+
+import it.eng.spagobi.commons.metadata.SbiHibernateModel;
 
 public class SbiMetaModelContent extends SbiHibernateModel {
 
@@ -44,12 +44,11 @@ public class SbiMetaModelContent extends SbiHibernateModel {
 	private String dimension = null;
 
 	private String creationUser = null;
-	
+
 	public SbiMetaModelContent() {
-		super();
 	}
+
 	public SbiMetaModelContent(Integer id) {
-		super();
 		this.id = id;
 	}
 
@@ -57,7 +56,7 @@ public class SbiMetaModelContent extends SbiHibernateModel {
 		return id;
 	}
 
-	private void setId(Integer id) {
+	public void setId(Integer id) {
 		this.id = id;
 	}
 

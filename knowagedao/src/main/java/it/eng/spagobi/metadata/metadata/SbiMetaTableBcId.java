@@ -24,7 +24,7 @@ public class SbiMetaTableBcId extends SbiHibernateModel {
 		return this.tableId;
 	}
 
-	private void setTableId(int tableId) {
+	public void setTableId(int tableId) {
 		this.tableId = tableId;
 	}
 
@@ -32,7 +32,7 @@ public class SbiMetaTableBcId extends SbiHibernateModel {
 		return this.bcId;
 	}
 
-	private void setBcId(int bcId) {
+	public void setBcId(int bcId) {
 		this.bcId = bcId;
 	}
 

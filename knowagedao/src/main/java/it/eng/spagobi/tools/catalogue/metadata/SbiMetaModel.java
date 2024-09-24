@@ -68,7 +68,7 @@ public class SbiMetaModel extends SbiHibernateModel {
 		return id;
 	}
 
-	private void setId(int id) {
+	public void setId(int id) {
 		this.id = id;
 	}
 
@@ -96,8 +96,7 @@ public class SbiMetaModel extends SbiHibernateModel {
 	}
 
 	/**
-	 * @param category
-	 *            the category to set
+	 * @param category the category to set
 	 */
 	public void setCategory(Integer category) {
 		this.category = category;
@@ -119,8 +118,7 @@ public class SbiMetaModel extends SbiHibernateModel {
 	}
 
 	/**
-	 * @param modelLocked
-	 *            the modelLocked to set
+	 * @param modelLocked the modelLocked to set
 	 */
 	public void setModelLocked(Boolean modelLocked) {
 		this.modelLocked = modelLocked;
@@ -134,8 +132,7 @@ public class SbiMetaModel extends SbiHibernateModel {
 	}
 
 	/**
-	 * @param modelLocker
-	 *            the modelLocker to set
+	 * @param modelLocker the modelLocker to set
 	 */
 	public void setModelLocker(String modelLocker) {
 		this.modelLocker = modelLocker;
@@ -149,8 +146,7 @@ public class SbiMetaModel extends SbiHibernateModel {
 	}
 
 	/**
-	 * @param smartView
-	 *            the smartView to set
+	 * @param smartView the smartView to set
 	 */
 	public void setSmartView(Boolean smartView) {
 		this.smartView = smartView;

@@ -21,10 +21,9 @@ public class SbiAlertLog extends SbiHibernateModel {
 	}
 
 	/**
-	 * @param id
-	 *            the id to set
+	 * @param id the id to set
 	 */
-	private void setId(Integer id) {
+	public void setId(Integer id) {
 		this.id = id;
 	}
 
@@ -36,8 +35,7 @@ public class SbiAlertLog extends SbiHibernateModel {
 	}
 
 	/**
-	 * @param listenerId
-	 *            the listenerId to set
+	 * @param listenerId the listenerId to set
 	 */
 	public void setListenerId(Integer listenerId) {
 		this.listenerId = listenerId;
@@ -51,8 +49,7 @@ public class SbiAlertLog extends SbiHibernateModel {
 	}
 
 	/**
-	 * @param actionId
-	 *            the actionId to set
+	 * @param actionId the actionId to set
 	 */
 	public void setActionId(Integer actionId) {
 		this.actionId = actionId;
@@ -66,8 +63,7 @@ public class SbiAlertLog extends SbiHibernateModel {
 	}
 
 	/**
-	 * @param listenerParams
-	 *            the listenerParams to set
+	 * @param listenerParams the listenerParams to set
 	 */
 	public void setListenerParams(String listenerParams) {
 		this.listenerParams = listenerParams;
@@ -81,8 +77,7 @@ public class SbiAlertLog extends SbiHibernateModel {
 	}
 
 	/**
-	 * @param actionParams
-	 *            the actionParams to set
+	 * @param actionParams the actionParams to set
 	 */
 	public void setActionParams(String actionParams) {
 		this.actionParams = actionParams;
@@ -96,8 +91,7 @@ public class SbiAlertLog extends SbiHibernateModel {
 	}
 
 	/**
-	 * @param detail
-	 *            the detail to set
+	 * @param detail the detail to set
 	 */
 	public void setDetail(String detail) {
 		this.detail = detail;
@@ -111,8 +105,7 @@ public class SbiAlertLog extends SbiHibernateModel {
 	}
 
 	/**
-	 * @param sbiAlertAction
-	 *            the sbiAlertAction to set
+	 * @param sbiAlertAction the sbiAlertAction to set
 	 */
 	public void setSbiAlertAction(SbiAlertAction sbiAlertAction) {
 		this.sbiAlertAction = sbiAlertAction;
@@ -126,8 +119,7 @@ public class SbiAlertLog extends SbiHibernateModel {
 	}
 
 	/**
-	 * @param sbiAlertListener
-	 *            the sbiAlertListener to set
+	 * @param sbiAlertListener the sbiAlertListener to set
 	 */
 	public void setSbiAlertListener(SbiAlertListener sbiAlertListener) {
 		this.sbiAlertListener = sbiAlertListener;

@@ -46,7 +46,7 @@ public class TimeByDay extends SbiHibernateModel {
 		return timeId;
 	}
 
-	private void setTimeId(Integer timeId) {
+	public void setTimeId(Integer timeId) {
 		this.timeId = timeId;
 	}
 

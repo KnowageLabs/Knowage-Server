@@ -27,10 +27,9 @@ public class SbiKpiExecutionFilterId implements Serializable {
 	}
 
 	/**
-	 * @param placeholderId
-	 *            the placeholderId to set
+	 * @param placeholderId the placeholderId to set
 	 */
-	private void setPlaceholderId(Integer placeholderId) {
+	public void setPlaceholderId(Integer placeholderId) {
 		this.placeholderId = placeholderId;
 	}
 
@@ -42,10 +41,9 @@ public class SbiKpiExecutionFilterId implements Serializable {
 	}
 
 	/**
-	 * @param executionId
-	 *            the executionId to set
+	 * @param executionId the executionId to set
 	 */
-	private void setExecutionId(Integer executionId) {
+	public void setExecutionId(Integer executionId) {
 		this.executionId = executionId;
 	}
 
@@ -57,10 +55,9 @@ public class SbiKpiExecutionFilterId implements Serializable {
 	}
 
 	/**
-	 * @param kpiId
-	 *            the kpiId to set
+	 * @param kpiId the kpiId to set
 	 */
-	private void setKpiId(Integer kpiId) {
+	public void setKpiId(Integer kpiId) {
 		this.kpiId = kpiId;
 	}
 
@@ -72,16 +69,15 @@ public class SbiKpiExecutionFilterId implements Serializable {
 	}
 
 	/**
-	 * @param kpiVersion
-	 *            the kpiVersion to set
+	 * @param kpiVersion the kpiVersion to set
 	 */
-	private void setKpiVersion(Integer kpiVersion) {
+	public void setKpiVersion(Integer kpiVersion) {
 		this.kpiVersion = kpiVersion;
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see java.lang.Object#hashCode()
 	 */
 	@Override
@@ -97,7 +93,7 @@ public class SbiKpiExecutionFilterId implements Serializable {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	@Override

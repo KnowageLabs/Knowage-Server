@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,7 +11,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -24,25 +24,24 @@ import it.eng.spagobi.tools.scheduler.bo.TriggerPaused;
  * @author Marco Cortella (marco.cortella@eng.it)
  *
  */
-public class SbiTriggerPaused extends SbiHibernateModel{
-	
-    // Fields  
-	
-	private Integer id;
-    private String triggerName;
-    private String triggerGroup;
-    private String jobName;
-    private String jobGroup;
+public class SbiTriggerPaused extends SbiHibernateModel {
 
-    // Constructors
-    
-    /** default constructor */
-    public SbiTriggerPaused(){
-    	
-    }
+	// Fields
+
+	private Integer id;
+	private String triggerName;
+	private String triggerGroup;
+	private String jobName;
+	private String jobGroup;
+
+	// Constructors
+
+	/** default constructor */
+	public SbiTriggerPaused() {
+
+	}
 
 	public SbiTriggerPaused(Integer id) {
-		super();
 		this.id = id;
 	}
 
@@ -53,8 +52,7 @@ public class SbiTriggerPaused extends SbiHibernateModel{
 	 * @param jobName
 	 * @param jobGroup
 	 */
-	public SbiTriggerPaused(Integer id, String triggerName,
-			String triggerGroup, String jobName, String jobGroup) {
+	public SbiTriggerPaused(Integer id, String triggerName, String triggerGroup, String jobName, String jobGroup) {
 		this.id = id;
 		this.triggerName = triggerName;
 		this.triggerGroup = triggerGroup;
@@ -62,7 +60,7 @@ public class SbiTriggerPaused extends SbiHibernateModel{
 		this.jobGroup = jobGroup;
 	}
 
-    // Property accessors
+	// Property accessors
 
 	/**
 	 * @return the id
@@ -74,7 +72,7 @@ public class SbiTriggerPaused extends SbiHibernateModel{
 	/**
 	 * @param id the id to set
 	 */
-	private void setId(Integer id) {
+	public void setId(Integer id) {
 		this.id = id;
 	}
 
@@ -133,26 +131,23 @@ public class SbiTriggerPaused extends SbiHibernateModel{
 	public void setJobGroup(String jobGroup) {
 		this.jobGroup = jobGroup;
 	}
-	
-    /**
-	 * From the Hibernate SbiTriggerPaused object, gives the corrispondent
-	 * <code>TriggerPaused</code> object.
-	 * 
-	 * 
-	 * 
+
+	/**
+	 * From the Hibernate SbiTriggerPaused object, gives the corrispondent <code>TriggerPaused</code> object.
+	 *
+	 *
+	 *
 	 * @return the corrispondent output <code>TriggerPaused</code>
 	 */
-	public TriggerPaused toTriggerPaused(){
+	public TriggerPaused toTriggerPaused() {
 		TriggerPaused triggerPaused = new TriggerPaused();
 		triggerPaused.setId(getId());
 		triggerPaused.setJobGroup(getJobGroup());
 		triggerPaused.setJobName(getJobName());
 		triggerPaused.setTriggerGroup(getTriggerGroup());
 		triggerPaused.setTriggerName(getTriggerName());
-		
+
 		return triggerPaused;
 	}
-	
-    
-    
+
 }

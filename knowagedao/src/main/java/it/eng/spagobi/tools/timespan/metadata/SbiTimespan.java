@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,7 +11,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -23,7 +23,6 @@ public class SbiTimespan extends SbiHibernateModel {
 
 	private static final long serialVersionUID = 7345354715151435192L;
 
-
 	private Integer id;
 
 	private String name;
@@ -32,8 +31,7 @@ public class SbiTimespan extends SbiHibernateModel {
 	private Boolean staticFilter = false;
 	private String definition;
 
-
-	public SbiTimespan(){
+	public SbiTimespan() {
 	}
 
 	/**
@@ -42,13 +40,14 @@ public class SbiTimespan extends SbiHibernateModel {
 	public Integer getId() {
 		return id;
 	}
+
 	/**
 	 * @param id the id to set
 	 */
-	private void setId(Integer id) {
+	public void setId(Integer id) {
 		this.id = id;
 	}
-	
+
 	public void changeId(Integer id) {
 		this.id = id;
 	}

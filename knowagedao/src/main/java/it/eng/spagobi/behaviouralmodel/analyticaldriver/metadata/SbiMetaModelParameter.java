@@ -34,8 +34,7 @@ public class SbiMetaModelParameter extends SbiHibernateModel {
 	/**
 	 * constructor with id.
 	 *
-	 * @param objParId
-	 *            the obj par id
+	 * @param objParId the obj par id
 	 */
 	public SbiMetaModelParameter(Integer objParId) {
 		this.metaModelParId = objParId;
@@ -55,8 +54,7 @@ public class SbiMetaModelParameter extends SbiHibernateModel {
 	/**
 	 * Sets the label.
 	 *
-	 * @param label
-	 *            the new label
+	 * @param label the new label
 	 */
 	public void setLabel(String label) {
 		this.label = label;
@@ -74,8 +72,7 @@ public class SbiMetaModelParameter extends SbiHibernateModel {
 	/**
 	 * Sets the mod fl.
 	 *
-	 * @param modFl
-	 *            the new mod fl
+	 * @param modFl the new mod fl
 	 */
 	public void setModFl(Short modFl) {
 		this.modFl = modFl;
@@ -93,8 +90,7 @@ public class SbiMetaModelParameter extends SbiHibernateModel {
 	/**
 	 * Sets the mult fl.
 	 *
-	 * @param multFl
-	 *            the new mult fl
+	 * @param multFl the new mult fl
 	 */
 	public void setMultFl(Short multFl) {
 		this.multFl = multFl;
@@ -112,8 +108,7 @@ public class SbiMetaModelParameter extends SbiHibernateModel {
 	/**
 	 * Sets the parurl nm.
 	 *
-	 * @param parurlNm
-	 *            the new parurl nm
+	 * @param parurlNm the new parurl nm
 	 */
 	public void setParurlNm(String parurlNm) {
 		this.parurlNm = parurlNm;
@@ -131,8 +126,7 @@ public class SbiMetaModelParameter extends SbiHibernateModel {
 	/**
 	 * Sets the prog.
 	 *
-	 * @param prog
-	 *            the new prog
+	 * @param prog the new prog
 	 */
 	public void setProg(Integer prog) {
 		this.prog = prog;
@@ -150,8 +144,7 @@ public class SbiMetaModelParameter extends SbiHibernateModel {
 	/**
 	 * Sets the req fl.
 	 *
-	 * @param reqFl
-	 *            the new req fl
+	 * @param reqFl the new req fl
 	 */
 	public void setReqFl(Short reqFl) {
 		this.reqFl = reqFl;
@@ -169,8 +162,7 @@ public class SbiMetaModelParameter extends SbiHibernateModel {
 	/**
 	 * Sets the sbi parameter.
 	 *
-	 * @param sbiParameter
-	 *            the new sbi parameter
+	 * @param sbiParameter the new sbi parameter
 	 */
 	public void setSbiParameter(SbiParameters sbiParameter) {
 		this.sbiParameter = sbiParameter;
@@ -188,8 +180,7 @@ public class SbiMetaModelParameter extends SbiHibernateModel {
 	/**
 	 * Sets the view fl.
 	 *
-	 * @param viewFl
-	 *            the new view fl
+	 * @param viewFl the new view fl
 	 */
 	public void setViewFl(Short viewFl) {
 		this.viewFl = viewFl;
@@ -207,8 +198,7 @@ public class SbiMetaModelParameter extends SbiHibernateModel {
 	/**
 	 * Sets the priority.
 	 *
-	 * @param priority
-	 *            the new priority
+	 * @param priority the new priority
 	 */
 	public void setPriority(Integer priority) {
 		this.priority = priority;
@@ -242,7 +232,7 @@ public class SbiMetaModelParameter extends SbiHibernateModel {
 		return metaModelParId;
 	}
 
-	private void setMetaModelParId(Integer metaModelParId) {
+	public void setMetaModelParId(Integer metaModelParId) {
 		this.metaModelParId = metaModelParId;
 	}
 
