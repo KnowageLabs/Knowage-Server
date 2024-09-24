@@ -36,20 +36,16 @@ public class AntiCsrfFilter implements Filter {
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
 			throws IOException, ServletException {
 		// controllo per escludere le login dal check csrf
-		String page = request.getParameter("PAGE");
-		String actionName = request.getParameter("ACTION_NAME");
 
-		// @formatter:off
-		if (!("LoginPage".equals(page)
-				|| "LOGIN_ACTION_BY_TOKEN".equals(actionName)
-				|| "LOGIN_ACTION_WEB".equals(actionName)
-				|| "READ_HTML_FILE".equals(actionName)		// when the user see the html page in menu		
-				|| "LOGOUT_ACTION".equals(actionName))) {
-		// @formatter:on
+		HttpServletRequest req = ((HttpServletRequest) request);
+
+		if (req.getSession(false) != null) {
+
 			String cookieVal = "";
 			String paramVal;
 			// getCookie
-			HttpServletRequest req = ((HttpServletRequest) request);
+
+			req.getSession(false);
 			Cookie[] cookies = req.getCookies();
 			boolean cFound = false;
 			if (cookies != null) {
@@ -66,6 +62,7 @@ public class AntiCsrfFilter implements Filter {
 				HttpServletResponse resp = (HttpServletResponse) response;
 				// sparo direttamente 403
 				resp.sendError(HttpServletResponse.SC_FORBIDDEN, "Invalid or missing CSRF token");
+				return;
 			}
 		}
 		chain.doFilter(request, response);

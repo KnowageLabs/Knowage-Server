@@ -145,8 +145,7 @@
      
      <filter-mapping>
 		<filter-name>KnowageAntiCsrfFilter</filter-name>
-		<url-pattern>/BirtReportServlet</url-pattern>
-		<url-pattern>/servlet/AdapterHTTP</url-pattern>
+		<url-pattern>/api/*</url-pattern>
 		<dispatcher>REQUEST</dispatcher>
 		<dispatcher>FORWARD</dispatcher>
 	</filter-mapping>
