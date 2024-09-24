@@ -31,7 +31,6 @@ public class SbiI18NMessages extends SbiHibernateModel implements java.io.Serial
 	}
 
 	public SbiI18NMessages(Integer id, Integer languageCd, String label, String message) {
-		super();
 		this.id = id;
 		this.languageCd = languageCd;
 		this.label = label;
@@ -39,14 +38,14 @@ public class SbiI18NMessages extends SbiHibernateModel implements java.io.Serial
 	}
 
 	public SbiI18NMessages(Integer id) {
-		this.id=id;
+		this.id = id;
 	}
 
 	public Integer getId() {
 		return id;
 	}
 
-	private void setId(Integer id) {
+	public void setId(Integer id) {
 		this.id = id;
 	}
 

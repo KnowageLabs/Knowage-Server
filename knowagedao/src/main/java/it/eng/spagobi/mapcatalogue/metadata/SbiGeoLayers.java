@@ -42,11 +42,10 @@ public class SbiGeoLayers extends SbiHibernateModel {
 	private List<SbiExtRoles> roles;
 
 	public SbiGeoLayers() {
-		super();
 	}
 
 	public SbiGeoLayers(int layerId) {
-		this.layerId=layerId;
+		this.layerId = layerId;
 	}
 
 	public String getName() {
@@ -85,10 +84,10 @@ public class SbiGeoLayers extends SbiHibernateModel {
 		return layerId;
 	}
 
-	private void setLayerId(int layerId) {
+	public void setLayerId(int layerId) {
 		this.layerId = layerId;
 	}
-	
+
 	public void changeLayerId(int layerId) {
 		this.layerId = layerId;
 	}
@@ -109,8 +108,7 @@ public class SbiGeoLayers extends SbiHibernateModel {
 	}
 
 	/**
-	 * @param isBaseLayer
-	 *            the isBaseLayer to set
+	 * @param isBaseLayer the isBaseLayer to set
 	 */
 	public void setBaseLayer(boolean baseLayer) {
 		this.baseLayer = baseLayer;

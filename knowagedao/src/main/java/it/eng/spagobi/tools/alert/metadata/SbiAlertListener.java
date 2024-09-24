@@ -19,7 +19,7 @@ public class SbiAlertListener extends SbiHibernateModel {
 	/**
 	 * @param id the id to set
 	 */
-	private void setId(Integer id) {
+	public void setId(Integer id) {
 		this.id = id;
 	}
 

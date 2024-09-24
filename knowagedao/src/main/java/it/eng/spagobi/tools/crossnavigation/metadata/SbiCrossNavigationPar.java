@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,22 +11,22 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package it.eng.spagobi.tools.crossnavigation.metadata;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import it.eng.spagobi.analiticalmodel.document.metadata.SbiObjPar;
 import it.eng.spagobi.commons.metadata.SbiHibernateModel;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public class SbiCrossNavigationPar extends SbiHibernateModel {
 
 	private static final long serialVersionUID = -5674358775970036877L;
 	/**
-	 * 
+	 *
 	 */
 	private Integer id;
 
@@ -50,10 +50,9 @@ public class SbiCrossNavigationPar extends SbiHibernateModel {
 	}
 
 	/**
-	 * @param id
-	 *            the id to set
+	 * @param id the id to set
 	 */
-	private void setId(Integer id) {
+	public void setId(Integer id) {
 		this.id = id;
 	}
 
@@ -65,8 +64,7 @@ public class SbiCrossNavigationPar extends SbiHibernateModel {
 	}
 
 	/**
-	 * @param toKey
-	 *            the toKey to set
+	 * @param toKey the toKey to set
 	 */
 	public void setToKey(SbiObjPar toKey) {
 		this.toKey = toKey;
@@ -80,8 +78,7 @@ public class SbiCrossNavigationPar extends SbiHibernateModel {
 	}
 
 	/**
-	 * @param newRecord
-	 *            the newRecord to set
+	 * @param newRecord the newRecord to set
 	 */
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
@@ -95,8 +92,7 @@ public class SbiCrossNavigationPar extends SbiHibernateModel {
 	}
 
 	/**
-	 * @param crossNavigation
-	 *            the crossNavigation to set
+	 * @param crossNavigation the crossNavigation to set
 	 */
 	public void setSbiCrossNavigation(SbiCrossNavigation crossNavigation) {
 		this.sbiCrossNavigation = crossNavigation;
@@ -110,8 +106,7 @@ public class SbiCrossNavigationPar extends SbiHibernateModel {
 	}
 
 	/**
-	 * @param fromKeyId
-	 *            the fromKeyId to set
+	 * @param fromKeyId the fromKeyId to set
 	 */
 	public void setFromKeyId(Integer fromKeyId) {
 		this.fromKeyId = fromKeyId;
@@ -125,8 +120,7 @@ public class SbiCrossNavigationPar extends SbiHibernateModel {
 	}
 
 	/**
-	 * @param fromType
-	 *            the fromType to set
+	 * @param fromType the fromType to set
 	 */
 	public void setFromType(Integer fromType) {
 		this.fromType = fromType;
@@ -140,8 +134,7 @@ public class SbiCrossNavigationPar extends SbiHibernateModel {
 	}
 
 	/**
-	 * @param toKeyId
-	 *            the toKeyId to set
+	 * @param toKeyId the toKeyId to set
 	 */
 	public void setToKeyId(Integer toKeyId) {
 		this.toKeyId = toKeyId;
@@ -155,8 +148,7 @@ public class SbiCrossNavigationPar extends SbiHibernateModel {
 	}
 
 	/**
-	 * @param fixedValue
-	 *            the fixedValue to set
+	 * @param fixedValue the fixedValue to set
 	 */
 	public void setFixedValue(String fixedValue) {
 		this.fixedValue = fixedValue;

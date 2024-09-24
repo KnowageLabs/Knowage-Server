@@ -52,7 +52,8 @@ public class SbiObjMetacontents extends SbiHibernateModel {
 	}
 
 	/** minimal constructor */
-	public SbiObjMetacontents(Integer objMetacontentId, SbiObjects sbiObjects, Integer objmetaId, Date creationDate, Date lastChangeDate) {
+	public SbiObjMetacontents(Integer objMetacontentId, SbiObjects sbiObjects, Integer objmetaId, Date creationDate,
+			Date lastChangeDate) {
 		this.objMetacontentId = objMetacontentId;
 		this.sbiObjects = sbiObjects;
 		this.objmetaId = objmetaId;
@@ -61,8 +62,9 @@ public class SbiObjMetacontents extends SbiHibernateModel {
 	}
 
 	/** full constructor */
-	public SbiObjMetacontents(Integer objMetacontentId, SbiObjects sbiObjects, SbiSubObjects sbiSubObjects, SbiBinContents sbiBinContents, Integer objmetaId,
-			Date creationDate, Date lastChangeDate, JSONObject additionalInfo) {
+	public SbiObjMetacontents(Integer objMetacontentId, SbiObjects sbiObjects, SbiSubObjects sbiSubObjects,
+			SbiBinContents sbiBinContents, Integer objmetaId, Date creationDate, Date lastChangeDate,
+			JSONObject additionalInfo) {
 		this.objMetacontentId = objMetacontentId;
 		this.sbiObjects = sbiObjects;
 		this.sbiSubObjects = sbiSubObjects;
@@ -79,7 +81,7 @@ public class SbiObjMetacontents extends SbiHibernateModel {
 		return this.objMetacontentId;
 	}
 
-	private void setObjMetacontentId(Integer objMetacontentId) {
+	public void setObjMetacontentId(Integer objMetacontentId) {
 		this.objMetacontentId = objMetacontentId;
 	}
 

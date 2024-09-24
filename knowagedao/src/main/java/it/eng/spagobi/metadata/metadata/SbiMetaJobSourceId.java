@@ -24,7 +24,7 @@ public class SbiMetaJobSourceId extends SbiHibernateModel {
 		return this.jobId;
 	}
 
-	private void setJobId(int jobId) {
+	public void setJobId(int jobId) {
 		this.jobId = jobId;
 	}
 
@@ -32,7 +32,7 @@ public class SbiMetaJobSourceId extends SbiHibernateModel {
 		return this.sourceId;
 	}
 
-	private void setSourceId(int sourceId) {
+	public void setSourceId(int sourceId) {
 		this.sourceId = sourceId;
 	}
 

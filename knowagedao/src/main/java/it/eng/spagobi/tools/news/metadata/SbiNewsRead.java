@@ -59,7 +59,7 @@ public class SbiNewsRead extends SbiHibernateModel {
 		return newsReadID;
 	}
 
-	private void setNewsReadID(Integer newsReadID) {
+	public void setNewsReadID(Integer newsReadID) {
 		this.newsReadID = newsReadID;
 	}
 

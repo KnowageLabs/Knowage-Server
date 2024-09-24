@@ -21,8 +21,7 @@ public class SbiMetamodelParuse extends SbiHibernateModel {
 	/**
 	 * constructor with id.
 	 *
-	 * @param id
-	 *            the id
+	 * @param id the id
 	 */
 	public SbiMetamodelParuse(Integer id) {
 		this.id = id;
@@ -32,10 +31,10 @@ public class SbiMetamodelParuse extends SbiHibernateModel {
 		return id;
 	}
 
-	private void setId(Integer id) {
+	public void setId(Integer id) {
 		this.id = id;
 	}
-	
+
 	public void changeId(Integer id) {
 		this.id = id;
 	}

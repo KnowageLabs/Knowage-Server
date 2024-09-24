@@ -28,7 +28,7 @@ public class CalendarAttribute extends SbiHibernateModel {
 		return attributeId;
 	}
 
-	private void setAttributeId(Integer attributeId) {
+	public void setAttributeId(Integer attributeId) {
 		this.attributeId = attributeId;
 	}
 

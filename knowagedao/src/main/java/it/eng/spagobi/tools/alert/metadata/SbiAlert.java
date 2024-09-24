@@ -13,7 +13,7 @@ public class SbiAlert extends SbiHibernateModel {
 	private String listenerOptions;
 
 	public SbiAlert(Integer id) {
-		this.id=id;
+		this.id = id;
 	}
 
 	/**
@@ -24,8 +24,7 @@ public class SbiAlert extends SbiHibernateModel {
 	}
 
 	/**
-	 * @param singleExecution
-	 *            the singleExecution to set
+	 * @param singleExecution the singleExecution to set
 	 */
 	public void setSingleExecution(Character singleExecution) {
 		this.singleExecution = singleExecution;
@@ -39,8 +38,7 @@ public class SbiAlert extends SbiHibernateModel {
 	}
 
 	/**
-	 * @param eventBeforeTriggerAction
-	 *            the eventBeforeTriggerAction to set
+	 * @param eventBeforeTriggerAction the eventBeforeTriggerAction to set
 	 */
 	public void setEventBeforeTriggerAction(Integer eventBeforeTriggerAction) {
 		this.eventBeforeTriggerAction = eventBeforeTriggerAction;
@@ -54,8 +52,7 @@ public class SbiAlert extends SbiHibernateModel {
 	}
 
 	/**
-	 * @param listenerOptions
-	 *            the listenerOptions to set
+	 * @param listenerOptions the listenerOptions to set
 	 */
 	public void setListenerOptions(String listenerOptions) {
 		this.listenerOptions = listenerOptions;
@@ -69,10 +66,9 @@ public class SbiAlert extends SbiHibernateModel {
 	}
 
 	/**
-	 * @param id
-	 *            the id to set
+	 * @param id the id to set
 	 */
-	private void setId(Integer id) {
+	public void setId(Integer id) {
 		this.id = id;
 	}
 
@@ -84,8 +80,7 @@ public class SbiAlert extends SbiHibernateModel {
 	}
 
 	/**
-	 * @param name
-	 *            the name to set
+	 * @param name the name to set
 	 */
 	public void setName(String name) {
 		this.name = name;
@@ -99,8 +94,7 @@ public class SbiAlert extends SbiHibernateModel {
 	}
 
 	/**
-	 * @param sbiAlertListener
-	 *            the sbiAlertListener to set
+	 * @param sbiAlertListener the sbiAlertListener to set
 	 */
 	public void setSbiAlertListener(SbiAlertListener sbiAlertListener) {
 		this.sbiAlertListener = sbiAlertListener;
@@ -114,8 +108,7 @@ public class SbiAlert extends SbiHibernateModel {
 	}
 
 	/**
-	 * @param listenerId
-	 *            the listenerId to set
+	 * @param listenerId the listenerId to set
 	 */
 	public void setListenerId(Integer listenerId) {
 		this.listenerId = listenerId;

@@ -64,8 +64,8 @@ public class SbiMetaSource extends SbiHibernateModel {
 		this.type = type;
 	}
 
-	public SbiMetaSource(String name, String type, String url, String location, String sourceSchema, String sourceCatalogue, String role, Set sbiMetaJobSources,
-			Set sbiMetaTables) {
+	public SbiMetaSource(String name, String type, String url, String location, String sourceSchema,
+			String sourceCatalogue, String role, Set sbiMetaJobSources, Set sbiMetaTables) {
 		this.name = name;
 		this.type = type;
 		this.url = url;
@@ -81,7 +81,7 @@ public class SbiMetaSource extends SbiHibernateModel {
 		return this.sourceId;
 	}
 
-	private void setSourceId(Integer sourceId) {
+	public void setSourceId(Integer sourceId) {
 		this.sourceId = sourceId;
 	}
 
@@ -159,7 +159,7 @@ public class SbiMetaSource extends SbiHibernateModel {
 
 	public void changeSourceId(Integer sourceId) {
 		this.setSourceId(sourceId);
-		
+
 	}
 
 }

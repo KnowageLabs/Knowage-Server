@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,7 +11,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -50,8 +50,7 @@ public class SbiLov extends SbiHibernateModel {
 	/**
 	 * constructor with id.
 	 *
-	 * @param lovId
-	 *            the lov id
+	 * @param lovId the lov id
 	 */
 	public SbiLov(Integer lovId) {
 		this.lovId = lovId;
@@ -71,13 +70,13 @@ public class SbiLov extends SbiHibernateModel {
 	public void changeLovId(Integer lovId) {
 		this.setLovId(lovId);
 	}
+
 	/**
 	 * Sets the lov id.
 	 *
-	 * @param lovId
-	 *            the new lov id
+	 * @param lovId the new lov id
 	 */
-	private void setLovId(Integer lovId) {
+	public void setLovId(Integer lovId) {
 		this.lovId = lovId;
 	}
 
@@ -93,8 +92,7 @@ public class SbiLov extends SbiHibernateModel {
 	/**
 	 * Sets the input type cd.
 	 *
-	 * @param inputTypeCd
-	 *            the new input type cd
+	 * @param inputTypeCd the new input type cd
 	 */
 	public void setInputTypeCd(String inputTypeCd) {
 		this.inputTypeCd = inputTypeCd;
@@ -112,8 +110,7 @@ public class SbiLov extends SbiHibernateModel {
 	/**
 	 * Sets the default val.
 	 *
-	 * @param defaultVal
-	 *            the new default val
+	 * @param defaultVal the new default val
 	 */
 	public void setDefaultVal(String defaultVal) {
 		this.defaultVal = defaultVal;
@@ -131,8 +128,7 @@ public class SbiLov extends SbiHibernateModel {
 	/**
 	 * Sets the label.
 	 *
-	 * @param label
-	 *            the new label
+	 * @param label the new label
 	 */
 	public void setLabel(String label) {
 		this.label = label;
@@ -150,8 +146,7 @@ public class SbiLov extends SbiHibernateModel {
 	/**
 	 * Sets the descr.
 	 *
-	 * @param descr
-	 *            the new descr
+	 * @param descr the new descr
 	 */
 	public void setDescr(String descr) {
 		this.descr = descr;
@@ -169,8 +164,7 @@ public class SbiLov extends SbiHibernateModel {
 	/**
 	 * Sets the profile attr.
 	 *
-	 * @param profileAttr
-	 *            the new profile attr
+	 * @param profileAttr the new profile attr
 	 */
 	public void setProfileAttr(String profileAttr) {
 		this.profileAttr = profileAttr;
@@ -188,8 +182,7 @@ public class SbiLov extends SbiHibernateModel {
 	/**
 	 * Sets the lov provider.
 	 *
-	 * @param lovProvider
-	 *            the new lov provider
+	 * @param lovProvider the new lov provider
 	 */
 	public void setLovProvider(String lovProvider) {
 		this.lovProvider = lovProvider;
@@ -207,8 +200,7 @@ public class SbiLov extends SbiHibernateModel {
 	/**
 	 * Sets the input type.
 	 *
-	 * @param inputType
-	 *            the new input type
+	 * @param inputType the new input type
 	 */
 	public void setInputType(SbiDomains inputType) {
 		this.inputType = inputType;
@@ -226,8 +218,7 @@ public class SbiLov extends SbiHibernateModel {
 	/**
 	 * Sets the name.
 	 *
-	 * @param name
-	 *            the new name
+	 * @param name the new name
 	 */
 	public void setName(String name) {
 		this.name = name;
@@ -241,8 +232,7 @@ public class SbiLov extends SbiHibernateModel {
 	}
 
 	/**
-	 * @param datasetId
-	 *            the datasetId to set
+	 * @param datasetId the datasetId to set
 	 */
 	public void setDatasetId(Integer datasetId) {
 		this.datasetId = datasetId;
@@ -250,7 +240,7 @@ public class SbiLov extends SbiHibernateModel {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see java.lang.Object#hashCode()
 	 */
 	@Override
@@ -263,7 +253,7 @@ public class SbiLov extends SbiHibernateModel {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	@Override
@@ -289,10 +279,9 @@ public class SbiLov extends SbiHibernateModel {
 	 *         public SbiDataSet getDatasetId() { return datasetId; }
 	 */
 	/**
-	 * @param datasetId
-	 *            the datasetId to set
+	 * @param datasetId the datasetId to set
 	 *
-	 *            public void setDatasetId(SbiDataSet datasetId) { this.datasetId = datasetId; }
+	 *                  public void setDatasetId(SbiDataSet datasetId) { this.datasetId = datasetId; }
 	 */
 
 }

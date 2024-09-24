@@ -64,10 +64,9 @@ public class SbiDomains extends SbiHibernateModel {
 	 *
 	 * @param valueId the new value id
 	 */
-	private void setValueId(Integer valueId) {
+	public void setValueId(Integer valueId) {
 		this.valueId = valueId;
 	}
-
 
 	/**
 	 * Gets the domain cd.
@@ -196,7 +195,7 @@ public class SbiDomains extends SbiHibernateModel {
 
 	public void changeValueId(Integer valueId) {
 		this.setValueId(valueId);
-		
+
 	}
 
 }

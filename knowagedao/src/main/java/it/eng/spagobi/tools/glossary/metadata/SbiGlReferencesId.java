@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,7 +11,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -34,7 +34,6 @@ public class SbiGlReferencesId implements Serializable {
 	 * @param refWordId
 	 */
 	public SbiGlReferencesId(int wordId, int refWordId) {
-		super();
 		this.wordId = wordId;
 		this.refWordId = refWordId;
 	}
@@ -47,10 +46,9 @@ public class SbiGlReferencesId implements Serializable {
 	}
 
 	/**
-	 * @param wordId
-	 *            the wordId to set
+	 * @param wordId the wordId to set
 	 */
-	private void setWordId(int wordId) {
+	public void setWordId(int wordId) {
 		this.wordId = wordId;
 	}
 
@@ -62,10 +60,9 @@ public class SbiGlReferencesId implements Serializable {
 	}
 
 	/**
-	 * @param refWordId
-	 *            the refWordId to set
+	 * @param refWordId the refWordId to set
 	 */
-	private void setRefWordId(int refWordId) {
+	public void setRefWordId(int refWordId) {
 		this.refWordId = refWordId;
 	}
 

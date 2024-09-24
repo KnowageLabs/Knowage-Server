@@ -28,13 +28,12 @@ public class SbiImages extends SbiHibernateModel {
 	private byte[] contentIco;
 
 	public SbiImages() {
-		super();
 	}
 
 	public SbiImages(Integer imageId) {
-		super();
 		this.setImageId(imageId);
 	}
+
 	/**
 	 * @return the imageId
 	 */
@@ -43,10 +42,9 @@ public class SbiImages extends SbiHibernateModel {
 	}
 
 	/**
-	 * @param imageId
-	 *            the imageId to set
+	 * @param imageId the imageId to set
 	 */
-	private void setImageId(Integer imageId) {
+	public void setImageId(Integer imageId) {
 		this.imageId = imageId;
 	}
 
@@ -58,8 +56,7 @@ public class SbiImages extends SbiHibernateModel {
 	}
 
 	/**
-	 * @param name
-	 *            the name to set
+	 * @param name the name to set
 	 */
 	public void setName(String name) {
 		this.name = name;
@@ -77,8 +74,7 @@ public class SbiImages extends SbiHibernateModel {
 	/**
 	 * Sets the content.
 	 *
-	 * @param content
-	 *            the new content
+	 * @param content the new content
 	 */
 	public void setContent(byte[] content) {
 		this.content = content;
@@ -96,8 +92,7 @@ public class SbiImages extends SbiHibernateModel {
 	/**
 	 * Sets the content icon.
 	 *
-	 * @param content
-	 *            the new content
+	 * @param content the new content
 	 */
 	public void setContentIco(byte[] contentIco) {
 		this.contentIco = contentIco;

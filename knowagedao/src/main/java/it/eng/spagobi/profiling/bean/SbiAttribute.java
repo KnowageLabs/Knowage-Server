@@ -53,15 +53,16 @@ public class SbiAttribute extends SbiHibernateModel {
 		this.description = description;
 	}
 
-	public SbiAttribute(int attributeId, String attributeName, String description, Set<SbiUserAttributes> sbiUserAttributeses) {
+	public SbiAttribute(int attributeId, String attributeName, String description,
+			Set<SbiUserAttributes> sbiUserAttributeses) {
 		this.attributeId = attributeId;
 		this.attributeName = attributeName;
 		this.description = description;
 		this.sbiUserAttributeses = sbiUserAttributeses;
 	}
 
-	public SbiAttribute(int attributeId, String attributeName, String description, Short allowUser, Short syntax, Integer lovId, Short multivalue,
-			ProfileAttributesValueTypes value) {
+	public SbiAttribute(int attributeId, String attributeName, String description, Short allowUser, Short syntax,
+			Integer lovId, Short multivalue, ProfileAttributesValueTypes value) {
 		this.attributeId = attributeId;
 		this.attributeName = attributeName;
 		this.description = description;
@@ -77,7 +78,7 @@ public class SbiAttribute extends SbiHibernateModel {
 		return this.attributeId;
 	}
 
-	private void setAttributeId(int attributeId) {
+	public void setAttributeId(int attributeId) {
 		this.attributeId = attributeId;
 	}
 
@@ -171,7 +172,7 @@ public class SbiAttribute extends SbiHibernateModel {
 
 	public void changeAttributeId(int intValue) {
 		this.setAttributeId(intValue);
-		
+
 	}
 
 }

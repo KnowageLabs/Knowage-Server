@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,17 +11,17 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package it.eng.spagobi.tools.glossary.metadata;
 
+import java.util.Set;
+
 import it.eng.spagobi.commons.metadata.SbiDomains;
 import it.eng.spagobi.commons.metadata.SbiHibernateModel;
 import it.eng.spagobi.tools.udp.metadata.SbiUdpValue;
-
-import java.util.Set;
 
 public class SbiGlWord extends SbiHibernateModel {
 
@@ -37,10 +37,10 @@ public class SbiGlWord extends SbiHibernateModel {
 
 	private Integer state_id;
 	private Integer category_id;
-	
+
 	private SbiDomains state;
 	private SbiDomains category;
-	
+
 	private Set<SbiGlReferences> references;
 	private Set<SbiUdpValue> attributes;
 
@@ -56,7 +56,6 @@ public class SbiGlWord extends SbiHibernateModel {
 	 * @param category
 	 */
 	public SbiGlWord(Integer wordId, String word, String descr, String formula, Integer state, Integer category) {
-		super();
 		this.wordId = wordId;
 		this.word = word;
 		this.descr = descr;
@@ -65,7 +64,6 @@ public class SbiGlWord extends SbiHibernateModel {
 		this.category_id = category;
 	}
 
-	
 	/**
 	 * @param wordId
 	 * @param word
@@ -76,10 +74,8 @@ public class SbiGlWord extends SbiHibernateModel {
 	 * @param references
 	 * @param attributes
 	 */
-	public SbiGlWord(Integer wordId, String word, String descr, String formula,
-			SbiDomains state, SbiDomains category,
+	public SbiGlWord(Integer wordId, String word, String descr, String formula, SbiDomains state, SbiDomains category,
 			Set<SbiGlReferences> references, Set<SbiUdpValue> attributes) {
-		super();
 		this.wordId = wordId;
 		this.word = word;
 		this.descr = descr;
@@ -98,16 +94,16 @@ public class SbiGlWord extends SbiHibernateModel {
 	}
 
 	/**
-	 * @param wordId
-	 *            the wordId to set
+	 * @param wordId the wordId to set
 	 */
-	private void setWordId(Integer wordId) {
+	public void setWordId(Integer wordId) {
 		this.wordId = wordId;
 	}
 
 	public void changeWordId(Integer wordId) {
 		this.wordId = wordId;
 	}
+
 	/**
 	 * @return the word
 	 */
@@ -116,8 +112,7 @@ public class SbiGlWord extends SbiHibernateModel {
 	}
 
 	/**
-	 * @param word
-	 *            the word to set
+	 * @param word the word to set
 	 */
 	public void setWord(String word) {
 		this.word = word;
@@ -131,8 +126,7 @@ public class SbiGlWord extends SbiHibernateModel {
 	}
 
 	/**
-	 * @param descr
-	 *            the descr to set
+	 * @param descr the descr to set
 	 */
 	public void setDescr(String descr) {
 		this.descr = descr;
@@ -146,14 +140,11 @@ public class SbiGlWord extends SbiHibernateModel {
 	}
 
 	/**
-	 * @param formula
-	 *            the formula to set
+	 * @param formula the formula to set
 	 */
 	public void setFormula(String formula) {
 		this.formula = formula;
 	}
-
-	
 
 	/**
 	 * @return the state_id
@@ -219,8 +210,7 @@ public class SbiGlWord extends SbiHibernateModel {
 	}
 
 	/**
-	 * @param references
-	 *            the references to set
+	 * @param references the references to set
 	 */
 	public void setReferences(Set<SbiGlReferences> references) {
 		this.references = references;
@@ -234,22 +224,25 @@ public class SbiGlWord extends SbiHibernateModel {
 	}
 
 	/**
-	 * @param attributes
-	 *            the attributes to set
+	 * @param attributes the attributes to set
 	 */
 	public void setAttributes(Set<SbiUdpValue> attributes) {
 		this.attributes = attributes;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 *
 	 * @see java.lang.Object#hashCode()
 	 */
 	@Override
 	public int hashCode() {
-		return wordId==null?super.hashCode():wordId.intValue();
+		return wordId == null ? super.hashCode() : wordId.intValue();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 *
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	@Override
@@ -269,6 +262,4 @@ public class SbiGlWord extends SbiHibernateModel {
 		return true;
 	}
 
-
-	
 }

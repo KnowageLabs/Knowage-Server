@@ -38,7 +38,7 @@ public class SbiCockpitAssociation extends SbiHibernateModel {
 		return sbiCockpitAssociationId;
 	}
 
-	private void setSbiCockpitAssociationId(Integer sbiCockpitAssociationId) {
+	public void setSbiCockpitAssociationId(Integer sbiCockpitAssociationId) {
 		this.sbiCockpitAssociationId = sbiCockpitAssociationId;
 	}
 
