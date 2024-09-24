@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- *
+ * 
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,7 +11,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- *
+ * 
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -22,13 +22,13 @@ import it.eng.spagobi.analiticalmodel.document.metadata.SbiSubObjects;
 import it.eng.spagobi.commons.metadata.SbiHibernateModel;
 
 /**
- *
+ * 
  * @author Zerbetto (davide.zerbetto@eng.it)
  *
  */
-public class SbiRememberMe extends SbiHibernateModel {
+public class SbiRememberMe extends SbiHibernateModel  {
 
-	// Fields
+	//	Fields
 	private Integer id;
 	private String name;
 	private String description;
@@ -36,27 +36,27 @@ public class SbiRememberMe extends SbiHibernateModel {
 	private SbiObjects sbiObject;
 	private SbiSubObjects sbiSubObject;
 	private String parameters;
-
-	// Constructors
-
-	/**
-	 * default constructor.
-	 */
-	public SbiRememberMe() {
-	}
+	
+    // Constructors
 
 	/**
-	 * constructor with id.
-	 * 
-	 * @param id the id
-	 */
-	public SbiRememberMe(Integer id) {
-		this.id = id;
-	}
+     * default constructor.
+     */
+    public SbiRememberMe() {
+    }
+    
+    /**
+     * constructor with id.
+     * 
+     * @param id the id
+     */
+    public SbiRememberMe(Integer id) {
+        this.id = id;
+    }
 
 	/**
 	 * Gets the id.
-	 *
+	 * 
 	 * @return the id
 	 */
 	public Integer getId() {
@@ -65,16 +65,16 @@ public class SbiRememberMe extends SbiHibernateModel {
 
 	/**
 	 * Sets the id.
-	 *
+	 * 
 	 * @param id the new id
 	 */
-	public void setId(Integer id) {
+	private void setId(Integer id) {
 		this.id = id;
 	}
 
 	/**
 	 * Gets the user name.
-	 *
+	 * 
 	 * @return the user name
 	 */
 	public String getUserName() {
@@ -83,7 +83,7 @@ public class SbiRememberMe extends SbiHibernateModel {
 
 	/**
 	 * Sets the user name.
-	 *
+	 * 
 	 * @param userName the new user name
 	 */
 	public void setUserName(String userName) {
@@ -92,7 +92,7 @@ public class SbiRememberMe extends SbiHibernateModel {
 
 	/**
 	 * Gets the sbi object.
-	 *
+	 * 
 	 * @return the sbi object
 	 */
 	public SbiObjects getSbiObject() {
@@ -101,7 +101,7 @@ public class SbiRememberMe extends SbiHibernateModel {
 
 	/**
 	 * Sets the sbi object.
-	 *
+	 * 
 	 * @param sbiObject the new sbi object
 	 */
 	public void setSbiObject(SbiObjects sbiObject) {
@@ -110,7 +110,7 @@ public class SbiRememberMe extends SbiHibernateModel {
 
 	/**
 	 * Gets the parameters.
-	 *
+	 * 
 	 * @return the parameters
 	 */
 	public String getParameters() {
@@ -119,7 +119,7 @@ public class SbiRememberMe extends SbiHibernateModel {
 
 	/**
 	 * Sets the parameters.
-	 *
+	 * 
 	 * @param parameters the new parameters
 	 */
 	public void setParameters(String parameters) {
@@ -128,7 +128,7 @@ public class SbiRememberMe extends SbiHibernateModel {
 
 	/**
 	 * Gets the sbi sub object.
-	 *
+	 * 
 	 * @return the sbi sub object
 	 */
 	public SbiSubObjects getSbiSubObject() {
@@ -137,7 +137,7 @@ public class SbiRememberMe extends SbiHibernateModel {
 
 	/**
 	 * Sets the sbi sub object.
-	 *
+	 * 
 	 * @param sbiSubObject the new sbi sub object
 	 */
 	public void setSbiSubObject(SbiSubObjects sbiSubObject) {
@@ -146,7 +146,7 @@ public class SbiRememberMe extends SbiHibernateModel {
 
 	/**
 	 * Gets the name.
-	 *
+	 * 
 	 * @return the name
 	 */
 	public String getName() {
@@ -155,7 +155,7 @@ public class SbiRememberMe extends SbiHibernateModel {
 
 	/**
 	 * Sets the name.
-	 *
+	 * 
 	 * @param name the new name
 	 */
 	public void setName(String name) {
@@ -164,7 +164,7 @@ public class SbiRememberMe extends SbiHibernateModel {
 
 	/**
 	 * Gets the description.
-	 *
+	 * 
 	 * @return the description
 	 */
 	public String getDescription() {
@@ -173,11 +173,11 @@ public class SbiRememberMe extends SbiHibernateModel {
 
 	/**
 	 * Sets the description.
-	 *
+	 * 
 	 * @param description the new description
 	 */
 	public void setDescription(String description) {
 		this.description = description;
 	}
-
+    
 }

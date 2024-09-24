@@ -58,7 +58,8 @@ public class SbiEngines extends SbiHibernateModel {
 	/**
 	 * constructor with id.
 	 *
-	 * @param engineId the engine id
+	 * @param engineId
+	 *            the engine id
 	 */
 	public SbiEngines(Integer engineId) {
 		this.engineId = engineId;
@@ -78,13 +79,13 @@ public class SbiEngines extends SbiHibernateModel {
 	public void changeEngineId(Integer engineId) {
 		this.setEngineId(engineId);
 	}
-
 	/**
 	 * Sets the engine id.
 	 *
-	 * @param engineId the new engine id
+	 * @param engineId
+	 *            the new engine id
 	 */
-	public void setEngineId(Integer engineId) {
+	private void setEngineId(Integer engineId) {
 		this.engineId = engineId;
 	}
 
@@ -100,7 +101,8 @@ public class SbiEngines extends SbiHibernateModel {
 	/**
 	 * Sets the encrypt.
 	 *
-	 * @param encrypt the new encrypt
+	 * @param encrypt
+	 *            the new encrypt
 	 */
 	public void setEncrypt(Short encrypt) {
 		this.encrypt = encrypt;
@@ -118,7 +120,8 @@ public class SbiEngines extends SbiHibernateModel {
 	/**
 	 * Sets the name.
 	 *
-	 * @param name the new name
+	 * @param name
+	 *            the new name
 	 */
 	public void setName(String name) {
 		this.name = name;
@@ -136,7 +139,8 @@ public class SbiEngines extends SbiHibernateModel {
 	/**
 	 * Sets the descr.
 	 *
-	 * @param descr the new descr
+	 * @param descr
+	 *            the new descr
 	 */
 	public void setDescr(String descr) {
 		this.descr = descr;
@@ -154,7 +158,8 @@ public class SbiEngines extends SbiHibernateModel {
 	/**
 	 * Sets the main url.
 	 *
-	 * @param mainUrl the new main url
+	 * @param mainUrl
+	 *            the new main url
 	 */
 	public void setMainUrl(String mainUrl) {
 		this.mainUrl = mainUrl;
@@ -172,7 +177,8 @@ public class SbiEngines extends SbiHibernateModel {
 	/**
 	 * Sets the secn url.
 	 *
-	 * @param secnUrl the new secn url
+	 * @param secnUrl
+	 *            the new secn url
 	 */
 	public void setSecnUrl(String secnUrl) {
 		this.secnUrl = secnUrl;
@@ -190,7 +196,8 @@ public class SbiEngines extends SbiHibernateModel {
 	/**
 	 * Sets the obj upl dir.
 	 *
-	 * @param objUplDir the new obj upl dir
+	 * @param objUplDir
+	 *            the new obj upl dir
 	 */
 	public void setObjUplDir(String objUplDir) {
 		this.objUplDir = objUplDir;
@@ -208,7 +215,8 @@ public class SbiEngines extends SbiHibernateModel {
 	/**
 	 * Sets the obj use dir.
 	 *
-	 * @param objUseDir the new obj use dir
+	 * @param objUseDir
+	 *            the new obj use dir
 	 */
 	public void setObjUseDir(String objUseDir) {
 		this.objUseDir = objUseDir;
@@ -226,7 +234,8 @@ public class SbiEngines extends SbiHibernateModel {
 	/**
 	 * Sets the driver nm.
 	 *
-	 * @param driverNm the new driver nm
+	 * @param driverNm
+	 *            the new driver nm
 	 */
 	public void setDriverNm(String driverNm) {
 		this.driverNm = driverNm;
@@ -244,7 +253,8 @@ public class SbiEngines extends SbiHibernateModel {
 	/**
 	 * Sets the label.
 	 *
-	 * @param label the new label
+	 * @param label
+	 *            the new label
 	 */
 	public void setLabel(String label) {
 		this.label = label;
@@ -262,7 +272,8 @@ public class SbiEngines extends SbiHibernateModel {
 	/**
 	 * Sets the biobj type.
 	 *
-	 * @param biobjType the new biobj type
+	 * @param biobjType
+	 *            the new biobj type
 	 */
 	public void setBiobjType(SbiDomains biobjType) {
 		this.biobjType = biobjType;
@@ -280,7 +291,8 @@ public class SbiEngines extends SbiHibernateModel {
 	/**
 	 * Sets the class nm.
 	 *
-	 * @param classNm the new class nm
+	 * @param classNm
+	 *            the new class nm
 	 */
 	public void setClassNm(String classNm) {
 		this.classNm = classNm;
@@ -298,7 +310,8 @@ public class SbiEngines extends SbiHibernateModel {
 	/**
 	 * Sets the engine type.
 	 *
-	 * @param engineType the new engine type
+	 * @param engineType
+	 *            the new engine type
 	 */
 	public void setEngineType(SbiDomains engineType) {
 		this.engineType = engineType;
@@ -316,7 +329,8 @@ public class SbiEngines extends SbiHibernateModel {
 	/**
 	 * Sets the use data source.
 	 *
-	 * @param useDataSource the new use data source
+	 * @param useDataSource
+	 *            the new use data source
 	 */
 	public void setUseDataSource(Boolean useDataSource) {
 		this.useDataSource = useDataSource;
@@ -334,7 +348,8 @@ public class SbiEngines extends SbiHibernateModel {
 	/**
 	 * Sets the use data set.
 	 *
-	 * @param useDataSet the new use data set
+	 * @param useDataSet
+	 *            the new use data set
 	 */
 	public void setUseDataSet(Boolean useDataSet) {
 		this.useDataSet = useDataSet;

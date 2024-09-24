@@ -82,14 +82,14 @@ public class SbiObjParview extends SbiHibernateModel {
 		return id;
 	}
 
-	public void setId(Integer id) {
+	private void setId(Integer id) {
 		this.id = id;
 	}
 
 	public void changeId(Integer id) {
 		this.setId(id);
 	}
-
+	
 	public Integer getProg() {
 		return prog;
 	}

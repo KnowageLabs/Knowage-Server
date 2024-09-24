@@ -39,7 +39,7 @@ public class SbiFederationDefinition extends SbiHibernateModel {
 	private String relationships;
 	private Set<SbiDataSet> sourceDatasets;
 	private Boolean degenerated; // true if the federation is degenerated.. When a user creates a derived dataset the system creates a federation that links the
-								 // original dataste and the derived one
+									// original dataste and the derived one
 	private String owner;
 
 	// constructors
@@ -47,8 +47,8 @@ public class SbiFederationDefinition extends SbiHibernateModel {
 		return relationships;
 	}
 
-	public SbiFederationDefinition(int federation_id, String label, String name, String description,
-			String relationships) {
+	public SbiFederationDefinition(int federation_id, String label, String name, String description, String relationships) {
+		super();
 		this.federation_id = federation_id;
 		this.label = label;
 		this.name = name;
@@ -77,7 +77,7 @@ public class SbiFederationDefinition extends SbiHibernateModel {
 		return federation_id;
 	}
 
-	public void setFederation_id(int federation_id) {
+	private void setFederation_id(int federation_id) {
 		this.federation_id = federation_id;
 	}
 
@@ -135,7 +135,7 @@ public class SbiFederationDefinition extends SbiHibernateModel {
 
 	public void changeFederation_id(int federation_id) {
 		this.setFederation_id(federation_id);
-
+		
 	}
 
 }

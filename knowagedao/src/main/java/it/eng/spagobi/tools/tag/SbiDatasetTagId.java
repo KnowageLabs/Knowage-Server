@@ -44,7 +44,7 @@ public class SbiDatasetTagId implements Serializable {
 		return dsId;
 	}
 
-	public void setDsId(Integer dsId) {
+	private void setDsId(Integer dsId) {
 		this.dsId = dsId;
 	}
 
@@ -52,7 +52,7 @@ public class SbiDatasetTagId implements Serializable {
 		return versionNum;
 	}
 
-	public void setVersionNum(Integer versionNum) {
+	private void setVersionNum(Integer versionNum) {
 		this.versionNum = versionNum;
 	}
 
@@ -60,7 +60,7 @@ public class SbiDatasetTagId implements Serializable {
 		return organization;
 	}
 
-	public void setOrganization(String organization) {
+	private void setOrganization(String organization) {
 		this.organization = organization;
 	}
 
@@ -68,7 +68,7 @@ public class SbiDatasetTagId implements Serializable {
 		return tagId;
 	}
 
-	public void setTagId(Integer tagId) {
+	private void setTagId(Integer tagId) {
 		this.tagId = tagId;
 	}
 
@@ -93,8 +93,8 @@ public class SbiDatasetTagId implements Serializable {
 		if (!(obj instanceof SbiDatasetTagId))
 			return false;
 		SbiDatasetTagId other = (SbiDatasetTagId) obj;
-		if (!(other.getDsId().equals(getDsId())) && !(other.getVersionNum().equals(getVersionNum()))
-				&& !(other.getOrganization().equals(getOrganization())) && !(other.getTagId().equals(getTagId())))
+		if (!(other.getDsId().equals(getDsId())) && !(other.getVersionNum().equals(getVersionNum())) && !(other.getOrganization().equals(getOrganization()))
+				&& !(other.getTagId().equals(getTagId())))
 			return false;
 
 		return true;

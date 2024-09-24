@@ -40,8 +40,9 @@ public class SbiKpiThresholdValue extends SbiHibernateModel implements java.io.S
 
 	public SbiKpiThresholdValue() {
 	}
-
+	
 	public SbiKpiThresholdValue(Integer id) {
+		super();
 		this.setId(id);
 	}
 
@@ -53,9 +54,10 @@ public class SbiKpiThresholdValue extends SbiHibernateModel implements java.io.S
 	}
 
 	/**
-	 * @param id the id to set
+	 * @param id
+	 *            the id to set
 	 */
-	public void setId(Integer id) {
+	private void setId(Integer id) {
 		this.id = id;
 	}
 
@@ -67,7 +69,8 @@ public class SbiKpiThresholdValue extends SbiHibernateModel implements java.io.S
 	}
 
 	/**
-	 * @param position the position to set
+	 * @param position
+	 *            the position to set
 	 */
 	public void setPosition(int position) {
 		this.position = position;
@@ -81,7 +84,8 @@ public class SbiKpiThresholdValue extends SbiHibernateModel implements java.io.S
 	}
 
 	/**
-	 * @param label the label to set
+	 * @param label
+	 *            the label to set
 	 */
 	public void setLabel(String label) {
 		this.label = label;
@@ -95,7 +99,8 @@ public class SbiKpiThresholdValue extends SbiHibernateModel implements java.io.S
 	}
 
 	/**
-	 * @param minValue the minValue to set
+	 * @param minValue
+	 *            the minValue to set
 	 */
 	public void setMinValue(Double minValue) {
 		this.minValue = minValue;
@@ -109,7 +114,8 @@ public class SbiKpiThresholdValue extends SbiHibernateModel implements java.io.S
 	}
 
 	/**
-	 * @param maxValue the maxValue to set
+	 * @param maxValue
+	 *            the maxValue to set
 	 */
 	public void setMaxValue(Double maxValue) {
 		this.maxValue = maxValue;
@@ -123,7 +129,8 @@ public class SbiKpiThresholdValue extends SbiHibernateModel implements java.io.S
 	}
 
 	/**
-	 * @param color the color to set
+	 * @param color
+	 *            the color to set
 	 */
 	public void setColor(String color) {
 		this.color = color;
@@ -137,7 +144,8 @@ public class SbiKpiThresholdValue extends SbiHibernateModel implements java.io.S
 	}
 
 	/**
-	 * @param severity the severity to set
+	 * @param severity
+	 *            the severity to set
 	 */
 	public void setSeverity(SbiDomains severity) {
 		this.severity = severity;
@@ -151,7 +159,8 @@ public class SbiKpiThresholdValue extends SbiHibernateModel implements java.io.S
 	}
 
 	/**
-	 * @param sbiKpiThreshold the sbiKpiThreshold to set
+	 * @param sbiKpiThreshold
+	 *            the sbiKpiThreshold to set
 	 */
 	public void setSbiKpiThreshold(SbiKpiThreshold sbiKpiThreshold) {
 		this.sbiKpiThreshold = sbiKpiThreshold;
@@ -165,7 +174,8 @@ public class SbiKpiThresholdValue extends SbiHibernateModel implements java.io.S
 	}
 
 	/**
-	 * @param includeMin the includeMin to set
+	 * @param includeMin
+	 *            the includeMin to set
 	 */
 	public void setIncludeMin(Character includeMin) {
 		this.includeMin = includeMin;
@@ -179,7 +189,8 @@ public class SbiKpiThresholdValue extends SbiHibernateModel implements java.io.S
 	}
 
 	/**
-	 * @param includeMax the includeMax to set
+	 * @param includeMax
+	 *            the includeMax to set
 	 */
 	public void setIncludeMax(Character includeMax) {
 		this.includeMax = includeMax;

@@ -49,8 +49,7 @@ public class SbiConfig extends SbiHibernateModel {
 	}
 
 	/** full constructor */
-	public SbiConfig(Integer id, SbiDomains sbiDomains, String label, String name, String description, boolean isActive,
-			String valueCheck, String category) {
+	public SbiConfig(Integer id, SbiDomains sbiDomains, String label, String name, String description, boolean isActive, String valueCheck, String category) {
 		this.id = id;
 		this.sbiDomains = sbiDomains;
 		this.label = label;
@@ -71,7 +70,7 @@ public class SbiConfig extends SbiHibernateModel {
 		return this.id;
 	}
 
-	public void setId(Integer id) {
+	private void setId(Integer id) {
 		this.id = id;
 	}
 

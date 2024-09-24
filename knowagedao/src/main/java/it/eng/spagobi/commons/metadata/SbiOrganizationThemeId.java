@@ -42,6 +42,8 @@ public class SbiOrganizationThemeId implements java.io.Serializable {
 		// TODO Auto-generated constructor stub
 	}
 
+	
+	
 	public SbiOrganizationThemeId(int organizationId) {
 		this.organizationId = organizationId;
 	}
@@ -55,7 +57,7 @@ public class SbiOrganizationThemeId implements java.io.Serializable {
 		return uuid;
 	}
 
-	public void setUuid(String uuid) {
+	private void setUuid(String uuid) {
 		this.uuid = uuid;
 	}
 
@@ -64,7 +66,7 @@ public class SbiOrganizationThemeId implements java.io.Serializable {
 		return organizationId;
 	}
 
-	public void setOrganizationId(int organizationId) {
+	private void setOrganizationId(int organizationId) {
 		this.organizationId = organizationId;
 	}
 

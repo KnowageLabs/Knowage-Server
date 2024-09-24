@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- *
+ * 
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,15 +11,15 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- *
+ * 
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package it.eng.spagobi.tools.scheduler.wsEvents;
 
-import java.util.Date;
-
 import it.eng.spagobi.commons.metadata.SbiHibernateModel;
+
+import java.util.Date;
 
 public class SbiWsEvent extends SbiHibernateModel {
 
@@ -42,8 +42,7 @@ public class SbiWsEvent extends SbiHibernateModel {
 	 * @param incomingDate
 	 * @param takeChargeDate
 	 */
-	public SbiWsEvent(Integer id, String eventName, String ipComeFrom, Date incomingDate, Date takeChargeDate,
-			String audits) {
+	public SbiWsEvent(Integer id, String eventName, String ipComeFrom, Date incomingDate, Date takeChargeDate, String audits) {
 		this.id = id;
 		this.eventName = eventName;
 		this.ipComeFrom = ipComeFrom;
@@ -65,7 +64,7 @@ public class SbiWsEvent extends SbiHibernateModel {
 		this.ipComeFrom = null;
 		this.incomingDate = null;
 		this.takeChargeDate = null;
-	}
+	};
 
 	// Property accessors
 
@@ -77,9 +76,10 @@ public class SbiWsEvent extends SbiHibernateModel {
 	}
 
 	/**
-	 * @param id the id to set
+	 * @param id
+	 *            the id to set
 	 */
-	public void setId(Integer id) {
+	private void setId(Integer id) {
 		this.id = id;
 	}
 

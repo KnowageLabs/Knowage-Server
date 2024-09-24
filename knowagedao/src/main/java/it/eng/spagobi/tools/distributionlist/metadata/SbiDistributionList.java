@@ -91,7 +91,7 @@ public class SbiDistributionList extends SbiHibernateModel {
 	 *
 	 * @param dlId the new dl id
 	 */
-	public void setDlId(Integer dlId) {
+	private void setDlId(Integer dlId) {
 		this.dlId = dlId;
 	}
 

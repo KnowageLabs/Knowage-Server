@@ -59,7 +59,8 @@ public class SbiGeoMaps extends SbiHibernateModel {
 	/**
 	 * minimal constructor.
 	 *
-	 * @param mapId the map id
+	 * @param mapId
+	 *            the map id
 	 */
 	public SbiGeoMaps(int mapId) {
 		this.mapId = mapId;
@@ -68,15 +69,21 @@ public class SbiGeoMaps extends SbiHibernateModel {
 	/**
 	 * full constructor.
 	 *
-	 * @param mapId       the map id
-	 * @param name        the name
-	 * @param descr       the descr
-	 * @param url         the url
-	 * @param format      the format
-	 * @param binContents the binary contents of svg file
+	 * @param mapId
+	 *            the map id
+	 * @param name
+	 *            the name
+	 * @param descr
+	 *            the descr
+	 * @param url
+	 *            the url
+	 * @param format
+	 *            the format
+	 * @param binContents
+	 *            the binary contents of svg file
 	 */
-	public SbiGeoMaps(int mapId, String name, String descr, String url, String format, String hierarchyName,
-			Integer level, String memberName, SbiBinContents binContents) {
+	public SbiGeoMaps(int mapId, String name, String descr, String url, String format, String hierarchyName, Integer level, String memberName,
+			SbiBinContents binContents) {
 		this.mapId = mapId;
 		this.name = name;
 		this.descr = descr;
@@ -101,9 +108,10 @@ public class SbiGeoMaps extends SbiHibernateModel {
 	/**
 	 * Sets the map id.
 	 *
-	 * @param mapId the new map id
+	 * @param mapId
+	 *            the new map id
 	 */
-	public void setMapId(int mapId) {
+	private void setMapId(int mapId) {
 		this.mapId = mapId;
 	}
 
@@ -119,7 +127,8 @@ public class SbiGeoMaps extends SbiHibernateModel {
 	/**
 	 * Sets the name.
 	 *
-	 * @param name the new name
+	 * @param name
+	 *            the new name
 	 */
 	public void setName(String name) {
 		this.name = name;
@@ -137,7 +146,8 @@ public class SbiGeoMaps extends SbiHibernateModel {
 	/**
 	 * Sets the descr.
 	 *
-	 * @param descr the new descr
+	 * @param descr
+	 *            the new descr
 	 */
 	public void setDescr(String descr) {
 		this.descr = descr;
@@ -155,7 +165,8 @@ public class SbiGeoMaps extends SbiHibernateModel {
 	/**
 	 * Sets the url.
 	 *
-	 * @param url the new url
+	 * @param url
+	 *            the new url
 	 */
 	public void setUrl(String url) {
 		this.url = url;
@@ -173,7 +184,8 @@ public class SbiGeoMaps extends SbiHibernateModel {
 	/**
 	 * Sets the format.
 	 *
-	 * @param format the new format
+	 * @param format
+	 *            the new format
 	 */
 	public void setFormat(String format) {
 		this.format = format;
@@ -187,7 +199,8 @@ public class SbiGeoMaps extends SbiHibernateModel {
 	}
 
 	/**
-	 * @param hierarchyName the hierarchyName to set
+	 * @param hierarchyName
+	 *            the hierarchyName to set
 	 */
 	public void setHierarchyName(String hierarchyName) {
 		this.hierarchyName = hierarchyName;
@@ -201,7 +214,8 @@ public class SbiGeoMaps extends SbiHibernateModel {
 	}
 
 	/**
-	 * @param level the level to set
+	 * @param level
+	 *            the level to set
 	 */
 	public void setLevel(Integer level) {
 		this.level = level;
@@ -215,7 +229,8 @@ public class SbiGeoMaps extends SbiHibernateModel {
 	}
 
 	/**
-	 * @param memberName the memberName to set
+	 * @param memberName
+	 *            the memberName to set
 	 */
 	public void setMemberName(String memberName) {
 		this.memberName = memberName;
@@ -229,7 +244,8 @@ public class SbiGeoMaps extends SbiHibernateModel {
 	}
 
 	/**
-	 * @param binContents the binContents to set
+	 * @param binContents
+	 *            the binContents to set
 	 */
 	public void setBinContents(SbiBinContents binContents) {
 		this.binContents = binContents;
@@ -238,7 +254,8 @@ public class SbiGeoMaps extends SbiHibernateModel {
 	/**
 	 * From the Hibernate Map object at input, gives the corrispondent <code>GeoMap</code> object.
 	 *
-	 * @param hibMap The Hibernate Map object
+	 * @param hibMap
+	 *            The Hibernate Map object
 	 *
 	 * @return the corrispondent output <code>GeoMap</code>
 	 */

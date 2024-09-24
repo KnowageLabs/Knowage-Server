@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- *
+ * 
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,7 +11,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- *
+ * 
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -39,6 +39,7 @@ public class SbiGlGlossary extends SbiHibernateModel {
 	 * @param glossaryDs
 	 */
 	public SbiGlGlossary(Integer glossaryId, String glossaryCd, String glossaryNm, String glossaryDs) {
+		super();
 		this.glossaryId = glossaryId;
 		this.glossaryCd = glossaryCd;
 		this.glossaryNm = glossaryNm;
@@ -53,15 +54,17 @@ public class SbiGlGlossary extends SbiHibernateModel {
 	}
 
 	/**
-	 * @param glossaryId the glossaryId to set
+	 * @param glossaryId
+	 *            the glossaryId to set
 	 */
-	public void setGlossaryId(Integer glossaryId) {
+	private void setGlossaryId(Integer glossaryId) {
 		this.glossaryId = glossaryId;
 	}
-
+	
 	public void changeGlossaryId(Integer glossaryId) {
 		this.glossaryId = glossaryId;
 	}
+	
 
 	/**
 	 * @return the glossaryCd
@@ -71,7 +74,8 @@ public class SbiGlGlossary extends SbiHibernateModel {
 	}
 
 	/**
-	 * @param glossaryCd the glossaryCd to set
+	 * @param glossaryCd
+	 *            the glossaryCd to set
 	 */
 	public void setGlossaryCd(String glossaryCd) {
 		this.glossaryCd = glossaryCd;
@@ -85,7 +89,8 @@ public class SbiGlGlossary extends SbiHibernateModel {
 	}
 
 	/**
-	 * @param glossaryNm the glossaryNm to set
+	 * @param glossaryNm
+	 *            the glossaryNm to set
 	 */
 	public void setGlossaryNm(String glossaryNm) {
 		this.glossaryNm = glossaryNm;
@@ -99,7 +104,8 @@ public class SbiGlGlossary extends SbiHibernateModel {
 	}
 
 	/**
-	 * @param glossaryDs the glossaryDs to set
+	 * @param glossaryDs
+	 *            the glossaryDs to set
 	 */
 	public void setGlossaryDs(String glossaryDs) {
 		this.glossaryDs = glossaryDs;

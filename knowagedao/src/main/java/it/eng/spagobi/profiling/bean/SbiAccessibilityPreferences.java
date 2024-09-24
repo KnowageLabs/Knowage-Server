@@ -15,8 +15,9 @@ public class SbiAccessibilityPreferences extends SbiHibernateModel {
 
 	}
 
-	public SbiAccessibilityPreferences(int id, SbiUser user, boolean enableUio, boolean enableRobobraille,
-			boolean enableGraphSonification, boolean enableVoice, String preferences) {
+	public SbiAccessibilityPreferences(int id, SbiUser user, boolean enableUio, boolean enableRobobraille, boolean enableGraphSonification,
+			boolean enableVoice, String preferences) {
+		super();
 		this.id = id;
 		this.user = user;
 		this.enableUio = enableUio;
@@ -30,7 +31,7 @@ public class SbiAccessibilityPreferences extends SbiHibernateModel {
 		return id;
 	}
 
-	public void setId(int id) {
+	private void setId(int id) {
 		this.id = id;
 	}
 

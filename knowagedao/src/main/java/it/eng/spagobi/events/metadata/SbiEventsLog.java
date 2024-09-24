@@ -46,8 +46,10 @@ public class SbiEventsLog extends SbiHibernateModel {
 	/**
 	 * Instantiates a new sbi events log.
 	 *
-	 * @param id   the id
-	 * @param user the user
+	 * @param id
+	 *            the id
+	 * @param user
+	 *            the user
 	 */
 	public SbiEventsLog(Integer id, String user) {
 		this.id = id;
@@ -66,9 +68,10 @@ public class SbiEventsLog extends SbiHibernateModel {
 	/**
 	 * Sets the id.
 	 *
-	 * @param id the new id
+	 * @param id
+	 *            the new id
 	 */
-	public void setId(Integer id) {
+	private void setId(Integer id) {
 		this.id = id;
 	}
 
@@ -84,7 +87,8 @@ public class SbiEventsLog extends SbiHibernateModel {
 	/**
 	 * Sets the user.
 	 *
-	 * @param user the new user
+	 * @param user
+	 *            the new user
 	 */
 	public void setUser(String user) {
 		this.user = user;
@@ -102,7 +106,8 @@ public class SbiEventsLog extends SbiHibernateModel {
 	/**
 	 * Sets the date.
 	 *
-	 * @param date the new date
+	 * @param date
+	 *            the new date
 	 */
 	public void setDate(Date date) {
 		this.date = date;
@@ -120,7 +125,8 @@ public class SbiEventsLog extends SbiHibernateModel {
 	/**
 	 * Sets the desc.
 	 *
-	 * @param desc the new desc
+	 * @param desc
+	 *            the new desc
 	 */
 	public void setDesc(String desc) {
 		this.desc = desc;
@@ -138,7 +144,8 @@ public class SbiEventsLog extends SbiHibernateModel {
 	/**
 	 * Sets the params.
 	 *
-	 * @param params the new params
+	 * @param params
+	 *            the new params
 	 */
 	public void setParams(String params) {
 		this.params = params;
@@ -156,7 +163,8 @@ public class SbiEventsLog extends SbiHibernateModel {
 	/**
 	 * Sets the roles.
 	 *
-	 * @param roles the new roles
+	 * @param roles
+	 *            the new roles
 	 */
 	public void setRoles(Set roles) {
 		this.roles = roles;
@@ -174,7 +182,8 @@ public class SbiEventsLog extends SbiHibernateModel {
 	/**
 	 * Sets the eventType.
 	 *
-	 * @param type the new eventType
+	 * @param type
+	 *            the new eventType
 	 */
 	public void setEventType(EventType eventType) {
 		this.eventType = eventType;

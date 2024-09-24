@@ -18,14 +18,14 @@ public class SbiMetaDocTabRel extends SbiHibernateModel {
 	}
 
 	public SbiMetaDocTabRel(Integer relationId) {
-		this.relationId = relationId;
+		this.relationId=relationId;
 	}
 
 	public Integer getRelationId() {
 		return relationId;
 	}
 
-	public void setRelationId(Integer relationId) {
+	private void setRelationId(Integer relationId) {
 		this.relationId = relationId;
 	}
 

@@ -16,7 +16,7 @@ public class Calendar extends SbiHibernateModel {
 		return calendarId;
 	}
 
-	public void setCalendarId(Integer calendarId) {
+	private void setCalendarId(Integer calendarId) {
 		this.calendarId = calendarId;
 	}
 

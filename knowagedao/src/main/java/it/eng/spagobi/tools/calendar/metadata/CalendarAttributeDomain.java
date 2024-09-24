@@ -12,7 +12,7 @@ public class CalendarAttributeDomain extends SbiHibernateModel {
 		return domainId;
 	}
 
-	public void setDomainId(Integer domainId) {
+	private void setDomainId(Integer domainId) {
 		this.domainId = domainId;
 	}
 

@@ -78,7 +78,7 @@ public class SbiExtRoles extends SbiHibernateModel {
 	 *
 	 * @param extRoleId the new ext role id
 	 */
-	public void setExtRoleId(Integer extRoleId) {
+	private void setExtRoleId(Integer extRoleId) {
 		this.extRoleId = extRoleId;
 	}
 
@@ -297,7 +297,7 @@ public class SbiExtRoles extends SbiHibernateModel {
 
 	public void changeExtRoleId(Integer id) {
 		this.setExtRoleId(id);
-
+		
 	}
 
 }

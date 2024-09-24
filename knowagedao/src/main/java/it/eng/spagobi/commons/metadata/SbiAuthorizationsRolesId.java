@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- *
+ * 
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,7 +11,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- *
+ * 
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -39,7 +39,7 @@ public class SbiAuthorizationsRolesId implements java.io.Serializable {
 		return this.authorizationId;
 	}
 
-	public void setAuthorizationId(int authorizationId) {
+	private void setAuthorizationId(int authorizationId) {
 		this.authorizationId = authorizationId;
 	}
 
@@ -47,7 +47,7 @@ public class SbiAuthorizationsRolesId implements java.io.Serializable {
 		return this.roleId;
 	}
 
-	public void setRoleId(int roleId) {
+	private void setRoleId(int roleId) {
 		this.roleId = roleId;
 	}
 
