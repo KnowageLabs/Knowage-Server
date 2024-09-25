@@ -397,7 +397,7 @@ sbiM.service('sbiModule_translate', function() {
 
 sbiM.config(['$httpProvider',function ($httpProvider) {
 	var uniqueToken = (Math.random() + 1).toString(36).substring(7)
-	$httpProvider.interceptors.push(['$rootScope', '$q','$cookies'
+	$httpProvider.interceptors.push(['$rootScope', '$q','$cookies',
 		function ($rootScope, $q,$cookies) {
 			return {
 				'request': function(config) {
