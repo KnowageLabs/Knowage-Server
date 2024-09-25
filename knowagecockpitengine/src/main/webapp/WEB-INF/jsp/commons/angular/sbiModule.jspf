@@ -136,17 +136,15 @@ sbiM.config(function($mdDateLocaleProvider) {
  --%>
 
 sbiM.config(['$httpProvider',function ($httpProvider) {
-	var uniqueToken = (Math.random() + 1).toString(36).substring(7)
+	var uniqueToken = localStorage.getItem('X-CSRF-TOKEN') || (Math.random() + 1).toString(36).substring(7)
 	$httpProvider.interceptors.push(['$rootScope', '$q','$cookies',
 		function ($rootScope, $q,$cookies) {
 			return {
 				'request': function(config) {
-       					$cookies.put('X-CSRF-TOKEN', uniqueToken);
-					localStorage.setItem('X-CSRF-TOKEN', uniqueToken);
+					$cookies.put('X-CSRF-TOKEN', uniqueToken);
 					config.headers["X-CSRF-TOKEN"] = uniqueToken
 					return config
-
-    				},
+    			},
 				responseError: function (response) {
 					if (response.status === 401) {
 						redirectToLoginUrl();
