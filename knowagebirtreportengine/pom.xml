@@ -84,12 +84,6 @@
 			<artifactId>viewservlets</artifactId>
 			<version>4.2.0</version>
 			<scope>compile</scope>
-			<exclusions>
-				<exclusion>
-					<artifactId>axis</artifactId>
-					<groupId>org.apache.axis</groupId>
-				</exclusion>
-			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>javax.servlet</groupId>
