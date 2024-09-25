@@ -22,7 +22,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <%@page import="org.apache.commons.lang.StringEscapeUtils"%>
 <script>
 
-var sbiM=angular.module('sbiModule',["ngSanitize"]);
+var sbiM=angular.module('sbiModule',["ngSanitize","ngCookies"]);
 var _CURRENTLANGUAGE = '<%= curr_language%>';
 
 // sbiM.config(function($mdThemingProvider) {
@@ -136,9 +136,17 @@ sbiM.config(function($mdDateLocaleProvider) {
  --%>
 
 sbiM.config(['$httpProvider',function ($httpProvider) {
-	$httpProvider.interceptors.push(['$rootScope', '$q',
-		function ($rootScope, $q) {
+	var uniqueToken = (Math.random() + 1).toString(36).substring(7)
+	$httpProvider.interceptors.push(['$rootScope', '$q','$cookies'
+		function ($rootScope, $q,$cookies) {
 			return {
+				'request': function(config) {
+       					$cookies.put('X-CSRF-TOKEN', uniqueToken);
+					localStorage.setItem('X-CSRF-TOKEN', uniqueToken);
+					config.headers["X-CSRF-TOKEN"] = uniqueToken
+					return config
+
+    				},
 				responseError: function (response) {
 					if (response.status === 401) {
 						redirectToLoginUrl();
@@ -147,6 +155,7 @@ sbiM.config(['$httpProvider',function ($httpProvider) {
 				}
 			};
 		}]);
+
 
 	var loginUrl = '<%= KnowageSystemConfiguration.getKnowageContext() %>'; // login url, used when session is expired
 

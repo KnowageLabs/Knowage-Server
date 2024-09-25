@@ -8,7 +8,7 @@
 <%@page import="it.eng.knowage.commons.utilities.urls.UrlBuilder"%>
 
 <script>
-var sbiM=angular.module('sbiModule',["toastr","ngSanitize"]);
+var sbiM=angular.module('sbiModule',["toastr","ngSanitize","ngCookies"]);
 
 // sbiM.config(function($mdThemingProvider) {
 // 	$mdThemingProvider.theme('default').primaryPalette('grey').accentPalette('blue-grey');
@@ -395,6 +395,26 @@ sbiM.service('sbiModule_translate', function() {
 });
 
 
+sbiM.config(['$httpProvider',function ($httpProvider) {
+	var uniqueToken = (Math.random() + 1).toString(36).substring(7)
+	$httpProvider.interceptors.push(['$rootScope', '$q','$cookies'
+		function ($rootScope, $q,$cookies) {
+			return {
+				'request': function(config) {
+       				$cookies.put('X-CSRF-TOKEN', uniqueToken);
+					localStorage.setItem('X-CSRF-TOKEN', uniqueToken);
+					config.headers["X-CSRF-TOKEN"] = uniqueToken
+					return config
+
+    				},
+				responseError: function (response) {
+					if (response.status === 401) {
+						redirectToLoginUrl();
+					}
+					return $q.reject(response);
+				}
+			};
+		}]);
 
 
 sbiM.service('sbiModule_restServices', function($http, $q, sbiModule_translate, sbiModule_config, sbiModule_logger, $mdDialog, $sanitize,$mdPanel, sbiModule_user) {
