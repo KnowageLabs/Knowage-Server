@@ -65,6 +65,10 @@
 					<artifactId>spring-boot-starter-logging</artifactId>
 					<groupId>org.springframework.boot</groupId>
 				</exclusion>
+				<exclusion>
+					 <groupId>org.yaml</groupId>
+					 <artifactId>snakeyaml</artifactId>
+				</exclusion>
 			</exclusions>
 		</dependency>
 		<dependency>
