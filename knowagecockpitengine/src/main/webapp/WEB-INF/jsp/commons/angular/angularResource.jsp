@@ -43,7 +43,7 @@
 <%@page import="it.eng.spagobi.commons.bo.AccessibilityPreferences" %>
 <%@page import="it.eng.knowage.commons.utilities.urls.UrlBuilder"%>
 <%@page import="it.eng.knowage.commons.utilities.urls.UrlBuilder"%>
-<%@page import="org.owasp.esapi.reference.DefaultEncoder"%>
+<%@page import="it.eng.knowage.security.OwaspDefaultEncoderFactory"%>
 <%@page import="org.owasp.esapi.Encoder"%>	
 
 <%-- ---------------------------------------------------------------------- --%>
@@ -51,7 +51,7 @@
 <%-- ---------------------------------------------------------------------- --%>
 
 <%
-	Encoder esapiEncoder = DefaultEncoder.getInstance();
+	Encoder esapiEncoder = OwaspDefaultEncoderFactory.getInstance().getEncoder();
 	String spagoBiContext = KnowageSystemConfiguration.getKnowageContext();							//  /knowage
 	String cockpitEngineContext = request.getContextPath(); 								//  /cockpitengine
 	UrlBuilder urlBuilder = new UrlBuilder(spagoBiContext, cockpitEngineContext);

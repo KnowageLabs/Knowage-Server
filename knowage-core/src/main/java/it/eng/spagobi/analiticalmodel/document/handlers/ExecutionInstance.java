@@ -18,7 +18,6 @@
 package it.eng.spagobi.analiticalmodel.document.handlers;
 
 import java.io.Serializable;
-
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
@@ -38,16 +37,15 @@ import org.apache.logging.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import org.owasp.esapi.reference.DefaultEncoder;
-
-
+import org.owasp.esapi.Encoder;
+import org.owasp.esapi.errors.EncodingException;
 
 import com.jamonapi.Monitor;
 import com.jamonapi.MonitorFactory;
 
 import edu.emory.mathcs.backport.java.util.Collections;
 import it.eng.LightNavigationConstants;
+import it.eng.knowage.security.OwaspDefaultEncoderFactory;
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFInternalError;
@@ -93,7 +91,6 @@ import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.objects.Couple;
-import org.owasp.esapi.errors.EncodingException; 
 
 /**
  * This class represents a document execution instance. This contains the following attributes: 1. execution flow id: it is the id of an execution flow
@@ -120,7 +117,7 @@ public class ExecutionInstance implements Serializable {
 	private boolean displaySliders = true;
 	private Calendar calendar = null;
 	private Locale locale = null;
-	private static org.owasp.esapi.Encoder esapiEncoder = DefaultEncoder.getInstance();
+
 	/**
 	 * Instantiates a new execution instance.
 	 *
@@ -1081,6 +1078,7 @@ public class ExecutionInstance implements Serializable {
 		LovResultHandler lovResultHandler = new LovResultHandler(lovResult);
 		List values = biparam.getParameterValues();
 		if (values != null && !values.isEmpty()) {
+			Encoder encoder = OwaspDefaultEncoderFactory.getInstance().getEncoder();
 			for (int i = 0; i < values.size(); i++) {
 				// String value = values.get(i).toString();
 				String value = null;
@@ -1088,7 +1086,7 @@ public class ExecutionInstance implements Serializable {
 				if (val.equalsIgnoreCase("%")) {
 					value = "%";
 				} else {
-					value = esapiEncoder.decodeFromURL(val);
+					value = encoder.decodeFromURL(val);
 				}
 				String description = null;
 				if (value.equals("")) {
@@ -1418,13 +1416,14 @@ public class ExecutionInstance implements Serializable {
 						while (r.hasNext()) {
 							String value = (String) r.next();
 							if (value != null && !value.equals("")) {
+								Encoder encoder = OwaspDefaultEncoderFactory.getInstance().getEncoder();
 								// encoding value
 								try {
-									value = esapiEncoder.encodeForURL(value);
+									value = encoder.encodeForURL(value);
 								} catch (EncodingException e) {
 									LOGGER.warn("UTF-8 encoding is not supported!!!", e);
 									LOGGER.warn("Using system encoding...");
-									value = esapiEncoder.encodeForURL(value);
+									value = encoder.encodeForURL(value);
 								}
 								buffer.append("&" + aParameter.getParameterUrlName() + "=" + value);
 							}

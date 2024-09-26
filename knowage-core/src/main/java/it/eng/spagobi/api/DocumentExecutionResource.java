@@ -66,12 +66,16 @@ import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.owasp.esapi.Encoder;
+import org.owasp.esapi.errors.EncodingException;
+
 import com.jamonapi.Monitor;
 import com.jamonapi.MonitorFactory;
 
 import it.eng.knowage.commons.security.PathTraversalChecker;
 import it.eng.knowage.features.Feature;
 import it.eng.knowage.rest.annotation.FeatureFlag;
+import it.eng.knowage.security.OwaspDefaultEncoderFactory;
 import it.eng.spago.base.RequestContainer;
 import it.eng.spago.base.RequestContainerAccess;
 import it.eng.spago.error.EMFInternalError;
@@ -122,8 +126,6 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.rest.RestUtilities;
 
-import org.owasp.esapi.reference.DefaultEncoder;
-import org.owasp.esapi.errors.EncodingException; 
 /**
  * @deprecated Replaced by {@link it.eng.spagobi.api.v2.DocumentExecutionResource}
  */
@@ -162,7 +164,6 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 
 	private static final String[] VISIBLE_COLUMNS = new String[] { VALUE_FIELD, LABEL_FIELD, DESCRIPTION_FIELD };
 	private static final String METADATA_DIR = "metadata";
-	private static org.owasp.esapi.Encoder esapiEncoder = DefaultEncoder.getInstance();
 
 	private class DocumentExecutionException extends Exception {
 		private static final long serialVersionUID = -1882998632783944575L;
@@ -362,9 +363,10 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 		return ret;
 	}
 
-	private JSONObject buildJsonParameters(JSONObject jsonParameters, HttpServletRequest req, String role, IParameterUseDAO parameterUseDAO, BIObject obj,
-			DocumentRuntime dum) throws JSONException, EMFUserError {
-		List<DocumentDriverRuntime> parameters = DocumentExecutionUtils.getParameters(obj, role, req.getLocale(), null, null, false, dum);
+	private JSONObject buildJsonParameters(JSONObject jsonParameters, HttpServletRequest req, String role,
+			IParameterUseDAO parameterUseDAO, BIObject obj, DocumentRuntime dum) throws JSONException, EMFUserError {
+		List<DocumentDriverRuntime> parameters = DocumentExecutionUtils.getParameters(obj, role, req.getLocale(), null,
+				null, false, dum);
 		for (DocumentDriverRuntime objParameter : parameters) {
 			Monitor checkingsParameterMonitor = MonitorFactory
 					.start("Knowage.DocumentExecutionResource.buildJsonParameters.checkings");
@@ -538,7 +540,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 	 * @throws EMFUserError
 	 * @throws JSONException
 	 * @throws IOException
-	 * @throws EncodingException 
+	 * @throws EncodingException
 	 */
 	@POST
 	@Path("/filters")
@@ -622,6 +624,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 					Object paramValues = objParameter.getDriver().getParameterValues();
 					Object paramDescriptionValues = objParameter.getDriver().getParameterValuesDescription();
 
+					Encoder encoder = OwaspDefaultEncoderFactory.getInstance().getEncoder();
 					if (paramValues instanceof List) {
 
 						List<String> valuesList = (List) paramValues;
@@ -642,10 +645,10 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 							try {
 								// % character breaks decode method
 								if (!itemVal.contains("%")) {
-									itemVal = esapiEncoder.decodeFromURL(itemVal.replace("+", "%2B"));
+									itemVal = encoder.decodeFromURL(itemVal.replace("+", "%2B"));
 								}
 								if (!itemDescr.contains("%")) {
-									itemDescr = esapiEncoder.decodeFromURL(itemDescr.replace("+", "%2B"));
+									itemDescr = encoder.decodeFromURL(itemDescr.replace("+", "%2B"));
 								}
 
 								// check input value and convert if it's an old multivalue syntax({;{xxx;yyy}STRING}) to list of values :["A-OMP", "A-PO", "CL"]
@@ -668,12 +671,12 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 							} catch (EncodingException e) {
 								LOGGER.debug(
 										"An error occured while decoding parameter with value[" + itemVal + "]" + e);
-							} 
+							}
 						}
 					} else if (paramValues instanceof String) {
 						// % character breaks decode method
 						if (!((String) paramValues).contains("%")) {
-							paramValues = esapiEncoder.decodeFromURL(((String) paramValues).replace("+", "%2B"));
+							paramValues = encoder.decodeFromURL(((String) paramValues).replace("+", "%2B"));
 						}
 						paramValueLst.add(paramValues.toString());
 
@@ -681,7 +684,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 								? paramDescriptionValues.toString()
 								: paramValues.toString();
 						if (!parDescrVal.contains("%")) {
-							parDescrVal = esapiEncoder.decodeFromURL(parDescrVal.replace("+", "%2B"));
+							parDescrVal = encoder.decodeFromURL(parDescrVal.replace("+", "%2B"));
 						}
 						paramDescrLst.add(parDescrVal);
 
@@ -880,9 +883,11 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 
 	// private List<AbstractDriverRuntime<AbstractDriver>>
 
-	protected JSONObject decodeRequestParameters(JSONObject requestValParams) throws JSONException, IOException, EncodingException {
+	protected JSONObject decodeRequestParameters(JSONObject requestValParams)
+			throws JSONException, IOException, EncodingException {
 		JSONObject toReturn = new JSONObject();
 
+		Encoder encoder = OwaspDefaultEncoderFactory.getInstance().getEncoder();
 		Iterator keys = requestValParams.keys();
 		while (keys.hasNext()) {
 			String key = (String) keys.next();
@@ -891,7 +896,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 				String value = String.valueOf(valueObj);
 				// if (!value.equals("%7B%3B%7B") && !value.equalsIgnoreCase("%")) {
 				if (!value.equals("") && !value.equalsIgnoreCase("%")) {
-					toReturn.put(key, esapiEncoder.decodeFromURL(value.replaceAll("%", "%25").replace("+", "%2B")));
+					toReturn.put(key, encoder.decodeFromURL(value.replaceAll("%", "%25").replace("+", "%2B")));
 				} else {
 					toReturn.put(key, value); // uses the original value for list and %
 				}
@@ -899,8 +904,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 				String value = String.valueOf(valueObj);
 				// if (!value.equals("%7B%3B%7B") && !value.equalsIgnoreCase("%")) {
 				if (!value.equals("") && !value.equalsIgnoreCase("%")) {
-					toReturn.put(key,
-							esapiEncoder.decodeFromURL(value.replaceAll("%", "%25").replace("+", "%2B")));
+					toReturn.put(key, encoder.decodeFromURL(value.replaceAll("%", "%25").replace("+", "%2B")));
 				} else {
 					toReturn.put(key, value); // uses the original value for list and %
 				}
@@ -911,8 +915,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 					// String value = (String) valuesLst.get(v);
 					String value = (valuesLst.get(v) != null) ? String.valueOf(valuesLst.get(v)) : "";
 					if (!value.equals("") && !value.equalsIgnoreCase("%")) {
-						valuesLstDecoded
-								.put(esapiEncoder.decodeFromURL(value.replaceAll("%", "%25").replace("+", "%2B")));
+						valuesLstDecoded.put(encoder.decodeFromURL(value.replaceAll("%", "%25").replace("+", "%2B")));
 					} else {
 						valuesLstDecoded.put(value);
 						URLDecoder.decode(value.replaceAll("%", "%25").replace("+", "%2B"), UTF_8.name()); // uses the original value for list and %
@@ -930,8 +933,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 					String value = String.valueOf(valueOb);
 					// if (!value.equals("%7B%3B%7B") && !value.equalsIgnoreCase("%")) {
 					if (!value.equals("") && !value.equalsIgnoreCase("%")) {
-						ValuesLstDecoded
-								.put(esapiEncoder.decodeFromURL(value.replaceAll("%", "%25").replace("+", "%2B")));
+						ValuesLstDecoded.put(encoder.decodeFromURL(value.replaceAll("%", "%25").replace("+", "%2B")));
 					} else {
 						ValuesLstDecoded.put(value); // uses the original value for list and %
 					}
@@ -1644,6 +1646,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 				Object paramValues = objParameter.getDriver().getParameterValues();
 				Object paramDescriptionValues = objParameter.getDriver().getParameterValuesDescription();
 
+				Encoder encoder = OwaspDefaultEncoderFactory.getInstance().getEncoder();
 				if (paramValues instanceof List) {
 
 					List<String> valuesList = (List) paramValues;
@@ -1664,10 +1667,10 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 						try {
 							// % character breaks decode method
 							if (!itemVal.contains("%")) {
-								itemVal = esapiEncoder.decodeFromURL(itemVal);
+								itemVal = encoder.decodeFromURL(itemVal);
 							}
 							if (!itemDescr.contains("%")) {
-								itemDescr = esapiEncoder.decodeFromURL(itemDescr);
+								itemDescr = encoder.decodeFromURL(itemDescr);
 							}
 
 							// check input value and convert if it's an old multivalue syntax({;{xxx;yyy}STRING}) to list of values :["A-OMP", "A-PO", "CL"]
@@ -1689,13 +1692,13 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 							// TODO Auto-generated catch block
 							// e.printStackTrace();
 							LOGGER.debug("An error occured while decoding parameter with value[" + itemVal + "]" + e);
-						} 
+						}
 					}
 				} else if (paramValues instanceof String) {
 					// % character breaks decode method
 					if (!((String) paramValues).contains("%")) {
 						try {
-							paramValues = esapiEncoder.decodeFromURL((String) paramValues);
+							paramValues = encoder.decodeFromURL((String) paramValues);
 						} catch (EncodingException e) {
 							LOGGER.debug(e.getCause(), e);
 							throw new SpagoBIRuntimeException(e.getMessage(), e);
@@ -1708,7 +1711,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 							: paramValues.toString();
 					if (!parDescrVal.contains("%")) {
 						try {
-							parDescrVal = esapiEncoder.decodeFromURL(parDescrVal);
+							parDescrVal = encoder.decodeFromURL(parDescrVal);
 						} catch (EncodingException e) {
 							LOGGER.debug(e.getCause(), e);
 							throw new SpagoBIRuntimeException(e.getMessage(), e);

@@ -41,7 +41,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.json.JSONObject;
+import org.owasp.esapi.Encoder;
 
+import it.eng.knowage.security.OwaspDefaultEncoderFactory;
 import it.eng.spagobi.api.AbstractSpagoBIResource;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
@@ -50,7 +52,6 @@ import it.eng.spagobi.i18n.metadata.SbiI18NMessageBody;
 import it.eng.spagobi.i18n.metadata.SbiI18NMessages;
 import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
-import org.owasp.esapi.reference.DefaultEncoder; 
 
 /**
  * @author Giulio Gavardi (giulio.gavardi@eng.it)
@@ -62,12 +63,12 @@ public class I18nResource extends AbstractSpagoBIResource {
 	private static final Logger LOGGER = LogManager.getLogger(I18nResource.class);
 
 	private static final String CHARSET = "; charset=UTF-8";
-	private static org.owasp.esapi.Encoder esapiEncoder = DefaultEncoder.getInstance();
+
 	@GET
 	@Path("/") // i18nmessages/
 	@Produces(MediaType.APPLICATION_JSON)
-	public String loadI18NFromDB(@QueryParam("currLanguage") String currLanguage, @QueryParam("currCountry") String currCountry,
-			@QueryParam("currScript") String currScript) {
+	public String loadI18NFromDB(@QueryParam("currLanguage") String currLanguage,
+			@QueryParam("currCountry") String currCountry, @QueryParam("currScript") String currScript) {
 
 		JSONObject toReturn = new JSONObject();
 		if (currLanguage.endsWith("/")) {
@@ -75,7 +76,8 @@ public class I18nResource extends AbstractSpagoBIResource {
 		}
 		try {
 			Locale locale = null;
-			if (currLanguage != null && !currLanguage.equals("null") && currCountry != null && !currCountry.equals("null")) {
+			if (currLanguage != null && !currLanguage.equals("null") && currCountry != null
+					&& !currCountry.equals("null")) {
 
 				Builder tmpLocale = new Locale.Builder().setLanguage(currLanguage).setRegion(currCountry);
 
@@ -157,8 +159,10 @@ public class I18nResource extends AbstractSpagoBIResource {
 				I18NMessagesDAO.updateNonDefaultI18NMessagesLabel(messageBeforeUpdate, message);
 			}
 			I18NMessagesDAO.updateI18NMessage(message);
-			String encodedI18NMessage = esapiEncoder.encodeForURL("" + message.getId());
-			return Response.created(new URI("/2.0/i18nMessages/" + encodedI18NMessage)).entity(encodedI18NMessage).build();
+			Encoder encoder = OwaspDefaultEncoderFactory.getInstance().getEncoder();
+			String encodedI18NMessage = encoder.encodeForURL("" + message.getId());
+			return Response.created(new URI("/2.0/i18nMessages/" + encodedI18NMessage)).entity(encodedI18NMessage)
+					.build();
 		} catch (Exception e) {
 			LOGGER.error("Error while updating I18NMessage", e);
 			throw new SpagoBIRestServiceException("Error while updating I18NMessage", buildLocaleFromSession(), e);
@@ -179,7 +183,8 @@ public class I18nResource extends AbstractSpagoBIResource {
 		try {
 			I18NMessagesDAO = DAOFactory.getI18NMessageDAO();
 			I18NMessagesDAO.deleteI18NMessage(id);
-			String encodedI18NMessage = esapiEncoder.encodeForURL("" + id);
+			Encoder encoder = OwaspDefaultEncoderFactory.getInstance().getEncoder();
+			String encodedI18NMessage = encoder.encodeForURL("" + id);
 			return Response.ok().entity(encodedI18NMessage).build();
 		} catch (Exception e) {
 			LOGGER.error("Error has occurred while deleting I18NMessage", e);
@@ -199,11 +204,13 @@ public class I18nResource extends AbstractSpagoBIResource {
 			SbiI18NMessages message = I18NMessagesDAO.getSbiI18NMessageById(id);
 			I18NMessagesDAO.deleteNonDefaultI18NMessages(message);
 			I18NMessagesDAO.deleteI18NMessage(id);
-			String encodedI18NMessage = esapiEncoder.encodeForURL("" + id);
+			Encoder encoder = OwaspDefaultEncoderFactory.getInstance().getEncoder();
+			String encodedI18NMessage = encoder.encodeForURL("" + id);
 			return Response.ok().entity(encodedI18NMessage).build();
 		} catch (Exception e) {
 			LOGGER.error("Error has occurred while deleting Default-Language I18NMessage", e);
-			throw new SpagoBIRestServiceException("Error while deleting Default-Language I18NMessage", buildLocaleFromSession(), e);
+			throw new SpagoBIRestServiceException("Error while deleting Default-Language I18NMessage",
+					buildLocaleFromSession(), e);
 		}
 	}
 

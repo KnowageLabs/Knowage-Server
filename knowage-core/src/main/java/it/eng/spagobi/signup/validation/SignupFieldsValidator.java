@@ -21,14 +21,15 @@ import java.util.Locale;
 
 import javax.ws.rs.core.MultivaluedMap;
 
-import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.owasp.esapi.Encoder;
 import org.owasp.esapi.errors.EncodingException;
-import org.owasp.esapi.reference.DefaultEncoder;
 
+import it.eng.knowage.security.OwaspDefaultEncoderFactory;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.commons.utilities.messages.IMessageBuilder;
 import it.eng.spagobi.commons.utilities.messages.MessageBuilderFactory;
@@ -42,8 +43,7 @@ public class SignupFieldsValidator implements IFieldsValidator {
 	private static final String REGEX_SECRETPHRASE = "[^\\d][a-zA-Z0-9]{7,15}";
 	private static final String REGEX_EMAIL = "[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,4}";
 	private static final String REGEX_DATE = "(0[1-9]|[12][\\d]|3[01])/(0[1-9]|1[012])/(19|20)\\d\\d";
-	private static org.owasp.esapi.Encoder esapiEncoder = DefaultEncoder.getInstance();
-	
+
 	private boolean validatePassword(String password, String username) {
 
 		if (username != null && password.indexOf(username) != -1)
@@ -62,13 +62,14 @@ public class SignupFieldsValidator implements IFieldsValidator {
 	}
 
 	@Override
-	public JSONArray validateFields(MultivaluedMap<String, String> parameters) throws EncodingException{
+	public JSONArray validateFields(MultivaluedMap<String, String> parameters) throws EncodingException {
 		IMessageBuilder msgBuilder = MessageBuilderFactory.getMessageBuilder();
 
 		JSONArray validationErrors = new JSONArray();
 
 		String strLocale = GeneralUtilities.trim(parameters.getFirst("locale"));
-		Locale locale = new Locale(strLocale.substring(0, strLocale.indexOf("_")), strLocale.substring(strLocale.indexOf("_") + 1));
+		Locale locale = new Locale(strLocale.substring(0, strLocale.indexOf("_")),
+				strLocale.substring(strLocale.indexOf("_") + 1));
 
 		String name = GeneralUtilities.trim(parameters.getFirst("name"));
 		String surname = GeneralUtilities.trim(parameters.getFirst("surname"));
@@ -84,20 +85,21 @@ public class SignupFieldsValidator implements IFieldsValidator {
 		String modify = GeneralUtilities.trim(parameters.getFirst("modify"));
 
 		try {
+			Encoder encoder = OwaspDefaultEncoderFactory.getInstance().getEncoder();
 			if (name != null)
-				name = esapiEncoder.decodeFromURL(name);
+				name = encoder.decodeFromURL(name);
 			if (surname != null)
-				surname = esapiEncoder.decodeFromURL(surname);
+				surname = encoder.decodeFromURL(surname);
 			if (username != null)
-				username = esapiEncoder.decodeFromURL(username);
+				username = encoder.decodeFromURL(username);
 			if (password != null)
-				password = esapiEncoder.decodeFromURL(password);
+				password = encoder.decodeFromURL(password);
 			if (confirmPassword != null)
-				confirmPassword = esapiEncoder.decodeFromURL(confirmPassword);
+				confirmPassword = encoder.decodeFromURL(confirmPassword);
 			if (email != null)
-				email = esapiEncoder.decodeFromURL(email);
+				email = encoder.decodeFromURL(email);
 			if (birthDate != null)
-				birthDate = esapiEncoder.decodeFromURL(birthDate);
+				birthDate = encoder.decodeFromURL(birthDate);
 
 		} catch (Exception ex) {
 			LOGGER.error(ex.getMessage());
@@ -107,47 +109,57 @@ public class SignupFieldsValidator implements IFieldsValidator {
 		try {
 
 			if (email == null)
-				validationErrors.put(new JSONObject("{message: \"" + msgBuilder.getMessage("signup.check.emailMandatory", locale) + "\"}"));
+				validationErrors.put(new JSONObject(
+						"{message: \"" + msgBuilder.getMessage("signup.check.emailMandatory", locale) + "\"}"));
 			else {
 				if (!validateEmail(email))
-					validationErrors.put(new JSONObject("{message: \"" + msgBuilder.getMessage("signup.check.emailInvalid", locale) + "\"}"));
+					validationErrors.put(new JSONObject(
+							"{message: \"" + msgBuilder.getMessage("signup.check.emailInvalid", locale) + "\"}"));
 			}
 			if (birthDate != null && !validateDate(birthDate))
-				validationErrors.put(new JSONObject("{message: \"" + msgBuilder.getMessage("signup.check.birthdayInvalid", locale) + "\"}"));
+				validationErrors.put(new JSONObject(
+						"{message: \"" + msgBuilder.getMessage("signup.check.birthdayInvalid", locale) + "\"}"));
 
 			if (name == null)
-				validationErrors.put(new JSONObject("{message: \"" + msgBuilder.getMessage("signup.check.nameMandatory", locale) + "\"}"));
-			
+				validationErrors.put(new JSONObject(
+						"{message: \"" + msgBuilder.getMessage("signup.check.nameMandatory", locale) + "\"}"));
+
 			if (surname == null)
-				validationErrors.put(new JSONObject("{message: \"" + msgBuilder.getMessage("signup.check.surnameMandatory", locale) + "\"}"));
+				validationErrors.put(new JSONObject(
+						"{message: \"" + msgBuilder.getMessage("signup.check.surnameMandatory", locale) + "\"}"));
 
 			if (modify == null) {
 				if (password == null)
-					validationErrors.put(new JSONObject("{message: \"" + msgBuilder.getMessage("signup.check.pwdMandatory", locale) + "\"}"));
+					validationErrors.put(new JSONObject(
+							"{message: \"" + msgBuilder.getMessage("signup.check.pwdMandatory", locale) + "\"}"));
 				else {
 					if (!validatePassword(password, username)) {
 						String errorMsg = msgBuilder.getMessage("signup.check.pwdInvalid", locale);
-						validationErrors.put(new JSONObject("{message: '" + JSONUtils.escapeJsonString(errorMsg) + "'}"));
+						validationErrors
+								.put(new JSONObject("{message: '" + JSONUtils.escapeJsonString(errorMsg) + "'}"));
 					}
 				}
 
 				if (username == null)
-					validationErrors.put(new JSONObject("{message: \"" + msgBuilder.getMessage("signup.check.usernameMandatory", locale) + "\"}"));
+					validationErrors.put(new JSONObject(
+							"{message: \"" + msgBuilder.getMessage("signup.check.usernameMandatory", locale) + "\"}"));
 
 				if (confirmPassword == null)
-					validationErrors.put(new JSONObject("{message: \"" + msgBuilder.getMessage("signup.check.confirmPwdMandatory", locale) + "\"}"));
+					validationErrors.put(new JSONObject("{message: \""
+							+ msgBuilder.getMessage("signup.check.confirmPwdMandatory", locale) + "\"}"));
 
 				if (useCaptcha && !Boolean.parseBoolean(terms))
-					validationErrors.put(new JSONObject("{message: \"" + msgBuilder.getMessage("signup.check.agreeMandatory", locale) + "\"}"));
+					validationErrors.put(new JSONObject(
+							"{message: \"" + msgBuilder.getMessage("signup.check.agreeMandatory", locale) + "\"}"));
 
-				if (password != null && !password.equals("Password") && 
-						confirmPassword != null && 
-						!confirmPassword.equals("Confirm Password") &&
-						!password.equals(confirmPassword))
-					validationErrors.put(new JSONObject("{message: \"" + msgBuilder.getMessage("signup.check.pwdNotEqual", locale) + "\"}"));
-				
+				if (password != null && !password.equals("Password") && confirmPassword != null
+						&& !confirmPassword.equals("Confirm Password") && !password.equals(confirmPassword))
+					validationErrors.put(new JSONObject(
+							"{message: \"" + msgBuilder.getMessage("signup.check.pwdNotEqual", locale) + "\"}"));
+
 				if (useCaptcha && captcha == null)
-					validationErrors.put(new JSONObject("{message: \"" + msgBuilder.getMessage("signup.check.captchaMandatory", locale) + "\"}"));
+					validationErrors.put(new JSONObject(
+							"{message: \"" + msgBuilder.getMessage("signup.check.captchaMandatory", locale) + "\"}"));
 			}
 		} catch (JSONException e1) {
 			LOGGER.error(e1.getMessage());

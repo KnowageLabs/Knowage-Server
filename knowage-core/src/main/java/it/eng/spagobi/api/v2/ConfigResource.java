@@ -38,8 +38,9 @@ import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.owasp.esapi.reference.DefaultEncoder;
+import org.owasp.esapi.Encoder;
 
+import it.eng.knowage.security.OwaspDefaultEncoderFactory;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.api.AbstractSpagoBIResource;
 import it.eng.spagobi.commons.bo.Config;
@@ -62,7 +63,7 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 public class ConfigResource extends AbstractSpagoBIResource {
 
 	private static Logger logger = Logger.getLogger(ConfigResource.class);
-	private static org.owasp.esapi.Encoder esapiEncoder = DefaultEncoder.getInstance();
+
 	@GET
 	@Path("/")
 	@UserConstraint(functionalities = { CommunityFunctionalityConstants.CONFIG_MANAGEMENT })
@@ -151,7 +152,8 @@ public class ConfigResource extends AbstractSpagoBIResource {
 	@GET
 	@Path("/KNOWAGE.CUSTOMIZED_DATABASE_FUNCTIONS/{dataSourceId}")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-	public String getKnowageCalculatedFunctionConfig(@PathParam("dataSourceId") Integer dataSourceId) throws JSONException {
+	public String getKnowageCalculatedFunctionConfig(@PathParam("dataSourceId") Integer dataSourceId)
+			throws JSONException {
 		logger.debug("IN");
 		IConfigDAO configsDao = null;
 		JSONObject toReturn = new JSONObject();
@@ -177,13 +179,15 @@ public class ConfigResource extends AbstractSpagoBIResource {
 
 		if (dm != null) {
 			String valueCheck = dm.getValueCheck();
-			logger.debug("content of KNOWAGE.CUSTOMIZED_DATABASE_FUNCTIONS variable to be cponverted in JSON " + valueCheck);
+			logger.debug(
+					"content of KNOWAGE.CUSTOMIZED_DATABASE_FUNCTIONS variable to be cponverted in JSON " + valueCheck);
 			if (valueCheck != null && !valueCheck.equals("")) {
 				try {
 					configJSON = new JSONObject(valueCheck);
 				} catch (JSONException e) {
 					logger.error("Error in converting " + valueCheck
-							+ " to JSON, correct the KNOWAGE.CUSTOMIZED_DATABASE_FUNCTIONS variable, meanwhile ignore custom functions", e);
+							+ " to JSON, correct the KNOWAGE.CUSTOMIZED_DATABASE_FUNCTIONS variable, meanwhile ignore custom functions",
+							e);
 				}
 
 				if (dataSourceId != null && dataSourceId != -1) {
@@ -247,14 +251,16 @@ public class ConfigResource extends AbstractSpagoBIResource {
 		}
 
 		if (config.getId() != null) {
-			return Response.status(Status.BAD_REQUEST).entity("Error paramters. New config should not have ID value").build();
+			return Response.status(Status.BAD_REQUEST).entity("Error paramters. New config should not have ID value")
+					.build();
 		}
 
 		try {
 			configsDao = DAOFactory.getSbiConfigDAO();
 			configsDao.setUserProfile(getUserProfile());
 			configsDao.saveConfig(config);
-			String encodedConfig = esapiEncoder.encodeForURL("" + config.getId());
+			Encoder encoder = OwaspDefaultEncoderFactory.getInstance().getEncoder();
+			String encodedConfig = encoder.encodeForURL("" + config.getId());
 			return Response.created(new URI("1.0/configs/" + encodedConfig)).entity(encodedConfig).build();
 		} catch (Exception e) {
 			Response.notModified().build();
@@ -284,7 +290,8 @@ public class ConfigResource extends AbstractSpagoBIResource {
 			configsDao = DAOFactory.getSbiConfigDAO();
 			configsDao.setUserProfile(getUserProfile());
 			configsDao.saveConfig(config);
-			String encodedConfig = esapiEncoder.encodeForURL("" + config.getId());
+			Encoder encoder = OwaspDefaultEncoderFactory.getInstance().getEncoder();
+			String encodedConfig = encoder.encodeForURL("" + config.getId());
 			return Response.created(new URI("1.0/configs/" + encodedConfig)).entity(encodedConfig).build();
 		} catch (Exception e) {
 			logger.error("Error while updating url of the new resource", e);

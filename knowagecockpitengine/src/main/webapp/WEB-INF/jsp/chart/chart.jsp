@@ -46,7 +46,7 @@ author:
 <%@page import="java.util.Iterator"%>
 <%@page import="com.fasterxml.jackson.databind.ObjectMapper"%>
 <%@page import="org.json.JSONObject"%>
-<%@page import="org.owasp.esapi.reference.DefaultEncoder"%>	
+<%@page import="it.eng.knowage.security.OwaspDefaultEncoderFactory"%>
 <%@page import="org.owasp.esapi.Encoder"%>	
 
 <%-- ---------------------------------------------------------------------- --%>
@@ -172,7 +172,7 @@ author:
 	}
 	String driverParams = new JSONObject(driverParamsMap).toString(0).replaceAll("'", "\\\\'");
 	String uuidO=request.getParameter("SBI_EXECUTION_ID")!=null? request.getParameter("SBI_EXECUTION_ID"): "null";
-	Encoder esapiEncoder = DefaultEncoder.getInstance();
+	Encoder esapiEncoder = OwaspDefaultEncoderFactory.getInstance().getEncoder();
 %>
 
 

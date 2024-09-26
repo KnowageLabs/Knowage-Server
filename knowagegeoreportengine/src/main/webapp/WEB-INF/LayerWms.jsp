@@ -30,8 +30,8 @@ try {
 
 	dbf.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
 	dbf.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
-	dbf.setFeature("http://xml.org/sax/features/external-parameterentities", false);
-	dbf.setFeature("http://xml.org/sax/features/external-generalentities", false);
+	dbf.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
+	dbf.setFeature("http://xml.org/sax/features/external-general-entities", false);
 
 	dbf.setXIncludeAware(false);
 	dbf.setExpandEntityReferences(false);

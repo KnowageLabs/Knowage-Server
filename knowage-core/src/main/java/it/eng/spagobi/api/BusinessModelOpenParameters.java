@@ -3,6 +3,7 @@ package it.eng.spagobi.api;
 import static it.eng.spagobi.commons.constants.SpagoBIConstants.DATE_RANGE_OPTIONS_KEY;
 import static it.eng.spagobi.commons.constants.SpagoBIConstants.DATE_RANGE_QUANTITY_JSON;
 import static it.eng.spagobi.commons.constants.SpagoBIConstants.DATE_RANGE_TYPE_JSON;
+
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -30,9 +31,10 @@ import org.apache.logging.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.owasp.esapi.Encoder;
 import org.owasp.esapi.errors.EncodingException;
-import org.owasp.esapi.reference.DefaultEncoder;
 
+import it.eng.knowage.security.OwaspDefaultEncoderFactory;
 import it.eng.spago.base.RequestContainer;
 import it.eng.spago.base.RequestContainerAccess;
 import it.eng.spago.base.SourceBean;
@@ -98,8 +100,6 @@ public class BusinessModelOpenParameters extends AbstractSpagoBIResource {
 	private static final String VALUE_FIELD = "value";
 
 	private static final String LABEL_FIELD = "label";
-	
-	private static org.owasp.esapi.Encoder esapiEncoder = DefaultEncoder.getInstance();
 
 	private class BusinessModelExecutionException extends Exception {
 		private static final long serialVersionUID = -1882998632783944575L;
@@ -581,6 +581,7 @@ public class BusinessModelOpenParameters extends AbstractSpagoBIResource {
 				Object paramValues = objParameter.getDriver().getParameterValues();
 				Object paramDescriptionValues = objParameter.getDriver().getParameterValuesDescription();
 
+				Encoder encoder = OwaspDefaultEncoderFactory.getInstance().getEncoder();
 				if (paramValues instanceof List) {
 
 					List<String> valuesList = (List) paramValues;
@@ -601,10 +602,10 @@ public class BusinessModelOpenParameters extends AbstractSpagoBIResource {
 						try {
 							// % character breaks decode method
 							if (!itemVal.contains("%")) {
-								itemVal = esapiEncoder.decodeFromURL(itemVal);
+								itemVal = encoder.decodeFromURL(itemVal);
 							}
 							if (!itemDescr.contains("%")) {
-								itemDescr = esapiEncoder.decodeFromURL(itemDescr);
+								itemDescr = encoder.decodeFromURL(itemDescr);
 							}
 
 							// check input value and convert if it's an old multivalue syntax({;{xxx;yyy}STRING}) to list of values :["A-OMP", "A-PO", "CL"]
@@ -631,7 +632,7 @@ public class BusinessModelOpenParameters extends AbstractSpagoBIResource {
 				} else if (paramValues instanceof String) {
 					// % character breaks decode method
 					if (!((String) paramValues).contains("%")) {
-						paramValues = esapiEncoder.decodeFromURL((String) paramValues);
+						paramValues = encoder.decodeFromURL((String) paramValues);
 					}
 					paramValueLst.add(paramValues.toString());
 
@@ -639,7 +640,7 @@ public class BusinessModelOpenParameters extends AbstractSpagoBIResource {
 							? paramDescriptionValues.toString()
 							: paramValues.toString();
 					if (!parDescrVal.contains("%")) {
-						parDescrVal = esapiEncoder.decodeFromURL(parDescrVal);
+						parDescrVal = encoder.decodeFromURL(parDescrVal);
 					}
 					paramDescrLst.add(parDescrVal);
 
@@ -818,9 +819,11 @@ public class BusinessModelOpenParameters extends AbstractSpagoBIResource {
 		return Response.ok(resultAsMap).build();
 	}
 
-	private JSONObject decodeRequestParameters(JSONObject requestValParams) throws JSONException, IOException, EncodingException {
+	private JSONObject decodeRequestParameters(JSONObject requestValParams)
+			throws JSONException, IOException, EncodingException {
 		JSONObject toReturn = new JSONObject();
 
+		Encoder encoder = OwaspDefaultEncoderFactory.getInstance().getEncoder();
 		Iterator<String> keys = requestValParams.keys();
 		while (keys.hasNext()) {
 			String key = keys.next();
@@ -829,7 +832,7 @@ public class BusinessModelOpenParameters extends AbstractSpagoBIResource {
 				String value = String.valueOf(valueObj);
 				// if (!value.equals("%7B%3B%7B") && !value.equalsIgnoreCase("%")) {
 				if (!value.equals("") && !value.equalsIgnoreCase("%")) {
-					toReturn.put(key, esapiEncoder.decodeFromURL(value));
+					toReturn.put(key, encoder.decodeFromURL(value));
 				} else {
 					toReturn.put(key, value); // uses the original value for list and %
 				}
@@ -837,7 +840,7 @@ public class BusinessModelOpenParameters extends AbstractSpagoBIResource {
 				String value = String.valueOf(valueObj);
 				// if (!value.equals("%7B%3B%7B") && !value.equalsIgnoreCase("%")) {
 				if (!value.equals("") && !value.equalsIgnoreCase("%")) {
-					toReturn.put(key, esapiEncoder.decodeFromURL(value));
+					toReturn.put(key, encoder.decodeFromURL(value));
 				} else {
 					toReturn.put(key, value); // uses the original value for list and %
 				}
@@ -848,10 +851,10 @@ public class BusinessModelOpenParameters extends AbstractSpagoBIResource {
 					// String value = (String) valuesLst.get(v);
 					String value = (valuesLst.get(v) != null) ? String.valueOf(valuesLst.get(v)) : "";
 					if (!value.equals("") && !value.equalsIgnoreCase("%")) {
-						ValuesLstDecoded.put(esapiEncoder.decodeFromURL(value));
+						ValuesLstDecoded.put(encoder.decodeFromURL(value));
 					} else {
 						ValuesLstDecoded.put(value);
-						esapiEncoder.decodeFromURL(value); // uses the original value for list and %
+						encoder.decodeFromURL(value); // uses the original value for list and %
 					}
 				}
 				toReturn.put(key, ValuesLstDecoded);
