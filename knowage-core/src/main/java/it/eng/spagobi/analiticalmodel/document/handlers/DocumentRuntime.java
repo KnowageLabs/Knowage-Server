@@ -9,16 +9,14 @@ import java.util.UUID;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
-
+import org.owasp.esapi.Encoder;
 import org.owasp.esapi.errors.EncodingException;
-import org.owasp.esapi.reference.DefaultEncoder;
-
-
 
 import com.jamonapi.Monitor;
 import com.jamonapi.MonitorFactory;
 
 import it.eng.LightNavigationConstants;
+import it.eng.knowage.security.OwaspDefaultEncoderFactory;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
@@ -46,7 +44,7 @@ public class DocumentRuntime extends AbstractBIResourceRuntime<BIObjectParameter
 	private static final Logger LOGGER = Logger.getLogger(DocumentRuntime.class);
 
 	private final List<DocumentDriverRuntime> drivers = null;
-	private static org.owasp.esapi.Encoder esapiEncoder = DefaultEncoder.getInstance();
+
 	public DocumentRuntime(IEngUserProfile userProfile, Locale locale) {
 		super(userProfile, locale);
 	}
@@ -87,7 +85,6 @@ public class DocumentRuntime extends AbstractBIResourceRuntime<BIObjectParameter
 			LOGGER.debug("OUT");
 		}
 	}
-
 
 	public String getExecutionUrl(BIObject obj, String executionModality, String role) throws EncodingException {
 		LOGGER.debug("IN");
@@ -155,13 +152,14 @@ public class DocumentRuntime extends AbstractBIResourceRuntime<BIObjectParameter
 						while (r.hasNext()) {
 							String value = r.next();
 							if (value != null && !value.equals("")) {
+								Encoder encoder = OwaspDefaultEncoderFactory.getInstance().getEncoder();
 								// encoding value
 								try {
-									value = esapiEncoder.encodeForURL(value);
+									value = encoder.encodeForURL(value);
 								} catch (EncodingException e) {
 									LOGGER.warn("UTF-8 encoding is not supported!!!", e);
 									LOGGER.warn("Using system encoding...");
-									value = esapiEncoder.encodeForURL(value);
+									value = encoder.encodeForURL(value);
 
 								}
 								buffer.append("&" + aParameter.getParameterUrlName() + "=" + value);

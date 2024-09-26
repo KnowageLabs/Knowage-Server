@@ -38,8 +38,9 @@ import javax.ws.rs.core.Response.Status;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.owasp.esapi.reference.DefaultEncoder;
+import org.owasp.esapi.Encoder;
 
+import it.eng.knowage.security.OwaspDefaultEncoderFactory;
 import it.eng.spagobi.api.AbstractSpagoBIResource;
 import it.eng.spagobi.commons.constants.CommunityFunctionalityConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
@@ -57,7 +58,7 @@ public class UdpResource extends AbstractSpagoBIResource {
 
 	// logger component-
 	private static Logger logger = Logger.getLogger(UdpResource.class);
-	private static org.owasp.esapi.Encoder esapiEncoder = DefaultEncoder.getInstance();
+
 	@GET
 	@Path("/")
 	@UserConstraint(functionalities = { CommunityFunctionalityConstants.USER_DATA_PROPERTIES_MANAGEMENT })
@@ -73,7 +74,8 @@ public class UdpResource extends AbstractSpagoBIResource {
 			sbiUdpDao.setUserProfile(getUserProfile());
 			allObjects = sbiUdpDao.findAll();
 			Integer totalNum = sbiUdpDao.countUdp();
-			JSONArray udpJSON = (JSONArray) SerializerFactory.getSerializer("application/json").serialize(allObjects, locale);
+			JSONArray udpJSON = (JSONArray) SerializerFactory.getSerializer("application/json").serialize(allObjects,
+					locale);
 
 			if (udpJSON != null && udpJSON.length() > 0) {
 				String toBeReturned = udpJSON.toString(); // JsonConverter.objectToJson(udpJSON, udpJSON.getClass());
@@ -109,7 +111,8 @@ public class UdpResource extends AbstractSpagoBIResource {
 			if (allObjects != null && !allObjects.isEmpty()) {
 				for (SbiUdp udp : allObjects) {
 					if (udp.getUdpId() == id) {
-						JSONObject udpJSON = (JSONObject) SerializerFactory.getSerializer("application/json").serialize(udp, locale);
+						JSONObject udpJSON = (JSONObject) SerializerFactory.getSerializer("application/json")
+								.serialize(udp, locale);
 						String toBeReturned = udpJSON.toString();
 						return Response.ok(toBeReturned).build();
 					}
@@ -150,14 +153,16 @@ public class UdpResource extends AbstractSpagoBIResource {
 		}
 
 		if (sbiUdp.getUdpId() != null) {
-			return Response.status(Status.BAD_REQUEST).entity("Error paramters. New User Data Property should not have ID value").build();
+			return Response.status(Status.BAD_REQUEST)
+					.entity("Error paramters. New User Data Property should not have ID value").build();
 		}
 
 		try {
 			sbiUdpsDao = DAOFactory.getUdpDAO();
 			sbiUdpsDao.setUserProfile(getUserProfile());
 			sbiUdpsDao.insert(sbiUdp);
-			String encodedSbiUdp = esapiEncoder.encodeForURL("" + sbiUdp.getUdpId());
+			Encoder encoder = OwaspDefaultEncoderFactory.getInstance().getEncoder();
+			String encodedSbiUdp = encoder.encodeForURL("" + sbiUdp.getUdpId());
 			return Response.created(new URI("1.0/userdataproperties/" + encodedSbiUdp)).entity(encodedSbiUdp).build();
 		} catch (Exception e) {
 			Response.notModified().build();
@@ -197,7 +202,8 @@ public class UdpResource extends AbstractSpagoBIResource {
 			sbiUdpsDao = DAOFactory.getUdpDAO();
 			sbiUdpsDao.setUserProfile(getUserProfile());
 			sbiUdpsDao.update(sbiUdp);
-			String encodedSbiUdp = esapiEncoder.encodeForURL("" + sbiUdp.getUdpId());
+			Encoder encoder = OwaspDefaultEncoderFactory.getInstance().getEncoder();
+			String encodedSbiUdp = encoder.encodeForURL("" + sbiUdp.getUdpId());
 			return Response.created(new URI("1.0/userdataproperties/" + encodedSbiUdp)).entity(encodedSbiUdp).build();
 		} catch (Exception e) {
 			logger.error("Error while updating url of the new resource", e);

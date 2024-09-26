@@ -40,9 +40,6 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.owasp.esapi.reference.DefaultEncoder;
-import org.owasp.esapi.errors.EncodingException;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
@@ -60,6 +57,8 @@ import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.owasp.esapi.Encoder;
+import org.owasp.esapi.errors.EncodingException;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -67,6 +66,7 @@ import com.google.common.collect.BiMap;
 
 import it.eng.knowage.monitor.IKnowageMonitor;
 import it.eng.knowage.monitor.KnowageMonitorFactory;
+import it.eng.knowage.security.OwaspDefaultEncoderFactory;
 import it.eng.spago.base.RequestContainer;
 import it.eng.spago.base.RequestContainerAccess;
 import it.eng.spago.error.EMFUserError;
@@ -148,8 +148,6 @@ public class DataSetResource {
 	public static String SELECTED_PARAMETER_VALUES = "parameters";
 	public static String FILTERS = "FILTERS";
 	public static String NODE = "node";
-	
-	private static org.owasp.esapi.Encoder esapiEncoder = DefaultEncoder.getInstance();
 
 	/**
 	 * @deprecated Replaced by {@link MetaUtils#NODE_ID_SEPARATOR}
@@ -1044,6 +1042,7 @@ public class DataSetResource {
 				Object paramValues = objParameter.getDriver().getParameterValues();
 				Object paramDescriptionValues = objParameter.getDriver().getParameterValuesDescription();
 
+				Encoder encoder = OwaspDefaultEncoderFactory.getInstance().getEncoder();
 				if (paramValues instanceof List) {
 
 					List<String> valuesList = (List) paramValues;
@@ -1064,10 +1063,10 @@ public class DataSetResource {
 						try {
 							// % character breaks decode method
 							if (!itemVal.contains("%")) {
-								itemVal = esapiEncoder.decodeFromURL(itemVal);
+								itemVal = encoder.decodeFromURL(itemVal);
 							}
 							if (!itemDescr.contains("%")) {
-								itemDescr = esapiEncoder.decodeFromURL(itemDescr);
+								itemDescr = encoder.decodeFromURL(itemDescr);
 							}
 
 							// check input value and convert if it's an old multivalue syntax({;{xxx;yyy}STRING}) to list of values :["A-OMP", "A-PO", "CL"]
@@ -1095,7 +1094,7 @@ public class DataSetResource {
 					// % character breaks decode method
 					if (!((String) paramValues).contains("%")) {
 						try {
-							paramValues = esapiEncoder.decodeFromURL((String) paramValues);
+							paramValues = encoder.decodeFromURL((String) paramValues);
 						} catch (EncodingException e) {
 							logger.debug(e.getCause(), e);
 							throw new SpagoBIRuntimeException(e.getMessage(), e);
@@ -1108,7 +1107,7 @@ public class DataSetResource {
 							: paramValues.toString();
 					if (!parDescrVal.contains("%")) {
 						try {
-							parDescrVal = esapiEncoder.decodeFromURL(parDescrVal);
+							parDescrVal = encoder.decodeFromURL(parDescrVal);
 						} catch (EncodingException e) {
 							logger.debug(e.getCause(), e);
 							throw new SpagoBIRuntimeException(e.getMessage(), e);

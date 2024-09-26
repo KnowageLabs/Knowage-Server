@@ -40,8 +40,9 @@ import javax.ws.rs.core.Response;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.owasp.esapi.reference.DefaultEncoder;
+import org.owasp.esapi.Encoder;
 
+import it.eng.knowage.security.OwaspDefaultEncoderFactory;
 import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
@@ -65,7 +66,7 @@ import it.eng.spagobi.security.Password;
 import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
 import it.eng.spagobi.services.rest.annotations.UserConstraint;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
-import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException; 
+import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 
 @Path("/2.0/users")
 @ManageAuthorization
@@ -73,7 +74,6 @@ public class UserResource extends AbstractSpagoBIResource {
 
 	private static final Logger LOGGER = LogManager.getLogger(UserResource.class);
 	private static final String CHARSET = "; charset=UTF-8";
-	private static org.owasp.esapi.Encoder esapiEncoder = DefaultEncoder.getInstance();
 
 	@GET
 	@UserConstraint(functionalities = { CommunityFunctionalityConstants.PROFILE_MANAGEMENT,
@@ -192,7 +192,7 @@ public class UserResource extends AbstractSpagoBIResource {
 		Set<SbiExtRoles> roles = new HashSet<>(0);
 		for (Integer id : list) {
 			SbiExtRoles role = new SbiExtRoles(id);
-			
+
 			roles.add(role);
 		}
 		sbiUser.setSbiExtUserRoleses(roles);
@@ -225,7 +225,8 @@ public class UserResource extends AbstractSpagoBIResource {
 
 		try {
 			Integer id = usersDao.fullSaveOrUpdateSbiUser(sbiUser);
-			String encodedUser = esapiEncoder.encodeForURL("" + id);
+			Encoder encoder = OwaspDefaultEncoderFactory.getInstance().getEncoder();
+			String encodedUser = encoder.encodeForURL("" + id);
 			return Response.created(new URI("2.0/users/" + encodedUser)).entity(encodedUser).build();
 		} catch (Exception e) {
 			LOGGER.error("Error while inserting resource", e);
@@ -262,7 +263,7 @@ public class UserResource extends AbstractSpagoBIResource {
 		Set<SbiExtRoles> roles = new HashSet<>(0);
 		for (Integer i : list) {
 			SbiExtRoles role = new SbiExtRoles(i);
-			
+
 			roles.add(role);
 		}
 		sbiUser.setSbiExtUserRoleses(roles);
@@ -323,7 +324,8 @@ public class UserResource extends AbstractSpagoBIResource {
 			usersDao = DAOFactory.getSbiUserDAO();
 			usersDao.setUserProfile(getUserProfile());
 			Integer idToReturn = usersDao.fullSaveOrUpdateSbiUser(sbiUser);
-			String encodedUser = esapiEncoder.encodeForURL("" + idToReturn);
+			Encoder encoder = OwaspDefaultEncoderFactory.getInstance().getEncoder();
+			String encodedUser = encoder.encodeForURL("" + idToReturn);
 			return Response.created(new URI("2.0/users/" + encodedUser)).entity(encodedUser).build();
 		} catch (Exception e) {
 			LOGGER.error(e.getMessage(), e);
@@ -343,7 +345,8 @@ public class UserResource extends AbstractSpagoBIResource {
 			usersDao = DAOFactory.getSbiUserDAO();
 			usersDao.setUserProfile(getUserProfile());
 			usersDao.deleteSbiUserById(id);
-			String encodedUser = esapiEncoder.encodeForURL("" + id);
+			Encoder encoder = OwaspDefaultEncoderFactory.getInstance().getEncoder();
+			String encodedUser = encoder.encodeForURL("" + id);
 			return Response.ok().entity(encodedUser).build();
 		} catch (Exception e) {
 			LOGGER.error("Error with deleting resource with id: {}", id, e);

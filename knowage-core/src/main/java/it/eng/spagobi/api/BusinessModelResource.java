@@ -19,6 +19,7 @@
 package it.eng.spagobi.api;
 
 import static it.eng.spagobi.analiticalmodel.document.DocumentExecutionUtils.createParameterValuesMap;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -44,11 +45,12 @@ import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.owasp.esapi.Encoder;
 import org.owasp.esapi.errors.EncodingException;
-import org.owasp.esapi.reference.DefaultEncoder;
 
 import com.google.common.collect.BiMap;
 
+import it.eng.knowage.security.OwaspDefaultEncoderFactory;
 import it.eng.spago.base.RequestContainer;
 import it.eng.spago.base.RequestContainerAccess;
 import it.eng.spago.error.EMFUserError;
@@ -122,8 +124,6 @@ public class BusinessModelResource {
 	public static String NODE_ID_SEPARATOR = "___SEPA__";
 	public static String START = "start";
 	public static String LIMIT = "limit";
-	private static org.owasp.esapi.Encoder esapiEncoder = DefaultEncoder.getInstance();
-
 
 	@Context
 	protected HttpServletRequest request;
@@ -443,8 +443,8 @@ public class BusinessModelResource {
 		mode = (String) requestVal.opt("mode");
 
 		DriversRuntimeLoader driversRuntimeLoader = DriversRuntimeLoaderFactory.getDriversRuntimeLoader();
-		//MetaModel datasetMetaModel = DAOFactory.getMetaModelsDAO().loadMetaModelByName(qbeDatamart);
-		//List<BIMetaModelParameter> drivers = datasetMetaModel.getDrivers();
+		// MetaModel datasetMetaModel = DAOFactory.getMetaModelsDAO().loadMetaModelByName(qbeDatamart);
+		// List<BIMetaModelParameter> drivers = datasetMetaModel.getDrivers();
 		List<BIMetaModelParameter> drivers = driversRuntimeLoader.getBusinessModelDrivers(qbeDatamart, role);
 
 		BIMetaModelParameter biObjectParameter = null;
@@ -479,8 +479,8 @@ public class BusinessModelResource {
 			resultAsMap.put("rows", result);
 		} else {
 			MetaModel loadMetaModelByName = DAOFactory.getMetaModelsDAO().loadMetaModelByName(qbeDatamart);
-			List errorList = DocumentExecutionUtils.handleNormalExecutionError(this.getUserProfile(), loadMetaModelByName,
-					req, this.getAttributeAsString("SBI_ENVIRONMENT"), role,
+			List errorList = DocumentExecutionUtils.handleNormalExecutionError(this.getUserProfile(),
+					loadMetaModelByName, req, this.getAttributeAsString("SBI_ENVIRONMENT"), role,
 					biObjectParameter.getParameter().getModalityValue().getSelectionType(), null, locale);
 
 			resultAsMap.put("errors", errorList);
@@ -616,6 +616,7 @@ public class BusinessModelResource {
 				Object paramValues = objParameter.getDriver().getParameterValues();
 				Object paramDescriptionValues = objParameter.getDriver().getParameterValuesDescription();
 
+				Encoder encoder = OwaspDefaultEncoderFactory.getInstance().getEncoder();
 				if (paramValues instanceof List) {
 
 					List<String> valuesList = (List) paramValues;
@@ -636,10 +637,10 @@ public class BusinessModelResource {
 						try {
 							// % character breaks decode method
 							if (!itemVal.contains("%")) {
-								itemVal = esapiEncoder.decodeFromURL(itemVal);
+								itemVal = encoder.decodeFromURL(itemVal);
 							}
 							if (!itemDescr.contains("%")) {
-								itemDescr = esapiEncoder.decodeFromURL(itemDescr);
+								itemDescr = encoder.decodeFromURL(itemDescr);
 							}
 
 							// check input value and convert if it's an old multivalue syntax({;{xxx;yyy}STRING}) to list of values :["A-OMP", "A-PO", "CL"]
@@ -670,7 +671,7 @@ public class BusinessModelResource {
 					if (!((String) paramValues).contains("%")) {
 						try {
 
-							paramValues = esapiEncoder.decodeFromURL((String) paramValues);
+							paramValues = encoder.decodeFromURL((String) paramValues);
 						} catch (EncodingException e) {
 							LOGGER.debug(e.getCause(), e);
 
@@ -685,7 +686,7 @@ public class BusinessModelResource {
 					if (!parDescrVal.contains("%")) {
 						try {
 
-							parDescrVal = esapiEncoder.decodeFromURL(parDescrVal);
+							parDescrVal = encoder.decodeFromURL(parDescrVal);
 						} catch (EncodingException e) {
 							LOGGER.debug(e.getCause(), e);
 

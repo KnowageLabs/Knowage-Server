@@ -38,13 +38,14 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.owasp.esapi.reference.DefaultEncoder;
+import org.owasp.esapi.Encoder;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import it.eng.knowage.analyticalDriver.api.AnalyticalDriverManagementAPI;
 import it.eng.knowage.monitor.IKnowageMonitor;
 import it.eng.knowage.monitor.KnowageMonitorFactory;
+import it.eng.knowage.security.OwaspDefaultEncoderFactory;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO;
@@ -72,8 +73,7 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 public class AnalyticalDriversResource extends AbstractSpagoBIResource {
 
 	private static final Logger LOGGER = LogManager.getLogger(AnalyticalDriversResource.class);
-	private static org.owasp.esapi.Encoder esapiEncoder = DefaultEncoder.getInstance();
-	
+
 	private final String charset = "; charset=UTF-8";
 
 	@GET
@@ -302,8 +302,9 @@ public class AnalyticalDriversResource extends AbstractSpagoBIResource {
 			useModesDao = DAOFactory.getParameterUseDAO();
 			useModesDao.setUserProfile(getUserProfile());
 			useModesDao.insertParameterUse(useMode);
-			
-			String encodedUseMode = esapiEncoder.encodeForURL("" + useMode.getUseID());
+
+			Encoder encoder = OwaspDefaultEncoderFactory.getInstance().getEncoder();
+			String encodedUseMode = encoder.encodeForURL("" + useMode.getUseID());
 			return Response.created(new URI("2.0/analyticalDrivers/" + encodedUseMode)).entity(encodedUseMode).build();
 		} catch (Exception e) {
 			LOGGER.error("Error while inserting resource", e);
@@ -341,7 +342,8 @@ public class AnalyticalDriversResource extends AbstractSpagoBIResource {
 
 			driversDao.modifyParameter(driver);
 
-			String encodedDriver = esapiEncoder.encodeForURL("" + driver.getId());
+			Encoder encoder = OwaspDefaultEncoderFactory.getInstance().getEncoder();
+			String encodedDriver = encoder.encodeForURL("" + driver.getId());
 
 			JSONArray jsonArray = new JSONArray();
 			response.put("encodedDriver", encodedDriver);
@@ -405,7 +407,8 @@ public class AnalyticalDriversResource extends AbstractSpagoBIResource {
 				}
 			}
 			useModesDao.modifyParameterUse(useMode);
-			String encodedUseMode = esapiEncoder.encodeForURL("" + useMode.getUseID());
+			Encoder encoder = OwaspDefaultEncoderFactory.getInstance().getEncoder();
+			String encodedUseMode = encoder.encodeForURL("" + useMode.getUseID());
 			return Response.created(new URI("2.0/analyticalDrivers/" + encodedUseMode)).entity(encodedUseMode).build();
 		} catch (Exception e) {
 			LOGGER.error("Error while modifying resource with id: {}", id, e);
@@ -438,7 +441,8 @@ public class AnalyticalDriversResource extends AbstractSpagoBIResource {
 			}
 			driversDao.eraseParameter(driver);
 
-			String encodedDriver = esapiEncoder.encodeForURL("" + driver.getId());
+			Encoder encoder = OwaspDefaultEncoderFactory.getInstance().getEncoder();
+			String encodedDriver = encoder.encodeForURL("" + driver.getId());
 			return Response.ok().entity(encodedDriver).build();
 		} catch (Exception e) {
 			LOGGER.error("Error with deleting resource with id: {}", id, e);
@@ -461,7 +465,9 @@ public class AnalyticalDriversResource extends AbstractSpagoBIResource {
 			useModesDao.setUserProfile(getUserProfile());
 			useModesDao.eraseParameterUse(mode);
 
-			String encodedMode = esapiEncoder.encodeForURL("" + mode.getUseID());
+			Encoder encoder = OwaspDefaultEncoderFactory.getInstance().getEncoder();
+			String encodedMode = encoder
+					.encodeForURL("" + mode.getUseID());
 			return Response.ok().entity(encodedMode).build();
 		} catch (Exception e) {
 			LOGGER.error("Error with deleting resource with id: {}", id, e);

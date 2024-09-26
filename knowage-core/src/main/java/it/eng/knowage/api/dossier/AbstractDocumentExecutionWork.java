@@ -37,7 +37,7 @@ import org.apache.logging.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.owasp.esapi.reference.DefaultEncoder;
+import org.owasp.esapi.Encoder;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -50,6 +50,7 @@ import it.eng.knowage.engines.dossier.template.parameter.Parameter;
 import it.eng.knowage.engines.dossier.template.placeholder.PlaceHolder;
 import it.eng.knowage.engines.dossier.template.report.Report;
 import it.eng.knowage.export.wrapper.beans.RenderOptions;
+import it.eng.knowage.security.OwaspDefaultEncoderFactory;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
@@ -87,7 +88,6 @@ public class AbstractDocumentExecutionWork extends DossierExecutionClient implem
 	IProgressThreadDAO progressThreadDAO;
 	protected AbstractDossierTemplate dossierTemplate = null;
 	protected JSONObject jsonObjectTemplate = new JSONObject();
-	
 
 	@Override
 	public void run() {
@@ -686,15 +686,15 @@ public class AbstractDocumentExecutionWork extends DossierExecutionClient implem
 											currValue2AsString = currValue2AsString.substring(1,
 													currValue2AsString.length() - 1);
 										}
-										
-										paramValue.put("value", 
-												DefaultEncoder.getInstance().encodeForHTML(currValue2AsString));
-												//URLEncoder.encode(currValue2AsString,
-												//StandardCharsets.UTF_8.toString()));
+
+										Encoder encoder = OwaspDefaultEncoderFactory.getInstance().getEncoder();
+										paramValue.put("value", encoder.encodeForHTML(currValue2AsString));
+										// URLEncoder.encode(currValue2AsString,
+										// StandardCharsets.UTF_8.toString()));
 										paramValue.put("description",
-												DefaultEncoder.getInstance().encodeForHTML(templateParameter.getUrlNameDescription()));
-												//URLEncoder.encode(templateParameter.getUrlNameDescription(),
-												//		StandardCharsets.UTF_8.toString()));
+												encoder.encodeForHTML(templateParameter.getUrlNameDescription()));
+										// URLEncoder.encode(templateParameter.getUrlNameDescription(),
+										// StandardCharsets.UTF_8.toString()));
 
 										paramValueArray.put(paramValue);
 									}

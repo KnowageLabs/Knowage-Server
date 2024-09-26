@@ -18,14 +18,13 @@ import org.apache.logging.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.owasp.esapi.Encoder;
+import org.owasp.esapi.errors.EncodingException;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 
-import org.owasp.esapi.errors.EncodingException;
-import org.owasp.esapi.reference.DefaultEncoder;
-
-
+import it.eng.knowage.security.OwaspDefaultEncoderFactory;
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.base.SourceBeanAttribute;
 import it.eng.spago.error.EMFInternalError;
@@ -60,8 +59,6 @@ public class MetaUtils {
 	private static final Logger LOGGER = LogManager.getLogger(MetaUtils.class);
 
 	private static final MetaUtils INSTANCE = new MetaUtils();
-	
-	private static org.owasp.esapi.Encoder esapiEncoder = DefaultEncoder.getInstance();
 
 	public static final MetaUtils getInstance() {
 		return INSTANCE;
@@ -186,6 +183,7 @@ public class MetaUtils {
 				List paramDescrLst = new ArrayList();
 				Object paramValues = objParameter.getDriver().getParameterValues();
 				Object paramDescriptionValues = objParameter.getDriver().getParameterValuesDescription();
+				Encoder encoder = OwaspDefaultEncoderFactory.getInstance().getEncoder();
 
 				if (paramValues instanceof List) {
 
@@ -207,10 +205,10 @@ public class MetaUtils {
 						try {
 							// % character breaks decode method
 							if (!itemVal.contains("%")) {
-								itemVal = esapiEncoder.decodeFromURL(itemVal);
+								itemVal = encoder.decodeFromURL(itemVal);
 							}
 							if (!itemDescr.contains("%")) {
-								itemDescr = esapiEncoder.decodeFromURL(itemDescr);
+								itemDescr = encoder.decodeFromURL(itemDescr);
 							}
 
 							// check input value and convert if it's an old multivalue syntax({;{xxx;yyy}STRING}) to list of values :["A-OMP", "A-PO", "CL"]
@@ -236,7 +234,7 @@ public class MetaUtils {
 					// % character breaks decode method
 					if (!((String) paramValues).contains("%")) {
 						try {
-							paramValues = esapiEncoder.decodeFromURL((String) paramValues);
+							paramValues = encoder.decodeFromURL((String) paramValues);
 						} catch (EncodingException e) {
 							LOGGER.debug(e.getCause(), e);
 							throw new SpagoBIRuntimeException(e.getMessage(), e);
@@ -249,7 +247,7 @@ public class MetaUtils {
 							: paramValues.toString();
 					if (!parDescrVal.contains("%")) {
 						try {
-							parDescrVal = esapiEncoder.decodeFromURL(parDescrVal);
+							parDescrVal = encoder.decodeFromURL(parDescrVal);
 						} catch (EncodingException e) {
 							LOGGER.debug(e.getCause(), e);
 							throw new SpagoBIRuntimeException(e.getMessage(), e);
