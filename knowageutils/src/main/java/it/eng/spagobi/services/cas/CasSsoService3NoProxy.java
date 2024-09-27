@@ -51,11 +51,17 @@ public class CasSsoService3NoProxy implements SsoServiceInterface {
 	public String readUserIdentifier(HttpServletRequest request){
     HttpSession session=request.getSession();
     Assertion assertion = (Assertion) session.getAttribute(AbstractCasFilter.CONST_CAS_ASSERTION);
-    String userInSession=assertion.getPrincipal().getName();
-	String user=request.getRemoteUser();
-	logger.debug("CAS user in HttpServletRequest:"+user);
-	logger.debug("CAS user in HttpSession:"+userInSession);
-	return user!=null? user:userInSession;
+    String userInSession = null;
+    if(assertion != null) {
+    	userInSession = assertion.getPrincipal() != null ? assertion.getPrincipal().getName() : null;    	
+    }
+	String user = request.getRemoteUser();
+	String userId = request.getParameter(SsoServiceInterface.USER_ID);
+	logger.debug("CAS user in HttpServletRequest:" + user);
+	logger.debug("CAS user in HttpSession:" + userInSession);
+	logger.debug("CAS user in user_id:" + userId);
+	return user != null ? user : 
+		userInSession != null ? userInSession : userId;
     }
     
     /**
