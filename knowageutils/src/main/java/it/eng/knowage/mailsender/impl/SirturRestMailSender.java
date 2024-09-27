@@ -25,6 +25,7 @@ import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import org.apache.commons.io.FilenameUtils;
 import org.apache.log4j.Logger;
 import org.json.JSONObject;
 
@@ -43,8 +44,9 @@ public class SirturRestMailSender implements IMailSender {
 
 	private static final String TOKEN_URL = "MAIL_SENDER.SIRTUR.TOKEN_URL";
 	private static final String CLIENT_ID = "MAIL_SENDER.SIRTUR.CLIENT_ID";
-	private static final String CLIENT_SECRET = "MAIL_SENDER.SIRTUR.CLIENT_SECRET";
+	private static final String CLIENT_SECRET = "MAIL_SENDER.SIRTUR.PASSWORD";
 	private static final String SENDMAIL_URL = "MAIL_SENDER.SIRTUR.SENDMAIL_URL";
+	private static final String NAME_SUFFIX = "NAME_SUFFIX";
 
 	@Override
 	public void sendMail(MessageMailDto messageMailDto) throws Exception {
@@ -86,7 +88,10 @@ public class SirturRestMailSender implements IMailSender {
 			if (messageMailDto.isZipMailDocument()) {
 				AttachmentRestDto attachmentRestDto = new AttachmentRestDto();
 				attachmentRestDto.setEstensione("zip");
-				attachmentRestDto.setNomeFile(messageMailDto.getZipFileName() + messageMailDto.getNameSuffix() + ".zip");
+				String nameSuffix = messageMailDto.getMailOptionFolder().get(NAME_SUFFIX) != null
+						? (String) messageMailDto.getMailOptionFolder().get(NAME_SUFFIX)
+						: "";
+				attachmentRestDto.setNomeFile(messageMailDto.getZipFileName() + nameSuffix);
 				attachmentRestDto.setAttachment(Base64.getEncoder().encodeToString(this.zipFolder(messageMailDto.getTempFolder())));
 				messageMailRestDto.setAttachment(Arrays.asList(attachmentRestDto));
 			} else {
@@ -106,7 +111,7 @@ public class SirturRestMailSender implements IMailSender {
 			AttachmentRestDto attachmentRestDto = new AttachmentRestDto();
 			if (messageMailDto.isZipMailDocument()) {
 				attachmentRestDto.setEstensione("zip");
-				attachmentRestDto.setNomeFile(messageMailDto.getZipFileName() + messageMailDto.getNameSuffix() + ".zip");
+				attachmentRestDto.setNomeFile(messageMailDto.getZipFileName() + messageMailDto.getNameSuffix());
 				attachmentRestDto.setAttachment(Base64.getEncoder().encodeToString(this.zipAttachment(messageMailDto)));
 
 			} else {
@@ -115,9 +120,9 @@ public class SirturRestMailSender implements IMailSender {
 				if (messageMailDto.getNameSuffix() != null) {
 					fileName = fileName + messageMailDto.getNameSuffix();
 				}
-
-				attachmentRestDto.setEstensione(messageMailDto.getFileExtension());
-				attachmentRestDto.setNomeFile(fileName + messageMailDto.getFileExtension());
+				String fileFullName = fileName + messageMailDto.getFileExtension();
+				attachmentRestDto.setEstensione(FilenameUtils.getExtension(fileFullName));
+				attachmentRestDto.setNomeFile(FilenameUtils.getBaseName(fileFullName));
 				attachmentRestDto.setAttachment(Base64.getEncoder().encodeToString(messageMailDto.getAttach()));
 			}
 			messageMailRestDto.setAttachment(Arrays.asList(attachmentRestDto));
@@ -139,6 +144,8 @@ public class SirturRestMailSender implements IMailSender {
 			logger.error("Impossible sendMail  - status " + response.getStatus() + " - reason " + response.getStatusInfo().getReasonPhrase());
 			throw new ServerErrorException(response);
 		}
+		
+		logger.info("sendMail response "+response.readEntity(String.class));
 
 	}
 
@@ -227,8 +234,8 @@ public class SirturRestMailSender implements IMailSender {
 			byte[] content = getBytesFromFile(f);
 
 			AttachmentRestDto attachmentRestDto = new AttachmentRestDto();
-			attachmentRestDto.setNomeFile(entries[i]);
-			attachmentRestDto.setEstensione(messageMailDto.getContentType());
+			attachmentRestDto.setNomeFile(FilenameUtils.getBaseName(entries[i]));
+			attachmentRestDto.setEstensione(FilenameUtils.getExtension(entries[i]));
 			attachmentRestDto.setAttachment(Base64.getEncoder().encodeToString(content));
 			listAttach.add(attachmentRestDto);
 

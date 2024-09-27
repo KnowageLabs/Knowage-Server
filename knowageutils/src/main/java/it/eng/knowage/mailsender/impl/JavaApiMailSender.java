@@ -35,8 +35,8 @@ public class JavaApiMailSender implements IMailSender {
 
 	private static Logger logger = Logger.getLogger(JavaApiMailSender.class);
 
-	public static final String NAME_SUFFIX = "NAME_SUFFIX";
-	public static final String TEMP_FOLDER_PATH = "TEMP_FOLDER_PATH";
+	private static final String NAME_SUFFIX = "NAME_SUFFIX";
+	private static final String TEMP_FOLDER_PATH = "TEMP_FOLDER_PATH";
 
 	@Override
 	public void sendMail(MessageMailDto messageMailDto) throws Exception {
