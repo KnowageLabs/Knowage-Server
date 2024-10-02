@@ -38,6 +38,7 @@ import java.util.stream.Collectors;
 import javax.naming.NamingException;
 
 import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.validator.GenericValidator;
 import org.apache.log4j.Logger;
 
@@ -58,6 +59,7 @@ import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.AbstractDriver;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.AbstractParuse;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ObjParuse;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.Parameter;
+import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.bo.Domain;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
@@ -425,6 +427,8 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 	 * @param executionInstance The execution instance
 	 */
 	private void addFilter(StringBuilder buffer, AbstractParuse dependency, List<? extends AbstractDriver> drivers) {
+		List<String> reserverWords = getReserverWords();
+		
 		AbstractDriver fatherParameter = getFatherParameter(dependency, drivers);
 		if (isDateRange(fatherParameter)) {
 			buffer.append(getDateRangeClause(dependency, fatherParameter));
@@ -435,7 +439,12 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 		String value = findValue(dependency, drivers);
 		if (value != null) {
 			buffer.append(" ( ");
-			buffer.append("\"" + getColumnSQLName(dependency.getFilterColumn()) + "\""); // added double quote against ORACLE key conflicts
+			if(!reserverWords.isEmpty() && reserverWords.contains(getColumnSQLName(dependency.getFilterColumn()))){
+				// add double quote against key conflicts
+				buffer.append("\"" + getColumnSQLName(dependency.getFilterColumn()) + "\""); 
+			} else {
+				buffer.append(getColumnSQLName(dependency.getFilterColumn()));
+			}
 			buffer.append(" " + operator + " ");
 			buffer.append(" " + value + " ");
 			buffer.append(" ) ");
@@ -443,6 +452,23 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 			buffer.append(" ( 1 = 1 ) "); // in case a filter has no value, add
 			// a TRUE condition
 		}
+	}
+	
+	public static List<String> getReserverWords() {
+		logger.debug("Getting reserver words");
+		List<String> ret = new ArrayList<>();
+		String reserverWords = SingletonConfig.getInstance().getConfigValue("KNOWAGE.DASHBOARD.RESERVED.WORDS");
+		if (StringUtils.isNotBlank(reserverWords)) {
+			for (String word : reserverWords.split(",", -1)) {
+				logger.debug("Found word: " + word);
+				ret.add(word);
+			}
+
+		} else {
+			logger.error("NO RESERVED WORDS CONFIGURED!!!");
+		}
+		logger.debug("Returning reserved words: " + ret);
+		return ret;
 	}
 
 	@SuppressWarnings("rawtypes")
