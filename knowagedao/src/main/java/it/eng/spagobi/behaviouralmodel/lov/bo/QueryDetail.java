@@ -435,7 +435,7 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 		String value = findValue(dependency, drivers);
 		if (value != null) {
 			buffer.append(" ( ");
-			buffer.append(getColumnSQLName(dependency.getFilterColumn()));
+			buffer.append("\"" + getColumnSQLName(dependency.getFilterColumn()) + "\""); // added double quote against ORACLE key conflicts
 			buffer.append(" " + operator + " ");
 			buffer.append(" " + value + " ");
 			buffer.append(" ) ");
