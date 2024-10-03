@@ -313,7 +313,7 @@ public abstract class AbstractDataSet implements IDataSet {
 	public IMetaData getMetadata() {
 		IMetaData toReturn = null;
 		String xmlMetadata = this.getDsMetadata();
-		if (xmlMetadata == null || xmlMetadata.trim().equals("")) {
+		if (xmlMetadata == null || xmlMetadata.trim().equals("") || xmlMetadata.trim().equals("[]") || xmlMetadata.trim().startsWith("{")) {
 			logger.error("This dataset has no metadata");
 			throw new SpagoBIRuntimeException("This dataset has no metadata");
 		}
@@ -457,13 +457,15 @@ public abstract class AbstractDataSet implements IDataSet {
 						String newValuesFromArray = "";
 						for (int i = 0; i < valuesArray.length; i++) {
 							String temp = valuesArray[i];
-							if (!delim.isEmpty() && temp.startsWith(delim) && temp.endsWith(delim))
+							if (!delim.isEmpty() && temp.startsWith(delim) && temp.endsWith(delim)) {
 								temp = temp.substring(1, temp.length() - 1);
+							}
 							temp = temp.replaceAll("'", "''");
-							if (i == 0)
+							if (i == 0) {
 								newValuesFromArray = (delim + temp + delim);
-							else
+							} else {
 								newValuesFromArray = newValuesFromArray + "," + (delim + temp + delim);
+							}
 
 						}
 						newValues.add(newValuesFromArray);

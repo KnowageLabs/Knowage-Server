@@ -44,7 +44,8 @@ public class PrivacyManagerDataStoreTransformer extends AbstractDataStoreTransfo
 	private final Map paramsMap = new LinkedHashMap<>();
 
 	public PrivacyManagerDataStoreTransformer(IDataSet dataSet) {
-		this(dataSet.getDsMetadata() != null ? dataSet.getMetadata() : new MetaData(), dataSet.getParamsMap());
+		this(dataSet.getDsMetadata() != null && !dataSet.getDsMetadata().equals("") && !dataSet.getDsMetadata().equals("[]")
+				&& !dataSet.getDsMetadata().startsWith("{") ? dataSet.getMetadata() : new MetaData(), dataSet.getParamsMap());
 	}
 
 	public PrivacyManagerDataStoreTransformer(IDataStore dataStore, Map paramsMap) {
