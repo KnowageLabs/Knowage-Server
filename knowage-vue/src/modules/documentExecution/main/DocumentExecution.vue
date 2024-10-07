@@ -108,7 +108,7 @@ const crypto = require('crypto')
 const deepcopy = require('deepcopy')
 // @ts-ignore
 // eslint-disable-next-line
-window.execExternalCrossNavigation = function (outputParameters, otherOutputParameters, crossNavigationLabel) {
+window.execExternalCrossNavigation = function(outputParameters, otherOutputParameters, crossNavigationLabel) {
     postMessage(
         {
             type: 'crossNavigation',
@@ -124,7 +124,7 @@ window.execExternalCrossNavigation = function (outputParameters, otherOutputPara
 
 // @ts-ignore
 // eslint-disable-next-line
-window.execPreviewDataset = function (dsLabel, parameters, directDownload) {
+window.execPreviewDataset = function(dsLabel, parameters, directDownload) {
     postMessage(
         {
             type: 'preview',
@@ -367,7 +367,7 @@ export default defineComponent({
         },
         async directDownloadDataset(dataset: any) {
             await this.$http
-            .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/export/dataset/${dataset.id}/csv`, this.prepareDriversAndParameter(dataset.pars), { headers: { Accept: 'application/json, text/plain, */*', 'Content-Type': 'application/json;charset=UTF-8' } })
+                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/export/dataset/${dataset.id}/csv`, this.prepareDriversAndParameter(dataset.pars), { headers: { Accept: 'application/json, text/plain, */*', 'Content-Type': 'application/json;charset=UTF-8' } })
                 .then(() => {
                     this.$store.commit('setInfo', {
                         title: this.$t('common.toast.updateTitle'),
@@ -781,6 +781,7 @@ export default defineComponent({
 
                     if (el.type === 'DATE' && !el.selectionType && el.valueSelection === 'man_in' && el.showOnPanel === 'true' && el.visible) {
                         el.parameterValue[0].value = getValidDate('' + el.parameterValue[0].value, this.dateFormat)
+                        if (el.driverMaxValue) el.driverMaxValue = getValidDate('' + el.driverMaxValue, this.dateFormat)
                     }
                 }
                 if (el.data) {
@@ -873,10 +874,10 @@ export default defineComponent({
             if (!this.urlData || !this.urlData.engineLabel) return
             await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/exporters/config/${this.urlData.engineLabel}`).then((response: AxiosResponse<any>) => (this.exporters = response.data.exporters))
         },
-        replaceNullForDates(par,value){
-            if(value == 'null' && this.filtersData.filterStatus.find((i)=>i.urlName === par && i.type === 'DATE')){
-                return '' 
-            }else return value
+        replaceNullForDates(par, value) {
+            if (value == 'null' && this.filtersData.filterStatus.find((i) => i.urlName === par && i.type === 'DATE')) {
+                return ''
+            } else return value
         },
         async sendForm(documentLabel: string | null = null, crossNavigationPopupMode: boolean = false) {
             let tempIndex = this.breadcrumbs.findIndex((el: any) => el.label === this.document.name) as any
@@ -918,7 +919,7 @@ export default defineComponent({
                 if (inputElement) {
                     inputElement.value = decodeURIComponent(postObject.params[k])
                     inputElement.value = inputElement.value.replace(/\+/g, ' ')
-                    inputElement.value = this.replaceNullForDates(k,inputElement.value)
+                    inputElement.value = this.replaceNullForDates(k, inputElement.value)
 
                     this.hiddenFormData.set(k, decodeURIComponent(postObject.params[k]).replace(/\+/g, ' '))
                 } else {
@@ -928,7 +929,7 @@ export default defineComponent({
                     element.name = k
                     element.value = decodeURIComponent(postObject.params[k])
                     element.value = element.value.replace(/\+/g, ' ')
-                    element.value = this.replaceNullForDates(k,element.value)
+                    element.value = this.replaceNullForDates(k, element.value)
 
                     postForm.appendChild(element)
                     this.hiddenFormData.append(k, decodeURIComponent(postObject.params[k]).replace(/\+/g, ' '))
@@ -1044,7 +1045,7 @@ export default defineComponent({
                         parameters[parameter.urlName + '_field_visible_description'] = parameter.parameterValue[0].value
                     } else if (parameter.selectionType === 'TREE' || parameter.selectionType === 'LOOKUP' || parameter.multivalue) {
                         parameters[parameter.urlName] = parameter.parameterValue.map((el: any) => {
-                            if(typeof el.value === "object") return el.value[0]
+                            if (typeof el.value === 'object') return el.value[0]
                             else return el.value
                         })
                         let tempString = ''

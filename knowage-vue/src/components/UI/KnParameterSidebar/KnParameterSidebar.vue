@@ -90,6 +90,7 @@
                         :class="{
                             'p-invalid': parameter.mandatory && parameter.parameterValue && !parameter.parameterValue[0]?.value
                         }"
+                        :maxDate="parameter.driverMaxValue ?? undefined"
                         @change="updateDependency(parameter)"
                         @date-select="updateDependency(parameter)"
                         :data-test="'parameter-date-input-' + parameter.id"
@@ -431,7 +432,7 @@ export default defineComponent({
                 })
             } else if (parameter.type === 'DATE' && parameter.showOnPanel === 'true' && parameter.visible) {
                 if (parameter.driverDefaultValue[0].desc?.split('#')[0]) {
-                    parameter.parameterValue[0].value = luxonFormatDate(parameter.driverDefaultValue[0].desc?.split('#')[0],parameter.driverDefaultValue[0].desc?.split('#')[1])
+                    parameter.parameterValue[0].value = luxonFormatDate(parameter.driverDefaultValue[0].desc?.split('#')[0], parameter.driverDefaultValue[0].desc?.split('#')[1])
                 }
             } else {
                 if (!parameter.parameterValue[0]) {
