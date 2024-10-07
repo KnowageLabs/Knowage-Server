@@ -23,10 +23,6 @@
             <div v-if="selectedDocument?.previewFile" class="p-text-center">
                 <img id="image-preview" :src="getImageUrl" />
             </div>
-            <div v-if="document.functionalities && document.functionalities.length > 0" class="p-m-4">
-                <h3 class="p-m-0">{{ $t('common.path') }}</h3>
-                <p v-for="(path, index) in document.functionalities" :key="index" class="p-m-0">{{ path }}</p>
-            </div>
             <div v-if="document.name" class="p-m-4">
                 <h3 class="p-m-0">{{ $t('common.name') }}</h3>
                 <p class="p-m-0">{{ document.name }}</p>

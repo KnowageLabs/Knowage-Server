@@ -98,7 +98,8 @@ public abstract class AbstractBIResourceRuntime<T extends AbstractDriver> {
 		try {
 			lovProvDet = LovDetailFactory.getLovFromXML(lovProv);
 		} catch (Exception e) {
-			throw new SpagoBIRuntimeException("Impossible to get LOV detail associated to the analytical driver for default values", e);
+			throw new SpagoBIRuntimeException(
+					"Impossible to get LOV detail associated to the analytical driver for default values", e);
 		}
 		return lovProvDet;
 	}
@@ -123,7 +124,8 @@ public abstract class AbstractBIResourceRuntime<T extends AbstractDriver> {
 		try {
 			lovProvDet = LovDetailFactory.getLovFromXML(lovProv);
 		} catch (Exception e) {
-			throw new SpagoBIRuntimeException("Impossible to get LOV detail associated to the analytical driver for max value", e);
+			throw new SpagoBIRuntimeException(
+					"Impossible to get LOV detail associated to the analytical driver for max value", e);
 		}
 		return lovProvDet;
 	}
@@ -134,7 +136,8 @@ public abstract class AbstractBIResourceRuntime<T extends AbstractDriver> {
 	@Deprecated
 	public void refreshParametersValues(JSONObject jsonObject, boolean transientMode, IDrivableBIResource object) {
 		logger.debug("IN");
-		Monitor refreshParametersValuesMonitor = MonitorFactory.start("Knowage.DocumentRuntime.refreshParametersValues");
+		Monitor refreshParametersValuesMonitor = MonitorFactory
+				.start("Knowage.DocumentRuntime.refreshParametersValues");
 
 		Assert.assertNotNull(jsonObject, "JSONObject in input is null!!");
 		List biparams = object.getDrivers();
@@ -150,8 +153,9 @@ public abstract class AbstractBIResourceRuntime<T extends AbstractDriver> {
 	/**
 	 * Refresh parameters value from user selection.
 	 *
-	 * @param jsonArray Something like:
-	 *   <pre>
+	 * @param jsonArray     Something like:
+	 * 
+	 *                      <pre>
 	 *     [
 	 *       {
 	 *         "name": "Driver #1 Name",
@@ -174,7 +178,8 @@ public abstract class AbstractBIResourceRuntime<T extends AbstractDriver> {
 	 *         "description": "Driver #4 Value's Description"
 	 *       }
 	 *     ]
-	 *   </pre>
+	 *                      </pre>
+	 *
 	 * @param transientMode
 	 * @param object
 	 * @deprecated Where possible, prefer {@link #refreshParametersValues(JSONArray, boolean, Collection)}
@@ -184,9 +189,11 @@ public abstract class AbstractBIResourceRuntime<T extends AbstractDriver> {
 		refreshParametersValues(jsonObject, transientMode, object.getDrivers());
 	}
 
-	public void refreshParametersValues(JSONArray jsonObject, boolean transientMode, Collection<? extends AbstractDriver> biparams) {
+	public void refreshParametersValues(JSONArray jsonObject, boolean transientMode,
+			Collection<? extends AbstractDriver> biparams) {
 		logger.debug("IN");
-		Monitor refreshParametersValuesMonitor = MonitorFactory.start("Knowage.DocumentRuntime.refreshParametersValues");
+		Monitor refreshParametersValuesMonitor = MonitorFactory
+				.start("Knowage.DocumentRuntime.refreshParametersValues");
 
 		Assert.assertNotNull(jsonObject, "JSONObject in input is null!!");
 		Iterator iterParams = biparams.iterator();
@@ -202,9 +209,11 @@ public abstract class AbstractBIResourceRuntime<T extends AbstractDriver> {
 	 * @deprecated Replaced by {@link #refreshParametersMetamodelValues(JSONArray, boolean, IDrivableBIResource)}
 	 */
 	@Deprecated
-	public void refreshParametersMetamodelValues(JSONObject jsonObject, boolean transientMode, IDrivableBIResource object) {
+	public void refreshParametersMetamodelValues(JSONObject jsonObject, boolean transientMode,
+			IDrivableBIResource object) {
 		logger.debug("IN");
-		Monitor refreshParametersValuesMonitor = MonitorFactory.start("Knowage.DocumentRuntime.refreshParametersValues");
+		Monitor refreshParametersValuesMonitor = MonitorFactory
+				.start("Knowage.DocumentRuntime.refreshParametersValues");
 
 		Assert.assertNotNull(jsonObject, "JSONObject in input is null!!");
 		List biparams = object.getMetamodelDrivers();
@@ -219,8 +228,9 @@ public abstract class AbstractBIResourceRuntime<T extends AbstractDriver> {
 
 	/**
 	 *
-	 * @param jsonArray Something like:
-	 *   <pre>
+	 * @param jsonArray     Something like:
+	 * 
+	 *                      <pre>
 	 *     [
 	 *       {
 	 *         "name": "Driver #1 Name",
@@ -243,20 +253,24 @@ public abstract class AbstractBIResourceRuntime<T extends AbstractDriver> {
 	 *         "description": "Driver #4 Value's Description"
 	 *       }
 	 *     ]
-	 *   </pre>
+	 *                      </pre>
+	 *
 	 * @param transientMode
 	 * @param object
 	 * @deprecated Where possible prefer {@link #refreshParametersMetamodelValues(JSONArray, boolean, Collection)}
 	 */
 	@Deprecated
-	public void refreshParametersMetamodelValues(JSONArray jsonArray, boolean transientMode, IDrivableBIResource object) {
+	public void refreshParametersMetamodelValues(JSONArray jsonArray, boolean transientMode,
+			IDrivableBIResource object) {
 		List biparams = object.getMetamodelDrivers();
 		refreshParametersMetamodelValues(jsonArray, transientMode, biparams);
 	}
 
-	public void refreshParametersMetamodelValues(JSONArray jsonArray, boolean transientMode, Collection<? extends AbstractDriver> biparams) {
+	public void refreshParametersMetamodelValues(JSONArray jsonArray, boolean transientMode,
+			Collection<? extends AbstractDriver> biparams) {
 		logger.debug("IN");
-		Monitor refreshParametersValuesMonitor = MonitorFactory.start("Knowage.DocumentRuntime.refreshParametersValues");
+		Monitor refreshParametersValuesMonitor = MonitorFactory
+				.start("Knowage.DocumentRuntime.refreshParametersValues");
 
 		Assert.assertNotNull(jsonArray, "JSONObject in input is null!!");
 		Iterator<? extends AbstractDriver> iterParams = biparams.iterator();
@@ -356,8 +370,9 @@ public abstract class AbstractBIResourceRuntime<T extends AbstractDriver> {
 	 * Refresh parameters value from user selection.
 	 *
 	 * @param biparam
-	 * @param jsonArray Something like:
-	 *   <pre>
+	 * @param jsonArray     Something like:
+	 * 
+	 *                      <pre>
 	 *     [
 	 *       {
 	 *         "urlName": "KNOWAGE-6401-1-1",
@@ -380,7 +395,8 @@ public abstract class AbstractBIResourceRuntime<T extends AbstractDriver> {
 	 *         "description": ""
 	 *       }
 	 *     ]
-	 *   </pre>
+	 *                      </pre>
+	 *
 	 * @param transientMode
 	 */
 	private void refreshParameter(AbstractDriver biparam, JSONArray jsonArray, boolean transientMode) {
@@ -399,8 +415,7 @@ public abstract class AbstractBIResourceRuntime<T extends AbstractDriver> {
 				String label = jsonObject.optString("label");
 
 				/*
-				 * WORKAROUND : the right way to match the driver is by comparing the URL but
-				 * in the past we've used the label. This is just for retrocompatibility.
+				 * WORKAROUND : the right way to match the driver is by comparing the URL but in the past we've used the label. This is just for retrocompatibility.
 				 */
 				boolean matchByUrl = isNotBlank(urlName) && urlName.equals(biparam.getParameterUrlName());
 				boolean matchByLabel = isNotBlank(label) && label.equals(biparam.getLabel());
@@ -408,6 +423,13 @@ public abstract class AbstractBIResourceRuntime<T extends AbstractDriver> {
 				if (matchByUrl || (isBlank(urlName) && matchByLabel)) {
 					Object value = jsonObject.get("value");
 					Object description = jsonObject.get("description");
+
+					if (JSONObject.NULL.equals(value)) {
+						value = null;
+					}
+					if (JSONObject.NULL.equals(description)) {
+						description = null;
+					}
 
 					if (value != null) {
 						if (value instanceof JSONArray) {

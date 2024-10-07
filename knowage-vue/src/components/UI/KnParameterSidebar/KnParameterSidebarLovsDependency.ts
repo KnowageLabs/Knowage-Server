@@ -29,7 +29,7 @@ export async function lovDependencyCheck(loadedParameters: { filterStatus: iPara
     loading = true
 
     resetParameterValueToEmptyValues(parameter)
-    if (resetValue) return
+    if (resetValue || !parameter.parameterValue?.[0]?.value) return
 
     const postData = { label: document?.label, parameters: getFormattedParameters(loadedParameters, userDateFormat), paramId: parameter.urlName, role: sessionRole }
     let url = '2.0/documentExeParameters/admissibleValues'

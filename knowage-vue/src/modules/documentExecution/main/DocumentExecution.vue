@@ -346,7 +346,7 @@ export default defineComponent({
         },
         prepareDriversAndParameter(parameters: any) {
             let tempObj = {} as any
-            if (parameters?.length > 0) {
+            if (parameters.length > 0) {
                 const tempParams = parameters.map((i) => {
                     return {
                         name: i.name,
@@ -356,7 +356,7 @@ export default defineComponent({
                 })
                 tempObj.parameters = tempParams
             }
-            if (this.filtersData?.filterStatus?.length > 0) {
+            if (this.filtersData?.filterStatus.length > 0) {
                 let tempDrivers = {} as any
                 this.filtersData.filterStatus.forEach((i) => {
                     tempDrivers[i.urlName] = i.multivalue ? i.parameterValue.map((p) => p.value) : i.parameterValue[0].value
@@ -377,10 +377,8 @@ export default defineComponent({
                 .catch(() => {})
         },
         async iframeEventsListener(event) {
-            if(this.loading) return
-            this.loading = true
             if (event.data.type === 'crossNavigation') {
-               await this.executeCrossNavigation(event)
+                await this.executeCrossNavigation(event)
             } else if (event.data.type === 'preview') {
                 await this.$http
                     .get(process.env.VUE_APP_HOST_URL + `/knowage/restful-services/1.0/datasets/${event.data.dsLabel}`)
@@ -395,10 +393,11 @@ export default defineComponent({
                         }
                     })
                     .catch(() => {})
-                if (event.data.directDownload) await this.directDownloadDataset(this.datasetToPreview)
+                if (event.data.directDownload) this.directDownloadDataset(this.datasetToPreview.id)
                 else this.datasetPreviewShown = true
-            } 
-            this.loading = false
+            } else if (event.data.type === 'cockpitExecuted') {
+                this.loading = false
+            }
         },
         editCockpitDocumentConfirm() {
             if (this.documentMode === 'EDIT') {
@@ -630,6 +629,7 @@ export default defineComponent({
             this.loading = true
             this.parameterSidebarVisible = false
             this.schedulationsTableVisible = true
+            this.schedulations = []
             await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/documentsnapshot/getSnapshots?id=${this.document.id}`).then((response: AxiosResponse<any>) => {
                 response.data?.schedulers.forEach((el: any) => this.schedulations.push({ ...el, urlPath: response.data.urlPath }))
             })
@@ -873,6 +873,11 @@ export default defineComponent({
             if (!this.urlData || !this.urlData.engineLabel) return
             await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/exporters/config/${this.urlData.engineLabel}`).then((response: AxiosResponse<any>) => (this.exporters = response.data.exporters))
         },
+        replaceNullForDates(par,value){
+            if(value == 'null' && this.filtersData.filterStatus.find((i)=>i.urlName === par && i.type === 'DATE')){
+                return '' 
+            }else return value
+        },
         async sendForm(documentLabel: string | null = null, crossNavigationPopupMode: boolean = false) {
             let tempIndex = this.breadcrumbs.findIndex((el: any) => el.label === this.document.name) as any
             const documentUrl = this.urlData?.url + '&timereloadurl=' + new Date().getTime()
@@ -913,6 +918,7 @@ export default defineComponent({
                 if (inputElement) {
                     inputElement.value = decodeURIComponent(postObject.params[k])
                     inputElement.value = inputElement.value.replace(/\+/g, ' ')
+                    inputElement.value = this.replaceNullForDates(k,inputElement.value)
 
                     this.hiddenFormData.set(k, decodeURIComponent(postObject.params[k]).replace(/\+/g, ' '))
                 } else {
@@ -922,6 +928,7 @@ export default defineComponent({
                     element.name = k
                     element.value = decodeURIComponent(postObject.params[k])
                     element.value = element.value.replace(/\+/g, ' ')
+                    element.value = this.replaceNullForDates(k,element.value)
 
                     postForm.appendChild(element)
                     this.hiddenFormData.append(k, decodeURIComponent(postObject.params[k]).replace(/\+/g, ' '))

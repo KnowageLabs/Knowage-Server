@@ -32,7 +32,9 @@ public class DecryptionDataStoreTransformer extends AbstractDataStoreTransformer
 	private final IMetaData dataStoreMetadata;
 
 	public DecryptionDataStoreTransformer(IDataSet dataSet) {
-		this(dataSet.getDsMetadata() != null ? dataSet.getMetadata() : new MetaData());
+		this(dataSet.getDsMetadata() != null && !dataSet.getDsMetadata().equals("") && !dataSet.getDsMetadata().equals("[]")
+				&& !dataSet.getDsMetadata().startsWith("{") ? dataSet.getMetadata()
+				: new MetaData());
 	}
 
 	public DecryptionDataStoreTransformer(IDataStore dataStore) {

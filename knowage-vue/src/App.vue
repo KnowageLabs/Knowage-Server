@@ -43,6 +43,8 @@ export default defineComponent({
   },
 
   async beforeCreate() {
+    // eslint-disable-next-line no-debugger
+    debugger
     await this.$http
       .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + "2.0/currentuser")
       .then(async (response) => {
