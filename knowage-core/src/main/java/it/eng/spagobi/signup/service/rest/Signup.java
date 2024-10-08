@@ -25,8 +25,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
-import javax.mail.Message;
-import javax.mail.internet.InternetAddress;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
@@ -49,8 +47,11 @@ import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
 import com.hazelcast.core.IMap;
 
-import it.eng.knowage.mail.MailSessionBuilder;
-import it.eng.knowage.mail.MailSessionBuilder.SessionFacade;
+import it.eng.knowage.mailsender.IMailSender;
+import it.eng.knowage.mailsender.dto.MessageMailDto;
+import it.eng.knowage.mailsender.dto.ProfileNameMailEnum;
+import it.eng.knowage.mailsender.dto.TypeMailEnum;
+import it.eng.knowage.mailsender.factory.FactoryMailSender;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.SingletonConfig;
@@ -135,8 +136,9 @@ public class Signup {
 			logger.debug("theme selected: " + theme_name);
 
 			String currTheme = (String) req.getAttribute("currTheme");
-			if (currTheme == null)
+			if (currTheme == null) {
 				currTheme = ThemesManager.getDefaultTheme();
+			}
 			logger.debug("currTheme: " + currTheme);
 
 			String url = "/themes/" + currTheme + "/jsp/signup/modify.jsp";
@@ -270,8 +272,9 @@ public class Signup {
 			int userId = user.getId();
 
 			user.setFullName(name + " " + surname);
-			if (password != null && !password.equals(defaultPassword))
+			if (password != null && !password.equals(defaultPassword)) {
 				user.setPassword(Password.encriptPassword(password));
+			}
 
 			userDao.updateSbiUser(user, userId);
 
@@ -344,8 +347,9 @@ public class Signup {
 		logger.debug("theme selected: " + theme_name);
 
 		String currTheme = (String) req.getAttribute("currTheme");
-		if (currTheme == null)
+		if (currTheme == null) {
 			currTheme = ThemesManager.getDefaultTheme();
+		}
 		logger.debug("currTheme: " + currTheme);
 
 		String url = "/themes/" + currTheme + "/jsp/signup/active.jsp";
@@ -532,7 +536,7 @@ public class Signup {
 				defaultTenant = "DEFAULT_TENANT";
 			}
 
-			Set<SbiExtRoles> roles = new HashSet<SbiExtRoles>();
+			Set<SbiExtRoles> roles = new HashSet<>();
 			SbiExtRoles r = new SbiExtRoles();
 			String defaultRole = SingletonConfig.getInstance().getConfigValue("SPAGOBI.SECURITY.DEFAULT_ROLE_ON_SIGNUP");
 
@@ -552,27 +556,34 @@ public class Signup {
 			roles.add(r);
 			user.setSbiExtUserRoleses(roles);
 
-			Set<SbiUserAttributes> attributes = new HashSet<SbiUserAttributes>();
+			Set<SbiUserAttributes> attributes = new HashSet<>();
 
 			ISbiAttributeDAO attrDao = DAOFactory.getSbiAttributeDAO();
 			attrDao.setTenant(defaultTenant);
 			addAttribute(attributes, attrDao.loadSbiAttributeByName("email").getAttributeId(), email);
-			if (attrDao.loadSbiAttributeByName("gender") != null)
+			if (attrDao.loadSbiAttributeByName("gender") != null) {
 				addAttribute(attributes, attrDao.loadSbiAttributeByName("gender").getAttributeId(), gender);
-			if (attrDao.loadSbiAttributeByName("birth_date") != null)
+			}
+			if (attrDao.loadSbiAttributeByName("birth_date") != null) {
 				addAttribute(attributes, attrDao.loadSbiAttributeByName("birth_date").getAttributeId(), birthDate);
-			if (attrDao.loadSbiAttributeByName("location") != null)
+			}
+			if (attrDao.loadSbiAttributeByName("location") != null) {
 				addAttribute(attributes, attrDao.loadSbiAttributeByName("location").getAttributeId(), address);
-			if (attrDao.loadSbiAttributeByName("community") != null)
+			}
+			if (attrDao.loadSbiAttributeByName("community") != null) {
 				addAttribute(attributes, attrDao.loadSbiAttributeByName("community").getAttributeId(), enterprise);
-			if (attrDao.loadSbiAttributeByName("short_bio") != null)
+			}
+			if (attrDao.loadSbiAttributeByName("short_bio") != null) {
 				addAttribute(attributes, attrDao.loadSbiAttributeByName("short_bio").getAttributeId(), biography);
-			if (attrDao.loadSbiAttributeByName("language") != null)
+			}
+			if (attrDao.loadSbiAttributeByName("language") != null) {
 				addAttribute(attributes, attrDao.loadSbiAttributeByName("language").getAttributeId(), language);
+			}
 
 			user.setSbiUserAttributeses(attributes);
-			if (userRegistrationFromExpiredToken)
+			if (userRegistrationFromExpiredToken) {
 				user.setId(existingUserId);
+			}
 
 			int id = userDao.fullSaveOrUpdateSbiUser(user);
 
@@ -668,8 +679,9 @@ public class Signup {
 		logger.debug("theme selected: " + theme_name);
 
 		String currTheme = (String) req.getAttribute("currTheme");
-		if (currTheme == null)
+		if (currTheme == null) {
 			currTheme = ThemesManager.getDefaultTheme();
+		}
 		logger.debug("currTheme: " + currTheme);
 
 		String url = "/themes/" + currTheme + "/jsp/signup/signup.jsp";
@@ -691,29 +703,15 @@ public class Signup {
 
 	private void sendMail(String emailAddress, String subject, String emailContent) throws Exception {
 
-		SessionFacade facade = MailSessionBuilder.newInstance().usingUserProfile().withTimeout(5000).withConnectionTimeout(5000).build();
+		MessageMailDto messageMailDto = new MessageMailDto();
+		messageMailDto.setProfileName(ProfileNameMailEnum.USER);
+		messageMailDto.setTypeMailEnum(TypeMailEnum.CONTENT);
+		messageMailDto.setSubject(subject);
+		messageMailDto.setText(emailContent);
+		messageMailDto.setContentType("text/html");
+		messageMailDto.setRecipients(new String[] { emailAddress });
 
-		// create a message
-		Message msg = facade.createNewMimeMessage();
-
-		InternetAddress addressTo = new InternetAddress(emailAddress);
-
-		msg.setRecipient(Message.RecipientType.TO, addressTo);
-
-		// Setting the Subject and Content Type
-		msg.setSubject(subject);
-		// create and fill the first message part
-		// MimeBodyPart mbp1 = new MimeBodyPart();
-		// mbp1.setText(emailContent);
-		// // create the Multipart and add its parts to it
-		// Multipart mp = new MimeMultipart();
-		// mp.addBodyPart(mbp1);
-		// // add the Multipart to the message
-		// msg.setContent(mp);
-		msg.setContent(emailContent, "text/html");
-
-		// send message
-		facade.sendMessage(msg);
+		FactoryMailSender.getMailSender(SingletonConfig.getInstance().getConfigValue(IMailSender.MAIL_SENDER)).sendMail(messageMailDto);
 
 	}
 

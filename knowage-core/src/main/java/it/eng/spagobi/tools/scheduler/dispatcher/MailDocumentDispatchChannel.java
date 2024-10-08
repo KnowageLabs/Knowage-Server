@@ -18,7 +18,6 @@
 package it.eng.spagobi.tools.scheduler.dispatcher;
 
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -28,27 +27,21 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
 
-import javax.activation.DataHandler;
 import javax.activation.DataSource;
-import javax.mail.Message;
-import javax.mail.Multipart;
-import javax.mail.PasswordAuthentication;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeBodyPart;
-import javax.mail.internet.MimeMultipart;
-import javax.mail.util.ByteArrayDataSource;
 
 import org.apache.commons.validator.GenericValidator;
 import org.apache.log4j.Logger;
 
-import it.eng.knowage.mail.MailSessionBuilder;
-import it.eng.knowage.mail.MailSessionBuilder.SessionFacade;
+import it.eng.knowage.mailsender.IMailSender;
+import it.eng.knowage.mailsender.dto.MessageMailDto;
+import it.eng.knowage.mailsender.dto.ProfileNameMailEnum;
+import it.eng.knowage.mailsender.dto.TypeMailEnum;
+import it.eng.knowage.mailsender.factory.FactoryMailSender;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
+import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
@@ -129,9 +122,8 @@ public class MailDocumentDispatchChannel implements IDocumentDispatchChannel {
 					: document.getName();
 			reportNameInSubject = dispatchContext.isReportNameInSubject();
 
-			SessionFacade facade = MailSessionBuilder.newInstance()
-				.usingSchedulerProfile()
-				.build();
+			MessageMailDto messageMailDto = new MessageMailDto();
+			messageMailDto.setProfileName((ProfileNameMailEnum.SCHEDULER));
 
 			String mailSubj = dispatchContext.getMailSubj();
 			mailSubj = StringUtilities.substituteParametersInString(mailSubj, parametersMap, null, false);
@@ -144,13 +136,8 @@ public class MailDocumentDispatchChannel implements IDocumentDispatchChannel {
 				return false;
 			}
 
-			// create a message
-			Message msg = facade.createNewMimeMessage();
-			InternetAddress[] addressTo = new InternetAddress[recipients.length];
-			for (int i = 0; i < recipients.length; i++) {
-				addressTo[i] = new InternetAddress(recipients[i]);
-			}
-			msg.setRecipients(Message.RecipientType.TO, addressTo);
+
+			messageMailDto.setRecipients(recipients);
 			// Setting the Subject and Content Type
 
 			String subject = mailSubj;
@@ -159,34 +146,19 @@ public class MailDocumentDispatchChannel implements IDocumentDispatchChannel {
 				subject += " " + document.getName() + nameSuffix;
 			}
 
-			msg.setSubject(subject);
-			// create and fill the first message part
-			MimeBodyPart mbp1 = new MimeBodyPart();
-			mbp1.setText(mailTxt + "\n" + descriptionSuffix);
-			// create the second message part
-			MimeBodyPart mbp2 = new MimeBodyPart();
-			// attach the file to the message
+			messageMailDto.setTypeMailEnum(TypeMailEnum.MULTIPART);
+			messageMailDto.setSubject(subject);
+			messageMailDto.setZipMailDocument(dispatchContext.isZipMailDocument());
+			messageMailDto.setAttach(executionOutput);
+			messageMailDto.setContainedFileName(containedFileName);
+			messageMailDto.setZipFileName(zipFileName);
+			messageMailDto.setNameSuffix(nameSuffix);
+			messageMailDto.setText(mailTxt + "\n" + descriptionSuffix);
+			messageMailDto.setFileExtension(fileExtension);
+			messageMailDto.setContentType(contentType);
 
-			SchedulerDataSource sds = null;
-			// if zip requested
-			if (dispatchContext.isZipMailDocument()) {
-				mbp2 = zipAttachment(executionOutput, containedFileName, zipFileName, nameSuffix, fileExtension);
-			}
-			// else
-			else {
-				sds = new SchedulerDataSource(executionOutput, contentType, containedFileName + nameSuffix + fileExtension);
-				mbp2.setDataHandler(new DataHandler(sds));
-				mbp2.setFileName(sds.getName());
-			}
+			FactoryMailSender.getMailSender(SingletonConfig.getInstance().getConfigValue(IMailSender.MAIL_SENDER)).sendMail(messageMailDto);
 
-			// create the Multipart and add its parts to it
-			Multipart mp = new MimeMultipart();
-			mp.addBodyPart(mbp1);
-			mp.addBodyPart(mbp2);
-			// add the Multipart to the message
-			msg.setContent(mp);
-			// send message
-			facade.sendMessage(msg);
 			logger.info("Mail sent for document with label " + document.getLabel());
 
 		} catch (Exception e) {
@@ -198,78 +170,6 @@ public class MailDocumentDispatchChannel implements IDocumentDispatchChannel {
 		return true;
 	}
 
-	private MimeBodyPart zipAttachment(byte[] attach, String containedFileName, String zipFileName, String nameSuffix, String fileExtension) {
-		MimeBodyPart messageBodyPart = null;
-		try {
-
-			ByteArrayOutputStream bout = new ByteArrayOutputStream();
-			ZipOutputStream zipOut = new ZipOutputStream(bout);
-			String entryName = containedFileName + nameSuffix + fileExtension;
-			zipOut.putNextEntry(new ZipEntry(entryName));
-			zipOut.write(attach);
-			zipOut.closeEntry();
-
-			zipOut.close();
-
-			messageBodyPart = new MimeBodyPart();
-			DataSource source = new ByteArrayDataSource(bout.toByteArray(), "application/zip");
-			messageBodyPart.setDataHandler(new DataHandler(source));
-			messageBodyPart.setFileName(zipFileName + nameSuffix + ".zip");
-
-		} catch (Exception e) {
-			// TODO: handle exception
-		}
-		return messageBodyPart;
-	}
-
-	private byte[] zipDocument(String fileZipName, byte[] content) {
-		logger.debug("IN");
-
-		ByteArrayOutputStream bos = null;
-		ZipOutputStream zos = null;
-		ByteArrayInputStream in = null;
-		try {
-
-			bos = new ByteArrayOutputStream();
-			zos = new ZipOutputStream(bos);
-			ZipEntry ze = new ZipEntry(fileZipName);
-			zos.putNextEntry(ze);
-			in = new ByteArrayInputStream(content);
-
-			for (int c = in.read(); c != -1; c = in.read()) {
-				zos.write(c);
-			}
-
-			return bos.toByteArray();
-
-		} catch (IOException ex) {
-			logger.error("Error zipping the document", ex);
-			return null;
-		} finally {
-			if (bos != null) {
-				try {
-					bos.close();
-				} catch (IOException e) {
-					logger.error("Error closing output stream", e);
-				}
-			}
-			if (zos != null) {
-				try {
-					zos.close();
-				} catch (IOException e) {
-					logger.error("Error closing output stream", e);
-				}
-			}
-			if (in != null) {
-				try {
-					in.close();
-				} catch (IOException e) {
-					logger.error("Error closing output stream", e);
-				}
-			}
-		}
-
-	}
 
 	public static boolean canDispatch(DispatchContext dispatchContext, BIObject document, IDataStore emailDispatchDataStore) {
 		String[] recipients = findRecipients(dispatchContext, document, emailDispatchDataStore);
@@ -304,8 +204,9 @@ public class MailDocumentDispatchChannel implements IDocumentDispatchChannel {
 				logger.error("[" + recipient + "] is not a valid email address.");
 				continue;
 			}
-			if (validRecipients.contains(recipient))
+			if (validRecipients.contains(recipient)) {
 				continue;
+			}
 			validRecipients.add(recipient);
 		}
 		toReturn = validRecipients.toArray(new String[0]);
@@ -408,8 +309,9 @@ public class MailDocumentDispatchChannel implements IDocumentDispatchChannel {
 				IField valueField = record.getFieldAt(0);
 				Object valueObj = valueField.getValue();
 				String value = null;
-				if (valueObj != null)
+				if (valueObj != null) {
 					value = valueObj.toString();
+				}
 				if (codeValue.equals(value)) {
 					logger.debug("Found value [" + codeValue + "] on the first field of a record of the dataset.");
 					// recipient address is on the second dataset field
