@@ -672,6 +672,11 @@ public class UserProfile implements IEngUserProfile {
 	public void setRoles(Collection<String> rols) {
 		this.roles = rols;
 	}
+	
+	public void setRole(String role) {
+		this.roles.add(role);
+	}
+
 
 	public void setSessionId(String sessionId) {
 		this.sessionId = sessionId;

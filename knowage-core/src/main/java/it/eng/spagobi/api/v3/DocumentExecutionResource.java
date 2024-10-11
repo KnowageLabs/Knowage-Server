@@ -94,6 +94,15 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 		try {
 			IBIObjectDAO documentDao = DAOFactory.getBIObjectDAO();
 			BIObject document = documentDao.loadBIObjectById(id);
+			
+			List<String> roles = DAOFactory.getBIObjectDAO().getCorrectRolesForExecution(document.getId());
+			if(userProfile.getRoles().isEmpty()) {
+				for (int j = 0; j < roles.size(); j++) {
+					String role = (String) roles.get(j);
+					userProfile.setRole(role);
+
+				}
+			}
 			if (!ObjectsAccessVerifier.canExec(document, userProfile)) {
 				String message = "User cannot exec the document";
 				LOGGER.error(message);
