@@ -75,6 +75,8 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 	private static final String DATAMART = "DATAMART";
 	private static final String FEDERATED_DATASET = "FEDERATED_DATASET";
 	private static final String QBE_DATASET = "QBE_DATASET";
+	
+	private static final String SCHEDULER_USER_ID_PREFIX = "scheduler";
 
 	@GET
 	@Path("/{id}/templates")
@@ -88,16 +90,20 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 			LOGGER.error(message);
 			throw new SpagoBIRuntimeException(message);
 		}
+		String userId = (String) userProfile.getUserAttribute("user_id");
 		byte[] temp = null;
 		JSONObject jsonTemplate = null;
 
 		try {
 			IBIObjectDAO documentDao = DAOFactory.getBIObjectDAO();
 			BIObject document = documentDao.loadBIObjectById(id);
-			if (!ObjectsAccessVerifier.canExec(document, userProfile)) {
-				String message = "User cannot exec the document";
-				LOGGER.error(message);
-				throw new SpagoBIRuntimeException(message);
+			
+			if(!isSchedulerUser(userId)){
+				if (!ObjectsAccessVerifier.canExec(document, userProfile)) {
+					String message = "User cannot exec the document";
+					LOGGER.error(message);
+					throw new SpagoBIRuntimeException(message);
+				}
 			}
 
 			ObjTemplate documentTemplate = document.getActiveTemplate();
@@ -112,6 +118,24 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 		LOGGER.debug("OUT");
 		return jsonTemplate;
 	}
+	
+	/**
+	 * Checks if is scheduler user.
+	 *
+	 * @return true, if checks if is scheduler user
+	 */
+	public static boolean isSchedulerUser(String userId) {
+		if (userId == null) {
+			return false;
+		}
+		try {
+			return userId.startsWith(SCHEDULER_USER_ID_PREFIX);
+		} catch (Exception e) {
+			LOGGER.debug("Error in correctRolesForExecution", e);
+			return false;
+		}
+
+	}
 
 	@GET
 	@Path("/correctRolesForExecution")
@@ -120,85 +144,93 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 		LOGGER.debug("IN");
 
 		UserProfile userProfile = UserProfileManager.getProfile();
-
-		List<String> correctRoles = new ArrayList<>();
+		String userId = null;
 		try {
-
-			List<String> userRoles = new ArrayList<>();
-			userProfile.getRolesForUse().forEach(x -> userRoles.add(x));
-
-			if (userRoles.size() > 0) {
-
-				ICategoryDAO categoryDao = DAOFactory.getCategoryDAO();
-
-				if (DATAMART.equals(typeCode)) {
-					MetaModel model = DAOFactory.getMetaModelsDAO().loadMetaModelById(id);
-					List<String> rolesByCategory = getRolesByCategory(categoryDao, model.getCategory());
-					userRoles.retainAll(rolesByCategory);
-					correctRoles = userRoles;
-
-					List<BIMetaModelParameter> drivers = model.getDrivers();
-					if (correctRoles.size() > 0 && drivers.size() > 0) {
-						List<String> rolesByModel = getModelRoles(userProfile, model);
-						correctRoles.retainAll(rolesByModel);
-					}
-				} else if (DATASET.equals(typeCode) || FEDERATED_DATASET.equals(typeCode)) {
-
-					IDataSet dataset = null;
-					if (DATASET.equals(typeCode)) {
-						dataset = id != null ? DAOFactory.getDataSetDAO().loadDataSetById(id) : DAOFactory.getDataSetDAO().loadDataSetByLabel(label);
-						Integer categoryId = dataset.getCategoryId();
-						correctRoles = manageRolesByCategory(userRoles, categoryDao, categoryId);
-					} else {
-						FederationDefinition federationDefinition = DAOFactory.getFedetatedDatasetDAO().loadFederationDefinition(id);
-						Set<IDataSet> fedSourceDatasets = federationDefinition.getSourceDatasets();
-						correctRoles = userRoles;
-						for (IDataSet federatedDataset : fedSourceDatasets) {
-							correctRoles = manageRolesByCategory(correctRoles, categoryDao, federatedDataset.getCategoryId());
-						}
-					}
-				} else if (QBE_DATASET.equals(typeCode)) {
-					IDataSet dataset = id != null ? DAOFactory.getDataSetDAO().loadDataSetById(id) : DAOFactory.getDataSetDAO().loadDataSetByLabel(label);
-
-					String conf = dataset.getConfiguration();
-					try {
-						String modelLabel = new JSONObject(conf).getString("qbeDatamarts");
-
-						MetaModel model = DAOFactory.getMetaModelsDAO().loadMetaModelByName(modelLabel);
+			userId = (String) userProfile.getUserAttribute("user_id");
+		} catch (EMFInternalError e) {
+			LOGGER.debug("Error in correctRolesForExecution", e);
+		}
+		List<String> correctRoles = new ArrayList<>();
+		
+		if(!isSchedulerUser(userId)){
+			
+			try {	
+				List<String> userRoles = new ArrayList<>();
+				userProfile.getRolesForUse().forEach(userRoles::add);
+	
+				if (!userRoles.isEmpty()) {
+	
+					ICategoryDAO categoryDao = DAOFactory.getCategoryDAO();
+	
+					if (DATAMART.equals(typeCode)) {
+						MetaModel model = DAOFactory.getMetaModelsDAO().loadMetaModelById(id);
 						List<String> rolesByCategory = getRolesByCategory(categoryDao, model.getCategory());
 						userRoles.retainAll(rolesByCategory);
 						correctRoles = userRoles;
-
+	
 						List<BIMetaModelParameter> drivers = model.getDrivers();
-						if (correctRoles.size() > 0 && drivers.size() > 0) {
+						if (!correctRoles.isEmpty() && !drivers.isEmpty()) {
 							List<String> rolesByModel = getModelRoles(userProfile, model);
 							correctRoles.retainAll(rolesByModel);
 						}
-					} catch (JsonSyntaxException | JSONException e) {
-						LOGGER.error("An error occurred while parsing dataset configuration", e);
-						throw new SpagoBIRuntimeException(e.getMessage(), e);
-					}
-
-				} else if (DOCUMENT.equals(typeCode)) {
-					BIObject biobj = id != null ? DAOFactory.getBIObjectDAO().loadBIObjectById(id) : DAOFactory.getBIObjectDAO().loadBIObjectByLabel(label);
-
-					checkExecRightsByProducts(biobj);
-
-					correctRoles = id != null ? ObjectsAccessVerifier.getCorrectRolesForExecution(id, userProfile)
-							: ObjectsAccessVerifier.getCorrectRolesForExecution(label, userProfile);
-
-					if (biobj.getDrivers().size() == 0 && correctRoles.size() > 0) {
-						correctRoles = Arrays.asList(correctRoles.get(0));
+					} else if (DATASET.equals(typeCode) || FEDERATED_DATASET.equals(typeCode)) {
+	
+						IDataSet dataset = null;
+						if (DATASET.equals(typeCode)) {
+							dataset = id != null ? DAOFactory.getDataSetDAO().loadDataSetById(id) : DAOFactory.getDataSetDAO().loadDataSetByLabel(label);
+							Integer categoryId = dataset.getCategoryId();
+							correctRoles = manageRolesByCategory(userRoles, categoryDao, categoryId);
+						} else {
+							FederationDefinition federationDefinition = DAOFactory.getFedetatedDatasetDAO().loadFederationDefinition(id);
+							Set<IDataSet> fedSourceDatasets = federationDefinition.getSourceDatasets();
+							correctRoles = userRoles;
+							for (IDataSet federatedDataset : fedSourceDatasets) {
+								correctRoles = manageRolesByCategory(correctRoles, categoryDao, federatedDataset.getCategoryId());
+							}
+						}
+					} else if (QBE_DATASET.equals(typeCode)) {
+						IDataSet dataset = id != null ? DAOFactory.getDataSetDAO().loadDataSetById(id) : DAOFactory.getDataSetDAO().loadDataSetByLabel(label);
+	
+						String conf = dataset.getConfiguration();
+						try {
+							String modelLabel = new JSONObject(conf).getString("qbeDatamarts");
+	
+							MetaModel model = DAOFactory.getMetaModelsDAO().loadMetaModelByName(modelLabel);
+							List<String> rolesByCategory = getRolesByCategory(categoryDao, model.getCategory());
+							userRoles.retainAll(rolesByCategory);
+							correctRoles = userRoles;
+	
+							List<BIMetaModelParameter> drivers = model.getDrivers();
+							if (!correctRoles.isEmpty() && !drivers.isEmpty()) {
+								List<String> rolesByModel = getModelRoles(userProfile, model);
+								correctRoles.retainAll(rolesByModel);
+							}
+						} catch (JsonSyntaxException | JSONException e) {
+							LOGGER.error("An error occurred while parsing dataset configuration", e);
+							throw new SpagoBIRuntimeException(e.getMessage(), e);
+						}
+	
+					} else if (DOCUMENT.equals(typeCode)) {
+						BIObject biobj = id != null ? DAOFactory.getBIObjectDAO().loadBIObjectById(id) : DAOFactory.getBIObjectDAO().loadBIObjectByLabel(label);
+	
+						checkExecRightsByProducts(biobj);
+	
+						correctRoles = id != null ? ObjectsAccessVerifier.getCorrectRolesForExecution(id, userProfile)
+								: ObjectsAccessVerifier.getCorrectRolesForExecution(label, userProfile);
+	
+						if (biobj.getDrivers().isEmpty() && !correctRoles.isEmpty()) {
+							correctRoles = Arrays.asList(correctRoles.get(0));
+						}
 					}
 				}
+	
+			} catch (EMFInternalError e) {
+				LOGGER.error("Cannot retrieve correct roles for execution", e);
+				throw new SpagoBIRuntimeException(e.getMessage(), e);
+			} catch (EMFUserError e) {
+				LOGGER.error("Cannot retrieve correct roles for execution", e);
+				throw new SpagoBIRuntimeException(e.getMessage(), e);
 			}
-
-		} catch (EMFInternalError e) {
-			LOGGER.error("Cannot retrieve correct roles for execution", e);
-			throw new SpagoBIRuntimeException(e.getMessage(), e);
-		} catch (EMFUserError e) {
-			LOGGER.error("Cannot retrieve correct roles for execution", e);
-			throw new SpagoBIRuntimeException(e.getMessage(), e);
 		}
 
 		LOGGER.debug("OUT");

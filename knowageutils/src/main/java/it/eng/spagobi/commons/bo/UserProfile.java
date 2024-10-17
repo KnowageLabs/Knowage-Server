@@ -187,6 +187,7 @@ public class UserProfile implements IEngUserProfile {
 		String jwtToken = JWTSsoService.userId2jwtToken(SCHEDULER_USER_ID_PREFIX + organization, expiresAt);
 		UserProfile profile = new UserProfile(jwtToken, SCHEDULER_USER_NAME, SCHEDULER_USER_NAME, organization);
 		profile.roles = new ArrayList<>();
+		profile.roles.add(SCHEDULER_USER_NAME);
 		return profile;
 	}
 
@@ -210,7 +211,7 @@ public class UserProfile implements IEngUserProfile {
 
 		List<String> functionalities = getSchedulerUserFunctionalities();
 		List<String> roles = new ArrayList<>();
-
+		roles.add(SCHEDULER_USER_NAME);
 		UserProfile toReturn = new UserProfile(userUniqueIdentifier, SCHEDULER_USER_NAME, SCHEDULER_USER_NAME,
 				organization);
 		toReturn.setRoles(roles);
