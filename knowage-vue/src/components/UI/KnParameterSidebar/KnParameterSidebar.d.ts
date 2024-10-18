@@ -32,7 +32,7 @@ export interface iParameter {
     dataDependsOnParameters?: iParameter[]
     lovDependsOnParameters?: iParameter[]
     lovDependentParameters?: iParameter[]
-    driverMaxValue?: Date
+    driverMaxValue?: Date | string
 }
 
 export interface iDocument {
