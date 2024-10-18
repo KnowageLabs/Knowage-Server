@@ -29,7 +29,11 @@ export function loadNavigationParamsInitialValue(vueComponent: any) {
                     }
                 }
                 if (tempParam.selectionType === 'COMBOBOX') formatCrossNavigationComboParameterDescription(tempParam)
-                else if (['TREE', 'LOOKUP'].includes(tempParam.selectionType) && tempParam.parameterValue[0]) tempParam.parameterValue[0].description = tempParam.parameterValue[0].value
+                else if (['TREE', 'LOOKUP'].includes(tempParam.selectionType) && Array.isArray(tempParam.parameterValue)) {
+                    tempParam.parameterValue.forEach((tempValue, index) => {
+                        tempValue.description = tempParam.parameterDescription?.[index] || tempValue.value
+                    })
+                }
             }
         }
     })
@@ -59,7 +63,10 @@ export function getValidDate(value: string, serverDateFormat: string) {
 }
 
 function convertToMomentFormat(format: string) {
-    return format.replace(/yyyy/g, 'YYYY').replace(/dd/g, 'DD').replace(/mm/g, 'MM')
+    return format
+        .replace(/yyyy/g, 'YYYY')
+        .replace(/dd/g, 'DD')
+        .replace(/mm/g, 'MM')
 }
 
 function extractDatePart(dateString: string) {
