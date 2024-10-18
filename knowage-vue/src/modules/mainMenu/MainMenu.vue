@@ -112,7 +112,7 @@ export default defineComponent({
       return false;
     },
     logout() {
-      auth.logout(localStorage.getItem("public")?true:undefined);
+      auth.logout(localStorage.getItem("public") ? true : undefined);
     },
     roleSelection() {
       this.roleDisplay = !this.roleDisplay;
@@ -152,13 +152,13 @@ export default defineComponent({
       if (item.command) {
         this[item.command]();
       } else if (item.to) {
-          if (event.navigate) {
-              event.navigate(event.originalEvent)
-              this.$emit('menuItemSelected', item)
-          } else location.replace(this.getHref(item))
+        if (event.navigate) {
+          event.navigate(event.originalEvent);
+          this.$emit("menuItemSelected", item);
+        } else location.replace(this.getHref(item));
       } else if (item.url && (!item.target || item.target === "insideKnowage")) this.$router.push({ name: "externalUrl", params: { url: item.url } });
       if (this.adminMenuOpened) this.adminMenuOpened = false;
-      this.hideItemMenu()
+      this.hideItemMenu();
     },
     getHref(item) {
       let to = item.to;
@@ -166,7 +166,7 @@ export default defineComponent({
         to = to.replace(/\\\//g, "/");
         if (to.startsWith("/")) to = to.substring(1);
         return process.env.VUE_APP_PUBLIC_PATH + to;
-      } else return to
+      } else return to;
     },
     toggleProfile() {
       this.showProfileMenu = !this.showProfileMenu;
@@ -217,9 +217,9 @@ export default defineComponent({
       return toRet;
     },
     toggleMenu(event, item) {
-      this.hideItemMenu()
+      this.hideItemMenu();
       if (item.items) {
-        this.$emit('openMenu')
+        this.$emit("openMenu");
         clearTimeout(this.hoverTimer);
         this.menuTargetElem = document.querySelector(`li[role="menu"][title="${item.label}"]`);
         this.selectedCustomMenu = item.items;
@@ -299,7 +299,7 @@ export default defineComponent({
       }
     },
     deleteTimer() {
-        clearTimeout(this.hoverTimer)
+      clearTimeout(this.hoverTimer);
     },
   },
 
@@ -328,7 +328,7 @@ export default defineComponent({
     },
     closeMenu(newProp) {
       //@ts-ignore
-        if (newProp) this.$refs.menu.hide()
+      if (newProp) this.$refs.menu.hide();
     },
   },
 });
@@ -348,8 +348,13 @@ export default defineComponent({
 .p-scrollpanel:deep(.p-scrollpanel-content) {
   padding: 0 0 18px 0;
 }
+@-moz-document url-prefix() {
+  .p-scrollpanel:deep(.p-scrollpanel-content) {
+    padding: 0 18px 18px 0;
+  }
+}
 .itemSection {
-    cursor: pointer;
+  cursor: pointer;
 }
 .layout-menu-container {
   z-index: 9000;
@@ -449,5 +454,4 @@ export default defineComponent({
     }
   }
 }
-
 </style>

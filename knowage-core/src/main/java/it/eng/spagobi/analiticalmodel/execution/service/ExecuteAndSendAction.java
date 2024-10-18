@@ -17,10 +17,6 @@
  */
 package it.eng.spagobi.analiticalmodel.execution.service;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -28,20 +24,16 @@ import java.util.ListIterator;
 import java.util.Map;
 import java.util.StringTokenizer;
 
-import javax.activation.DataHandler;
-import javax.activation.DataSource;
-import javax.mail.Message;
-import javax.mail.Multipart;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeBodyPart;
-import javax.mail.internet.MimeMultipart;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
 
-import it.eng.knowage.mail.MailSessionBuilder;
-import it.eng.knowage.mail.MailSessionBuilder.SessionFacade;
+import it.eng.knowage.mailsender.IMailSender;
+import it.eng.knowage.mailsender.dto.MessageMailDto;
+import it.eng.knowage.mailsender.dto.ProfileNameMailEnum;
+import it.eng.knowage.mailsender.dto.TypeMailEnum;
+import it.eng.knowage.mailsender.factory.FactoryMailSender;
 import it.eng.spago.base.RequestContainer;
 import it.eng.spago.base.SessionContainer;
 import it.eng.spago.base.SourceBean;
@@ -54,6 +46,7 @@ import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO;
 import it.eng.spagobi.analiticalmodel.document.handlers.ExecutionController;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
+import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.utilities.ExecutionProxy;
 import it.eng.spagobi.commons.utilities.UserUtilities;
@@ -195,52 +188,33 @@ public class ExecuteAndSendAction extends AbstractHttpAction {
 			// } end if (execCtrl.directExecution()) {
 			// SEND MAIL
 
-			SessionFacade facade = MailSessionBuilder.newInstance()
-				.usingUserProfile()
-				.build();
 
-			// create a message
-			Message msg = facade.createNewMimeMessage();
+			MessageMailDto messageMailDto = new MessageMailDto();
+			messageMailDto.setProfileName((ProfileNameMailEnum.USER_NO_TIMEOUT));
 
 			String[] recipients = to.split(",");
-			InternetAddress[] addressTo = new InternetAddress[recipients.length];
-			for (int i = 0; i < recipients.length; i++) {
-				addressTo[i] = new InternetAddress(recipients[i]);
-			}
-			msg.setRecipients(Message.RecipientType.TO, addressTo);
+			messageMailDto.setRecipients(recipients);
 			if ((cc != null) && !cc.trim().equals("")) {
 				recipients = cc.split(",");
-				InternetAddress[] addressCC = new InternetAddress[recipients.length];
-				for (int i = 0; i < recipients.length; i++) {
-					String cc_add = recipients[i];
-					if ((cc_add != null) && !cc_add.trim().equals("")) {
-						addressCC[i] = new InternetAddress(recipients[i]);
-					}
-				}
-				msg.setRecipients(Message.RecipientType.CC, addressCC);
+				messageMailDto.setRecipientsCC(recipients);
 			}
-			// Setting the Subject and Content Type
-			msg.setSubject(object);
 
-			// create and fill the first message part
-			MimeBodyPart mbp1 = new MimeBodyPart();
-			mbp1.setText(message);
-			// create the second message part
-			MimeBodyPart mbp2 = new MimeBodyPart();
-			// attach the file to the message
-			SchedulerDataSource sds = new SchedulerDataSource(documentBytes, returnedContentType, "result" + fileextension);
-			mbp2.setDataHandler(new DataHandler(sds));
-			mbp2.setFileName(sds.getName());
-			// create the Multipart and add its parts to it
-			Multipart mp = new MimeMultipart();
-			mp.addBodyPart(mbp1);
-			mp.addBodyPart(mbp2);
-			// add the Multipart to the message
-			msg.setContent(mp);
+			messageMailDto.setSubject(object);
+
+
 			// send message
+			messageMailDto.setTypeMailEnum(TypeMailEnum.MULTIPART);
+			messageMailDto.setText(message);
+			messageMailDto.setAttach(documentBytes);
+			messageMailDto.setContainedFileName("result");
+			messageMailDto.setFileExtension(fileextension);
+			messageMailDto.setContentType(returnedContentType);
+
 			EMFErrorHandler errorHandler = getErrorHandler();
+
 			if (errorHandler.isOKBySeverity(EMFErrorSeverity.ERROR)) {
-				facade.sendMessage(msg);
+				// send message
+				FactoryMailSender.getMailSender(SingletonConfig.getInstance().getConfigValue(IMailSender.MAIL_SENDER)).sendMail(messageMailDto);
 				retCode = OK;
 			} else {
 				logger.error("Error while executing and sending object " + errorHandler.getStackTrace());
@@ -263,41 +237,6 @@ public class ExecuteAndSendAction extends AbstractHttpAction {
 		logger.debug("OUT");
 	}
 
-	private class SchedulerDataSource implements DataSource {
-
-		byte[] content = null;
-		String name = null;
-		String contentType = null;
-
-		@Override
-		public String getContentType() {
-			return contentType;
-		}
-
-		@Override
-		public InputStream getInputStream() throws IOException {
-			ByteArrayInputStream bais = new ByteArrayInputStream(content);
-			return bais;
-		}
-
-		@Override
-		public String getName() {
-			return name;
-		}
-
-		@Override
-		public OutputStream getOutputStream() throws IOException {
-			return null;
-		}
-
-		public SchedulerDataSource(byte[] content, String contentType, String name) {
-			this.content = content;
-			this.contentType = contentType;
-			this.name = name;
-		}
-
-	}
-
 	/**
 	 * Add the description to the BIObjectparameters
 	 *
@@ -305,7 +244,7 @@ public class ExecuteAndSendAction extends AbstractHttpAction {
 	 * @param attributes
 	 */
 	public void setParametersDescription(List<BIObjectParameter> BIObjectParameters, List<SourceBeanAttribute> attributes) {
-		Map<String, String> parameterNameDescriptionMap = new HashMap<String, String>();
+		Map<String, String> parameterNameDescriptionMap = new HashMap<>();
 		// we create a map: parameter name, parameter description
 		for (int i = 0; i < attributes.size(); i++) {
 			SourceBeanAttribute sba = attributes.get(i);
@@ -333,7 +272,7 @@ public class ExecuteAndSendAction extends AbstractHttpAction {
 	 * @return the list of descriptions
 	 */
 	public List<String> parseDescriptionString(String s) {
-		List<String> descriptions = new ArrayList<String>();
+		List<String> descriptions = new ArrayList<>();
 		StringTokenizer stk = new StringTokenizer(s, ";");
 		while (stk.hasMoreTokens()) {
 			descriptions.add(stk.nextToken());
