@@ -62,7 +62,6 @@ public final class SecurityServiceProxy extends AbstractServiceProxy {
 	 * Don't use it.
 	 */
 	private SecurityServiceProxy() {
-		super();
 	}
 
 	/**
@@ -113,7 +112,7 @@ public final class SecurityServiceProxy extends AbstractServiceProxy {
 				try {
 					userProfile = UserProfile.createSchedulerUserProfile(userId);
 				} catch (SpagoBIRuntimeException e) {
-					userProfile = UserProfile.createSchedulerUserProfile();
+					userProfile = UserProfile.createSchedulerUserProfileWithRole(null);
 				}
 			} else {
 				SpagoBIUserProfile user = lookUp().getUserProfile(readTicket(), userId);

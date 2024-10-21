@@ -97,8 +97,9 @@ public class ExecutionProxy {
 		LOGGER.debug("Executing document with profile {}, modality {}, defaultOutputFormat {}", profile, modality, defaultOutputFormat);
 		byte[] response = new byte[0];
 		try {
-			if (biObject == null)
+			if (biObject == null) {
 				return response;
+			}
 			// get the engine of the biobject
 			Engine eng = biObject.getEngine();
 			// if engine is not an external it's not possible to call it using
@@ -208,8 +209,9 @@ public class ExecutionProxy {
 				}
 				httpMethod = postMethod;
 			}
-			String userId = (String) UserProfile.createSchedulerUserProfile().getUserUniqueIdentifier();
-			String encodedUserId = Base64.getEncoder().encodeToString(userId.getBytes(UTF_8));
+			// String userId = (String) UserProfile.createSchedulerUserProfileWithRole(null).getUserUniqueIdentifier();
+			UserProfile userProfile = (UserProfile) profile;
+			String encodedUserId = Base64.getEncoder().encodeToString(((String) userProfile.getUserId()).getBytes(UTF_8));
 			httpMethod.addRequestHeader("Authorization", "Direct " + encodedUserId);
 
 			// sent request to the engine

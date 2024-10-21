@@ -125,8 +125,9 @@ public class JWTSsoService implements SsoServiceInterface {
 	}
 
 	public static void assertNotEmpty(Claim claim, String message) {
-		if (claim.isNull() || claim.asString().trim().equals(""))
+		if (claim.isNull() || claim.asString().trim().equals("")) {
 			throw new SpagoBIRuntimeException(message);
+		}
 	}
 
 	/**
@@ -143,6 +144,22 @@ public class JWTSsoService implements SsoServiceInterface {
 		// @formatter:off
 		String token = JWT.create()
 				.withClaim(SsoServiceInterface.USER_ID, userId)
+				.withExpiresAt(expiresAt) // token will expire at the desired expire date
+				.sign(algorithm);
+		// @formatter:on
+		LogMF.debug(logger, "JWT token is [{0}]", token);
+		return token;
+	}
+
+	public static String userIdAndRole2jwtToken(String userId, List<String> roles, Date expiresAt) {
+		Algorithm algorithm = ALGORITHM_FACTORY.getAlgorithm();
+		LogMF.debug(logger, "User id in input is [{0}]", userId);
+		LogMF.debug(logger, "JWT token will expire at [{0}]", expiresAt);
+		// @formatter:off
+		String token = JWT.create()
+				.withClaim(SsoServiceInterface.USER_ID, userId)
+				.withArrayClaim(SsoServiceInterface.ROLES, roles.stream()
+						  .toArray(String[]::new))
 				.withExpiresAt(expiresAt) // token will expire at the desired expire date
 				.sign(algorithm);
 		// @formatter:on

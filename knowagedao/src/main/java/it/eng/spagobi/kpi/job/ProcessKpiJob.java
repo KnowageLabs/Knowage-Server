@@ -165,8 +165,9 @@ public class ProcessKpiJob extends AbstractSuspendableJob {
 				innerSql = innerSql.replaceAll("\\@\\b" + paramName + "\\b", "\\$P{" + paramName + "}");
 			}
 			innerSql = innerSql.trim();
-			if (innerSql.endsWith(";"))
+			if (innerSql.endsWith(";")) {
 				innerSql = innerSql.substring(0, innerSql.length() - 1);
+			}
 
 			// Checking for missing placeholders (if any)
 			Pattern pattern = Pattern.compile("@([^\\p{Punct}\\p{Space}]+)");
@@ -176,8 +177,9 @@ public class ProcessKpiJob extends AbstractSuspendableJob {
 				String placeholder = matcher.group(0);
 				sb.append(", ").append(placeholder);
 			}
-			if (sb.length() > 0)
+			if (sb.length() > 0) {
 				throw new KpiComputationException("Missing placeholder(s): " + sb.substring(2));
+			}
 
 			this.innerSql = innerSql;
 		}
@@ -193,8 +195,9 @@ public class ProcessKpiJob extends AbstractSuspendableJob {
 			sb.append("SELECT ").append(aggregateMeasureFunction).append("(").append(aggregateMeasureName).append(") AS ").append(aggregateMeasureName);
 			for (String attributeName : attributesNames) {
 				sb.append(", ").append(attributeName);
-				if (groupByColumns.length() > 0)
+				if (groupByColumns.length() > 0) {
 					groupByColumns.append(", ");
+				}
 				groupByColumns.append(attributeName);
 			}
 			sb.append(" FROM (").append(innerSql).append(")");
@@ -206,8 +209,9 @@ public class ProcessKpiJob extends AbstractSuspendableJob {
 			} while (sqlPart1.contains(derivedTableAlias));
 			StringBuilder orderByColumns = new StringBuilder();
 			for (String attributeName : orderByAttributesNames) {
-				if (orderByColumns.length() > 0)
+				if (orderByColumns.length() > 0) {
 					orderByColumns.append(", ");
+				}
 				orderByColumns.append(attributeName);
 			}
 			String sqlPart2 = (groupByColumns.length() != 0) ? " GROUP BY " + groupByColumns + " ORDER BY " + orderByColumns : "";
@@ -223,8 +227,9 @@ public class ProcessKpiJob extends AbstractSuspendableJob {
 		@Override
 		public boolean equals(Object o) {
 			// Alternative equals criteria: ruleId|measureName|aggregateFunction|placeholders
-			if (!(o instanceof AggregateMeasureQuery))
+			if (!(o instanceof AggregateMeasureQuery)) {
 				return false;
+			}
 			AggregateMeasureQuery amq = (AggregateMeasureQuery) o;
 			return dataSourceId == amq.dataSourceId && toString(true).equals(amq.toString(true));
 		}
@@ -235,8 +240,9 @@ public class ProcessKpiJob extends AbstractSuspendableJob {
 		}
 
 		public void preload() throws EMFUserError, EMFInternalError, JSONException {
-			if (preloadedData != null)
+			if (preloadedData != null) {
 				return;
+			}
 			List<LinkedHashMap<String, Comparable>> preloadedData = new LinkedList<>();
 			QueryResult qr = execute();
 			while (qr.iterator.hasNext()) {
@@ -276,8 +282,9 @@ public class ProcessKpiJob extends AbstractSuspendableJob {
 				} else {
 					dataSet = JDBCDatasetFactory.getJDBCDataSet(dataSource);
 				}
-				if (quotedParameters != null)
+				if (quotedParameters != null) {
 					dataSet.setParamsMap(quotedParameters);
+				}
 				((ConfigurableDataSet) dataSet).setDataSource(dataSource);
 				((ConfigurableDataSet) dataSet).setQuery(sql);
 				((ConfigurableDataSet) dataSet).setQueryScript(queryScript);
@@ -459,18 +466,21 @@ public class ProcessKpiJob extends AbstractSuspendableJob {
 				Map<String, String> placeholdersMap = new HashMap<>();
 				for (int f = 0; f < kpiScheduler.getFilters().size(); f++) {
 					SchedulerFilter schedulerFilter = kpiScheduler.getFilters().get(f);
-					if (schedulerFilter == null)
+					if (schedulerFilter == null) {
 						throw new KpiComputationException("Invalid filter (filter no. " + (f + 1) + ")");
-					if (!kpi.getName().equalsIgnoreCase(schedulerFilter.getKpiName()))
+					}
+					if (!kpi.getName().equalsIgnoreCase(schedulerFilter.getKpiName())) {
 						continue;
-					if (schedulerFilter.getType() == null)
+					}
+					if (schedulerFilter.getType() == null) {
 						throw new KpiComputationException("Missing placeholder type (placeholder name: " + schedulerFilter.getPlaceholderName() + ")");
+					}
 					String type = schedulerFilter.getType().getValueCd();
 					if ("FIXED_VALUE".equals(type)) {
 						placeholdersMap.put(schedulerFilter.getPlaceholderName(), schedulerFilter.getValue());
 					} else if ("LOV".equals(type)) {
 						ModalitiesValue modalitiesvalue = modalitiesValueDAO.loadModalitiesValueByLabel(schedulerFilter.getValue());
-						UserProfile schedulerUserProfile = UserProfile.createSchedulerUserProfile();
+						UserProfile schedulerUserProfile = UserProfile.createSchedulerUserProfileWithRole(null);
 						ILovDetail lovDetail = getLovDetail(modalitiesvalue);
 						String lovResult = lovDetail.getLovResult(schedulerUserProfile, null, null, null);
 						LovResultHandler lovResultHandler = new LovResultHandler(lovResult);
@@ -478,9 +488,10 @@ public class ProcessKpiJob extends AbstractSuspendableJob {
 						if (rows != null && !rows.isEmpty()) {
 							SourceBeanAttribute firstAttribute = (SourceBeanAttribute) rows.get(0).getContainedAttributes().get(0);
 							String firstValue = (String) firstAttribute.getValue();
-							if (firstValue == null)
+							if (firstValue == null) {
 								throw new KpiComputationException("Null value for LOV: " + schedulerFilter.getValue() + " (placeholder name: "
 										+ schedulerFilter.getPlaceholderName() + ")");
+							}
 							placeholdersMap.put(schedulerFilter.getPlaceholderName(), firstValue);
 						} else {
 							throw new KpiComputationException(
@@ -578,16 +589,19 @@ public class ProcessKpiJob extends AbstractSuspendableJob {
 							for (RuleOutput ruleOutput : rule.getRuleOutputs()) {
 								if ("TEMPORAL_ATTRIBUTE".equals(ruleOutput.getType().getValueCd())) {
 									String attributeName = ruleOutput.getAlias();
-									if (!groupByAttributes.contains(attributeName))
+									if (!groupByAttributes.contains(attributeName)) {
 										continue;
+									}
 
 									// YEAR, QUARTER, MONTH, WEEK, DAY
-									if (ruleOutput.getHierarchy() == null)
+									if (ruleOutput.getHierarchy() == null) {
 										throw new KpiComputationException(
 												"Missing hierarchy for temporal attribute: " + attributeName + " (rule output id: " + ruleOutput.getId() + ")");
-									if (ruleOutput.getHierarchy().getValueCd() == null)
+									}
+									if (ruleOutput.getHierarchy().getValueCd() == null) {
 										throw new KpiComputationException("Missing hierarchy value code for temporal attribute: " + attributeName
 												+ ruleOutput.getHierarchy() + " (rule output id: " + ruleOutput.getId() + ")");
+									}
 									String attributeTemporalType = ruleOutput.getHierarchy().getValueCd();
 
 									ntGroupByAttributes.remove(attributeName);
@@ -610,8 +624,9 @@ public class ProcessKpiJob extends AbstractSuspendableJob {
 							String aggregateMeasureFunction = parsedKpi.measuresFunctions.get(m);
 							List<String> queryOrderByAttributes = new ArrayList<>();
 							for (String attribute : orderByAttributes) {
-								if (groupByAttributes.contains(attribute))
+								if (groupByAttributes.contains(attribute)) {
 									queryOrderByAttributes.add(attribute);
+								}
 							}
 							AggregateMeasureQuery query = new AggregateMeasureQuery(rule.getDataSourceId(), ruleSql, aggregateMeasureName,
 									aggregateMeasureFunction, groupByAttributes, queryOrderByAttributes, placeholdersMap);
@@ -643,14 +658,16 @@ public class ProcessKpiJob extends AbstractSuspendableJob {
 								new KpiComputationUnit(parsedKpi, queries, queriesAttributesTemporalTypes, queriesIgnoredAttributes, mainMeasure, replaceMode));
 
 						// Exit condition: no temporal attributes left (except perhaps YEAR)
-						if (realMinTemporalTypePriority <= 1)
+						if (realMinTemporalTypePriority <= 1) {
 							break;
+						}
 
 						Integer nextPriority = 0;
 						for (String temporalType : queriesAttributesTemporalTypes.get(mainMeasure).values()) {
 							Integer priority = temporalTypesPriorities.get(temporalType);
-							if (priority != null && priority < realMinTemporalTypePriority && priority >= nextPriority)
+							if (priority != null && priority < realMinTemporalTypePriority && priority >= nextPriority) {
 								nextPriority = priority;
+							}
 						}
 						minTemporalTypePriority = nextPriority;
 					}
@@ -699,8 +716,9 @@ public class ProcessKpiJob extends AbstractSuspendableJob {
 						measureValue = (Number) row.get(columnName);
 					} else {
 						rowAttributesValues.add(row.get(columnName));
-						if (rowsAttributesValues.isEmpty())
+						if (rowsAttributesValues.isEmpty()) {
 							attributesNames.add(columnName);
+						}
 					}
 					// sb.append("[" + field.getValue() + "]");
 				}
@@ -714,14 +732,16 @@ public class ProcessKpiJob extends AbstractSuspendableJob {
 
 			// For each measure read its values to complete the formulae
 			for (int m = 0; m < parsedKpi.measures.size(); m++) {
-				if (m == mainMeasure)
+				if (m == mainMeasure) {
 					continue;
+				}
 				QueryResult qr = queries.get(m).execute();
 				Number measureValue = null;
 				LinkedHashMap<String, Comparable> row = null;
 				for (int r = 0; r < rowsFormulae.size(); r++) {
-					if (row == null && qr.iterator.hasNext())
+					if (row == null && qr.iterator.hasNext()) {
 						row = qr.iterator.next();
+					}
 					if (row != null) {
 						while (true) {
 							int cmp = compareAttributes(rowsAttributesValues.get(r), attributesNames, row);
@@ -787,8 +807,9 @@ public class ProcessKpiJob extends AbstractSuspendableJob {
 					logicalKeyPairs.put(attributesNames.get(a).toUpperCase(), rowAttributesValues.get(a));
 				}
 				for (String attributeName : logicalKeyPairs.keySet()) {
-					if (logicalKey.length() > 0)
+					if (logicalKey.length() > 0) {
 						logicalKey.append(",");
+					}
 					logicalKey.append(attributeName).append("=").append(logicalKeyPairs.get(attributeName).toString().trim());
 				}
 				boolean nullValue = value.toLowerCase().contains("null");
@@ -862,11 +883,13 @@ public class ProcessKpiJob extends AbstractSuspendableJob {
 			LinkedHashMap<String, Comparable> secondRow) {
 		for (int i = 0; i < firstRowAttributesNames.size(); i++) {
 			String attributeName = firstRowAttributesNames.get(i);
-			if (!secondRow.containsKey(attributeName))
+			if (!secondRow.containsKey(attributeName)) {
 				continue;
+			}
 			int cmp = firstRowAttributesValues.get(i).compareTo(secondRow.get(attributeName));
-			if (cmp != 0)
+			if (cmp != 0) {
 				return cmp;
+			}
 		}
 		return 0;
 	}

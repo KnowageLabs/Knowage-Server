@@ -95,18 +95,21 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.auth0.jwt.interfaces.Claim;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.security.AuthorizationsBusinessMapper;
 import it.eng.spagobi.services.common.JWTSsoService;
+import it.eng.spagobi.services.common.SsoServiceInterface;
 import it.eng.spagobi.services.security.bo.SpagoBIUserProfile;
 import it.eng.spagobi.tenant.Tenant;
 import it.eng.spagobi.tenant.TenantManager;
@@ -174,7 +177,7 @@ public class UserProfile implements IEngUserProfile {
 	 *
 	 * @return the user profile for the scheduler
 	 */
-	public static final UserProfile createSchedulerUserProfile() {
+	public static final UserProfile createSchedulerUserProfileWithRole(List<String> userRoles) {
 		Tenant tenant = TenantManager.getTenant();
 		if (tenant == null) {
 			throw new SpagoBIRuntimeException("Tenant not found!!!");
@@ -184,10 +187,14 @@ public class UserProfile implements IEngUserProfile {
 		Date expiresAt = calendar.getTime();
 
 		String organization = tenant.getName();
-		String jwtToken = JWTSsoService.userId2jwtToken(SCHEDULER_USER_ID_PREFIX + organization, expiresAt);
+		String jwtToken = null;
+
+		jwtToken = Optional.ofNullable(userRoles).map(roles -> JWTSsoService.userIdAndRole2jwtToken(SCHEDULER_USER_ID_PREFIX + organization, roles, expiresAt))
+				.orElseGet(() -> JWTSsoService.userId2jwtToken(SCHEDULER_USER_ID_PREFIX + organization, expiresAt));
+
 		UserProfile profile = new UserProfile(jwtToken, SCHEDULER_USER_NAME, SCHEDULER_USER_NAME, organization);
 		profile.roles = new ArrayList<>();
-		profile.roles.add(SCHEDULER_USER_NAME);
+
 		return profile;
 	}
 
@@ -204,14 +211,18 @@ public class UserProfile implements IEngUserProfile {
 			throw new SpagoBIRuntimeException(
 					"User unique identifier [" + userUniqueIdentifier + "] is not a scheduler user id");
 		}
-		String userId = JWTSsoService.jwtToken2userId(userUniqueIdentifier);
+		// String userId = JWTSsoService.jwtToken2userId(userUniqueIdentifier);
+		Map<String, Claim> claims = JWTSsoService.getClaims(userUniqueIdentifier);
+		String userId = claims.get(SsoServiceInterface.USER_ID).asString();
+		List<String> userRoles = claims.get(SsoServiceInterface.ROLES).asList(String.class);
 		LOGGER.debug("User id is {}", userId);
 		String organization = userId.substring(SCHEDULER_USER_ID_PREFIX.length());
 		LOGGER.debug("Organization is {}", organization);
 
 		List<String> functionalities = getSchedulerUserFunctionalities();
 		List<String> roles = new ArrayList<>();
-		roles.add(SCHEDULER_USER_NAME);
+		Optional.ofNullable(userRoles).ifPresent(x -> roles.addAll(userRoles));
+
 		UserProfile toReturn = new UserProfile(userUniqueIdentifier, SCHEDULER_USER_NAME, SCHEDULER_USER_NAME,
 				organization);
 		toReturn.setRoles(roles);
@@ -539,8 +550,9 @@ public class UserProfile implements IEngUserProfile {
 	 */
 	public Object getUserId() {
 		String retVal = userId;
-		if (retVal == null)
+		if (retVal == null) {
 			retVal = userUniqueIdentifier;
+		}
 		return retVal;
 	}
 
@@ -551,8 +563,9 @@ public class UserProfile implements IEngUserProfile {
 	 */
 	public Object getUserName() {
 		String retVal = userName;
-		if (retVal == null)
+		if (retVal == null) {
 			retVal = userUniqueIdentifier;
+		}
 		return retVal;
 	}
 
@@ -613,8 +626,9 @@ public class UserProfile implements IEngUserProfile {
 				moduleName);
 		if (functionality != null) {
 			return this.functionalities.contains(functionality);
-		} else
+		} else {
 			return false;
+		}
 	}
 
 	/*
@@ -704,5 +718,7 @@ public class UserProfile implements IEngUserProfile {
 				+ userName + ", userAttributes=" + userAttributes + ", roles=" + roles + ", organization="
 				+ organization + ", isSuperadmin=" + isSuperadmin + "]";
 	}
+
+
 
 }

@@ -139,7 +139,7 @@ public class XExecuteBIDocumentJob extends AbstractSpagoBIJob implements Job {
 			} else if (typeEvent.equals("dataset")) {
 
 				IDataSetDAO d = DAOFactory.getDataSetDAO();
-				d.setUserProfile(UserProfile.createSchedulerUserProfile());
+				d.setUserProfile(UserProfile.createSchedulerUserProfileWithRole(null));
 				IDataSet dataSet = d.loadDataSetById(jo.getInt("dataset"));
 				if (dataSet != null) {
 					dataSet.loadData();
@@ -216,11 +216,13 @@ public class XExecuteBIDocumentJob extends AbstractSpagoBIJob implements Job {
 		logger.debug("IN");
 
 		try {
-			userProfile = UserProfile.createSchedulerUserProfile();
+
 			jobDataMap = jobExecutionContext.getMergedJobDataMap();
+			userProfile = UserProfile.createSchedulerUserProfileWithRole(Arrays.asList(jobDataMap.getString("userRoles").split(",")));
 			documentDAO = DAOFactory.getBIObjectDAO();
 
 			String encodedDocumentLabels = jobDataMap.getString("documentLabels");
+
 			String[] documentLabels = {};
 			if (!encodedDocumentLabels.trim().equals("")) {
 				documentLabels = encodedDocumentLabels.split(",");
@@ -235,13 +237,15 @@ public class XExecuteBIDocumentJob extends AbstractSpagoBIJob implements Job {
 
 			// please refactor this
 			modality = jobDataMap.getString("modality");
-			if (StringUtils.isEmpty(modality))
+			if (StringUtils.isEmpty(modality)) {
 				modality = "SCHEDULATION";
+			}
 			outputMIMEType = jobDataMap.getString("outputMIMEType");
 			String cycleOnFilters = jobDataMap.getString("isSplittingFilter");
 			isSplittingFilter = false;
-			if ("true".equalsIgnoreCase(cycleOnFilters))
+			if ("true".equalsIgnoreCase(cycleOnFilters)) {
 				isSplittingFilter = true;
+			}
 
 			long startSchedule = System.currentTimeMillis();
 			logger.debug("Scheduled activity contains [" + documentLabels.length + "] documnt(s)");

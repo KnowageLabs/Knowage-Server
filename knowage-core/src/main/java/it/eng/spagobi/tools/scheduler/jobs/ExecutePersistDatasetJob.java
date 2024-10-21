@@ -64,7 +64,7 @@ public class ExecutePersistDatasetJob extends AbstractSpagoBIJob implements Job 
 		logger.debug("IN");
 
 		try {
-			userProfile = UserProfile.createSchedulerUserProfile();
+			userProfile = UserProfile.createSchedulerUserProfileWithRole(null);
 			jobName = jobExecutionContext.getJobDetail().getKey().getName();
 
 			datasetDAO = DAOFactory.getDataSetDAO();
