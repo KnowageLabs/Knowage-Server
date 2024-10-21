@@ -296,7 +296,7 @@ public class UserResource extends AbstractSpagoBIResource {
 		try {
 			PasswordChecker.getInstance().isValid(sbiUserOriginal, sbiUserOriginal.getPassword(), true, requestDTO.getPassword(), requestDTO.getPassword());
 		} catch (Exception e) {
-			logger.error("Password is not valid", e);
+			LOGGER.error("Password is not valid", e);
 			String message = msgBuilder.getMessage("signup.check.pwdInvalid", "messages", locale);
 			if (e instanceof EMFUserError) {
 				throw new SpagoBIServiceException(message, ((EMFUserError) e).getDescription());
