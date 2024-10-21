@@ -246,22 +246,12 @@ public class Signup {
 
 			int userId = user.getId();
 
-<<<<<<< HEAD
-			user.setFullName(name + " " + surname);
 			if(!name.isEmpty() && !surname.isEmpty()) {				
 				user.setFullName(name + " " + surname);
 			}
 			
 			if (password != null && !password.equals(DEFAULT_PASSWORD)) {
 				user.setPassword(Password.hashPassword(password));
-=======
-			if(!name.isEmpty() && !surname.isEmpty()) {				
-				user.setFullName(name + " " + surname);
-			}
-			
-			if (password != null && !password.equals(defaultPassword)) {
-				user.setPassword(Password.encriptPassword(password));
->>>>>>> c4ed5cc473 ([KNOWAGE-8565] Added name and surname checks for new interface)
 			}
 
 			userDao.updateSbiUser(user, userId);
