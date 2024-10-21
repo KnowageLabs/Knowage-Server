@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map.Entry;
 import java.util.Set;
 
@@ -51,6 +52,8 @@ import it.eng.spagobi.commons.constants.CommunityFunctionalityConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.metadata.SbiExtRoles;
 import it.eng.spagobi.commons.utilities.UserUtilities;
+import it.eng.spagobi.commons.utilities.messages.MessageBuilder;
+import it.eng.spagobi.commons.validation.PasswordChecker;
 import it.eng.spagobi.dao.QueryFilters;
 import it.eng.spagobi.profiling.PublicProfile;
 import it.eng.spagobi.profiling.bean.SbiAttribute;
@@ -240,6 +243,9 @@ public class UserResource extends AbstractSpagoBIResource {
 			CommunityFunctionalityConstants.FINAL_USERS_MANAGEMENT })
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response updateUser(@PathParam("id") Integer id, @Valid UserBO requestDTO) {
+		
+		MessageBuilder msgBuilder = new MessageBuilder();
+		Locale locale = msgBuilder.getLocale(request);
 
 		SbiUser sbiUserOriginal = null;
 		ISbiUserDAO usersDao = null;
@@ -249,7 +255,7 @@ public class UserResource extends AbstractSpagoBIResource {
 		if (userId.startsWith(PublicProfile.PUBLIC_USER_PREFIX)) {
 			LOGGER.error("public is reserved prefix for user id");
 			throw new SpagoBIServiceException("SPAGOBI_SERVICE", "public_ is a reserved prefix for user name", null);
-		}
+		}	
 
 		SbiUser sbiUser = new SbiUser();
 		sbiUser.changeId(id);
@@ -258,6 +264,9 @@ public class UserResource extends AbstractSpagoBIResource {
 		sbiUser.setPassword(requestDTO.getPassword());
 		sbiUser.setDefaultRoleId(requestDTO.getDefaultRoleId());
 		sbiUser.setFailedLoginAttempts(requestDTO.getFailedLoginAttempts());
+		
+		// This reset the account lock enabled in case of too much failed login attempts
+		// sbiUser.setFailedLoginAttempts(0);
 
 		List<Integer> list = requestDTO.getSbiExtUserRoleses();
 		Set<SbiExtRoles> roles = new HashSet<>(0);
@@ -282,6 +291,18 @@ public class UserResource extends AbstractSpagoBIResource {
 			attrList = objDao.loadSbiAttributes();
 		} catch (EMFUserError e1) {
 			LOGGER.error("Impossible get attributes", e1);
+		}
+		
+		try {
+			PasswordChecker.getInstance().isValid(sbiUserOriginal, sbiUserOriginal.getPassword(), true, requestDTO.getPassword(), requestDTO.getPassword());
+		} catch (Exception e) {
+			logger.error("Password is not valid", e);
+			String message = msgBuilder.getMessage("signup.check.pwdInvalid", "messages", locale);
+			if (e instanceof EMFUserError) {
+				throw new SpagoBIServiceException(message, ((EMFUserError) e).getDescription());
+			} else {
+				throw new SpagoBIServiceException(message, e);
+			}
 		}
 
 		for (Entry<Integer, HashMap<String, String>> entry : map.entrySet()) {
