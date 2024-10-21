@@ -248,6 +248,10 @@ public class Signup {
 
 <<<<<<< HEAD
 			user.setFullName(name + " " + surname);
+			if(!name.isEmpty() && !surname.isEmpty()) {				
+				user.setFullName(name + " " + surname);
+			}
+			
 			if (password != null && !password.equals(DEFAULT_PASSWORD)) {
 				user.setPassword(Password.hashPassword(password));
 =======
