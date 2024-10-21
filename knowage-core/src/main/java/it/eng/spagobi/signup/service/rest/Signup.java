@@ -245,8 +245,8 @@ public class Signup {
 		MessageBuilder msgBuilder = new MessageBuilder();
 		Locale locale = msgBuilder.getLocale(request);
 
-		String name = signupDTO.getName();
-		String surname = signupDTO.getSurname();
+		String name = signupDTO.getName() != null ? signupDTO.getName() : "";
+		String surname = signupDTO.getSurname() != null ? signupDTO.getSurname() : "";
 		String password = signupDTO.getPassword();
 		String email = signupDTO.getEmail();
 
@@ -271,7 +271,10 @@ public class Signup {
 
 			int userId = user.getId();
 
-			user.setFullName(name + " " + surname);
+			if(!name.isEmpty() && !surname.isEmpty()) {				
+				user.setFullName(name + " " + surname);
+			}
+			
 			if (password != null && !password.equals(defaultPassword)) {
 				user.setPassword(Password.encriptPassword(password));
 			}
@@ -297,9 +300,11 @@ public class Signup {
 			}
 
 			updAttribute(userDao, attrDao, email, user.getUserId(), userId, currEmail);
-
-			profile.setAttributeValue("name", name);
-			profile.setAttributeValue("surname", surname);
+			
+			if(!name.isEmpty() && !surname.isEmpty()) {				
+				profile.setAttributeValue("name", name);
+				profile.setAttributeValue("surname", surname);
+			}
 			profile.setAttributeValue("email", email);
 
 		} catch (Throwable t) {
