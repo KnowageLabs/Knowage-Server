@@ -257,7 +257,7 @@
 			iconCls="fas fa-briefcase" />
 
 		<ITEM id="11003" label="menu.myAccount" condition="my_account"
-			to="${SPAGOBI_CONTEXT}/restful-services/signup/prepareUpdate"
+			command="accountManagement"
 			iconCls="fas fa-address-card" />
 
 		<ITEM id="11004" label="menu.Users"
