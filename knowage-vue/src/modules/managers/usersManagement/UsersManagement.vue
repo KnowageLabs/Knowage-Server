@@ -204,12 +204,6 @@ export default defineComponent({
                     .then((response: AxiosResponse<any>) => {
                         this.afterSaveOrUpdate(response)
                     })
-                    .catch((error) => {
-                        this.$store.commit('setError', {
-                            title: error.title,
-                            msg: error.msg
-                        })
-                    })
                     .finally(() => {
                         this.loading = false
                     })
