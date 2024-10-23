@@ -30,11 +30,9 @@ import it.eng.spagobi.services.validation.Xss;
 public class SignupDTO {
 
 	@NoPunctation
-	@NotNull
 	@Xss
 	private String name;
 	@NoPunctation
-	@NotNull
 	@Xss
 	private String surname;
 	@ExtendedAlphanumeric
