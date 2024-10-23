@@ -2,7 +2,9 @@ package it.eng.spagobi.commons.validation;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
@@ -23,7 +25,7 @@ public class PasswordChecker {
 	private static Logger logger = Logger.getLogger(PasswordChecker.class);
 
 	private static final String PROP_NODE = "changepwdmodule.";
-
+	
 	private static final PasswordChecker INSTANCE = new PasswordChecker();
 
 	private PasswordChecker() {
@@ -39,9 +41,18 @@ public class PasswordChecker {
 	 * @return true if the new password is correct
 	 */
 	public boolean isValid(String newPwd, String newPwd2) throws Exception {
-		IConfigDAO configDao = DAOFactory.getSbiConfigDAO();
-		List<Config> configChecks = configDao.loadConfigParametersByProperties(PROP_NODE);
-		logger.debug("checks found on db: " + configChecks.size());
+//		IConfigDAO configDao = DAOFactory.getSbiConfigDAO();
+//		List<Config> configChecks = configDao.loadConfigParametersByProperties(PROP_NODE);
+//		logger.debug("checks found on db: " + configChecks.size());
+		logger.debug("password validation");
+		
+		Map<String, String> configChecks = new HashMap<>();
+		configChecks.put("changepwdmodule.len_min", "8");
+		configChecks.put("changepwdmodule.alphabetical", "abcdefghjklmnopqrstuwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ");
+		configChecks.put("changepwdmodule.lower_char", "abcdefghjklmnopqrstuwxyz");
+		configChecks.put("changepwdmodule.upper_char", "ABCDEFGJKLMNOPQRSTUVWXYZ");
+		configChecks.put("changepwdmodule.special_char", "_|-#$");
+		configChecks.put("changepwdmodule.number", "0123456789");
 
 		if (StringUtils.isEmpty(newPwd) || StringUtils.isEmpty(newPwd2)) {
 			logger.debug("The new password is empty.");
@@ -53,31 +64,32 @@ public class PasswordChecker {
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 14000);
 		}
 
-		for (Config check : configChecks) {
+//		for (Config check : configChecks) {
+		for (Map.Entry<String, String> check : configChecks.entrySet()) {
 
-			if (check.getValueTypeId() != null && check.getValueCheck() == null) {
-				logger.debug("The value configuration on db isn't valorized.");
-				List<String> v = new ArrayList<>();
-				v.add(check.getLabel());
-				throw new EMFUserError(EMFErrorSeverity.ERROR, 14009, v, Collections.emptyMap());
-			}
+//			if (check.getValueTypeId() != null && check.getValueCheck() == null) {
+//				logger.debug("The value configuration on db isn't valorized.");
+//				List<String> v = new ArrayList<>();
+//				v.add(check.getLabel());
+//				throw new EMFUserError(EMFErrorSeverity.ERROR, 14009, v, Collections.emptyMap());
+//			}
 
-			if (check.getLabel().equals(SpagoBIConstants.CHANGEPWDMOD_LEN_MIN)) {
+			if (check.getKey().equals(SpagoBIConstants.CHANGEPWDMOD_LEN_MIN)) {
 				int pwdLen = newPwd.length();
-				if (pwdLen < Integer.parseInt(check.getValueCheck())) {
+				if (pwdLen < Integer.parseInt(check.getValue())) {
 					logger.debug("The password's length isn't correct.");
 					List<String> v = new ArrayList<>();
-					v.add(check.getValueCheck());
+					v.add(check.getValue());
 					throw new EMFUserError(EMFErrorSeverity.ERROR, 14001, v, Collections.emptyMap());
 				}
 			}
 
-			if (check.getLabel().equals(SpagoBIConstants.CHANGEPWDMOD_ALPHA)) {
+			if (check.getKey().equals(SpagoBIConstants.CHANGEPWDMOD_ALPHA)) {
 				char[] pwdChars = new char[newPwd.length()];
 				newPwd.getChars(0, newPwd.length(), pwdChars, 0);
 				boolean containsChar = false;
 				for (char pwdChar : pwdChars) {
-					if (check.getValueCheck().contains(String.valueOf(pwdChar))) {
+					if (check.getValue().contains(String.valueOf(pwdChar))) {
 						containsChar = true;
 						break;
 					}
@@ -89,12 +101,12 @@ public class PasswordChecker {
 				}
 			}
 
-			if (check.getLabel().equals(SpagoBIConstants.CHANGEPWDMOD_LOWER_CHAR)) {
+			if (check.getKey().equals(SpagoBIConstants.CHANGEPWDMOD_LOWER_CHAR)) {
 				char[] pwdChars = new char[newPwd.length()];
 				newPwd.getChars(0, newPwd.length(), pwdChars, 0);
 				boolean containsChar = false;
 				for (char pwdChar : pwdChars) {
-					if (check.getValueCheck().contains(String.valueOf(pwdChar))) {
+					if (check.getValue().contains(String.valueOf(pwdChar))) {
 						containsChar = true;
 						break;
 					}
@@ -106,12 +118,12 @@ public class PasswordChecker {
 				}
 			}
 
-			if (check.getLabel().equals(SpagoBIConstants.CHANGEPWDMOD_UPPER_CHAR)) {
+			if (check.getKey().equals(SpagoBIConstants.CHANGEPWDMOD_UPPER_CHAR)) {
 				char[] pwdChars = new char[newPwd.length()];
 				newPwd.getChars(0, newPwd.length(), pwdChars, 0);
 				boolean containsChar = false;
 				for (char pwdChar : pwdChars) {
-					if (check.getValueCheck().contains(String.valueOf(pwdChar))) {
+					if (check.getValue().contains(String.valueOf(pwdChar))) {
 						containsChar = true;
 						break;
 					}
@@ -123,12 +135,12 @@ public class PasswordChecker {
 				}
 			}
 
-			if (check.getLabel().equals(SpagoBIConstants.CHANGEPWDMOD_SPECIAL_CHAR)) {
+			if (check.getKey().equals(SpagoBIConstants.CHANGEPWDMOD_SPECIAL_CHAR)) {
 				char[] pwdChars = new char[newPwd.length()];
 				newPwd.getChars(0, newPwd.length(), pwdChars, 0);
 				boolean containsChar = false;
 				for (char pwdChar : pwdChars) {
-					if (check.getValueCheck().contains(String.valueOf(pwdChar))) {
+					if (check.getValue().contains(String.valueOf(pwdChar))) {
 						containsChar = true;
 						break;
 					}
@@ -136,17 +148,17 @@ public class PasswordChecker {
 				if (!containsChar) {
 					logger.debug("The password's doesn't contain special char.");
 					List<String> v = new ArrayList<>();
-					v.add(check.getValueCheck());
+					v.add(check.getValue());
 					throw new EMFUserError(EMFErrorSeverity.ERROR, 14003, v, Collections.emptyMap());
 				}
 			}
 
-			if (check.getLabel().equals(SpagoBIConstants.CHANGEPWDMOD_NUMBER)) {
+			if (check.getKey().equals(SpagoBIConstants.CHANGEPWDMOD_NUMBER)) {
 				char[] pwdChars = new char[newPwd.length()];
 				newPwd.getChars(0, newPwd.length(), pwdChars, 0);
 				boolean containsChar = false;
 				for (char pwdChar : pwdChars) {
-					if (check.getValueCheck().contains(String.valueOf(pwdChar))) {
+					if (check.getValue().contains(String.valueOf(pwdChar))) {
 						containsChar = true;
 						break;
 					}
