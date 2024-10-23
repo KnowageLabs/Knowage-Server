@@ -76,10 +76,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 							<input ng-model="newUser.email" name="email" type="text" ng-pattern="emailFormat"> </md-input-container>
 						<md-input-container class="md-block" flex=50 flex-xs=100>
 							<label>Password</label>
-							<input ng-model="newUser.password" name="password" type="password" required> </md-input-container>
+							<input ng-model="newUser.password" name="password" type="password" ng-pattern="passwordFormat" required>
+							<div class="hint" style="font-size: .7rem;color: gray;">Password must contain a minimum of 8 characters, at least:<br/> 1 lowercase, 1 uppercase, 1 number, 1 special character(|-_#$)</div> 
+						</md-input-container>
 						<md-input-container class="md-block" flex=50 flex-xs=100>
 							<label>Confirm Password</label>
-							<input ng-model="newUser.confirmPassword" name="confirmPassword" type="password" required> </md-input-container>
+							<input ng-model="newUser.confirmPassword" name="confirmPassword" ng-pattern="passwordFormat" type="password" required> </md-input-container>
 					</div>
 				</md-card-content>
 				<md-card-actions layout="column" layout-align="center">
@@ -117,6 +119,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		  $scope.newUser.username = '<%=StringEscapeUtils.escapeJavaScript(username)%>';
 		  $scope.activeSignup= <%=activeSignup%>;
 		  $scope.emailFormat = /^[a-zA-Z0-9.!#$%&*+\/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)+$/;
+		  $scope.passwordFormat = /^((?=.*\d)(?=.*[_,|,\-,,#,$])(?=.*[a-z])(?=.*[A-Z]).{8,})$/;
 		  $scope.$watch("newUser.confirmPassword", function(newValue, oldValue) {
 			    if (newValue == $scope.newUser.password) {
 			    	$scope.signUpForm.confirmPassword.$setValidity('correct',true) ;
