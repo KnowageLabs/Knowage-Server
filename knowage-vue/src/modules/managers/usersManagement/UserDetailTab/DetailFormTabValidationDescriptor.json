@@ -54,9 +54,16 @@
                         "key": "minLength",
                         "validator": {
                             "params": {
-                                "min": 6
+                                "min": 8
                             },
                             "type": "minLength"
+                        }
+                    },
+                    {
+                        "key": "passwordFormat",
+                        "translateBaseKey": "usersManagement.validation",
+                        "validator": {
+                            "type": "password-format"
                         }
                     },
                     {

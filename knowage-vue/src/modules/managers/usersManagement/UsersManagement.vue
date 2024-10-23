@@ -102,6 +102,9 @@ export default defineComponent({
             'custom-required': (value) => {
                 return !this.formInsert || value
             },
+            'password-format': (value) => {
+                return value.match(/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\-_|#$])[A-Za-z\d\-_|#$]{8,}/)
+            },
             'custom-sameAs': sameAs(this.userDetailsForm.password)
         }
         const validationObject = {
