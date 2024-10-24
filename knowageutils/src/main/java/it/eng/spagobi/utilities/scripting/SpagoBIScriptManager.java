@@ -22,23 +22,16 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.security.AccessControlContext;
-import java.security.AccessController;
-import java.security.CodeSource;
-import java.security.PermissionCollection;
-import java.security.Permissions;
-import java.security.PrivilegedExceptionAction;
-import java.security.ProtectionDomain;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import javax.script.Bindings;
+import javax.script.ScriptContext;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineFactory;
 import javax.script.ScriptEngineManager;
-import javax.script.ScriptException;
 import javax.script.SimpleBindings;
 
 import org.apache.log4j.LogMF;
@@ -69,7 +62,7 @@ public class SpagoBIScriptManager {
 		try {
 
 			if (imports != null) {
-				StringBuffer importsBuffer = new StringBuffer();
+				StringBuilder importsBuffer = new StringBuilder();
 				for (Object importedScriptReference : imports) {
 					if (importedScriptReference instanceof File) {
 						importsBuffer.append(this.getImportedScript((File) importedScriptReference) + "\n");
@@ -95,33 +88,19 @@ public class SpagoBIScriptManager {
 				logger.debug("Found engine [" + scriptEngine.NAME + "]");
 			}
 
+			Bindings bindingContext = scriptEngine.getContext().getBindings(ScriptContext.ENGINE_SCOPE);
+			bindingContext.put("polyglot.js.allowHostAccess", true);
+
 			if (bindings != null) {
 				Bindings scriptBindings = new SimpleBindings(bindings);
 
-				scriptBindings.forEach((k, v) -> {
-					scriptEngine.put(k, v);
-				});
+				scriptBindings.forEach(scriptEngine::put);
 			}
 
-			PermissionCollection pc = new Permissions(); // This means no permissions at all
-			CodeSource codeSource = scriptEngine.getClass().getProtectionDomain().getCodeSource();
-			ProtectionDomain protectionDomain = new ProtectionDomain(codeSource, pc);
-			ProtectionDomain[] context = new ProtectionDomain[] { protectionDomain };
-			AccessControlContext accessControlContext = new AccessControlContext(context);
-
-			final String _script = script;
-
-			results = AccessController.doPrivileged(new PrivilegedExceptionAction<>() {
-
-				@Override
-				public Object run() throws ScriptException {
-					return scriptEngine.eval(_script);
-				}
-			}, accessControlContext);
-			
-			// the keyword "query" is used because it is useful in datasets when changing the query entered 
+			results = scriptEngine.eval(script);
+			// the keyword "query" is used because it is useful in datasets when changing the query entered
 			// this is a commonly used variable name.
-			if(scriptEngine.get("query") != null) {			
+			if (scriptEngine.get("query") != null) {
 				results = scriptEngine.get("query");
 			}
 		} catch (Throwable t) {
@@ -275,7 +254,7 @@ public class SpagoBIScriptManager {
 		importedScript = null;
 
 		try {
-			StringBuffer buffer = new StringBuffer();
+			StringBuilder buffer = new StringBuilder();
 			int arrayLength = 1024;
 			byte[] bufferbyte = new byte[arrayLength];
 			char[] bufferchar = new char[arrayLength];
