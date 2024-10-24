@@ -32,6 +32,7 @@ public class BigQueryDataBase extends AbstractDataBase implements CacheDataBase 
 	private static transient Logger logger = Logger.getLogger(BigQueryDataBase.class);
 
 	private static int MAX_VARCHAR_VALUE = 10485760;
+	public static final String ALIAS_DELIMITER = "`";
 
 	private int varcharLength = 255;
 
@@ -46,7 +47,7 @@ public class BigQueryDataBase extends AbstractDataBase implements CacheDataBase 
 	 */
 	@Override
 	public String getAliasDelimiter() {
-		return "";
+		return ALIAS_DELIMITER;
 	}
 
 	@Override
