@@ -94,18 +94,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		}
 
 		function setDefaultTextSearch() {
-		if($scope.ngModel.settings && $scope.ngModel.settings.defaultTextSearch){
-			if($scope.ngModel.settings.defaultTextSearchType == 'static') $scope.ngModel.search.text = $scope.ngModel.settings.defaultTextSearchValue;
-			if($scope.ngModel.settings.defaultTextSearchType == 'driver') $scope.ngModel.search.text = cockpitModule_analyticalDrivers[$scope.ngModel.settings.defaultTextSearchValue];
-			if(!$scope.ngModel.search.columns){
+			if($scope.ngModel.settings && $scope.ngModel.settings.defaultTextSearch){
+				if($scope.ngModel.settings.defaultTextSearchType == 'static') $scope.ngModel.search.text = $scope.ngModel.settings.defaultTextSearchValue;
+				if($scope.ngModel.settings.defaultTextSearchType == 'driver') $scope.ngModel.search.text = cockpitModule_analyticalDrivers[$scope.ngModel.settings.defaultTextSearchValue];
+				$scope.ngModel.search.columns = []
 				for(var c in $scope.ngModel.content.columnSelectedOfDataset){
-
 					if($scope.ngModel.content.columnSelectedOfDataset[c].fullTextSearch){
 						$scope.ngModel.search.columns.push($scope.ngModel.content.columnSelectedOfDataset[c].name);
 					}
 				}
 			}
-		}
 		}
 		
 		setDefaultTextSearch();
