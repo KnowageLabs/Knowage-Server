@@ -118,7 +118,7 @@ public class FeatureFlagProvider implements ContainerRequestFilter {
 		
 		Path resourcesFolder = Paths.get(jndiResource);
 		
-		Path fileFolder = resourcesFolder.resolve("..").resolve("knowage").resolve("feature-list.properties");
+		Path fileFolder = resourcesFolder.resolve("..").resolve("resources").resolve("feature-list.properties");
 
 		if (Files.exists(fileFolder)) {
 			try (InputStream is = Files.newInputStream(fileFolder)) {
