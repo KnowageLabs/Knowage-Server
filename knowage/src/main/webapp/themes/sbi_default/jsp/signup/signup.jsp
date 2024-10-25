@@ -21,7 +21,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <%-- ---------------------------------------------------------------------- --%>
 <%-- JAVA IMPORTS															--%>
 <%-- ---------------------------------------------------------------------- --%>
-<%@page import="it.eng.spagobi.tools.dataset.service.SelfServiceDatasetAction" %>
 <%@page import="java.util.Map" %>
 <%@page import="org.json.JSONObject"%>
 
