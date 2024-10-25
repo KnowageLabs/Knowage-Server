@@ -131,24 +131,9 @@
 		importFileMaxSizeMB = new Integer(maxSizeStr);
 	}
 	
-	 AccessibilityPreferences ap =  UserUtilities.readAccessibilityPreferencesByUser((UserProfile)userProfile);
-	  
-	  boolean includeInfusion;
-	  if(ap != null){
-	      includeInfusion=ap.isEnableUio();
-	  }else{
-		  includeInfusion=false;
-	  }
 	
 %>
-<%-- ---------------------------------------------------------------------- --%>
-<%-- INFUSION																--%>
-<%-- ---------------------------------------------------------------------- --%>
 
-	 <%if(includeInfusion){ %> 
-       <%@include file="/WEB-INF/jsp/commons/infusion/infusionImport.jsp"%>
-      
-     <%} %>	
 
 
 <%@include file="/WEB-INF/jsp/commons/includeMessageResource.jspf"%>
