@@ -1,6 +1,8 @@
 package it.eng.spagobi.security.utils;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.stream.Stream;
 
@@ -39,7 +41,7 @@ public class AntiCsrfFilter implements Filter {
 
 		HttpServletRequest req = ((HttpServletRequest) request);
 
-		if (req.getSession(false) != null) {
+		if (req.getSession(false) != null && !this.excludeCheck(req.getPathInfo())) {
 
 			String cookieVal = "";
 			String paramVal;
@@ -66,6 +68,18 @@ public class AntiCsrfFilter implements Filter {
 			}
 		}
 		chain.doFilter(request, response);
+	}
+
+	private boolean excludeCheck(String path) {
+		List<String> urlToExclude = new ArrayList<>();
+		urlToExclude.add("/signup/prepare");
+
+		if (urlToExclude.contains(path)) {
+			return true;
+		} else {
+			return false;
+		}
+
 	}
 
 	@Override
