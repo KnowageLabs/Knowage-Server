@@ -24,6 +24,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import it.eng.spagobi.services.validation.EmailValidation;
 import it.eng.spagobi.services.validation.ExtendedAlphanumeric;
 import it.eng.spagobi.services.validation.NoPunctation;
+import it.eng.spagobi.services.validation.PasswordValidation;
 import it.eng.spagobi.services.validation.Xss;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -33,21 +34,24 @@ public class SignupDTO {
 	@NotNull
 	@Xss
 	private String name;
+	
 	@NoPunctation
 	@NotNull
 	@Xss
 	private String surname;
-	@ExtendedAlphanumeric
+	
+	@PasswordValidation
 	@NotNull
 	@Xss
 	private String password;
+	
 	@EmailValidation
 	@Xss
 	private String email;
 
 	// properties for creation only
 
-	@ExtendedAlphanumeric
+	@PasswordValidation
 	@NotNull
 	private String confirmPassword;
 

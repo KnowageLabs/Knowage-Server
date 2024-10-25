@@ -24,18 +24,20 @@ import java.util.Locale;
 import java.util.Locale.Builder;
 import java.util.Set;
 
-import javax.mail.Message;
-import javax.mail.internet.InternetAddress;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
-import it.eng.knowage.mail.MailSessionBuilder;
-import it.eng.knowage.mail.MailSessionBuilder.SessionFacade;
+import it.eng.knowage.mailsender.IMailSender;
+import it.eng.knowage.mailsender.dto.MessageMailDto;
+import it.eng.knowage.mailsender.dto.ProfileNameMailEnum;
+import it.eng.knowage.mailsender.dto.TypeMailEnum;
+import it.eng.knowage.mailsender.factory.FactoryMailSender;
 import it.eng.spago.base.RequestContainer;
 import it.eng.spago.base.RequestContainerAccess;
 import it.eng.spago.base.SessionContainer;
+import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.utilities.ChannelUtilities;
@@ -68,8 +70,9 @@ public class CommunityUtilities {
 				}
 
 				locale = tmpLocale.build();
-			} else
+			} else {
 				locale = GeneralUtilities.getDefaultLocale();
+			}
 		}
 		String currTheme = ThemesManager.getDefaultTheme();
 		logger.debug("currTheme: " + currTheme);
@@ -91,7 +94,7 @@ public class CommunityUtilities {
 		String contextName = ChannelUtilities.getSpagoBIContextName(request);
 
 		String mailSubj = "Community " + communityName + " membership request";
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		sb.append("<HTML>");
 		sb.append("<HEAD>");
 		sb.append("<TITLE>Community Membership Request</TITLE>");
@@ -141,21 +144,17 @@ public class CommunityUtilities {
 		logger.debug("IN");
 		try {
 
-			SessionFacade facade = MailSessionBuilder.newInstance().usingUserProfile().build();
+			MessageMailDto messageMailDto = new MessageMailDto();
+			messageMailDto.setProfileName(ProfileNameMailEnum.USER_NO_TIMEOUT);
+			messageMailDto.setTypeMailEnum(TypeMailEnum.CONTENT);
 
-			// create a message
-			Message msg = facade.createNewMimeMessage();
-			InternetAddress[] addressTo = new InternetAddress[1];
-			addressTo[0] = new InternetAddress(ownerEmail);
+			messageMailDto.setSubject(mailSubj);
+			messageMailDto.setText(mailTxt);
+			messageMailDto.setContentType("text/html");
+			messageMailDto.setRecipients(new String[] { ownerEmail });
 
-			msg.setRecipients(Message.RecipientType.TO, addressTo);
+			FactoryMailSender.getMailSender(SingletonConfig.getInstance().getConfigValue(IMailSender.MAIL_SENDER)).sendMail(messageMailDto);
 
-			// Setting the Subject
-			msg.setSubject(mailSubj);
-			msg.setContent(mailTxt, "text/html");
-
-			// send message
-			facade.sendMessage(msg);
 		} catch (Throwable e) {
 			logger.error("Error while sending community membership request mail", e);
 			return false;

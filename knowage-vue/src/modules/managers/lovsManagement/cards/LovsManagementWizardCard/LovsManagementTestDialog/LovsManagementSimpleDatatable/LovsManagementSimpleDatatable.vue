@@ -75,6 +75,11 @@ export default defineComponent({
         this.loadSelectedModel()
         this.loadModel()
     },
+    mounted() {
+        this.setSelectedValue()
+        this.setSelectedDescription()
+        this.setSelectedVisible()
+    },
     methods: {
         loadData() {
             this.data = this.tableData as any

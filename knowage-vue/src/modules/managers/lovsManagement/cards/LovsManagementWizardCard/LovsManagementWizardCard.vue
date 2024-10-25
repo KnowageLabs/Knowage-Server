@@ -262,7 +262,6 @@ export default defineComponent({
                         msg: response
                     })
                 })
-                .finally(() => (this.touchedForTest = false))
             if (listOfEmptyDependencies.length > 0 && !this.dependenciesReady) {
                 this.dependenciesList = []
                 for (let i = 0; i < listOfEmptyDependencies.length; i++) {
@@ -578,6 +577,7 @@ export default defineComponent({
                 this.treeListTypeModel['DESCRIPTION-COLUMNS'] += this.testLovTreeModel[i].description
                 this.treeListTypeModel['DESCRIPTION-COLUMNS'] += i === this.testLovTreeModel.length - 1 ? '' : ','
             }
+            this.touchedForTest = false
             this.handleSubmit(this.sendSave)
             this.testDialogVisible = false
             this.dependenciesReady = false

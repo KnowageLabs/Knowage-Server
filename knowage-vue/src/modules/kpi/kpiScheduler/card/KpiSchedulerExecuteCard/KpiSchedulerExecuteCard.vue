@@ -1,31 +1,5 @@
 <template>
-    <Card>
-        <template #header>
-            <Toolbar class="kn-toolbar kn-toolbar--primary">
-                <template #start>
-                    {{ $t('kpi.kpiScheduler.executionType') }}
-                </template>
-            </Toolbar>
-        </template>
-        <template #content>
-            <div class="p-field-radiobutton">
-                <RadioButton id="delta-with-update" name="delta" :value="true" v-model="schedule.delta" @click="$emit('touched')" />
-                <label for="delta-with-update">{{ $t('kpi.kpiScheduler.insertAndUpdate') }}</label>
-            </div>
-            <div class="p-field-radiobutton">
-                <RadioButton id="delta-with-delete" name="delta" :value="false" v-model="schedule.delta" @click="$emit('touched')" />
-                <label for="delta-with-delete">{{ $t('kpi.kpiScheduler.deleteAndInsert') }}</label>
-            </div>
-        </template>
-    </Card>
     <Card class="p-mt-2">
-        <template #header>
-            <Toolbar class="kn-toolbar kn-toolbar--primary">
-                <template #start>
-                    {{ $t('kpi.kpiScheduler.logExecution') }}
-                </template>
-            </Toolbar>
-        </template>
         <template #content>
             <DataTable :value="executionList" :paginator="true" :rowsPerPageOptions="[10, 20, 50]" :rows="10" :loading="loading" class="p-datatable-sm kn-table p-m-1" dataKey="id" responsiveLayout="stack" breakpoint="960px" @rowClick="showForm($event.data, false)" data-test="executions-table">
                 <template #loading>
@@ -34,6 +8,16 @@
                 <template #header>
                     <div class="table-header">
                         <div class="p-d-flex p-ai-center">
+                            <div>
+                                <div class="p-field-radiobutton">
+                                    <RadioButton id="delta-with-update" name="delta" :value="true" v-model="schedule.delta" @click="$emit('touched')" />
+                                    <label for="delta-with-update">{{ $t('kpi.kpiScheduler.insertAndUpdate') }}</label>
+                                </div>
+                                <div class="p-field-radiobutton">
+                                    <RadioButton id="delta-with-delete" name="delta" :value="false" v-model="schedule.delta" @click="$emit('touched')" />
+                                    <label for="delta-with-delete">{{ $t('kpi.kpiScheduler.deleteAndInsert') }}</label>
+                                </div>
+                            </div>
                             <span class="p-d-flex p-flex-column  p-mr-2">
                                 <label for="numberOfLogs" class="kn-material-input-label"> {{ $t('kpi.kpiScheduler.numberOfExecutions') }}</label>
                                 <InputNumber id="numberOfLogs" inputClass="kn-material-input" v-model="numberOfLogs" />

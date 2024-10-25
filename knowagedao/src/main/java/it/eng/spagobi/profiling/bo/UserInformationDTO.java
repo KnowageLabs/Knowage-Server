@@ -23,13 +23,13 @@ import java.util.Collection;
 import java.util.Locale;
 import java.util.Map;
 
-import it.eng.knowage.commons.multitenant.OrganizationImageManager;
 import org.apache.commons.lang3.StringUtils;
 
+import it.eng.knowage.commons.multitenant.OrganizationImageManager;
 import it.eng.spago.error.EMFInternalError;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
-import it.eng.spagobi.tenant.TenantManager;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 /**
  * Business Object used to retrieve basic informations about current the user
@@ -44,6 +44,7 @@ public class UserInformationDTO {
 	private String fullName;
 	private Boolean isSuperadmin;
 	private String defaultRole = null;
+
 	private Map<String, Object> attributes;
 	private String organization;
 	private String organizationImageb64;
@@ -55,30 +56,34 @@ public class UserInformationDTO {
 	private Collection functionalities;
 	private boolean enterprise;
 
-	public UserInformationDTO(UserProfile user) throws EMFInternalError {
-		this.userId = String.valueOf(user.getUserId());
-		this.fullName = String.valueOf(user.getUserName());
-		this.isSuperadmin = user.getIsSuperadmin();
-		this.attributes = user.getUserAttributes();
-		this.organization = TenantManager.getTenant().getName();
-		this.organizationImageb64 = OrganizationImageManager.getOrganizationB64Image(organization);
-		// TODO: Change when there will be user email address
-		this.email = null;
-		if (user.getUserAttribute("email") != null && StringUtils.isNotBlank(user.getUserAttribute("email").toString()))
-			this.email = user.getUserAttribute("email").toString();
-		this.userUniqueIdentifier = user.getUserUniqueIdentifier();
+	public UserInformationDTO(UserProfile user) {
+		try {
+			this.userId = String.valueOf(user.getUserId());
+			this.fullName = String.valueOf(user.getUserName());
+			this.isSuperadmin = user.getIsSuperadmin();
+			this.attributes = user.getUserAttributes();
+			this.organization = user.getOrganization();
+			this.organizationImageb64 = OrganizationImageManager.getOrganizationB64Image(organization);
+			// TODO: Change when there will be user email address
+			this.email = null;
 
-		this.locale = GeneralUtilities.getDefaultLocale();
-		this.roles = user.getRoles();
+			if (user.getUserAttribute("email") != null && StringUtils.isNotBlank(user.getUserAttribute("email").toString()))
+				this.email = user.getUserAttribute("email").toString();
+			this.userUniqueIdentifier = user.getUserUniqueIdentifier();
 
-		Collection rolesOrDefaultRole = user.getRolesForUse();
-		ArrayList<String> newList = new ArrayList<>(rolesOrDefaultRole);
-		this.defaultRole = newList.size() == 1 ? newList.get(0) : null;
+			this.locale = GeneralUtilities.getDefaultLocale();
+			this.roles = user.getRoles();
 
-		this.functionalities = user.getFunctionalities();
+			Collection rolesOrDefaultRole = user.getRolesForUse();
+			ArrayList<String> newList = new ArrayList<>(rolesOrDefaultRole);
+			this.defaultRole = newList.size() == 1 ? newList.get(0) : null;
 
-		this.enterprise = isEnterpriseEdition();
+			this.functionalities = user.getFunctionalities();
 
+			this.enterprise = isEnterpriseEdition();
+		} catch (EMFInternalError e) {
+			throw new SpagoBIRuntimeException("Cannot create UserInformationDTO from UserProfile object", e);
+		}
 	}
 
 	public String getUserId() {
@@ -200,6 +205,14 @@ public class UserInformationDTO {
 		} catch (ClassNotFoundException e) {
 			return false;
 		}
+	}
+
+	@Override
+	public String toString() {
+		return "UserInformationDTO [userId=" + userId + ", fullName=" + fullName + ", isSuperadmin=" + isSuperadmin + ", defaultRole=" + defaultRole
+				+ ", attributes=" + attributes + ", organization=" + organization + ", organizationImageb64=" + organizationImageb64 + ", uniqueIdentifier="
+				+ uniqueIdentifier + ", email=" + email + ", locale=" + locale + ", userUniqueIdentifier=" + userUniqueIdentifier + ", roles=" + roles
+				+ ", functionalities=" + functionalities + ", enterprise=" + enterprise + "]";
 	}
 
 }

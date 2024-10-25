@@ -108,7 +108,7 @@ const crypto = require('crypto')
 const deepcopy = require('deepcopy')
 // @ts-ignore
 // eslint-disable-next-line
-window.execExternalCrossNavigation = function (outputParameters, otherOutputParameters, crossNavigationLabel) {
+window.execExternalCrossNavigation = function(outputParameters, otherOutputParameters, crossNavigationLabel) {
     postMessage(
         {
             type: 'crossNavigation',
@@ -124,7 +124,7 @@ window.execExternalCrossNavigation = function (outputParameters, otherOutputPara
 
 // @ts-ignore
 // eslint-disable-next-line
-window.execPreviewDataset = function (dsLabel, parameters, directDownload) {
+window.execPreviewDataset = function(dsLabel, parameters, directDownload) {
     postMessage(
         {
             type: 'preview',
@@ -344,9 +344,30 @@ export default defineComponent({
         isInDocBrowser() {
             return this.$router.currentRoute.value.matched.some((i) => i.name === 'document-browser' || i.name === 'document-execution-workspace')
         },
-        async directDownloadDataset(datasetId: number) {
+        prepareDriversAndParameter(parameters: any) {
+            let tempObj = {} as any
+            if (parameters.length > 0) {
+                const tempParams = parameters.map((i) => {
+                    return {
+                        name: i.name,
+                        multiValue: i.multiValue,
+                        value: i.value
+                    }
+                })
+                tempObj.parameters = tempParams
+            }
+            if (this.filtersData?.filterStatus.length > 0) {
+                let tempDrivers = {} as any
+                this.filtersData.filterStatus.forEach((i) => {
+                    tempDrivers[i.urlName] = i.multivalue ? i.parameterValue.map((p) => p.value) : i.parameterValue[0].value
+                })
+                tempObj.drivers = tempDrivers
+            }
+            return tempObj
+        },
+        async directDownloadDataset(dataset: any) {
             await this.$http
-                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/export/dataset/${datasetId}/csv`, {}, { headers: { Accept: 'application/json, text/plain, */*', 'Content-Type': 'application/json;charset=UTF-8' } })
+                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/export/dataset/${dataset.id}/csv`, this.prepareDriversAndParameter(dataset.pars), { headers: { Accept: 'application/json, text/plain, */*', 'Content-Type': 'application/json;charset=UTF-8' } })
                 .then(() => {
                     this.$store.commit('setInfo', {
                         title: this.$t('common.toast.updateTitle'),
@@ -357,7 +378,7 @@ export default defineComponent({
         },
         async iframeEventsListener(event) {
             if (event.data.type === 'crossNavigation') {
-                this.executeCrossNavigation(event)
+                await this.executeCrossNavigation(event)
             } else if (event.data.type === 'preview') {
                 await this.$http
                     .get(process.env.VUE_APP_HOST_URL + `/knowage/restful-services/1.0/datasets/${event.data.dsLabel}`)
@@ -608,6 +629,7 @@ export default defineComponent({
             this.loading = true
             this.parameterSidebarVisible = false
             this.schedulationsTableVisible = true
+            this.schedulations = []
             await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/documentsnapshot/getSnapshots?id=${this.document.id}`).then((response: AxiosResponse<any>) => {
                 response.data?.schedulers.forEach((el: any) => this.schedulations.push({ ...el, urlPath: response.data.urlPath }))
             })
@@ -759,6 +781,7 @@ export default defineComponent({
 
                     if (el.type === 'DATE' && !el.selectionType && el.valueSelection === 'man_in' && el.showOnPanel === 'true' && el.visible) {
                         el.parameterValue[0].value = getValidDate('' + el.parameterValue[0].value, this.dateFormat)
+                        if (el.driverMaxValue) el.driverMaxValue = getValidDate('' + el.driverMaxValue, this.dateFormat)
                     }
                 }
                 if (el.data) {
@@ -851,6 +874,11 @@ export default defineComponent({
             if (!this.urlData || !this.urlData.engineLabel) return
             await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/exporters/config/${this.urlData.engineLabel}`).then((response: AxiosResponse<any>) => (this.exporters = response.data.exporters))
         },
+        replaceNullForDates(par, value) {
+            if (value == 'null' && this.filtersData.filterStatus.find((i) => i.urlName === par && i.type === 'DATE')) {
+                return ''
+            } else return value
+        },
         async sendForm(documentLabel: string | null = null, crossNavigationPopupMode: boolean = false) {
             let tempIndex = this.breadcrumbs.findIndex((el: any) => el.label === this.document.name) as any
             const documentUrl = this.urlData?.url + '&timereloadurl=' + new Date().getTime()
@@ -891,6 +919,7 @@ export default defineComponent({
                 if (inputElement) {
                     inputElement.value = decodeURIComponent(postObject.params[k])
                     inputElement.value = inputElement.value.replace(/\+/g, ' ')
+                    inputElement.value = this.replaceNullForDates(k, inputElement.value)
 
                     this.hiddenFormData.set(k, decodeURIComponent(postObject.params[k]).replace(/\+/g, ' '))
                 } else {
@@ -900,6 +929,7 @@ export default defineComponent({
                     element.name = k
                     element.value = decodeURIComponent(postObject.params[k])
                     element.value = element.value.replace(/\+/g, ' ')
+                    element.value = this.replaceNullForDates(k, element.value)
 
                     postForm.appendChild(element)
                     this.hiddenFormData.append(k, decodeURIComponent(postObject.params[k]).replace(/\+/g, ' '))
@@ -1012,10 +1042,10 @@ export default defineComponent({
                     } else if (parameter.valueSelection === 'man_in') {
                         if (!parameter.parameterValue[0]) parameter.parameterValue[0] = { value: '', description: '' }
                         parameters[parameter.urlName] = parameter.type === 'NUM' && parameter.parameterValue[0].value ? +parameter.parameterValue[0].value : parameter.parameterValue[0].value
-                        parameters[parameter.urlName + '_field_visible_description'] = parameter.type === 'NUM' && parameter.parameterValue[0].description ? +parameter.parameterValue[0].description : parameter.parameterValue[0].description
+                        parameters[parameter.urlName + '_field_visible_description'] = parameter.parameterValue[0].value
                     } else if (parameter.selectionType === 'TREE' || parameter.selectionType === 'LOOKUP' || parameter.multivalue) {
                         parameters[parameter.urlName] = parameter.parameterValue.map((el: any) => {
-                            if(typeof el.value === "object") return el.value[0]
+                            if (typeof el.value === 'object') return el.value[0]
                             else return el.value
                         })
                         let tempString = ''

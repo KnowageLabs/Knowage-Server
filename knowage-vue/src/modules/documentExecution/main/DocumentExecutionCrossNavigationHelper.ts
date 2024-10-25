@@ -29,7 +29,11 @@ export function loadNavigationParamsInitialValue(vueComponent: any) {
                     }
                 }
                 if (tempParam.selectionType === 'COMBOBOX') formatCrossNavigationComboParameterDescription(tempParam)
-                else if (['TREE', 'LOOKUP'].includes(tempParam.selectionType) && tempParam.parameterValue[0]) tempParam.parameterValue[0].description = tempParam.parameterValue[0].value
+                else if (['TREE', 'LOOKUP'].includes(tempParam.selectionType) && Array.isArray(tempParam.parameterValue)) {
+                    tempParam.parameterValue.forEach((tempValue, index) => {
+                        tempValue.description = tempParam.parameterDescription?.[index] || tempValue.value
+                    })
+                }
             }
         }
     })
@@ -44,11 +48,11 @@ function checkIfMultivalueDriverContainsCrossNavigationValue(tempParam: any, cro
 export function getValidDate(value: string, serverDateFormat: string) {
     const extractedDateValue = extractDatePart(value)
     let momentDate = moment(deepcopy(extractedDateValue))
-    const tempServerDateFormat = serverDateFormat.replaceAll('y', 'Y')
+    const tempServerDateFormat = convertToMomentFormat(serverDateFormat)
     const validFormats = [tempServerDateFormat, 'DD/MM/YYYY', 'DD/MM/YYYY HH:mm:ss.SSS']
     let tempDateFormatFromTheDateValue = extractDateFormatPart(value)
     if (tempDateFormatFromTheDateValue) {
-        tempDateFormatFromTheDateValue = tempDateFormatFromTheDateValue.replaceAll('y', 'Y')
+        tempDateFormatFromTheDateValue = convertToMomentFormat(tempDateFormatFromTheDateValue)
         validFormats.unshift(tempDateFormatFromTheDateValue)
     }
     for (let i = 0; i < validFormats.length; i++) {
@@ -56,6 +60,13 @@ export function getValidDate(value: string, serverDateFormat: string) {
         if (momentDate.isValid()) return momentDate.toDate()
     }
     return ''
+}
+
+function convertToMomentFormat(format: string) {
+    return format
+        .replace(/yyyy/g, 'YYYY')
+        .replace(/dd/g, 'DD')
+        .replace(/mm/g, 'MM')
 }
 
 function extractDatePart(dateString: string) {
