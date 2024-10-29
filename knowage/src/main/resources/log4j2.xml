@@ -121,7 +121,7 @@
 		<logger name="dataset.audit" additivity="false" level="error">
 			<AppenderRef ref="KNOWAGE_DATASET_AUDIT" />
 		</logger>
-		<logger name="it.eng" additivity="false" level="error">
+		<logger name="it.eng" additivity="false" level="info">
 			<AppenderRef ref="KNOWAGE_CORE" />
 		</logger>
 		<logger name="it.eng.knowage.mail.MailSessionBuilder" additivity="false" level="warn">
@@ -181,40 +181,43 @@
 		<logger name="org.quartz" additivity="false" level="trace">
 			<AppenderRef ref="KNOWAGE_QUARTZ" />
 		</logger>
-		<logger name="it.eng.spagobi.tools.scheduler.init.QuartzInitializer" additivity="false" level="warn">
+		<logger name="it.eng.spagobi.tools.scheduler.init.QuartzInitializer" additivity="false" level="error">
 			<AppenderRef ref="KNOWAGE_QUARTZ" />
 		</logger>
 		<logger name="Spago" level="error" additivity="false">
 			<AppenderRef ref="KNOWAGE_CORE" />
 		</logger>
-		<logger name="it.eng.spagobi.commons.utilities.ObjectsAccessVerifier" level="warn" additivity="false">
+		<logger name="it.eng.spagobi.commons.utilities.ObjectsAccessVerifier" level="error" additivity="false">
 			<AppenderRef ref="KNOWAGE_CORE" />
 		</logger>
-		<logger name="it.eng.knowage.functionscatalog.utils.CatalogFunctionDataProxy" level="warn" additivity="false">
+		<logger name="it.eng.knowage.functionscatalog.utils.CatalogFunctionDataProxy" level="error" additivity="false">
 			<AppenderRef ref="KNOWAGE_CORE" />
 		</logger>
-		<logger name="it.eng.knowage.encryption.DecryptionDataStoreTransformer" level="warn" additivity="false">
+		<logger name="it.eng.knowage.encryption.DecryptionDataStoreTransformer" level="error" additivity="false">
 			<AppenderRef ref="KNOWAGE_CORE" />
 		</logger>
-		<logger name="it.eng.knowage.encryption.DataEncryptionInitializer" level="warn" additivity="false">
+		<logger name="it.eng.knowage.encryption.DataEncryptionInitializer" level="error" additivity="false">
 			<AppenderRef ref="KNOWAGE_CORE" />
 		</logger>
-		<logger name="privacymanager.wrapper.PrivacyManagerAPIImpl" level="warn" additivity="false">
+		<logger name="privacymanager.wrapper.PrivacyManagerAPIImpl" level="error" additivity="false">
 			<AppenderRef ref="KNOWAGE_CORE" />
 		</logger>
-		<logger name="it.eng.knowage.privacymanager.PrivacyManagerDataStoreTransformer" level="debug" additivity="false">
+		<logger name="it.eng.knowage.privacymanager.PrivacyManagerDataStoreTransformer" level="error" additivity="false">
 			<AppenderRef ref="KNOWAGE_CORE" />
 		</logger>
-		<logger name="it.eng.knowage.privacymanager.PMConfiguration" level="debug" additivity="false">
+		<logger name="it.eng.knowage.privacymanager.PMConfiguration" level="error" additivity="false">
 			<AppenderRef ref="KNOWAGE_CORE" />
 		</logger>
-		<logger name="it.eng.knowage.privacymanager.EventBuilderUtils" level="debug" additivity="false">
+		<logger name="it.eng.knowage.privacymanager.EventBuilderUtils" level="deerrorbug" additivity="false">
 			<AppenderRef ref="KNOWAGE_CORE" />
 		</logger>
-		<logger name="it.eng.spagobi.tools.dataset.actions.AbstractDatasetActionsChecker" level="debug" additivity="false">
+		<logger name="it.eng.spagobi.tools.dataset.actions.AbstractDatasetActionsChecker" level="error" additivity="false">
 			<AppenderRef ref="KNOWAGE_CORE" />
 		</logger>
-		<Root level="error">
+		<logger name="it.eng.spagobi.security" level="info" additivity="false">
+			<AppenderRef ref="KNOWAGE_CORE" />
+		</logger>		
+		<Root level="info">
 			<AppenderRef ref="KNOWAGE_CORE" />
 		</Root>
 	</Loggers>
