@@ -62,12 +62,12 @@ public class PNTSecurityServiceSupplier extends OIDCFullIdTokenSecurityServiceSu
 		try {
 			String[] rolesArray = this.getUserRoles(decodedJWT);
 			if (rolesArray == null || rolesArray.length == 0) {
-				logger.debug("No roles detected, returning empty profile attributes.");
+				logger.info("No roles detected, returning empty profile attributes.");
 				return getNoVisibilityAttributes();
 			}
 			List<String> roles = Arrays.asList(rolesArray);
 			if (roles.contains(ROLE_KN_ADMIN) || roles.contains(ROLE_KN_DEV) || roles.contains(ROLE_KN_GOVERNO)) {
-				logger.debug("A role between " + ROLE_KN_ADMIN + ", " + ROLE_KN_DEV + " or " + ROLE_KN_GOVERNO
+				logger.info("A role between " + ROLE_KN_ADMIN + ", " + ROLE_KN_DEV + " or " + ROLE_KN_GOVERNO
 						+ "was detected, returning full visibility attributes");
 				return getFullVisibilityAttributes();
 			}
@@ -89,7 +89,7 @@ public class PNTSecurityServiceSupplier extends OIDCFullIdTokenSecurityServiceSu
 			String decodedPayload = new String(Base64.getDecoder().decode(payload));
 
 			net.minidev.json.JSONArray parsed = JsonPath.read(decodedPayload, ORGANIZATIONS_JSON_PATH);
-			LogMF.debug(logger, "Got parsed organizations [{0}]", parsed);
+			LogMF.info(logger, "Got parsed organizations [{0}]", parsed);
 			if (parsed == null || parsed.isEmpty()) {
 				logger.debug("No organizations detected");
 				return getNoVisibilityAttributes();
@@ -103,7 +103,7 @@ public class PNTSecurityServiceSupplier extends OIDCFullIdTokenSecurityServiceSu
 																								// inside the list
 					strutture.add(organization);
 				} else {
-					logger.warn("Organization [" + organization + "] not recognized neither as a 'regione' nor as a 'struttura'");
+					logger.info("Organization [" + organization + "] not recognized neither as a 'regione' nor as a 'struttura'");
 				}
 			});
 		} catch (Exception e) {
@@ -168,7 +168,7 @@ public class PNTSecurityServiceSupplier extends OIDCFullIdTokenSecurityServiceSu
 
 	private IDataSource getDataSource() {
 		String datasourceName = getDataSourceName();
-		LogMF.debug(logger, "Data source name is [{0}]", datasourceName);
+		LogMF.info(logger, "Data source name is [{0}]", datasourceName);
 		IDataSource ds = null;
 		try {
 			ds = DAOFactory.getDataSourceDAO().findDataSourceByLabel(datasourceName);

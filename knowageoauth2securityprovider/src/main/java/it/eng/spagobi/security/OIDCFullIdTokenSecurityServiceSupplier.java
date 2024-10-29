@@ -66,25 +66,25 @@ public class OIDCFullIdTokenSecurityServiceSupplier implements ISecurityServiceS
 
 	private String externalJWTToken2InternalJWTToken(String jwtToken) {
 		try {
-			LogMF.debug(logger, "Input JWT token is [{0}]", jwtToken);
+			LogMF.info(logger, "Input JWT token is [{0}]", jwtToken);
 			DecodedJWT decodedJWT = JWT.decode(jwtToken); // ID TOKEN IS TRUSTED: it was validated by OAuth2Filter
-			logger.debug("JWT token properly decoded");
+			logger.info("JWT token properly decoded");
 			String userId = decodedJWT.getClaim(OAuth2Config.getInstance().getUserIdClaim()).asString();
-			LogMF.debug(logger, "User id is [{0}]", userId);
+			LogMF.info(logger, "User id is [{0}]", userId);
 			String userName = getUserName(decodedJWT);
-			LogMF.debug(logger, "User name is [{0}]", userName);
+			LogMF.info(logger, "User name is [{0}]", userName);
 			String[] roles = getUserRoles(decodedJWT);
-			LogMF.debug(logger, "Roles list is [{0}]", roles);
+			LogMF.info(logger, "Roles list is [{0}]", roles);
 			boolean isSuperAdmin = isSuperAdmin(roles);
-			LogMF.debug(logger, "Super admin flag is [{0}]", isSuperAdmin);
+			LogMF.info(logger, "Super admin flag is [{0}]", isSuperAdmin);
 			Map<String, String> attributes = getUserAttributes(decodedJWT);
-			LogMF.debug(logger, "Attributes are [{0}]", attributes);
+			LogMF.info(logger, "Attributes are [{0}]", attributes);
 			Calendar calendar = Calendar.getInstance();
 			calendar.add(Calendar.HOUR, InternalSecurityServiceSupplierImpl.USER_JWT_TOKEN_EXPIRE_HOURS);
 			Date expiresAt = calendar.getTime();
 
 			String toReturn = JWTSsoService.getFullJWTToken(userId, userName, roles, attributes, isSuperAdmin, expiresAt);
-			LogMF.debug(logger, "Output JWT token is [{0}]", toReturn);
+			LogMF.info(logger, "Output JWT token is [{0}]", toReturn);
 
 			return toReturn;
 		} catch (JWTDecodeException e) {
@@ -100,10 +100,10 @@ public class OIDCFullIdTokenSecurityServiceSupplier implements ISecurityServiceS
 				String claimName = sbiAttribute.getAttributeName();
 				Claim valueClaim = decodedJWT.getClaim(claimName);
 				if (!valueClaim.isNull()) {
-					LogMF.debug(logger, "Got attribute/claim with name [{0}] and value [{1}]", claimName, valueClaim.asString());
+					LogMF.info(logger, "Got attribute/claim with name [{0}] and value [{1}]", claimName, valueClaim.asString());
 					attributes.put(claimName, valueClaim.asString());
 				} else {
-					LogMF.debug(logger, "Claim with name [{0}] not found into JWT token", claimName);
+					LogMF.info(logger, "Claim with name [{0}] not found into JWT token", claimName);
 				}
 			});
 		} catch (EMFUserError e) {
@@ -149,9 +149,9 @@ public class OIDCFullIdTokenSecurityServiceSupplier implements ISecurityServiceS
 			String payload = decodedJWT.getPayload();
 			String decodedPayload = new String(Base64.getDecoder().decode(payload));
 			net.minidev.json.JSONArray parsed = JsonPath.read(decodedPayload, OAuth2Config.getInstance().getIdTokenJsonRolesPath());
-			LogMF.debug(logger, "Got parsed roles [{0}]", parsed);
+			LogMF.info(logger, "Got parsed roles [{0}]", parsed);
 			if (parsed == null || parsed.isEmpty()) {
-				logger.debug("No roles detected");
+				logger.info("No roles detected");
 				return new String[0];
 			}
 			String[] roles = new String[parsed.size()];
