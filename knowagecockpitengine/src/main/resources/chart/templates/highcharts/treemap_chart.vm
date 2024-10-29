@@ -64,7 +64,7 @@
 {
  	chart: 
  	{
-  		type: '$chartType',
+  		type: 'treemap',
 		#if($chart.isCockpitEngine=="true")
 			drillable: $chart.drillable,
 		#else
