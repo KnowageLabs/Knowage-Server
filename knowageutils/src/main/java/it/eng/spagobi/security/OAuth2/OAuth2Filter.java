@@ -77,16 +77,16 @@ public class OAuth2Filter implements Filter {
 
 			if (idToken != null) {
 				// request contains id token --> set it in session and continue with filters chain
-				LOGGER.debug("ID token found: [{}]", idToken);
+				LOGGER.info("ID token found: [{}]", idToken);
 				validateIdToken(idToken, session);
-				LOGGER.debug("ID token validated successfully");
+				LOGGER.info("ID token validated successfully");
 				session.setAttribute(Oauth2SsoService.ID_TOKEN, idToken);
 				chain.doFilter(request, response);
 			} else {
 				if (session.isNew() || session.getAttribute(Oauth2SsoService.ID_TOKEN) == null) {
 					// OAuth2 flow must take place --> stop filters chain
 					manageNonce(session);
-					LOGGER.debug("ID token not found, starting OIDC flow...");
+					LOGGER.info("ID token not found, starting OIDC flow...");
 					request.getRequestDispatcher(config.getFlowJSPPath()).forward(request, response);
 				} else {
 					// session is already initialized --> continue with filters chain
@@ -100,17 +100,17 @@ public class OAuth2Filter implements Filter {
 			// in case nonce is not defined, generate it and put it in session
 			if (nonceFromSession == null) {
 				String nonce = OAuth2Utils.createNonce();
-				LOGGER.debug("Nonce generated : [{}]", nonce);
+				LOGGER.info("Nonce generated : [{}]", nonce);
 				session.setAttribute(Oauth2SsoService.NONCE, nonce);
 			}
 
 		}
 
 		private void validateIdToken(String idToken, HttpSession session) {
-			LOGGER.debug("Input JWT token is [{}]", idToken);
+			LOGGER.info("Input JWT token is [{}]", idToken);
 			try {
 				DecodedJWT decodedJWT = JWT.decode(idToken);
-				LOGGER.debug("JWT token properly decoded");
+				LOGGER.info("JWT token properly decoded");
 				// verify token
 				JwkProvider provider = new JwkProviderBuilder(new URL(OAuth2Config.getInstance().getJWKSUrl())).build();
 				Jwk jwk = provider.get(decodedJWT.getKeyId());
@@ -136,7 +136,7 @@ public class OAuth2Filter implements Filter {
 					LOGGER.error("JWT token nonce [{}] does not match the generated nonce, that is [{}]", nonceClaim, generatedNonce);
 					throw new SpagoBIRuntimeException("JWT token nonce does not match the generated nonce");
 				}
-				LOGGER.debug("JWT token verified.");
+				LOGGER.info("JWT token verified.");
 			} catch (Exception e) {
 				LOGGER.error("An error occurred while verifying ID TOKEN", e);
 				throw new SpagoBIRuntimeException("An error occurred while verifying ID TOKEN", e);
@@ -151,7 +151,7 @@ public class OAuth2Filter implements Filter {
 		@Override
 		public void manage(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws ServletException, IOException {
 
-			LOGGER.debug("Managing OAuth2 in a classic way");
+			LOGGER.info("Managing OAuth2 in a classic way");
 
 			HttpSession session = request.getSession();
 			OAuth2Config config = OAuth2Config.getInstance();
@@ -159,13 +159,13 @@ public class OAuth2Filter implements Filter {
 
 			if (accessToken != null) {
 				// request contains access token --> set it in session and continue with filters chain
-				LOGGER.debug("Access token found: [{}]", accessToken);
+				LOGGER.info("Access token found: [{}]", accessToken);
 				session.setAttribute(Oauth2SsoService.ACCESS_TOKEN, accessToken);
 				chain.doFilter(request, response);
 			} else {
 				if (session.isNew() || session.getAttribute(Oauth2SsoService.ACCESS_TOKEN) == null) {
 					// OAuth2 flow must take place --> stop filters chain
-					LOGGER.debug("Access token not found, starting OAuth2 flow...");
+					LOGGER.info("Access token not found, starting OAuth2 flow...");
 					request.getRequestDispatcher(config.getFlowJSPPath()).forward(request, response);
 				} else {
 					// session is already initialized --> continue with filters chain

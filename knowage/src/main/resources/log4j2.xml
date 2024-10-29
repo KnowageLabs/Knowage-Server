@@ -223,7 +223,7 @@
 		<logger name="it.eng.spagobi.security" level="info" additivity="false">
 			<AppenderRef ref="KNOWAGE_CORE" />
 		</logger>
-		<Root level="error">
+		<Root level="info">
 			<AppenderRef ref="KNOWAGE_CORE" />
 		</Root>
 	</Loggers>
