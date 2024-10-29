@@ -746,24 +746,13 @@ angular.module('chartInitializer')
 
 	}
 	this.setExtremes = function (chartConf){
-		var mapAxis=  {min:{},max:{}};
-		for (var i =0; i < chartConf.series.length; i++){
-			var max = Math.max.apply(Math, chartConf.series[i].data.map(function(o) {  if(o.y){return o.y;}else{return null} }));
-			var min = Math.min.apply(Math, chartConf.series[i].data.map(function(o) {  if(o.y){return o.y;}else{return null} }));
-			if(mapAxis.min[chartConf.series[i].yAxis]!=undefined){
-				if(mapAxis.min[chartConf.series[i].yAxis] > min)
-				mapAxis.min[chartConf.series[i].yAxis] = min;
-			} else {
-				mapAxis.min[chartConf.series[i].yAxis] = min;
-			}
-			if(mapAxis.max[chartConf.series[i].yAxis]!=undefined){
-				if(mapAxis.max[chartConf.series[i].yAxis] < max)
-				mapAxis.max[chartConf.series[i].yAxis] = max;
-			} else {
-				mapAxis.max[chartConf.series[i].yAxis] = max;
-			}
-		}
-		return mapAxis;
+		let extremes = {max: [],min: []}
+		chartConf.series.forEach((serie)=>{
+			let values = serie.data.map((i)=>i.y||null);
+			extremes.max.push(Math.max(...values))
+			extremes.min.push(Math.min(...values))
+		})
+	    return extremes
 	}
 
 	this.updateData = function(widgetData){
