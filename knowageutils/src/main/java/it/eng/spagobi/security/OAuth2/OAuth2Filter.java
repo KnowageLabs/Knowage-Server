@@ -131,8 +131,11 @@ public class OAuth2Filter implements Filter {
 				}
 				// check that nonce matches the generated one
 				String generatedNonce = (String) session.getAttribute(Oauth2SsoService.NONCE);
+				LOGGER.info("generatedNonce [{}]",generatedNonce);
 				Claim nonceClaim = decodedJWT.getClaim(Oauth2SsoService.NONCE);
+
 				if (nonceClaim.isNull() || !nonceClaim.asString().equals(generatedNonce)) {
+					LOGGER.info("nonceClaim.asString() [{}]",nonceClaim.asString());
 					LOGGER.error("JWT token nonce [{}] does not match the generated nonce, that is [{}]", nonceClaim, generatedNonce);
 					throw new SpagoBIRuntimeException("JWT token nonce does not match the generated nonce");
 				}
