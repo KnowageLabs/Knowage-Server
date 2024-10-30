@@ -185,7 +185,6 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 	@POST
 	@Path("/url")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-	@FeatureFlag(Feature.EDIT_DOCUMENT)
 	public Response getDocumentExecutionURL(@Context HttpServletRequest req) throws IOException, JSONException {
 
 		LOGGER.debug("IN");
@@ -545,7 +544,6 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 	@POST
 	@Path("/filters")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-	@FeatureFlag(Feature.EDIT_DOCUMENT)
 	public Response getDocumentExecutionFilters(@Context HttpServletRequest req)
 			throws EMFUserError, IOException, JSONException, EncodingException {
 
@@ -1116,7 +1114,6 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 	// @QueryParam("mode") String mode, @QueryParam("treeLovNode") String treeLovNode,
 	// // @QueryParam("treeLovNode") Integer treeLovNodeLevel,
 	// @Context HttpServletRequest req) throws EMFUserError {
-	@FeatureFlag(Feature.EDIT_DOCUMENT)
 	public Response getParameterValues(@Context HttpServletRequest req)
 			throws EMFUserError, IOException, JSONException {
 
@@ -1222,7 +1219,6 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 	@POST
 	@Path("/canHavePublicExecutionUrl")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-	@FeatureFlag(Feature.EDIT_DOCUMENT)
 	public Response canHavePublicExecutionUrl(@Context HttpServletRequest req) {
 		LOGGER.debug("IN");
 
