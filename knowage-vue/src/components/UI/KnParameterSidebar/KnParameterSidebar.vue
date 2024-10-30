@@ -63,8 +63,8 @@
                         :class="{
                             'p-invalid': parameter.mandatory && parameter.parameterValue && !parameter.parameterValue[0]?.value
                         }"
-                        @blur="updateDependency(parameter)"
-                        @keypress.enter="updateDependency(parameter)"
+                        @blur="onInputTextChanged(parameter)"
+                        @keypress.enter="onInputTextChanged(parameter)"
                         :data-test="'parameter-input-' + parameter.id"
                     />
                 </div>
@@ -349,6 +349,8 @@ export default defineComponent({
             this.filtersData?.filterStatus?.forEach((el: iParameter) => {
                 if (el.selectionType == 'LIST' && el.showOnPanel == 'true' && el.visible && el.multivalue) {
                     this.selectedParameterCheckbox[el.id] = el.parameterValue?.map((parameterValue: any) => parameterValue.value)
+                } else if (el.type === 'STRING' && el.valueSelection == 'man_in' && el.showOnPanel == 'true') {
+                    el.initialValue = el.parameterValue && el.parameterValue[0] ? el.parameterValue[0].value : ''
                 }
                 this.parameters.filterStatus.push(el)
             })
@@ -731,6 +733,10 @@ export default defineComponent({
             if (!parameter.parameterValue[0]) return
             const index = parameter.data?.findIndex((el: { value: string; description: string }) => el.value === parameter.parameterValue[0].value)
             if (index !== -1) parameter.parameterValue[0].description = parameter.data[index].description
+        },
+        onInputTextChanged(parameter: any) {
+            if (parameter.parameterValue[0] && parameter.initialValue === parameter.parameterValue[0]?.value) return
+            this.updateDependency(parameter)
         }
     }
 })
