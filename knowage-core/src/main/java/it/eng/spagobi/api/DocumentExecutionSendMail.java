@@ -1,5 +1,7 @@
 package it.eng.spagobi.api;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -10,13 +12,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
 
-import javax.activation.DataHandler;
 import javax.activation.DataSource;
-import javax.mail.Message;
-import javax.mail.Multipart;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeBodyPart;
-import javax.mail.internet.MimeMultipart;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -29,14 +25,18 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import it.eng.knowage.mail.MailSessionBuilder;
-import it.eng.knowage.mail.MailSessionBuilder.SessionFacade;
+import it.eng.knowage.mailsender.IMailSender;
+import it.eng.knowage.mailsender.dto.MessageMailDto;
+import it.eng.knowage.mailsender.dto.ProfileNameMailEnum;
+import it.eng.knowage.mailsender.dto.TypeMailEnum;
+import it.eng.knowage.mailsender.factory.FactoryMailSender;
 import it.eng.spago.base.SourceBeanAttribute;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO;
 import it.eng.spagobi.analiticalmodel.document.handlers.ExecutionController;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
+import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.utilities.ExecutionProxy;
 import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
@@ -65,7 +65,7 @@ public class DocumentExecutionSendMail extends AbstractSpagoBIResource {
 		String object = requestVal.optString("OBJECT");
 		JSONObject jsonParameters = requestVal.optJSONObject("parameters");
 
-		HashMap<String, Object> resultAsMap = new HashMap<String, Object>();
+		HashMap<String, Object> resultAsMap = new HashMap<>();
 
 		logger.debug("IN");
 
@@ -98,7 +98,7 @@ public class DocumentExecutionSendMail extends AbstractSpagoBIResource {
 			ExecutionController execCtrl = new ExecutionController();
 			execCtrl.setBiObject(biobj);
 
-			List<BIObjectParameter> listBioParams = new ArrayList<BIObjectParameter>();
+			List<BIObjectParameter> listBioParams = new ArrayList<>();
 			// fill parameters
 			String queryStr = "user_id=" + userId + "&ACTION_NAME=SEND_TO_ACTION&SBI_ENVIRONMENT=DOCBROWSER";
 			for (BIObjectParameter biParam : biobj.getDrivers()) {
@@ -142,53 +142,32 @@ public class DocumentExecutionSendMail extends AbstractSpagoBIResource {
 			// } end if (execCtrl.directExecution()) {
 			// SEND MAIL
 
-			SessionFacade facade = MailSessionBuilder.newInstance()
-				.usingUserProfile()
-				.setFromAddress(from)
-				.setUser(login)
-				.setPassword(pass)
-				.build();
+			MessageMailDto messageMailDto = new MessageMailDto();
+			messageMailDto.setProfileName((ProfileNameMailEnum.USER_FROM_PWS));
+			messageMailDto.setFrom(from);
+			messageMailDto.setLogin(login);
+			messageMailDto.setPassword(pass);
 
-			// create a message
-			Message msg = facade.createNewMimeMessage();
-
-			InternetAddress[] addressTo = new InternetAddress[recipients.length];
-			for (int i = 0; i < recipients.length; i++) {
-				addressTo[i] = new InternetAddress(recipients[i]);
-			}
-			msg.setRecipients(Message.RecipientType.TO, addressTo);
+			messageMailDto.setRecipients(recipients);
 			if ((cc != null) && !cc.trim().equals("")) {
 				recipients = cc.split(",");
-				InternetAddress[] addressCC = new InternetAddress[recipients.length];
-				for (int i = 0; i < recipients.length; i++) {
-					String cc_add = recipients[i];
-					if ((cc_add != null) && !cc_add.trim().equals("")) {
-						addressCC[i] = new InternetAddress(recipients[i]);
-					}
-				}
-				msg.setRecipients(Message.RecipientType.CC, addressCC);
+				messageMailDto.setRecipientsCC(recipients);
 			}
-			// Setting the Subject and Content Type
-			msg.setSubject(object);
 
-			// create and fill the first message part
-			MimeBodyPart mbp1 = new MimeBodyPart();
-			mbp1.setText(message, "utf-8", "html");
-			// create the second message part
-			MimeBodyPart mbp2 = new MimeBodyPart();
-			// attach the file to the message
-			SchedulerDataSource sds = new SchedulerDataSource(documentBytes, returnedContentType, "result" + fileextension);
-			mbp2.setDataHandler(new DataHandler(sds));
-			mbp2.setFileName(sds.getName());
-			// create the Multipart and add its parts to it
-			Multipart mp = new MimeMultipart();
-			mp.addBodyPart(mbp1);
-			mp.addBodyPart(mbp2);
-			// add the Multipart to the message
-			msg.setContent(mp);
+			// Setting the Subject and Content Type
+			messageMailDto.setSubject(object);
+
+			messageMailDto.setTypeMailEnum(TypeMailEnum.MULTIPART);
+			messageMailDto.setText(message);
+			messageMailDto.setCharset(UTF_8.name());
+			messageMailDto.setSubtype("html");
+			messageMailDto.setAttach(documentBytes);
+			messageMailDto.setContainedFileName("result");
+			messageMailDto.setFileExtension(fileextension);
+			messageMailDto.setContentType(returnedContentType);
 
 			// send message
-			facade.sendMessage(msg);
+			FactoryMailSender.getMailSender(SingletonConfig.getInstance().getConfigValue(IMailSender.MAIL_SENDER)).sendMail(messageMailDto);
 
 			// retCode = OK;
 			resultAsMap.put("success", "Mail Sent");
@@ -251,7 +230,7 @@ public class DocumentExecutionSendMail extends AbstractSpagoBIResource {
 	 * @param attributes
 	 */
 	public void setParametersDescription(List<BIObjectParameter> BIObjectParameters, List<SourceBeanAttribute> attributes) {
-		Map<String, String> parameterNameDescriptionMap = new HashMap<String, String>();
+		Map<String, String> parameterNameDescriptionMap = new HashMap<>();
 		// we create a map: parameter name, parameter description
 		for (int i = 0; i < attributes.size(); i++) {
 			SourceBeanAttribute sba = attributes.get(i);
@@ -279,7 +258,7 @@ public class DocumentExecutionSendMail extends AbstractSpagoBIResource {
 	 * @return the list of descriptions
 	 */
 	public List<String> parseDescriptionString(String s) {
-		List<String> descriptions = new ArrayList<String>();
+		List<String> descriptions = new ArrayList<>();
 		StringTokenizer stk = new StringTokenizer(s, ";");
 		while (stk.hasMoreTokens()) {
 			descriptions.add(stk.nextToken());
