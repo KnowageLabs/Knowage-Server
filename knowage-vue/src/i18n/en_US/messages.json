@@ -215,6 +215,7 @@
         "validation": {
             "maxLength": "This field must have less then {max} characters",
             "maximumCharacters": "The maximum length allowed is {max}",
+            "passwordFormat": "The password must contain at least the following characters: 1 uppercase, 1 lowercase, 1 number, 1 special character ({'|'}_-#$)",
             "minLength": "This field should have at least {min} characters",
             "noQuestionMark": "The value of the field must not contain the question mark (?)",
             "regex": "Invalid format",
