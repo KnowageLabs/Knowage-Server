@@ -24,6 +24,7 @@ import java.util.List;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import it.eng.spagobi.services.validation.Alphanumeric;
@@ -34,7 +35,7 @@ import it.eng.spagobi.services.validation.ExtendedAlphanumeric;
  *
  * @author Petrovic Stefan ( o_stpetrov, Stefan.Petrovic@mht.net )
  */
-
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class RoleBO implements Serializable {
 
 	/**
@@ -609,10 +610,11 @@ public class RoleBO implements Serializable {
 
 	@JsonProperty(value = "isPublic")
 	public void setIsPublic(Boolean isPublic) {
-		if (isPublic == null)
+		if (isPublic == null) {
 			this.isPublic = false;
-		else
+		} else {
 			this.isPublic = isPublic;
+		}
 	}
 
 	public boolean isAbleToCreateSelfServiceCockpit() {

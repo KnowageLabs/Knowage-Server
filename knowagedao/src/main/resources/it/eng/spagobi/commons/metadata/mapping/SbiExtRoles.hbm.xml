@@ -95,7 +95,34 @@
         	<many-to-many entity-name="it.eng.spagobi.tools.news.metadata.SbiNews">
         		<column name="NEWS_ID" not-null="true"></column>
         	</many-to-many>
-        </set>   
+        </set>
+        
+        <set name="sbiLayersRoles" table="SBI_ROLES_LAYERS" inverse="true" lazy="true" fetch="select">
+        	<key>
+        		<column name="ID_ROLE" not-null="true"></column>
+        	</key>
+        	<many-to-many entity-name="it.eng.spagobi.mapcatalogue.metadata.SbiGeoLayers">
+        		<column name="ID_LAYER" not-null="true"></column>
+        	</many-to-many>
+        </set>
+		
+		 <set name="sbiUsersRoles" table="SBI_EXT_USER_ROLES" inverse="true" lazy="true" fetch="select">
+        	<key>
+        		<column name="EXT_ROLE_ID" not-null="true"></column>
+        	</key>
+        	<many-to-many entity-name="it.eng.spagobi.profiling.bean.SbiUser">
+        		<column name="ID" not-null="true"></column>
+        	</many-to-many>
+        </set>
+		
+		<set name="sbiMenuRoles" table="SBI_MENU_ROLE" inverse="true" lazy="true" fetch="select">
+        	<key>
+        		<column name="EXT_ROLE_ID" not-null="true"></column>
+        	</key>
+        	<many-to-many entity-name="it.eng.spagobi.wapp.metadata.SbiMenu">
+        		<column name="MENU_ID" not-null="true"></column>
+        	</many-to-many>
+        </set>
         
         <filter name="tenantFilter" condition="organization=:tenant"/>  
     </class>

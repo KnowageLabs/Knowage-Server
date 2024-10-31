@@ -65,15 +65,6 @@
 				<param name="type">12</param>
 			</type>
         </property>
-        <set name="roles" table="SBI_EVENTS_ROLES" 
-        	inverse="false" lazy="true" fetch="select" cascade="all" >
-            <key>
-                <column name="EVENT_ID" not-null="true" />
-            </key>
-            <many-to-many entity-name="it.eng.spagobi.commons.metadata.SbiExtRoles">
-                <column name="ROLE_ID" not-null="true" />
-            </many-to-many>
-        </set>
         <filter name="tenantFilter" condition="organization=:tenant"/>  
     </class>
 	<filter-def name="tenantFilter">

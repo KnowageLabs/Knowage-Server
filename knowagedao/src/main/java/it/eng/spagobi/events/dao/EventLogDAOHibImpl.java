@@ -20,10 +20,8 @@ package it.eng.spagobi.events.dao;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
@@ -40,7 +38,6 @@ import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
-import it.eng.spagobi.commons.metadata.SbiExtRoles;
 import it.eng.spagobi.dao.PagedList;
 import it.eng.spagobi.events.bo.EventLog;
 import it.eng.spagobi.events.bo.EventType;
@@ -78,8 +75,9 @@ public class EventLogDAOHibImpl extends AbstractHibernateDAO implements IEventLo
 			tx = aSession.beginTransaction();
 			SbiEventsLog aSbiEventsLog = (SbiEventsLog) aSession.get(SbiEventsLog.class, id);
 
-			if (aSbiEventsLog == null)
+			if (aSbiEventsLog == null) {
 				return null;
+			}
 
 			realResult = toEventsLog(aSbiEventsLog);
 
@@ -237,8 +235,9 @@ public class EventLogDAOHibImpl extends AbstractHibernateDAO implements IEventLo
 		Iterator<String> rolesIt = roles.iterator();
 		while (rolesIt.hasNext()) {
 			String roleName = rolesIt.next();
-			if (!roleNames.contains(roleName))
+			if (!roleNames.contains(roleName)) {
 				roleNames.add(roleName);
+			}
 		}
 
 		return roleNames;
@@ -271,23 +270,6 @@ public class EventLogDAOHibImpl extends AbstractHibernateDAO implements IEventLo
 			hibEventLog.setParams(eventLog.getParams());
 			hibEventLog.setEventType(eventLog.getType());
 			this.updateSbiCommonInfo4Insert(hibEventLog);
-			Set hibEventRoles = new HashSet();
-			List roles = eventLog.getRoles();
-			Iterator rolesIt = roles.iterator();
-			while (rolesIt.hasNext()) {
-				String roleName = (String) rolesIt.next();
-				String hql = "from SbiExtRoles as roles where roles.name = ?";
-
-				Query hqlQuery = session.createQuery(hql);
-				hqlQuery.setString(0, roleName);
-				SbiExtRoles aHibRole = (SbiExtRoles) hqlQuery.uniqueResult();
-				if (aHibRole == null) {
-					logger.error("Role with name = '" + roleName + "' does not exist!!");
-					continue;
-				}
-				hibEventRoles.add(aHibRole);
-			}
-			hibEventLog.setRoles(hibEventRoles);
 			session.save(hibEventLog);
 			tx.commit();
 			return hibEventLog.getId();
@@ -409,14 +391,6 @@ public class EventLogDAOHibImpl extends AbstractHibernateDAO implements IEventLo
 		eventLog.setDesc(hibEventLog.getDesc());
 		eventLog.setParams(hibEventLog.getParams());
 		eventLog.setType(hibEventLog.getEventType());
-		List roles = new ArrayList();
-		Set rolesSet = hibEventLog.getRoles();
-		Iterator rolesIt = rolesSet.iterator();
-		while (rolesIt.hasNext()) {
-			SbiExtRoles hibRole = (SbiExtRoles) rolesIt.next();
-			roles.add(hibRole.getName());
-		}
-		eventLog.setRoles(roles);
 		logger.debug("OUT");
 		return eventLog;
 	}

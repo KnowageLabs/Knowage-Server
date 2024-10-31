@@ -152,25 +152,6 @@ public class SbiEventsLog extends SbiHibernateModel {
 	}
 
 	/**
-	 * Gets the roles.
-	 *
-	 * @return the roles
-	 */
-	public Set getRoles() {
-		return roles;
-	}
-
-	/**
-	 * Sets the roles.
-	 *
-	 * @param roles
-	 *            the new roles
-	 */
-	public void setRoles(Set roles) {
-		this.roles = roles;
-	}
-
-	/**
 	 * Gets the eventType.
 	 *
 	 * @return the eventType

@@ -104,6 +104,14 @@ public class Role implements Serializable {
 
 	private List<RoleMetaModelCategory> roleMetaModelCategories = new ArrayList<>();
 
+
+	private List<String> roleFunzionalities = new ArrayList<>();
+	private List<String> roleAnaliticalDrivers = new ArrayList<>();
+	private List<String> roleNews = new ArrayList<>();
+	private List<String> roleLayers = new ArrayList<>();
+	private List<String> roleUsers = new ArrayList<>();
+	private List<String> roleMenu = new ArrayList<>();
+
 	/**
 	 * Checks if is able to edit python scripts.
 	 *
@@ -829,5 +837,54 @@ public class Role implements Serializable {
 	private final void writeObject(ObjectOutputStream aOutputStream) {
 		  throw new UnsupportedOperationException("Security violation : cannot serialize object to a stream");
 	}
+
+	public List<String> getRoleFunzionalities() {
+		return roleFunzionalities;
+	}
+
+	public void setRoleFunzionalities(List<String> roleFunzionalities) {
+		this.roleFunzionalities = roleFunzionalities;
+	}
+
+	public List<String> getRoleAnaliticalDrivers() {
+		return roleAnaliticalDrivers;
+	}
+
+	public void setRoleAnaliticalDrivers(List<String> roleAnaliticalDrivers) {
+		this.roleAnaliticalDrivers = roleAnaliticalDrivers;
+	}
+
+	public List<String> getRoleNews() {
+		return roleNews;
+	}
+
+	public void setRoleNews(List<String> roleNews) {
+		this.roleNews = roleNews;
+	}
+
+	public List<String> getRoleLayers() {
+		return roleLayers;
+	}
+
+	public void setRoleLayers(List<String> roleLayers) {
+		this.roleLayers = roleLayers;
+	}
+
+	public List<String> getRoleUsers() {
+		return roleUsers;
+	}
+
+	public void setRoleUsers(List<String> roleUsers) {
+		this.roleUsers = roleUsers;
+	}
+
+	public List<String> getRoleMenu() {
+		return roleMenu;
+	}
+
+	public void setRoleMenu(List<String> roleMenu) {
+		this.roleMenu = roleMenu;
+	}
+
 
 }

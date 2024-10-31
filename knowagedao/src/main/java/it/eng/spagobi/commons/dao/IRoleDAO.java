@@ -54,6 +54,8 @@ public interface IRoleDAO extends ISpagoBIDao, EmittingEventDAO<RoleEventsEmitti
 	 */
 	Role loadByID(Integer roleID) throws EMFUserError;
 
+	Role loadAllElemtnsForRoleByID(Integer roleID) throws EMFUserError;
+
 	SbiExtRoles loadSbiExtRoleById(Integer roleId) throws EMFUserError;
 
 	/**

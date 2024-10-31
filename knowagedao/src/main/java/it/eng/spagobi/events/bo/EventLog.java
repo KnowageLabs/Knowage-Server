@@ -53,7 +53,6 @@ public class EventLog implements Serializable {
 	private String desc;
 	private String params;
 	private EventType type;
-	private List roles;
 
 	private static Logger logger = Logger.getLogger(EventLog.class);
 
@@ -153,25 +152,6 @@ public class EventLog implements Serializable {
 	}
 
 	/**
-	 * Gets the roles.
-	 *
-	 * @return the roles
-	 */
-	public List getRoles() {
-		return roles;
-	}
-
-	/**
-	 * Sets the roles.
-	 *
-	 * @param roles
-	 *            the new roles
-	 */
-	public void setRoles(List roles) {
-		this.roles = roles;
-	}
-
-	/**
 	 * Gets the type.
 	 *
 	 * @return the type
@@ -195,8 +175,9 @@ public class EventLog implements Serializable {
 		if (description != null) {
 			description = GeneralUtilities.replaceInternationalizedMessages(description);
 			description = description.replaceAll("<br/>", " ");
-			if (description.length() > 50)
+			if (description.length() > 50) {
 				description = description.substring(0, 50) + "...";
+			}
 			description = description.replaceAll(">", "&gt;");
 			description = description.replaceAll("<", "&lt;");
 			description = description.replaceAll("\"", "&quot;");

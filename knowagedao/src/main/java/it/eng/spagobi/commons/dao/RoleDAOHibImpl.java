@@ -24,6 +24,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
@@ -44,6 +45,7 @@ import com.jamonapi.MonitorFactory;
 
 import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFUserError;
+import it.eng.spagobi.analiticalmodel.functionalitytree.metadata.SbiFuncRole;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.metadata.SbiParuse;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.metadata.SbiParuseDet;
 import it.eng.spagobi.commons.bo.Role;
@@ -59,7 +61,10 @@ import it.eng.spagobi.commons.metadata.SbiExtRoles;
 import it.eng.spagobi.commons.metadata.SbiOrganizationProductType;
 import it.eng.spagobi.commons.metadata.SbiProductType;
 import it.eng.spagobi.mapcatalogue.metadata.SbiGeoLayersRoles;
+import it.eng.spagobi.profiling.bean.SbiUser;
+import it.eng.spagobi.tools.news.metadata.SbiNews;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+import it.eng.spagobi.wapp.metadata.SbiMenu;
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Element;
@@ -118,6 +123,72 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 	}
 
 	@Override
+	public Role loadAllElemtnsForRoleByID(Integer roleID) throws EMFUserError {
+		Monitor m = MonitorFactory.start("knowage_loadAllElemtnByID");
+		Role toReturn = null;
+		Session aSession = null;
+		Transaction tx = null;
+
+		try {
+			aSession = getSession();
+			tx = aSession.beginTransaction();
+
+			SbiExtRoles hibRole = (SbiExtRoles) aSession.load(SbiExtRoles.class, roleID);
+			toReturn = toRole(hibRole);
+
+			if (hibRole.getSbiFuncRoles() != null && !hibRole.getSbiFuncRoles().isEmpty()) {
+				toReturn.setRoleFunzionalities((List<String>) hibRole.getSbiFuncRoles().stream().map(x -> ((SbiFuncRole) x).getId().getFunction().getPath())
+						.distinct().collect(Collectors.toList()));
+			}
+
+			if (hibRole.getSbiParuseDets() != null && !hibRole.getSbiParuseDets().isEmpty()) {
+
+				toReturn.setRoleAnaliticalDrivers((List<String>) hibRole.getSbiParuseDets().stream()
+						.map(x -> ((SbiParuseDet) x).getId().getSbiParuse().getSbiParameters().getLabel()).distinct().collect(Collectors.toList()));
+
+			}
+
+			if (hibRole.getSbiNewsRoles() != null && !hibRole.getSbiNewsRoles().isEmpty()) {
+
+				toReturn.setRoleNews(
+						(List<String>) hibRole.getSbiNewsRoles().stream().map(x -> ((SbiNews) x).getName()).distinct().collect(Collectors.toList()));
+
+			}
+
+			if (hibRole.getSbiLayersRoles() != null && !hibRole.getSbiLayersRoles().isEmpty()) {
+
+				toReturn.setRoleLayers(
+						hibRole.getSbiLayersRoles().stream().map(x -> x.getName()).distinct().toList());
+
+			}
+
+			if (hibRole.getSbiUsersRoles() != null && !hibRole.getSbiUsersRoles().isEmpty()) {
+
+				toReturn.setRoleUsers(hibRole.getSbiUsersRoles().stream().map(SbiUser::getUserId).distinct().toList());
+
+			}
+
+			if (hibRole.getSbiMenuRoles() != null && !hibRole.getSbiMenuRoles().isEmpty()) {
+
+				toReturn.setRoleMenu(hibRole.getSbiMenuRoles().stream().map(SbiMenu::getName).distinct().toList());
+
+			}
+
+
+			tx.commit();
+		} catch (HibernateException he) {
+			logException(he);
+			rollbackIfActive(tx);
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+		} finally {
+			closeSessionIfOpen(aSession);
+		}
+
+		m.stop();
+		return toReturn;
+	}
+
+	@Override
 	public SbiExtRoles loadSbiExtRoleById(Integer roleId) throws EMFUserError {
 		SbiExtRoles toReturn = null;
 		Session aSession = null;
@@ -160,8 +231,9 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 				tx = aSession.beginTransaction();
 
 				SbiExtRoles hibRole = loadByNameInSession(roleName, aSession);
-				if (hibRole == null)
+				if (hibRole == null) {
 					return null;
+				}
 
 				toReturn = toRole(hibRole);
 				putIntoCache(roleName, toReturn);
@@ -506,7 +578,7 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 
 					SbiAuthorizationsRoles fr = new SbiAuthorizationsRoles();
 					SbiAuthorizationsRolesId id = new SbiAuthorizationsRolesId(authI.getId(), hibRole.getExtRoleId());
-					
+
 
 					fr.setSbiExtRoles(hibRole);
 					fr.setSbiAuthorizations(authI);
@@ -585,7 +657,7 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 				|| (authI.getName().equals("ENABLE_DOSSIER") && aRole.getAbleToUseDossier())
 				|| (authI.getName().equals("ENABLE_DASHBOARD_THEME_MANAGEMENT") && aRole.getAbleToUseDashboardThemeManagement());
 
-				
+
 	}
 
 	/**
@@ -894,7 +966,7 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 			if(name.equals("ENABLE_DASHBOARD_THEME_MANAGEMENT")){
 				role.setAbleToUseDashboardThemeManagement(true);
 			}
-			
+
 
 		}
 
@@ -1124,8 +1196,9 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 			hibernateQuery = aSession.createQuery("from SbiExtRoles order by name");
 
 			hibernateQuery.setFirstResult(offset);
-			if (fetchSize > 0)
+			if (fetchSize > 0) {
 				hibernateQuery.setMaxResults(fetchSize);
+			}
 
 			toTransform = hibernateQuery.list();
 
@@ -1740,8 +1813,9 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 
 			Object hibRoleO = query.uniqueResult();
 
-			if (hibRoleO == null)
+			if (hibRoleO == null) {
 				return null;
+			}
 
 			SbiExtRoles hibRole = (SbiExtRoles) hibRoleO;
 

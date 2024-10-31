@@ -52,8 +52,9 @@ public class EventsManager {
 	 * @return single instance of EventsManager
 	 */
 	public static EventsManager getInstance() {
-		if (instance == null)
+		if (instance == null) {
 			instance = new EventsManager();
+		}
 		return instance;
 	}
 
@@ -102,7 +103,6 @@ public class EventsManager {
 		eventLog.setDate(new Timestamp(System.currentTimeMillis()));
 		eventLog.setParams(params);
 		eventLog.setType(type);
-		eventLog.setRoles(roles);
 		try {
 			EventLogDAOHibImpl eventLogDAO = new EventLogDAOHibImpl();
 			eventLogDAO.setUserID(user);
@@ -145,16 +145,17 @@ public class EventsManager {
 	 */
 	public static String getParamsStr(Map params) {
 		logger.debug("IN");
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		Iterator it = params.keySet().iterator();
 		boolean isFirstParameter = true;
 		while (it.hasNext()) {
 			String pname = (String) it.next();
 			String pvalue = (String) params.get(pname);
-			if (!isFirstParameter)
+			if (!isFirstParameter) {
 				buffer.append("&");
-			else
+			} else {
 				isFirstParameter = false;
+			}
 			buffer.append(pname + "=" + pvalue);
 		}
 		logger.debug("OUT");
