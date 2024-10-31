@@ -211,16 +211,6 @@ public class JWTSsoService implements SsoServiceInterface {
 		LogMF.debug(logger, "User id is [{0}]", userId);
 		return userId;
 	}
-	
-	public static String jwtToken2email(String jwtToken) throws JWTVerificationException {
-		Map<String, Claim> claims = getClaims(jwtToken);
-		Claim emailClaim = claims.get(SsoServiceInterface.EMAIL);
-		LogMF.debug(logger, "Email detected is [{0}]", emailClaim.asString());
-		assertNotEmpty(emailClaim, "Email information is missing!!!");
-		String email = emailClaim.asString();
-		LogMF.debug(logger, "Email is [{0}]", email);
-		return email;
-	}
 
 	public static Map<String, Claim> getClaims(String jwtToken) throws JWTVerificationException {
 		DecodedJWT decodedJWT = getDecodedJWT(jwtToken);

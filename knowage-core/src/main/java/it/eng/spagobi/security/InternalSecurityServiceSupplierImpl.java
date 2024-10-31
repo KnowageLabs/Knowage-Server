@@ -23,8 +23,11 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
+
+import com.auth0.jwt.interfaces.Claim;
 
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.commons.dao.DAOFactory;
@@ -124,7 +127,14 @@ public class InternalSecurityServiceSupplierImpl implements ISecurityServiceSupp
 		String userId = JWTSsoService.jwtToken2userId(jwtToken);
 		logger.debug("userId: " + userId);
 		
-		String email = JWTSsoService.jwtToken2email(jwtToken);
+		String email;
+		Map<String, Claim> claims = JWTSsoService.getClaims(jwtToken);
+		if (claims.containsKey(JWTSsoService.EMAIL_CLAIM)) {
+			Claim emailClaim = claims.get(JWTSsoService.EMAIL_CLAIM);
+			email = emailClaim.asString();
+		} else {
+			email = null;
+		}
 		logger.debug("email: " + email);
 		
 		SpagoBIUserProfile profile = null;
