@@ -68,7 +68,7 @@ public class OIDCFullIdTokenSecurityServiceSupplier implements ISecurityServiceS
 		try {
 			LogMF.info(logger, "Input JWT token is [{0}]", jwtToken);
 			DecodedJWT decodedJWT = JWT.decode(jwtToken); // ID TOKEN IS TRUSTED: it was validated by OAuth2Filter
-			logger.deinfobug("JWT token properly decoded");
+			logger.info("JWT token properly decoded");
 			String userId = decodedJWT.getClaim(OAuth2Config.getInstance().getUserIdClaim()).asString();
 			LogMF.info(logger, "User id is [{0}]", userId);
 			String userName = getUserName(decodedJWT);
