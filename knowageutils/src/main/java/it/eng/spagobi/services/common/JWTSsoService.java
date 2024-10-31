@@ -61,6 +61,7 @@ public class JWTSsoService implements SsoServiceInterface {
 	public static final String USERNAME_CLAIM = "kn_username";
 	public static final String ROLES_CLAIM = "kn_roles";
 	public static final String IS_SUPER_ADMIN_CLAIM = "kn_is_super_admin";
+	public static final String EMAIL_CLAIM = "email";
 
 	protected static final List<String> PREDEFINED_CLAIMS_LIST = Arrays.asList(SsoServiceInterface.USER_ID,
 			USERNAME_CLAIM, ROLES_CLAIM, IS_SUPER_ADMIN_CLAIM, PublicClaims.ISSUER, PublicClaims.EXPIRES_AT);
@@ -226,6 +227,16 @@ public class JWTSsoService implements SsoServiceInterface {
 		String userId = userIdClaim.asString();
 		LogMF.debug(logger, "User id is [{0}]", userId);
 		return userId;
+	}
+	
+	public static String jwtToken2email(String jwtToken) throws JWTVerificationException {
+		Map<String, Claim> claims = getClaims(jwtToken);
+		Claim emailClaim = claims.get(SsoServiceInterface.EMAIL);
+		LogMF.debug(logger, "Email detected is [{0}]", emailClaim.asString());
+		assertNotEmpty(emailClaim, "Email information is missing!!!");
+		String email = emailClaim.asString();
+		LogMF.debug(logger, "Email is [{0}]", email);
+		return email;
 	}
 
 	public static Map<String, Claim> getClaims(String jwtToken) throws JWTVerificationException {

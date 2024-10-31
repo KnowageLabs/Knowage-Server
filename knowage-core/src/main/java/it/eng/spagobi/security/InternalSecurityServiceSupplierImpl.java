@@ -29,6 +29,7 @@ import org.apache.log4j.Logger;
 
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.metadata.SbiExtRoles;
+import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.profiling.bean.SbiUser;
 import it.eng.spagobi.profiling.bean.SbiUserAttributes;
 import it.eng.spagobi.services.common.JWTSsoService;
@@ -115,9 +116,14 @@ public class InternalSecurityServiceSupplierImpl implements ISecurityServiceSupp
 
 	@Override
 	public SpagoBIUserProfile createUserProfile(String jwtToken) {
-		LOGGER.debug("IN - JWT token: " + jwtToken);
+		logger.debug("IN - JWT token: " + jwtToken);
+		
 		String userId = JWTSsoService.jwtToken2userId(jwtToken);
-		LOGGER.debug("userId: " + userId);
+		logger.debug("userId: " + userId);
+		
+		String email = JWTSsoService.jwtToken2email(jwtToken);
+		logger.debug("email: " + email);
+		
 		SpagoBIUserProfile profile = null;
 
 		SbiUser user = DAOFactory.getSbiUserDAO().loadSbiUserByUserId(userId);
@@ -160,7 +166,15 @@ public class InternalSecurityServiceSupplierImpl implements ISecurityServiceSupp
 			}
 		}
 
-		LOGGER.debug("Attributes load into SpagoBI profile: " + attributes);
+		// add email as attribute
+		if (StringUtilities.isNotEmpty(email)) {
+			logger.debug("Email is [" + email + "]");
+			attributes.put("email", email);
+		} else {
+			logger.debug("Email not found");
+		}
+
+		logger.debug("Attributes load into SpagoBI profile: " + attributes);
 
 		// end load profile attributes
 

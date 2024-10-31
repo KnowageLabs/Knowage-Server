@@ -58,6 +58,7 @@ public class OAuth2Config {
 	private final String scopes;
 	private final String userIdClaim;
 	private final String userNameClaim;
+	private final String userEmailClaim;
 	private final List<String> profileAttributes = new ArrayList<>();
 	private final String restApiBaseUrl;
 	private final String organizationInfoPath;
@@ -117,6 +118,8 @@ public class OAuth2Config {
 			userNameClaim = Optional.ofNullable(System.getProperty("oauth2_user_name_claim", System.getenv("OAUTH2_USER_NAME_CLAIM")))
 					.orElse("preferred_username");
 
+			userEmailClaim = Optional.ofNullable(System.getProperty("oauth2_user_email", System.getenv("OAUTH2_USER_EMAIL"))).orElse("email");
+
 			final Optional<String> attributes = Optional
 					.ofNullable(System.getProperty("oauth2_profile_attributes", System.getenv("OAUTH2_PROFILE_ATTRIBUTES")));
 			if (attributes.isPresent()) {
@@ -163,6 +166,7 @@ public class OAuth2Config {
 			scopes = null;
 			userIdClaim = null;
 			userNameClaim = null;
+			userEmailClaim = null;
 			restApiBaseUrl = null;
 			organizationInfoPath = null;
 			rolesPath = null;
@@ -239,6 +243,10 @@ public class OAuth2Config {
 
 	public String getUserNameClaim() {
 		return userNameClaim;
+	}
+	
+	public String getUserEmailClaim() {
+		return userEmailClaim;
 	}
 
 	public List<String> getProfileAttributes() {
