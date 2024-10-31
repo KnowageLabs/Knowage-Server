@@ -29,6 +29,7 @@ import org.apache.log4j.Logger;
 
 import com.auth0.jwt.interfaces.Claim;
 
+import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.metadata.SbiExtRoles;
 import it.eng.spagobi.commons.utilities.StringUtilities;
@@ -121,17 +122,18 @@ public class InternalSecurityServiceSupplierImpl implements ISecurityServiceSupp
 		LOGGER.debug("IN - JWT token: " + jwtToken);
 
 		String userId = JWTSsoService.jwtToken2userId(jwtToken);
-		LOGGER.debug("userId: " + userId);
-
-		String email = null;
+		logger.debug("userId: " + userId);
+		
+		String email;
 		Map<String, Claim> claims = JWTSsoService.getClaims(jwtToken);
 		if (claims.containsKey(JWTSsoService.EMAIL_CLAIM)) {
 			Claim emailClaim = claims.get(JWTSsoService.EMAIL_CLAIM);
 			email = emailClaim.asString();
+		} else {
+			email = null;
 		}
-
-		LOGGER.debug("email: " + email);
-
+		logger.debug("email: " + email);
+		
 		SpagoBIUserProfile profile = null;
 
 		SbiUser user = DAOFactory.getSbiUserDAO().loadSbiUserByUserId(userId);

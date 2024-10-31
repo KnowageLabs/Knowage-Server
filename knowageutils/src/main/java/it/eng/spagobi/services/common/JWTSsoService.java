@@ -228,7 +228,6 @@ public class JWTSsoService implements SsoServiceInterface {
 		LogMF.debug(logger, "User id is [{0}]", userId);
 		return userId;
 	}
-	
 
 	public static Map<String, Claim> getClaims(String jwtToken) throws JWTVerificationException {
 		DecodedJWT decodedJWT = getDecodedJWT(jwtToken);
