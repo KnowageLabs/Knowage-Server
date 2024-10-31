@@ -31,6 +31,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -72,6 +73,8 @@ import it.eng.spagobi.engines.config.dao.IEngineDAO;
 import it.eng.spagobi.profiling.PublicProfile;
 import it.eng.spagobi.profiling.bean.SbiAccessibilityPreferences;
 import it.eng.spagobi.profiling.bean.SbiUser;
+import it.eng.spagobi.profiling.bean.SbiUserAttributes;
+import it.eng.spagobi.profiling.bean.SbiUserAttributesId;
 import it.eng.spagobi.profiling.dao.ISbiUserDAO;
 import it.eng.spagobi.services.common.JWTSsoService;
 import it.eng.spagobi.services.common.SsoServiceFactory;
@@ -218,6 +221,8 @@ public class UserUtilities {
 	}
 
 	private static void importUser(SpagoBIUserProfile user) {
+		logger.debug("IN - importUser");
+		
 		SbiUser newUser = fromSpagoBIUserProfile2SbiUser(user);
 		ISbiUserDAO userDAO = DAOFactory.getSbiUserDAO();
 		userDAO.setTenant(user.getOrganization());
@@ -225,12 +230,18 @@ public class UserUtilities {
 	}
 
 	protected static SbiUser fromSpagoBIUserProfile2SbiUser(SpagoBIUserProfile user) {
+		logger.debug("IN - fromSpagoBIUserProfile2SbiUser");
+		
 		SbiUser newUser = new SbiUser();
-
 		newUser.setUserId(user.getUserId());
 		newUser.setFullName(user.getUserName());
 		newUser.setIsSuperadmin(user.getIsSuperadmin());
 		newUser.getCommonInfo().setOrganization(user.getOrganization());
+		
+		logger.debug("Set userId " + newUser.getUserId() + 
+						" - fullname " + newUser.getFullName() + 
+						" - superAdmin " + newUser.getFullName() +
+						" - commonInfo " + newUser.getCommonInfo());
 
 		List<String> roleNamesList = Arrays.asList(user.getRoles());
 
@@ -251,8 +262,31 @@ public class UserUtilities {
 				.filter(x -> x != null)  // to filter roles there were not found into database
 				.collect(Collectors.toList());
 		// @formatter:on
+		logger.debug("Filtered roles for user " + user.getUserName());
+		
+		HashMap<Integer, HashMap<String, String>> map = user.getAttributes();
+		Set<SbiUserAttributes> attributes = new HashSet<SbiUserAttributes>(0);
+
+		for (Entry<Integer, HashMap<String, String>> entry : map.entrySet()) {
+			SbiUserAttributes attribute = new SbiUserAttributes();
+			SbiUserAttributesId attid = new SbiUserAttributesId();
+			
+			attid.setAttributeId(entry.getKey());
+			attribute.setId(attid);
+			
+			for (Entry<String, String> value : entry.getValue().entrySet()) {
+				attribute.setAttributeValue(value.getValue());
+			}
+			
+			attributes.add(attribute);
+			logger.debug("Added attribute " + attribute +  " for user " + user.getUserName());
+		}
+		
 
 		newUser.setSbiExtUserRoleses(new HashSet<>(rolesList));
+		logger.debug("Set rolesList: " + newUser.getSbiExtUserRoleses());
+		newUser.setSbiUserAttributeses(attributes);	
+		logger.debug("Set attributes: " + newUser.getSbiUserAttributeses());
 		return newUser;
 	}
 
