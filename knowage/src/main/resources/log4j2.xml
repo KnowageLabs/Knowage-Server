@@ -208,7 +208,7 @@
 		<logger name="it.eng.knowage.privacymanager.PMConfiguration" level="error" additivity="false">
 			<AppenderRef ref="KNOWAGE_CORE" />
 		</logger>
-		<logger name="it.eng.knowage.privacymanager.EventBuilderUtils" level="deerrorbug" additivity="false">
+		<logger name="it.eng.knowage.privacymanager.EventBuilderUtils" level="error" additivity="false">
 			<AppenderRef ref="KNOWAGE_CORE" />
 		</logger>
 		<logger name="it.eng.spagobi.tools.dataset.actions.AbstractDatasetActionsChecker" level="error" additivity="false">
