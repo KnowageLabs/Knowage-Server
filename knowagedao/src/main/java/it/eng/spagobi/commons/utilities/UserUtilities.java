@@ -267,21 +267,22 @@ public class UserUtilities {
 		HashMap<Integer, HashMap<String, String>> map = user.getAttributes();
 		Set<SbiUserAttributes> attributes = new HashSet<SbiUserAttributes>(0);
 
-		for (Entry<Integer, HashMap<String, String>> entry : map.entrySet()) {
-			SbiUserAttributes attribute = new SbiUserAttributes();
-			SbiUserAttributesId attid = new SbiUserAttributesId();
-			
-			attid.setAttributeId(entry.getKey());
-			attribute.setId(attid);
-			
-			for (Entry<String, String> value : entry.getValue().entrySet()) {
-				attribute.setAttributeValue(value.getValue());
+		if(map != null && !map.isEmpty()) {
+			for (Entry<Integer, HashMap<String, String>> entry : map.entrySet()) {
+				SbiUserAttributes attribute = new SbiUserAttributes();
+				SbiUserAttributesId attid = new SbiUserAttributesId();
+				
+				attid.setAttributeId(entry.getKey());
+				attribute.setId(attid);
+				
+				for (Entry<String, String> value : entry.getValue().entrySet()) {
+					attribute.setAttributeValue(value.getValue());
+				}
+				
+				attributes.add(attribute);
+				logger.debug("Added attribute " + attribute +  " for user " + user.getUserName());
 			}
-			
-			attributes.add(attribute);
-			logger.debug("Added attribute " + attribute +  " for user " + user.getUserName());
-		}
-		
+		}		
 
 		newUser.setSbiExtUserRoleses(new HashSet<>(rolesList));
 		logger.debug("Set rolesList: " + newUser.getSbiExtUserRoleses());
