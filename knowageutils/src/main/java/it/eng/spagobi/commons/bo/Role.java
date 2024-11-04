@@ -105,7 +105,7 @@ public class Role implements Serializable {
 	private List<RoleMetaModelCategory> roleMetaModelCategories = new ArrayList<>();
 
 
-	private List<String> roleFunzionalities = new ArrayList<>();
+	private List<String> roleFunctionalities = new ArrayList<>();
 	private List<String> roleAnaliticalDrivers = new ArrayList<>();
 	private List<String> roleNews = new ArrayList<>();
 	private List<String> roleLayers = new ArrayList<>();
@@ -838,12 +838,12 @@ public class Role implements Serializable {
 		  throw new UnsupportedOperationException("Security violation : cannot serialize object to a stream");
 	}
 
-	public List<String> getRoleFunzionalities() {
-		return roleFunzionalities;
+	public List<String> getRoleFunctionalities() {
+		return roleFunctionalities;
 	}
 
-	public void setRoleFunzionalities(List<String> roleFunzionalities) {
-		this.roleFunzionalities = roleFunzionalities;
+	public void setRoleFunctionalities(List<String> roleFunctionalities) {
+		this.roleFunctionalities = roleFunctionalities;
 	}
 
 	public List<String> getRoleAnaliticalDrivers() {

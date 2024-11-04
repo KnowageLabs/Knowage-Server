@@ -137,7 +137,7 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 			toReturn = toRole(hibRole);
 
 			if (hibRole.getSbiFuncRoles() != null && !hibRole.getSbiFuncRoles().isEmpty()) {
-				toReturn.setRoleFunzionalities((List<String>) hibRole.getSbiFuncRoles().stream().map(x -> ((SbiFuncRole) x).getId().getFunction().getPath())
+				toReturn.setRoleFunctionalities((List<String>) hibRole.getSbiFuncRoles().stream().map(x -> ((SbiFuncRole) x).getId().getFunction().getPath())
 						.distinct().collect(Collectors.toList()));
 			}
 
