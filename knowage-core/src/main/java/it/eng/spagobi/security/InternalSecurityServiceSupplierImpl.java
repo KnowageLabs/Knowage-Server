@@ -116,14 +116,14 @@ public class InternalSecurityServiceSupplierImpl implements ISecurityServiceSupp
 
 	@Override
 	public SpagoBIUserProfile createUserProfile(String jwtToken) {
-		logger.debug("IN - JWT token: " + jwtToken);
-		
+		LOGGER.debug("IN - JWT token: " + jwtToken);
+
 		String userId = JWTSsoService.jwtToken2userId(jwtToken);
-		logger.debug("userId: " + userId);
-		
+		LOGGER.debug("userId: " + userId);
+
 		String email = JWTSsoService.jwtToken2email(jwtToken);
-		logger.debug("email: " + email);
-		
+		LOGGER.debug("email: " + email);
+
 		SpagoBIUserProfile profile = null;
 
 		SbiUser user = DAOFactory.getSbiUserDAO().loadSbiUserByUserId(userId);
@@ -168,13 +168,13 @@ public class InternalSecurityServiceSupplierImpl implements ISecurityServiceSupp
 
 		// add email as attribute
 		if (StringUtilities.isNotEmpty(email)) {
-			logger.debug("Email is [" + email + "]");
+			LOGGER.debug("Email is [" + email + "]");
 			attributes.put("email", email);
 		} else {
-			logger.debug("Email not found");
+			LOGGER.debug("Email not found");
 		}
 
-		logger.debug("Attributes load into Knowage profile: " + attributes);
+		LOGGER.debug("Attributes load into Knowage profile: " + attributes);
 
 		// end load profile attributes
 

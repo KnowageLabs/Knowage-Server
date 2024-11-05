@@ -31,6 +31,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -221,7 +222,7 @@ public class UserUtilities {
 	}
 
 	private static void importUser(SpagoBIUserProfile user) throws Exception {
-		logger.debug("IN - importUser");
+		LOGGER.debug("IN - importUser");
 
 		SbiUser newUser = fromSpagoBIUserProfile2SbiUser(user);
 		ISbiUserDAO userDAO = DAOFactory.getSbiUserDAO();
@@ -230,7 +231,7 @@ public class UserUtilities {
 	}
 
 	protected static SbiUser fromSpagoBIUserProfile2SbiUser(SpagoBIUserProfile user) throws Exception {
-		logger.debug("IN - fromSpagoBIUserProfile2SbiUser");
+		LOGGER.debug("IN - fromSpagoBIUserProfile2SbiUser");
 
 		SbiUser newUser = new SbiUser();
 		newUser.setUserId(user.getUserId());
@@ -238,7 +239,7 @@ public class UserUtilities {
 		newUser.setIsSuperadmin(user.getIsSuperadmin());
 		newUser.getCommonInfo().setOrganization(user.getOrganization());
 
-		logger.debug("Set userId " + newUser.getUserId() +
+		LOGGER.debug("Set userId " + newUser.getUserId() +
 						" - fullname " + newUser.getFullName() +
 						" - superAdmin " + newUser.getFullName() +
 						" - commonInfo " + newUser.getCommonInfo());
@@ -262,23 +263,23 @@ public class UserUtilities {
 				.filter(x -> x != null)  // to filter roles there were not found into database
 				.collect(Collectors.toList());
 		// @formatter:on
-		logger.debug("Filtered roles for user " + user.getUserName());
+		LOGGER.debug("Filtered roles for user " + user.getUserName());
 
 
 		newUser.setSbiExtUserRoleses(new HashSet<>(rolesList));
 
-		HashMap<String, String> map = user.getAttributes();
-		String email = map.get("email");
-		logger.debug("email " + email);
+		Map<String, Object> map = user.getAttributes();
+		String email = (String) map.get("email");
+		LOGGER.debug("email " + email);
 		if (email != null && !email.equals("")) {
 			Set<SbiUserAttributes> attributes = new HashSet<>();
 			ISbiAttributeDAO attrDao = DAOFactory.getSbiAttributeDAO();
 			attrDao.setTenant(user.getOrganization());
 
 			int idAttributeMail = attrDao.loadSbiAttributeByName("email").getAttributeId();
-			logger.debug("idAttributeMail " + idAttributeMail);
+			LOGGER.debug("idAttributeMail " + idAttributeMail);
 			addAttribute(attributes, idAttributeMail, email, user.getOrganization());
-			logger.debug("Attributes: " + attributes);
+			LOGGER.debug("Attributes: " + attributes);
 			newUser.setSbiUserAttributeses(attributes);
 
 		}
@@ -291,8 +292,7 @@ public class UserUtilities {
 		if (attrValue != null) {
 			SbiUserAttributes a = new SbiUserAttributes();
 			a.getCommonInfo().setOrganization(tenant);
-			SbiUserAttributesId id = new SbiUserAttributesId();
-			id.setAttributeId(attrId);
+			SbiUserAttributesId id = new SbiUserAttributesId(attrId);
 			a.setId(id);
 			a.setAttributeValue(attrValue);
 			attributes.add(a);
@@ -583,9 +583,9 @@ public class UserUtilities {
 				Role role = DAOFactory.getRoleDAO().loadByName(rolename);
 				if (role != null) {
 					roles.add(role);
-					logger.debug("Add Rolename ( " + rolename + ") ");
+					LOGGER.debug("Add Rolename ( " + rolename + ") ");
 				} else {
-					logger.debug("Rolename ( " + rolename + ") doesn't exist in EXT_ROLES");
+					LOGGER.debug("Rolename ( " + rolename + ") doesn't exist in EXT_ROLES");
 				}
 			}
 

@@ -50,6 +50,7 @@ import com.auth0.jwt.interfaces.Claim;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.auth0.jwt.interfaces.Verification;
 
+import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.security.OAuth2.OAuth2Client;
 import it.eng.spagobi.security.OAuth2.OAuth2Config;
 import it.eng.spagobi.services.common.JWTSsoService;
@@ -240,5 +241,5 @@ public class Oauth2HybridSsoService extends JWTSsoService {
 		// @formatter:on
 	}
 
-	
+
 }

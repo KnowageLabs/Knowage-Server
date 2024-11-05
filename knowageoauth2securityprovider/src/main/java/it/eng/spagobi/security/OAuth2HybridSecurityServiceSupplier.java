@@ -17,9 +17,7 @@
  */
 package it.eng.spagobi.security;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
@@ -29,7 +27,7 @@ import com.auth0.jwt.interfaces.Claim;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.profiling.bean.SbiUser;
-import it.eng.spagobi.profiling.bean.SbiUserAttributes;
+import it.eng.spagobi.security.OAuth2.OAuth2Config;
 import it.eng.spagobi.services.common.JWTSsoService;
 import it.eng.spagobi.services.security.bo.SpagoBIUserProfile;
 import it.eng.spagobi.utilities.assertion.UnreachableCodeException;
@@ -77,7 +75,7 @@ public class OAuth2HybridSecurityServiceSupplier extends InternalSecurityService
 
 	private SpagoBIUserProfile createMinimumUserProfile(String jwtToken, String userId) {
 		logger.debug("IN");
-		
+
 		SpagoBIUserProfile profile = new SpagoBIUserProfile();
 		profile.setUniqueIdentifier(jwtToken);
 		profile.setUserId(userId);
@@ -93,7 +91,7 @@ public class OAuth2HybridSecurityServiceSupplier extends InternalSecurityService
 
 		profile.setUserName(userName);
 		profile.setIsSuperadmin(false);
-		
+
 		String email;
 		if (claims.containsKey(JWTSsoService.EMAIL_CLAIM)) {
 			Claim emailClaim = claims.get(JWTSsoService.EMAIL_CLAIM);
@@ -101,7 +99,7 @@ public class OAuth2HybridSecurityServiceSupplier extends InternalSecurityService
 		} else {
 			email = null;
 		}
-		
+
 		HashMap attributes = new HashMap();
 
 		// add email as attribute
@@ -117,7 +115,7 @@ public class OAuth2HybridSecurityServiceSupplier extends InternalSecurityService
 		// end load profile attributes
 
 		profile.setAttributes(attributes);
-		
+
 		return profile;
 	}
 }

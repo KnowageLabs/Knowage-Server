@@ -34,6 +34,7 @@ public interface SsoServiceInterface {
 
 	public static final String USER_ID = "user_id";
 	public static final String EMAIL = "email";
+	public static final String ROLES = "roles";
 	public static final String USER_NAME_REQUEST_PARAMETER = "USERNAME";
 	public static final String SECRETPHRASE_REQUEST_PARAMETER = "PASSWORD";
 	public static final String SECRETPHRASE_MODE_REQUEST_PARAMETER = "PASSWORD_MODE";
