@@ -566,8 +566,8 @@
 			var defaultIndicator = config.defaultIndicator;
 			var measureStat = findIndicatorStats(defaultIndicator, data.stats);
 
-			var minValue = measureStat.min;
-			var maxValue = measureStat.max;
+			var minValue = measureStat ? measureStat.min : 0;
+			var maxValue = measureStat ? measureStat.max : 0;
 			var split = (maxValue-minValue)/(config.analysisConf.classes);
 			for (var i=0; i<config.analysisConf.classes; i++) {
 				var from = (minValue+(split*i));
