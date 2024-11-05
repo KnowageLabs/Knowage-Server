@@ -188,7 +188,7 @@ public class InternalSecurityServiceSupplierImpl implements ISecurityServiceSupp
 			logger.debug("Email not found");
 		}
 
-		logger.debug("Attributes load into SpagoBI profile: " + attributes);
+		logger.debug("Attributes load into Knowage profile: " + attributes);
 
 		// end load profile attributes
 
