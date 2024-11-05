@@ -27,6 +27,8 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 
+import com.auth0.jwt.interfaces.Claim;
+
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.metadata.SbiExtRoles;
 import it.eng.spagobi.commons.utilities.StringUtilities;
@@ -121,7 +123,13 @@ public class InternalSecurityServiceSupplierImpl implements ISecurityServiceSupp
 		String userId = JWTSsoService.jwtToken2userId(jwtToken);
 		LOGGER.debug("userId: " + userId);
 
-		String email = JWTSsoService.jwtToken2email(jwtToken);
+		String email = null;
+		Map<String, Claim> claims = JWTSsoService.getClaims(jwtToken);
+		if (claims.containsKey(JWTSsoService.EMAIL_CLAIM)) {
+			Claim emailClaim = claims.get(JWTSsoService.EMAIL_CLAIM);
+			email = emailClaim.asString();
+		}
+
 		LOGGER.debug("email: " + email);
 
 		SpagoBIUserProfile profile = null;
