@@ -264,6 +264,7 @@ public class UserUtilities {
 		// @formatter:on
 		logger.debug("Filtered roles for user " + user.getUserName());
 
+
 		newUser.setSbiExtUserRoleses(new HashSet<>(rolesList));
 
 		HashMap<String, String> map = user.getAttributes();
