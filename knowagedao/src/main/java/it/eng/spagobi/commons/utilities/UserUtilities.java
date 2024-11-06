@@ -1126,11 +1126,7 @@ public class UserUtilities {
 		} catch (DAORuntimeException e) {
 			throw e;
 		} catch (Throwable t) {
-			if (t instanceof DAORuntimeException) {
-				throw (DAORuntimeException) t;
-			} else {
-				throw new DAORuntimeException("Impossible to instatiate supplier class [" + engUserProfileFactoryClass + "]", t);
-			}
+			throw new DAORuntimeException("Impossible to instatiate supplier class [" + engUserProfileFactoryClass + "]", t);
 		}
 
 		return securityServiceSupplier;
