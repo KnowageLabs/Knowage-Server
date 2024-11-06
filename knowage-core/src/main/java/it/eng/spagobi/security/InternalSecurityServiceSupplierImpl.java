@@ -29,10 +29,8 @@ import org.apache.log4j.Logger;
 
 import com.auth0.jwt.interfaces.Claim;
 
-import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.metadata.SbiExtRoles;
-import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.profiling.bean.SbiUser;
 import it.eng.spagobi.profiling.bean.SbiUserAttributes;
 import it.eng.spagobi.services.common.JWTSsoService;
@@ -107,13 +105,11 @@ public class InternalSecurityServiceSupplierImpl implements ISecurityServiceSupp
 
 	@Override
 	public SpagoBIUserProfile checkAuthenticationWithToken(String userId, String token) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public boolean checkAuthorization(String userId, String function) {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
@@ -122,9 +118,9 @@ public class InternalSecurityServiceSupplierImpl implements ISecurityServiceSupp
 		LOGGER.debug("IN - JWT token: " + jwtToken);
 
 		String userId = JWTSsoService.jwtToken2userId(jwtToken);
-		logger.debug("userId: " + userId);
+		LOGGER.debug("userId: " + userId);
 		
-		String email;
+		String email = null;
 		Map<String, Claim> claims = JWTSsoService.getClaims(jwtToken);
 		if (claims.containsKey(JWTSsoService.EMAIL_CLAIM)) {
 			Claim emailClaim = claims.get(JWTSsoService.EMAIL_CLAIM);
@@ -132,7 +128,7 @@ public class InternalSecurityServiceSupplierImpl implements ISecurityServiceSupp
 		} else {
 			email = null;
 		}
-		logger.debug("email: " + email);
+		LOGGER.debug("email: " + email);
 		
 		SpagoBIUserProfile profile = null;
 
@@ -177,7 +173,7 @@ public class InternalSecurityServiceSupplierImpl implements ISecurityServiceSupp
 		}
 
 		// add email as attribute
-		if (StringUtilities.isNotEmpty(email)) {
+		if (email != null && !email.isEmpty()) {
 			LOGGER.debug("Email is [" + email + "]");
 			attributes.put("email", email);
 		} else {
