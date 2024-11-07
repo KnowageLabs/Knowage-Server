@@ -69,7 +69,7 @@ public abstract class AbstractDatasetActionsChecker implements IDatasetActionsCh
 		boolean isTester = UserUtilities.hasTesterRole(userProfile);
 		boolean isModelAdministrator = UserUtilities.hasModelAdminRole(userProfile);
 
-		Object userId = userProfile.getUserUniqueIdentifier();
+		Object userId = userProfile.getUserId();
 
 		SbiDomains scopeEnterprise = null;
 		SbiDomains scopeTechnical = null;
