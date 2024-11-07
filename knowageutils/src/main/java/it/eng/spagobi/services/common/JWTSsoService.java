@@ -61,6 +61,7 @@ public class JWTSsoService implements SsoServiceInterface {
 	public static final String USERNAME_CLAIM = "kn_username";
 	public static final String ROLES_CLAIM = "kn_roles";
 	public static final String IS_SUPER_ADMIN_CLAIM = "kn_is_super_admin";
+	public static final String EMAIL_CLAIM = "email";
 
 	protected static final List<String> PREDEFINED_CLAIMS_LIST = Arrays.asList(SsoServiceInterface.USER_ID, USERNAME_CLAIM, ROLES_CLAIM, IS_SUPER_ADMIN_CLAIM,
 			PublicClaims.ISSUER, PublicClaims.EXPIRES_AT);

@@ -23,6 +23,7 @@ import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -51,6 +52,7 @@ public class PNTSecurityServiceSupplier extends OIDCFullIdTokenSecurityServiceSu
 	private static final String STRUTTURA_ATTRIBUTE = "STRUTTURA";
 	private static final String ROLE_KN_ADMIN = "KN_ADMIN";
 	private static final String ROLE_KN_DEV = "KN_DEV";
+	private static final String ROLE_KN_RENDICONTAZIONE = "KN_RENDICONTATORE";
 	private static final String ROLE_KN_GOVERNO = "KN_GOVERNO";
 	private static final String FULL_VISILIBITY_ATTRIBUTE_VALUE = "*";
 	private static final String NO_VISILIBITY_ATTRIBUTE_VALUE = "";
@@ -71,10 +73,66 @@ public class PNTSecurityServiceSupplier extends OIDCFullIdTokenSecurityServiceSu
 						+ "was detected, returning full visibility attributes");
 				return getFullVisibilityAttributes();
 			}
+			if (roles.contains(ROLE_KN_RENDICONTAZIONE)) {
+				return getRendicontazioneVisibilityAttributes(decodedJWT);
+			}
 			return getPartialVisibilityAttributes(decodedJWT);
 		} catch (Exception e) {
 			throw new SpagoBIRuntimeException("An error occured while getting attributes from JWT token", e);
 		}
+	}
+
+	private Map<String, String> getRendicontazioneVisibilityAttributes(DecodedJWT decodedJWT) {
+		logger.debug("Start getRendicontazioneVisibilityAttributes");
+		Map<String, String> attributes = new HashMap<>();
+		List<String> regioni = null;
+		List<String> strutture = new ArrayList<>();
+
+		try {
+			// regione claim can be a list or string
+			List<String> codRegioni = decodedJWT.getClaim("regione").asList(String.class);
+			if (codRegioni == null) {
+				String codRegione = decodedJWT.getClaim("regione").asString();
+				logger.debug("regione as string: " + codRegione);
+				codRegioni = Arrays.asList(codRegione);
+			}
+			logger.debug("codRegioni from claim: " + codRegioni);
+			if (codRegioni != null && !codRegioni.isEmpty()) {
+				regioni = codRegioni.stream().map(PNTRegioniEnum::getDescriptionFromCode).filter(Objects::nonNull).collect(Collectors.toList());
+			}
+			logger.debug("regioni: " + regioni);
+			if (regioni != null && !regioni.isEmpty()) {
+				attributes.put(REGIONE_ATTRIBUTE, joinValues(regioni));
+			} else {
+				attributes.put(REGIONE_ATTRIBUTE, NO_VISILIBITY_ATTRIBUTE_VALUE);
+			}
+
+			List<String> allStrutture = getAllStrutture();
+
+			String payload = decodedJWT.getPayload();
+			String decodedPayload = new String(Base64.getDecoder().decode(payload));
+
+			net.minidev.json.JSONArray parsed = JsonPath.read(decodedPayload, ORGANIZATIONS_JSON_PATH);
+			LogMF.debug(logger, "Got parsed organizations [{0}]", parsed);
+
+			if (parsed != null && !parsed.isEmpty()) {
+				parsed.forEach(elem -> {
+					String organization = (String) elem;
+					if (allStrutture.stream().anyMatch(organization::equalsIgnoreCase)) {
+						strutture.add(organization);
+					} else {
+						logger.warn("Organization [" + organization + "] not recognized neither as a 'struttura'");
+					}
+				});
+				attributes.put(STRUTTURA_ATTRIBUTE, joinValues(strutture));
+			} else {
+				attributes.put(STRUTTURA_ATTRIBUTE, NO_VISILIBITY_ATTRIBUTE_VALUE);
+			}
+		} catch (Exception e) {
+			throw new SpagoBIRuntimeException("An error occurred while parsing json", e);
+		}
+		logger.debug("End getRendicontazioneVisibilityAttributes");
+		return attributes;
 	}
 
 	private Map<String, String> getPartialVisibilityAttributes(DecodedJWT decodedJWT) {
