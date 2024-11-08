@@ -17,6 +17,7 @@
  */
 package it.eng.spagobi.services.cas;
 
+import java.io.IOException;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -27,6 +28,7 @@ import org.apache.log4j.Logger;
 import org.jasig.cas.client.util.AbstractCasFilter;
 import org.jasig.cas.client.validation.Assertion;
 import it.eng.spagobi.services.common.JWTSsoService;
+import it.eng.spagobi.services.security.exceptions.SecurityException;
 
 public class CasSsoService5 extends JWTSsoService {
 	static private Logger logger = Logger.getLogger(CasSsoService5.class);
@@ -50,7 +52,34 @@ public class CasSsoService5 extends JWTSsoService {
 		logger.debug("JWT-TOKEN " + jwtToken);
 	
 		return jwtToken;
-    }
+    }    
     
+    /**
+     * Get a new ticket.
+     * 
+     * @param session HttpSession
+     * 
+     * @return String
+     * 
+     * @throws IOException Signals that an I/O exception has occurred.
+     */
+    public String readTicket(HttpSession session) throws IOException{
+	    logger.debug("IN");
+	    logger.debug("OUT. No ticket ");
+	    return "";
+    }
 
+    /**
+     * This method verify the ticket.
+     * 
+     * @param ticket String, ticket to validate
+     * @param userId String, user id
+     * 
+     * @return String
+     * 
+     * @throws SecurityException the security exception
+     */
+    public void validateTicket(String ticket, String userId)throws SecurityException {
+    	logger.debug("IN");	
+    }
 }

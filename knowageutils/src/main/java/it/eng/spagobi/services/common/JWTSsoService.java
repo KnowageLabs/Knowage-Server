@@ -31,8 +31,8 @@ import javax.portlet.PortletSession;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import org.apache.log4j.LogMF;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTCreator.Builder;
@@ -53,7 +53,7 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
  */
 public class JWTSsoService implements SsoServiceInterface {
 
-	private static Logger logger = Logger.getLogger(JWTSsoService.class);
+	private static final Logger LOGGER = LogManager.getLogger(JWTSsoService.class);
 
 	private static final JWTSsoServiceAlgorithmFactory ALGORITHM_FACTORY = JWTSsoServiceAlgorithmFactory.getInstance();
 
@@ -72,15 +72,15 @@ public class JWTSsoService implements SsoServiceInterface {
 			Algorithm algorithm = ALGORITHM_FACTORY.getAlgorithm();
 			String jwtToken = request.getParameter(SsoServiceInterface.USER_ID);
 			if (jwtToken == null) {
-				logger.debug("JWT token not found in request");
+				LOGGER.debug("JWT token not found in request");
 				return null;
 			}
-			LogMF.debug(logger, "JWT token in input is [{0}]", jwtToken);
+			LOGGER.debug("JWT token in input is [{}]", jwtToken);
 			JWTVerifier verifier = JWT.require(algorithm).build();
 			DecodedJWT decodedJWT = verifier.verify(jwtToken);
-			logger.debug("JWT token verified properly");
+			LOGGER.debug("JWT token verified properly");
 			Claim userIdClaim = decodedJWT.getClaim(SsoServiceInterface.USER_ID);
-			LogMF.debug(logger, "User id detected is [{0}]", userIdClaim.asString());
+			LOGGER.debug("User id detected is [{}]", userIdClaim.asString());
 			assertNotEmpty(userIdClaim, "User id information is missing!!!");
 			return jwtToken;
 		} catch (JWTVerificationException e) {
@@ -90,7 +90,7 @@ public class JWTSsoService implements SsoServiceInterface {
 
 	@Override
 	public String readUserIdentifier(PortletSession session) {
-		logger.debug("NOT Implemented");
+		LOGGER.debug("NOT Implemented");
 		return "";
 	}
 
@@ -100,14 +100,14 @@ public class JWTSsoService implements SsoServiceInterface {
 		Calendar calendar = Calendar.getInstance();
 		calendar.add(Calendar.MINUTE, 5); // token for services will expire in 5 minutes
 		Date expiresAt = calendar.getTime();
-		LogMF.debug(logger, "JWT token will expire at [{0}]", expiresAt);
+		LOGGER.debug("JWT token will expire at [{}]", expiresAt);
 		// @formatter:off
 		String token = JWT.create()
 				.withIssuer(KNOWAGE_ISSUER)
 				.withExpiresAt(expiresAt)
 				.sign(algorithm);
 		// @formatter:on
-		LogMF.debug(logger, "JWT token is [{0}]", token);
+		LOGGER.debug("JWT token is [{}]", token);
 		return token;
 	}
 
@@ -116,10 +116,10 @@ public class JWTSsoService implements SsoServiceInterface {
 		try {
 			Algorithm algorithm = ALGORITHM_FACTORY.getAlgorithm();
 			String jwtToken = ticket;
-			logger.debug("JWT token in input : [" + jwtToken + "]");
+			LOGGER.debug("JWT token in input : [" + jwtToken + "]");
 			JWTVerifier verifier = JWT.require(algorithm).withIssuer(KNOWAGE_ISSUER).build();
 			verifier.verify(jwtToken);
-			logger.debug("JWT token verified properly");
+			LOGGER.debug("JWT token verified properly");
 		} catch (JWTVerificationException e) {
 			throw new SecurityException("Invalid JWT token!", e);
 		}
@@ -139,15 +139,15 @@ public class JWTSsoService implements SsoServiceInterface {
 	 */
 	public static String userId2jwtToken(String userId, Date expiresAt) {
 		Algorithm algorithm = ALGORITHM_FACTORY.getAlgorithm();
-		LogMF.debug(logger, "User id in input is [{0}]", userId);
-		LogMF.debug(logger, "JWT token will expire at [{0}]", expiresAt);
+		LOGGER.debug("User id in input is [{}]", userId);
+		LOGGER.debug("JWT token will expire at [{}]", expiresAt);
 		// @formatter:off
 		String token = JWT.create()
 				.withClaim(SsoServiceInterface.USER_ID, userId)
 				.withExpiresAt(expiresAt) // token will expire at the desired expire date
 				.sign(algorithm);
 		// @formatter:on
-		LogMF.debug(logger, "JWT token is [{0}]", token);
+		LOGGER.debug("JWT token is [{}]", token);
 		return token;
 	}
 
@@ -161,21 +161,21 @@ public class JWTSsoService implements SsoServiceInterface {
 	 */
 	public static String userId2jwtToken(String userId) {
 		Algorithm algorithm = ALGORITHM_FACTORY.getAlgorithm();
-		LogMF.debug(logger, "User id in input is [{0}]", userId);
-		logger.debug("Expire date not set, JWT token will last forever");
+		LOGGER.debug("User id in input is [{}]", userId);
+		LOGGER.debug("Expire date not set, JWT token will last forever");
 		// @formatter:off
 		String token = JWT.create()
 				.withClaim(SsoServiceInterface.USER_ID, userId)
 				.sign(algorithm);
 		// @formatter:on
-		LogMF.debug(logger, "JWT token is [{0}]", token);
+		LOGGER.debug("JWT token is [{}]", token);
 		return token;
 	}
 
 	public static String ldapUser2jwtToken(String userId, String distinguishName, String psw, Date expiresAt) {
 		Algorithm algorithm = ALGORITHM_FACTORY.getAlgorithm();
-		LogMF.debug(logger, "User id in input is [{0}]", userId);
-		LogMF.debug(logger, "JWT token will expire at [{0}]", expiresAt);
+		LOGGER.debug("User id in input is [{}]", userId);
+		LOGGER.debug("JWT token will expire at [{}]", expiresAt);
 		// @formatter:off
 		String token = JWT.create()
 				.withClaim(SsoServiceInterface.USER_ID, userId)
@@ -184,46 +184,46 @@ public class JWTSsoService implements SsoServiceInterface {
 				.withExpiresAt(expiresAt) // token will expire at the desired expire date
 				.sign(algorithm);
 		// @formatter:on
-		LogMF.debug(logger, "JWT token is [{0}]", token);
+		LOGGER.debug("JWT token is [{}]", token);
 		return token;
 	}
 
 	public static String pythonScript2jwtToken(String script, Date expiresAt) {
 		Algorithm algorithm = ALGORITHM_FACTORY.getAlgorithm();
-		LogMF.debug(logger, "Python script in input is [{0}]", script);
-		LogMF.debug(logger, "JWT token will expire at [{0}]", expiresAt);
+		LOGGER.debug("Python script in input is [{}]", script);
+		LOGGER.debug("JWT token will expire at [{}]", expiresAt);
 		// @formatter:off
 		String token = JWT.create()
 				.withClaim(SsoServiceInterface.PYTHON_SCRIPT, script)
 				.withExpiresAt(expiresAt) // token will expire at the desired expire date
 				.sign(algorithm);
 		// @formatter:on
-		LogMF.debug(logger, "JWT token is [{0}]", token);
+		LOGGER.debug("JWT token is [{}]", token);
 		return token;
 	}
 
 	public static String jwtToken2userId(String jwtToken) throws JWTVerificationException {
 		Map<String, Claim> claims = getClaims(jwtToken);
 		Claim userIdClaim = claims.get(SsoServiceInterface.USER_ID);
-		LogMF.debug(logger, "User id detected is [{0}]", userIdClaim.asString());
+		LOGGER.debug("User id detected is [{}]", userIdClaim.asString());
 		assertNotEmpty(userIdClaim, "User id information is missing!!!");
 		String userId = userIdClaim.asString();
-		LogMF.debug(logger, "User id is [{0}]", userId);
+		LOGGER.debug("User id is [{}]", userId);
 		return userId;
 	}
 
 	public static Map<String, Claim> getClaims(String jwtToken) throws JWTVerificationException {
 		DecodedJWT decodedJWT = getDecodedJWT(jwtToken);
-		logger.debug("JWT token verified properly");
+		LOGGER.debug("JWT token verified properly");
 		return decodedJWT.getClaims();
 	}
 
 	public static DecodedJWT getDecodedJWT(String jwtToken) throws JWTVerificationException {
-		LogMF.debug(logger, "JWT token in input is [{0}]", jwtToken);
+		LOGGER.debug("JWT token in input is [{}]", jwtToken);
 		Algorithm algorithm = ALGORITHM_FACTORY.getAlgorithm();
 		JWTVerifier verifier = JWT.require(algorithm).build();
 		DecodedJWT decodedJWT = verifier.verify(jwtToken);
-		logger.debug("JWT token verified and decoded properly");
+		LOGGER.debug("JWT token verified and decoded properly");
 		return decodedJWT;
 	}
 
@@ -233,9 +233,9 @@ public class JWTSsoService implements SsoServiceInterface {
 
 	public static String map2jwtToken(Map<String, String> claims, Date expiresAt, String issuer) {
 		Algorithm algorithm = ALGORITHM_FACTORY.getAlgorithm();
-		LogMF.debug(logger, "Claims map in input is [{0}]", claims);
-		LogMF.debug(logger, "JWT token will expire at [{0}]", expiresAt);
-		LogMF.debug(logger, "JWT token issuer [{0}]", issuer);
+		LOGGER.debug("Claims map in input is [{}]", claims);
+		LOGGER.debug("JWT token will expire at [{}]", expiresAt);
+		LOGGER.debug("JWT token issuer [{}]", issuer);
 		Assert.assertTrue(claims != null && !claims.isEmpty(), "Claims map in input is empty!!!");
 		Builder builder = JWT.create();
 		for (Map.Entry<String, String> entry : claims.entrySet()) {
@@ -244,23 +244,23 @@ public class JWTSsoService implements SsoServiceInterface {
 		builder.withIssuer(issuer);
 		builder.withExpiresAt(expiresAt); // token will expire at the desired expire date
 		String token = builder.sign(algorithm);
-		LogMF.debug(logger, "JWT token is [{0}]", token);
+		LOGGER.debug("JWT token is [{}]", token);
 		return token;
 	}
 
 	public static Map<String, String> jwtToken2ldapUser(String jwtToken) throws JWTVerificationException {
 		Algorithm algorithm = ALGORITHM_FACTORY.getAlgorithm();
-		LogMF.debug(logger, "JWT token in input is [{0}]", jwtToken);
+		LOGGER.debug("JWT token in input is [{}]", jwtToken);
 		JWTVerifier verifier = JWT.require(algorithm).build();
 		DecodedJWT decodedJWT = verifier.verify(jwtToken);
-		logger.debug("JWT token verified properly");
+		LOGGER.debug("JWT token verified properly");
 		Claim userIdClaim = decodedJWT.getClaim(SsoServiceInterface.USER_ID);
-		LogMF.debug(logger, "User id detected is [{0}]", userIdClaim.asString());
+		LOGGER.debug("User id detected is [{}]", userIdClaim.asString());
 		assertNotEmpty(userIdClaim, "User id information is missing!!!");
 		String userId = userIdClaim.asString();
-		LogMF.debug(logger, "User id is [{0}]", userId);
+		LOGGER.debug("User id is [{}]", userId);
 		Claim distinguishNameClaim = decodedJWT.getClaim(SsoServiceInterface.DISTINGUISH_NAME);
-		LogMF.debug(logger, "Distinguish name detected is [{0}]", distinguishNameClaim.asString());
+		LOGGER.debug("Distinguish name detected is [{}]", distinguishNameClaim.asString());
 		assertNotEmpty(distinguishNameClaim, "Distinguish name information is missing!!!");
 		String dn = distinguishNameClaim.asString();
 		Claim pswClaim = decodedJWT.getClaim(SsoServiceInterface.PASSWORD);
@@ -291,7 +291,7 @@ public class JWTSsoService implements SsoServiceInterface {
 	}
 
 	public static SpagoBIUserProfile fullJWTToken2UserProfile(String jwtToken) {
-		LogMF.debug(logger, "JWT token in input is [{0}]", jwtToken);
+		LOGGER.debug("JWT token in input is [{}]", jwtToken);
 
 		SpagoBIUserProfile profile = new SpagoBIUserProfile();
 		profile.setUniqueIdentifier(jwtToken);
@@ -299,24 +299,24 @@ public class JWTSsoService implements SsoServiceInterface {
 		Algorithm algorithm = ALGORITHM_FACTORY.getAlgorithm();
 		JWTVerifier verifier = JWT.require(algorithm).build();
 		DecodedJWT decodedJWT = verifier.verify(jwtToken);
-		logger.debug("JWT token verified properly");
+		LOGGER.debug("JWT token verified properly");
 
 		Claim userIdClaim = decodedJWT.getClaim(SsoServiceInterface.USER_ID);
-		LogMF.debug(logger, "User id detected is [{0}]", userIdClaim.asString());
+		LOGGER.debug("User id detected is [{}]", userIdClaim.asString());
 		assertNotEmpty(userIdClaim, "User id information is missing!!!");
 		profile.setUserId(userIdClaim.asString());
 
 		Claim usernameClaim = decodedJWT.getClaim(USERNAME_CLAIM);
-		LogMF.debug(logger, "User name detected is [{0}]", usernameClaim.asString());
+		LOGGER.debug("User name detected is [{}]", usernameClaim.asString());
 		assertNotEmpty(usernameClaim, "User name information is missing!!!");
 		profile.setUserName(usernameClaim.asString());
 
 		Claim rolesClaim = decodedJWT.getClaim(ROLES_CLAIM);
-		LogMF.debug(logger, "Roles claim detected is [{0}]", rolesClaim.asString());
+		LOGGER.debug("Roles claim detected is [{}]", rolesClaim.asString());
 		profile.setRoles(rolesClaim.asArray(String.class));
 
 		Claim isSuperAdminClaim = decodedJWT.getClaim(IS_SUPER_ADMIN_CLAIM);
-		LogMF.debug(logger, "Super admin flag detected is [{0}]", isSuperAdminClaim.asBoolean());
+		LOGGER.debug("Super admin flag detected is [{}]", isSuperAdminClaim.asBoolean());
 		profile.setIsSuperadmin(isSuperAdminClaim.asBoolean());
 
 		// @formatter:off
@@ -326,7 +326,7 @@ public class JWTSsoService implements SsoServiceInterface {
 				.filter(entry -> !PREDEFINED_CLAIMS_LIST.contains(entry.getKey()))
 				.collect(Collectors.toMap(Entry::getKey, e -> e.getValue().asString(), (prev, next) -> next, HashMap::new));
 		// @formatter:on
-		LogMF.debug(logger, "Attributs detected are [{0}]", attributes);
+		LOGGER.debug("Attributs detected are [{}]", attributes);
 		profile.setAttributes(attributes);
 
 		return profile;
