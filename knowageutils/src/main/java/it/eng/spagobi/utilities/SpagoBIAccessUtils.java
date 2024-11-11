@@ -63,7 +63,7 @@ public class SpagoBIAccessUtils {
 			while (entries.hasMoreElements()) {
 				SonarZipCommons sonarZipCommons = new SonarZipCommons();
 				
-				if(sonarZipCommons.doThresholdCheck(path)) {
+				if(sonarZipCommons.doThresholdCheck(zipFile.getName())) {
 					entry = entries.nextElement();
 					name = entry.getName();
 					path = newDirectory.getPath() + File.separator + name;
