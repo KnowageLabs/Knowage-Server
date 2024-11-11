@@ -20,8 +20,7 @@ package it.eng.spagobi.analiticalmodel.document.bo;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.sql.Timestamp;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.TemporalAccessor;
 import java.util.ArrayList;
@@ -162,8 +161,9 @@ public class BIObject implements Serializable, Cloneable, IDrivableBIResource<BI
 
 	private String stateCodeStr = null;
 
-	private static final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 	private static final DateTimeFormatter dateFormat_v2 = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
+	private static final DateTimeFormatter dateFormat_v3 = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS");
 
 	/**
 	 * Gets the id.
@@ -327,8 +327,9 @@ public class BIObject implements Serializable, Cloneable, IDrivableBIResource<BI
 	}
 
 	public String getDataSourceLabel() throws EMFUserError {
-		if (dataSourceId == null)
+		if (dataSourceId == null) {
 			return null;
+		}
 
 		IDataSourceDAO dataSourceDAO = DAOFactory.getDataSourceDAO();
 		return dataSourceDAO.loadDataSourceByID(dataSourceId).getLabel();
@@ -633,7 +634,7 @@ public class BIObject implements Serializable, Cloneable, IDrivableBIResource<BI
 		String formattedDate = null;
 		if (creationDate != null) {
 			if (creationDate instanceof Timestamp) {
-				formattedDate = dateFormat.format(creationDate);
+				formattedDate = dateFormat_v3.format(creationDate.toInstant().atZone(ZoneId.systemDefault()));
 			} else if (creationDate instanceof TemporalAccessor) {
 				formattedDate = dateFormat_v2.format((TemporalAccessor) creationDate);
 			}
@@ -880,8 +881,9 @@ public class BIObject implements Serializable, Cloneable, IDrivableBIResource<BI
 
 	@Override
 	public boolean equals(Object v) {
-		if (this == v)
+		if (this == v) {
 			return true;
+		}
 
 		boolean toReturn = false;
 

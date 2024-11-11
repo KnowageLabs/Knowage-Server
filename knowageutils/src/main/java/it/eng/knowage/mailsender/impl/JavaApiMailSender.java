@@ -30,6 +30,7 @@ import it.eng.knowage.mailsender.IMailSender;
 import it.eng.knowage.mailsender.dto.MessageMailDto;
 import it.eng.knowage.mailsender.dto.ProfileNameMailEnum;
 import it.eng.knowage.mailsender.dto.TypeMailEnum;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 public class JavaApiMailSender implements IMailSender {
 
@@ -241,13 +242,17 @@ public class JavaApiMailSender implements IMailSender {
 				continue;// Ignore directory
 			}
 			logger.debug("insert file: " + f.getName());
-			FileInputStream in = new FileInputStream(f); // Stream to read file
-			ZipEntry entry = new ZipEntry(f.getName()); // Make a ZipEntry
-			out.putNextEntry(entry); // Store entry
-			while ((bytesRead = in.read(buffer)) != -1) {
-				out.write(buffer, 0, bytesRead);
+			try (FileInputStream in = new FileInputStream(f)) {
+				ZipEntry entry = new ZipEntry(f.getName()); // Make a ZipEntry
+				out.putNextEntry(entry); // Store entry
+				while ((bytesRead = in.read(buffer)) != -1) {
+					out.write(buffer, 0, bytesRead);
+				}
+
+			} catch (Exception e) {
+				logger.error("JavaApiMailSender - Error in zipFolder ", e);
+				throw new SpagoBIRuntimeException("JavaApiMailSender - Error in zipFolder");
 			}
-			in.close();
 		}
 		out.close();
 

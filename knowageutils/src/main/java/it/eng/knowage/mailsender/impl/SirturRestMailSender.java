@@ -35,6 +35,7 @@ import it.eng.knowage.mailsender.dto.MessageMailDto;
 import it.eng.knowage.mailsender.dto.MessageMailRestDto;
 import it.eng.knowage.mailsender.dto.TypeMailEnum;
 import it.eng.spagobi.commons.SingletonConfig;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 public class SirturRestMailSender implements IMailSender {
 
@@ -144,7 +145,7 @@ public class SirturRestMailSender implements IMailSender {
 			logger.error("Impossible sendMail  - status " + response.getStatus() + " - reason " + response.getStatusInfo().getReasonPhrase());
 			throw new ServerErrorException(response);
 		}
-		
+
 		logger.info("sendMail response "+response.readEntity(String.class));
 
 	}
@@ -210,13 +211,16 @@ public class SirturRestMailSender implements IMailSender {
 				continue;// Ignore directory
 			}
 
-			FileInputStream in = new FileInputStream(f); // Stream to read file
-			ZipEntry entry = new ZipEntry(f.getName()); // Make a ZipEntry
-			out.putNextEntry(entry); // Store entry
-			while ((bytesRead = in.read(buffer)) != -1) {
-				out.write(buffer, 0, bytesRead);
+			try (FileInputStream in = new FileInputStream(f)) {
+				ZipEntry entry = new ZipEntry(f.getName()); // Make a ZipEntry
+				out.putNextEntry(entry); // Store entry
+				while ((bytesRead = in.read(buffer)) != -1) {
+					out.write(buffer, 0, bytesRead);
+				}
+			} catch (Exception e) {
+				logger.error("SirturRestMailSender - Error in zipFolder ", e);
+				throw new SpagoBIRuntimeException("SirturRestMailSender - Error in zipFolder");
 			}
-			in.close();
 		}
 		out.close();
 

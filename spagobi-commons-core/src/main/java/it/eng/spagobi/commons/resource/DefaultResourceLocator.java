@@ -5,11 +5,9 @@
  This Source Code Form is subject to the terms of the Mozilla Public
  License, v. 2.0. If a copy of the MPL was not distributed with this file,
  You can obtain one at http://mozilla.org/MPL/2.0/.
- 
+
 **/
 package it.eng.spagobi.commons.resource;
-
-import it.eng.spagobi.commons.exception.SpagoBIPluginException;
 
 import java.io.File;
 import java.io.IOException;
@@ -21,6 +19,8 @@ import java.util.Properties;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.Platform;
 import org.osgi.framework.Bundle;
+
+import it.eng.spagobi.commons.exception.SpagoBIPluginException;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
@@ -60,7 +60,7 @@ public class DefaultResourceLocator implements IResourceLocator {
 		fileURL = null;
 
 		bundle = Platform.getBundle(pluginId);
-		if(bundle !=  null) {		
+		if(bundle !=  null) {
 			//System.err.println("Boundle trovato");
 			fileURL = bundle.getEntry(fileRelativePath);
 			if(fileURL == null) {
@@ -78,7 +78,7 @@ public class DefaultResourceLocator implements IResourceLocator {
 			try {
 				fileURL =  file.toURI().toURL();
 			} catch (MalformedURLException e) {
-				throw new SpagoBIPluginException("Impossible to resolve resource [" + fileRelativePath + "] to a valid URL", e);
+				throw new SpagoBIPluginException("Impossible to resolve resource [" + fileRelativePath + "] to a valid URL");
 			}
 		}
 
@@ -95,7 +95,7 @@ public class DefaultResourceLocator implements IResourceLocator {
 		URL fileURL = getFileURL( fileRelativePath );
 		try{
 			String fullPath = fileURL.getFile();
-			toreturn = new File(fullPath);	
+			toreturn = new File(fullPath);
 		}
 		catch (Exception e) {
 			throw new SpagoBIPluginException("From the URL [" + fileURL + "] no file could be retrieved ", e);
