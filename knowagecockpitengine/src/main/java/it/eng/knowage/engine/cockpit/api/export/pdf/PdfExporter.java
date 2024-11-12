@@ -33,11 +33,11 @@ import java.util.Objects;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.pdfbox.io.MemoryUsageSetting;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
+import org.apache.pdfbox.pdmodel.font.Standard14Fonts;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -90,7 +90,11 @@ public class PdfExporter extends AbstractFormatExporter {
 			}
 		}
 
-		try (PDDocument document = new PDDocument(MemoryUsageSetting.setupTempFileOnly())) {
+		/* 
+		 * PDFBox 3.0: The MemoryUsageSetting parameter within the loadPDF methods was replaced by a parameter using 
+		 * the new functional interface StreamCacheCreateFunction to encapsulate the caching details within the IO package.
+		*/
+		try (PDDocument document = new PDDocument()) { 
 			long widgetId = body.getLong("widget");
 
 			exportTableWidget(document, templateString, widgetId);
@@ -256,7 +260,7 @@ public class PdfExporter extends AbstractFormatExporter {
 					if (settings != null && settings.has("alternateRows")) {
 						JSONObject alternateRows = settings.getJSONObject("alternateRows");
 						if (alternateRows.optBoolean("enabled")) {
-							cell.setFont(PDType1Font.HELVETICA);
+							cell.setFont(new PDType1Font(Standard14Fonts.FontName.HELVETICA));
 							if (r % 2 == 0) {
 								cell.setFillColor(
 										getColorFromString(alternateRows.optString("evenRowsColor"), Color.WHITE));
@@ -380,7 +384,7 @@ public class PdfExporter extends AbstractFormatExporter {
 	private void styleHeaderCell(JSONObject style, Cell<PDPage> headerCell) throws JSONException {
 		if (style != null && style.has("th") && style.getJSONObject("th").optBoolean("enabled")) {
 			JSONObject headerStyle = style.getJSONObject("th");
-			headerCell.setFont(PDType1Font.HELVETICA_BOLD);
+			headerCell.setFont(new PDType1Font(Standard14Fonts.FontName.HELVETICA_BOLD));
 			if (headerStyle.has("font-size")) {
 				float size = getFontSizeFromString(headerStyle.getString("font-size"));
 				if (size != 0)

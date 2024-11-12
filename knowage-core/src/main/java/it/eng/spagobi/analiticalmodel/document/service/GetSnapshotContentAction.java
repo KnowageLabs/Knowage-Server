@@ -31,8 +31,8 @@ import java.util.Map;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
+import org.apache.pdfbox.io.RandomAccessReadBuffer;
 import org.apache.pdfbox.multipdf.PDFMergerUtility;
-
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.dispatching.action.AbstractHttpAction;
 import it.eng.spago.error.EMFInternalError;
@@ -205,11 +205,13 @@ public class GetSnapshotContentAction extends AbstractHttpAction {
 			} else {
 				sortedSnapList = snapList;
 			}
+			
 			for (int i = 0; i < sortedSnapList.size(); i++) {
 				Snapshot snap = sortedSnapList.get(i);
 				InputStream is = new ByteArrayInputStream(snap.getContent());
-				mergePdf.addSource(is);
+				mergePdf.addSource(new RandomAccessReadBuffer(is));
 			}
+
 			// download merged file
 			ByteArrayOutputStream pdfDownload = new ByteArrayOutputStream();
 			mergePdf.setDestinationStream(pdfDownload);
