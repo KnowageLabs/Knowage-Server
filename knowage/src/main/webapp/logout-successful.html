@@ -1,71 +1,47 @@
 <!DOCTYPE html>
 <html>
-        <head>
-            <meta charset="utf-8">
-            <meta http-equiv="X-UA-Compatible" content="IE=edge">
-            <meta name="viewport" content="width=device-width, initial-scale=1">
-            <meta name="apple-mobile-web-app-capable" content="yes">
-            <meta name="apple-mobile-web-app-title" content="Knowage">
-            <link rel="manifest" href="./manifest.json" crossorigin="use-credentials"/>
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="Knowage" />
+    <link rel="manifest" href="./manifest.json" crossorigin="use-credentials" />
 
-            <title>Knowage Logout</title>
+    <title>Knowage Logout</title>
 
-                <link rel="shortcut icon" href="./themes/sbi_default/img/favicon.ico" />
-                   <!-- Bootstrap -->
-                <link rel="stylesheet" href="./node_modules/bootstrap/dist/css/bootstrap.min.css" />
-                <style>
-                .logout-hint {
-                        padding: 8px;
-                        border: 1px solid #A2A2A2;
-                        background-color: #CCC;
-                }
-                .logout-hint a {
-                        color: #042d5f;
-                        font-weight: bold;
-                }
-                </style>
+    <link rel="shortcut icon" href="./themes/sbi_default/img/favicon.ico" />
+    <!-- Bootstrap -->
+    <link rel="stylesheet" href="./node_modules/bootstrap/dist/css/bootstrap.min.css" />
+    <style>
+      .logout-hint {
+        padding: 8px;
+        border: 1px solid #a2a2a2;
+        background-color: #ccc;
+      }
+      .logout-hint a {
+        color: #042d5f;
+        font-weight: bold;
+      }
+    </style>
+  </head>
 
+  <body class="kn-login">
+    <div class="container-fluid" style="height: 100%">
+      <div class="col-sm-5 col-sm-offset-7" style="height: 100%; background-color: white; display: flex; flex-direction: column; padding: 20px; justify-content: center; align-items: center">
+        <img id="profile-img" class="col-xs-8" src="./themes/commons/img/defaultTheme/logoCover.svg" />
+        <p id="profile-name" class="profile-name-card"></p>
 
-        </head>
+        <div class="col-xs-8">
+          <div class="logout-hint">Logout successful. Click <a id="login_link" href="#">here</a> to log in again.</div>
+        </div>
+      </div>
+      <!-- /container -->
+    </div>
+    <script src="./node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
 
-        <body class="kn-login">
-                <div class="container-fluid" style="height:100%;">
-                <div class="col-sm-5 col-sm-offset-7" style="height:100%;background-color:white;display:flex;flex-direction:column;padding:20px;justify-content:center;align-items:center">
-                <img id="profile-img" class="col-xs-8" src='./themes/commons/img/defaultTheme/logoCover.svg' />
-                <p id="profile-name" class="profile-name-card"></p>
-
-                <div class="col-xs-8">
-
-                                        <div class="logout-hint">
-                                        Logout successful. Click <a id="login_link" href="#">here</a> to log in again.
-                                        </div>
-
-                </div>
-                        </div><!-- /container -->
-                </div>
-                <script src="./node_modules/jquery/dist/jquery.min.js"></script>
-                <script src="./node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
-
-                <script>
-                        $(document).ready(function(){
-                                // Select all elements with data-toggle="tooltips" in the document
-                                $('[data-toggle="tooltip"]').tooltip();
-
-                                // Select a specified element
-                                $('#myTooltip').tooltip();
-
-                                $.get('./package.json',(data)=>{
-                                        const version = data.version
-                                        var linkElem = document.createElement('link');
-                                        linkElem.setAttribute('rel','styleSheet')
-                                        linkElem.setAttribute('type','text/css')
-                                        linkElem.setAttribute('href', `${location.href.substring(0, location.href.length - 'logout-successful.html'.length)}themes/commons/css-${version}/customStyle.css`)
-                                        //document.querySelector("head").append(linkElem)
-                                })
-
-                                $('#login_link').attr('href', location.href.substring(0, location.href.length - 'logout-successful.html'.length));
-                        });
-                </script>
-
-        </body>
+    <script>
+      document.getElementById("login_link").setAttribute("href", location.href.substring(0, location.href.length - "logout-successful.html".length));
+    </script>
+  </body>
 </html>

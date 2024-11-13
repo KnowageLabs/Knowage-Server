@@ -175,18 +175,7 @@ String userId = (request.getParameter("user_id") == null) ? "" : request.getPara
          <spagobi:error/>
       </div>
       <!-- /container -->
-      <!-- Include all compiled plugins (below), or include individual files as needed -->
-	  <script src="<%=urlBuilder.getResourceLink(request, "node_modules/jquery/dist/jquery.min.js")%>"></script>
- 		<script src="<%=urlBuilder.getResourceLink(request, "node_modules/bootstrap/dist/js/bootstrap.min.js")%>"></script>
-      <script>
-         $(document).ready(function(){
-            // Select all elements with data-toggle="tooltips" in the document
-         $('[data-toggle="tooltip"]').tooltip(); 
-         
-         // Select a specified element
-         $('#myTooltip').tooltip();
-         });
-      </script>		
+ 		<script src="<%=urlBuilder.getResourceLink(request, "node_modules/bootstrap/dist/js/bootstrap.min.js")%>"></script>	
       <!-- END NEW FORM -->
    </body>
 </html>

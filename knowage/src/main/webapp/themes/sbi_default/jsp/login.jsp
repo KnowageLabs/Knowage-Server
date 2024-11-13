@@ -150,17 +150,24 @@
 			function onSignIn(googleUser) {
 			  var profile = googleUser.getBasicProfile();
 			  var id_token = googleUser.getAuthResponse().id_token;
-			  $.post("/knowage/servlet/AdapterHTTP", {
-				  "ACTION_NAME": "LOGIN_ACTION_BY_TOKEN",
-				  "NEW_SESSION" : true,
-				  "token" : id_token
-			  }).done(function( data ) {
-				  // reload current page, in order to keep input GET parameters (such as required document and so on)
-				  location.reload();
-			  }).fail(function (error) {
-				  $("#kn-infoerror-message").show();
-				  $(".kn-infoerror").html("Authentication failed. Please check if you are to allowed to enter this application.");
-			  });
+			  try{
+				const response = await fetch("/knowage/servlet/AdapterHTTP", {
+					method: "POST",
+					body: {
+				  		"ACTION_NAME": "LOGIN_ACTION_BY_TOKEN",
+				  		"NEW_SESSION" : true,
+				  		"token" : id_token
+			  		}
+				});
+				if (response.ok) {
+					// reload current page, in order to keep input GET parameters (such as required document and so on)
+					location.reload();
+				}
+			  }catch(e){
+				document.getElementById('kn-infoerror-message').style.display = 'block';
+				document.getElementsByClassName$("kn-infoerror")[0].innerHTML = "Authentication failed. Please check if you are to allowed to enter this application.";
+			  }
+				
 			}
 		</script>
 		<script src="https://apis.google.com/js/platform.js" async defer></script>
@@ -189,19 +196,27 @@
 				myMSALObj = new msal.PublicClientApplication(msalConfig);
 				myMSALObj.loginPopup(loginRequest).then(handleResponse);
 			}
-			
+
+
 			function handleResponse(response) {
-				$.post("/knowage/servlet/AdapterHTTP", {
-					  "ACTION_NAME": "LOGIN_ACTION_BY_TOKEN",
-					  "NEW_SESSION" : true,
-					  "token" : response.idToken
-				}).done(function( data ) {
-					  // reload current page, in order to keep input GET parameters (such as required document and so on)
-					  location.reload();
-				}).fail(function (error) {
-					  $("#kn-infoerror-message").show();
-					  $(".kn-infoerror").html("Authentication failed. Please check if you are to allowed to enter this application.");
+			  try{
+				const response = await fetch("/knowage/servlet/AdapterHTTP", {
+					method: "POST",
+					body: {
+				  		"ACTION_NAME": "LOGIN_ACTION_BY_TOKEN",
+				  		"NEW_SESSION" : true,
+				  		"token" : response.id_token
+			  		}
 				});
+				if (response.ok) {
+					// reload current page, in order to keep input GET parameters (such as required document and so on)
+					location.reload();
+				}
+			  }catch(e){
+				document.getElementById('kn-infoerror-message').style.display = 'block';
+				document.getElementsByClassName$("kn-infoerror")[0].innerHTML = "Authentication failed. Please check if you are to allowed to enter this application.";
+			  }
+				
 			}
 		</script>
 		<script type="text/javascript" src="https://alcdn.msauth.net/browser/2.0.0-beta.0/js/msal-browser.js" integrity="sha384-r7Qxfs6PYHyfoBR6zG62DGzptfLBxnREThAlcJyEfzJ4dq5rqExc1Xj3TPFE/9TH" crossorigin="anonymous" async defer></script>
@@ -280,18 +295,7 @@
 				<div class="version"><span>Version:</span> <%=it.eng.knowage.wapp.Version.getVersionForDatabase()%></div>
 			</div><!-- /container -->
 		</div>
- 		<script src="<%=urlBuilder.getResourceLink(request, "node_modules/jquery/dist/jquery.min.js")%>"></script>
  		<script src="<%=urlBuilder.getResourceLink(request, "node_modules/bootstrap/dist/js/bootstrap.min.js")%>"></script>
-	
-		<script>
-			$(document).ready(function(){
-				// Select all elements with data-toggle="tooltips" in the document
-				$('[data-toggle="tooltip"]').tooltip(); 
-				
-				// Select a specified element
-				$('#myTooltip').tooltip();
-			});
-		</script>
 		
 	</body>
 </html>

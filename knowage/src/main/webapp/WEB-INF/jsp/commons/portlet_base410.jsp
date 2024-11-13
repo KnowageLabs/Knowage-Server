@@ -411,12 +411,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <%-- ---------------------------------------------------------------------- --%>
 <%-- INCLUDE Angular JS														--%>
 <%-- ---------------------------------------------------------------------- --%>
-	<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "/node_modules/jquery/dist/jquery.min.js")%>"></script> 
-	<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "/node_modules/malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.js")%>"></script>
 	<%@include file="/WEB-INF/jsp/commons/angular/angularImport.jsp"%>
 
-	<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "/node_modules/ng-scrollbars/dist/scrollbars.min.js")%>"></script>
-	<link rel="stylesheet" href="<%=urlBuilder.getResourceLink(request,"/node_modules/malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.css")%>" type="text/css"/>
 	<link rel="styleSheet" href="<%=urlBuilder.getResourceLink(request,"/themes/commons/css/customStyle.css")%>" type="text/css" />
 
 <%@ include file="/WEB-INF/jsp/commons/includeMessageResource.jspf" %>
