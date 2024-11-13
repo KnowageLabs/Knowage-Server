@@ -184,7 +184,6 @@ public class LayerCRUD {
 	@GET
 	@Path("/{layerId}/download/{typeWFS}")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-	@UserConstraint(functionalities = { CommunityFunctionalityConstants.GEO_LAYERS_MANAGEMENT })
 	public Response getDownload(@PathParam("layerId") int layerId, @PathParam("typeWFS") String typeWFS)
 			throws JSONException {
 		ISbiGeoLayersDAO dao = DAOFactory.getSbiGeoLayerDao();
