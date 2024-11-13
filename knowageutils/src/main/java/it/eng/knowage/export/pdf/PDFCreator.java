@@ -40,8 +40,6 @@ import javax.imageio.ImageIO;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.log4j.Logger;
-import org.apache.pdfbox.Loader;
-import org.apache.pdfbox.io.RandomAccessReadBuffer;
 import org.apache.pdfbox.multipdf.PDFMergerUtility;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
@@ -50,7 +48,6 @@ import org.apache.pdfbox.pdmodel.PDPageContentStream.AppendMode;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
 import org.apache.pdfbox.pdmodel.font.PDFont;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
-import org.apache.pdfbox.pdmodel.font.Standard14Fonts;
 import org.apache.pdfbox.pdmodel.graphics.image.LosslessFactory;
 import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
 import org.apache.pdfbox.util.Matrix;
@@ -137,7 +134,7 @@ public abstract class PDFCreator {
 		for (int i = 0; i < contents.length; i++) {
 			// adding the source files
 			if (contents[i] != null) {
-				merger.addSource(new RandomAccessReadBuffer(contents[i]));
+				merger.addSource(contents[i]);
 			}
 		}
 		// Merging the documents
@@ -156,12 +153,12 @@ public abstract class PDFCreator {
 	 *             If there is an error writing the data.
 	 */
 	public static void addInformation(Path input, ExportDetails details) throws IOException {
-		try (PDDocument doc = Loader.loadPDF(input.toFile())) {
+		try (PDDocument doc = PDDocument.load(input.toFile())) {
 			if (details.getPageNumbering() != null) {
-				writePageNumbering(doc, new PDType1Font(Standard14Fonts.FontName.HELVETICA), 16.0f, details.getPageNumbering());
+				writePageNumbering(doc, PDType1Font.HELVETICA_BOLD, 16.0f, details.getPageNumbering());
 			}
 			if (details.getFrontpageDetails() != null) {
-				writeFrontpageDetails(doc, new PDType1Font(Standard14Fonts.FontName.HELVETICA), 18.0f, details.getFrontpageDetails());
+				writeFrontpageDetails(doc, PDType1Font.HELVETICA_BOLD, 18.0f, details.getFrontpageDetails());
 			}
 			doc.save(input.toFile());
 		}
