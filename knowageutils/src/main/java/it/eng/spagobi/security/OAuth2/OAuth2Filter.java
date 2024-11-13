@@ -137,7 +137,7 @@ public class OAuth2Filter implements Filter {
 				if (nonceClaim.isNull() || !nonceClaim.asString().equals(generatedNonce)) {
 					LOGGER.info("nonceClaim.asString() [{}]",nonceClaim.asString());
 					LOGGER.error("JWT token nonce [{}] does not match the generated nonce, that is [{}]", nonceClaim, generatedNonce);
-					//throw new SpagoBIRuntimeException("JWT token nonce does not match the generated nonce");
+					throw new SpagoBIRuntimeException("JWT token nonce does not match the generated nonce");
 				}
 				LOGGER.info("JWT token verified.");
 			} catch (Exception e) {
