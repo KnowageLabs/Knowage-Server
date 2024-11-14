@@ -285,7 +285,8 @@ public class ZipUtils {
 		unzip("", zipFile, outFolder, false);
 	}
 
-	public static void unzipFile(String filePath) {
+	/* NOT USED
+	 * public static void unzipFile(String filePath) {
 
 		ZipEntry zEntry = null;
 		try (FileInputStream fis = new FileInputStream(filePath);
@@ -304,6 +305,7 @@ public class ZipUtils {
 			LOGGER.warn("Non-fatal error unzipping {}", filePath, e);
 		}
 	}
+	*/
 
 	private static void unzipEntry(String filePath, ZipEntry zEntry, ZipInputStream zipIs) {
 		byte[] tmp = new byte[4 * 1024];
