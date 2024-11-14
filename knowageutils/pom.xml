@@ -238,7 +238,7 @@
 		<dependency>
 			<groupId>org.apache.poi</groupId>
 			<artifactId>poi-ooxml</artifactId>
-			<version>${apache.poi}</version>
+			<version>${apache.poi-ooxml}</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
