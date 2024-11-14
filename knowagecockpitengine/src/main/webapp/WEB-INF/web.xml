@@ -216,6 +216,13 @@
 	</servlet-mapping>
 	<!-- END ProxyTicketReceptor -->
 
+<session-config>
+  <cookie-config>
+     <http-only>true</http-only>        
+     <secure>true</secure>        
+  </cookie-config>
+</session-config>
+
 	<!-- START TOMCAT RES -->
 	<resource-ref>
 		<res-ref-name>wm/SpagoWorkManager</res-ref-name>

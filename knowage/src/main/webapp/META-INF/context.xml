@@ -1,4 +1,4 @@
-<Context path="/knowage" reloadable="false">
+<Context path="/knowage" reloadable="false" useHttpOnly="true">
 	<CookieProcessor sameSiteCookies="lax" />
 	
 	<!-- <Loader delegate="true"/> -->
