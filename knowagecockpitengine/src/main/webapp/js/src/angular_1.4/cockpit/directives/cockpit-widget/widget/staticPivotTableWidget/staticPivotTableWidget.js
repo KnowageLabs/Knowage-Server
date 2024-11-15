@@ -1526,7 +1526,7 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 		$scope.conditions=['>','<','==','>=','<=','!='];
 
 		$scope.getTemplateUrl = function(template){
-			return cockpitModule_generalServices.getTemplateUrl('tableWidget',template)
+			return cockpitModule_generalServices.getTemplateUrl('advancedTableWidget',template)
 		}
 
 		$scope.selectedColumn.disableShowHeader = false; //default is enabled: only for measures force disable if there are many measures

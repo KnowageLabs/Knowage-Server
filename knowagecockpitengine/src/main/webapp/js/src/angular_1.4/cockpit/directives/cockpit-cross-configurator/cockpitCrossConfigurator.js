@@ -150,7 +150,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     }
 
     $scope.getTemplateUrl = function (template) {
-      return cockpitModule_generalServices.getTemplateUrl("tableWidget", template);
+      return cockpitModule_generalServices.getTemplateUrl("advancedTableWidget", template);
     };
 
     $scope.addLink = function () {

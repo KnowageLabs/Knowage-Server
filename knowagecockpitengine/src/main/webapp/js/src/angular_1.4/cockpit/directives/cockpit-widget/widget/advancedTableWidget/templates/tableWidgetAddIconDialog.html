@@ -1,0 +1,30 @@
+<div class="iconSelectorSide">
+    <md-toolbar class="ternaryToolbar">
+      <div class="md-toolbar-tools">
+        <h2>Choose Icon</h2>
+        <span flex></span>
+      </div>
+    </md-toolbar>
+    <md-content>
+    	<div ng-repeat="family in availableIcons">
+	    	<md-subheader class="expandableSubheader" ng-click="openFamily(family.name)">
+	    		<span>{{family.name}}</span>
+	    		<span flex></span>
+	    		<i class="fa" ng-class="{'fa-chevron-down': iconFamily != family.name,'fa-chevron-up': iconFamily == family.name}"></i>
+	    	</md-subheader>
+		    	<md-virtual-repeat-container id="vertical-container" ng-show="iconFamily == family.name">
+			    	<div md-virtual-repeat="iconSet in family.icons" class="iconsContainer">
+				      	<div ng-repeat="icon in iconSet track by $index" class="selectable" ng-class="{'selected':(family.className+' '+icon.className)==currentRange.icon}" ng-click="setIcon(family,icon)">
+				      		<md-tooltip md-delay="500">{{icon.label}}</md-tooltip>
+				      		<i ng-class="[family.className, icon.className]" ></i>
+				      	</div>
+			      </div>
+			    </md-virtual-repeat-container>
+		    </md-grid-list>
+		    
+    	</div>
+    	
+      
+    </md-content>
+
+</div>
