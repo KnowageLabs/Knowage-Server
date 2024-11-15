@@ -114,7 +114,7 @@ export default defineComponent({
         return validationObject
     },
     computed: {
-        passwordValidation() {
+        passwordValidation():boolean {
             return !this.userDetailsForm.password || (this.userDetailsForm.password && !this.v$.userDetailsForm.$invalid)
         }
     },
