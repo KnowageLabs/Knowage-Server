@@ -54,7 +54,7 @@ public interface IObjParuseDAO extends ISpagoBIDao {
 	 *
 	 * @throws EMFUserError If an Exception occurred
 	 */
-	void modifyObjParuse(ObjParuse aObjParuse) throws HibernateException;
+	void modifyObjParuse(ObjParuse aObjParuse) throws HibernateException, IllegalArgumentException;
 
 	/**
 	 * Implements the query to insert a ObjParuse. All information needed is stored into the input <code>ObjParuse</code> object.
@@ -64,7 +64,7 @@ public interface IObjParuseDAO extends ISpagoBIDao {
 	 *
 	 * @throws EMFUserError If an Exception occurred
 	 */
-	Integer insertObjParuse(ObjParuse aObjParuse) throws HibernateException;
+	Integer insertObjParuse(ObjParuse aObjParuse) throws HibernateException, IllegalArgumentException;
 
 	/**
 	 * Implements the query to erase a ObjParuse. All information needed is stored into the input <code>ObjParuse</code> object.

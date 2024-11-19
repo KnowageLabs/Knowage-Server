@@ -74,6 +74,7 @@ public class ObjParuseDAOHibImpl extends AbstractHibernateDAO implements IObjPar
 			aSession.clear();
 			SbiObjPar sbiObjPar = (SbiObjPar) aSession.load(SbiObjPar.class, aObjParuse.getParId());
 			SbiParuse sbiParuse = (SbiParuse) aSession.load(SbiParuse.class, aObjParuse.getUseModeId());
+			this.checksDataConsistency(sbiObjPar, sbiParuse);
 			SbiObjPar sbiObjParFather = (SbiObjPar) aSession.load(SbiObjPar.class, aObjParuse.getParFatherId());
 			if (sbiObjParFather == null) {
 				SpagoBITracer.major(SpagoBIConstants.NAME_MODULE, this.getClass().getName(), "modifyObjParuse",
@@ -123,6 +124,7 @@ public class ObjParuseDAOHibImpl extends AbstractHibernateDAO implements IObjPar
 			tx = aSession.beginTransaction();
 			SbiObjPar sbiObjPar = (SbiObjPar) aSession.load(SbiObjPar.class, aObjParuse.getParId());
 			SbiParuse sbiParuse = (SbiParuse) aSession.load(SbiParuse.class, aObjParuse.getUseModeId());
+			this.checksDataConsistency(sbiObjPar, sbiParuse);
 			SbiObjPar sbiObjParFather = (SbiObjPar) aSession.load(SbiObjPar.class, aObjParuse.getParFatherId());
 			if (sbiObjParFather == null) {
 				SpagoBITracer.major(SpagoBIConstants.NAME_MODULE, this.getClass().getName(), "modifyObjParuse",
@@ -150,6 +152,15 @@ public class ObjParuseDAOHibImpl extends AbstractHibernateDAO implements IObjPar
 			closeSessionIfOpen(aSession);
 		}
 		return correlation.getId();
+	}
+
+	private void checksDataConsistency(SbiObjPar sbiObjPar, SbiParuse sbiParuse) {
+		if (!sbiObjPar.getSbiParameter().getParId().equals(sbiParuse.getSbiParameters().getParId())) {
+			String message = "SbiParameter in  SbiObjPar:  " + sbiObjPar.getSbiParameter().getParId() + " does not equal to SbiParameter in SbiParuse: "
+					+ sbiParuse.getSbiParameters().getParId();
+			SpagoBITracer.major(SpagoBIConstants.NAME_MODULE, this.getClass().getName(), "modifyObjParuse", message);
+			throw new IllegalArgumentException("Error links:  " + message);
+		}
 	}
 
 	/**
@@ -242,8 +253,9 @@ public class ObjParuseDAOHibImpl extends AbstractHibernateDAO implements IObjPar
 	 * @return The corrispondent <code>ObjParuse</code>
 	 */
 	public ObjParuse toObjParuse(SbiObjParuse aSbiObjParuse) {
-		if (aSbiObjParuse == null)
+		if (aSbiObjParuse == null) {
 			return null;
+		}
 		ObjParuse toReturn = new ObjParuse();
 		toReturn.setId(aSbiObjParuse.getId());
 		toReturn.setParId(aSbiObjParuse.getSbiObjPar().getObjParId());
@@ -283,8 +295,9 @@ public class ObjParuseDAOHibImpl extends AbstractHibernateDAO implements IObjPar
 			Query query = aSession.createQuery(hql);
 			query.setInteger(0, objParFatherId.intValue());
 			List<SbiObjParuse> objParuses = query.list();
-			if (objParuses == null || objParuses.isEmpty())
+			if (objParuses == null || objParuses.isEmpty()) {
 				return toReturn;
+			}
 			// add to the list all the distinct labels of parameter which depend form the father parameter
 			Iterator<SbiObjParuse> it = objParuses.iterator();
 			while (it.hasNext()) {
@@ -408,8 +421,9 @@ public class ObjParuseDAOHibImpl extends AbstractHibernateDAO implements IObjPar
 			query.setInteger(1, paruseId.intValue());
 
 			List<SbiObjParuse> sbiObjParuses = query.list();
-			if (sbiObjParuses == null)
+			if (sbiObjParuses == null) {
 				return objparuses;
+			}
 			Iterator<SbiObjParuse> itersbiOP = sbiObjParuses.iterator();
 			while (itersbiOP.hasNext()) {
 				SbiObjParuse sbiop = itersbiOP.next();
