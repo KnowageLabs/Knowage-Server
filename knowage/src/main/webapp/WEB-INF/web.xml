@@ -53,7 +53,7 @@
 		<filter-class>it.eng.spagobi.commons.filters.SpagoBICoreCheckSessionFilter</filter-class>
 	</filter>
 	
-	<!--  ANTI CSRF FILTER -->
+	<!--  ANTI CSRF FILTER 
 	<filter>
       <filter-name>KnowageAntiCsrfFilter</filter-name> 
       <filter-class>it.eng.spagobi.security.utils.AntiCsrfFilter</filter-class> 
@@ -65,7 +65,7 @@
 		<dispatcher>REQUEST</dispatcher>
 		<dispatcher>FORWARD</dispatcher>
 	</filter-mapping>
-	
+	-->
 	<!--
 	<servlet>
 		<servlet-name>jersey-serlvet</servlet-name>
