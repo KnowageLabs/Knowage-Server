@@ -55,7 +55,7 @@ OAuth2Config oauth2Config = OAuth2Config.getInstance();
         
         if (id_token && state) {
         	if (window.sessionStorage.getItem("state") !== state){
-        	   // throw Error("Probable session hijacking attack!");
+        	    throw Error("Probable session hijacking attack!");
         	}
 
     		// storing id_token for later usage (on logout)
