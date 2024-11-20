@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map.Entry;
 import java.util.Set;
 
@@ -52,6 +53,8 @@ import it.eng.spagobi.commons.constants.CommunityFunctionalityConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.metadata.SbiExtRoles;
 import it.eng.spagobi.commons.utilities.UserUtilities;
+import it.eng.spagobi.commons.utilities.messages.MessageBuilder;
+import it.eng.spagobi.commons.validation.PasswordChecker;
 import it.eng.spagobi.dao.QueryFilters;
 import it.eng.spagobi.profiling.PublicProfile;
 import it.eng.spagobi.profiling.bean.SbiAttribute;
@@ -241,6 +244,9 @@ public class UserResource extends AbstractSpagoBIResource {
 			CommunityFunctionalityConstants.FINAL_USERS_MANAGEMENT })
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response updateUser(@PathParam("id") Integer id, @Valid UserBO requestDTO) {
+
+		MessageBuilder msgBuilder = new MessageBuilder();
+		Locale locale = msgBuilder.getLocale(request);
 
 		SbiUser sbiUserOriginal = null;
 		ISbiUserDAO usersDao = null;
