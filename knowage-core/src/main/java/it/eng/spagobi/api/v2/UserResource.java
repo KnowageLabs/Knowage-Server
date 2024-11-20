@@ -297,7 +297,7 @@ public class UserResource extends AbstractSpagoBIResource {
 						try {
 							PasswordChecker.getInstance().isValid(sbiUserOriginal, sbiUserOriginal.getPassword(), true, requestDTO.getPassword(), requestDTO.getPassword());
 						} catch (Exception e) {
-							LOGGER.error("Password is not valid", e);
+							logger.error("Password is not valid", e);
 							String message = msgBuilder.getMessage("signup.check.pwdInvalid", "messages", locale);
 							if (e instanceof EMFUserError) {
 								throw new SpagoBIServiceException(((EMFUserError) e).getDescription(), message);
@@ -306,10 +306,10 @@ public class UserResource extends AbstractSpagoBIResource {
 							}
 						}
 			} else {
-				LOGGER.debug("User management by admin");
+				logger.debug("User management by admin");
 			}
 		} catch (EMFInternalError e) {
-			LOGGER.error("Error while validating password", e);
+			logger.error("Error while validating password", e);
 		}
 
 		for (Entry<Integer, HashMap<String, String>> entry : map.entrySet()) {
