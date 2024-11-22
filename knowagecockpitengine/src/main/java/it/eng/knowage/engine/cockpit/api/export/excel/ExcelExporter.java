@@ -991,7 +991,7 @@ public class ExcelExporter extends AbstractFormatExporter {
 							break;
 						case "int":
 							if (!s.trim().isEmpty()) {
-								cell.setCellValue(Double.parseDouble(s));
+								cell.setCellValue(Integer.parseInt(s));
 								cell.setCellStyle(getIntCellStyle(wb, createHelper, column, columnStyles[c], INT_CELL_DEFAULT_FORMAT, settings,
 										Integer.parseInt(s), rowObject, mapColumns, mapColumnsTypes, variablesMap, mapParameters));
 							} else {

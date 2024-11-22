@@ -182,6 +182,7 @@ public abstract class AbstractFormatExporter {
 					}
 				}
 			}
+			hiddenColumns = localHiddenColumns;
 			return localHiddenColumns;
 		} catch (Exception e) {
 			LOGGER.error("Error while getting hidden columns list", e);
