@@ -349,6 +349,8 @@ public class DataSourceResource extends AbstractSpagoBIResource {
 
 		LOGGER.debug("IN");
 
+		this.checkJNDIName(dataSource);
+
 		String url = dataSource.getUrlConnection();
 		String user = dataSource.getUser();
 		String pwd = dataSource.getPwd();
