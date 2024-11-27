@@ -13,18 +13,18 @@
        		<span ref="lbFirstRowOnPage">{{((ngModel.settings.page-1)*ngModel.settings.pagination.itemsNumber+1)}}</span> {{::translate.load('sbi.cockpit.widgets.table.pagination.to')}} <span ref="lbLastRowOnPage">{{maxPageNumber()}}</span> {{::translate.load('sbi.cockpit.widgets.table.pagination.of')}} <span ref="lbRecordCount">{{totalRows}}</span>
    		</span>
    		<span class="ag-paging-page-summary-panel">
-   			<div ref="btFirst" class="ag-paging-button-wrapper" ng-class="{'ag-disabled':disableFirst()}"><span class="ag-icon ag-icon-first" unselectable="on"></span>
-       			<button type="button" ref="btFirst" class="ag-paging-button" ng-disabled="disableFirst()" ng-click="first()">{{::translate.load('sbi.cockpit.widgets.table.pagination.first')}}</button>
-      			</div>
-      			<div ref="btPrevious" class="ag-paging-button-wrapper" ng-class="{'ag-disabled':disableFirst()}"><span class="ag-icon ag-icon-previous" unselectable="on"></span>
-       			<button type="button" ref="btPrevious" class="ag-paging-button" ng-disabled="disableFirst()" ng-click="prev()">{{::translate.load('sbi.cockpit.widgets.table.pagination.previous')}}</button>
+   			<div ref="btFirst" class="ag-paging-button-wrapper" ng-class="{'ag-disabled':disableFirst()}">
+       			<button type="button" ref="btFirst" class="ag-icon ag-icon-first" ng-disabled="disableFirst()" ng-click="first()" title="{{::translate.load('sbi.cockpit.widgets.table.pagination.first')}}"></button>
+      		</div>
+      		<div ref="btPrevious" class="ag-paging-button-wrapper" ng-class="{'ag-disabled':disableFirst()}">
+       			<button type="button" ref="btPrevious" class="ag-icon ag-icon-previous" ng-disabled="disableFirst()" ng-click="prev()" title="{{::translate.load('sbi.cockpit.widgets.table.pagination.previous')}}"></button>
        		</div>
        		{{::translate.load('sbi.cockpit.widgets.table.pagination.page')}} <span ref="lbCurrent"> {{ngModel.settings.page}} </span> {{::translate.load('sbi.cockpit.widgets.table.pagination.of')}} <span ref="lbTotal">{{totalPages}}</span>
-       		<div ref="btNext" class="ag-paging-button-wrapper" ng-class="{'ag-disabled':disableLast()}"><span class="ag-icon ag-icon-next" unselectable="on"></span>
-       			<button type="button" ref="btNext" class="ag-paging-button" ng-click="next()" ng-disabled="disableLast()">{{::translate.load('sbi.cockpit.widgets.table.pagination.next')}}</button>
+       		<div ref="btNext" class="ag-paging-button-wrapper" ng-class="{'ag-disabled':disableLast()}">
+       			<button type="button" ref="btNext" class="ag-icon ag-icon-next" ng-click="next()" ng-disabled="disableLast()" title="{{::translate.load('sbi.cockpit.widgets.table.pagination.next')}}"></button>
        		</div>
-       		<div ref="btLast" class="ag-paging-button-wrapper" ng-class="{'ag-disabled':disableLast()}"><span class="ag-icon ag-icon-last" unselectable="on"></span>
-       			<button type="button" ref="btLast" class="ag-paging-button" ng-disabled="disableLast()" ng-click="last()">{{::translate.load('sbi.cockpit.widgets.table.pagination.last')}}</button>
+       		<div ref="btLast" class="ag-paging-button-wrapper" ng-class="{'ag-disabled':disableLast()}">
+       			<button type="button" ref="btLast" class="ag-icon ag-icon-last" ng-disabled="disableLast()" ng-click="last()" title="{{::translate.load('sbi.cockpit.widgets.table.pagination.last')}}"></button>
        		</div>
    		</span>
 	</div>

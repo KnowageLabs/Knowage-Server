@@ -238,6 +238,12 @@ $aggrid-border-color: #d9dcde;
     span[ref="lbTotal"] {
       padding: 0 4px;
     }
+    .ag-paging-button-wrapper{
+      .ag-icon {
+        border: none;
+        background-color: transparent;
+      }
+    }
   }
   &.ag-theme-knowage-advanced {
     height: 100%;
