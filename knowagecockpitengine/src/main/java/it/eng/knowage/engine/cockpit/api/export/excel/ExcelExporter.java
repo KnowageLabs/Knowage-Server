@@ -877,6 +877,8 @@ public class ExcelExporter extends AbstractFormatExporter {
 			if (widgetData.getString("type").equalsIgnoreCase("table") && widgetContent.has("columnSelectedOfDataset")) {
 				hiddenColumns = getHiddenColumnsList(columnSelectedOfDataset);
 				columnsOrdered = getTableOrderedColumns(columnSelectedOfDataset, columns);
+			} else if (widgetData.getString("type").equalsIgnoreCase("discovery") && widgetContent.has("columnSelectedOfDataset")) {
+				columnsOrdered = getDiscoveryOrderedColumns(columnSelectedOfDataset, columns);
 			} else {
 				columnsOrdered = columns;
 			}
