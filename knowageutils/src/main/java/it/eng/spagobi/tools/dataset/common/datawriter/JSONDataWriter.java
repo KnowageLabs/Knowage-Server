@@ -359,7 +359,11 @@ public class JSONDataWriter implements IDataWriter {
 					result = TIMESTAMP_FORMATTER_V2.format(valueAsTimestamp.toInstant().atZone(ZoneId.systemDefault()));
 				} else if (Time.class.isAssignableFrom(fieldMetaData.getType())) {
 					result = CACHE_TIMEONLY_FORMATTER_V2.format(((Time) field.getValue()).toLocalTime());
-				} else if (Date.class.isAssignableFrom(fieldMetaData.getType())) {
+				} else if (java.sql.Date.class.isAssignableFrom(fieldMetaData.getType())) {
+					java.sql.Date sqlDate = (java.sql.Date) field.getValue();
+					Date valueAsDate = new Date(sqlDate.getTime());
+					result = DATE_FORMATTER_V2.format(valueAsDate.toInstant().atZone(ZoneId.systemDefault()));
+				} else if (java.util.Date.class.isAssignableFrom(fieldMetaData.getType())) {
 					Date valueAsDate = (Date) field.getValue();
 					result = DATE_FORMATTER_V2.format(valueAsDate.toInstant().atZone(ZoneId.systemDefault()));
 				} else if (Boolean.class.isAssignableFrom(fieldMetaData.getType())) {

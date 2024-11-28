@@ -20,8 +20,10 @@ package it.eng.spagobi.tools.dataset.utils;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.sql.Timestamp;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeParseException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -48,7 +50,7 @@ import it.eng.spagobi.services.proxy.DataSetServiceProxy;
 import it.eng.spagobi.tools.dataset.bo.DataSetParameterItem;
 import it.eng.spagobi.tools.dataset.bo.DataSetParametersList;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
-import it.eng.spagobi.tools.dataset.common.datawriter.CockpitJSONDataWriter;
+import it.eng.spagobi.tools.dataset.common.datawriter.JSONDataWriter;
 import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import it.eng.spagobi.utilities.Helper;
@@ -379,21 +381,28 @@ public class DataSetUtilities {
 		Object result = null;
 
 		if (value != null && !value.equalsIgnoreCase("null")) {
-			if (type.toString().toLowerCase().contains("timestamp")) {
+			if (type.toString().toLowerCase().contains("timestamp") || LocalDateTime.class.isAssignableFrom(type)) {
 				try {
 					result = Timestamp.valueOf(value);
 				} catch (IllegalArgumentException e) {
 					try {
-						Date date = new SimpleDateFormat(CockpitJSONDataWriter.TIMESTAMP_FORMAT).parse(value);
-						String formattedValue = new SimpleDateFormat(CockpitJSONDataWriter.CACHE_TIMESTAMP_FORMAT).format(date);
+
+						LocalDateTime localDateTime = LocalDateTime.parse(value,
+								java.time.format.DateTimeFormatter.ofPattern(JSONDataWriter.TIMESTAMP_FORMAT));
+						String formattedValue = localDateTime
+								.format(java.time.format.DateTimeFormatter.ofPattern(JSONDataWriter.CACHE_TIMESTAMP_FORMAT));
+						// Date date = new SimpleDateFormat(CockpitJSONDataWriter.TIMESTAMP_FORMAT).parse(value);
+						// String formattedValue = new SimpleDateFormat(CockpitJSONDataWriter.CACHE_TIMESTAMP_FORMAT).format(date);
 						result = Timestamp.valueOf(formattedValue);
-					} catch (ParseException | IllegalArgumentException ex) { // tries Solr date format
+					} catch (DateTimeParseException | IllegalArgumentException ex) { // tries Solr date format
 						try {
 							DateTimeFormatter dateTime = ISODateTimeFormat.dateTimeNoMillis();
 							DateTime parsedDateTime = dateTime.parseDateTime(value);
 							Date dateToconvert = parsedDateTime.toDate();
-							SimpleDateFormat sdf = new SimpleDateFormat(CockpitJSONDataWriter.CACHE_TIMESTAMP_FORMAT);
-							String valuesToChange = sdf.format(dateToconvert);
+							// SimpleDateFormat sdf = new SimpleDateFormat(CockpitJSONDataWriter.CACHE_TIMESTAMP_FORMAT);
+							// String valuesToChange = sdf.format(dateToconvert);
+							java.time.format.DateTimeFormatter formatter = java.time.format.DateTimeFormatter.ofPattern(JSONDataWriter.CACHE_TIMESTAMP_FORMAT);
+							String valuesToChange = formatter.format(dateToconvert.toInstant().atZone(ZoneId.systemDefault()));
 							result = Timestamp.valueOf(valuesToChange);
 						} catch (Exception ex2) {
 							throw new SpagoBIRuntimeException(ex2);
@@ -402,11 +411,15 @@ public class DataSetUtilities {
 				}
 			} else if (Date.class.isAssignableFrom(type)) {
 				try {
-					result = new SimpleDateFormat(CockpitJSONDataWriter.DATE_FORMAT).parse(value);
-				} catch (ParseException e) {
+					LocalDate dateTime = LocalDate.parse(value, java.time.format.DateTimeFormatter.ofPattern(JSONDataWriter.DATE_FORMAT));
+					result = Date.from(dateTime.atStartOfDay(ZoneId.systemDefault()).toInstant());
+					// result = new SimpleDateFormat(CockpitJSONDataWriter.DATE_FORMAT).parse(value);
+				} catch (DateTimeParseException e) {
 					try {
-						result = new SimpleDateFormat(CockpitJSONDataWriter.CACHE_DATE_FORMAT).parse(value);
-					} catch (ParseException pe) {
+						LocalDate dateTime = LocalDate.parse(value, java.time.format.DateTimeFormatter.ofPattern(JSONDataWriter.CACHE_DATE_FORMAT));
+						result = Date.from(dateTime.atStartOfDay(ZoneId.systemDefault()).toInstant());
+						// result = new SimpleDateFormat(CockpitJSONDataWriter.CACHE_DATE_FORMAT).parse(value);
+					} catch (DateTimeParseException pe) {
 						throw new SpagoBIRuntimeException(pe);
 					}
 				}

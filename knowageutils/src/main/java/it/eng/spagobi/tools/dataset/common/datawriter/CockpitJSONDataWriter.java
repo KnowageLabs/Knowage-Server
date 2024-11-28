@@ -66,7 +66,11 @@ public class CockpitJSONDataWriter extends JSONDataWriter {
 				result = TIMESTAMP_FORMATTER.format(timestamp);
 			} else if (Time.class.isAssignableFrom(type)) {
 				result = CACHE_TIMEONLY_FORMATTER_V2.format(((Time) value).toLocalTime());
-			} else if (Date.class.isAssignableFrom(type)) {
+			} else if (java.sql.Date.class.isAssignableFrom(fieldMetaData.getType())) {
+				java.sql.Date sqlDate = (java.sql.Date) field.getValue();
+				Date valueAsDate = new Date(sqlDate.getTime());
+				result = DATE_FORMATTER_V2.format(valueAsDate.toInstant().atZone(ZoneId.systemDefault()));
+			} else if (java.util.Date.class.isAssignableFrom(type)) {
 				result = DATE_FORMATTER_V2.format(LocalDateTime.ofInstant(((Date) value).toInstant(), ZoneId.systemDefault()));
 			} else if (Boolean.class.isAssignableFrom(type)) {
 				result = Boolean.valueOf(value.toString());
