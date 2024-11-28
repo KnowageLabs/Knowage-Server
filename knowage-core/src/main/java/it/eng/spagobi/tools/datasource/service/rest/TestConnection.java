@@ -150,6 +150,12 @@ public class TestConnection {
 		String jndi = requestBodyJSON.optString("jndi");
 		String type = requestBodyJSON.getString("type");
 
+		if (jndi != null && !jndi.startsWith("java:comp/env/jdbc/")) {
+			JSONObject toReturn = new JSONObject();
+			toReturn.put("error", "JNDI Name not valid");
+			return toReturn.toString();
+		}
+
 		IEngUserProfile profile = (IEngUserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 
 		String schema = (String) profile.getUserAttribute(schemaAttr);
