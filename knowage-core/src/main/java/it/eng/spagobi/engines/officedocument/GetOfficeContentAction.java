@@ -48,6 +48,9 @@ public class GetOfficeContentAction extends AbstractHttpAction {
 	@Override
 	public void service(SourceBean request, SourceBean responseSb) throws Exception {
 		logger.debug("IN");
+		// delete userProfile in PermanentContainer spagoFramework put by officedoc.jsp
+		// it was necessary for ActionCoordinator of spagoFramework
+		this.getRequestContainer().getSessionContainer().getPermanentContainer().delAttribute(IEngUserProfile.ENG_USER_PROFILE);
 		freezeHttpResponse();
 
 		HttpServletResponse response = getHttpResponse();
@@ -75,8 +78,9 @@ public class GetOfficeContentAction extends AbstractHttpAction {
 			}
 
 			String documentId = (String) request.getAttribute("documentId");
-			if (documentId == null)
+			if (documentId == null) {
 				throw new Exception("Document id missing!!");
+			}
 			logger.debug("Got parameter documentId = " + documentId);
 
 			ContentServiceImplSupplier c = new ContentServiceImplSupplier();

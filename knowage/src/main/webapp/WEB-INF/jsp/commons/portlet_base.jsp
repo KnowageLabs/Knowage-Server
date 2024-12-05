@@ -61,8 +61,6 @@ The following directive catches exceptions thrown by jsps, must be commented in 
 <%@page import="org.apache.commons.lang.StringUtils"%>
 <%@page import="java.util.Locale.Builder" %>
 
-<!-- IMPORT TAG LIBRARY  -->
-<%@ taglib uri="/WEB-INF/tlds/spagobi.tld" prefix="spagobi"%>
 
 <%-- START SCRIPT FOR DOMAIN DEFINITION (MUST BE EQUAL BETWEEN SPAGOBI AND EXTERNAL ENGINES) -->
 commented by Davide Zerbetto on 12/10/2009: there are problems with MIF (Ext ManagedIFrame library) library

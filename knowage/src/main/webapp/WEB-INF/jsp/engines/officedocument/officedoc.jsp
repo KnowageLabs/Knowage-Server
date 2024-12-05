@@ -55,6 +55,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		officeDocUrl += "&" + AuditManager.AUDIT_ID + "=" + executionAuditId_office.toString();
 	}
 	if (!isImage){
+		//put userProfile in permanentSession spagoFramework for call GetOfficeContentAction Action
+		//it is necessary for ActionCoordinator of spagoFramework
+		permanentSession.setAttribute(IEngUserProfile.ENG_USER_PROFILE, userProfile);
 		response.sendRedirect(officeDocUrl);
 	}else{
     %>
