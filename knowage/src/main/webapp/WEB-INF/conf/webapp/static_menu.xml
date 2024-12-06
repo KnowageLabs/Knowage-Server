@@ -176,9 +176,6 @@
 			<ITEM id="8003" label="menu.ThemeManagement"
 				requiredFunctionality="ThemeManagement"
 				to="/theme-management" />
-			<ITEM id="8004" label="menu.InstallConf"
-				requiredFunctionality="InstallConfig"
-				to="${SPAGOBI_CONTEXT}/restful-services/2.0/installconfig" />
 			<ITEM id="8005" label="menu.license"
 				requiredFunctionality="LicenseManagement" command="licenseSelection"/>
 			<ITEM id="8006" label="menu.event"
