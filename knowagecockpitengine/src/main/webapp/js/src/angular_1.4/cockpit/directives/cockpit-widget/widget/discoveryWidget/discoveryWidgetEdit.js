@@ -306,13 +306,36 @@ function discoveryWidgetEditControllerFunction(
   			$mdDialog.hide($scope.selectedColumn);
   		}
   	}
+	  $scope.checkAliases = function(){
+		var aliases = [];
+		if($scope.newModel.content.columnSelectedOfDataset.length > 0){
+			for(var k = 0;k<$scope.newModel.content.columnSelectedOfDataset.length;k++){
+				if(aliases.indexOf($scope.newModel.content.columnSelectedOfDataset[k].alias) === -1) aliases.push($scope.newModel.content.columnSelectedOfDataset[k].alias);
+				else return false
+				if(k==$scope.newModel.content.columnSelectedOfDataset.length-1) return true
+			}
+
+		}else return false
+	}
+
 
   	//MAIN DIALOG BUTTONS
 	$scope.saveConfiguration=function(){
-		mdPanelRef.close();
-		angular.copy($scope.newModel,model);
-		finishEdit.resolve();
-		$scope.$destroy();
+		if($scope.checkAliases()){
+			mdPanelRef.close();
+			angular.copy($scope.newModel,model);
+			finishEdit.resolve();
+			$scope.$destroy();
+		}else{
+			Toastify({
+				text: 'Cannot save columns with same alias',
+				duration: 10000,
+				close: true,
+				className: 'kn-warningToast',
+				stopOnFocus: true
+			}).showToast();
+		}
+		
   	}
 
 	$scope.cancelConfiguration=function(){

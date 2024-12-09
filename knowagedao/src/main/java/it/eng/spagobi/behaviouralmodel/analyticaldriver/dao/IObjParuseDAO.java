@@ -45,7 +45,7 @@ public interface IObjParuseDAO extends ISpagoBIDao {
 	 *
 	 * @throws EMFUserError If an Exception occurred
 	 */
-	public List loadObjParuse(Integer objParId, Integer paruseId) throws EMFUserError;
+	List loadObjParuse(Integer objParId, Integer paruseId) throws EMFUserError;
 
 	/**
 	 * Implements the query to modify a ObjParuse. All information needed is stored into the input <code>ObjParuse</code> object.
@@ -54,7 +54,7 @@ public interface IObjParuseDAO extends ISpagoBIDao {
 	 *
 	 * @throws EMFUserError If an Exception occurred
 	 */
-	public void modifyObjParuse(ObjParuse aObjParuse) throws HibernateException;
+	void modifyObjParuse(ObjParuse aObjParuse) throws HibernateException, IllegalArgumentException;
 
 	/**
 	 * Implements the query to insert a ObjParuse. All information needed is stored into the input <code>ObjParuse</code> object.
@@ -64,7 +64,7 @@ public interface IObjParuseDAO extends ISpagoBIDao {
 	 *
 	 * @throws EMFUserError If an Exception occurred
 	 */
-	public Integer insertObjParuse(ObjParuse aObjParuse) throws HibernateException;
+	Integer insertObjParuse(ObjParuse aObjParuse) throws HibernateException, IllegalArgumentException;
 
 	/**
 	 * Implements the query to erase a ObjParuse. All information needed is stored into the input <code>ObjParuse</code> object.
@@ -73,7 +73,7 @@ public interface IObjParuseDAO extends ISpagoBIDao {
 	 *
 	 * @throws EMFUserError If an Exception occurred
 	 */
-	public void eraseObjParuse(ObjParuse aObjParuse) throws HibernateException;
+	void eraseObjParuse(ObjParuse aObjParuse) throws HibernateException;
 
 	/**
 	 * Returns the list of all ObjParuse objects associated to a <code>BIObjectParameter</code>, known its <code>objParId</code>.
@@ -84,7 +84,7 @@ public interface IObjParuseDAO extends ISpagoBIDao {
 	 *
 	 * @throws EMFUserError If any exception occurred
 	 */
-	public List loadObjParuses(Integer objParId) throws HibernateException;
+	List loadObjParuses(Integer objParId) throws HibernateException;
 
 	/**
 	 * Returns the list of labels of BIObjectParameter objects that have a correlation relationship with the BIObjectParameter at input, given its id.
@@ -95,7 +95,7 @@ public interface IObjParuseDAO extends ISpagoBIDao {
 	 *
 	 * @throws EMFUserError the EMF user error
 	 */
-	public List getDependencies(Integer objParFatherId) throws EMFUserError;
+	List getDependencies(Integer objParFatherId) throws EMFUserError;
 
 	/**
 	 * Returns the labels list of the documents containing dependencies for the parameter use identified by the id at input.
@@ -106,7 +106,7 @@ public interface IObjParuseDAO extends ISpagoBIDao {
 	 *
 	 * @throws EMFUserError the EMF user error
 	 */
-	public List getDocumentLabelsListWithAssociatedDependencies(Integer useId) throws EMFUserError;
+	List getDocumentLabelsListWithAssociatedDependencies(Integer useId) throws EMFUserError;
 
 	/**
 	 * Returns the list of dependencies (ObjParuse objects list) for the ParameterUse object identified by the id passes at input.
@@ -117,7 +117,7 @@ public interface IObjParuseDAO extends ISpagoBIDao {
 	 *
 	 * @throws EMFUserError the EMF user error
 	 */
-	public List getAllDependenciesForParameterUse(Integer useId) throws EMFUserError;
+	List getAllDependenciesForParameterUse(Integer useId) throws EMFUserError;
 
 	/**
 	 * Implements the query to erase a ObjParuse. If the object does not exist does not do anything All information needed is stored into the input
@@ -127,7 +127,7 @@ public interface IObjParuseDAO extends ISpagoBIDao {
 	 *
 	 * @throws EMFUserError If an Exception occurred
 	 */
-	public void eraseObjParuseIfExists(ObjParuse aObjParuse, Session aSession) throws EMFUserError;
+	void eraseObjParuseIfExists(ObjParuse aObjParuse, Session aSession) throws EMFUserError;
 
 	/**
 	 * Returns the list of all ObjParuse objects associated to a <code>BIObjectParameter</code> via a father relationship, known its <code>objParId</code>.
@@ -138,6 +138,6 @@ public interface IObjParuseDAO extends ISpagoBIDao {
 	 *
 	 * @throws EMFUserError If any exception occurred
 	 */
-	public List loadObjParusesFather(Integer objParId) throws EMFUserError;
+	List loadObjParusesFather(Integer objParId) throws EMFUserError;
 
 }

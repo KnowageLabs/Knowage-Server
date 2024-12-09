@@ -66,7 +66,7 @@ public abstract class AbstractSecurityServerInterceptor extends AbstractKnowageI
 	@Override
 	public void filter(ContainerRequestContext requestContext) throws IOException {
 
-		LOGGER.trace("IN");
+		LOGGER.info("IN");
 
 		try {
 
@@ -76,7 +76,7 @@ public abstract class AbstractSecurityServerInterceptor extends AbstractKnowageI
 					+ resourceInfo.getResourceClass() + "]");
 
 			if (method.isAnnotationPresent(PublicService.class)) {
-				LOGGER.debug("Invoked service is public");
+				LOGGER.info("Invoked service is public");
 				return;
 			}
 
@@ -86,18 +86,19 @@ public abstract class AbstractSecurityServerInterceptor extends AbstractKnowageI
 			boolean authenticated = isUserAuthenticatedInSpagoBI();
 
 			if (!authenticated) {
-				LOGGER.debug("User is not authenticated in SpagoBI");
+				LOGGER.info("User is not authenticated in KNOWAGE");
 
 				// try to authenticate the user on the fly using simple-authentication schema
 				profile = authenticateUser();
 			} else {
-				LOGGER.debug("User is already authenticated in SpagoBI");
+				LOGGER.info("User is already authenticated in KNOWAGE");
 
 				// get the user profile from session
 				profile = getUserProfileFromSession();
 			}
 
 			if (profile == null) {
+				LOGGER.info("profile in session is null, exit!!!");
 				notAuthenticated(requestContext);
 				return;
 			}
@@ -111,6 +112,7 @@ public abstract class AbstractSecurityServerInterceptor extends AbstractKnowageI
 			// we put user profile in session only in case incoming request is NOT for a back-end service (because back-end services should be treated in a
 			// stateless fashion, otherwise number of HTTP sessions will increase with no control) and it is not already stored in session
 			if (!isBackEndService() && getUserProfileFromSession() == null) {
+				LOGGER.info("Set user profile in session");
 				setUserProfileInSession(profile);
 			}
 
@@ -122,26 +124,34 @@ public abstract class AbstractSecurityServerInterceptor extends AbstractKnowageI
 					|| checkFunctionalitiesParser.checkFunctionalitiesByAnnotation(method, profile);
 
 			if (!authorized) {
+				LOGGER.info("The user is not authorized");
 				try {
 					requestContext.abortWith(Response.status(400)
 							.entity(ExceptionUtilities.serializeException("not-enabled-to-call-service", null))
 							.build());
 				} catch (Exception e) {
+					LOGGER.error("Error checking if the user [" + profile.getUserName()
+							+ "] has the rights to invoke method [" + method.getName() + "] on class ["
+							+ resourceInfo.getResourceClass() + "]", e);
 					throw new SpagoBIRuntimeException("Error checking if the user [" + profile.getUserName()
 							+ "] has the rights to invoke method [" + method.getName() + "] on class ["
 							+ resourceInfo.getResourceClass() + "]", e);
 				}
 			} else {
-				LOGGER.debug("The user [" + profile.getUserName() + "] is enabled to invoke method [" + method.getName()
+				LOGGER.info("The user [" + profile.getUserName() + "] is enabled to invoke method [" + method.getName()
 						+ "] on class [" + resourceInfo.getResourceClass() + "]");
 			}
 
 			// TODO PM enrich user profile
 
 		} catch (SpagoBIRuntimeException e) {
+			LOGGER.error("SpagoBIRuntimeException",e);
 			throw e;
 		} catch (Exception e) {
+			LOGGER.error("An unexpected error occured while preprocessing service request", e);
 			throw new SpagoBIRuntimeException("An unexpected error occured while preprocessing service request", e);
+		}finally{
+			LOGGER.info("OUT");
 		}
 	}
 

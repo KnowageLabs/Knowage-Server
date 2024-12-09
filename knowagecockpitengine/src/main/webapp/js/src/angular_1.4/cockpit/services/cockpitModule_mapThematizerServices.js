@@ -279,7 +279,7 @@
 //			if (!color) color = (config.style && config.style.color) ? mts.rgbaToHex(config.style.color) : 'grey';
 			if (!alpha) alpha = (config.style && config.style.color) ? mts.rgbaToAlpha(config.style.color) : 1;
 			if (props.coordType != "string" && !borderColor) borderColor = color;
-			if (!borderColor) borderColor = config.style.borderColor || 'grey';
+			if (!borderColor) borderColor = (config.style && config.style.borderColor) ? config.style.borderColor : 'grey';
 			if (!borderAlpha) borderAlpha = (config.style && config.style.borderColor) ? mts.rgbaToAlpha(config.style.borderColor) : 1;
 
 			if (props.coordType === "string") {
@@ -566,8 +566,8 @@
 			var defaultIndicator = config.defaultIndicator;
 			var measureStat = findIndicatorStats(defaultIndicator, data.stats);
 
-			var minValue = measureStat.min;
-			var maxValue = measureStat.max;
+			var minValue = measureStat ? measureStat.min : 0;
+			var maxValue = measureStat ? measureStat.max : 0;
 			var split = (maxValue-minValue)/(config.analysisConf.classes);
 			for (var i=0; i<config.analysisConf.classes; i++) {
 				var from = (minValue+(split*i));

@@ -30,8 +30,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <% 
 	SourceBean sbModuleResponse = (SourceBean) aServiceResponse.getAttribute("ExecuteBIObjectModule");
-	Boolean isImage = (sbModuleResponse.getAttribute("isImage") != null )? 
-			(Boolean)sbModuleResponse.getAttribute("isImage"):false; 
+	//Boolean isImage = (sbModuleResponse.getAttribute("isImage") != null )? 
+	//		(Boolean)sbModuleResponse.getAttribute("isImage"):false; 
 	ExecutionInstance instanceO = contextManager.getExecutionInstance(ExecutionInstance.class.getName());
 	String execContext = instanceO.getExecutionModality();
 
@@ -54,56 +54,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	if (executionAuditId_office != null) {
 		officeDocUrl += "&" + AuditManager.AUDIT_ID + "=" + executionAuditId_office.toString();
 	}
-	if (!isImage){
-		response.sendRedirect(officeDocUrl);
-	}else{
-    %>
-	<%-- ---------------------------------------------------------------------- --%>
-	<%-- HTML CODE FOR ZOOM FUNCTIONALITY										--%>
-	<%-- ---------------------------------------------------------------------- --%>
-	<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/lib/ext-3.1.1/ux/imageeditor/ImageEditor.js")%>'></script>
-	<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/lib/ext-3.1.1/ux/imageeditor/PanPanel.js")%>'></script>
-	<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/formats/"+ locale.getLanguage() +".js")%>'></script>
-	<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/formats/LocaleUtils.js")%>'></script> 
-	<script type="text/javascript">
-		Ext.onReady(function() { 
-			Ext.QuickTips.init();		
-			
-			var image = document.createElement('img');
-            image.src = '<%=officeDocUrl%>';
-            var editor = new Ext.ux.ImageEditor();
-            var p = new Ext.ux.PanPanel({
-                frame: true,
-                border: false,
-                client: image,  		
-		  		autoHeight: true,
-		  		autoWidth: true,
-                floating: true,
-                plugins: [editor],
-                autoScroll: true,
-                x: 5, y: 5,
-                renderTo: Ext.getBody(),
-                listeners: {
-                    render: function(p) {
-                        new Ext.Resizable(p.getEl(), {
-                            handles: 'all',
-                            pinned: true,
-                            transparent: true,
-                            resizeElement: function() {
-                                var box = this.proxy.getBox();
-                                p.updateBox(box);
-                                if (p.layout) {
-                                    p.doLayout();
-                                }
-                                return box;
-                            }
-                        });
-                    }
-                },
-                tbar: []
-            });
-            p.show();
-		});
-		
-	</script>
-<%} %>
+	
+	response.sendRedirect(officeDocUrl);
+	%>
+    

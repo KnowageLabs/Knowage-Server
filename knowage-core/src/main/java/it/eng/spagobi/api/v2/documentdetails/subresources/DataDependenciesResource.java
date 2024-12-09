@@ -80,6 +80,9 @@ public class DataDependenciesResource extends AbstractSpagoBIResource {
 		} catch (HibernateException e) {
 			logger.error("Data Dependencies can not be created", e);
 			throw new SpagoBIRestServiceException(e.getCause().getCause().getLocalizedMessage() + " in Data Dependency", buildLocaleFromSession(), e);
+		} catch (IllegalArgumentException ill) {
+			logger.error("Data Dependencies error", ill);
+			throw new SpagoBIRestServiceException(buildLocaleFromSession(), ill);
 		}
 		logger.debug("OUT");
 		return parameterUseObject;
@@ -116,6 +119,9 @@ public class DataDependenciesResource extends AbstractSpagoBIResource {
 		} catch (HibernateException e) {
 			logger.error("Data Dependencies can not be modified", e);
 			throw new SpagoBIRestServiceException(e.getCause().getCause().getLocalizedMessage(), buildLocaleFromSession(), e);
+		} catch (IllegalArgumentException ill) {
+			logger.error("Data Dependencies error", ill);
+			throw new SpagoBIRestServiceException(buildLocaleFromSession(), ill);
 		}
 		logger.debug("OUT");
 		return parameterUseObject;
