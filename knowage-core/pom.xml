@@ -114,12 +114,6 @@
 			<artifactId>poi-ooxml</artifactId>
 			<version>${apache.poi-ooxml}</version>
 			<scope>compile</scope>
-			<exclusions>
-				<exclusion>
-					<artifactId>xmlbeans</artifactId>
-					<groupId>org.apache.xmlbeans</groupId>
-				</exclusion>
-			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>com.google.code.maven-play-plugin.net.sf.jtidy</groupId>
