@@ -19,7 +19,7 @@ export function downloadPromise(content, fileName, contentType): Promise<any> {
 
 export function downloadDirectFromResponse(response) {
     var contentDisposition = response.headers['content-disposition']
-    var fileAndExtension = contentDisposition.match(/(?!([\b attachment;filename= \b])).*(?=)/g)[0]
+    const fileAndExtension = contentDisposition.match(/filename[^;\n=]*=((['"]).*?\2|[^;\n]*)/i)[1]
     var completeFileName = fileAndExtension.replaceAll('"', '').replaceAll(';', '')
     downloadDirect(response.data, completeFileName, response.headers['content-type'])
 }
