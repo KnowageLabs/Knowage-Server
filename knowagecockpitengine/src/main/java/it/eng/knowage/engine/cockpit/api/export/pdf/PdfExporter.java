@@ -21,6 +21,7 @@ package it.eng.knowage.engine.cockpit.api.export.pdf;
 import java.awt.Color;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -216,6 +217,7 @@ public class PdfExporter extends AbstractFormatExporter {
 				if (value != null) {
 					String valueStr = value.toString();
 					if (type.equalsIgnoreCase("float") && columnStyles[c] != null && columnStyles[c].has("precision")) {
+						valueStr = new BigDecimal((double) value).toPlainString();
 						int precision = columnStyles[c].optInt("precision");
 						int pos = valueStr.indexOf(".");
 						// offset = 0 se devo tagliare fuori anche la virgola ( in caso precision fosse 0 )
