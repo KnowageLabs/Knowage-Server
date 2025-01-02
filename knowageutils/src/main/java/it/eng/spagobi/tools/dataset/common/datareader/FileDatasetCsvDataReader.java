@@ -211,7 +211,6 @@ public class FileDatasetCsvDataReader extends AbstractDataReader {
 						IField field = null;
 						if (contentsMap.get(header[i]) == null) {
 							field = new Field();
-							((FieldMetadata) dataStore.getMetaData().getFieldMeta(i)).setType(String.class);
 						} else {
 							field = new Field(contentsMap.get(header[i]));
 							// update metadata type in order with the real value's type (default was string)
@@ -287,6 +286,14 @@ public class FileDatasetCsvDataReader extends AbstractDataReader {
 			if (header.length > 0 && isUTF8BOMEncoding()) {
 				((FieldMetadata) dataStore.getMetaData().getFieldsMeta().get(0)).setName(escapeUTF8BOM(header[0]));
 			}
+
+			// if after elaboration there are in the list a FieldsMeta type is null (for all empty value)
+			// set type String
+			dataStore.getMetaData().getFieldsMeta().forEach(x ->{
+				if(x.getType()==null) {
+					x.setType(String.class);
+				}
+			});
 
 		} catch (Exception e) {
 			throw new SpagoBIRuntimeException("Error while reading csv file", e);
