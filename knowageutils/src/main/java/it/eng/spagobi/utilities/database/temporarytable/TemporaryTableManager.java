@@ -466,7 +466,11 @@ public class TemporaryTableManager {
 			}
 
 			logger.debug("Executing sql " + sql);
-			stmt.execute(sql);
+			if (dialect.contains("PostgreSQL")) {
+				stmt.execute();
+			} else {
+				stmt.execute(sql);
+			}
 			if (!dialect.contains("VoltDB")) {
 				connection.commit();
 			}
