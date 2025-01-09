@@ -35,6 +35,12 @@
 			<groupId>com.auth0</groupId>
 			<artifactId>jwks-rsa</artifactId>
 			<version>0.9.0</version>
+			<exclusions>
+				<exclusion>
+					<artifactId>commons-io</artifactId>
+					<groupId>commons-io</groupId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 	</dependencies>
 	

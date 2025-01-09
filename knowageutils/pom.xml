@@ -258,6 +258,12 @@
 		<dependency>
 			<groupId>org.cometd.java</groupId>
 			<artifactId>cometd-java-server</artifactId>
+			<exclusions>
+				<exclusion>
+					<artifactId>jetty-util</artifactId>
+					<groupId>org.eclipse.jetty</groupId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.quartz-scheduler</groupId>
@@ -490,6 +496,14 @@
 				<exclusion>
 					<artifactId>commons-io</artifactId>
 					<groupId>commons-io</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>jetty-http</artifactId>
+					<groupId>org.eclipse.jetty</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>jetty-client</artifactId>
+					<groupId>org.eclipse.jetty</groupId>
 				</exclusion>
 			</exclusions>
 		</dependency>
