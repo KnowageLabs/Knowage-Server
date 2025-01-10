@@ -485,7 +485,7 @@ public class DataSourceResource extends AbstractSpagoBIResource {
 	}
 
 	private void checkJNDIName(IDataSource dataSource) {
-		if (dataSource.getJndi() != null && !dataSource.getJndi().startsWith("java:comp/env/jdbc/")) {
+		if (dataSource.getJndi() != null && !dataSource.getJndi().trim().isEmpty() && !dataSource.getJndi().startsWith("java:comp/env/jdbc/")) {
 			MessageBuilder msgBuilder = new MessageBuilder();
 			throw new SpagoBIRestServiceException(msgBuilder.getMessage("sbi.datasource.jndi"), buildLocaleFromSession(), new Throwable());
 		}
