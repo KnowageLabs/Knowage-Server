@@ -351,8 +351,9 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 			if (p instanceof DataStoreCatalogFunctionField) {
 				String oldUuid = uuid;
 				uuid = ((DataStoreCatalogFunctionField) p).getCatalogFunctionUuid();
-				if (oldUuid != null && !oldUuid.equals(uuid))
+				if (oldUuid != null && !oldUuid.equals(uuid)) {
 					throw new SpagoBIRuntimeException("Only one function supported");
+				}
 			}
 		}
 		return uuid;
@@ -615,8 +616,9 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 			}
 		}
 
-		if (roundBrackets != 0 || squareBrackets != 0 || curlyBrackets != 0)
+		if (roundBrackets != 0 || squareBrackets != 0 || curlyBrackets != 0) {
 			throw new ValidationException();
+		}
 
 	}
 
@@ -635,8 +637,9 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 				}
 			}
 
-			if (!found)
+			if (!found) {
 				throw new ValidationException();
+			}
 		}
 
 	}
@@ -736,8 +739,9 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 				for (String aggr : AggregationFunctions.getAggregationsList()) {
 					String regex = ".*" + aggr + ".*";
 					boolean hasAggregationFunction = Pattern.matches(regex, field.getString("formula"));
-					if (hasAggregationFunction)
+					if (hasAggregationFunction) {
 						return true;
+					}
 				}
 			}
 		}
@@ -913,8 +917,7 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 
 	protected List<String> getColumnList(String columns, IDataSet dataSet,
 			Map<String, String> columnAliasToColumnName) {
-		List<String> columnList = new ArrayList<>(Arrays.asList(columns.trim().replaceAll("\\s+", " ").split("\\s,\\s")));
-
+		List<String> columnList = new ArrayList<>(Arrays.asList(columns.trim().replaceAll("\\s+", " ").split("\\s?,\\s?")));
 		// transform QBE columns
 		for (int i = 0; i < columnList.size(); i++) {
 			String column = columnList.get(i);
@@ -1046,8 +1049,9 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 
 				String meta = datasetJSON.optString("meta");
 
-				if (meta != null && !meta.equals(""))
+				if (meta != null && !meta.equals("")) {
 					isGeoDataset = ExecuteAdHocUtility.hasGeoHierarchy(meta);
+				}
 
 			} catch (Exception e) {
 				LOGGER.error("Error during check of Geo spatial column", e);
@@ -1122,8 +1126,9 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 
 		try {
 			if (dataset.getDsType().equalsIgnoreCase(DataSetConstants.PREPARED_DATASET)) {
-				if (dataset instanceof VersionedDataSet)
+				if (dataset instanceof VersionedDataSet) {
 					dataset = ((VersionedDataSet) dataset).getWrappedDataset();
+				}
 				String instanceId = ((PreparedDataSet) dataset).getDataPreparationInstance();
 				Client restClient = ClientBuilder.newClient();
 				InitialContext context = new InitialContext();
