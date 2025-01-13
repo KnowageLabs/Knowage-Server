@@ -150,7 +150,7 @@ public class TestConnection {
 		String jndi = requestBodyJSON.optString("jndi");
 		String type = requestBodyJSON.getString("type");
 
-		if (jndi != null && !jndi.startsWith("java:comp/env/jdbc/")) {
+		if (jndi != null && !jndi.trim().isEmpty() && !jndi.startsWith("java:comp/env/jdbc/")) {
 			JSONObject toReturn = new JSONObject();
 			toReturn.put("error", "JNDI Name not valid");
 			return toReturn.toString();
