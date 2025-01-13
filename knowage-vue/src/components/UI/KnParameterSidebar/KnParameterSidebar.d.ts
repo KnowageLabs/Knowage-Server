@@ -28,7 +28,9 @@ export interface iParameter {
     parameterDescription: string[]
     dependentParameters?: iParameter[]
     dataDependentParameters?: iParameter[]
+    dataDependsOnParameters?: iParameter[]
     lovDependsOnParameters?: iParameter[]
+    lovDependentParameters?: iParameter[]
     driverMaxValue?: string | null
     driverMaxDateValue?: Date | null
     initialValue?: string | number | Date | null
