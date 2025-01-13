@@ -90,7 +90,7 @@
                         :class="{
                             'p-invalid': parameter.mandatory && parameter.parameterValue && !parameter.parameterValue[0]?.value
                         }"
-                        :maxDate="parameter.driverMaxValue ?? undefined"
+                        :maxDate="parameter.driverMaxDateValue ?? undefined"
                         @change="updateDependency(parameter)"
                         @date-select="updateDependency(parameter)"
                         :data-test="'parameter-date-input-' + parameter.id"
