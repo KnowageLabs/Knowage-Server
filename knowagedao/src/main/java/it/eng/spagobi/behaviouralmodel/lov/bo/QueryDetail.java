@@ -37,6 +37,7 @@ import java.util.stream.Collectors;
 
 import javax.naming.NamingException;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringEscapeUtils;
 import org.apache.commons.validator.GenericValidator;
 import org.apache.log4j.Logger;
@@ -58,6 +59,7 @@ import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.AbstractDriver;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.AbstractParuse;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ObjParuse;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.Parameter;
+import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.bo.Domain;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
@@ -430,12 +432,13 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 			buffer.append(getDateRangeClause(dependency, fatherParameter));
 			return;
 		}
+		List<String> reserverWords = getReserverWords();
 
 		String operator = findOperator(dependency, drivers);
 		String value = findValue(dependency, drivers);
 		if (value != null) {
 			buffer.append(" ( ");
-			buffer.append(getColumnSQLName(dependency.getFilterColumn()));
+			buffer.append(this.checkReservedWords(reserverWords, getColumnSQLName(dependency.getFilterColumn())));
 			buffer.append(" " + operator + " ");
 			buffer.append(" " + value + " ");
 			buffer.append(" ) ");
@@ -1018,22 +1021,24 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 	 */
 	private String getValidationQueryForRegularLOVs(IEngUserProfile profile, AbstractDriver driver, List<String> values,
 			List<? extends AbstractDriver> drivers, List<ObjParuse> dependencies) throws Exception {
+
+		List<String> reserverWords = getReserverWords();
 		String statement = getQueryDefinition();
 		statement = StringUtilities.substituteProfileAttributesInString(statement, profile);
 		statement = substituteParametersInString(statement, drivers);
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("SELECT ");
-		buffer.append(getColumnSQLName(this.valueColumnName) + " AS \"" + VALUE_ALIAS + "\", ");
-		buffer.append(getColumnSQLName(this.descriptionColumnName) + " AS \"" + DESCRIPTION_ALIAS + "\" ");
+		buffer.append(this.checkReservedWords(reserverWords, getColumnSQLName(this.valueColumnName)) + " AS \"" + VALUE_ALIAS + "\", ");
+		buffer.append(this.checkReservedWords(reserverWords, getColumnSQLName(this.descriptionColumnName)) + " AS \"" + DESCRIPTION_ALIAS + "\" ");
 		buffer.append("FROM (");
 		buffer.append(statement);
 		buffer.append(") " + getRandomAlias() + " WHERE ");
 
 		if (values.size() == 1) {
-			buffer.append(getColumnSQLName(this.valueColumnName) + " = ");
+			buffer.append(this.checkReservedWords(reserverWords, getColumnSQLName(this.valueColumnName)) + " = ");
 			buffer.append(getSQLValue(driver, values.get(0)));
 		} else {
-			buffer.append(getColumnSQLName(this.valueColumnName) + " IN (");
+			buffer.append(this.checkReservedWords(reserverWords, getColumnSQLName(this.valueColumnName)) + " IN (");
 			buffer.append(concatenateValues(driver, values));
 			buffer.append(")");
 		}
@@ -1441,6 +1446,31 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 
 	private void manageMissingConnection(String dsLabel, Exception e) {
 		throw new SpagoBIRuntimeException("Impossible to get connection for dataset " + dsLabel, e);
+	}
+
+	private String checkReservedWords(List<String> reserverWords, String columnName) {
+		// add double quote against key conflicts for reserved words
+		if (!reserverWords.isEmpty() && reserverWords.contains(columnName)) {
+			return "\"" + columnName + "\"";
+		}
+		return columnName;
+	}
+
+	private static List<String> getReserverWords() {
+		LOGGER.debug("Getting reserver words");
+		List<String> ret = new ArrayList<>();
+		String reserverWords = SingletonConfig.getInstance().getConfigValue("KNOWAGE.DASHBOARD.RESERVED.WORDS");
+		if (StringUtils.isNotBlank(reserverWords)) {
+			for (String word : reserverWords.split(",", -1)) {
+				LOGGER.debug("Found word: " + word);
+				ret.add(word);
+			}
+
+		} else {
+			LOGGER.error("NO RESERVED WORDS CONFIGURED!!!");
+		}
+		LOGGER.debug("Returning reserved words: " + ret);
+		return ret;
 	}
 
 }

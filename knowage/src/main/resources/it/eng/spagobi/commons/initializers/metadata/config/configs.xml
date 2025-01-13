@@ -574,6 +574,11 @@
 	<CONFIG label="KNOWAGE.DASHBOARD.PASSWORD.ENCRYPTER.PROVIDER_ALGORITHM" name="KNOWAGE.DASHBOARD.PASSWORD.ENCRYPTER.PROVIDER_ALGORITHM"
 		description="Avoid sonar security hotspot issue" isActive="true"
 		valueCheck="HmacSHA1" valueType="STRING" category="GENERIC_CONFIGURATION" />	
+	
+	<CONFIG label="KNOWAGE.DASHBOARD.RESERVED.WORDS" name="Query Reserved Words"
+		description="Query Reserved Words" isActive="true"
+		valueCheck="RESOURCE,TABLE" valueType="STRING" category="GENERIC_CONFIGURATION" />
+	
 	<CONFIG label="SPAGOBI.DATASET.SOLR.FACET_LIMIT" name="SPAGOBI.DATASET.SOLR.FACET_LIMIT"
 		description="Limit the buckets count when Solr dataset execute facet query (-1 for unlimited)" isActive="true"
 		valueCheck="-1" valueType="NUM" category="SOLR_CONFIGURATION" />
