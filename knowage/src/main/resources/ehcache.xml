@@ -17,8 +17,8 @@
 		overflowToDisk="true" timeToIdleSeconds="600" timeToLiveSeconds="600"
 		diskPersistent="false" diskExpiryThreadIntervalSeconds="3" />	
 
-	<cache name="configuration" maxElementsInMemory="1" eternal="false"
-		overflowToDisk="false" timeToLiveSeconds="60"
+	<cache name="configuration" maxElementsInMemory="10" eternal="false"
+		overflowToDisk="false" timeToLiveSeconds="3600"
 		diskPersistent="false" diskExpiryThreadIntervalSeconds="120" />
 
 </ehcache>
