@@ -67,7 +67,7 @@ public class Utilities {
 
 			DirectoryStream<java.nio.file.Path> userJobDirectory = null;
 
-			LOGGER.info("Getting list of exported files for user " + userProfile.getUserId() + "...");
+			LOGGER.debug("Getting list of exported files for user " + userProfile.getUserId() + "...");
 
 			if (Files.isDirectory(perUserExportResourcePath)) {
 
@@ -122,7 +122,7 @@ public class Utilities {
 		} finally {
 			totalTime.stop();
 		}
-		LOGGER.info("Got list of exported files for user " + userProfile.getUserId());
+		LOGGER.debug("Got list of exported files for user " + userProfile.getUserId());
 		return ret;
 	}
 
