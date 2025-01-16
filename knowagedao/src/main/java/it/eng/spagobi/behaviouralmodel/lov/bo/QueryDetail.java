@@ -428,7 +428,7 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 	 */
 	private void addFilter(StringBuilder buffer, AbstractParuse dependency, List<? extends AbstractDriver> drivers) {
 		List<String> reserverWords = getReserverWords();
-		
+
 		AbstractDriver fatherParameter = getFatherParameter(dependency, drivers);
 		if (isDateRange(fatherParameter)) {
 			buffer.append(getDateRangeClause(dependency, fatherParameter));
@@ -441,7 +441,7 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 			buffer.append(" ( ");
 			if(!reserverWords.isEmpty() && reserverWords.contains(getColumnSQLName(dependency.getFilterColumn()))){
 				// add double quote against key conflicts
-				buffer.append("\"" + getColumnSQLName(dependency.getFilterColumn()) + "\""); 
+				buffer.append("\"" + getColumnSQLName(dependency.getFilterColumn()) + "\"");
 			} else {
 				buffer.append(getColumnSQLName(dependency.getFilterColumn()));
 			}
@@ -453,7 +453,7 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 			// a TRUE condition
 		}
 	}
-	
+
 	public static List<String> getReserverWords() {
 		logger.debug("Getting reserver words");
 		List<String> ret = new ArrayList<>();
@@ -1046,26 +1046,36 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 	 */
 	private String getValidationQueryForRegularLOVs(IEngUserProfile profile, AbstractDriver driver, List<String> values,
 			List<? extends AbstractDriver> drivers, List<ObjParuse> dependencies) throws Exception {
+
+		List<String> reserverWords = getReserverWords();
 		String statement = getQueryDefinition();
 		statement = StringUtilities.substituteProfileAttributesInString(statement, profile);
 		statement = substituteParametersInString(statement, drivers);
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("SELECT ");
-		buffer.append(getColumnSQLName(this.valueColumnName) + " AS \"" + VALUE_ALIAS + "\", ");
-		buffer.append(getColumnSQLName(this.descriptionColumnName) + " AS \"" + DESCRIPTION_ALIAS + "\" ");
+		buffer.append(this.checkReservedWords(reserverWords,getColumnSQLName(this.valueColumnName)) + " AS \"" + VALUE_ALIAS + "\", ");
+		buffer.append(this.checkReservedWords(reserverWords,getColumnSQLName(this.descriptionColumnName)) + " AS \"" + DESCRIPTION_ALIAS + "\" ");
 		buffer.append("FROM (");
 		buffer.append(statement);
 		buffer.append(") " + getRandomAlias() + " WHERE ");
 
 		if (values.size() == 1) {
-			buffer.append(getColumnSQLName(this.valueColumnName) + " = ");
+			buffer.append(this.checkReservedWords(reserverWords,getColumnSQLName(this.valueColumnName)) + " = ");
 			buffer.append(getSQLValue(driver, values.get(0)));
 		} else {
 			buffer.append(getColumnSQLName(this.valueColumnName) + " IN (");
 			buffer.append(concatenateValues(driver, values));
 			buffer.append(")");
 		}
+		this.checkReservedWords(reserverWords,getColumnSQLName(this.descriptionColumnName));
 		return buffer.toString();
+	}
+
+	private String checkReservedWords(List<String> reserverWords, String columnName) {
+		if (!reserverWords.isEmpty() && reserverWords.contains(columnName)) {
+			return "\"" + columnName + "\"";
+		}
+		return columnName;
 	}
 
 	/**
