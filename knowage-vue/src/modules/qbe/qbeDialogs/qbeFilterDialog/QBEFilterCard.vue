@@ -121,7 +121,6 @@ import Dropdown from 'primevue/dropdown'
 import QBEFilterDialogDescriptor from './QBEFilterDialogDescriptor.json'
 import QBEFilterValuesTable from './QBEFilterValuesTable.vue'
 import moment from 'moment'
-import { localeDate } from '@/helpers/commons/localeHelper'
 
 export default defineComponent({
     name: 'qbe-filter-card',
@@ -308,21 +307,7 @@ export default defineComponent({
         },
         onManualValueChange() {
             if (this.filter) {
-                const isDateOrTimestamp = ['DATE', 'TIMESTAMP'].includes(this.field?.id?.type)
-                if (isDateOrTimestamp) this.formatManualDate()
                 this.filter.rightOperandValue = [this.filter.rightOperandDescription]
-            }
-        },
-        formatManualDate() {
-            if (!this.filter) return
-
-            const serverFormat = 'DD/MM/YYYY hh:mm'
-            const format = localeDate().replace(/yyyy/g, 'YYYY').replace(/dd/g, 'DD').replace(/d/g, 'D').replace(/MM/g, 'MM').replace(/M/g, 'M').replace(/hh/g, 'HH').replace(/mm/g, 'mm').replace(/ss/g, 'ss').replace(/SSS/g, 'SSS')
-            const momentDate = moment(this.filter.rightOperandDescription, format, true)
-
-            if (momentDate.isValid()) {
-                const formattedDate = momentDate.format(serverFormat)
-                this.filter.rightOperandDescription = formattedDate
             }
         },
         onManualBetweenChange() {

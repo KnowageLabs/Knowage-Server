@@ -203,6 +203,7 @@ import calcFieldDescriptor from './QBECalcFieldDescriptor.json'
 import KnCalculatedField from '@/components/functionalities/KnCalculatedField/KnCalculatedField.vue'
 import Dropdown from 'primevue/dropdown'
 import { getCorrectRolesForExecution } from '@/helpers/commons/roleHelper'
+import { getFormattedQBECatalogueForAPI } from './QBEHelper'
 
 const crypto = require('crypto')
 const deepcopy = require('deepcopy')
@@ -233,7 +234,7 @@ export default defineComponent({
         KnCalculatedField,
         Dropdown
     },
-    props: { visible: { type: Boolean }, dataset: { type: Object }, returnQueryMode: { type: Boolean }, getQueryFromDatasetProp: { type: Boolean }, sourceDataset: { type: Object },fromDsManagement: { type: Boolean, default: false } },
+    props: { visible: { type: Boolean }, dataset: { type: Object }, returnQueryMode: { type: Boolean }, getQueryFromDatasetProp: { type: Boolean }, sourceDataset: { type: Object }, fromDsManagement: { type: Boolean, default: false } },
     emits: ['close', 'querySaved'],
     data() {
         return {
@@ -344,7 +345,7 @@ export default defineComponent({
                     }
                 })
                 .catch(() => this.$emit('close'))
-            }else await this.loadPage()
+        } else await this.loadPage()
     },
     methods: {
         //#region ===================== Load QBE and format data ====================================================
@@ -599,12 +600,12 @@ export default defineComponent({
                 }
             })
         },
-        async executeQBEQuery(showPreview: boolean) {
+        async executeQBEQuery(showPreview: boolean, filters?: iFilter[]) {
             if (!this.qbe) return
             if (this.qbe.qbeJSONQuery && this.qbe.qbeJSONQuery.catalogue.queries[0].fields.length == 0) return
             this.loading = true
 
-            const postData = { catalogue: this.qbe?.qbeJSONQuery?.catalogue.queries, meta: this.formatQbeMeta(), pars: this.qbe?.pars, qbeJSONQuery: {}, schedulingCronLine: '0 * * * * ?' }
+            const postData = { catalogue: getFormattedQBECatalogueForAPI(this.qbe?.qbeJSONQuery?.catalogue.queries, filters), meta: this.formatQbeMeta(), pars: this.qbe?.pars, qbeJSONQuery: {}, schedulingCronLine: '0 * * * * ?' }
             await this.$http
                 .post(process.env.VUE_APP_QBE_PATH + `qbequery/executeQuery/?SBI_EXECUTION_ID=${this.uniqueID}&currentQueryId=${this.selectedQuery.id}&start=${this.pagination.start}&limit=${this.pagination.limit}`, postData)
                 .then((response: AxiosResponse<any>) => {
