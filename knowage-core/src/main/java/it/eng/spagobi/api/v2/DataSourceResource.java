@@ -420,6 +420,9 @@ public class DataSourceResource extends AbstractSpagoBIResource {
 
 				try (Connection connection = DriverManager.getConnection(url, user, pwd)) {
 					LOGGER.debug("Connection performed successfully");
+				} catch (SQLException sqlException) {
+					LOGGER.error("Connection failure", sqlException);
+					throw new SpagoBIRestServiceException("Connection failure: " + url, buildLocaleFromSession(), sqlException.getMessage());
 				}
 			}
 
