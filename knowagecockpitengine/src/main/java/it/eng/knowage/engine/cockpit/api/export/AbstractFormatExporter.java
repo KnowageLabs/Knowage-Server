@@ -200,6 +200,9 @@ public abstract class AbstractFormatExporter {
 				// dataset variable
 				String key = variable.optString("key");
 				variableValue = ((JSONObject) value).optString(key);
+			} else if (value instanceof Integer) {
+				// parameter variable
+				variableValue = value.toString();
 			}
 			String condition = variable.getString("condition");
 			switch (condition) {
