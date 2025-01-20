@@ -202,7 +202,7 @@
 				to="/import-export" />
 			<ITEM id="10002" label="menu.ImpExpDocument"
 				requiredFunctionality="ImpExpDocument"
-				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=importExportDocuments" />
+				to="/import-export-documents/" />
 			<ITEM id="10003" label="menu.ImpExpMenu"
 				requiredFunctionality="ImpExpMenu"
 				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=importExportMenu" />
