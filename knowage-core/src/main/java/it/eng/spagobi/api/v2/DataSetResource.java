@@ -467,6 +467,7 @@ public class DataSetResource extends AbstractDataSetResource {
 			JSONArray ja = new JSONArray();
 
 			for (SbiDataSet ds : dataset) {
+				logger.debug("Processing dataset: " + ds.getId());
 				IDataSet dataSet = DataSetFactory.toDataSet(ds, getUserProfile());
 				boolean isNearRealtimeSupported = isNearRealtimeSupported(dataSet);
 				JSONObject jsonIDataSet = (JSONObject) SerializerFactory.getSerializer("application/json")
