@@ -189,7 +189,7 @@ public class UserResource extends AbstractSpagoBIResource {
 		sbiUser.setDefaultRoleId(requestDTO.getDefaultRoleId());
 
 		List<Integer> list = requestDTO.getSbiExtUserRoleses();
-		Set<SbiExtRoles> roles = new HashSet<SbiExtRoles>(0);
+		Set<SbiExtRoles> roles = new HashSet<>(0);
 		for (Integer id : list) {
 			SbiExtRoles role = new SbiExtRoles();
 			role.setExtRoleId(id);
@@ -198,7 +198,7 @@ public class UserResource extends AbstractSpagoBIResource {
 		sbiUser.setSbiExtUserRoleses(roles);
 
 		HashMap<Integer, HashMap<String, String>> map = requestDTO.getSbiUserAttributeses();
-		Set<SbiUserAttributes> attributes = new HashSet<SbiUserAttributes>(0);
+		Set<SbiUserAttributes> attributes = new HashSet<>(0);
 
 		for (Entry<Integer, HashMap<String, String>> entry : map.entrySet()) {
 			SbiUserAttributes attribute = new SbiUserAttributes();
@@ -239,7 +239,7 @@ public class UserResource extends AbstractSpagoBIResource {
 	@UserConstraint(functionalities = { CommunityFunctionalityConstants.PROFILE_MANAGEMENT, CommunityFunctionalityConstants.FINAL_USERS_MANAGEMENT })
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response updateUser(@PathParam("id") Integer id, @Valid UserBO requestDTO) {
-		
+
 		MessageBuilder msgBuilder = new MessageBuilder();
 		Locale locale = msgBuilder.getLocale(request);
 
@@ -251,7 +251,7 @@ public class UserResource extends AbstractSpagoBIResource {
 		if (userId.startsWith(PublicProfile.PUBLIC_USER_PREFIX)) {
 			logger.error("public is reserved prefix for user id");
 			throw new SpagoBIServiceException("SPAGOBI_SERVICE", "public_ is a reserved prefix for user name", null);
-		}	
+		}
 
 		SbiUser sbiUser = new SbiUser();
 		sbiUser.setId(id);
@@ -260,12 +260,12 @@ public class UserResource extends AbstractSpagoBIResource {
 		sbiUser.setPassword(requestDTO.getPassword());
 		sbiUser.setDefaultRoleId(requestDTO.getDefaultRoleId());
 		sbiUser.setFailedLoginAttempts(requestDTO.getFailedLoginAttempts());
-		
+
 		// This reset the account lock enabled in case of too much failed login attempts
 		// sbiUser.setFailedLoginAttempts(0);
 
 		List<Integer> list = requestDTO.getSbiExtUserRoleses();
-		Set<SbiExtRoles> roles = new HashSet<SbiExtRoles>(0);
+		Set<SbiExtRoles> roles = new HashSet<>(0);
 		for (Integer i : list) {
 			SbiExtRoles role = new SbiExtRoles();
 			role.setExtRoleId(i);
@@ -274,7 +274,7 @@ public class UserResource extends AbstractSpagoBIResource {
 		sbiUser.setSbiExtUserRoleses(roles);
 
 		HashMap<Integer, HashMap<String, String>> map = requestDTO.getSbiUserAttributeses();
-		Set<SbiUserAttributes> attributes = new HashSet<SbiUserAttributes>(0);
+		Set<SbiUserAttributes> attributes = new HashSet<>(0);
 		List<SbiAttribute> attrList = null;
 		ISbiAttributeDAO objDao = null;
 
@@ -288,29 +288,22 @@ public class UserResource extends AbstractSpagoBIResource {
 		} catch (EMFUserError e1) {
 			logger.error("Impossible get attributes", e1);
 		}
-		
-		/* KNOWAGE-8687: User parameters cannot be saved without entering password (only for admin) */
-		try {
-			if(!(objDao.getUserProfile().getRoles().size() == 1
-					&& objDao.getUserProfile().getRoles().toArray()[0].equals("admin") 
-					&& requestDTO.getPassword() == null)) {
-						try {
-							PasswordChecker.getInstance().isValid(sbiUserOriginal, sbiUserOriginal.getPassword(), true, requestDTO.getPassword(), requestDTO.getPassword());
-						} catch (Exception e) {
-							logger.error("Password is not valid", e);
-							String message = msgBuilder.getMessage("signup.check.pwdInvalid", "messages", locale);
-							if (e instanceof EMFUserError) {
-								throw new SpagoBIServiceException(((EMFUserError) e).getDescription(), message);
-							} else {
-								throw new SpagoBIServiceException(message, e);
-							}
-						}
-			} else {
-				logger.debug("User management by admin");
+
+		/* KNOWAGE-8687: CheckPassword if changed */
+		if (requestDTO.getPassword() != null) {
+			try {
+				PasswordChecker.getInstance().isValid(sbiUserOriginal, sbiUserOriginal.getPassword(), true, requestDTO.getPassword(), requestDTO.getPassword());
+			} catch (Exception e) {
+				logger.error("Password is not valid", e);
+				String message = msgBuilder.getMessage("signup.check.pwdInvalid", "messages", locale);
+				if (e instanceof EMFUserError) {
+					throw new SpagoBIServiceException(((EMFUserError) e).getDescription(), message);
+				} else {
+					throw new SpagoBIServiceException(message, e);
+				}
 			}
-		} catch (EMFInternalError e) {
-			logger.error("Error while validating password", e);
 		}
+
 
 		for (Entry<Integer, HashMap<String, String>> entry : map.entrySet()) {
 			SbiUserAttributes attribute = new SbiUserAttributes();
@@ -328,8 +321,9 @@ public class UserResource extends AbstractSpagoBIResource {
 		// This method get hidden attributes from user and sets their value to last known in DB
 		// By this we are avoiding changing that value if user change some other attributes
 		try {
-			if (objDao.getUserProfile().getRoles().size() == 1 && objDao.getUserProfile().getRoles().toArray()[0].equals("user"))
+			if (objDao.getUserProfile().getRoles().size() == 1 && objDao.getUserProfile().getRoles().toArray()[0].equals("user")) {
 				roleFilter.setAttributeHiddenFromUser(sbiUserOriginal, attributes, attrList);
+			}
 		} catch (EMFInternalError e1) {
 			logger.error(e1.getMessage(), e1);
 		}
