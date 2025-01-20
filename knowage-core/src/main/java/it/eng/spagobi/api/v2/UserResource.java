@@ -168,10 +168,10 @@ public class UserResource extends AbstractSpagoBIResource {
 			CommunityFunctionalityConstants.FINAL_USERS_MANAGEMENT })
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response insertUser(@Valid UserBO requestDTO) {
-		
+
 		MessageBuilder msgBuilder = new MessageBuilder();
 		Locale locale = msgBuilder.getLocale(request);
-		
+
 		ISbiUserDAO usersDao = null;
 
 		String userId = requestDTO.getUserId();
@@ -221,7 +221,7 @@ public class UserResource extends AbstractSpagoBIResource {
 		sbiUser.setSbiUserAttributeses(attributes);
 
 		String password = sbiUser.getPassword();
-		
+
 		try {
 			PasswordChecker.getInstance().checkPwd(password);
 		} catch (Exception e) {
@@ -232,8 +232,8 @@ public class UserResource extends AbstractSpagoBIResource {
 			} else {
 				throw new SpagoBIServiceException(message, e);
 			}
-		}		
-		
+		}
+
 		//if (password != null && password.length() > 0) {
 			try {
 				sbiUser.setPassword(Password.hashPassword(password));
@@ -260,7 +260,7 @@ public class UserResource extends AbstractSpagoBIResource {
 			CommunityFunctionalityConstants.FINAL_USERS_MANAGEMENT })
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response updateUser(@PathParam("id") Integer id, @Valid UserBO requestDTO) {
-		
+
 		MessageBuilder msgBuilder = new MessageBuilder();
 		Locale locale = msgBuilder.getLocale(request);
 
@@ -272,7 +272,7 @@ public class UserResource extends AbstractSpagoBIResource {
 		if (userId.startsWith(PublicProfile.PUBLIC_USER_PREFIX)) {
 			LOGGER.error("public is reserved prefix for user id");
 			throw new SpagoBIServiceException("SPAGOBI_SERVICE", "public_ is a reserved prefix for user name", null);
-		}	
+		}
 
 		SbiUser sbiUser = new SbiUser();
 		sbiUser.changeId(id);
@@ -281,7 +281,7 @@ public class UserResource extends AbstractSpagoBIResource {
 		sbiUser.setPassword(requestDTO.getPassword());
 		sbiUser.setDefaultRoleId(requestDTO.getDefaultRoleId());
 		sbiUser.setFailedLoginAttempts(requestDTO.getFailedLoginAttempts());
-		
+
 		// This reset the account lock enabled in case of too much failed login attempts
 		// sbiUser.setFailedLoginAttempts(0);
 
@@ -309,29 +309,22 @@ public class UserResource extends AbstractSpagoBIResource {
 		} catch (EMFUserError e1) {
 			LOGGER.error("Impossible get attributes", e1);
 		}
-		
-		/* KNOWAGE-8687: User parameters cannot be saved without entering password (only for admin) */
-		try {
-			if(!(objDao.getUserProfile().getRoles().size() == 1
-					&& objDao.getUserProfile().getRoles().toArray()[0].equals("admin") 
-					&& requestDTO.getPassword() == null)) {
-						try {
-							PasswordChecker.getInstance().isValid(sbiUserOriginal, sbiUserOriginal.getPassword(), true, requestDTO.getPassword(), requestDTO.getPassword());
-						} catch (Exception e) {
-							LOGGER.error("Password is not valid", e);
-							String message = msgBuilder.getMessage("signup.check.pwdInvalid", "messages", locale);
-							if (e instanceof EMFUserError) {
-								throw new SpagoBIServiceException(((EMFUserError) e).getDescription(), message);
-							} else {
-								throw new SpagoBIServiceException(message, e);
-							}
-						}
-			} else {
-				LOGGER.debug("User management by admin");
+
+		/* KNOWAGE-8687: CheckPassword if changed */
+		if (requestDTO.getPassword() != null) {
+			try {
+				PasswordChecker.getInstance().isValid(sbiUserOriginal, sbiUserOriginal.getPassword(), true, requestDTO.getPassword(), requestDTO.getPassword());
+			} catch (Exception e) {
+				LOGGER.error("Password is not valid", e);
+				String message = msgBuilder.getMessage("signup.check.pwdInvalid", "messages", locale);
+				if (e instanceof EMFUserError) {
+					throw new SpagoBIServiceException(((EMFUserError) e).getDescription(), message);
+				} else {
+					throw new SpagoBIServiceException(message, e);
+				}
 			}
-		} catch (EMFInternalError e) {
-			LOGGER.error("Error while validating password", e);
 		}
+
 
 		for (Entry<Integer, HashMap<String, String>> entry : map.entrySet()) {
 			SbiUserAttributes attribute = new SbiUserAttributes();
@@ -349,8 +342,9 @@ public class UserResource extends AbstractSpagoBIResource {
 		// By this we are avoiding changing that value if user change some other attributes
 		try {
 			if (objDao.getUserProfile().getRoles().size() == 1
-					&& objDao.getUserProfile().getRoles().toArray()[0].equals("user"))
+					&& objDao.getUserProfile().getRoles().toArray()[0].equals("user")) {
 				roleFilter.setAttributeHiddenFromUser(sbiUserOriginal, attributes, attrList);
+			}
 		} catch (EMFInternalError e1) {
 			LOGGER.error(e1.getMessage(), e1);
 		}
