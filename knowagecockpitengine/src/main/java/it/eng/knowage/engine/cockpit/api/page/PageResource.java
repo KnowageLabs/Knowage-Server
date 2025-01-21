@@ -53,6 +53,8 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import it.eng.spagobi.utilities.mime.MimeUtils;
+import it.eng.spagobi.utilities.rest.RestUtilities;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.client.utils.URIBuilder;
 //import org.apache.jena.ext.com.google.common.collect.Iterables;
@@ -104,6 +106,11 @@ public class PageResource extends AbstractCockpitEngineResource {
 	private static final String PDF_DEVICE_SCALE_FACTOR = "pdfDeviceScaleFactor";
 	private static final String PDF_WAIT_TIME = "pdfWaitTime";
 	private static final String IS_MULTI_SHEET = "isMultiSheet";
+	private static final String USER_ID = "user_id";
+	private static final String DOCUMENT_ID = "document";
+	private static final String DOCUMENT_LABEL = "DOCUMENT_LABEL";
+	private static final String DOCUMENT_NAME = "DOCUMENT_NAME";
+
 
 	private static Map<String, JSONObject> pages;
 
@@ -179,9 +186,47 @@ public class PageResource extends AbstractCockpitEngineResource {
 
 	@POST
 	@Path("/{pagename}/spreadsheet")
-	public Response openPagePostSpreadsheet(@PathParam("pagename") String pageName)
+	public void openPagePostSpreadsheet(@Context HttpServletRequest req)
 			throws IOException, InterruptedException, JSONException {
-		return openPageSpreadsheetInternal(pageName);
+		logger.debug("IN");
+		response.setCharacterEncoding(UTF_8.name());
+		try {
+			JSONObject body = new JSONObject();
+			String userId = request.getParameter(USER_ID);
+			String template = getIOManager().getTemplateAsString();
+			body.put("template", template);
+//			String outputType = body.getString(OUTPUT_TYPE);
+			ExcelExporter excelExporter = new ExcelExporter(userId, body);
+			String mimeType = excelExporter.getMimeType();
+
+			if (!MimeUtils.isValidMimeType(mimeType))
+				throw new SpagoBIRuntimeException("Invalid mime type: " + mimeType);
+
+			if (mimeType != null) {
+				Integer documentId = Integer.valueOf(req.getParameter(DOCUMENT_ID));
+				String documentLabel = req.getParameter(DOCUMENT_LABEL);
+				String documentName = req.getParameter(DOCUMENT_NAME);
+				String options = body.optString("options");
+				byte[] data;
+				data = excelExporter.getDashboardBinaryData(documentId, documentLabel, documentName, template, options);
+				//convert to base64
+				String base64 = Base64.getEncoder().encodeToString(data);
+
+				response.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+				response.setHeader("Content-length", Integer.toString(data.length));
+				response.setHeader("Content-Type", mimeType);
+				response.setHeader("Content-Disposition", "attachment; fileName=" + documentLabel + "." + "xlsx");
+
+				response.getOutputStream().write(data, 0, data.length);
+				response.getOutputStream().flush();
+				response.getOutputStream().close();
+			}
+		} catch (Exception e) {
+			logger.error("Cannot export to Excel", e);
+			throw SpagoBIEngineServiceExceptionHandler.getInstance().getWrappedException("", getEngineInstance(), e);
+		} finally {
+			logger.debug("OUT");
+		}
 	}
 
 	@GET

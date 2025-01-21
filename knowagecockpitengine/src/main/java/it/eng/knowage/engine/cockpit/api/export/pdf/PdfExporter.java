@@ -662,6 +662,12 @@ public class PdfExporter extends AbstractFormatExporter {
 		return cockpitSelections;
 	}
 
+	@Override
+	protected JSONObject getDashboardSelectionsFromBody(JSONObject template) {
+		// TODO implement this method when needed
+		return new JSONObject();
+	}
+
 	/**
 	 * Replace common problematic characters for Apache PDFBox, used by Boxable.
 	 *

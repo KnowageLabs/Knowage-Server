@@ -307,6 +307,105 @@ public class ExcelExporter extends AbstractFormatExporter {
 		}
 	}
 
+
+	public byte[] getDashboardBinaryData(Integer documentId, String documentLabel, String documentName, String templateString, String options) {
+		this.documentName = documentName;
+
+		if (templateString == null) {
+			ObjTemplate template = null;
+			String message = "Unable to get template for document with id [" + documentId + "] and label ["
+					+ documentLabel + "]";
+			try {
+				if (documentId != null && documentId.intValue() != 0) {
+					template = DAOFactory.getObjTemplateDAO().getBIObjectActiveTemplate(documentId);
+				} else if (documentLabel != null && !documentLabel.isEmpty()) {
+					template = DAOFactory.getObjTemplateDAO().getBIObjectActiveTemplateByLabel(documentLabel);
+				}
+
+				if (template == null) {
+					throw new SpagoBIRuntimeException(message);
+				}
+
+				templateString = new String(template.getContent());
+			} catch (EMFAbstractError e) {
+				throw new SpagoBIRuntimeException(message);
+			}
+		}
+
+		int windowSize = Integer.parseInt(
+				SingletonConfig.getInstance().getConfigValue("KNOWAGE.DASHBOARD.EXPORT.EXCEL.STREAMING_WINDOW_SIZE"));
+		try (Workbook wb = new SXSSFWorkbook(windowSize)) {
+
+			int exportedSheets = 0;
+			if (isSingleWidgetExport) {
+				long widgetId = body.getLong("widget");
+				String widgetType = getWidgetTypeFromCockpitTemplate(templateString, widgetId);
+				JSONObject optionsObj = new JSONObject();
+				if (options != null && !options.isEmpty()) {
+					optionsObj = new JSONObject(options);
+				}
+				IWidgetExporter widgetExporter = WidgetExporterFactory.getExporter(this, widgetType, templateString,
+						widgetId, wb, optionsObj);
+				exportedSheets = widgetExporter.export();
+				Map<String, Map<String, Object>> selectionsMap = new HashMap<>();
+				try {
+					selectionsMap = createSelectionsMap();
+				} catch (JSONException e) {
+					throw new SpagoBIRuntimeException("Unable to get selection map: ", e);
+				}
+				if (!selectionsMap.isEmpty()) {
+					Sheet selectionsSheet = createUniqueSafeSheetForSelections(wb, "Active Selections");
+					fillSelectionsSheetWithData(selectionsMap, wb, selectionsSheet, "Selections");
+					exportedSheets++;
+				}
+
+				Map<String, Map<String, Object>> driversMap = new HashMap<>();
+				try {
+					driversMap = createDriversMap();
+				} catch (JSONException e) {
+					throw new SpagoBIRuntimeException("Unable to get driver map: ", e);
+				}
+				if (!driversMap.isEmpty()) {
+					Sheet driversSheet = createUniqueSafeSheetForDrivers(wb, "Filters");
+					fillDriversSheetWithData(driversMap, wb, driversSheet, "Filters");
+					exportedSheets++;
+				}
+			} else {
+				// export whole cockpit
+				JSONArray widgetsJson = getDashboardWidgetsJson(templateString);
+				JSONObject optionsObj = buildOptionsForCrosstab(templateString);
+				exportedSheets = exportDashboard(templateString, widgetsJson, wb, optionsObj);
+			}
+
+			if (exportedSheets == 0) {
+				exportEmptyExcel(wb);
+			} else {
+				for (Sheet sheet: wb) {
+					if(sheet != null) {
+						// Adjusts the column width to fit the contents
+						adjustColumnWidth(sheet, this.imageB64);
+					}
+				}
+			}
+
+			byte[] ret = null;
+			try (ByteArrayOutputStream out = new ByteArrayOutputStream()) {
+				wb.write(out);
+				out.flush();
+				ret = out.toByteArray();
+			}
+			return ret;
+		} catch (IOException e) {
+			throw new SpagoBIRuntimeException("Unable to generate output file", e);
+		} catch (Exception e) {
+			throw new SpagoBIRuntimeException("Cannot export data to excel", e);
+		}
+
+	}
+
+
+
+
 	private JSONObject buildOptionsForCrosstab(String templateString) {
 		try {
 			JSONObject template = new JSONObject(templateString);
@@ -423,6 +522,30 @@ public class ExcelExporter extends AbstractFormatExporter {
 		return cockpitSelections;
 	}
 
+	@Override
+	//TODO: IMPLEMENT THIS METHOD CORRECTLY
+	protected JSONObject getDashboardSelectionsFromBody(JSONObject template) {
+		JSONObject dashboardSelections = new JSONObject();
+		if (body == null || body.length() == 0) {
+			return dashboardSelections;
+		}
+		try {
+			if (isSingleWidgetExport) { // export single widget
+				//TODO: IMPLEMENT THIS LOGIC
+				dashboardSelections = body.getJSONObject("COCKPIT_SELECTIONS");
+			} else { // export whole dashboard
+				JSONObject configuration = body.getJSONObject("configuration");
+//				dashboardSelections = body.getJSONArray("configuration").getJSONObject();
+			}
+			forceUniqueHeaders(dashboardSelections);
+		} catch (Exception e) {
+			LOGGER.error("Cannot get dashboard selections", e);
+			return new JSONObject();
+		}
+		return dashboardSelections;
+	}
+
+
 	private String getDatasetLabel(JSONObject template, int dsId) {
 		try {
 			JSONArray cockpitDatasets = template.getJSONObject("configuration").getJSONArray("datasets");
@@ -456,6 +579,21 @@ public class ExcelExporter extends AbstractFormatExporter {
 				}
 				return toReturn;
 			}
+		} catch (Exception e) {
+			throw new SpagoBIRuntimeException("Cannot retrieve widgets list", e);
+		}
+	}
+
+	private JSONArray getDashboardWidgetsJson(String templateString) {
+		try {
+			JSONArray toReturn = new JSONArray();
+			JSONObject template = new JSONObject(templateString);
+			JSONArray widgets = template.getJSONArray("widgets");
+			for (int i = 0; i < widgets.length(); i++) {
+				JSONObject widget = widgets.getJSONObject(i);
+				toReturn.put(widget);
+			}
+			return toReturn;
 		} catch (Exception e) {
 			throw new SpagoBIRuntimeException("Cannot retrieve widgets list", e);
 		}
@@ -509,6 +647,56 @@ public class ExcelExporter extends AbstractFormatExporter {
 		}
 		return exportedSheets;
 	}
+
+	private int exportDashboard(String templateString, JSONArray widgetsJson, Workbook wb, JSONObject optionsObj) {
+		String widgetId = null;
+		int exportedSheets = 0;
+		for (int i = 0; i < widgetsJson.length(); i++) {
+			try {
+				JSONObject currWidget = widgetsJson.getJSONObject(i);
+				widgetId = currWidget.getString("id");
+				String widgetType = currWidget.getString("type");
+				if (Arrays.asList(WIDGETS_TO_IGNORE).contains(widgetType.toLowerCase())) {
+					continue;
+				}
+				JSONObject currWidgetOptions = new JSONObject();
+				if (optionsObj.has(widgetId)) {
+					currWidgetOptions = optionsObj.getJSONObject(widgetId);
+				}
+				IWidgetExporter widgetExporter = WidgetExporterFactory.getExporter(this, widgetType, templateString,
+						Long.parseLong(widgetId), wb, currWidgetOptions);
+				exportedSheets += widgetExporter.export();
+
+			} catch (Exception e) {
+				LOGGER.error("Error while exporting widget {}", widgetId, e);
+			}
+		}
+		Map<String, Map<String, Object>> selectionsMap = new HashMap<>();
+		try {
+			selectionsMap = createSelectionsMap();
+		} catch (JSONException e) {
+			throw new SpagoBIRuntimeException("Unable to get selection map: ", e);
+		}
+		if (!selectionsMap.isEmpty()) {
+			Sheet selectionsSheet = createUniqueSafeSheetForSelections(wb, "Active Selections");
+			fillSelectionsSheetWithData(selectionsMap, wb, selectionsSheet, "Selections");
+			exportedSheets++;
+		}
+
+		Map<String, Map<String, Object>> driversMap = new HashMap<>();
+		try {
+			driversMap = createDriversMap();
+		} catch (JSONException e) {
+			throw new SpagoBIRuntimeException("Unable to get driver map: ", e);
+		}
+		if (!driversMap.isEmpty()) {
+			Sheet driversSheet = createUniqueSafeSheetForSelections(wb, "Filters");
+			fillDriversSheetWithData(driversMap, wb, driversSheet, "Filters");
+			exportedSheets++;
+		}
+		return exportedSheets;
+	}
+
 
 	private void exportEmptyExcel(Workbook wb) {
 		if (wb.getNumberOfSheets() == 0) {
@@ -1089,6 +1277,11 @@ public class ExcelExporter extends AbstractFormatExporter {
 		} catch (Exception e) {
 			throw new SpagoBIRuntimeException("Cannot write data to Excel file", e);
 		}
+	}
+
+	public void fillDashboardSheetWithData(JSONObject dataStore, Workbook wb, Sheet sheet, String widgetName, int offset,
+								  JSONObject settings) {
+		//TODO: IMPLEMENT THIS ONE
 	}
 
 	private HashMap<String, Object> createMapVariables(HashMap<String, Object> variablesMap) throws JSONException {

@@ -384,6 +384,43 @@ public abstract class AbstractFormatExporter {
 		return datastore;
 	}
 
+	public JSONObject getDataStoreForDashboardWidget(JSONObject template, JSONObject widget, int offset, int fetchSize) {
+		Map<String, Object> map = new java.util.HashMap<>();
+		JSONObject datastore;
+		try {
+			Integer datasetId = Integer.valueOf(widget.optString("dataset"));
+			IDataSet dataset = DAOFactory.getDataSetDAO().loadDataSetById(datasetId);
+			String datasetLabel = dataset.getLabel();
+
+			//TODO : Check if this is correct
+//			if (getRealtimeFromWidget(datasetId, configuration))
+//				map.put("nearRealtime", true);
+
+			JSONObject cockpitSelections = getDashboardSelectionsFromBody(template);
+
+			//TODO: Ask what is this
+			JSONArray summaryRow = getSummaryRowFromDashboardWidget(widget);
+
+			if (summaryRow != null)
+				cockpitSelections.put("summaryRow", summaryRow);
+
+			if (isSolrDataset(dataset) && !widget.getString("type").equalsIgnoreCase("discovery")) {
+				JSONObject jsOptions = new JSONObject();
+				jsOptions.put("solrFacetPivot", true);
+				cockpitSelections.put("options", jsOptions);
+			}
+
+			datastore = getDatastore(datasetLabel, map, cockpitSelections.toString(), offset, fetchSize);
+			datastore.put("widgetData", widget);
+
+		} catch (Exception e) {
+			throw new SpagoBIRuntimeException("Error getting datastore for widget [type=" + widget.optString("type")
+					+ "] [id=" + widget.optLong("id") + "]", e);
+		}
+		return datastore;
+	}
+
+
 	protected JSONObject getDatastore(String datasetLabel, Map<String, Object> map, String selections, int offset,
 			int fetchSize) {
 		ExporterClient client = new ExporterClient();
@@ -642,7 +679,15 @@ public abstract class AbstractFormatExporter {
 		}
 	}
 
+	protected JSONArray getSummaryRowFromDashboardWidget(JSONObject widget) {
+		return new JSONArray();
+	}
+
+
 	protected abstract JSONObject getCockpitSelectionsFromBody(JSONObject widget);
+
+	protected abstract JSONObject getDashboardSelectionsFromBody(JSONObject template);
+
 
 	protected boolean getRealtimeFromWidget(int dsId, JSONObject configuration) {
 		try {
