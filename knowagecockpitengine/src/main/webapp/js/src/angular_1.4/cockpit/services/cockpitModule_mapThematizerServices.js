@@ -279,7 +279,7 @@
 //			if (!color) color = (config.style && config.style.color) ? mts.rgbaToHex(config.style.color) : 'grey';
 			if (!alpha) alpha = (config.style && config.style.color) ? mts.rgbaToAlpha(config.style.color) : 1;
 			if (props.coordType != "string" && !borderColor) borderColor = color;
-			if (!borderColor) borderColor = config.style.borderColor || 'grey';
+			if (!borderColor) borderColor = (config.style && config.style.borderColor) ? config.style.borderColor : 'grey';
 			if (!borderAlpha) borderAlpha = (config.style && config.style.borderColor) ? mts.rgbaToAlpha(config.style.borderColor) : 1;
 
 			if (props.coordType === "string") {

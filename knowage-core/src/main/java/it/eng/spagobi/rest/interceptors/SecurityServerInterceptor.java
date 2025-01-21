@@ -71,7 +71,7 @@ public class SecurityServerInterceptor extends AbstractSecurityServerInterceptor
 	protected UserProfile authenticateUser() {
 		UserProfile profile = null;
 
-		LOGGER.trace("IN");
+		LOGGER.debug("IN");
 
 		try {
 			String authorizationHeaderName = getAuthorizationHeaderName();
@@ -79,7 +79,7 @@ public class SecurityServerInterceptor extends AbstractSecurityServerInterceptor
 			if (servletRequest.getHeader(authorizationHeaderName) != null) {
 				String token = servletRequest.getHeader(authorizationHeaderName);
 
-				LOGGER.trace("Token in header [" + authorizationHeaderName + "] is [" + token + "]");
+				LOGGER.info("Token in header [" + authorizationHeaderName + "] is [" + token + "]");
 
 				token = token.replaceFirst("Bearer ", "");
 				ISecurityServiceSupplier supplier = SecurityServiceSupplierFactory.createISecurityServiceSupplier();
@@ -94,7 +94,7 @@ public class SecurityServerInterceptor extends AbstractSecurityServerInterceptor
 				 */
 				String auto = servletRequest.getHeader("Authorization");
 
-				LOGGER.trace("Authorization header is: " + auto);
+				LOGGER.info("Authorization header is: " + auto);
 
 				int position = auto.indexOf("Direct");
 				if (position > -1 && position < 5) {// Direct stay at the beginning of the header
@@ -116,7 +116,10 @@ public class SecurityServerInterceptor extends AbstractSecurityServerInterceptor
 
 					SpagoBIUserProfile spagoBIUserProfile = supplier.checkAuthentication(user, password);
 					if (spagoBIUserProfile != null) {
+						LOGGER.info("spagoBIUserProfile is not null" );
 						profile = (UserProfile) UserUtilities.getUserProfile(spagoBIUserProfile.getUniqueIdentifier());
+					}else {
+						LOGGER.info("spagoBIUserProfile is null !!!!" );
 					}
 				}
 			} else {
@@ -124,19 +127,22 @@ public class SecurityServerInterceptor extends AbstractSecurityServerInterceptor
 				// "X-Auth-Token chencking authorization will be by access token"
 				String token = servletRequest.getHeader("X-Auth-Token");
 
-				LOGGER.trace("X-Auth-Token header is: " + token);
+				LOGGER.info("X-Auth-Token header is: " + token);
 
 				ISecurityServiceSupplier supplier = SecurityServiceSupplierFactory.createISecurityServiceSupplier();
 
 				SpagoBIUserProfile spagoBIUserProfile = supplier.checkAuthenticationToken(token);
 				if (spagoBIUserProfile != null) {
+					LOGGER.info("spagoBIUserProfile is not null" );
 					profile = (UserProfile) UserUtilities.getUserProfile(spagoBIUserProfile.getUniqueIdentifier());
+				}else {
+						LOGGER.info("spagoBIUserProfile is null !!!!" );
 				}
 			}
 		} catch (Exception e) {
 			LOGGER.error("Problem during authentication, returning null", e);
 		} finally {
-			LOGGER.trace("OUT");
+			LOGGER.debug("OUT");
 		}
 
 		return profile;
@@ -144,6 +150,7 @@ public class SecurityServerInterceptor extends AbstractSecurityServerInterceptor
 
 	@Override
 	protected boolean isUserAuthenticatedInSpagoBI() {
+		LOGGER.debug("IN");
 		boolean authenticated = true;
 		IEngUserProfile engProfile = getUserProfileFromSession();
 
@@ -151,32 +158,40 @@ public class SecurityServerInterceptor extends AbstractSecurityServerInterceptor
 			engProfile = this.getUserProfileFromUserId();
 
 			if (engProfile != null) {
-				LOGGER.debug("User is authenticated but his profile is not already stored in session");
+				LOGGER.info("User is authenticated but his profile is not already stored in session");
 			} else {
-				LOGGER.debug("User is not authenticated");
+				LOGGER.info("User is not authenticated");
 				authenticated = false;
 			}
 		}
+		LOGGER.debug("OUT");
 		return authenticated;
 	}
 
 	@Override
 	protected IEngUserProfile createProfile(String userId) {
+		LOGGER.debug("IN");
 		try {
 			return GeneralUtilities.createNewUserProfile(userId);
 		} catch (Exception e) {
 			throw new SpagoBIRuntimeException("Error while creating user profile with user id = [" + userId + "]", e);
+		}finally{
+			LOGGER.debug("OUT");
 		}
+		
 	}
 
 	@Override
 	protected boolean isBackEndService() {
+		LOGGER.debug("IN");
 		String auto = servletRequest.getHeader("Authorization");
 		// no header provided
 		if (auto == null) {
+			LOGGER.info("return false");
 			return false;
 		}
 		int position = auto.indexOf("Direct");
+		LOGGER.debug("OUT");
 		return (position > -1 && position < 5);
 	}
 

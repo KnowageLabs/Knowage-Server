@@ -200,6 +200,9 @@ public abstract class AbstractFormatExporter {
 				// dataset variable
 				String key = variable.optString("key");
 				variableValue = ((JSONObject) value).optString(key);
+			} else if (value instanceof Integer) {
+				// parameter variable
+				variableValue = value.toString();
 			}
 			String condition = variable.getString("condition");
 			switch (condition) {
@@ -259,6 +262,31 @@ public abstract class AbstractFormatExporter {
 							JSONArray ranges = columnNew.getJSONArray("ranges");
 							columnOld.put("ranges", ranges); // added ranges for column thresholds
 						}
+
+						columnsOrdered.put(columnOld);
+						break;
+					}
+				}
+			}
+			return columnsOrdered;
+		} catch (Exception e) {
+			LOGGER.error("Error retrieving ordered columns");
+			return new JSONArray();
+		}
+	}
+	
+	protected JSONArray getDiscoveryOrderedColumns(JSONArray columnsNew, JSONArray columnsOld) {
+		JSONArray columnsOrdered = new JSONArray();
+		// new columns are in the correct order
+		// for each of them we have to find the correspondent old column and push it into columnsOrdered
+		try {
+			for (int i = 0; i < columnsNew.length(); i++) {
+
+				JSONObject columnNew = columnsNew.getJSONObject(i);
+
+				for (int j = 0; j < columnsOld.length(); j++) {
+					JSONObject columnOld = columnsOld.getJSONObject(j);
+					if (columnOld.getString("header").equals(columnNew.getString("name"))) {
 
 						columnsOrdered.put(columnOld);
 						break;

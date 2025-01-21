@@ -117,7 +117,7 @@ export interface iFilter {
     leftOperandLastValue: any
     leftOperandLongDescription: string
     leftOperandType: string
-    leftOperandValue: string
+    leftOperandValue: any
     operator: string
     promptable: boolean
     rightOperandAlias?: any

@@ -49,7 +49,7 @@ public class FinalUserConfigResource extends AbstractSpagoBIResource {
 	 */
 	private static final List<String> USER_CONFIG_LABELS = Arrays.asList("SPAGOBI.SESSION_PARAMETERS_MANAGER.enabled",
 			"SPAGOBI.DATE-FORMAT-SERVER.format", "SPAGOBI.TIMESTAMP-FORMAT.format",
-			"KNOWAGE.EMBEDDING_APPLICATION_VALUE", "KNOWAGE.RESOURCE.UPLOAD.MAX_SIZE","KNOWAGE.HIDE_VERSION","oidc.session.polling.interval","oidc.session.polling.url");
+			"KNOWAGE.EMBEDDING_APPLICATION_VALUE", "KNOWAGE.RESOURCE.UPLOAD.MAX_SIZE","KNOWAGE.HIDE_VERSION","oidc.session.polling.interval","oidc.session.polling.url","KNOWAGE.MANDATORY-ROLE");
 
 	@GET
 	@Path("/")

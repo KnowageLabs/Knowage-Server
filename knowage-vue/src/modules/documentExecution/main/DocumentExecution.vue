@@ -781,7 +781,10 @@ export default defineComponent({
 
                     if (el.type === 'DATE' && !el.selectionType && el.valueSelection === 'man_in' && el.showOnPanel === 'true' && el.visible) {
                         el.parameterValue[0].value = getValidDate('' + el.parameterValue[0].value, this.dateFormat)
-                        if (el.driverMaxValue) el.driverMaxValue = getValidDate('' + el.driverMaxValue, this.dateFormat)
+                        if (el.driverMaxValue) {
+                            const validDate = getValidDate('' + el.driverMaxValue, this.dateFormat)
+                            el.driverMaxDateValue = validDate === '' ? null : validDate
+                        }
                     }
                 }
                 if (el.data) {

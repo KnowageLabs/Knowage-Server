@@ -53,7 +53,7 @@ public class ObjParuseDAOHibImpl extends AbstractHibernateDAO implements IObjPar
 	 * @see it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IObjParuseDAO#modifyObjParuse(it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ObjParuse)
 	 */
 	@Override
-	public void modifyObjParuse(ObjParuse aObjParuse) throws HibernateException {
+	public void modifyObjParuse(ObjParuse aObjParuse) throws HibernateException, IllegalArgumentException {
 		Session aSession = null;
 		Transaction tx = null;
 		try {
@@ -79,6 +79,7 @@ public class ObjParuseDAOHibImpl extends AbstractHibernateDAO implements IObjPar
 			aSession.clear();
 			SbiObjPar sbiObjPar = (SbiObjPar) aSession.load(SbiObjPar.class, aObjParuse.getParId());
 			SbiParuse sbiParuse = (SbiParuse) aSession.load(SbiParuse.class, aObjParuse.getUseModeId());
+			this.checksDataConsistency(sbiObjPar, sbiParuse);
 			SbiObjPar sbiObjParFather = (SbiObjPar) aSession.load(SbiObjPar.class, aObjParuse.getParFatherId());
 			if (sbiObjParFather == null) {
 				SpagoBITracer.major(SpagoBIConstants.NAME_MODULE, this.getClass().getName(), "modifyObjParuse",
@@ -101,8 +102,9 @@ public class ObjParuseDAOHibImpl extends AbstractHibernateDAO implements IObjPar
 			tx.commit();
 		} catch (HibernateException he) {
 			logException(he);
-			if (tx != null)
+			if (tx != null) {
 				tx.rollback();
+			}
 			throw new HibernateException(he.getLocalizedMessage(), he);
 		} finally {
 			if (aSession != null) {
@@ -129,7 +131,7 @@ public class ObjParuseDAOHibImpl extends AbstractHibernateDAO implements IObjPar
 	 * @see it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IObjParuseDAO#insertObjParuse(it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ObjParuse)
 	 */
 	@Override
-	public Integer insertObjParuse(ObjParuse aObjParuse) throws HibernateException {
+	public Integer insertObjParuse(ObjParuse aObjParuse) throws HibernateException, IllegalArgumentException {
 
 		Session aSession = null;
 		Transaction tx = null;
@@ -139,6 +141,7 @@ public class ObjParuseDAOHibImpl extends AbstractHibernateDAO implements IObjPar
 			tx = aSession.beginTransaction();
 			SbiObjPar sbiObjPar = (SbiObjPar) aSession.load(SbiObjPar.class, aObjParuse.getParId());
 			SbiParuse sbiParuse = (SbiParuse) aSession.load(SbiParuse.class, aObjParuse.getUseModeId());
+			this.checksDataConsistency(sbiObjPar, sbiParuse);
 			SbiObjPar sbiObjParFather = (SbiObjPar) aSession.load(SbiObjPar.class, aObjParuse.getParFatherId());
 			if (sbiObjParFather == null) {
 				SpagoBITracer.major(SpagoBIConstants.NAME_MODULE, this.getClass().getName(), "modifyObjParuse",
@@ -160,17 +163,28 @@ public class ObjParuseDAOHibImpl extends AbstractHibernateDAO implements IObjPar
 			tx.commit();
 		} catch (HibernateException he) {
 			logException(he);
-			if (tx != null)
+			if (tx != null) {
 				tx.rollback();
+			}
 			throw new HibernateException(he.getLocalizedMessage(), he);
 		} finally {
 			if (aSession != null) {
-				if (aSession.isOpen())
+				if (aSession.isOpen()) {
 					aSession.close();
+				}
 				return correlation.getId();
 			}
 		}
 		return correlation.getId();
+	}
+
+	private void checksDataConsistency(SbiObjPar sbiObjPar, SbiParuse sbiParuse) {
+		if (!sbiObjPar.getSbiParameter().getParId().equals(sbiParuse.getSbiParameters().getParId())) {
+			String message = "SbiParameter in  SbiObjPar:  " + sbiObjPar.getSbiParameter().getParId() + " does not equal to SbiParameter in SbiParuse: "
+					+ sbiParuse.getSbiParameters().getParId();
+			SpagoBITracer.major(SpagoBIConstants.NAME_MODULE, this.getClass().getName(), "modifyObjParuse", message);
+			throw new IllegalArgumentException("Error links:  " + message);
+		}
 	}
 
 	/**
@@ -195,13 +209,15 @@ public class ObjParuseDAOHibImpl extends AbstractHibernateDAO implements IObjPar
 			tx.commit();
 		} catch (HibernateException he) {
 			logException(he);
-			if (tx != null)
+			if (tx != null) {
 				tx.rollback();
+			}
 			throw new HibernateException(he.getLocalizedMessage(), he);
 		} finally {
 			if (aSession != null) {
-				if (aSession.isOpen())
+				if (aSession.isOpen()) {
 					aSession.close();
+				}
 			}
 		}
 		/*
@@ -261,13 +277,15 @@ public class ObjParuseDAOHibImpl extends AbstractHibernateDAO implements IObjPar
 			tx.commit();
 		} catch (HibernateException he) {
 			logException(he);
-			if (tx != null)
+			if (tx != null) {
 				tx.rollback();
+			}
 			throw new HibernateException(he.getLocalizedMessage(), he);
 		} finally {
 			if (aSession != null) {
-				if (aSession.isOpen())
+				if (aSession.isOpen()) {
 					aSession.close();
+				}
 			}
 		}
 		return toReturn;
@@ -281,8 +299,9 @@ public class ObjParuseDAOHibImpl extends AbstractHibernateDAO implements IObjPar
 	 * @return The corrispondent <code>ObjParuse</code>
 	 */
 	public ObjParuse toObjParuse(SbiObjParuse aSbiObjParuse) {
-		if (aSbiObjParuse == null)
+		if (aSbiObjParuse == null) {
 			return null;
+		}
 		ObjParuse toReturn = new ObjParuse();
 		toReturn.setId(aSbiObjParuse.getId());
 		toReturn.setParId(aSbiObjParuse.getSbiObjPar().getObjParId());
@@ -323,8 +342,9 @@ public class ObjParuseDAOHibImpl extends AbstractHibernateDAO implements IObjPar
 			Query query = aSession.createQuery(hql);
 			query.setInteger(0, objParFatherId.intValue());
 			List objParuses = query.list();
-			if (objParuses == null || objParuses.size() == 0)
+			if (objParuses == null || objParuses.size() == 0) {
 				return toReturn;
+			}
 			// add to the list all the distinct labels of parameter which depend form the father parameter
 			Iterator it = objParuses.iterator();
 			while (it.hasNext()) {
@@ -339,13 +359,15 @@ public class ObjParuseDAOHibImpl extends AbstractHibernateDAO implements IObjPar
 			tx.commit();
 		} catch (HibernateException he) {
 			logException(he);
-			if (tx != null)
+			if (tx != null) {
 				tx.rollback();
+			}
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
 			if (aSession != null) {
-				if (aSession.isOpen())
+				if (aSession.isOpen()) {
 					aSession.close();
+				}
 			}
 		}
 		return toReturn;
@@ -382,13 +404,15 @@ public class ObjParuseDAOHibImpl extends AbstractHibernateDAO implements IObjPar
 			tx.commit();
 		} catch (HibernateException he) {
 			logException(he);
-			if (tx != null)
+			if (tx != null) {
 				tx.rollback();
+			}
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
 			if (aSession != null) {
-				if (aSession.isOpen())
+				if (aSession.isOpen()) {
 					aSession.close();
+				}
 			}
 		}
 		return toReturn;
@@ -426,13 +450,15 @@ public class ObjParuseDAOHibImpl extends AbstractHibernateDAO implements IObjPar
 			tx.commit();
 		} catch (HibernateException he) {
 			logException(he);
-			if (tx != null)
+			if (tx != null) {
 				tx.rollback();
+			}
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
 			if (aSession != null) {
-				if (aSession.isOpen())
+				if (aSession.isOpen()) {
 					aSession.close();
+				}
 			}
 		}
 		return toReturn;
@@ -473,8 +499,9 @@ public class ObjParuseDAOHibImpl extends AbstractHibernateDAO implements IObjPar
 			query.setInteger(1, paruseId.intValue());
 
 			List sbiObjParuses = query.list();
-			if (sbiObjParuses == null)
+			if (sbiObjParuses == null) {
 				return objparuses;
+			}
 			Iterator itersbiOP = sbiObjParuses.iterator();
 			while (itersbiOP.hasNext()) {
 				SbiObjParuse sbiop = (SbiObjParuse) itersbiOP.next();
@@ -484,13 +511,15 @@ public class ObjParuseDAOHibImpl extends AbstractHibernateDAO implements IObjPar
 			tx.commit();
 		} catch (HibernateException he) {
 			logException(he);
-			if (tx != null)
+			if (tx != null) {
 				tx.rollback();
+			}
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
 			if (aSession != null) {
-				if (aSession.isOpen())
+				if (aSession.isOpen()) {
 					aSession.close();
+				}
 			}
 		}
 		return objparuses;
@@ -535,13 +564,15 @@ public class ObjParuseDAOHibImpl extends AbstractHibernateDAO implements IObjPar
 			tx.commit();
 		} catch (HibernateException he) {
 			logException(he);
-			if (tx != null)
+			if (tx != null) {
 				tx.rollback();
+			}
 			throw new HibernateException(he.getLocalizedMessage(), he);
 		} finally {
 			if (aSession != null) {
-				if (aSession.isOpen())
+				if (aSession.isOpen()) {
 					aSession.close();
+				}
 			}
 		}
 		return toReturn;
