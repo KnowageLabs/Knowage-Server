@@ -272,7 +272,43 @@ public abstract class AbstractFormatExporter {
 			return new JSONArray();
 		}
 	}
-	
+
+	protected JSONArray getDashboardTableOrderedColumns(JSONArray columnsNew, JSONArray columnsOld) {
+		JSONArray columnsOrdered = new JSONArray();
+		// new columns are in the correct order
+		// for each of them we have to find the correspondent old column and push it into columnsOrdered
+		try {
+			for (int i = 0; i < columnsNew.length(); i++) {
+
+				if (hiddenColumns.contains(i))
+					continue;
+
+				JSONObject columnNew = columnsNew.getJSONObject(i);
+
+//				String newHeader = getTableColumnHeaderValue(columnNew);
+
+				for (int j = 0; j < columnsOld.length(); j++) {
+					JSONObject columnOld = columnsOld.getJSONObject(j);
+					if (columnOld.getString("header").equals(columnNew.getString("alias"))) {
+
+						if (columnNew.has("ranges")) {
+							JSONArray ranges = columnNew.getJSONArray("ranges");
+							columnOld.put("ranges", ranges); // added ranges for column thresholds
+						}
+
+						columnsOrdered.put(columnOld);
+						break;
+					}
+				}
+			}
+			return columnsOrdered;
+		} catch (Exception e) {
+			LOGGER.error("Error retrieving ordered columns");
+			return new JSONArray();
+		}
+	}
+
+
 	protected JSONArray getDiscoveryOrderedColumns(JSONArray columnsNew, JSONArray columnsOld) {
 		JSONArray columnsOrdered = new JSONArray();
 		// new columns are in the correct order

@@ -95,27 +95,6 @@ class GenericWidgetExporter implements IWidgetExporter {
 		}
 	}
 
-	protected String getDashboardSheetName(JSONObject template, long widgetId) {
-		try {
-			JSONArray widgets = template.getJSONArray("widgets");
-			if (widgets.length() == 1) {
-				return "";
-			}
-			for (int i = 0; i < widgets.length(); i++) {
-				JSONObject widget = widgets.getJSONObject(i);
-					if (widgetId == widget.getLong("id")) {
-						JSONObject style = widget.getJSONObject("style");
-						JSONObject title = style.getJSONObject("title");
-						return title.getString("text");
-					}
-				}
-			return "";
-		} catch (Exception e) {
-			logger.error("Unable to retrieve cockpit sheet name from template", e);
-			return "";
-		}
-	}
-
 	protected String getWidgetName(JSONObject widget) throws JSONException {
 		String widgetName = null;
 		JSONObject style = widget.optJSONObject("style");
@@ -165,25 +144,5 @@ class GenericWidgetExporter implements IWidgetExporter {
 		}
 		throw new SpagoBIRuntimeException("Unable to find widget with id [" + widgetId + "] in template");
 	}
-
-	protected JSONObject getDashboardWidgetById(JSONObject template, long widgetId) {
-		try {
-
-			JSONArray widgets = template.getJSONArray("widgets");
-			for (int i = 0; i < widgets.length(); i++) {
-				JSONObject widget = widgets.getJSONObject(i);
-					long id = widget.getLong("id");
-					if (id == widgetId) {
-						return widget;
-					}
-			}
-		} catch (Exception e) {
-			throw new SpagoBIRuntimeException("Error while getting widget with id [" + widgetId + "] from template", e);
-		}
-		throw new SpagoBIRuntimeException("Unable to find widget with id [" + widgetId + "] in template");
-	}
-
-
-
 
 }

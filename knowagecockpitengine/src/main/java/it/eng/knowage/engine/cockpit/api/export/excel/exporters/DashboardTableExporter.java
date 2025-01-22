@@ -8,10 +8,10 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.json.JSONObject;
 
-public class DashboardTableExporter extends GenericWidgetExporter implements IWidgetExporter{
+public class DashboardTableExporter extends GenericDashboardWidgetExporter implements IWidgetExporter{
     public static transient Logger logger = Logger.getLogger(TableExporter.class);
 
-    public DashboardTableExporter(ExcelExporter excelExporter, String widgetType, String templateString, long widgetId, Workbook wb, JSONObject options) {
+    public DashboardTableExporter(ExcelExporter excelExporter, String widgetType, String templateString, String widgetId, Workbook wb, JSONObject options) {
         super(excelExporter, widgetType, templateString, widgetId, wb, options);
     }
 

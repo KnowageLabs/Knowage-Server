@@ -39,6 +39,7 @@ import java.util.regex.Pattern;
 
 import javax.ws.rs.core.UriBuilder;
 
+import it.eng.knowage.engine.cockpit.api.export.excel.exporters.DashboardWidgetExporterFactory;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -338,6 +339,7 @@ public class ExcelExporter extends AbstractFormatExporter {
 
 			int exportedSheets = 0;
 			if (isSingleWidgetExport) {
+				//TODO IMPLEMENT THE LOGIC FOR THE SINGLE WIDGET EXPORT
 				long widgetId = body.getLong("widget");
 				String widgetType = getWidgetTypeFromCockpitTemplate(templateString, widgetId);
 				JSONObject optionsObj = new JSONObject();
@@ -663,8 +665,8 @@ public class ExcelExporter extends AbstractFormatExporter {
 				if (optionsObj.has(widgetId)) {
 					currWidgetOptions = optionsObj.getJSONObject(widgetId);
 				}
-				IWidgetExporter widgetExporter = WidgetExporterFactory.getExporter(this, widgetType, templateString,
-						Long.parseLong(widgetId), wb, currWidgetOptions);
+				IWidgetExporter widgetExporter = DashboardWidgetExporterFactory.getExporter(this, widgetType, templateString,
+						widgetId, wb, currWidgetOptions);
 				exportedSheets += widgetExporter.export();
 
 			} catch (Exception e) {
@@ -1281,8 +1283,250 @@ public class ExcelExporter extends AbstractFormatExporter {
 
 	public void fillDashboardSheetWithData(JSONObject dataStore, Workbook wb, Sheet sheet, String widgetName, int offset,
 								  JSONObject settings) {
-		//TODO: IMPLEMENT THIS ONE
-	}
+		try {
+			JSONObject metadata = dataStore.getJSONObject("metaData");
+			JSONArray columns = metadata.getJSONArray("fields");
+			columns = filterDataStoreColumns(columns);
+			JSONArray rows = dataStore.getJSONArray("rows");
+			HashMap<String, Object> variablesMap = new HashMap<>();
+			JSONObject widgetData = dataStore.getJSONObject("widgetData");
+			JSONArray columnSelectedOfDataset = widgetData.getJSONArray("columns");
+//			HashMap<String, String> arrayHeader = new HashMap<>();
+			HashMap<String, String> chartAggregationsMap = new HashMap<>();
+			if (widgetData.getString("type").equalsIgnoreCase("table")) {
+//				ATTENTION: renaming table columns names of the excel export has been placed at the end
+//				for (int i = 0; i < columnSelectedOfDataset.length(); i++) {
+//					JSONObject column = columnSelectedOfDataset.getJSONObject(i);
+//					String key;
+//					if (column.optBoolean("isCalculated") && !column.has("name")) {
+//						key = column.getString("alias");
+//					} else {
+//						key = column.getString("name");
+//					}
+//					// arrayHeader is used to rename table columns names of the excel export
+//					arrayHeader.put(key, column.getString("aliasToShow"));
+//				}
+			} else if (widgetData.getString("type").equalsIgnoreCase("chart")) {
+				// TODO SEE IF IT IS NECESSARY TO IMPLEMENT THIS (SEE THE COCKPIT METHOD FOR A REFERENCE)
+			}
+
+			JSONArray columnsOrdered;
+			if (widgetData.getString("type").equalsIgnoreCase("table") && widgetData.has("columns")) {
+				hiddenColumns = getHiddenColumnsList(columnSelectedOfDataset);
+				columnsOrdered = getDashboardTableOrderedColumns(columnSelectedOfDataset, columns);
+			} else if (widgetData.getString("type").equalsIgnoreCase("discovery") && widgetData.has("columns")) {
+				//TODO SEE IF IT IS NECESSARY TO IMPLEMENT THIS (SEE THE COCKPIT METHOD FOR A REFERENCE)
+				columnsOrdered = getDiscoveryOrderedColumns(columnSelectedOfDataset, columns);
+			} else {
+				columnsOrdered = columns;
+			}
+
+			JSONArray groupsFromWidgetContent = getGroupsFromWidgetContent(widgetData);
+			Map<String, String> groupsAndColumnsMap = getGroupAndColumnsMap(widgetData, groupsFromWidgetContent);
+
+			// CREATE BRANDED HEADER SHEET
+			this.imageB64 = OrganizationImageManager.getOrganizationB64ImageWide(TenantManager.getTenant().getName());
+			int startRow = 0;
+			float rowHeight = 35; // in points
+			int rowspan = 2;
+			int startCol = 0;
+			int colWidth = 25;
+			int colspan = 2;
+			int namespan = 10;
+			int dataspan = 10;
+
+			if (offset == 0) { // if pagination is active, headers must be created only once
+				Row header = null;
+
+//				ATTENTION: exporting single widget must not be different from exporting whole cockpit
+//				if (isSingleWidgetExport) { // export single widget
+//					header = createHeaderColumnNames(sheet, groupsAndColumnsMap, columnsOrdered, 0);
+//				} else { // export whole cockpit
+//					// First row is for Widget name in case exporting whole Cockpit document
+//					Row firstRow = sheet.createRow((short) 0);
+//					Cell firstCell = firstRow.createCell(0);
+//					firstCell.setCellValue(widgetName);
+//					header = createHeaderColumnNames(sheet, groupsAndColumnsMap, columnsOrdered, 1);
+//				}
+
+				int headerIndex = createBrandedHeaderSheet(
+						sheet,
+						this.imageB64,
+						startRow,
+						rowHeight,
+						rowspan,
+						startCol,
+						colWidth,
+						colspan,
+						namespan,
+						dataspan,
+						this.documentName,
+						widgetName);
+
+				header = createHeaderColumnNames(sheet, groupsAndColumnsMap, columnsOrdered, headerIndex+1);
+
+				for (int i = 0; i < columnsOrdered.length(); i++) {
+					JSONObject column = columnsOrdered.getJSONObject(i);
+					String columnName = column.getString("header");
+					String chartAggregation = null;
+					if (widgetData.getString("type").equalsIgnoreCase("table")){
+						// renaming table columns names of the excel export
+						for (int j = 0; j < columnSelectedOfDataset.length(); j++) {
+							JSONObject columnSelected = columnSelectedOfDataset.getJSONObject(j);
+							if(columnSelected.has("aliasToShow") && columnName.equals(columnSelected.getString("aliasToShow"))) {
+								columnName = getTableColumnHeaderValue(columnSelected);
+								break;
+							}
+						}
+					} else if (widgetData.getString("type").equalsIgnoreCase("discovery")){
+						// renaming table columns names of the excel export
+						for (int j = 0; j < columnSelectedOfDataset.length(); j++) {
+							JSONObject columnSelected = columnSelectedOfDataset.getJSONObject(j);
+							if(columnSelected.has("name") && columnName.equals(columnSelected.getString("name"))) {
+								columnName = getTableColumnHeaderValue(columnSelected);
+								break;
+							}
+						}
+					} else if (widgetData.getString("type").equalsIgnoreCase("chart")) {
+						chartAggregation = chartAggregationsMap.get(columnName);
+						if (chartAggregation != null) {
+							columnName = columnName.split("_" + chartAggregation)[0];
+						}
+					}
+
+					columnName = getInternationalizedHeader(columnName);
+
+					if (widgetData.getString("type").equalsIgnoreCase("chart") && chartAggregation != null) {
+						columnName = columnName + "_" + chartAggregation;
+					}
+
+					Cell cell = header.createCell(i);
+					cell.setCellValue(columnName);
+
+					CellStyle headerCellStyle = buildCellStyle(sheet, true, HorizontalAlignment.LEFT, VerticalAlignment.CENTER, (short) 11);
+					cell.setCellStyle(headerCellStyle);
+				}
+
+				// adjusts the column width to fit the contents
+				adjustColumnWidth(sheet, this.imageB64);
+			}
+
+			// Cell styles for int and float
+			CreationHelper createHelper = wb.getCreationHelper();
+
+			DateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT, getLocale());
+
+			SimpleDateFormat timeStampFormat = new SimpleDateFormat(TIMESTAMP_FORMAT, getLocale());
+
+			// cell styles for table widget
+			JSONObject[] columnStyles = new JSONObject[columnsOrdered.length() + 10];
+			HashMap<String, String> mapColumns = new HashMap<>();
+			HashMap<String, String> mapColumnsTypes = new HashMap<>();
+			HashMap<String, Object> mapParameters = new HashMap<>();
+			if (widgetData.getString("type").equalsIgnoreCase("table")) {
+				columnStyles = getColumnsStyles(columnsOrdered, widgetData);
+				mapColumns = getColumnsMap(columnsOrdered);
+				mapColumnsTypes = getColumnsMapTypes(columnsOrdered);
+				mapParameters = createMapParameters(mapParameters);
+			}
+			variablesMap = createMapVariables(variablesMap);
+			// FILL RECORDS
+			int isGroup = groupsAndColumnsMap.isEmpty() ? 0 : 1;
+			for (int r = 0; r < rows.length(); r++) {
+				JSONObject rowObject = rows.getJSONObject(r);
+				Row row;
+
+//				if (isSingleWidgetExport)
+//					row = sheet.createRow((offset + r + isGroup) + 1); // starting from second row, because the 0th (first) is Header
+//				else
+//					row = sheet.createRow((offset + r + isGroup) + 2);
+
+				if (StringUtils.isNotEmpty(imageB64)) {
+					row = sheet.createRow((offset + r + isGroup) + (startRow + rowspan) + 2); // starting by Header
+				} else {
+					row = sheet.createRow((offset + r + isGroup) + 2);
+				}
+
+				for (int c = 0; c < columnsOrdered.length(); c++) {
+					JSONObject column = columnsOrdered.getJSONObject(c);
+					String type = getCellType(column, column.getString("name"));
+					String colIndex = column.getString("name"); // column_1, column_2, column_3...
+
+					Cell cell = row.createCell(c);
+					Object value = rowObject.get(colIndex);
+
+					if (value != null) {
+						String s = value.toString();
+						switch (type) {
+							case "string":
+								cell.setCellValue(s);
+								cell.setCellStyle(getStringCellStyle(wb, createHelper, column, columnStyles[c],
+										FLOAT_CELL_DEFAULT_FORMAT, settings, s, rowObject, mapColumns, mapColumnsTypes,
+										variablesMap, mapParameters));
+								break;
+							case "int":
+								if (!s.trim().isEmpty()) {
+									cell.setCellValue(Integer.parseInt(s));
+									cell.setCellStyle(getIntCellStyle(wb, createHelper, column, columnStyles[c],
+											INT_CELL_DEFAULT_FORMAT, settings, Integer.parseInt(s), rowObject, mapColumns,
+											mapColumnsTypes, variablesMap, mapParameters));
+								} else {
+									cell.setCellStyle(getGenericCellStyle(wb, createHelper, column, columnStyles[c],
+											INT_CELL_DEFAULT_FORMAT, settings, rowObject, mapColumns, mapColumnsTypes,
+											variablesMap, mapParameters));
+								}
+								break;
+							case "float":
+								if (!s.trim().isEmpty()) {
+									cell.setCellValue(Double.parseDouble(s));
+									cell.setCellStyle(getDoubleCellStyle(wb, createHelper, column, columnStyles[c],
+											FLOAT_CELL_DEFAULT_FORMAT, settings, Double.parseDouble(s), rowObject,
+											mapColumns, mapColumnsTypes, variablesMap, mapParameters));
+								} else {
+									cell.setCellStyle(getGenericCellStyle(wb, createHelper, column, columnStyles[c],
+											FLOAT_CELL_DEFAULT_FORMAT, settings, rowObject, mapColumns, mapColumnsTypes,
+											variablesMap, mapParameters));
+								}
+								break;
+							case "date":
+								try {
+									if (!s.trim().isEmpty()) {
+										Date date = dateFormat.parse(s);
+										cell.setCellValue(date);
+										cell.setCellStyle(getDateCellStyle(wb, createHelper, column, columnStyles[c],
+												DATE_FORMAT, settings, rowObject, mapColumns, mapColumnsTypes, variablesMap,
+												mapParameters));
+									}
+								} catch (Exception e) {
+									LOGGER.debug("Date will be exported as string due to error: ", e);
+									cell.setCellValue(s);
+								}
+								break;
+							case "timestamp":
+								try {
+									if (!s.trim().isEmpty()) {
+										Date ts = timeStampFormat.parse(s);
+										cell.setCellValue(ts);
+										cell.setCellStyle(getDateCellStyle(wb, createHelper, column, columnStyles[c],
+												TIMESTAMP_FORMAT, settings, rowObject, mapColumns, mapColumnsTypes,
+												variablesMap, mapParameters));
+									}
+								} catch (Exception e) {
+									LOGGER.debug("Timestamp will be exported as string due to error: ", e);
+									cell.setCellValue(s);
+								}
+								break;
+							default:
+								cell.setCellValue(s);
+								break;
+						}
+					}
+				}
+			}
+
+		} catch (Exception e) {
+			throw new SpagoBIRuntimeException("Cannot write data to Excel file", e);
+		}	}
 
 	private HashMap<String, Object> createMapVariables(HashMap<String, Object> variablesMap) throws JSONException {
 		if (body.has("COCKPIT_VARIABLES")) {
