@@ -373,7 +373,7 @@ public class PdfExporter extends AbstractFormatExporter {
 			for (int i = matchStartIndex; i < columnsOrdered.length(); i++) {
 				JSONObject column = columnsOrdered.getJSONObject(i);
 				String groupName = groupsAndColumnsMap.get(column.get("header"));
-				if(groupName.equals(groupNameToMatch)) {
+				if(groupName != null && groupName.equals(groupNameToMatch)) {
 					adjacents++;
 				} else {
 					return adjacents;
