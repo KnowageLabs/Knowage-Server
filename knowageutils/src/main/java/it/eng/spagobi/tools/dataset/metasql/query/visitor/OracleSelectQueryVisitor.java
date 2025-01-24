@@ -21,7 +21,7 @@ package it.eng.spagobi.tools.dataset.metasql.query.visitor;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
-
+import org.apache.log4j.Logger;
 import it.eng.spagobi.tools.dataset.common.datawriter.CockpitJSONDataWriter;
 import it.eng.spagobi.tools.dataset.common.query.AggregationFunctions;
 import it.eng.spagobi.tools.dataset.common.query.IAggregationFunction;
@@ -38,16 +38,20 @@ public class OracleSelectQueryVisitor extends AbstractSelectQueryVisitor {
 	private static final String DATE_FORMAT = "YYYY-MM-DD HH24:MI:SS";
 	private static final String TIMESTAMP_FORMAT = DATE_FORMAT + ".FF";
 
+	private static final Logger logger = Logger.getLogger(OracleSelectQueryVisitor.class);
+
 	public OracleSelectQueryVisitor(IDataBase database) {
 		super(database);
 	}
 
 	@Override
 	protected void append(InFilter item) {
+		logger.debug("IN");
 		queryBuilder.append(" (");
 		List<Projection> projections = item.getProjections();
 		String openBracket;
 		if (projections.size() > 1) {
+			logger.debug("projections.size() > 1");	
 			if (projections.size() > SQL_IN_CLAUSE_LIMIT) {
 				openBracket = "(1,";
 			} else {
@@ -70,7 +74,7 @@ public class OracleSelectQueryVisitor extends AbstractSelectQueryVisitor {
 		List<Object> operands = item.getOperands();
 
 		if (operands.size() < SQL_IN_CLAUSE_LIMIT) {
-
+	        logger.debug("operands.size() < SQL_IN_CLAUSE_LIMIT");	
 			queryBuilder.append(" ");
 			queryBuilder.append(item.getOperator());
 			queryBuilder.append(" (");
@@ -92,7 +96,9 @@ public class OracleSelectQueryVisitor extends AbstractSelectQueryVisitor {
 			}
 			queryBuilder.append(")");
 		} else {
+			logger.debug("operands.size() >= SQL_IN_CLAUSE_LIMIT");	
 			if (projections.size() == 1) {
+				logger.debug("projections.size() == 1");
 				int temp = 0;
 				for (int i = 0; i < operands.size(); i++) {
 					if (temp == 0 && i == 0) {
@@ -135,7 +141,7 @@ public class OracleSelectQueryVisitor extends AbstractSelectQueryVisitor {
 				if (!queryTemp.isEmpty() && !queryTemp.substring(queryTemp.length() - 1).equals(")"))
 					queryBuilder.append(")");
 			} else {
-
+				logger.debug("projections.size() != 1");
 				int temp = 0;
 				if (SQL_IN_CLAUSE_LIMIT % projections.size() != 0) {
 					SQL_IN_CLAUSE_LIMIT = SQL_IN_CLAUSE_LIMIT - 1;
@@ -195,6 +201,7 @@ public class OracleSelectQueryVisitor extends AbstractSelectQueryVisitor {
 
 		}
 		queryBuilder.append(")");
+		logger.debug("OUT");
 	}
 
 	@Override
