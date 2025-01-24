@@ -216,8 +216,14 @@ public class PdfExporter extends AbstractFormatExporter {
 				Object value = rowObject.get(colIndex);
 				if (value != null) {
 					String valueStr = value.toString();
+					if (value instanceof Number) {
+						if (value instanceof Double) {
+							valueStr = new BigDecimal(valueStr).toPlainString();
+						} else {
+							valueStr = value.toString();
+						}
+					}
 					if (type.equalsIgnoreCase("float") && columnStyles[c] != null && columnStyles[c].has("precision")) {
-						valueStr = new BigDecimal((double) value).toPlainString();
 						int precision = columnStyles[c].optInt("precision");
 						int pos = valueStr.indexOf(".");
 						// offset = 0 se devo tagliare fuori anche la virgola ( in caso precision fosse 0 )
