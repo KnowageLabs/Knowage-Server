@@ -61,10 +61,10 @@ class GenericDashboardWidgetExporter implements IWidgetExporter {
             JSONObject widget = getDashboardWidgetById(template, widgetId);
             String widgetName = getWidgetName(widget);
 
-            JSONObject dataStore = excelExporter.getDataStoreForWidget(template, widget);
+            JSONObject dataStore = excelExporter.getDataStoreforDashboardWidget(template, widget);
             if (dataStore != null) {
                 String dashboardSheetName = getDashboardSheetName(template, widgetId);
-                excelExporter.createAndFillExcelSheet(dataStore, wb, widgetName, dashboardSheetName);
+                excelExporter.createAndFillDashboardExcelSheet(dataStore, wb, widgetName, dashboardSheetName);
                 return 1;
             }
 
@@ -121,27 +121,6 @@ class GenericDashboardWidgetExporter implements IWidgetExporter {
             }
         }
         return widgetName;
-    }
-
-    protected JSONObject getWidgetById(JSONObject template, long widgetId) {
-        try {
-
-            JSONArray sheets = template.getJSONArray("sheets");
-            for (int i = 0; i < sheets.length(); i++) {
-                JSONObject sheet = sheets.getJSONObject(i);
-                JSONArray widgets = sheet.getJSONArray("widgets");
-                for (int j = 0; j < widgets.length(); j++) {
-                    JSONObject widget = widgets.getJSONObject(j);
-                    long id = widget.getLong("id");
-                    if (id == widgetId) {
-                        return widget;
-                    }
-                }
-            }
-        } catch (Exception e) {
-            throw new SpagoBIRuntimeException("Error while getting widget with id [" + widgetId + "] from template", e);
-        }
-        throw new SpagoBIRuntimeException("Unable to find widget with id [" + widgetId + "] in template");
     }
 
     protected JSONObject getDashboardWidgetById(JSONObject template, String widgetId) {

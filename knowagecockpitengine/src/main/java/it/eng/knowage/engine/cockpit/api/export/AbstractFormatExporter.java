@@ -432,21 +432,21 @@ public abstract class AbstractFormatExporter {
 //			if (getRealtimeFromWidget(datasetId, configuration))
 //				map.put("nearRealtime", true);
 
-			JSONObject cockpitSelections = getDashboardSelectionsFromBody(template);
+			JSONObject dashboardSelections = getDashboardSelections(template, widget);
 
-			//TODO: Ask what is this
+			//TODO: Ask what this is
 			JSONArray summaryRow = getSummaryRowFromDashboardWidget(widget);
 
 			if (summaryRow != null)
-				cockpitSelections.put("summaryRow", summaryRow);
+				dashboardSelections.put("summaryRow", summaryRow);
 
 			if (isSolrDataset(dataset) && !widget.getString("type").equalsIgnoreCase("discovery")) {
 				JSONObject jsOptions = new JSONObject();
 				jsOptions.put("solrFacetPivot", true);
-				cockpitSelections.put("options", jsOptions);
+				dashboardSelections.put("options", jsOptions);
 			}
 
-			datastore = getDatastore(datasetLabel, map, cockpitSelections.toString(), offset, fetchSize);
+			datastore = getDatastore(datasetLabel, map, dashboardSelections.toString(), offset, fetchSize);
 			datastore.put("widgetData", widget);
 
 		} catch (Exception e) {
@@ -722,7 +722,7 @@ public abstract class AbstractFormatExporter {
 
 	protected abstract JSONObject getCockpitSelectionsFromBody(JSONObject widget);
 
-	protected abstract JSONObject getDashboardSelectionsFromBody(JSONObject template);
+	protected abstract JSONObject getDashboardSelections(JSONObject template, JSONObject widget);
 
 
 	protected boolean getRealtimeFromWidget(int dsId, JSONObject configuration) {
@@ -1556,6 +1556,18 @@ public abstract class AbstractFormatExporter {
 			if (widgetContent.get("columnSelectedOfDataset") instanceof JSONArray)
 				mapGroupsAndColumns = getMapFromGroupsArray(groupsArray,
 						widgetContent.getJSONArray("columnSelectedOfDataset"));
+		} catch (JSONException e) {
+			LOGGER.error("Couldn't retrieve groups", e);
+		}
+		return mapGroupsAndColumns;
+	}
+
+	protected final Map<String, String> getDashboardGroupAndColumnsMap(JSONObject widgetContent, JSONArray groupsArray) {
+		Map<String, String> mapGroupsAndColumns = new HashMap<>();
+		try {
+			if (widgetContent.get("columns") instanceof JSONArray)
+				mapGroupsAndColumns = getMapFromGroupsArray(groupsArray,
+						widgetContent.getJSONArray("columns"));
 		} catch (JSONException e) {
 			LOGGER.error("Couldn't retrieve groups", e);
 		}

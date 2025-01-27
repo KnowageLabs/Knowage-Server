@@ -107,6 +107,7 @@ public class PageResource extends AbstractCockpitEngineResource {
 	private static final String PDF_WAIT_TIME = "pdfWaitTime";
 	private static final String IS_MULTI_SHEET = "isMultiSheet";
 	private static final String USER_ID = "user_id";
+	private static final String TOKEN_HEADER = "x-kn-authorization";
 	private static final String DOCUMENT_ID = "document";
 	private static final String DOCUMENT_LABEL = "DOCUMENT_LABEL";
 	private static final String DOCUMENT_NAME = "DOCUMENT_NAME";
@@ -192,7 +193,9 @@ public class PageResource extends AbstractCockpitEngineResource {
 		response.setCharacterEncoding(UTF_8.name());
 		try {
 			JSONObject body = new JSONObject();
-			String userId = request.getParameter(USER_ID);
+			String token = request.getHeader(TOKEN_HEADER);
+			//USER ID IS THAT TOKEN WITHOUR THE BEARER
+			String userId = token.substring(7);
 			String template = getIOManager().getTemplateAsString();
 			body.put("template", template);
 //			String outputType = body.getString(OUTPUT_TYPE);

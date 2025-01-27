@@ -28,12 +28,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -525,26 +520,85 @@ public class ExcelExporter extends AbstractFormatExporter {
 	}
 
 	@Override
-	//TODO: IMPLEMENT THIS METHOD CORRECTLY
-	protected JSONObject getDashboardSelectionsFromBody(JSONObject template) {
-		JSONObject dashboardSelections = new JSONObject();
-		if (body == null || body.length() == 0) {
-			return dashboardSelections;
-		}
+	protected JSONObject getDashboardSelections(JSONObject template, JSONObject widget) {
+		JSONObject dashboardSelections;
 		try {
-			if (isSingleWidgetExport) { // export single widget
-				//TODO: IMPLEMENT THIS LOGIC
-				dashboardSelections = body.getJSONObject("COCKPIT_SELECTIONS");
-			} else { // export whole dashboard
-				JSONObject configuration = body.getJSONObject("configuration");
-//				dashboardSelections = body.getJSONArray("configuration").getJSONObject();
+			JSONArray widgets = template.getJSONArray("widgets");
+			int i;
+			for (i = 0; i < widgets.length(); i++) {
+				JSONObject curWidget = widgets.getJSONObject(i);
+				if (Objects.equals(curWidget.getString("id"), widget.getString("id"))) {
+					break;
+				}
 			}
-			forceUniqueHeaders(dashboardSelections);
+			JSONArray columns = widgets.getJSONObject(i).getJSONArray("columns");
+//			TODO: IMPLEMENT THIS METHOD CORRECTLY
+//			forceUniqueHeaders(dashboardSelections);
+			dashboardSelections = buildDashboardSelections(columns, getDashboardDatasetLabel(template, widget.getInt("dataset")));
 		} catch (Exception e) {
 			LOGGER.error("Cannot get dashboard selections", e);
-			return new JSONObject();
+			throw new SpagoBIRuntimeException("Cannot get dashboard selections", e);
 		}
 		return dashboardSelections;
+	}
+
+	private JSONObject buildDashboardSelections(JSONArray columns, String datasetLabel) {
+		JSONObject selections = new JSONObject();
+		try {
+			selections.put("aggregations", new JSONObject());
+			JSONObject aggregations = selections.getJSONObject("aggregations");
+			aggregations.put("measures", new JSONArray());
+			JSONArray measures = aggregations.getJSONArray("measures");
+			aggregations.put("categories", new JSONArray());
+			JSONArray categories = aggregations.getJSONArray("categories");
+
+			for (int i = 0; i < columns.length(); i++) {
+				if (columns.getJSONObject(i).getString("fieldType").equalsIgnoreCase("measure")) {
+					JSONObject measure = getMeasure(columns.getJSONObject(i));
+					measures.put(measure);
+				} else {
+					JSONObject category = getCategory(columns.getJSONObject(i));
+					categories.put(category);
+				}
+			}
+			aggregations.put("dataset", datasetLabel);
+		} catch (Exception e) {
+			LOGGER.error("Cannot build dashboard selections", e);
+			throw new SpagoBIRuntimeException("Cannot build dashboard selections", e);
+		}
+		return selections;
+	}
+
+	private JSONObject getCategory(JSONObject jsonObject) {
+		try {
+			JSONObject category = new JSONObject();
+			category.put("id", jsonObject.getString("columnName"));
+			category.put("alias", jsonObject.getString("columnName"));
+			category.put("columnName", jsonObject.getString("columnName"));
+			category.put("funct", "NONE");
+			category.put("orderType", "");
+			category.put("orderColumn", "");
+			return category;
+		} catch (Exception e) {
+			LOGGER.error("Cannot get category", e);
+			throw new SpagoBIRuntimeException("Cannot get category", e);
+		}
+	}
+
+	private JSONObject getMeasure(JSONObject column) {
+		try {
+			JSONObject measure = new JSONObject();
+			measure.put("id", column.getString("columnName"));
+			measure.put("alias", column.getString("columnName"));
+			measure.put("columnName", column.getString("columnName"));
+			measure.put("orderType", "");
+			measure.put("funct", column.getString("aggregation"));
+			measure.put("orderColumn", "");
+			return measure;
+		} catch (Exception e) {
+			LOGGER.error("Cannot get measure", e);
+			throw new SpagoBIRuntimeException("Cannot get measure", e);
+		}
 	}
 
 
@@ -555,6 +609,21 @@ public class ExcelExporter extends AbstractFormatExporter {
 				int currDsId = cockpitDatasets.getJSONObject(i).getInt("dsId");
 				if (currDsId == dsId) {
 					return cockpitDatasets.getJSONObject(i).getString("dsLabel");
+				}
+			}
+		} catch (Exception e) {
+			throw new SpagoBIRuntimeException("Cannot retrieve dataset label for dsId: " + dsId, e);
+		}
+		throw new SpagoBIRuntimeException("No dataset found with dsId: " + dsId);
+	}
+
+	private String getDashboardDatasetLabel(JSONObject template, int dsId) {
+		try {
+			JSONArray dashboardDatasets = template.getJSONObject("configuration").getJSONArray("datasets");
+			for (int i = 0; i < dashboardDatasets.length(); i++) {
+				int currDsId = dashboardDatasets.getJSONObject(i).getInt("id");
+				if (currDsId == dsId) {
+					return dashboardDatasets.getJSONObject(i).getString("dsLabel");
 				}
 			}
 		} catch (Exception e) {
@@ -770,6 +839,10 @@ public class ExcelExporter extends AbstractFormatExporter {
 		return getDataStoreForWidget(template, widget, 0, -1);
 	}
 
+	public JSONObject getDataStoreforDashboardWidget(JSONObject template, JSONObject widget) {
+		return getDataStoreForDashboardWidget(template, widget, 0, -1);
+	}
+
 	private JSONObject getMultiCockpitSelectionsFromBody(JSONObject widget, int datasetId) {
 		JSONObject cockpitSelections = new JSONObject();
 		JSONArray allSelections = new JSONArray();
@@ -810,6 +883,11 @@ public class ExcelExporter extends AbstractFormatExporter {
 	public void createAndFillExcelSheet(JSONObject dataStore, Workbook wb, String widgetName, String cockpitSheetName) {
 		Sheet newSheet = createUniqueSafeSheet(wb, widgetName, cockpitSheetName);
 		fillSheetWithData(dataStore, wb, newSheet, widgetName, 0, null);
+	}
+
+	public void createAndFillDashboardExcelSheet(JSONObject dataStore, Workbook wb, String widgetName, String cockpitSheetName) {
+		Sheet newSheet = createUniqueSafeSheet(wb, widgetName, cockpitSheetName);
+		fillDashboardSheetWithData(dataStore, wb, newSheet, widgetName, 0, null);
 	}
 
 	private void fillSelectionsSheetWithData(Map<String, Map<String, Object>> selectionsMap, Workbook wb, Sheet sheet,
@@ -1306,8 +1384,39 @@ public class ExcelExporter extends AbstractFormatExporter {
 //					// arrayHeader is used to rename table columns names of the excel export
 //					arrayHeader.put(key, column.getString("aliasToShow"));
 //				}
-			} else if (widgetData.getString("type").equalsIgnoreCase("chart")) {
-				// TODO SEE IF IT IS NECESSARY TO IMPLEMENT THIS (SEE THE COCKPIT METHOD FOR A REFERENCE)
+			} else if (widgetData.getString("type").equalsIgnoreCase("chart") || widgetData.getString("type").equalsIgnoreCase("highcharts")) {
+				for (int i = 0; i < columnSelectedOfDataset.length(); i++) {
+					JSONObject column = columnSelectedOfDataset.getJSONObject(i);
+					if (column.has("aggregation") && column.has("alias")) {
+						String col = column.getString("alias");
+						String aggregation = column.getString("aggregation");
+						if (col.contains("$V")) {
+							if (body.has("COCKPIT_VARIABLES")) {
+								String columnAlias = "";
+								Pattern patt = Pattern.compile("(\\$V\\{)([\\w\\s]+)(\\})");
+								Matcher matcher = patt.matcher(col);
+								if (body.get("COCKPIT_VARIABLES") instanceof JSONObject) {
+									JSONObject variableOBJ = body.getJSONObject("COCKPIT_VARIABLES");
+									while (matcher.find()) {
+										columnAlias = matcher.group(2);
+									}
+									col = col.replace("$V{" + columnAlias + "}", variableOBJ.getString(columnAlias));
+								} else {
+									JSONArray arr = body.getJSONArray("COCKPIT_VARIABLES");
+									for (int j = 0; j < arr.length(); j++) {
+										JSONObject variableOBJ = arr.getJSONObject(j);
+										while (matcher.find()) {
+											columnAlias = matcher.group(2);
+										}
+										col = col.replace("$V{" + columnAlias + "}",
+												variableOBJ.getString(columnAlias));
+									}
+								}
+							}
+						}
+						chartAggregationsMap.put(col, aggregation);
+					}
+				}
 			}
 
 			JSONArray columnsOrdered;
@@ -1322,7 +1431,7 @@ public class ExcelExporter extends AbstractFormatExporter {
 			}
 
 			JSONArray groupsFromWidgetContent = getGroupsFromWidgetContent(widgetData);
-			Map<String, String> groupsAndColumnsMap = getGroupAndColumnsMap(widgetData, groupsFromWidgetContent);
+			Map<String, String> groupsAndColumnsMap = getDashboardGroupAndColumnsMap(widgetData, groupsFromWidgetContent);
 
 			// CREATE BRANDED HEADER SHEET
 			this.imageB64 = OrganizationImageManager.getOrganizationB64ImageWide(TenantManager.getTenant().getName());
@@ -1387,7 +1496,7 @@ public class ExcelExporter extends AbstractFormatExporter {
 								break;
 							}
 						}
-					} else if (widgetData.getString("type").equalsIgnoreCase("chart")) {
+					} else if (widgetData.getString("type").equalsIgnoreCase("chart") || widgetData.getString("type").equalsIgnoreCase("highcharts")) {
 						chartAggregation = chartAggregationsMap.get(columnName);
 						if (chartAggregation != null) {
 							columnName = columnName.split("_" + chartAggregation)[0];
@@ -1396,7 +1505,7 @@ public class ExcelExporter extends AbstractFormatExporter {
 
 					columnName = getInternationalizedHeader(columnName);
 
-					if (widgetData.getString("type").equalsIgnoreCase("chart") && chartAggregation != null) {
+					if (widgetData.getString("type").equalsIgnoreCase("chart") || widgetData.getString("type").equalsIgnoreCase("highcharts") && chartAggregation != null) {
 						columnName = columnName + "_" + chartAggregation;
 					}
 
