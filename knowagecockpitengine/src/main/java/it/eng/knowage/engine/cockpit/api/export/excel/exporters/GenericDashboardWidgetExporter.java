@@ -21,7 +21,6 @@ package it.eng.knowage.engine.cockpit.api.export.excel.exporters;
 import org.apache.log4j.Logger;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import it.eng.knowage.engine.cockpit.api.export.excel.ExcelExporter;
@@ -31,7 +30,7 @@ import java.util.Objects;
 
 class GenericDashboardWidgetExporter implements IWidgetExporter {
 
-    private static Logger logger = Logger.getLogger(GenericWidgetExporter.class);
+    private static final Logger logger = Logger.getLogger(GenericDashboardWidgetExporter.class);
 
     ExcelExporter excelExporter;
     String widgetType;
@@ -39,10 +38,6 @@ class GenericDashboardWidgetExporter implements IWidgetExporter {
     String widgetId;
     Workbook wb;
     JSONObject optionsObj;
-
-    public GenericDashboardWidgetExporter() {
-        super();
-    }
 
     public GenericDashboardWidgetExporter(ExcelExporter excelExporter, String widgetType, String templateString, String widgetId, Workbook wb, JSONObject options) {
         super();
@@ -59,8 +54,7 @@ class GenericDashboardWidgetExporter implements IWidgetExporter {
         try {
             JSONObject template = new JSONObject(templateString);
             JSONObject widget = getDashboardWidgetById(template, widgetId);
-            String widgetName = getWidgetName(widget);
-
+            String widgetName = getDashboardWidgetName(widget);
             JSONObject dataStore = excelExporter.getDataStoreforDashboardWidget(template, widget);
             if (dataStore != null) {
                 String dashboardSheetName = getDashboardSheetName(template, widgetId);
@@ -82,9 +76,7 @@ class GenericDashboardWidgetExporter implements IWidgetExporter {
             for (int i = 0; i < widgets.length(); i++) {
                 JSONObject widget = widgets.getJSONObject(i);
                 if (Objects.equals(widgetId, widget.getString("id"))) {
-                    JSONObject style = widget.getJSONObject("style");
-                    JSONObject title = style.getJSONObject("title");
-                    return title.getString("text");
+                    return widget.getString("type").concat(" ").concat(widget.getString("id"));
                 }
             }
             return "";
@@ -94,26 +86,10 @@ class GenericDashboardWidgetExporter implements IWidgetExporter {
         }
     }
 
-    protected String getWidgetName(JSONObject widget) throws JSONException {
-        String widgetName = null;
-        JSONObject style = widget.optJSONObject("style");
-        if (style != null) {
-            JSONObject title = style.optJSONObject("title");
-            if (title != null) {
-                widgetName = title.optString("label");
-            } else {
-                JSONObject content = widget.optJSONObject("content");
-                if (content != null) {
-                    widgetName = content.getString("name");
-                }
-            }
-        }
-        return widgetName;
-    }
-
-    protected String getDashboardWidgetName(JSONObject widget) throws JSONException {
-        String widgetName = null;
-        JSONObject style = widget.optJSONObject("style");
+    protected String getDashboardWidgetName(JSONObject widget) {
+        String widgetName = "";
+        JSONObject settings = widget.optJSONObject("settings");
+        JSONObject style = settings.optJSONObject("style");
         if (style != null) {
             JSONObject title = style.optJSONObject("title");
             if (title != null) {

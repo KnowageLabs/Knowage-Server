@@ -86,6 +86,9 @@ public class ExcelExporter extends AbstractFormatExporter {
 	private static final String SCRIPT_NAME = "cockpit-export-xls.js";
 	private static final String CONFIG_NAME_FOR_EXPORT_SCRIPT_PATH = "internal.nodejs.chromium.export.path";
 	private static final int SHEET_NAME_MAX_LEN = 31;
+	private static final String SORTING_OBJ = "sortingObj";
+	private static final String DRILL_SORTING_OBJ = "drillSortingObj";
+	private static final String BOTH = "both";
 
 	public static final String UNIQUE_ALIAS_PLACEHOLDER = "_$_";
 
@@ -532,9 +535,10 @@ public class ExcelExporter extends AbstractFormatExporter {
 				}
 			}
 			JSONArray columns = widgets.getJSONObject(i).getJSONArray("columns");
+			JSONObject settings = widgets.getJSONObject(i).getJSONObject("settings");
 //			TODO: IMPLEMENT THIS METHOD CORRECTLY
 //			forceUniqueHeaders(dashboardSelections);
-			dashboardSelections = buildDashboardSelections(columns, getDashboardDatasetLabel(template, widget.getInt("dataset")));
+			dashboardSelections = buildDashboardSelections(columns, getDashboardDatasetLabel(template, widget.getInt("dataset")), settings);
 		} catch (Exception e) {
 			LOGGER.error("Cannot get dashboard selections", e);
 			throw new SpagoBIRuntimeException("Cannot get dashboard selections", e);
@@ -542,8 +546,11 @@ public class ExcelExporter extends AbstractFormatExporter {
 		return dashboardSelections;
 	}
 
-	private JSONObject buildDashboardSelections(JSONArray columns, String datasetLabel) {
+	private JSONObject buildDashboardSelections(JSONArray columns, String datasetLabel, JSONObject settings) {
 		JSONObject selections = new JSONObject();
+		String sortingColumn = settings.optString("sortingColumn");
+		String sortingOrder = settings.optString("sortingOrder");
+
 		try {
 			selections.put("aggregations", new JSONObject());
 			JSONObject aggregations = selections.getJSONObject("aggregations");
@@ -553,11 +560,17 @@ public class ExcelExporter extends AbstractFormatExporter {
 			JSONArray categories = aggregations.getJSONArray("categories");
 
 			for (int i = 0; i < columns.length(); i++) {
-				if (columns.getJSONObject(i).getString("fieldType").equalsIgnoreCase("measure")) {
-					JSONObject measure = getMeasure(columns.getJSONObject(i));
+				JSONObject column = columns.getJSONObject(i);
+
+				if (sortingColumn.isEmpty() && column.getString("orderType") != null) {
+					sortingColumn = column.getString("columnName");
+					sortingOrder = column.getString("orderType");
+				}
+				if (column.getString("fieldType").equalsIgnoreCase("measure")) {
+					JSONObject measure = getMeasure(columns.getJSONObject(i), getSortingObj(column, sortingColumn, sortingOrder), getDrillSortingObj(column));
 					measures.put(measure);
 				} else {
-					JSONObject category = getCategory(columns.getJSONObject(i));
+					JSONObject category = getCategory(columns.getJSONObject(i), getSortingObj(column, sortingColumn, sortingOrder), getDrillSortingObj(column));
 					categories.put(category);
 				}
 			}
@@ -569,15 +582,35 @@ public class ExcelExporter extends AbstractFormatExporter {
 		return selections;
 	}
 
-	private JSONObject getCategory(JSONObject jsonObject) {
+	private JSONObject getDrillSortingObj(JSONObject column) {
+		return column.optJSONObject("drillOrder");
+	}
+
+	private JSONObject getSortingObj(JSONObject column, String sortingColumn, String sortingOrder) {
+		JSONObject sortingObj = new JSONObject();
+		try {
+			if (column.getString("columnName").equals(sortingColumn)) {
+				sortingObj.put("sortingColumn", column.getString("columnName"));
+				sortingObj.put("sortingOrder", sortingOrder);
+			} else {
+				return null;
+			}
+		} catch (Exception e) {
+			LOGGER.error("Cannot check if column is sorting column", e);
+			throw new SpagoBIRuntimeException("Cannot check if column is sorting column", e);
+		}
+		return sortingObj;
+	}
+
+	private JSONObject getCategory(JSONObject column, JSONObject sortingObj, JSONObject drillSortingObj) {
 		try {
 			JSONObject category = new JSONObject();
-			category.put("id", jsonObject.getString("columnName"));
-			category.put("alias", jsonObject.getString("columnName"));
-			category.put("columnName", jsonObject.getString("columnName"));
+			category.put("id", column.getString("columnName"));
+			category.put("alias", column.getString("columnName"));
+			category.put("columnName", column.getString("columnName"));
 			category.put("funct", "NONE");
-			category.put("orderType", "");
-			category.put("orderColumn", "");
+			String sorting = getSortingObj(sortingObj, drillSortingObj);
+			buildSorting(sortingObj, drillSortingObj, sorting, category);
 			return category;
 		} catch (Exception e) {
 			LOGGER.error("Cannot get category", e);
@@ -585,19 +618,50 @@ public class ExcelExporter extends AbstractFormatExporter {
 		}
 	}
 
-	private JSONObject getMeasure(JSONObject column) {
+	private JSONObject getMeasure(JSONObject column, JSONObject sortingObj, JSONObject drillSortingObj) {
 		try {
 			JSONObject measure = new JSONObject();
 			measure.put("id", column.getString("columnName"));
 			measure.put("alias", column.getString("columnName"));
 			measure.put("columnName", column.getString("columnName"));
-			measure.put("orderType", "");
 			measure.put("funct", column.getString("aggregation"));
-			measure.put("orderColumn", "");
+			String sorting = getSortingObj(sortingObj, drillSortingObj);
+			buildSorting(sortingObj, drillSortingObj, sorting, measure);
 			return measure;
 		} catch (Exception e) {
 			LOGGER.error("Cannot get measure", e);
 			throw new SpagoBIRuntimeException("Cannot get measure", e);
+		}
+	}
+
+	private static void buildSorting(JSONObject sortingObj, JSONObject drillSortingObj, String sorting, JSONObject measure) throws JSONException {
+		switch (sorting) {
+			case BOTH -> {
+				measure.put("orderType", sortingObj.getString("sortingOrder"));
+				measure.put("orderColumn", sortingObj.getString("sortingColumn"));
+				measure.put("drillOrder", drillSortingObj);
+			}
+			case SORTING_OBJ -> {
+				measure.put("orderType", sortingObj.getString("sortingOrder"));
+				measure.put("orderColumn", sortingObj.getString("sortingColumn"));
+			}
+			case DRILL_SORTING_OBJ -> measure.put("drillOrder", drillSortingObj);
+			default -> {
+				measure.put("orderType", "");
+				measure.put("orderColumn", "");
+			}
+		}
+	}
+
+	private String getSortingObj(JSONObject sortingObj, JSONObject drillSortingObj) {
+		if (sortingObj != null && drillSortingObj != null) {
+			return BOTH;
+		} else if (sortingObj != null) {
+			return SORTING_OBJ;
+		} else if (drillSortingObj != null) {
+			return DRILL_SORTING_OBJ;
+		} else {
+			return "";
 		}
 	}
 
@@ -885,8 +949,8 @@ public class ExcelExporter extends AbstractFormatExporter {
 		fillSheetWithData(dataStore, wb, newSheet, widgetName, 0, null);
 	}
 
-	public void createAndFillDashboardExcelSheet(JSONObject dataStore, Workbook wb, String widgetName, String cockpitSheetName) {
-		Sheet newSheet = createUniqueSafeSheet(wb, widgetName, cockpitSheetName);
+	public void createAndFillDashboardExcelSheet(JSONObject dataStore, Workbook wb, String widgetName, String sheetName) {
+		Sheet newSheet = createUniqueSafeSheet(wb, widgetName, sheetName);
 		fillDashboardSheetWithData(dataStore, wb, newSheet, widgetName, 0, null);
 	}
 
@@ -1975,7 +2039,7 @@ public class ExcelExporter extends AbstractFormatExporter {
 		Sheet sheet;
 		String sheetName;
 		try {
-			if (!isSingleWidgetExport && cockpitSheetName != null && !cockpitSheetName.equals("")) {
+			if (!isSingleWidgetExport && cockpitSheetName != null && !cockpitSheetName.isEmpty()) {
 				sheetName = cockpitSheetName.concat(".").concat(widgetName);
 			} else {
 				sheetName = widgetName;
