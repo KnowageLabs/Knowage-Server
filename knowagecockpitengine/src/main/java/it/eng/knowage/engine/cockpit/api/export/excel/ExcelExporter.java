@@ -561,8 +561,8 @@ public class ExcelExporter extends AbstractFormatExporter {
 
 			for (int i = 0; i < columns.length(); i++) {
 				JSONObject column = columns.getJSONObject(i);
-
-				if (sortingColumn.isEmpty() && column.getString("orderType") != null) {
+				String orderTypeCol = column.optString("orderType");
+				if (sortingColumn.isEmpty() && !orderTypeCol.isEmpty()) {
 					sortingColumn = column.getString("columnName");
 					sortingOrder = column.getString("orderType");
 				}
