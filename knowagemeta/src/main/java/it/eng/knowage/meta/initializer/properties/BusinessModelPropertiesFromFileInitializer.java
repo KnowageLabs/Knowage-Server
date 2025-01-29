@@ -88,7 +88,7 @@ public class BusinessModelPropertiesFromFileInitializer implements IPropertiesIn
 			 */
 			// File propertiesFile = RL.getFile("properties/customProperties.xml") here before
 			InputStream is = getClass().getClassLoader().getResourceAsStream("it/eng/knowage/meta/initializer/properties/custom/customProperties.xml");
-			DocumentBuilderFactory domFactory = DocumentBuilderFactory.newInstance();
+			DocumentBuilderFactory domFactory = DocumentBuilderFactory.newDefaultInstance();
 			domFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
 			domFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_SCHEMA, "");
 			DocumentBuilder builder = domFactory.newDocumentBuilder();

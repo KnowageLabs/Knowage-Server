@@ -79,7 +79,7 @@ public class PhysicalModelPropertiesFromFileInitializer implements IPropertiesIn
 			 */
 			// File propertiesFile = RL.getFile("properties/customPhysicalProperties.xml") here before
 			InputStream is = getClass().getClassLoader().getResourceAsStream("it/eng/knowage/meta/initializer/properties/custom/customPhysicalProperties.xml");
-			DocumentBuilderFactory domFactory = DocumentBuilderFactory.newInstance();
+			DocumentBuilderFactory domFactory = DocumentBuilderFactory.newDefaultInstance();
 			domFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
 			domFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_SCHEMA, "");
 			DocumentBuilder builder = domFactory.newDocumentBuilder();
