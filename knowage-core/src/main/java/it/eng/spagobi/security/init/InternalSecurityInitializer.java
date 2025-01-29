@@ -140,13 +140,13 @@ public class InternalSecurityInitializer extends SpagoBIInitializer {
 							}
 
 							SbiExtUserRoles sbiExtUserRole = new SbiExtUserRoles();
-							
+
 
 							Integer extRoleId = findRoleId(rolesList, name, organization);
 
 							int userIdInt = usersLookupMap.get(userId).intValue();
 							SbiExtUserRolesId id = new SbiExtUserRolesId(userIdInt,extRoleId);
-							
+
 							sbiExtUserRole.getCommonInfo().setOrganization(organization);
 
 							sbiExtUserRole.setId(id);
@@ -157,12 +157,24 @@ public class InternalSecurityInitializer extends SpagoBIInitializer {
 						}
 					}
 				}
+			} else {
+				this.createPasswordIfNull(userDAO);
 			}
 		} catch (Throwable t) {
 			LOGGER.error("An unexpected error occurred during users' initialization", t);
 			throw new SpagoBIRuntimeException("An unexpected error occurred during users' initialization", t);
 		}
 		LOGGER.debug("OUT");
+	}
+
+	private void createPasswordIfNull(ISbiUserDAO userDAO) {
+		List<SbiUser> listUser = userDAO.loadSbiUsers();
+		List<SbiUser> userWithooutPws = listUser.stream().filter(x -> x.getPassword() == null).toList();
+		userWithooutPws.forEach(user -> {
+			String pwd = Password.hashPassword(user.getUserId());
+			user.setPassword(pwd);
+			userDAO.updateSbiUser(user, user.getId());
+		});
 	}
 
 	@Override
@@ -218,13 +230,15 @@ public class InternalSecurityInitializer extends SpagoBIInitializer {
 				boolean insert = false;
 
 				if (usePublicUserConf == null
-						|| (usePublicUserConf.isActive() && usePublicUserConf.getValueCheck() != null && usePublicUserConf.getValueCheck().equals("true")))
+						|| (usePublicUserConf.isActive() && usePublicUserConf.getValueCheck() != null && usePublicUserConf.getValueCheck().equals("true"))) {
 					usePublicUser = true;
+				}
 
 				if (existingUser == null) {
 					insert = true;
-					if (defaultUser.getUserId().equalsIgnoreCase(SpagoBIConstants.PUBLIC_USER_ID) && !usePublicUser)
+					if (defaultUser.getUserId().equalsIgnoreCase(SpagoBIConstants.PUBLIC_USER_ID) && !usePublicUser) {
 						insert = false;
+					}
 					if (insert) {
 						LOGGER.debug("Storing user [" + defaultUser.getUserId() + "] into database ");
 						Integer newId = userDAO.saveSbiUser(defaultUser);
@@ -619,12 +633,14 @@ public class InternalSecurityInitializer extends SpagoBIInitializer {
 
 						String authorizationName = (String) defaultAuthorizationSB.getAttribute("authorizationName");
 
-						if (productTypes == null)
+						if (productTypes == null) {
 							productTypes = DAOFactory.getProductTypeDAO().loadAllProductType();
+						}
 
 						for (SbiProductType productType : productTypes) {
-							if (authorizations == null)
+							if (authorizations == null) {
 								authorizations = DAOFactory.getRoleDAO().loadAllAuthorizations();
+							}
 
 							SbiAuthorizations sbiAuthorizations = getSbiAuthorizationToInsert(authorizations, authorizationName,
 									productType.getProductTypeId());
