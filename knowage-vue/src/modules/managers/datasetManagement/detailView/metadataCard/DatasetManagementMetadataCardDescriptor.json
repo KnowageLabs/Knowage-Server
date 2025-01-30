@@ -27,6 +27,16 @@
         },
         {
             "disabled": false,
+            "name": "oracle.sql.CLOB",
+            "value": "CLOB"
+        },
+        {
+            "disabled": false,
+            "name": "oracle.jdbc.OracleClob",
+            "value": "CLOB"
+        },
+        {
+            "disabled": false,
             "name": "java.sql.Date",
             "value": "Date"
         },
