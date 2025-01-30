@@ -559,8 +559,9 @@ public abstract class AbstractSelectQueryVisitor extends AbstractFilterVisitor i
 		 * WORKAROUND - KNOWAGE-5361 : exclude DISTINCT clause for all the dataset that contains a CLOB.
 		 */
 		boolean containsCLOB = false;
-		if (query.getDataSet().getDsMetadata() != null && query.getDataSet().getDsMetadata().contains("CLOB"))
+		if (query.getDataSet().getDsMetadata() != null && query.getDataSet().getDsMetadata().toUpperCase().contains("CLOB")) {
 			containsCLOB = true;
+		}
 
 		if (query.isSelectDistinct() && query.getGroups().isEmpty() && !query.hasAggregationFunction()
 				&& !containsCLOB) {
