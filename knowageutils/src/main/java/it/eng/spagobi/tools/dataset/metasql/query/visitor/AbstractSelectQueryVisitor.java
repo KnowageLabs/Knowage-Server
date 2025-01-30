@@ -472,8 +472,8 @@ public abstract class AbstractSelectQueryVisitor extends AbstractFilterVisitor i
 			queryBuilder.append("COUNT(*) ");
 		} else {
 			List<AbstractSelectionField> projectionsAbs = query.getProjections();
-			List<Projection> projections = new ArrayList<Projection>();
-			List<DataStoreCalculatedField> projectionsCalcFields = new ArrayList<DataStoreCalculatedField>();
+			List<Projection> projections = new ArrayList<>();
+			List<DataStoreCalculatedField> projectionsCalcFields = new ArrayList<>();
 			int appendedProjectionsCounter = 0;
 			for (AbstractSelectionField abstractSelectionField : projectionsAbs) {
 				if (abstractSelectionField.getClass().equals(DataStoreCatalogFunctionField.class)) {
@@ -546,8 +546,9 @@ public abstract class AbstractSelectQueryVisitor extends AbstractFilterVisitor i
 		 * WORKAROUND - KNOWAGE-5361 : exclude DISTINCT clause for all the dataset that contains a CLOB.
 		 */
 		boolean containsCLOB = false;
-		if (query.getDataSet().getDsMetadata() != null && query.getDataSet().getDsMetadata().contains("CLOB"))
+		if (query.getDataSet().getDsMetadata() != null && query.getDataSet().getDsMetadata().toUpperCase().contains("CLOB")) {
 			containsCLOB = true;
+		}
 
 		if (query.isSelectDistinct() && query.getGroups().isEmpty() && !query.hasAggregationFunction() && !containsCLOB) {
 			queryBuilder.append("DISTINCT ");
@@ -577,7 +578,7 @@ public abstract class AbstractSelectQueryVisitor extends AbstractFilterVisitor i
 	}
 
 	protected void buildGroupBy(SelectQuery query) {
-		List<AbstractSelectionField> groups = query.getGroups().stream().filter(g -> (g instanceof DataStoreCatalogFunctionField) == false)
+		List<AbstractSelectionField> groups = query.getGroups().stream().filter(g -> !(g instanceof DataStoreCatalogFunctionField))
 				.collect(Collectors.toList());
 		if (groups == null || groups.isEmpty()) {
 			return;
