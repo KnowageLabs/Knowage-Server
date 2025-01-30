@@ -307,43 +307,23 @@ public class ExcelExporter extends AbstractFormatExporter {
 	}
 
 
-	public byte[] getDashboardBinaryData(Integer documentId, String documentLabel, String documentName, String templateString, String options) {
-		this.documentName = documentName;
+	public byte[] getDashboardBinaryData(JSONObject body, String documentName) {
 
-		if (templateString == null) {
-			ObjTemplate template = null;
-			String message = "Unable to get template for document with id [" + documentId + "] and label ["
-					+ documentLabel + "]";
-			try {
-				if (documentId != null && documentId.intValue() != 0) {
-					template = DAOFactory.getObjTemplateDAO().getBIObjectActiveTemplate(documentId);
-				} else if (documentLabel != null && !documentLabel.isEmpty()) {
-					template = DAOFactory.getObjTemplateDAO().getBIObjectActiveTemplateByLabel(documentLabel);
-				}
-
-				if (template == null) {
-					throw new SpagoBIRuntimeException(message);
-				}
-
-				templateString = new String(template.getContent());
-			} catch (EMFAbstractError e) {
-				throw new SpagoBIRuntimeException(message);
-			}
+        if (body == null) {
+			throw new SpagoBIRuntimeException("Unable to get template for dashboard");
 		}
-
+		this.documentName = documentName;
+		String templateString = body.toString();
 		int windowSize = Integer.parseInt(
 				SingletonConfig.getInstance().getConfigValue("KNOWAGE.DASHBOARD.EXPORT.EXCEL.STREAMING_WINDOW_SIZE"));
 		try (Workbook wb = new SXSSFWorkbook(windowSize)) {
 
-			int exportedSheets = 0;
+			int exportedSheets;
 			if (isSingleWidgetExport) {
 				//TODO IMPLEMENT THE LOGIC FOR THE SINGLE WIDGET EXPORT
 				long widgetId = body.getLong("widget");
 				String widgetType = getWidgetTypeFromCockpitTemplate(templateString, widgetId);
 				JSONObject optionsObj = new JSONObject();
-				if (options != null && !options.isEmpty()) {
-					optionsObj = new JSONObject(options);
-				}
 				IWidgetExporter widgetExporter = WidgetExporterFactory.getExporter(this, widgetType, templateString,
 						widgetId, wb, optionsObj);
 				exportedSheets = widgetExporter.export();
@@ -388,7 +368,7 @@ public class ExcelExporter extends AbstractFormatExporter {
 				}
 			}
 
-			byte[] ret = null;
+			byte[] ret;
 			try (ByteArrayOutputStream out = new ByteArrayOutputStream()) {
 				wb.write(out);
 				out.flush();

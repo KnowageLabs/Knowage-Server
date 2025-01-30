@@ -187,34 +187,26 @@ public class PageResource extends AbstractCockpitEngineResource {
 
 	@POST
 	@Path("/{pagename}/spreadsheet")
-	public void openPagePostSpreadsheet(@Context HttpServletRequest req)
+	@Produces(MediaType.APPLICATION_OCTET_STREAM)
+	public void openPagePostSpreadsheet(@PathParam("pagename") String pagename, @Context HttpServletRequest req)
 			throws IOException, InterruptedException, JSONException {
 		logger.debug("IN");
 		response.setCharacterEncoding(UTF_8.name());
 		try {
-			JSONObject body = new JSONObject();
+			JSONObject body = RestUtilities.readBodyAsJSONObject(req);
 			String token = request.getHeader(TOKEN_HEADER);
-			//USER ID IS THAT TOKEN WITHOUR THE BEARER
 			String userId = token.substring(7);
-			String template = getIOManager().getTemplateAsString();
-			body.put("template", template);
-//			String outputType = body.getString(OUTPUT_TYPE);
 			ExcelExporter excelExporter = new ExcelExporter(userId, body);
 			String mimeType = excelExporter.getMimeType();
+			JSONObject document = body.getJSONObject("document");
+			String documentName = document.getString("name");
+			String documentLabel = document.getString("label");
 
 			if (!MimeUtils.isValidMimeType(mimeType))
 				throw new SpagoBIRuntimeException("Invalid mime type: " + mimeType);
 
 			if (mimeType != null) {
-				Integer documentId = Integer.valueOf(req.getParameter(DOCUMENT_ID));
-				String documentLabel = req.getParameter(DOCUMENT_LABEL);
-				String documentName = req.getParameter(DOCUMENT_NAME);
-				String options = body.optString("options");
-				byte[] data;
-				data = excelExporter.getDashboardBinaryData(documentId, documentLabel, documentName, template, options);
-				//convert to base64
-				String base64 = Base64.getEncoder().encodeToString(data);
-
+				byte[] data = excelExporter.getDashboardBinaryData(body, documentName);
 				response.setContentType(MediaType.APPLICATION_OCTET_STREAM);
 				response.setHeader("Content-length", Integer.toString(data.length));
 				response.setHeader("Content-Type", mimeType);
