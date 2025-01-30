@@ -32,28 +32,19 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
+import it.eng.knowage.engine.cockpit.api.export.excel.models.Style;
+import it.eng.spagobi.services.validation.Xss;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.ClientAnchor;
-import org.apache.poi.ss.usermodel.CreationHelper;
-import org.apache.poi.ss.usermodel.Drawing;
-import org.apache.poi.ss.usermodel.FillPatternType;
-import org.apache.poi.ss.usermodel.Font;
-import org.apache.poi.ss.usermodel.HorizontalAlignment;
-import org.apache.poi.ss.usermodel.Picture;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.VerticalAlignment;
-import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.util.Units;
 import org.apache.poi.xssf.streaming.SXSSFSheet;
 import org.apache.poi.xssf.usermodel.DefaultIndexedColorMap;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFColor;
+import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -67,6 +58,9 @@ import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.bo.SolrDataSet;
 import it.eng.spagobi.tools.dataset.bo.VersionedDataSet;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+
+import static it.eng.knowage.engine.cockpit.api.export.excel.exporters.CrossTabExporter.DEFAULT_FONT_NAME;
+import static org.apache.poi.xssf.usermodel.XSSFFont.DEFAULT_FONT_SIZE;
 
 public abstract class AbstractFormatExporter {
 	private static final Logger LOGGER = LogManager.getLogger(AbstractFormatExporter.class);
@@ -1805,5 +1799,66 @@ public abstract class AbstractFormatExporter {
 		
 		cellStyle.setFont(font);
 		return cellStyle;
+	}
+
+	public CellStyle buildDashboardCellStyle(Style style) {
+		CellStyle cellStyle = style.getSheet().getWorkbook().createCellStyle();
+		XSSFFont font = (XSSFFont) style.getSheet().getWorkbook().createFont();
+
+		if (stringIsNotEmpty(style.getFontSize())) {
+			font.setFontHeightInPoints(Short.parseShort(getOnlyTheNumericValueFromString(style.getFontSize())));
+		} else {
+			font.setFontHeightInPoints(DEFAULT_FONT_SIZE);
+		}
+
+		if (stringIsNotEmpty(style.getColor())) {
+			font.setColor(getXSSFColorFromRGBA(style.getColor()));
+		}
+
+		if (stringIsNotEmpty(style.getBackgroundColor())) {
+			cellStyle.setFillForegroundColor(getXSSFColorFromRGBA(style.getBackgroundColor()));
+			cellStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+		}
+
+		if (stringIsNotEmpty(style.getFontFamily())) {
+			font.setFontName(style.getFontFamily());
+		} else {
+			font.setFontName(DEFAULT_FONT_NAME);
+		}
+
+		if (stringIsNotEmpty(style.getFontWeight())) {
+			font.setBold(style.getFontWeight().equals("bold"));
+		}
+
+		if (stringIsNotEmpty(style.getFontStyle())) {
+			font.setItalic(style.getFontStyle().equals("italic"));
+		}
+
+		if (stringIsNotEmpty(style.getAlignItems())) {
+			cellStyle.setAlignment(HorizontalAlignment.valueOf(style.getAlignItems().toUpperCase()));
+		}
+
+		if (stringIsNotEmpty(style.getJustifyContent())) {
+			cellStyle.setVerticalAlignment(VerticalAlignment.valueOf(style.getJustifyContent().toUpperCase()));
+		}
+
+		cellStyle.setFont(font);
+		return cellStyle;
+	}
+
+	private String getOnlyTheNumericValueFromString(String string) {
+		return string.replaceAll("[^0-9]", "");
+	}
+
+	private XSSFColor getXSSFColorFromRGBA(String colorStr) {
+			String[] values = colorStr.replace(colorStr.contains("rgba(") ? "rgba(" : "rgb(", "").replace(")", "").split(",");
+			int red = Integer.parseInt(values[0].trim());
+			int green = Integer.parseInt(values[1].trim());
+			int blue = Integer.parseInt(values[2].trim());
+
+			return new XSSFColor(new java.awt.Color(red, green, blue), new DefaultIndexedColorMap());}
+
+	private boolean stringIsNotEmpty(String str) {
+		return str != null && !str.isEmpty();
 	}
 }

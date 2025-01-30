@@ -35,6 +35,7 @@ import java.util.regex.Pattern;
 import javax.ws.rs.core.UriBuilder;
 
 import it.eng.knowage.engine.cockpit.api.export.excel.exporters.DashboardWidgetExporterFactory;
+import it.eng.knowage.engine.cockpit.api.export.excel.models.Style;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -1489,7 +1490,7 @@ public class ExcelExporter extends AbstractFormatExporter {
 			int dataspan = 10;
 
 			if (offset == 0) { // if pagination is active, headers must be created only once
-				Row header = null;
+				Row header;
 
 //				ATTENTION: exporting single widget must not be different from exporting whole cockpit
 //				if (isSingleWidgetExport) { // export single widget
@@ -1516,7 +1517,7 @@ public class ExcelExporter extends AbstractFormatExporter {
 						this.documentName,
 						widgetName);
 
-				header = createHeaderColumnNames(sheet, groupsAndColumnsMap, columnsOrdered, headerIndex+1);
+				header = createDashboardHeaderColumnNames(sheet, groupsAndColumnsMap, columnsOrdered, headerIndex+1);
 
 				for (int i = 0; i < columnsOrdered.length(); i++) {
 					JSONObject column = columnsOrdered.getJSONObject(i);
@@ -1556,7 +1557,13 @@ public class ExcelExporter extends AbstractFormatExporter {
 					Cell cell = header.createCell(i);
 					cell.setCellValue(columnName);
 
-					CellStyle headerCellStyle = buildCellStyle(sheet, true, HorizontalAlignment.LEFT, VerticalAlignment.CENTER, (short) 11);
+					CellStyle headerCellStyle;
+					if (settings != null) {
+						Style style = getDashboardStyle(sheet, settings);
+						headerCellStyle = buildDashboardCellStyle(style);
+					} else {
+						headerCellStyle = buildCellStyle(sheet, true, HorizontalAlignment.LEFT, VerticalAlignment.CENTER, (short) 11);
+					}
 					cell.setCellStyle(headerCellStyle);
 				}
 
@@ -1680,6 +1687,27 @@ public class ExcelExporter extends AbstractFormatExporter {
 		} catch (Exception e) {
 			throw new SpagoBIRuntimeException("Cannot write data to Excel file", e);
 		}	}
+
+	private Style getDashboardStyle(Sheet sheet, JSONObject settings) {
+		JSONObject properties;
+		try {
+			properties = settings.getJSONObject("style").getJSONObject("headers").getJSONObject("properties");
+		} catch (JSONException e) {
+			throw new SpagoBIRuntimeException("Couldn't get style properties", e);
+		}
+
+		Style style = new Style();
+		style.setSheet(sheet);
+		style.setAlignItems(properties.optString("align-items"));
+		style.setJustifyContent(properties.optString("justify-content"));
+		style.setBackgroundColor(properties.optString("background-color"));
+		style.setColor(properties.optString("color"));
+		style.setFontSize(properties.optString("font-size"));
+		style.setFontWeight(properties.optString("font-weight"));
+		style.setFontStyle(properties.optString("font-style"));
+
+		return style;
+	}
 
 	private HashMap<String, Object> createMapVariables(HashMap<String, Object> variablesMap) throws JSONException {
 		if (body.has("COCKPIT_VARIABLES")) {
@@ -1996,6 +2024,42 @@ public class ExcelExporter extends AbstractFormatExporter {
 			throw new SpagoBIRuntimeException("Couldn't create header column names", e);
 		}
 	}
+
+	private Row createDashboardHeaderColumnNames(Sheet sheet, Map<String, String> groupsAndColumnsMap, JSONArray columnsOrdered,
+										int startRowOffset) {
+		try {
+			Row header;
+			if (!groupsAndColumnsMap.isEmpty()) {
+				Row newheader = sheet.createRow((short) startRowOffset);
+				for (int i = 0; i < columnsOrdered.length(); i++) {
+					JSONObject column = columnsOrdered.getJSONObject(i);
+					String groupName = groupsAndColumnsMap.get(column.get("header"));
+					if (groupName != null) {
+						// check if adjacent header cells have same group names in order to add merged region
+						int adjacents = getAdjacentEqualNamesAmount(groupsAndColumnsMap, columnsOrdered, i, groupName);
+						if (adjacents > 1) {
+							sheet.addMergedRegion(new CellRangeAddress(newheader.getRowNum(), // first row (0-based)
+									newheader.getRowNum(), // last row (0-based)
+									i, // first column (0-based)
+									i + adjacents - 1 // last column (0-based)
+							));
+						}
+						Cell cell = newheader.createCell(i);
+						cell.setCellValue(groupName);
+						i += adjacents - 1;
+					}
+				}
+				header = sheet.createRow((short) (startRowOffset + 1));
+			}
+			else {
+				header = sheet.createRow((short) startRowOffset); // first row
+			}
+			return header;
+		} catch (Exception e) {
+			throw new SpagoBIRuntimeException("Couldn't create header column names", e);
+		}
+	}
+
 
 	private int getAdjacentEqualNamesAmount(Map<String, String> groupsAndColumnsMap, JSONArray columnsOrdered, int matchStartIndex, String groupNameToMatch) {
 		try {
