@@ -6,20 +6,15 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.json.JSONObject;
 
 public class DashboardWidgetExporterFactory {
-    public static transient Logger logger = Logger.getLogger(WidgetExporterFactory.class);
+    public static Logger logger = Logger.getLogger(WidgetExporterFactory.class);
 
-    /**
-     * @param widgetType the type of the widget to be exported
-     */
-
-    public static IWidgetExporter getExporter(ExcelExporter exporter, String widgetType, String templateString, String widgetId, Workbook wb,
-                                              JSONObject options) {
-        if (widgetType.equalsIgnoreCase("table")) {
+    public static IWidgetExporter getExporter(ExcelExporter exporter, Workbook wb, JSONObject widget) {
+        if (widget.optString("tipe").equalsIgnoreCase("table")) {
             // table widget supports pagination
-            return new DashboardTableExporter(exporter, widgetType, templateString, widgetId, wb, options);
+            return new DashboardTableExporter(exporter, wb, widget);
         } else {
             // chart widget does not support pagination
-            return new GenericDashboardWidgetExporter(exporter, widgetType, templateString, widgetId, wb, options);
+            return new GenericDashboardWidgetExporter(exporter, wb, widget);
         }
     }
 }

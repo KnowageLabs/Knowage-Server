@@ -663,9 +663,8 @@ public class PdfExporter extends AbstractFormatExporter {
 	}
 
 	@Override
-	protected JSONObject getDashboardSelections(JSONObject template, JSONObject widget) {
-		// TODO implement this method when needed
-		return new JSONObject();
+	protected JSONObject getDashboardSelections(JSONObject widget, String datasetLabel) {
+		return null;
 	}
 
 	/**

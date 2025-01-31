@@ -61,6 +61,8 @@ import org.apache.http.client.utils.URIBuilder;
 import com.google.common.collect.Iterables;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.jboss.resteasy.plugins.providers.html.View;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -198,19 +200,26 @@ public class PageResource extends AbstractCockpitEngineResource {
 			String userId = token.substring(7);
 			ExcelExporter excelExporter = new ExcelExporter(userId, body);
 			String mimeType = excelExporter.getMimeType();
-			JSONObject document = body.getJSONObject("document");
-			String documentName = document.getString("name");
-			String documentLabel = document.getString("label");
+			String optionalWidgetId = body.optString("id");
+			boolean isDashboardSingleWidgetExport = !optionalWidgetId.isEmpty();
 
 			if (!MimeUtils.isValidMimeType(mimeType))
 				throw new SpagoBIRuntimeException("Invalid mime type: " + mimeType);
 
 			if (mimeType != null) {
-				byte[] data = excelExporter.getDashboardBinaryData(body, documentName);
+				byte[] data;
+				data = excelExporter.getDashboardBinaryData(body, isDashboardSingleWidgetExport);
+				if (!isDashboardSingleWidgetExport) {
+					String documentLabel = body.getJSONObject("document").getString("label");
+					response.setHeader("Content-Disposition", "attachment; fileName=" + documentLabel + ".xlsx");
+				} else {
+					String widgetName = body.getJSONObject("settings").getJSONObject("style").getJSONObject("title")
+							.optString("text");
+					response.setHeader("Content-Disposition", "attachment; fileName=" + widgetName + "." + "xlsx");
+				}
 				response.setContentType(MediaType.APPLICATION_OCTET_STREAM);
 				response.setHeader("Content-length", Integer.toString(data.length));
 				response.setHeader("Content-Type", mimeType);
-				response.setHeader("Content-Disposition", "attachment; fileName=" + documentLabel + "." + "xlsx");
 
 				response.getOutputStream().write(data, 0, data.length);
 				response.getOutputStream().flush();

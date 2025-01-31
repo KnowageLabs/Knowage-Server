@@ -18,25 +18,20 @@
 
 package it.eng.knowage.engine.cockpit.api.export;
 
-import java.awt.Color;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-
 import it.eng.knowage.engine.cockpit.api.export.excel.models.Style;
-import it.eng.spagobi.services.validation.Xss;
+import it.eng.knowage.engine.cockpit.api.export.pdf.CssColorParser;
+import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.i18n.dao.I18NMessagesDAO;
+import it.eng.spagobi.tools.dataset.bo.IDataSet;
+import it.eng.spagobi.tools.dataset.bo.SolrDataSet;
+import it.eng.spagobi.tools.dataset.bo.VersionedDataSet;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.util.Units;
@@ -48,16 +43,12 @@ import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.apache.commons.lang3.StringUtils;
 
-import it.eng.knowage.engine.cockpit.api.export.pdf.CssColorParser;
-import it.eng.spagobi.commons.constants.SpagoBIConstants;
-import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.i18n.dao.I18NMessagesDAO;
-import it.eng.spagobi.tools.dataset.bo.IDataSet;
-import it.eng.spagobi.tools.dataset.bo.SolrDataSet;
-import it.eng.spagobi.tools.dataset.bo.VersionedDataSet;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+import java.awt.Color;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.List;
+import java.util.*;
 
 import static it.eng.knowage.engine.cockpit.api.export.excel.exporters.CrossTabExporter.DEFAULT_FONT_NAME;
 import static org.apache.poi.xssf.usermodel.XSSFFont.DEFAULT_FONT_SIZE;
@@ -414,7 +405,7 @@ public abstract class AbstractFormatExporter {
 		return datastore;
 	}
 
-	public JSONObject getDataStoreForDashboardWidget(JSONObject template, JSONObject widget, int offset, int fetchSize) {
+	public JSONObject getDataStoreForDashboardWidget(JSONObject widget, int offset, int fetchSize) {
 		Map<String, Object> map = new java.util.HashMap<>();
 		JSONObject datastore;
 		try {
@@ -422,11 +413,7 @@ public abstract class AbstractFormatExporter {
 			IDataSet dataset = DAOFactory.getDataSetDAO().loadDataSetById(datasetId);
 			String datasetLabel = dataset.getLabel();
 
-			//TODO : Check if this is correct
-//			if (getRealtimeFromWidget(datasetId, configuration))
-//				map.put("nearRealtime", true);
-
-			JSONObject dashboardSelections = getDashboardSelections(template, widget);
+			JSONObject dashboardSelections = getDashboardSelections(widget, datasetLabel);
 
 			//TODO: Ask what this is
 			JSONArray summaryRow = getSummaryRowFromDashboardWidget(widget);
@@ -449,6 +436,7 @@ public abstract class AbstractFormatExporter {
 		}
 		return datastore;
 	}
+
 
 
 	protected JSONObject getDatastore(String datasetLabel, Map<String, Object> map, String selections, int offset,
@@ -716,7 +704,7 @@ public abstract class AbstractFormatExporter {
 
 	protected abstract JSONObject getCockpitSelectionsFromBody(JSONObject widget);
 
-	protected abstract JSONObject getDashboardSelections(JSONObject template, JSONObject widget);
+	protected abstract JSONObject getDashboardSelections(JSONObject widget, String datasetLabel);
 
 
 	protected boolean getRealtimeFromWidget(int dsId, JSONObject configuration) {
