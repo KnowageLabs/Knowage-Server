@@ -544,7 +544,7 @@ public class ExcelExporter extends AbstractFormatExporter {
 
 	private JSONObject buildDashboardSelections(JSONArray columns, String datasetLabel, JSONObject settings) {
 		JSONObject selections = new JSONObject();
-		String sortingColumn = settings.optString("sortingColumn");
+		String sortingColumnId = settings.optString("sortingColumn");
 		String sortingOrder = settings.optString("sortingOrder");
 
 		try {
@@ -558,15 +558,15 @@ public class ExcelExporter extends AbstractFormatExporter {
 			for (int i = 0; i < columns.length(); i++) {
 				JSONObject column = columns.getJSONObject(i);
 				String orderTypeCol = column.optString("orderType");
-				if (sortingColumn.isEmpty() && !orderTypeCol.isEmpty()) {
-					sortingColumn = column.getString("columnName");
+				if (sortingColumnId.isEmpty() && !orderTypeCol.isEmpty()) {
+					sortingColumnId = column.getString("id");
 					sortingOrder = column.getString("orderType");
 				}
 				if (column.getString("fieldType").equalsIgnoreCase("measure")) {
-					JSONObject measure = getMeasure(columns.getJSONObject(i), getSortingObj(column, sortingColumn, sortingOrder), getDrillSortingObj(column));
+					JSONObject measure = getMeasure(columns.getJSONObject(i), getSortingObj(column, sortingColumnId, sortingOrder), getDrillSortingObj(column));
 					measures.put(measure);
 				} else {
-					JSONObject category = getCategory(columns.getJSONObject(i), getSortingObj(column, sortingColumn, sortingOrder), getDrillSortingObj(column));
+					JSONObject category = getCategory(columns.getJSONObject(i), getSortingObj(column, sortingColumnId, sortingOrder), getDrillSortingObj(column));
 					categories.put(category);
 				}
 			}
@@ -582,10 +582,10 @@ public class ExcelExporter extends AbstractFormatExporter {
 		return column.optJSONObject("drillOrder");
 	}
 
-	private JSONObject getSortingObj(JSONObject column, String sortingColumn, String sortingOrder) {
+	private JSONObject getSortingObj(JSONObject column, String sortingColumnId, String sortingOrder) {
 		JSONObject sortingObj = new JSONObject();
 		try {
-			if (column.getString("columnName").equals(sortingColumn)) {
+			if (column.getString("id").equals(sortingColumnId)) {
 				sortingObj.put("sortingColumn", column.getString("columnName"));
 				sortingObj.put("sortingOrder", sortingOrder);
 			} else {

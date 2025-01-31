@@ -9,7 +9,7 @@ public class DashboardWidgetExporterFactory {
     public static Logger logger = Logger.getLogger(WidgetExporterFactory.class);
 
     public static IWidgetExporter getExporter(ExcelExporter exporter, Workbook wb, JSONObject widget) {
-        if (widget.optString("tipe").equalsIgnoreCase("table")) {
+        if (widget.optString("type").equalsIgnoreCase("table")) {
             // table widget supports pagination
             return new DashboardTableExporter(exporter, wb, widget);
         } else {
