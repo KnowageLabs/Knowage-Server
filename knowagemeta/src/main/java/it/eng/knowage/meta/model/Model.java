@@ -17,6 +17,7 @@
  */
 package it.eng.knowage.meta.model;
 
+import java.io.Serializable;
 import java.util.List;
 
 import org.eclipse.emf.common.util.EList;
@@ -45,7 +46,7 @@ import it.eng.spagobi.tools.datasource.bo.IDataSource;
  * @model
  * @generated
  */
-public interface Model extends ModelObject {
+public interface Model extends ModelObject, Serializable {
 	/**
 	 * Returns the value of the '<em><b>Physical Models</b></em>' containment reference list. The list contents are of type
 	 * {@link it.eng.knowage.meta.model.physical.PhysicalModel}. It is bidirectional and its opposite is '

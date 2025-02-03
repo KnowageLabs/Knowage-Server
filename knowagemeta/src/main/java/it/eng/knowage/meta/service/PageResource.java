@@ -22,9 +22,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -34,6 +32,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.Response;
 
 import org.apache.log4j.Logger;
 import org.eclipse.emf.common.util.URI;
@@ -41,7 +40,6 @@ import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.emf.ecore.util.ECrossReferenceAdapter;
-import org.jboss.resteasy.plugins.providers.html.View;
 import org.json.JSONObject;
 
 import it.eng.knowage.meta.generator.jpamapping.wrappers.JpaProperties;
@@ -80,17 +78,7 @@ import it.eng.spagobi.utilities.engines.EngineStartServletIOManager;
 @Path("/1.0/pages")
 public class PageResource {
 
-	private static Map<String, String> urls;
-
 	private static Logger logger = Logger.getLogger(PageResource.class);
-
-	{
-		urls = new HashMap<>();
-		urls.put("edit", "/WEB-INF/jsp/metaWeb.jsp");
-		urls.put("test", "/WEB-INF/jsp/test.jsp");
-		urls.put("error", "/WEB-INF/jsp/error.jsp");
-
-	}
 
 	@Context
 	protected HttpServletRequest request;
@@ -100,9 +88,7 @@ public class PageResource {
 	@GET
 	@Path("/{pagename}")
 	@Produces("text/html")
-	public View getPage(@PathParam("pagename") String pageName, @QueryParam("bmName") String businessModelName) throws Exception {
-		String dispatchUrl = urls.get(pageName);
-
+	public Response getPage(@PathParam("pagename") String pageName, @QueryParam("bmName") String businessModelName) throws Exception {
 		try {
 			EngineStartServletIOManager ioManager = new EngineStartServletIOManager(request, response);
 			UserProfile userProfile = ioManager.getUserProfile();
@@ -112,7 +98,7 @@ public class PageResource {
 				ioManager.setUserProfile(userProfile);
 			}
 
-			ioManager.getHttpSession().setAttribute("ioManager", ioManager);
+			// ioManager.getHttpSession().setAttribute("ioManager", ioManager);
 			ioManager.getHttpSession().setAttribute("userProfile", userProfile);
 
 			// load product types
@@ -175,7 +161,8 @@ public class PageResource {
 						logger.error("Business model file not found");
 					}
 					if (!modelFound) {
-						return new View(urls.get("error"));
+						// return new View(urls.get("error"));
+						return Response.serverError().build();
 					}
 
 				}
@@ -212,7 +199,8 @@ public class PageResource {
 			response.setContentType("text/html");
 			response.setCharacterEncoding(UTF_8.name());
 
-			return new View(dispatchUrl);
+			// return new View(dispatchUrl);
+			return Response.ok().build();
 
 		} catch (Exception e) {
 			logger.error("Error during Metamodel initialization: ", e);
