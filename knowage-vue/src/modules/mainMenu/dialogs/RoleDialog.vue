@@ -60,8 +60,7 @@ export default defineComponent({
     },
     getRoleOptions(): Array<string> {
       const rolesOptions = this.user.roles;
-      if (!this.mandatory)
-        rolesOptions.unshift(this.$t("role.defaultRolePlaceholder"));
+      if (!this.mandatory && rolesOptions[0] !== this.$t('role.defaultRolePlaceholder')) rolesOptions.unshift(this.$t('role.defaultRolePlaceholder'))
       return rolesOptions;
     },
     changeRole() {
