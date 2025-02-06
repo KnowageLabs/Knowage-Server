@@ -274,7 +274,9 @@ public abstract class AbstractFormatExporter {
 
 				for (int j = 0; j < columnsOld.length(); j++) {
 					JSONObject columnOld = columnsOld.getJSONObject(j);
+
 					if (columnOld.getString("header").equals(columnNew.getString("alias"))) {
+						columnOld.put("id", columnNew.getString("id"));
 
 						if (columnNew.has("ranges")) {
 							JSONArray ranges = columnNew.getJSONArray("ranges");
@@ -462,6 +464,53 @@ public abstract class AbstractFormatExporter {
 			}
 		}
 		return i18nMessages.getOrDefault(columnName, columnName);
+	}
+
+	protected JSONObject getVisualizationFromSettings(JSONObject settings) {
+		try {
+			return settings.getJSONObject("visualization");
+		} catch (Exception e) {
+			LOGGER.error("Error while getting visualization from settings", e);
+			return new JSONObject();
+		}
+	}
+
+	protected int getPrecisionByColumn(JSONObject settings, JSONObject column) {
+		try {
+			JSONObject visualization = getVisualizationFromSettings(settings);
+			if (visualization == null)
+				return -1;
+
+			JSONObject visualizationTypes = visualization.getJSONObject("visualizationTypes");
+
+			if (visualizationTypes == null) {
+				return -1;
+			}
+
+			JSONArray types = visualizationTypes.getJSONArray("types");
+
+			for (int i = 0; i < types.length(); i++) {
+				JSONObject type = types.getJSONObject(i);
+				JSONArray target;
+				try {
+					target = type.getJSONArray("target");
+				} catch (JSONException e) {
+					target = new JSONArray();
+					target.put(type.getString("target"));
+				}
+
+				if (type.has("precision")) {
+					if (target.toString().contains(column.getString("id")) || target.toString().contains("all")) {
+						return type.getInt("precision");
+					} else {
+						return -1;
+					}
+				}
+			}
+		} catch (Exception e) {
+			LOGGER.error("Error while getting precision by column", e);
+		}
+		return -1;
 	}
 
 	protected boolean isSolrDataset(IDataSet dataSet) {
@@ -1789,9 +1838,8 @@ public abstract class AbstractFormatExporter {
 		return cellStyle;
 	}
 
-	public CellStyle buildDashboardCellStyle(Style style) {
-		CellStyle cellStyle = style.getSheet().getWorkbook().createCellStyle();
-		XSSFFont font = (XSSFFont) style.getSheet().getWorkbook().createFont();
+	public CellStyle buildPoiCellStyle(Style style, XSSFFont font, Workbook wb) {
+		CellStyle cellStyle = wb.createCellStyle();
 
 		if (stringIsNotEmpty(style.getFontSize())) {
 			font.setFontHeightInPoints(Short.parseShort(getOnlyTheNumericValueFromString(style.getFontSize())));
@@ -1823,15 +1871,31 @@ public abstract class AbstractFormatExporter {
 		}
 
 		if (stringIsNotEmpty(style.getAlignItems())) {
-			cellStyle.setAlignment(HorizontalAlignment.valueOf(style.getAlignItems().toUpperCase()));
+			cellStyle.setAlignment(getHorizontalAlignment(style.getAlignItems().toUpperCase()));
 		}
 
 		if (stringIsNotEmpty(style.getJustifyContent())) {
-			cellStyle.setVerticalAlignment(VerticalAlignment.valueOf(style.getJustifyContent().toUpperCase()));
+			cellStyle.setVerticalAlignment(getVerticalAlignment(style.getJustifyContent().toUpperCase()));
 		}
 
 		cellStyle.setFont(font);
 		return cellStyle;
+	}
+
+	private HorizontalAlignment getHorizontalAlignment(String alignItem) {
+        return switch (alignItem) {
+            case "CENTER" -> HorizontalAlignment.CENTER;
+            case "FLEX-END" -> HorizontalAlignment.RIGHT;
+            default -> HorizontalAlignment.LEFT;
+        };
+	}
+
+	private VerticalAlignment getVerticalAlignment(String justifyContent) {
+		return switch (justifyContent) {
+			case "CENTER" -> VerticalAlignment.CENTER;
+			case "FLEX-END" -> VerticalAlignment.BOTTOM;
+			default -> VerticalAlignment.TOP;
+		};
 	}
 
 	private String getOnlyTheNumericValueFromString(String string) {
@@ -1846,7 +1910,7 @@ public abstract class AbstractFormatExporter {
 
 			return new XSSFColor(new java.awt.Color(red, green, blue), new DefaultIndexedColorMap());}
 
-	private boolean stringIsNotEmpty(String str) {
+	protected boolean stringIsNotEmpty(String str) {
 		return str != null && !str.isEmpty();
 	}
 }

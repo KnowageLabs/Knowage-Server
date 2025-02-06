@@ -30,7 +30,7 @@ public class DashboardTableExporter extends GenericDashboardWidgetExporter imple
             if (dataStore != null) {
                 int totalNumberOfRows = dataStore.getInt("results");
                 while (offset < totalNumberOfRows) {
-                    excelExporter.fillDashboardSheetWithData(dataStore, wb, sheet, widgetName, offset, settings);
+                    excelExporter.fillTableSheetWithData(dataStore, wb, sheet, widgetName, offset, settings);
                     offset += fetchSize;
                     dataStore = excelExporter.getDataStoreForDashboardWidget(widget, offset, fetchSize);
                 }

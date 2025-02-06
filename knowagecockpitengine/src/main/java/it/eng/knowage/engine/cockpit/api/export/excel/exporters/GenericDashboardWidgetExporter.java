@@ -20,6 +20,7 @@ package it.eng.knowage.engine.cockpit.api.export.excel.exporters;
 
 import it.eng.knowage.engine.cockpit.api.export.excel.ExcelExporter;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.json.JSONObject;
 
@@ -38,15 +39,16 @@ class GenericDashboardWidgetExporter implements IWidgetExporter {
 
     @Override
     public int export() {
-        JSONObject dataStore;
-        String widgetId;
-        widgetId = widget.optString("id");
+        String widgetId = widget.optString("id");
         try {
-                dataStore = excelExporter.getDataStoreforDashboardSingleWidget(widget);
-                if (dataStore != null) {
-                    String dashboardSheetName = widget.getString("type").concat(" ").concat(widget.getString("id"));
-                    excelExporter.createAndFillDashboardExcelSheet(dataStore, wb, widgetId, dashboardSheetName);
-                    return 1;
+            JSONObject settings = widget.getJSONObject("settings");
+            JSONObject dataStore = excelExporter.getDataStoreforDashboardSingleWidget(widget);
+            String widgetName = getDashboardWidgetName(widget);
+            if (dataStore != null) {
+                String dashboardSheetName = widget.getString("type").concat(" ").concat(widget.getString("id"));
+                Sheet sheet = excelExporter.createUniqueSafeSheet(wb, widgetName, dashboardSheetName);
+                excelExporter.fillGenericWidgetSheetWithData(dataStore, wb, sheet, widgetName, 0, settings);
+                return 1;
                 }
         } catch (Exception e) {
             throw new SpagoBIRuntimeException("Unable to export generic widget: " + widgetId, e);
