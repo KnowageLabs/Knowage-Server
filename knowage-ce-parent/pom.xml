@@ -44,7 +44,8 @@
 		<module>../knowage-spring-boot-api-common</module>
 		<module>../knowage-common</module>
 		<module>../knowage-pm-dto</module>
-	</modules>
+        <module>../knowage-excel-export</module>
+    </modules>
 	
 	<distributionManagement>
 		<site>

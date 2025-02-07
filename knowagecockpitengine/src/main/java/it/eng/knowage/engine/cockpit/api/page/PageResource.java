@@ -18,10 +18,10 @@
 package it.eng.knowage.engine.cockpit.api.page;
 
 import com.google.common.collect.Iterables;
+import it.eng.knowage.engine.api.excel.export.ExcelExporter;
 import it.eng.knowage.engine.cockpit.CockpitEngine;
 import it.eng.knowage.engine.cockpit.CockpitEngineInstance;
 import it.eng.knowage.engine.cockpit.api.AbstractCockpitEngineResource;
-import it.eng.knowage.engine.cockpit.api.export.excel.ExcelExporter;
 import it.eng.knowage.engine.cockpit.api.export.pdf.nodejs.PdfExporterV2;
 import it.eng.knowage.engine.cockpit.api.export.png.PngExporter;
 import it.eng.knowage.export.wrapper.beans.RenderOptions;
@@ -367,7 +367,7 @@ public class PageResource extends AbstractCockpitEngineResource {
 
 		String documentLabel = request.getParameter("DOCUMENT_LABEL");
 
-		ExcelExporter excelExporter = new ExcelExporter(userId, parameterMap, requestURL);
+		it.eng.knowage.engine.api.excel.export.ExcelExporter excelExporter = new it.eng.knowage.engine.api.excel.export.ExcelExporter(userId, parameterMap, requestURL);
 		String mimeType = excelExporter.getMimeType();
 		byte[] data = excelExporter.getBinaryData(documentLabel);
 
