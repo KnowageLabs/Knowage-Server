@@ -31,7 +31,7 @@
                             </div>
                             <div :class="template.type === 'python' ? 'p-col-3' : 'p-col-6'">
                                 <span class="p-float-label">
-                                    <Dropdown id="type" v-model="v$.template.type" class="kn-material-input" :options="galleryDescriptor.types" option-label="name" option-value="value" @change="setDirty" />
+                                    <Dropdown id="type" v-model="template.type" class="kn-material-input" :options="galleryDescriptor.types" option-label="name" option-value="value" @change="setDirty" />
                                     <label class="kn-material-input-label" for="type">{{ $t('common.type') }}</label>
                                 </span>
                             </div>
