@@ -29,7 +29,6 @@ import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
@@ -87,7 +86,6 @@ public class PageResource {
 
 	@GET
 	@Path("/{pagename}")
-	@Produces("text/html")
 	public Response getPage(@PathParam("pagename") String pageName, @QueryParam("bmName") String businessModelName) throws Exception {
 		try {
 			EngineStartServletIOManager ioManager = new EngineStartServletIOManager(request, response);
@@ -196,10 +194,9 @@ public class PageResource {
 
 			// -------------------------------------------------------------------------------------------
 
-			response.setContentType("text/html");
+			response.setContentType("application/json");
 			response.setCharacterEncoding(UTF_8.name());
 
-			// return new View(dispatchUrl);
 			return Response.ok().build();
 
 		} catch (Exception e) {
