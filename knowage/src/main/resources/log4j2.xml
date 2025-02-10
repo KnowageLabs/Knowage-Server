@@ -1,115 +1,109 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Configuration status="info">
+<Configuration status="error">
 	<Appenders>
 		<Console name="CONSOLE" target="SYSTEM_OUT">
 			<PatternLayout>
 				<Pattern>%d{ISO8601_OFFSET_DATE_TIME_HHCMM} [%u{RANDOM}] %5p [%t] [%c.%M:%L] [%X{correlationId}/%X{jSessionId}] [%X{environment}] [%X{tenant}]%n%message%n%xThrowable</Pattern>
 			</PatternLayout>
 		</Console>
-		<RollingFile
-				name="KNOWAGE_DATASET_AUDIT"
-				fileName="${sys:catalina.base}/logs/knowageDatasetAudit.log"
-				append="true"
-				filePattern="${sys:catalina.base}/logs/knowageDatasetAudit-%i.log"
-				ignoreExceptions="false"
-				createOnDemand="true">
-			<PatternLayout>
-				<Pattern>%d{ISO8601_OFFSET_DATE_TIME_HHCMM} [%u{RANDOM}] %5p [%t] [%c.%M:%L] [%X{correlationId}/%X{jSessionId}] [%X{environment}] [%X{tenant}]%n%message%n%xThrowable</Pattern>
-			</PatternLayout>
-			<Policies>
-				<SizeBasedTriggeringPolicy size="5000KB" />
-			</Policies>
-			<DefaultRolloverStrategy max="3" />
-		</RollingFile>
-		<RollingFile
-				name="KNOWAGE_HIERARCHIES"
-				fileName="${sys:catalina.base}/logs/knowageHiearchies.log"
-				append="true"
-				filePattern="${sys:catalina.base}/logs/knowageHiearchies-%i.log"
-				ignoreExceptions="false"
-				createOnDemand="true">
-			<PatternLayout>
-				<Pattern>%d{ISO8601_OFFSET_DATE_TIME_HHCMM} [%u{RANDOM}] %5p [%t] [%c.%M:%L] [%X{correlationId}/%X{jSessionId}] [%X{environment}] [%X{tenant}]%n%message%n%xThrowable</Pattern>
-			</PatternLayout>
-			<Policies>
-				<SizeBasedTriggeringPolicy size="5000KB" />
-			</Policies>
-			<DefaultRolloverStrategy max="3" />
-		</RollingFile>
-		<RollingFile
-				name="KNOWAGE_CORE"
-				fileName="${sys:catalina.base}/logs/knowage.log" append="true"
-				filePattern="${sys:catalina.base}/logs/knowage-%i.log"
-				ignoreExceptions="false"
-				createOnDemand="true">
-			<PatternLayout>
-				<Pattern>%d{ISO8601_OFFSET_DATE_TIME_HHCMM} [%u{RANDOM}] %5p [%t] [%c.%M:%L] [%X{correlationId}/%X{jSessionId}] [%X{environment}] [%X{tenant}]%n%message%n%xThrowable</Pattern>
-			</PatternLayout>
-			<Policies>
-				<SizeBasedTriggeringPolicy size="5000KB" />
-			</Policies>
-			<DefaultRolloverStrategy max="3" />
-		</RollingFile>
-		<RollingFile
-				name="KNOWAGE_RESOURCE_EXPORT_FOLDER_CLEANING_MANAGER"
-				fileName="${sys:catalina.base}/logs/knowageResourceExportFolderCleaningManager.log"
-				append="true"
-				filePattern="${sys:catalina.base}/logs/knowageResourceExportFolderCleaningManager-%i.log"
-				ignoreExceptions="false"
-				createOnDemand="true">
-			<PatternLayout>
-				<Pattern>%d{ISO8601_OFFSET_DATE_TIME_HHCMM} [%u{RANDOM}] %5p [%t] [%c.%M:%L] [%X{correlationId}/%X{jSessionId}] [%X{environment}] [%X{tenant}]%n%message%n%xThrowable</Pattern>
-			</PatternLayout>
-			<Policies>
-				<SizeBasedTriggeringPolicy size="5000KB" />
-			</Policies>
-			<DefaultRolloverStrategy max="3" />
-		</RollingFile>
-		<RollingFile
-				name="KNOWAGE_SERVER_MANAGER"
-				fileName="${sys:catalina.base}/logs/knowageServerManager.log"
-				append="true"
-				filePattern="${sys:catalina.base}/logs/knowageServerManager-%i.log"
-				ignoreExceptions="false"
-				createOnDemand="true">
-			<PatternLayout>
-				<Pattern>%d{ISO8601_OFFSET_DATE_TIME_HHCMM} [%u{RANDOM}] %5p [%t] [%c.%M:%L] [%X{correlationId}/%X{jSessionId}] [%X{environment}] [%X{tenant}]%n%message%n%xThrowable</Pattern>
-			</PatternLayout>
-			<Policies>
-				<SizeBasedTriggeringPolicy size="5000KB" />
-			</Policies>
-			<DefaultRolloverStrategy max="3" />
-		</RollingFile>
-		<RollingFile
-				name="KNOWAGE_QUARTZ"
-				fileName="${sys:catalina.base}/logs/Quartz.log"
-				append="true"
-				filePattern="${sys:catalina.base}/logs/Quartz-%i.log"
-				ignoreExceptions="false"
-				createOnDemand="true">
-			<PatternLayout>
-				<Pattern>%d{ISO8601_OFFSET_DATE_TIME_HHCMM} [%u{RANDOM}] %5p [%t] [%c.%M:%L] [%X{correlationId}/%X{jSessionId}] [%X{environment}] [%X{tenant}]%n%message%n%xThrowable</Pattern>
-			</PatternLayout>
-			<Policies>
-				<SizeBasedTriggeringPolicy size="5000KB" />
-			</Policies>
-			<DefaultRolloverStrategy max="3" />
-		</RollingFile>
-		<RollingFile
-				name="KNOWAGE_OPERATOR_TRACE"
-				fileName="${sys:catalina.base}/logs/knowage_[1]_OperatorTrace.log"
-				append="true"
-				filePattern="${sys:catalina.base}/logs/knowage_[1]_OperatorTrace-%i.log"
-				ignoreExceptions="false"
-				createOnDemand="true">
-			<PatternLayout>
-				<Pattern>%m%n</Pattern>
-			</PatternLayout>
-			<Policies>
-				<SizeBasedTriggeringPolicy size="5000KB" />
-			</Policies>
-			<DefaultRolloverStrategy max="1" />
-		</RollingFile>
+                <RollingFile
+                                name="KNOWAGE_DATASET_AUDIT"
+                                append="true"
+                                filePattern="${sys:catalina.base}/logs/knowageDatasetAudit.%d{yyyy-MM-dd}.log"
+                                ignoreExceptions="true"
+                                createOnDemand="true">
+                        <PatternLayout>
+                                <Pattern>%d{ISO8601_OFFSET_DATE_TIME_HHCMM} [%u{RANDOM}] %5p [%t] [%c.%M:%L] [%X{correlationId}/%X{jSessionId}] [%X{environment}] [%X{tenant}]%n%message%n%xThrowable</Pattern>
+                        </PatternLayout>
+                        <Policies>
+                                <TimeBasedTriggeringPolicy />
+                        </Policies>
+                        <DirectWriteRolloverStrategy/>
+                </RollingFile>
+                <RollingFile
+                                name="KNOWAGE_HIERARCHIES"
+                                append="true"
+                                filePattern="${sys:catalina.base}/logs/knowageHiearchies.%d{yyyy-MM-dd}.log"
+                                ignoreExceptions="true"
+                                createOnDemand="true">
+                        <PatternLayout>
+                                <Pattern>%d{ISO8601_OFFSET_DATE_TIME_HHCMM} [%u{RANDOM}] %5p [%t] [%c.%M:%L] [%X{correlationId}/%X{jSessionId}] [%X{environment}] [%X{tenant}]%n%message%n%xThrowable</Pattern>
+                        </PatternLayout>
+                        <Policies>
+                                <TimeBasedTriggeringPolicy />
+                        </Policies>
+                        <DirectWriteRolloverStrategy/>
+                </RollingFile>	
+                <RollingFile
+                                name="KNOWAGE_CORE"
+                                append="true"
+                                filePattern="${sys:catalina.base}/logs/knowage.%d{yyyy-MM-dd}.log"
+                                ignoreExceptions="true"
+                                createOnDemand="true">
+                        <PatternLayout>
+                                <Pattern>%d{ISO8601_OFFSET_DATE_TIME_HHCMM} [%u{RANDOM}] %5p [%t] [%c.%M:%L] [%X{correlationId}/%X{jSessionId}] [%X{environment}] [%X{tenant}]%n%message%n%xThrowable</Pattern>
+                        </PatternLayout>
+                        <Policies>
+                                <TimeBasedTriggeringPolicy />
+                        </Policies>
+                        <DirectWriteRolloverStrategy/>
+                </RollingFile>	
+                <RollingFile
+                                name="KNOWAGE_RESOURCE_EXPORT_FOLDER_CLEANING_MANAGER"
+                                append="true"
+                                filePattern="${sys:catalina.base}/logs/knowageResourceExportFolderCleaningManager.%d{yyyy-MM-dd}.log"
+                                ignoreExceptions="true"
+                                createOnDemand="true">
+                        <PatternLayout>
+                                <Pattern>%d{ISO8601_OFFSET_DATE_TIME_HHCMM} [%u{RANDOM}] %5p [%t] [%c.%M:%L] [%X{correlationId}/%X{jSessionId}] [%X{environment}] [%X{tenant}]%n%message%n%xThrowable</Pattern>
+                        </PatternLayout>
+                        <Policies>
+                                <TimeBasedTriggeringPolicy />
+                        </Policies>
+                        <DirectWriteRolloverStrategy/>
+                </RollingFile>	
+                <RollingFile
+                                name="KNOWAGE_SERVER_MANAGER"
+                                append="true"
+                                filePattern="${sys:catalina.base}/logs/knowageServerManager.%d{yyyy-MM-dd}.log"
+                                ignoreExceptions="true"
+                                createOnDemand="true">
+                        <PatternLayout>
+                                <Pattern>%d{ISO8601_OFFSET_DATE_TIME_HHCMM} [%u{RANDOM}] %5p [%t] [%c.%M:%L] [%X{correlationId}/%X{jSessionId}] [%X{environment}] [%X{tenant}]%n%message%n%xThrowable</Pattern>
+                        </PatternLayout>
+                        <Policies>
+                                <TimeBasedTriggeringPolicy />
+                        </Policies>
+                        <DirectWriteRolloverStrategy/>
+                </RollingFile>
+                <RollingFile
+                                name="KNOWAGE_QUARTZ"
+                                append="true"
+                                filePattern="${sys:catalina.base}/logs/knowageQuartz.%d{yyyy-MM-dd}.log"
+                                ignoreExceptions="true"
+                                createOnDemand="true">
+                        <PatternLayout>
+                                <Pattern>%d{ISO8601_OFFSET_DATE_TIME_HHCMM} [%u{RANDOM}] %5p [%t] [%c.%M:%L] [%X{correlationId}/%X{jSessionId}] [%X{environment}] [%X{tenant}]%n%message%n%xThrowable</Pattern>
+                        </PatternLayout>
+                        <Policies>
+                                <TimeBasedTriggeringPolicy />
+                        </Policies>
+                        <DirectWriteRolloverStrategy/>
+                </RollingFile>
+                <RollingFile
+                                name="KNOWAGE_OPERATOR_TRACE"
+                                append="true"
+                                filePattern="${sys:catalina.base}/logs/knowage_OperatorTrace.%d{yyyy-MM-dd}.log"
+                                ignoreExceptions="true"
+                                createOnDemand="true">
+                        <PatternLayout>
+                                <Pattern>%d{ISO8601_OFFSET_DATE_TIME_HHCMM} [%u{RANDOM}] %5p [%t] [%c.%M:%L] [%X{correlationId}/%X{jSessionId}] [%X{environment}] [%X{tenant}]%n%message%n%xThrowable</Pattern>
+                        </PatternLayout>
+                        <Policies>
+                                <TimeBasedTriggeringPolicy />
+                        </Policies>
+                        <DirectWriteRolloverStrategy/>
+                </RollingFile>
 	</Appenders>
 	<Loggers>
 		<logger name="audit" additivity="false" level="info">
@@ -124,13 +118,13 @@
 		<logger name="it.eng" additivity="false" level="error">
 			<AppenderRef ref="KNOWAGE_CORE" />
 		</logger>
-		<logger name="it.eng.knowage.mail.MailSessionBuilder" additivity="false" level="warn">
+		<logger name="it.eng.knowage.mail.MailSessionBuilder" additivity="false" level="error">
 			<AppenderRef ref="KNOWAGE_CORE" />
 		</logger>
 		<logger name="it.eng.knowage.tools.servermanager" additivity="false" level="error">
 			<AppenderRef ref="KNOWAGE_SERVER_MANAGER" />
 		</logger>
-		<logger name="it.eng.spagobi.api.v2.export" additivity="false" level="warn">
+		<logger name="it.eng.spagobi.api.v2.export" additivity="false" level="waerrorrn">
 			<AppenderRef ref="KNOWAGE_CORE" />
 		</logger>
 		<logger name="it.eng.spagobi.behaviouralmodel.lov.bo.QueryDetail" additivity="false" level="error">
@@ -142,7 +136,7 @@
 		<logger name="it.eng.spagobi.commons.utilities.urls.WebUrlBuilder" level="error">
 			<AppenderRef ref="KNOWAGE_CORE" />
 		</logger>
-		<logger name="it.eng.spagobi.tools.dataset.associativity.strategy.OuterAssociativityManager" level="warn" additivity="false">
+		<logger name="it.eng.spagobi.tools.dataset.associativity.strategy.OuterAssociativityManager" level="error" additivity="false">
 			<AppenderRef ref="KNOWAGE_CORE" />
 		</logger>
 		<logger name="it.eng.spagobi.tools.dataset.common.dataproxy.JDBCBigQueryDataProxy" level="info" additivity="false">
@@ -166,7 +160,7 @@
 		<logger name="it.eng.spagobi.tools.dataset.common.dataproxy.SolrDataProxy" level="info" additivity="false">
 			<AppenderRef ref="KNOWAGE_DATASET_AUDIT" />
 		</logger>
-		<logger name="it.eng.spagobi.tools.dataset.graph.associativity.container.InlineViewAssociativeDatasetContainer" level="warn" additivity="false">
+		<logger name="it.eng.spagobi.tools.dataset.graph.associativity.container.InlineViewAssociativeDatasetContainer" level="error" additivity="false">
 			<AppenderRef ref="KNOWAGE_CORE" />
 		</logger>
 		<logger name="it.eng.spagobi.tools.hierarchiesmanagement.service.rest" additivity="false" level="error">
@@ -178,19 +172,21 @@
 		<logger name="org.jbpm" level="error">
 			<AppenderRef ref="KNOWAGE_CORE" />
 		</logger>
-		<logger name="org.quartz" additivity="false" level="trace">
+		<logger name="org.quartz" additivity="false" level="error">
 			<AppenderRef ref="KNOWAGE_QUARTZ" />
 		</logger>
-		<logger name="it.eng.spagobi.tools.scheduler.init.QuartzInitializer" additivity="false" level="warn">
+		<logger name="it.eng.spagobi.tools.scheduler.init.QuartzInitializer" additivity="false" level="waerrorrn">
 			<AppenderRef ref="KNOWAGE_QUARTZ" />
 		</logger>
+		<!--
 		<logger name="Spago" level="error" additivity="false">
 			<AppenderRef ref="KNOWAGE_CORE" />
 		</logger>
-		<logger name="it.eng.spagobi.commons.utilities.ObjectsAccessVerifier" level="warn" additivity="false">
+		-->
+		<logger name="it.eng.spagobi.commons.utilities.ObjectsAccessVerifier" level="error" additivity="false">
 			<AppenderRef ref="KNOWAGE_CORE" />
 		</logger>
-		<logger name="it.eng.knowage.functionscatalog.utils.CatalogFunctionDataProxy" level="warn" additivity="false">
+		<logger name="it.eng.knowage.functionscatalog.utils.CatalogFunctionDataProxy" level="error" additivity="false">
 			<AppenderRef ref="KNOWAGE_CORE" />
 		</logger>
 		<logger name="it.eng.knowage.encryption.DecryptionDataStoreTransformer" level="error" additivity="false">
@@ -199,10 +195,10 @@
 		<logger name="it.eng.knowage.encryption.DataEncryptionInitializer" level="error" additivity="false">
 			<AppenderRef ref="KNOWAGE_CORE" />
 		</logger>
-		<logger name="privacymanager.wrapper.PrivacyManagerAPIImpl" level="warn" additivity="false">
+		<logger name="privacymanager.wrapper.PrivacyManagerAPIImpl" level="error" additivity="false">
 			<AppenderRef ref="KNOWAGE_CORE" />
 		</logger>
-		<logger name="it.eng.knowage.privacymanager.PrivacyManagerDataStoreTransformer" level="warn" additivity="false">
+		<logger name="it.eng.knowage.privacymanager.PrivacyManagerDataStoreTransformer" level="error" additivity="false">
 			<AppenderRef ref="KNOWAGE_CORE" />
 		</logger>
 		<logger name="it.eng.knowage.privacymanager.PMConfiguration" level="error" additivity="false">
@@ -211,7 +207,7 @@
 		<logger name="it.eng.knowage.privacymanager.EventBuilderUtils" level="error" additivity="false">
 			<AppenderRef ref="KNOWAGE_CORE" />
 		</logger>
-		<logger name="it.eng.spagobi.tools.dataset.actions.AbstractDatasetActionsChecker" level="debug" additivity="false">
+		<logger name="it.eng.spagobi.tools.dataset.actions.AbstractDatasetActionsChecker" level="error" additivity="false">
 			<AppenderRef ref="KNOWAGE_CORE" />
 		</logger>
 		<Root level="error">
