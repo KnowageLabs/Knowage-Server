@@ -2,7 +2,7 @@
 <Configuration status="error">
 	<Appenders>
 		                <RollingFile
-                                name="KNOWAGE_DATASET_AUDIT"
+                                name="KNOWAGE_DATKNOWAGE_GEO_REPORT_ENGINEASET_AUDIT"
                                 append="true"
                                 filePattern="${sys:catalina.base}/logs/knowageGeoReportEngine.%d{yyyy-MM-dd}.log"
                                 ignoreExceptions="true"
