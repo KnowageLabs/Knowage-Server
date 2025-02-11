@@ -1606,7 +1606,7 @@ public class ExcelExporter extends AbstractFormatExporter {
             int isGroup = groupsAndColumnsMap.isEmpty() ? 0 : 1;
             Map<String, JSONArray> columnStylesMap = getStylesMap(settings);
             Map<String, CellStyle> columnsCellStyles = new HashMap<>();
-            CellStyle cellStyle;
+            CellStyle cellStyle = null;
             for (int r = 0; r < rows.length(); r++) {
                 JSONObject rowObject = rows.getJSONObject(r);
                 Row row;
@@ -1616,6 +1616,10 @@ public class ExcelExporter extends AbstractFormatExporter {
                     row = sheet.createRow((offset + r + isGroup) + 2);
                 }
 
+                boolean styleAlreadyAppliedToPreviousCells = false;
+                String styleKeyToApplyToTheEntireRow = null;
+                List<Boolean> styleCanBeOverriddenByWholeRowStyle = new ArrayList<>();
+
                 for (int c = 0; c < columnsOrdered.length(); c++) {
                     JSONObject column = columnsOrdered.getJSONObject(c);
                     String type = getCellType(column, column.getString("name"));
@@ -1624,28 +1628,52 @@ public class ExcelExporter extends AbstractFormatExporter {
                     Cell cell = row.createCell(c);
                     Object value = rowObject.get(colIndex);
 
-                    if (value != null) {
-                        String stringifiedValue = value.toString();
-                        JSONObject theRightStyle = getTheRightStyle(columnStylesMap, stringifiedValue, column.optString("id"));
-                        String styleKey = getStyleKey(column, theRightStyle);
-                        if (columnAlreadyHasTheRightStyle(styleKey, columnsCellStyles)) {
-                            cellStyle = columnsCellStyles.get(styleKey);
-                        } else {
-                            Style styleCustomObj = getStyleCustomObjFromProps(sheet, theRightStyle);
-                            cellStyle = buildPoiCellStyle(styleCustomObj, (XSSFFont) wb.createFont(), wb);
-                            columnsCellStyles.put(getStyleKey(column, theRightStyle), cellStyle);
-                        }
+                    String stringifiedValue = value != null ? value.toString() : "";
+                    JSONObject theRightStyle = getTheRightStyle(columnStylesMap, stringifiedValue, column.optString("id"));
 
-                        cell.setCellStyle(cellStyle);
-                        doTypeLogic(wb, getPrecisionByColumn(settings, column), type, cell, stringifiedValue);
+                    styleCanBeOverriddenByWholeRowStyle.add(c, styleCanBeOverridden(theRightStyle));
+
+                    if (theRightStyle.has("applyToWholeRow") && theRightStyle.getBoolean("applyToWholeRow")) {
+                        String styleKey = getStyleKey(column, theRightStyle);
+                        if (!styleAlreadyAppliedToPreviousCells) {
+                            cellStyle = getCellStyleByStyleKey(wb, sheet, styleKey, columnsCellStyles, theRightStyle, column);
+                            for (int previousCell = c - 1; previousCell >= 0; previousCell--) {
+                                if (styleCanBeOverriddenByWholeRowStyle.get(previousCell).equals(Boolean.TRUE)) {
+                                    row.getCell(previousCell).setCellStyle(cellStyle);
+                                }
+                            }
+                            styleAlreadyAppliedToPreviousCells = true;
+                        }
+                        styleKeyToApplyToTheEntireRow = styleKey;
+                    } else if (styleKeyToApplyToTheEntireRow != null && styleCanBeOverridden(theRightStyle)) {
+                        cellStyle = columnsCellStyles.get(styleKeyToApplyToTheEntireRow);
+                    } else {
+                        String styleKey = getStyleKey(column, theRightStyle);
+                        cellStyle = getCellStyleByStyleKey(wb, sheet, styleKey, columnsCellStyles, theRightStyle, column);
                     }
+                    cell.setCellStyle(cellStyle);
+                    doTypeLogic(wb, getPrecisionByColumn(settings, column), type, cell, stringifiedValue);
                 }
             }
-
-
         } catch (Exception e) {
             throw new SpagoBIRuntimeException("Cannot write data to Excel file", e);
         }
+    }
+
+    private static boolean styleCanBeOverridden(JSONObject theRightStyle) throws JSONException {
+        return (theRightStyle.has("type") && (theRightStyle.getString("type").equals(STATIC_CUSTOM_STYLE) || theRightStyle.getString("type").equals(GLOBAL_STYLE))) || !theRightStyle.has("type");
+    }
+
+    private CellStyle getCellStyleByStyleKey(Workbook wb, Sheet sheet, String styleKey, Map<String, CellStyle> columnsCellStyles, JSONObject theRightStyle, JSONObject column) throws JSONException {
+        CellStyle cellStyle;
+        if (columnAlreadyHasTheRightStyle(styleKey, columnsCellStyles)) {
+            cellStyle = columnsCellStyles.get(styleKey);
+        } else {
+            Style styleCustomObj = getStyleCustomObjFromProps(sheet, theRightStyle);
+            cellStyle = buildPoiCellStyle(styleCustomObj, (XSSFFont) wb.createFont(), wb);
+            columnsCellStyles.put(getStyleKey(column, theRightStyle), cellStyle);
+        }
+        return cellStyle;
     }
 
     private static String getStyleKey(JSONObject column, JSONObject theRightStyle) throws JSONException {
@@ -1740,6 +1768,7 @@ public class ExcelExporter extends AbstractFormatExporter {
                 if (style.has("condition") && conditionIsApplicable(style.getJSONObject("condition"), stringifiedValue)) {
                     style.put("type", CONDITIONAL_STYLE);
                     style.put("styleIndex", i);
+                    style.put("applyToWholeRow", style.getBoolean("applyToWholeRow"));
                     return style;
                 } else if (!style.has("condition")) {
                     nonConditionalStyle = style;
@@ -1757,8 +1786,20 @@ public class ExcelExporter extends AbstractFormatExporter {
     private boolean conditionIsApplicable(JSONObject condition, String stringifiedValue) {
         try {
             return switch (condition.optString("operator")) {
-                case "==" -> stringifiedValue.equals(condition.getString("value"));
-                case "!=" -> !stringifiedValue.equals(condition.getString("value"));
+                case "==" -> {
+                    try {
+                        yield Double.parseDouble(stringifiedValue) == Double.parseDouble(condition.getString("value"));
+                    } catch (RuntimeException rte) {
+                        yield stringifiedValue.equals(condition.getString("value"));
+                    }
+                }
+                case "!=" -> {
+                    try {
+                        yield Double.parseDouble(stringifiedValue) != Double.parseDouble(condition.getString("value"));
+                    } catch (RuntimeException rte) {
+                        yield stringifiedValue.equals(condition.getString("value"));
+                    }
+                }
                 case ">" -> {
                     if (stringIsNotEmpty(stringifiedValue)) {
                         yield Double.parseDouble((stringifiedValue)) > Double.parseDouble(condition.getString("value"));
