@@ -77,9 +77,9 @@ public class ExcelExporter extends AbstractFormatExporter {
     private static final String BOTH = "both";
 
     public static final String UNIQUE_ALIAS_PLACEHOLDER = "_$_";
-    private static final String GLOBAL_STYLE = "global";
     private static final String STATIC_CUSTOM_STYLE = "static";
     private static final String CONDITIONAL_STYLE = "conditional";
+    private static final String ALL_COLUMNS_STYLE = "all";
 
     private final boolean isSingleWidgetExport;
     private int uniqueId = 0;
@@ -1583,7 +1583,7 @@ public class ExcelExporter extends AbstractFormatExporter {
                     CellStyle headerCellStyle;
                     XSSFFont font = (XSSFFont) wb.createFont();
                     if (settings != null && settings.has("style") && settings.getJSONObject("style").has("headers")) {
-                        Style style = getStyleCustomObjFromProps(sheet, settings.getJSONObject("style").getJSONObject("headers"));
+                        Style style = getStyleCustomObjFromProps(sheet, settings.getJSONObject("style").getJSONObject("headers"), "");
                         headerCellStyle = buildPoiCellStyle(style, font, wb);
                     } else {
                         headerCellStyle = buildCellStyle(sheet, true, HorizontalAlignment.LEFT, VerticalAlignment.CENTER, (short) 11);
@@ -1604,9 +1604,13 @@ public class ExcelExporter extends AbstractFormatExporter {
 //			mapparameters = createmapparameters(mapparameters);
 //			variablesmap = createmapvariables(variablesmap);
             int isGroup = groupsAndColumnsMap.isEmpty() ? 0 : 1;
+
+            assert settings != null;
+
             Map<String, JSONArray> columnStylesMap = getStylesMap(settings);
             Map<String, CellStyle> columnsCellStyles = new HashMap<>();
             CellStyle cellStyle = null;
+            JSONObject alternatedRows = getRowStyle(settings);
             for (int r = 0; r < rows.length(); r++) {
                 JSONObject rowObject = rows.getJSONObject(r);
                 Row row;
@@ -1616,10 +1620,13 @@ public class ExcelExporter extends AbstractFormatExporter {
                     row = sheet.createRow((offset + r + isGroup) + 2);
                 }
 
+                boolean rowIsEven = (r % 2 == 0);
+                String rawCurrentNumberType = rowIsEven ? "even" : "odd";
+                String defaultRowBackgroundColor = getDefaultRowBackgroundColor(alternatedRows, rowIsEven);
+
                 boolean styleAlreadyAppliedToPreviousCells = false;
                 String styleKeyToApplyToTheEntireRow = null;
                 List<Boolean> styleCanBeOverriddenByWholeRowStyle = new ArrayList<>();
-
                 for (int c = 0; c < columnsOrdered.length(); c++) {
                     JSONObject column = columnsOrdered.getJSONObject(c);
                     String type = getCellType(column, column.getString("name"));
@@ -1629,14 +1636,15 @@ public class ExcelExporter extends AbstractFormatExporter {
                     Object value = rowObject.get(colIndex);
 
                     String stringifiedValue = value != null ? value.toString() : "";
-                    JSONObject theRightStyle = getTheRightStyle(columnStylesMap, stringifiedValue, column.optString("id"));
+                    JSONObject theRightStyle = getTheRightStyleByColumnIdAndValue(columnStylesMap, stringifiedValue, column.optString("id"), defaultRowBackgroundColor);
 
                     styleCanBeOverriddenByWholeRowStyle.add(c, styleCanBeOverridden(theRightStyle));
 
+                    String styleKey;
                     if (theRightStyle.has("applyToWholeRow") && theRightStyle.getBoolean("applyToWholeRow")) {
-                        String styleKey = getStyleKey(column, theRightStyle);
+                        styleKey = getStyleKey(column, theRightStyle, rawCurrentNumberType);
                         if (!styleAlreadyAppliedToPreviousCells) {
-                            cellStyle = getCellStyleByStyleKey(wb, sheet, styleKey, columnsCellStyles, theRightStyle, column);
+                            cellStyle = getCellStyleByStyleKey(wb, sheet, styleKey, columnsCellStyles, theRightStyle, defaultRowBackgroundColor);
                             for (int previousCell = c - 1; previousCell >= 0; previousCell--) {
                                 if (styleCanBeOverriddenByWholeRowStyle.get(previousCell).equals(Boolean.TRUE)) {
                                     row.getCell(previousCell).setCellStyle(cellStyle);
@@ -1648,8 +1656,8 @@ public class ExcelExporter extends AbstractFormatExporter {
                     } else if (styleKeyToApplyToTheEntireRow != null && styleCanBeOverridden(theRightStyle)) {
                         cellStyle = columnsCellStyles.get(styleKeyToApplyToTheEntireRow);
                     } else {
-                        String styleKey = getStyleKey(column, theRightStyle);
-                        cellStyle = getCellStyleByStyleKey(wb, sheet, styleKey, columnsCellStyles, theRightStyle, column);
+                        styleKey = getStyleKey(column, theRightStyle, rawCurrentNumberType);
+                        cellStyle = getCellStyleByStyleKey(wb, sheet, styleKey, columnsCellStyles, theRightStyle, defaultRowBackgroundColor);
                     }
                     cell.setCellStyle(cellStyle);
                     doTypeLogic(wb, getPrecisionByColumn(settings, column), type, cell, stringifiedValue);
@@ -1660,24 +1668,48 @@ public class ExcelExporter extends AbstractFormatExporter {
         }
     }
 
-    private static boolean styleCanBeOverridden(JSONObject theRightStyle) throws JSONException {
-        return (theRightStyle.has("type") && (theRightStyle.getString("type").equals(STATIC_CUSTOM_STYLE) || theRightStyle.getString("type").equals(GLOBAL_STYLE))) || !theRightStyle.has("type");
+    private String getDefaultRowBackgroundColor(JSONObject altenatedRows, boolean rowIsEven) {
+        try {
+            if (altenatedRows != null && altenatedRows.getBoolean("enabled")) {
+                    if (rowIsEven) {
+                        return altenatedRows.optString("evenBackgroundColor");
+                    } else {
+                        return altenatedRows.optString("oddBackgroundColor");
+                    }
+            }
+        } catch (JSONException e) {
+            LOGGER.error("Error while getting current row background color", e);
+        }
+        return "";
     }
 
-    private CellStyle getCellStyleByStyleKey(Workbook wb, Sheet sheet, String styleKey, Map<String, CellStyle> columnsCellStyles, JSONObject theRightStyle, JSONObject column) throws JSONException {
+    private JSONObject getRowStyle(JSONObject settings) {
+        JSONObject style = settings.optJSONObject("style");
+        if (style != null) {
+            JSONObject rows = style.optJSONObject("rows");
+            return rows.optJSONObject("alternatedRows");
+        }
+        return null;
+    }
+
+    private static boolean styleCanBeOverridden(JSONObject theRightStyle) throws JSONException {
+        return (theRightStyle.has("type") && theRightStyle.getString("type").equals(STATIC_CUSTOM_STYLE)) || !theRightStyle.has("type");
+    }
+
+    private CellStyle getCellStyleByStyleKey(Workbook wb, Sheet sheet, String styleKey, Map<String, CellStyle> columnsCellStyles, JSONObject theRightStyle, String defaultRowBackgroundColor) {
         CellStyle cellStyle;
         if (columnAlreadyHasTheRightStyle(styleKey, columnsCellStyles)) {
             cellStyle = columnsCellStyles.get(styleKey);
         } else {
-            Style styleCustomObj = getStyleCustomObjFromProps(sheet, theRightStyle);
+            Style styleCustomObj = getStyleCustomObjFromProps(sheet, theRightStyle, defaultRowBackgroundColor);
             cellStyle = buildPoiCellStyle(styleCustomObj, (XSSFFont) wb.createFont(), wb);
-            columnsCellStyles.put(getStyleKey(column, theRightStyle), cellStyle);
+            columnsCellStyles.put(styleKey, cellStyle);
         }
         return cellStyle;
     }
 
-    private static String getStyleKey(JSONObject column, JSONObject theRightStyle) throws JSONException {
-        return column.optString("id").concat(theRightStyle.getString("type").concat(theRightStyle.getString("styleIndex")));
+    private static String getStyleKey(JSONObject column, JSONObject theRightStyle, String rawCurrentNumberType) throws JSONException {
+        return column.optString("id").concat(theRightStyle.getString("type").concat(theRightStyle.getString("styleIndex").concat(rawCurrentNumberType)));
     }
 
     private boolean columnAlreadyHasTheRightStyle(String styleKey, Map<String, CellStyle> stylesMap) {
@@ -1687,16 +1719,20 @@ public class ExcelExporter extends AbstractFormatExporter {
     private Map<String, JSONArray> getStylesMap(JSONObject settings) {
         Map<String, JSONArray> stylesMap = new HashMap<>();
         try {
-            JSONArray styles = settings.getJSONObject("style").getJSONObject("columns").getJSONArray("styles");
-            stylesMap = buildStylesMap(stylesMap, styles);
+            JSONObject columns = settings.getJSONObject("style").getJSONObject("columns");
 
-            if (settings.has("conditionalStyles")) {
+            if (columns.getBoolean("enabled")) {
+                JSONArray styles = columns.getJSONArray("styles");
+                stylesMap = buildStylesMap(stylesMap, styles);
+            }
+
+            if (settings.has("conditionalStyles") && settings.getJSONObject("conditionalStyles").getBoolean("enabled")) {
                 JSONObject conditionalStyles = settings.getJSONObject("conditionalStyles");
                 JSONArray conditions = conditionalStyles.getJSONArray("conditions");
 
                 stylesMap = buildStylesMap(stylesMap, conditions);
-
             }
+
         } catch (JSONException e) {
             LOGGER.debug("No styles found in settings", e);
             return stylesMap;
@@ -1746,40 +1782,63 @@ public class ExcelExporter extends AbstractFormatExporter {
         return target;
     }
 
-    private JSONObject getTheRightStyle(Map<String, JSONArray> styles, String stringifiedValue, String columnId) {
+    private JSONObject getTheRightStyleByColumnIdAndValue(Map<String, JSONArray> styles, String stringifiedValue, String columnId, String defaultRowBackgroundColor) throws JSONException {
         JSONObject customStyle = getTheStyleByValueAndColumnId(styles, stringifiedValue, columnId);
 
-        if (!customStyle.has("properties")) {
-            return getTheStyleByValueAndColumnId(styles, stringifiedValue, "all");
+        if (customStyle.has("properties") && customStyle.getJSONObject("properties").length() == 0) {
+            return getTheStyleByValueAndColumnId(styles, stringifiedValue, ALL_COLUMNS_STYLE);
         }
         return customStyle;
     }
 
 
     private JSONObject getTheStyleByValueAndColumnId(Map<String, JSONArray> styles, String stringifiedValue, String columnId) {
-        JSONObject nonConditionalStyle = new JSONObject();
         try {
-            JSONArray columnStyles = styles.get(columnId);
-            if (columnStyles == null) {
-                columnStyles = styles.get("all");
-            }
-            for (int i = 0; i < columnStyles.length(); i++) {
-                JSONObject style = columnStyles.getJSONObject(i);
-                if (style.has("condition") && conditionIsApplicable(style.getJSONObject("condition"), stringifiedValue)) {
-                    style.put("type", CONDITIONAL_STYLE);
-                    style.put("styleIndex", i);
-                    style.put("applyToWholeRow", style.getBoolean("applyToWholeRow"));
-                    return style;
-                } else if (!style.has("condition")) {
-                    nonConditionalStyle = style;
+            JSONObject nonConditionalProps = new JSONObject();
+            if (styles != null) {
+                JSONArray columnStyles = styles.get(columnId);
+
+                if (columnStyles == null) {
+                    if (styles.get(ALL_COLUMNS_STYLE) == null) {
+                        return getStyleObject(nonConditionalProps, STATIC_CUSTOM_STYLE, 0, false);
+                    } else {
+                        columnStyles = styles.get(ALL_COLUMNS_STYLE);
+                    }
                 }
+
+                for (int i = 0; i < columnStyles.length(); i++) {
+                    JSONObject style = columnStyles.getJSONObject(i);
+                    if (style.has("condition") && conditionIsApplicable(style.getJSONObject("condition"), stringifiedValue)) {
+                        return getStyleObject(style.getJSONObject("properties"), CONDITIONAL_STYLE, i, style.getBoolean("applyToWholeRow"));
+                    } else if (!style.has("condition")) {
+                        nonConditionalProps = style.getJSONObject("properties");
+                    }
+                }
+            } else {
+                return getStyleObject(nonConditionalProps, STATIC_CUSTOM_STYLE, 0, false);
             }
-            nonConditionalStyle.put("type", STATIC_CUSTOM_STYLE);
-            nonConditionalStyle.put("styleIndex", 0);
-            return nonConditionalStyle;
+            return getStyleObject(nonConditionalProps, STATIC_CUSTOM_STYLE, 0, false);
         } catch (JSONException e) {
             LOGGER.error("Error while checking if conditional style applies", e);
             throw new SpagoBIRuntimeException("Error while checking if conditional style applies", e);
+        }
+    }
+
+    private JSONObject getStyleObject(JSONObject properties, String type, int styleIndex, boolean applyToWholeRow) {
+        try {
+            JSONObject style = new JSONObject();
+            style.put("properties", properties);
+            style.put("type", type);
+            style.put("styleIndex", styleIndex);
+
+            if (style.get("type").equals(CONDITIONAL_STYLE)) {
+                style.put("applyToWholeRow", applyToWholeRow);
+            }
+
+            return style;
+        } catch (JSONException e) {
+            LOGGER.error("Error while building default non conditional style", e);
+            throw new SpagoBIRuntimeException("Error while building default non conditional style", e);
         }
     }
 
@@ -1837,13 +1896,13 @@ public class ExcelExporter extends AbstractFormatExporter {
         }
     }
 
-    private Style getStyleCustomObjFromProps(Sheet sheet, JSONObject props) {
+    private Style getStyleCustomObjFromProps(Sheet sheet, JSONObject props, String defaultRowBackgroundColor) {
         Style style = new Style();
-        props = props.optJSONObject("properties");
         style.setSheet(sheet);
+        props = props.optJSONObject("properties");
         style.setAlignItems(props.optString("align-items"));
         style.setJustifyContent(props.optString("justify-content"));
-        style.setBackgroundColor(props.optString("background-color"));
+        style.setBackgroundColor(props.optString("background-color").isEmpty() ? defaultRowBackgroundColor : props.optString("background-color"));
         style.setColor(props.optString("color"));
         style.setFontSize(props.optString("font-size"));
         style.setFontWeight(props.optString("font-weight"));
