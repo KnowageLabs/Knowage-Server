@@ -38,10 +38,16 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.util.AreaReference;
 import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.ss.util.WorkbookUtil;
+import org.apache.poi.xssf.streaming.SXSSFSheet;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFFont;
+import org.apache.poi.xssf.usermodel.XSSFPivotTable;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -537,6 +543,51 @@ public class ExcelExporter extends AbstractFormatExporter {
         return dashboardSelections;
     }
 
+    @Override
+    protected JSONObject getPivotSelections(JSONObject widget, String datasetLabel) {
+        JSONObject pivotSelections;
+        try {
+            JSONObject settings = widget.getJSONObject("settings");
+            JSONObject fields = widget.getJSONObject("fields");
+
+            pivotSelections = buildPivotSelections(fields, datasetLabel, settings);
+        } catch (Exception e) {
+            LOGGER.error("Cannot get pivot selections", e);
+            throw new SpagoBIRuntimeException("Cannot get pivot selections", e);
+        }
+        return pivotSelections;
+    }
+
+    private JSONObject buildPivotSelections(JSONObject fields, String datasetLabel, JSONObject settings) {
+        JSONObject selections = new JSONObject();
+        try {
+            selections.put("aggregations", new JSONObject());
+            JSONObject aggregations = selections.getJSONObject("aggregations");
+            aggregations.put("measures", new JSONArray());
+            JSONArray measures = aggregations.getJSONArray("measures");
+            aggregations.put("categories", new JSONArray());
+            JSONArray categories = aggregations.getJSONArray("categories");
+
+            JSONArray columns = fields.getJSONArray("columns");
+            JSONArray data = fields.getJSONArray("data");
+
+            for (int i = 0; i < columns.length(); i++) {
+                JSONObject category = getCategory(columns.getJSONObject(i), new JSONObject(), new JSONObject());
+                categories.put(category);
+            }
+            for (int i = 0; i < data.length(); i++) {
+                JSONObject measure = getMeasure(data.getJSONObject(i), new JSONObject(), new JSONObject());
+                measures.put(measure);
+            }
+            aggregations.put("dataset", datasetLabel);
+        } catch (Exception e) {
+            LOGGER.error("Cannot build dashboard selections", e);
+            throw new SpagoBIRuntimeException("Cannot build dashboard selections", e);
+        }
+        return selections;
+
+    }
+
     private JSONObject buildDashboardSelections(JSONArray columns, String datasetLabel, JSONObject settings) {
         JSONObject selections = new JSONObject();
         String sortingColumnId = settings.optString("sortingColumn");
@@ -645,15 +696,24 @@ public class ExcelExporter extends AbstractFormatExporter {
     }
 
     private String getSortingObj(JSONObject sortingObj, JSONObject drillSortingObj) {
-        if (sortingObj != null && drillSortingObj != null) {
+        if (objectsAreNotEmpty(sortingObj, drillSortingObj)) {
             return BOTH;
-        } else if (sortingObj != null) {
+        } else if (objectsAreNotEmpty(sortingObj)) {
             return SORTING_OBJ;
-        } else if (drillSortingObj != null) {
+        } else if (objectsAreNotEmpty(drillSortingObj)) {
             return DRILL_SORTING_OBJ;
         } else {
             return "";
         }
+    }
+
+    private boolean objectsAreNotEmpty(JSONObject... objects) {
+        for (JSONObject obj : objects) {
+            if (obj == null || obj.length() == 0) {
+                return false;
+            }
+        }
+        return true;
     }
 
 
@@ -1526,10 +1586,8 @@ public class ExcelExporter extends AbstractFormatExporter {
             JSONArray columnsOrdered;
             if (widgetData.has("columns")) {
                 hiddenColumns = getHiddenColumnsList(columnSelectedOfDataset);
-                columnsOrdered = getDashboardTableOrderedColumns(columnSelectedOfDataset, columns);
-            } else {
-                columnsOrdered = columns;
             }
+            columnsOrdered = columns;
 
             JSONArray groupsFromWidgetContent = getGroupsFromWidgetContent(widgetData);
             Map<String, String> groupsAndColumnsMap = getDashboardGroupAndColumnsMap(widgetData, groupsFromWidgetContent);
@@ -1671,11 +1729,11 @@ public class ExcelExporter extends AbstractFormatExporter {
     private String getDefaultRowBackgroundColor(JSONObject altenatedRows, boolean rowIsEven) {
         try {
             if (altenatedRows != null && altenatedRows.getBoolean("enabled")) {
-                    if (rowIsEven) {
-                        return altenatedRows.optString("evenBackgroundColor");
-                    } else {
-                        return altenatedRows.optString("oddBackgroundColor");
-                    }
+                if (rowIsEven) {
+                    return altenatedRows.optString("evenBackgroundColor");
+                } else {
+                    return altenatedRows.optString("oddBackgroundColor");
+                }
             }
         } catch (JSONException e) {
             LOGGER.error("Error while getting current row background color", e);
@@ -1685,7 +1743,7 @@ public class ExcelExporter extends AbstractFormatExporter {
 
     private JSONObject getRowStyle(JSONObject settings) {
         JSONObject style = settings.optJSONObject("style");
-        if (style != null) {
+        if (style != null && style.has("rows")) {
             JSONObject rows = style.optJSONObject("rows");
             return rows.optJSONObject("alternatedRows");
         }
@@ -2346,5 +2404,16 @@ public class ExcelExporter extends AbstractFormatExporter {
 
     }
 
+    public void createPivotTable(Workbook workbook, Sheet sheet, JSONObject settings) {
+        //create pivot
+
+        // Crea una tabella pivot
+        SXSSFWorkbook sxssfWorkbook = (SXSSFWorkbook) workbook;
+        XSSFSheet pivotSheet = sxssfWorkbook.getXSSFWorkbook().createSheet("Pivot");
+        XSSFPivotTable pivotTable = pivotSheet.createPivotTable(new AreaReference("A4:D239", workbook.getSpreadsheetVersion()), new CellReference("A1"), sheet);
+
+        pivotTable.addRowLabel(0);
+        pivotTable.addRowLabel(1);
+    }
 }
 

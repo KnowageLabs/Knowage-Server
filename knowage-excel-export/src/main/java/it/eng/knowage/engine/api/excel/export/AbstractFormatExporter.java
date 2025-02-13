@@ -415,7 +415,12 @@ public abstract class AbstractFormatExporter {
 			IDataSet dataset = DAOFactory.getDataSetDAO().loadDataSetById(datasetId);
 			String datasetLabel = dataset.getLabel();
 
-			JSONObject dashboardSelections = getDashboardSelections(widget, datasetLabel);
+			JSONObject dashboardSelections;
+			if (widget.getString("type").equalsIgnoreCase("static-pivot-table")) {
+				dashboardSelections = getPivotSelections(widget, datasetLabel);
+			} else {
+				dashboardSelections = getDashboardSelections(widget, datasetLabel);
+			}
 
 			//TODO: Ask what this is
 			JSONArray summaryRow = getSummaryRowFromDashboardWidget(widget);
@@ -439,6 +444,7 @@ public abstract class AbstractFormatExporter {
 		return datastore;
 	}
 
+	protected abstract JSONObject getPivotSelections(JSONObject widget, String datasetLabel);
 
 
 	protected JSONObject getDatastore(String datasetLabel, Map<String, Object> map, String selections, int offset,

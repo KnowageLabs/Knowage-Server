@@ -14,7 +14,10 @@ public class DashboardWidgetExporterFactory {
         if (widget.optString("type").equalsIgnoreCase("table")) {
             // table widget supports pagination
             return new DashboardTableExporter(exporter, wb, widget, documentName);
-        } else {
+        } else if (widget.optString("type").equalsIgnoreCase("static-pivot-table")) {
+            return new DashboardPivotExporter(exporter, wb, widget, documentName);
+        }
+        else {
             // chart widget does not support pagination
             return new GenericDashboardWidgetExporter(exporter, wb, widget, documentName);
         }

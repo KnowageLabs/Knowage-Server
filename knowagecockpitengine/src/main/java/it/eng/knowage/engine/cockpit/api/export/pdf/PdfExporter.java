@@ -71,6 +71,11 @@ public class PdfExporter extends AbstractFormatExporter {
 		super(userUniqueIdentifier, body);
 	}
 
+	@Override
+	protected JSONObject getPivotSelections(JSONObject widget, String datasetLabel) {
+		return null;
+	}
+
 	public byte[] getBinaryData(Integer documentId, String documentLabel, String templateString) throws JSONException {
 		if (templateString == null) {
 			ObjTemplate template = null;
