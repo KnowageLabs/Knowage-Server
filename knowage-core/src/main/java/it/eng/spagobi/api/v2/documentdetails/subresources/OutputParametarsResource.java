@@ -17,7 +17,9 @@
  */
 package it.eng.spagobi.api.v2.documentdetails.subresources;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -40,6 +42,8 @@ import it.eng.spagobi.api.AbstractSpagoBIResource;
 import it.eng.spagobi.commons.constants.CommunityFunctionalityConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.services.rest.annotations.UserConstraint;
+import it.eng.spagobi.tools.crossnavigation.dao.ICrossNavigationDAO;
+import it.eng.spagobi.tools.crossnavigation.metadata.SbiCrossNavigationPar;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
 
@@ -102,8 +106,9 @@ public class OutputParametarsResource extends AbstractSpagoBIResource {
 			Gson gson = new Gson();
 			JsonElement lfJsonElement = gson.toJsonTree(outputParameter);
 
-			if (found != null && found)
+			if (found != null && found) {
 				lfJsonElement.getAsJsonObject().addProperty("usedInCrossNavigations", found);
+			}
 
 			return gson.toJson(lfJsonElement);
 
@@ -134,5 +139,19 @@ public class OutputParametarsResource extends AbstractSpagoBIResource {
 		logger.debug("OUT");
 		return outputparId;
 	}
+
+	@GET
+	@Path("{outputparId}/sbicrossnavigation")
+	@Produces("application/json")
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.DOCUMENT_MANAGEMENT_DEV })
+	public List<String> getSbiCrossNavigationFromOutputParameter(@PathParam("id") Integer id, @PathParam("outputparId") Integer outputparId) {
+		logger.debug("IN");
+		ICrossNavigationDAO crossNavigationDao = DAOFactory.getCrossNavigationDAO();
+		List<SbiCrossNavigationPar> listSbiCrossNavigation = crossNavigationDao.listNavigationsByOutputParameters(outputparId);
+		logger.debug("OUT");
+		return Optional.ofNullable(listSbiCrossNavigation).map(x -> x.stream().map(z -> z.getSbiCrossNavigation().getName()).toList())
+				.orElse(Collections.emptyList());
+	}
+
 
 }
