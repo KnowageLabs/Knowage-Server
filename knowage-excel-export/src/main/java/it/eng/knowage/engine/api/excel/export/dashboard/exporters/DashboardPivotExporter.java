@@ -38,7 +38,7 @@ public class DashboardPivotExporter extends GenericDashboardWidgetExporter imple
                     offset += fetchSize;
                     dataStore = excelExporter.getDataStoreForDashboardWidget(widget, offset, fetchSize);
                 }
-                excelExporter.createPivotTable(wb, sheet, settings);
+                excelExporter.createPivotTable(wb, sheet, widget);
                 return 1;
             }
         } catch (Exception e) {

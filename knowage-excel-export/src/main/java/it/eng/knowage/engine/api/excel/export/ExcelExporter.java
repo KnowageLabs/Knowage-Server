@@ -51,6 +51,9 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDataField;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPivotField;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPivotTableStyle;
 
 import javax.ws.rs.core.UriBuilder;
 import java.io.*;
@@ -65,6 +68,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
+import static org.apache.poi.ss.usermodel.DataConsolidateFunction.*;
 
 /**
  * @author Francesco Lucchi (francesco.lucchi@eng.it)
@@ -570,14 +574,27 @@ public class ExcelExporter extends AbstractFormatExporter {
 
             JSONArray columns = fields.getJSONArray("columns");
             JSONArray data = fields.getJSONArray("data");
+            JSONArray rows = fields.getJSONArray("rows");
 
+            String sortingColumnId = "";
+            String sortingOrder = "";
             for (int i = 0; i < columns.length(); i++) {
-                JSONObject category = getCategory(columns.getJSONObject(i), new JSONObject(), new JSONObject());
-                categories.put(category);
+                JSONObject column = columns.getJSONObject(i);
+                String sort = column.optString("sort");
+                if (!sort.isEmpty()) {
+                    sortingColumnId = column.getString("id");
+                    sortingOrder = sort;
+                }
+                column = getCategory(column, getSortingObj(column, sortingColumnId, sortingOrder), new JSONObject());
+                categories.put(column);
+            }
+            for (int i = 0; i < rows.length(); i++) {
+                JSONObject row = getCategory(rows.getJSONObject(i), new JSONObject(), new JSONObject());
+                categories.put(row);
             }
             for (int i = 0; i < data.length(); i++) {
-                JSONObject measure = getMeasure(data.getJSONObject(i), new JSONObject(), new JSONObject());
-                measures.put(measure);
+                JSONObject datum = getMeasure(data.getJSONObject(i), new JSONObject(), new JSONObject());
+                measures.put(datum);
             }
             aggregations.put("dataset", datasetLabel);
         } catch (Exception e) {
@@ -2404,16 +2421,55 @@ public class ExcelExporter extends AbstractFormatExporter {
 
     }
 
-    public void createPivotTable(Workbook workbook, Sheet sheet, JSONObject settings) {
-        //create pivot
-
-        // Crea una tabella pivot
+    public void createPivotTable(Workbook workbook, Sheet sheet, JSONObject widget) {
         SXSSFWorkbook sxssfWorkbook = (SXSSFWorkbook) workbook;
         XSSFSheet pivotSheet = sxssfWorkbook.getXSSFWorkbook().createSheet("Pivot");
-        XSSFPivotTable pivotTable = pivotSheet.createPivotTable(new AreaReference("A4:D239", workbook.getSpreadsheetVersion()), new CellReference("A1"), sheet);
+        int lastRow = sheet.getLastRowNum();
+        int lastColumn = sheet.getRow(lastRow).getLastCellNum();
+        String finalCell = new CellReference(lastRow, lastColumn - 1).formatAsString();
+        XSSFPivotTable pivotTable = pivotSheet.createPivotTable(new AreaReference("A4:".concat(finalCell), workbook.getSpreadsheetVersion()), new CellReference("A1"), sheet);
 
-        pivotTable.addRowLabel(0);
-        pivotTable.addRowLabel(1);
+        try {
+            JSONObject fields = widget.getJSONObject("fields");
+            JSONArray columns = fields.getJSONArray("columns");
+            JSONArray rows = fields.getJSONArray("rows");
+            JSONArray data = fields.getJSONArray("data");
+
+            int counter = 0;
+
+            for (int i = 0; i < columns.length(); ++i) {
+                pivotTable.addRowLabel(counter);
+                counter++;
+            }
+
+            for (int i = 0; i < rows.length(); ++i) {
+                pivotTable.addRowLabel(counter);
+                counter++;
+            }
+
+            for (int i = 0; i < data.length(); ++i) {
+                JSONObject datum = data.getJSONObject(i);
+                pivotTable.addColumnLabel(getAggregrationFunction(datum.getString("aggregation").toUpperCase()), counter, datum.getString("alias"));
+                counter++;
+            }
+
+            CTPivotTableStyle pivotTableStyle = pivotTable.getCTPivotTableDefinition().getPivotTableStyleInfo();
+        } catch (JSONException e) {
+            LOGGER.error("Error while creating pivot table", e);
+        }
+
+    }
+
+    private DataConsolidateFunction getAggregrationFunction(String aggregation) {
+
+        return switch (aggregation) {
+            case "SUM" -> SUM;
+            case "COUNT" -> COUNT;
+            case "AVG" -> AVERAGE;
+            case "MAX" -> MAX;
+            case "MIN" -> MIN;
+            default -> throw new IllegalStateException("Unexpected value: " + aggregation);
+        };
     }
 }
 
