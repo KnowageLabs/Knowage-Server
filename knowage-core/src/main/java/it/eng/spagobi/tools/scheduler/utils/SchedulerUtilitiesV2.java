@@ -394,12 +394,21 @@ public class SchedulerUtilitiesV2 {
 			saveOptString += serializeSaveAsMailOptions(dispatchContext);
 			saveOptString += serializeSaveAsDistributionListOptions(dispatchContext, uniqueDispatchContextName, trigg,
 					runImmediately, profile);
+			saveOptString += serializeSaveOutputType(dispatchContext);
 
 			message.append("   	   <PARAMETER name=\"biobject_id_" + uniqueDispatchContextName + "\" value=\""
 					+ saveOptString + "\" />");
 		}
 
 		message.append("   </PARAMETERS>");
+	}
+
+	private static String serializeSaveOutputType(DispatchContext dispatchContext) {
+		String saveOptString = "";
+		if (dispatchContext.getOutputTypeTrigger() != null) {
+			saveOptString += "outputType=" + dispatchContext.getOutputTypeTrigger() + "%26";
+		}
+		return saveOptString;
 	}
 
 	private static String serializeSaveAsSnapshotOptions(DispatchContext dispatchContext) {
@@ -700,9 +709,14 @@ public class SchedulerUtilitiesV2 {
 			getSaveAsDocumentOptions(docum.getJSONObject(i), dispatchContext, jerr);
 			getSaveAsMailOptions(docum.getJSONObject(i), dispatchContext, jerr);
 			getSaveAsDistributionListOptions(docum.getJSONObject(i), dispatchContext, jerr);
+			getSaveOutputType(docum.getJSONObject(i), dispatchContext);
 			saveOptions.put(docum.getJSONObject(i).getString("labelId"), dispatchContext);
 		}
 		return saveOptions;
+	}
+
+	private static void getSaveOutputType(JSONObject request, DispatchContext dispatchContext) throws JSONException {
+		dispatchContext.setOutputTypeTrigger(request.optString("outputType"));
 	}
 
 	private static void getSaveAsSnapshotOptions(JSONObject request, DispatchContext dispatchContext, JSONArray jerr)
@@ -1262,10 +1276,12 @@ public class SchedulerUtilitiesV2 {
 		Collections.sort(functionalities, new Comparator<LowFunctionality>() {
 			@Override
 			public int compare(LowFunctionality f1, LowFunctionality f2) {
-				if (f1.getParentId() == null)
+				if (f1.getParentId() == null) {
 					return -1;
-				if (f2.getParentId() == null)
+				}
+				if (f2.getParentId() == null) {
 					return 1;
+				}
 				if (f1.getParentId().equals(f2.getParentId())) {
 					return f1.getProg().compareTo(f2.getProg());
 				} else {

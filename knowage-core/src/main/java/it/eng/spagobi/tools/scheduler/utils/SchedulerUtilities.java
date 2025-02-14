@@ -306,14 +306,17 @@ public class SchedulerUtilities {
 		String startTime = (String) triggerInfoSB.getAttribute("triggerStartTime");
 		String chronString = (String) triggerInfoSB.getAttribute("triggerChronString");
 		String endDate = (String) triggerInfoSB.getAttribute("triggerEndDate");
-		if (endDate == null)
+		if (endDate == null) {
 			endDate = "";
+		}
 		String endTime = (String) triggerInfoSB.getAttribute("triggerEndTime");
-		if (endTime == null)
+		if (endTime == null) {
 			endTime = "";
+		}
 		String triggerRepeatInterval = (String) triggerInfoSB.getAttribute("triggerRepeatInterval");
-		if (triggerRepeatInterval == null)
+		if (triggerRepeatInterval == null) {
 			triggerRepeatInterval = "";
+		}
 		triggerInfo.setEndDate(endDate);
 		triggerInfo.setEndTime(endTime);
 		triggerInfo.setRepeatInterval(triggerRepeatInterval);
@@ -502,6 +505,9 @@ public class SchedulerUtilities {
 			}
 			if (name.equals("zipFileName")) {
 				dispatchContext.setZipFileName(value);
+			}
+			if (name.equals("outputType")) {
+				dispatchContext.setOutputTypeTrigger(value);
 			}
 
 		}

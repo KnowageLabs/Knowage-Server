@@ -64,6 +64,7 @@ public class ExecutionProxy {
 	private BIObject biObject = null;
 
 	private String returnedContentType = null;
+	private String outputTypeTrigger = null;
 	String mimeType = null;
 
 	/**
@@ -175,6 +176,9 @@ public class ExecutionProxy {
 				mapPars.put(AuditManager.AUDIT_ID, auditId.toString());
 			}
 
+			// add outputType from trigger
+			adjustOutputParameterForSchedulerTrigger(mapPars);
+
 			// get the url of the engine
 			String urlEngine = getExternalEngineUrl(eng);
 
@@ -236,6 +240,7 @@ public class ExecutionProxy {
 		LOGGER.debug("OUT");
 		return response;
 	}
+
 
 	private String getExternalEngineUrl(Engine eng) {
 		LOGGER.debug("IN");
@@ -353,6 +358,12 @@ public class ExecutionProxy {
 		}
 	}
 
+	private void adjustOutputParameterForSchedulerTrigger(Map mapPars) {
+		if (this.outputTypeTrigger != null) {
+			mapPars.put("outputType", this.outputTypeTrigger);
+		}
+	}
+
 	public String getMimeType() {
 		return mimeType;
 	}
@@ -360,4 +371,9 @@ public class ExecutionProxy {
 	public void setMimeType(String outputType) {
 		this.mimeType = outputType;
 	}
+
+	public void setOutputTypeTrigger(String outputTypeTrigger) {
+		this.outputTypeTrigger = outputTypeTrigger;
+	}
+
 }
