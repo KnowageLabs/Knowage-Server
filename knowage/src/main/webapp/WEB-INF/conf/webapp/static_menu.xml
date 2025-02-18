@@ -60,12 +60,6 @@
 			<ITEM id="4002" label="menu.MondrianCatalogue"
 				requiredFunctionality="ArtifactCatalogueManagement"
 				to="/mondrian-schemas-management" />
-			<ITEM id="4003" label="menu.MapCat"
-				requiredFunctionality="MapCatalogueManagement"
-				to="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?PAGE=ListMapsPage&amp;LIGHT_NAVIGATOR_RESET_INSERT=TRUE" />
-			<ITEM id="4004" label="menu.FeatureMapCat"
-				requiredFunctionality="MapFeaturesManagement"
-				to="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?PAGE=ListFeaturesPage&amp;LIGHT_NAVIGATOR_RESET_INSERT=TRUE" />
 			<ITEM id="4005" label="menu.MeasuresCatalogue"
 				requiredFunctionality="MeasuresCatalogueManagement"
 				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=measuresCatalogue" />
@@ -176,6 +170,9 @@
 			<ITEM id="8003" label="menu.ThemeManagement"
 				requiredFunctionality="ThemeManagement"
 				to="/theme-management" />
+			<ITEM id="8004" label="menu.DashboardThemeManagement"
+				requiredFunctionality="DashboardThemeManagement"
+				to="/dashboard-theme-management" />
 			<ITEM id="8005" label="menu.license"
 				requiredFunctionality="LicenseManagement" command="licenseSelection"/>
 			<ITEM id="8006" label="menu.event"

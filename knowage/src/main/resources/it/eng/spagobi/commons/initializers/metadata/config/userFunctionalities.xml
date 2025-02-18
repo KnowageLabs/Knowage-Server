@@ -123,6 +123,7 @@
 	<USER_FUNCTIONALITY productType="KnowageSI" name="ProfileAttributeListManagement" description="ProfileAttributeListManagement" />
 	<USER_FUNCTIONALITY productType="KnowageSI" name="LicenseReadOnly" description="LicenseReadOnly" />
 	<USER_FUNCTIONALITY productType="KnowageSI" name="ThemeManagement" description="ThemeManagement"/>
+	<USER_FUNCTIONALITY productType="KnowageSI" name="DashboardThemeManagement" description="DashboardThemeManagement"/>
 	<USER_FUNCTIONALITY productType="KnowageSI" name="QbeAdvancedSaving" description="QbeAdvancedSaving"/>	
 	<USER_FUNCTIONALITY productType="KnowageSI" name="CategoryManagement" description="CategoryManagement"/>
 	<USER_FUNCTIONALITY productType="KnowageSI" name="MondrianSchemaManagement" description="MondrianSchemaManagement"/>
@@ -254,7 +255,6 @@
 	<USER_FUNCTIONALITY productType="KnowageLI" name="LovsView" description="LovsView" />
 	<USER_FUNCTIONALITY productType="KnowageLI" name="ManageCrossNavigation" description="ManageCrossNavigation" />
     <USER_FUNCTIONALITY productType="KnowageLI" name="ExecuteCrossNavigation" description="ExecuteCrossNavigation" />	
-	<USER_FUNCTIONALITY productType="KnowageLI" name="MapCatalogueManagement" description="MapCatalogueManagement" />
 	<USER_FUNCTIONALITY productType="KnowageLI" name="MenuManagement" description="MenuManagement" />
 	<USER_FUNCTIONALITY productType="KnowageLI" name="MetaModelsCatalogueManagement" description="MetaModelsCatalogueManagement" />
 	<USER_FUNCTIONALITY productType="KnowageLI" name="ModifyRefresh" description="ModifyRefresh" />

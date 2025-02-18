@@ -122,10 +122,6 @@
 	<ROLE_TYPE_USER_FUNCTIONALITY
 		userFunctionality="LovsView" roleType="DEV_ROLE" />
 	<ROLE_TYPE_USER_FUNCTIONALITY
-		userFunctionality="MapCatalogueManagement" roleType="ADMIN" />
-	<ROLE_TYPE_USER_FUNCTIONALITY
-		userFunctionality="MapCatalogueManagement" roleType="DEV_ROLE" />
-	<ROLE_TYPE_USER_FUNCTIONALITY
 		userFunctionality="MenuManagement" roleType="ADMIN" />
 	<ROLE_TYPE_USER_FUNCTIONALITY
 		userFunctionality="ModifyRefresh" roleType="ADMIN" />
@@ -411,6 +407,7 @@
 	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="QbeAdvancedSaving" roleType="MODEL_ADMIN" />	
 
 	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="ThemeManagement" roleType="ADMIN" />	
+	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="DashboardThemeManagement" roleType="ADMIN" />	
 
 	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="CategoryManagement" roleType="ADMIN" />
 
