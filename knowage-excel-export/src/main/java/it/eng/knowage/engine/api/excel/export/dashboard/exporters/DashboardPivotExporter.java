@@ -7,8 +7,7 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import org.apache.log4j.Logger;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+
 import org.json.JSONObject;
 
 public class DashboardPivotExporter extends GenericDashboardWidgetExporter implements IWidgetExporter {
@@ -38,7 +37,7 @@ public class DashboardPivotExporter extends GenericDashboardWidgetExporter imple
                     offset += fetchSize;
                     dataStore = excelExporter.getDataStoreForDashboardWidget(widget, offset, fetchSize);
                 }
-                excelExporter.createPivotTable(wb, sheet, widget);
+                excelExporter.createPivotTable(wb, sheet, widget, widgetName);
                 return 1;
             }
         } catch (Exception e) {

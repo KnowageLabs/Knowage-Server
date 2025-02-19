@@ -1655,7 +1655,8 @@ public abstract class AbstractFormatExporter {
 			
 			// set brandend header image
 			sheet.addMergedRegion(new CellRangeAddress(startRow, startRow+rowspan-1, startCol, startCol+colspan-1));
-			drawBrandendHeaderImage(sheet, imageB64, Workbook.PICTURE_TYPE_PNG, startCol, startRow, colspan, rowspan);				
+
+			drawBrandendHeaderImage(sheet, imageB64, Workbook.PICTURE_TYPE_PNG, startCol, startRow, colspan, rowspan);
 			
 			// set document name
 			sheet.getRow(startRow).createCell(startCol+colspan).setCellValue(documentName);
@@ -1684,108 +1685,121 @@ public abstract class AbstractFormatExporter {
 		
 		return headerIndex;
 	}
-	
+
+	private Picture drawImage(Sheet sheet, String imageB64, int pictureType, int startCol, int startRow, int colspan, int rowspan, ClientAnchor anchor, Workbook wb) {
+
+		String encodingPrefix = "base64,";
+		int contentStartIndex = imageB64.indexOf(encodingPrefix) + encodingPrefix.length();
+		byte[] bytes = org.apache.commons.codec.binary.Base64.decodeBase64(imageB64.substring(contentStartIndex));
+		int pictureIdx = wb.addPicture(bytes, pictureType);
+
+		anchor.setCol1(startCol);
+		anchor.setRow1(startRow);
+		anchor.setCol2(startCol + colspan);
+		anchor.setRow2(startRow + rowspan);
+
+		Drawing<?> drawing = sheet.createDrawingPatriarch();
+		return drawing.createPicture(anchor, pictureIdx);
+	}
+
+
 	public void drawBrandendHeaderImage(Sheet sheet, String imageB64, int pictureType, int startCol, int startRow,
 			int colspan, int rowspan) {
 		try {
 			Workbook wb = sheet.getWorkbook();
-			
-			// load the picture
-		    String encodingPrefix = "base64,";
-		    int contentStartIndex = imageB64.indexOf(encodingPrefix) + encodingPrefix.length();
-		    byte[] bytes = org.apache.commons.codec.binary.Base64.decodeBase64(imageB64.substring(contentStartIndex));			
-			int pictureIdx = wb.addPicture(bytes, pictureType);
-
-			// create an anchor with upper left cell startCol/startRow
 			CreationHelper helper = wb.getCreationHelper();
 			ClientAnchor anchor = helper.createClientAnchor();
-			anchor.setCol1(startCol);
-			anchor.setRow1(startRow);
 
-			Drawing drawing = sheet.createDrawingPatriarch();
-			Picture pict = drawing.createPicture(anchor, pictureIdx);
+			Picture pict = drawImage(sheet, imageB64, pictureType, startCol, startRow, colspan, rowspan, anchor, wb);
+			buildImageMesaures(sheet, startCol, startRow, colspan, rowspan, pict, anchor);
 
-			int pictWidthPx = pict.getImageDimension().width;
-			int pictHeightPx = pict.getImageDimension().height;
-			
-			// get the heights of all merged rows in px
-			float[] rowHeightsPx = new float[startRow+rowspan];
-			float rowsHeightPx = 0f;
-			for (int r = startRow; r < startRow+rowspan; r++) {
-				Row row = sheet.getRow(r);
-				float rowHeightPt = row.getHeightInPoints();
-				rowHeightsPx[r-startRow] = rowHeightPt * Units.PIXEL_DPI / Units.POINT_DPI;
-				rowsHeightPx += rowHeightsPx[r-startRow];
-			}
-
-			// get the widths of all merged cols in px
-			float[] colWidthsPx = new float[startCol + colspan];
-			float colsWidthPx = 0f;
-			for (int c = startCol; c < startCol + colspan; c++) {
-				colWidthsPx[c - startCol] = sheet.getColumnWidthInPixels(c);
-				colsWidthPx += colWidthsPx[c - startCol];
-			}
-
-			// calculate scale
-			float scale = 1;
-			if (pictHeightPx > rowsHeightPx) {
-				float tmpscale = rowsHeightPx / pictHeightPx;
-				if (tmpscale < scale)
-					scale = tmpscale;
-			}
-			if (pictWidthPx > colsWidthPx) {
-				float tmpscale = colsWidthPx / pictWidthPx;
-				if (tmpscale < scale)
-					scale = tmpscale;
-			}
-
-			// calculate the horizontal center position
-			int horCenterPosPx = Math.round(colsWidthPx / 2f - pictWidthPx * scale / 2f);
-			Integer col1 = null;
-			colsWidthPx = 0f;
-			for (int c = 0; c < colWidthsPx.length; c++) {
-				float colWidthPx = colWidthsPx[c];
-				if (colsWidthPx + colWidthPx > horCenterPosPx) {
-					col1 = c + startCol;
-					break;
-				}
-				colsWidthPx += colWidthPx;
-			}
-			
-			// set the horizontal center position as Col1 plus Dx1 of anchor
-			if (col1 != null) {
-				anchor.setCol1(col1);
-				anchor.setDx1(Math.round(horCenterPosPx - colsWidthPx) * Units.EMU_PER_PIXEL);
-			}
-
-			// calculate the vertical center position
-			int vertCenterPosPx = Math.round(rowsHeightPx / 2f - pictHeightPx * scale / 2f);
-			Integer row1 = null;
-			rowsHeightPx = 0f;
-			for (int r = 0; r < rowHeightsPx.length; r++) {
-				float rowHeightPx = rowHeightsPx[r];
-				if (rowsHeightPx + rowHeightPx > vertCenterPosPx) {
-					row1 = r + startRow;
-				    break;
-				}
-				rowsHeightPx += rowHeightPx;
-			}
-			  
-			if (row1 != null) {
-				anchor.setRow1(row1);
-				anchor.setDy1(Math.round(vertCenterPosPx - rowsHeightPx) * Units.EMU_PER_PIXEL); //in unit EMU for XSSF
-			}
-			 
-			anchor.setCol2(startCol+colspan);
-			anchor.setDx2(Math.round(colsWidthPx - Math.round(horCenterPosPx - colsWidthPx)) * Units.EMU_PER_PIXEL);
-			anchor.setRow2(startRow+rowspan);
-			anchor.setDy2(Math.round(rowsHeightPx - Math.round(vertCenterPosPx - rowsHeightPx)) * Units.EMU_PER_PIXEL);
-			
 		} catch (Exception e) {
 			throw new SpagoBIRuntimeException("Cannot write data to Excel file", e);
 		}
 	}
-	
+
+	private static void buildImageMesaures(Sheet sheet, int startCol, int startRow, int colspan, int rowspan, Picture pict, ClientAnchor anchor) {
+		float colsWidthPx;
+		int horCenterPosPx;
+		float rowsHeightPx;
+		int vertCenterPosPx;
+		int pictWidthPx = pict.getImageDimension().width;
+		int pictHeightPx = pict.getImageDimension().height;
+
+		// get the heights of all merged rows in px
+		float[] rowHeightsPx = new float[startRow + rowspan];
+		rowsHeightPx = 0f;
+		for (int r = startRow; r < startRow + rowspan; r++) {
+			Row row = sheet.getRow(r);
+			float rowHeightPt = row.getHeightInPoints();
+			rowHeightsPx[r- startRow] = rowHeightPt * Units.PIXEL_DPI / Units.POINT_DPI;
+			rowsHeightPx += rowHeightsPx[r- startRow];
+		}
+
+		// get the widths of all merged cols in px
+		float[] colWidthsPx = new float[startCol + colspan];
+		colsWidthPx = 0f;
+		for (int c = startCol; c < startCol + colspan; c++) {
+			colWidthsPx[c - startCol] = sheet.getColumnWidthInPixels(c);
+			colsWidthPx += colWidthsPx[c - startCol];
+		}
+
+		// calculate scale
+		float scale = 1;
+		if (pictHeightPx > rowsHeightPx) {
+			float tmpscale = rowsHeightPx / pictHeightPx;
+			if (tmpscale < scale)
+				scale = tmpscale;
+		}
+		if (pictWidthPx > colsWidthPx) {
+			float tmpscale = colsWidthPx / pictWidthPx;
+			if (tmpscale < scale)
+				scale = tmpscale;
+		}
+
+		// calculate the horizontal center position
+		horCenterPosPx = Math.round(colsWidthPx / 2f - pictWidthPx * scale / 2f);
+		Integer col1 = null;
+		colsWidthPx = 0f;
+		for (int c = 0; c < colWidthsPx.length; c++) {
+			float colWidthPx = colWidthsPx[c];
+			if (colsWidthPx + colWidthPx > horCenterPosPx) {
+				col1 = c + startCol;
+				break;
+			}
+			colsWidthPx += colWidthPx;
+		}
+
+		// set the horizontal center position as Col1 plus Dx1 of anchor
+		if (col1 != null) {
+			anchor.setCol1(col1);
+			anchor.setDx1(Math.round(horCenterPosPx - colsWidthPx) * Units.EMU_PER_PIXEL);
+		}
+
+		// calculate the vertical center position
+		vertCenterPosPx = Math.round(rowsHeightPx / 2f - pictHeightPx * scale / 2f);
+		Integer row1 = null;
+		rowsHeightPx = 0f;
+		for (int r = 0; r < rowHeightsPx.length; r++) {
+			float rowHeightPx = rowHeightsPx[r];
+			if (rowsHeightPx + rowHeightPx > vertCenterPosPx) {
+				row1 = r + startRow;
+				break;
+			}
+			rowsHeightPx += rowHeightPx;
+		}
+
+		if (row1 != null) {
+			anchor.setRow1(row1);
+			anchor.setDy1(Math.round(vertCenterPosPx - rowsHeightPx) * Units.EMU_PER_PIXEL); //in unit EMU for XSSF
+		}
+
+		if (sheet instanceof SXSSFSheet) {
+			anchor.setDx2(Math.round(colsWidthPx - Math.round(horCenterPosPx - colsWidthPx)) * Units.EMU_PER_PIXEL);
+			anchor.setDy2(Math.round(rowsHeightPx - Math.round(vertCenterPosPx - rowsHeightPx)) * Units.EMU_PER_PIXEL);
+		}
+	}
+
 	public CellStyle buildCellStyle(Sheet sheet, boolean bold, HorizontalAlignment alignment, VerticalAlignment verticalAlignment, short headerFontSizeShort) {
 		
 		// CELL

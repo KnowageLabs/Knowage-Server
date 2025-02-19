@@ -18,9 +18,9 @@ import com.google.gson.Gson;
 import it.eng.knowage.commons.multitenant.OrganizationImageManager;
 import it.eng.knowage.commons.security.PathTraversalChecker;
 import it.eng.knowage.engine.api.excel.export.dashboard.exporters.DashboardWidgetExporterFactory;
+import it.eng.knowage.engine.api.excel.export.dashboard.models.Style;
 import it.eng.knowage.engine.api.excel.export.exporters.IWidgetExporter;
 import it.eng.knowage.engine.api.excel.export.exporters.WidgetExporterFactory;
-import it.eng.knowage.engine.api.excel.export.dashboard.models.Style;
 import it.eng.spago.error.EMFAbstractError;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.analiticalmodel.document.bo.ObjTemplate;
@@ -36,24 +36,18 @@ import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.AreaReference;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.ss.util.WorkbookUtil;
-import org.apache.poi.xssf.streaming.SXSSFSheet;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.apache.poi.xssf.usermodel.XSSFPivotTable;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDataField;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPivotField;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPivotTableStyle;
 
 import javax.ws.rs.core.UriBuilder;
 import java.io.*;
@@ -575,6 +569,7 @@ public class ExcelExporter extends AbstractFormatExporter {
             JSONArray columns = fields.getJSONArray("columns");
             JSONArray data = fields.getJSONArray("data");
             JSONArray rows = fields.getJSONArray("rows");
+            JSONArray filters = fields.getJSONArray("filters");
 
             String sortingColumnId = "";
             String sortingOrder = "";
@@ -585,16 +580,19 @@ public class ExcelExporter extends AbstractFormatExporter {
                     sortingColumnId = column.getString("id");
                     sortingOrder = sort;
                 }
-                column = getCategory(column, getSortingObj(column, sortingColumnId, sortingOrder), new JSONObject());
-                categories.put(column);
+                addToCategoriesOrMeasuresArray(column, categories, sortingColumnId, sortingOrder, measures);
             }
             for (int i = 0; i < rows.length(); i++) {
-                JSONObject row = getCategory(rows.getJSONObject(i), new JSONObject(), new JSONObject());
-                categories.put(row);
+                JSONObject row = rows.getJSONObject(i);
+                addToCategoriesOrMeasuresArray(row, categories, sortingColumnId, sortingOrder, measures);
             }
             for (int i = 0; i < data.length(); i++) {
                 JSONObject datum = getMeasure(data.getJSONObject(i), new JSONObject(), new JSONObject());
                 measures.put(datum);
+            }
+            for (int i = 0; i < filters.length(); i++) {
+                JSONObject filter = filters.getJSONObject(i);
+                addToCategoriesOrMeasuresArray(filter, categories, sortingColumnId, sortingOrder, measures);
             }
             aggregations.put("dataset", datasetLabel);
         } catch (Exception e) {
@@ -603,6 +601,15 @@ public class ExcelExporter extends AbstractFormatExporter {
         }
         return selections;
 
+    }
+
+    private void addToCategoriesOrMeasuresArray(JSONObject column, JSONArray categories, String sortingColumnId, String sortingOrder, JSONArray measures) throws JSONException {
+        boolean isCategory = column.getString("fieldType").equalsIgnoreCase("attribute");
+        if (isCategory) {
+            categories.put(getCategory(column, getSortingObj(column, sortingColumnId, sortingOrder), new JSONObject()));
+        } else {
+            measures.put(getMeasure(column, getSortingObj(column, sortingColumnId, sortingOrder), new JSONObject()));
+        }
     }
 
     private JSONObject buildDashboardSelections(JSONArray columns, String datasetLabel, JSONObject settings) {
@@ -677,15 +684,19 @@ public class ExcelExporter extends AbstractFormatExporter {
         }
     }
 
-    private JSONObject getMeasure(JSONObject column, JSONObject sortingObj, JSONObject drillSortingObj) {
+    private JSONObject getMeasure(JSONObject object, JSONObject sortingObj, JSONObject drillSortingObj) {
         try {
             JSONObject measure = new JSONObject();
-            measure.put("id", column.getString("columnName"));
-            measure.put("alias", column.getString("columnName"));
-            measure.put("columnName", column.getString("columnName"));
-            measure.put("funct", column.getString("aggregation"));
-            String sorting = getSortingObj(sortingObj, drillSortingObj);
-            buildSorting(sortingObj, drillSortingObj, sorting, measure);
+            measure.put("id", object.getString("columnName"));
+            measure.put("alias", object.getString("columnName"));
+            measure.put("columnName", object.getString("columnName"));
+            measure.put("funct", object.getString("aggregation"));
+            if (object.has("formula")) {
+                measure.put("formula", object.getString("formula"));
+            }
+//            String sorting = getSortingObj(sortingObj, drillSortingObj);
+//            buildSorting(sortingObj, drillSortingObj, sorting, measure);
+            measure.put("orderColumn", object.getString("columnName"));
             return measure;
         } catch (Exception e) {
             LOGGER.error("Cannot get measure", e);
@@ -1601,10 +1612,12 @@ public class ExcelExporter extends AbstractFormatExporter {
             JSONArray columnSelectedOfDataset = widgetData.getJSONArray("columns");
 
             JSONArray columnsOrdered;
-            if (widgetData.has("columns")) {
+            if (widgetData.has("columns") && widgetData.getJSONArray("columns").length() > 0) {
                 hiddenColumns = getHiddenColumnsList(columnSelectedOfDataset);
+                columnsOrdered = getDashboardTableOrderedColumns(columnSelectedOfDataset, columns);
+            } else {
+                columnsOrdered = columns;
             }
-            columnsOrdered = columns;
 
             JSONArray groupsFromWidgetContent = getGroupsFromWidgetContent(widgetData);
             Map<String, String> groupsAndColumnsMap = getDashboardGroupAndColumnsMap(widgetData, groupsFromWidgetContent);
@@ -2421,13 +2434,42 @@ public class ExcelExporter extends AbstractFormatExporter {
 
     }
 
-    public void createPivotTable(Workbook workbook, Sheet sheet, JSONObject widget) {
+    public void createPivotTable(Workbook workbook, Sheet sheet, JSONObject widget, String widgetName) {
+
         SXSSFWorkbook sxssfWorkbook = (SXSSFWorkbook) workbook;
-        XSSFSheet pivotSheet = sxssfWorkbook.getXSSFWorkbook().createSheet("Pivot");
-        int lastRow = sheet.getLastRowNum();
-        int lastColumn = sheet.getRow(lastRow).getLastCellNum();
-        String finalCell = new CellReference(lastRow, lastColumn - 1).formatAsString();
-        XSSFPivotTable pivotTable = pivotSheet.createPivotTable(new AreaReference("A4:".concat(finalCell), workbook.getSpreadsheetVersion()), new CellReference("A1"), sheet);
+        XSSFSheet pivotSheet = sxssfWorkbook.getXSSFWorkbook().createSheet(widgetName);
+
+        // CREATE BRANDED HEADER SHEET
+        this.imageB64 = OrganizationImageManager.getOrganizationB64ImageWide(TenantManager.getTenant().getName());
+        int startRow = 0;
+        float rowHeight = 35; // in points
+        int rowspan = 2;
+        int startCol = 0;
+        int colWidth = 25;
+        int colspan = 2;
+        int namespan = 10;
+        int dataspan = 10;
+
+        createBrandedHeaderSheet(
+                pivotSheet,
+                this.imageB64,
+                startRow,
+                rowHeight,
+                rowspan,
+                startCol,
+                colWidth,
+                colspan,
+                namespan,
+                dataspan,
+                this.documentName,
+                widgetName);
+
+        int sourceSheetLastRow = sheet.getLastRowNum();
+        int sourceSheetLastColumn = sheet.getRow(sourceSheetLastRow).getLastCellNum();
+        String sourceSheetFinalCell = new CellReference(sourceSheetLastRow, sourceSheetLastColumn - 1).formatAsString();
+        int targetSheetLastRow = pivotSheet.getLastRowNum();
+        CellReference position = new CellReference(targetSheetLastRow + 1, 0);
+        XSSFPivotTable pivotTable = pivotSheet.createPivotTable(new AreaReference("A4:".concat(sourceSheetFinalCell), workbook.getSpreadsheetVersion()), position, sheet);
 
         try {
             JSONObject fields = widget.getJSONObject("fields");
@@ -2449,18 +2491,19 @@ public class ExcelExporter extends AbstractFormatExporter {
 
             for (int i = 0; i < data.length(); ++i) {
                 JSONObject datum = data.getJSONObject(i);
-                pivotTable.addColumnLabel(getAggregrationFunction(datum.getString("aggregation").toUpperCase()), counter, datum.getString("alias"));
+                DataConsolidateFunction function = getAggregationFunction(datum.getString("aggregation").toUpperCase());
+                pivotTable.addColumnLabel(function, counter, datum.getString("alias"));
                 counter++;
             }
 
-            CTPivotTableStyle pivotTableStyle = pivotTable.getCTPivotTableDefinition().getPivotTableStyleInfo();
+            workbook.setSheetVisibility(workbook.getSheetIndex(sheet), SheetVisibility.VERY_HIDDEN);
+
         } catch (JSONException e) {
             LOGGER.error("Error while creating pivot table", e);
         }
-
     }
 
-    private DataConsolidateFunction getAggregrationFunction(String aggregation) {
+    private DataConsolidateFunction getAggregationFunction(String aggregation) {
 
         return switch (aggregation) {
             case "SUM" -> SUM;
@@ -2468,7 +2511,7 @@ public class ExcelExporter extends AbstractFormatExporter {
             case "AVG" -> AVERAGE;
             case "MAX" -> MAX;
             case "MIN" -> MIN;
-            default -> throw new IllegalStateException("Unexpected value: " + aggregation);
+            default -> null;
         };
     }
 }
