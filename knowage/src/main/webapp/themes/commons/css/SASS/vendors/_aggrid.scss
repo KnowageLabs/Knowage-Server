@@ -32,9 +32,15 @@ $aggrid-border-color: #d9dcde;
       display: inline-block;
     }
   }
+  &.columnsGrid {
+    .ag-root-wrapper {
+      overflow: visible;
+    }
+  }
   .ag-root-wrapper {
     border: none !important;
   }
+
   .ag-body-viewport.ag-layout-auto-height {
     height: auto;
   }
