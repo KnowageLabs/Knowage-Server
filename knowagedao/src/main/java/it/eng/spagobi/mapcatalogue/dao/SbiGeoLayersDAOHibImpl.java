@@ -686,9 +686,9 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 						BufferedReader br = new BufferedReader(new InputStreamReader(inputstream))) {
 					String c;
 					c = br.readLine();
-					if (typeWFS.equals("wkt")) {
+					if (typeWFS.equals(SbiLayersEnum.WKT.key)) {
 						obj = new JSONObject();
-						obj.put("wkt", c);
+						obj.put(SbiLayersEnum.WKT.key, c);
 					} else {
 						obj = new JSONObject(c);
 					}
