@@ -8,13 +8,16 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import org.apache.log4j.Logger;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.json.JSONArray;
 import org.json.JSONObject;
+
+import java.util.Map;
 
 public class DashboardTableExporter extends GenericDashboardWidgetExporter implements IWidgetExporter {
     public static Logger logger = Logger.getLogger(TableExporter.class);
 
-    public DashboardTableExporter(ExcelExporter excelExporter, Workbook wb, JSONObject widget, String documentName) {
-        super(excelExporter, wb, widget, documentName);
+    public DashboardTableExporter(ExcelExporter excelExporter, Workbook wb, JSONObject widget, String documentName, Map<String, Map<String, JSONArray>> selections, JSONObject drivers) {
+        super(excelExporter, wb, widget, documentName, selections, drivers);
     }
 
     @Override
@@ -25,16 +28,15 @@ public class DashboardTableExporter extends GenericDashboardWidgetExporter imple
             String dashboardSheetName = documentName != null ? documentName : "Dashboard";
             String widgetName = getDashboardWidgetName(widget);
             Sheet sheet = excelExporter.createUniqueSafeSheet(wb, widgetName, dashboardSheetName);
-
             int offset = 0;
             int fetchSize = Integer.parseInt(SingletonConfig.getInstance().getConfigValue("SPAGOBI.API.DATASET.MAX_ROWS_NUMBER"));
-            JSONObject dataStore = excelExporter.getDataStoreForDashboardWidget(widget, offset, fetchSize);
+            JSONObject dataStore = excelExporter.getDataStoreForDashboardWidget(widget, offset, fetchSize, selections, drivers);
             if (dataStore != null) {
                 int totalNumberOfRows = dataStore.getInt("results");
                 while (offset < totalNumberOfRows) {
                     excelExporter.fillTableSheetWithData(dataStore, wb, sheet, widgetName, offset, settings);
                     offset += fetchSize;
-                    dataStore = excelExporter.getDataStoreForDashboardWidget(widget, offset, fetchSize);
+                    dataStore = excelExporter.getDataStoreForDashboardWidget(widget, offset, fetchSize, selections, drivers);
                 }
                 return 1;
             }

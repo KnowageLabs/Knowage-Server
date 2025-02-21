@@ -23,7 +23,10 @@ import it.eng.knowage.engine.api.excel.export.exporters.IWidgetExporter;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.json.JSONArray;
 import org.json.JSONObject;
+
+import java.util.Map;
 
 class GenericDashboardWidgetExporter implements IWidgetExporter {
 
@@ -31,13 +34,17 @@ class GenericDashboardWidgetExporter implements IWidgetExporter {
     Workbook wb;
     JSONObject widget;
     String documentName;
+    Map<String, Map<String, JSONArray>> selections;
+    JSONObject drivers;
 
-    public GenericDashboardWidgetExporter(ExcelExporter excelExporter, Workbook wb, JSONObject widget, String documentName) {
+    public GenericDashboardWidgetExporter(ExcelExporter excelExporter, Workbook wb, JSONObject widget, String documentName, Map<String, Map<String, JSONArray>> selections, JSONObject drivers) {
         super();
         this.excelExporter = excelExporter;
         this.wb = wb;
         this.widget = widget;
         this.documentName = documentName;
+        this.selections = selections;
+        this.drivers = drivers;
     }
 
     @Override
@@ -45,7 +52,7 @@ class GenericDashboardWidgetExporter implements IWidgetExporter {
         String widgetId = widget.optString("id");
         try {
             JSONObject settings = widget.getJSONObject("settings");
-            JSONObject dataStore = excelExporter.getDataStoreforDashboardSingleWidget(widget);
+            JSONObject dataStore = excelExporter.getDataStoreforDashboardSingleWidget(widget, selections, drivers);
             String widgetName = getDashboardWidgetName(widget);
             if (dataStore != null) {
                 String dashboardSheetName = documentName != null ? documentName : "Dashboard";

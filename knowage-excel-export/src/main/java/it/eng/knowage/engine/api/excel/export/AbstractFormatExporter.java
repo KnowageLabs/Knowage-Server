@@ -407,7 +407,7 @@ public abstract class AbstractFormatExporter {
 		return datastore;
 	}
 
-	public JSONObject getDataStoreForDashboardWidget(JSONObject widget, int offset, int fetchSize) {
+	public JSONObject getDataStoreForDashboardWidget(JSONObject widget, int offset, int fetchSize, Map<String, Map<String, JSONArray>> selections, JSONObject drivers) {
 		Map<String, Object> map = new HashMap<>();
 		JSONObject datastore;
 		try {
@@ -417,12 +417,14 @@ public abstract class AbstractFormatExporter {
 
 			JSONObject dashboardSelections;
 			if (widget.getString("type").equalsIgnoreCase("static-pivot-table")) {
-				dashboardSelections = getPivotSelections(widget, datasetLabel);
+				dashboardSelections = getPivotAggregations(widget, datasetLabel);
 			} else {
-				dashboardSelections = getDashboardSelections(widget, datasetLabel);
+				dashboardSelections = getDashboardAggregations(widget, datasetLabel);
 			}
 
-			//TODO: Ask what this is
+			dashboardSelections.put("selections", selections);
+			dashboardSelections.put("parameters", drivers);
+
 			JSONArray summaryRow = getSummaryRowFromDashboardWidget(widget);
 
 			if (summaryRow != null)
@@ -444,7 +446,7 @@ public abstract class AbstractFormatExporter {
 		return datastore;
 	}
 
-	protected abstract JSONObject getPivotSelections(JSONObject widget, String datasetLabel);
+	protected abstract JSONObject getPivotAggregations(JSONObject widget, String datasetLabel);
 
 
 	protected JSONObject getDatastore(String datasetLabel, Map<String, Object> map, String selections, int offset,
@@ -759,7 +761,7 @@ public abstract class AbstractFormatExporter {
 
 	protected abstract JSONObject getCockpitSelectionsFromBody(JSONObject widget);
 
-	protected abstract JSONObject getDashboardSelections(JSONObject widget, String datasetLabel);
+	protected abstract JSONObject getDashboardAggregations(JSONObject widget, String datasetLabel);
 
 
 	protected boolean getRealtimeFromWidget(int dsId, JSONObject configuration) {

@@ -72,7 +72,7 @@ public class PdfExporter extends AbstractFormatExporter {
 	}
 
 	@Override
-	protected JSONObject getPivotSelections(JSONObject widget, String datasetLabel) {
+	protected JSONObject getPivotAggregations(JSONObject widget, String datasetLabel) {
 		return null;
 	}
 
@@ -668,7 +668,7 @@ public class PdfExporter extends AbstractFormatExporter {
 	}
 
 	@Override
-	protected JSONObject getDashboardSelections(JSONObject widget, String datasetLabel) {
+	protected JSONObject getDashboardAggregations(JSONObject widget, String datasetLabel) {
 		return null;
 	}
 
