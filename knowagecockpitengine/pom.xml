@@ -116,6 +116,12 @@
 			<groupId>com.github.dhorions</groupId>
 			<artifactId>boxable</artifactId>
 			<version>1.7.0</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.jsoup</groupId>
+    				<artifactId>jsoup</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<!-- Provides support for Graylog in log4j2 -->
 		<dependency>

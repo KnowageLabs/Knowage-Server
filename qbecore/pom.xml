@@ -35,7 +35,7 @@
 		<dependency>
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-validator</artifactId>
-			<version>4.1.0.Final</version>
+			<version>5.2.5.Final</version>
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>
@@ -47,6 +47,10 @@
 				<exclusion>
 					<artifactId>asm</artifactId>
 					<groupId>asm</groupId>
+				</exclusion>
+				<exclusion>
+					<groupId>commons-collections</groupId>
+    				<artifactId>commons-collections</artifactId>
 				</exclusion>
 			</exclusions>
 		</dependency>
