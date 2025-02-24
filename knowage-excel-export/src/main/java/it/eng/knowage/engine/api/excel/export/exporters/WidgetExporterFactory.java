@@ -13,17 +13,16 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package it.eng.knowage.engine.cockpit.api.export.excel.exporters;
+package it.eng.knowage.engine.api.excel.export.exporters;
 
+import it.eng.knowage.engine.api.excel.export.ExcelExporter;
 import org.apache.log4j.Logger;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.json.JSONObject;
 
-import it.eng.knowage.engine.cockpit.api.export.excel.ExcelExporter;
-
 public class WidgetExporterFactory {
 
-	public static transient Logger logger = Logger.getLogger(WidgetExporterFactory.class);
+	public static Logger logger = Logger.getLogger(WidgetExporterFactory.class);
 
 	/**
 	 *

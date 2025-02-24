@@ -13,38 +13,20 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package it.eng.knowage.engine.cockpit.api.export.excel.exporters;
+package it.eng.knowage.engine.api.excel.export.exporters;
 
-import java.awt.Color;
-import java.util.ArrayList;
-
-/* SpagoBI, the Open Source Business Intelligence suite
-
- * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice.
- * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Properties;
-
+import com.jamonapi.Monitor;
+import com.jamonapi.MonitorFactory;
+import it.eng.knowage.engine.api.excel.export.ExcelExporter;
+import it.eng.knowage.engine.api.excel.export.oldcockpit.Threshold;
+import it.eng.knowage.engine.api.excel.export.oldcockpit.crosstable.*;
+import it.eng.spagobi.commons.SingletonConfig;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+import it.eng.spagobi.utilities.json.JSONUtils;
+import it.eng.spagobi.utilities.messages.EngineMessageBundle;
 import org.apache.log4j.Logger;
-import org.apache.poi.ss.usermodel.BorderStyle;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.CreationHelper;
-import org.apache.poi.ss.usermodel.DataFormat;
-import org.apache.poi.ss.usermodel.FillPatternType;
 import org.apache.poi.ss.usermodel.Font;
-import org.apache.poi.ss.usermodel.HorizontalAlignment;
-import org.apache.poi.ss.usermodel.IndexedColors;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.VerticalAlignment;
-import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.streaming.SXSSFSheet;
 import org.apache.poi.xssf.usermodel.DefaultIndexedColorMap;
@@ -54,24 +36,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.jamonapi.Monitor;
-import com.jamonapi.MonitorFactory;
-
-import it.eng.knowage.engine.cockpit.api.crosstable.CrossTab;
-import it.eng.knowage.engine.cockpit.api.crosstable.CrossTab.CellType;
-import it.eng.knowage.engine.cockpit.api.crosstable.CrossTab.MeasureInfo;
-import it.eng.knowage.engine.cockpit.api.crosstable.CrosstabBuilder;
-import it.eng.knowage.engine.cockpit.api.crosstable.Measure;
-import it.eng.knowage.engine.cockpit.api.crosstable.MeasureFormatter;
-import it.eng.knowage.engine.cockpit.api.crosstable.MeasureScaleFactorOption;
-import it.eng.knowage.engine.cockpit.api.crosstable.Node;
-import it.eng.knowage.engine.cockpit.api.crosstable.NodeComparator;
-import it.eng.knowage.engine.cockpit.api.export.excel.ExcelExporter;
-import it.eng.knowage.engine.cockpit.api.export.excel.Threshold;
-import it.eng.spagobi.commons.SingletonConfig;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
-import it.eng.spagobi.utilities.json.JSONUtils;
-import it.eng.spagobi.utilities.messages.EngineMessageBundle;
+import java.util.List;
+import java.util.*;
 
 /**
  * Exports the crosstab data (formatted as a JSON object in input) into a XLS file. The JSON object should have this structure (a node is {node_key:"Text",
@@ -163,7 +129,7 @@ public class CrossTabExporter extends GenericWidgetExporter implements IWidgetEx
 	 * https://production.eng.it/jira/browse/KNOWAGE-6693)
 	 */
 	protected final XSSFCellStyle getCellStyleByFormat(Workbook wb, CreationHelper helper, String format,
-			Optional<FillPatternType> fillPatternTypeOpt, Optional<Color> colorOpt) {
+			Optional<FillPatternType> fillPatternTypeOpt, Optional<java.awt.Color> colorOpt) {
 		Integer styleKey = getStyleKey(format, fillPatternTypeOpt, colorOpt);
 		formatHash2CellStyle.computeIfAbsent(styleKey,
 				key -> doCreateCellStyle(wb, helper, format, fillPatternTypeOpt, colorOpt));
@@ -171,7 +137,7 @@ public class CrossTabExporter extends GenericWidgetExporter implements IWidgetEx
 	}
 
 	private final XSSFCellStyle doCreateCellStyle(Workbook wb, CreationHelper helper, String format,
-			Optional<FillPatternType> fillPatternTypeOpt, Optional<Color> colorOpt) {
+			Optional<FillPatternType> fillPatternTypeOpt, Optional<java.awt.Color> colorOpt) {
 
 		LOGGER.debug("New style created for format " + format + ", fill pattern" + fillPatternTypeOpt + " and color"
 				+ colorOpt);
@@ -188,14 +154,14 @@ public class CrossTabExporter extends GenericWidgetExporter implements IWidgetEx
 	}
 
 	private final Integer getStyleKey(String format, Optional<FillPatternType> fillPatternTypeOpt,
-			Optional<Color> colorOpt) {
+			Optional<java.awt.Color> colorOpt) {
 		Integer hashcode = format.hashCode();
 		if (fillPatternTypeOpt.isPresent()) {
 			FillPatternType fillPatternType = fillPatternTypeOpt.get();
 			hashcode += fillPatternType.hashCode();
 		}
 		if (colorOpt.isPresent()) {
-			Color color = colorOpt.get();
+			java.awt.Color color = colorOpt.get();
 			hashcode += color.hashCode();
 		}
 
@@ -206,7 +172,7 @@ public class CrossTabExporter extends GenericWidgetExporter implements IWidgetEx
 	}
 
 	private int fillExcelSheetWithData(Sheet sheet, CrossTab cs, CreationHelper createHelper, int startRow,
-			Locale locale) throws JSONException {
+									   Locale locale) throws JSONException {
 		int columnsDepth = cs.getColumnsRoot().getSubTreeDepth();
 		int rowsDepth = cs.getRowsRoot().getSubTreeDepth();
 
@@ -250,13 +216,6 @@ public class CrossTabExporter extends GenericWidgetExporter implements IWidgetEx
 		return startRow + totalRowsNumber;
 	}
 
-	/**
-	 * Sheet initialization. We create as many rows as it is required to contain the crosstab.
-	 *
-	 * @param sheet The XLS sheet
-	 * @param json  The crosstab data (it must have been enriched with the calculateDescendants method)
-	 * @throws JSONException
-	 */
 	public int initSheet(Sheet sheet, CrossTab cs) {
 
 		int columnsDepth = cs.getColumnsRoot().getSubTreeDepth();
@@ -278,7 +237,7 @@ public class CrossTabExporter extends GenericWidgetExporter implements IWidgetEx
 		int numOfMeasures = cs.getMeasures().size();
 		List<Measure> allMeasures = cs.getCrosstabDefinition().getMeasures();
 		List<Measure> subtotalMeasures = getSubtotalsMeasures(allMeasures);
-		List<MeasureInfo> measuresInfo = cs.getMeasures();
+		List<CrossTab.MeasureInfo> measuresInfo = cs.getMeasures();
 		for (int i = 0; i < dataMatrix.length; i++) {
 			rowNum = rowOffset + i;
 			Row row = sheet.getRow(rowNum);
@@ -319,7 +278,7 @@ public class CrossTabExporter extends GenericWidgetExporter implements IWidgetEx
 					int measureIdx = j % numOfMeasures;
 					String measureId = getMeasureId(cs, measureIdx);
 					int decimals = measureFormatter.getFormatXLS(i, j);
-					CellType cellType = cs.getCellType(i, j);
+					CrossTab.CellType cellType = cs.getCellType(i, j);
 					CellStyle style = getStyle(decimals, sheet, createHelper, cellType, measureId, value,
 							dataCellStyle);
 					cellStyleMonitor.stop();
@@ -362,8 +321,8 @@ public class CrossTabExporter extends GenericWidgetExporter implements IWidgetEx
 	}
 
 	private String getMeasureId(CrossTab cs, int index) {
-		List<MeasureInfo> measures = cs.getMeasures();
-		MeasureInfo measure = measures.get(index);
+		List<CrossTab.MeasureInfo> measures = cs.getMeasures();
+		CrossTab.MeasureInfo measure = measures.get(index);
 		String measureId = measure.getId();
 		return measureId;
 	}
@@ -394,7 +353,7 @@ public class CrossTabExporter extends GenericWidgetExporter implements IWidgetEx
 	 * @throws JSONException
 	 */
 	protected void buildRowsHeaders(Sheet sheet, CrossTab cs, List<Node> siblings, int rowNum, int columnNum,
-			CreationHelper createHelper, Locale locale, CellStyle memberCellStyle) throws JSONException {
+									CreationHelper createHelper, Locale locale, CellStyle memberCellStyle) throws JSONException {
 		int rowsCounter = rowNum;
 
 		for (int i = 0; i < siblings.size(); i++) {
@@ -430,17 +389,6 @@ public class CrossTabExporter extends GenericWidgetExporter implements IWidgetEx
 		}
 	}
 
-	/**
-	 * Add the title of the columns in the row headers
-	 *
-	 * @param sheet
-	 * @param titles              list of titles
-	 * @param columnHeadersNumber number of column headers
-	 * @param startColumn         first column of the crosstab in the xls
-	 * @param startRow            first row of the crosstab in the xls
-	 * @param createHelper
-	 * @throws JSONException
-	 */
 	protected void buildRowHeaderTitle(Sheet sheet, CrossTab cs, int columnHeadersNumber, int startColumn, int startRow,
 			CreationHelper createHelper, Locale locale, CellStyle dimensionCellStyle) throws JSONException {
 		List<String> titles = cs.getRowHeadersTitles();
@@ -451,7 +399,7 @@ public class CrossTabExporter extends GenericWidgetExporter implements IWidgetEx
 			for (int i = 0; i < titles.size(); i++) {
 
 				Cell cell = row.createCell(startColumn + i);
-				it.eng.knowage.engine.cockpit.api.crosstable.CrosstabDefinition.Row aRowDef = cs.getCrosstabDefinition()
+				CrosstabDefinition.Row aRowDef = cs.getCrosstabDefinition()
 						.getRows().get(i);
 
 				String text = titles.get(i);
@@ -646,8 +594,8 @@ public class CrossTabExporter extends GenericWidgetExporter implements IWidgetEx
 	 * @throws JSONException
 	 */
 	protected void buildColumnsHeader(Sheet sheet, CrossTab cs, List<Node> siblings, int rowNum, int columnNum,
-			CreationHelper createHelper, Locale locale, CellStyle memberCellStyle, CellStyle dimensionCellStyle,
-			int recursionLevel) throws JSONException {
+									  CreationHelper createHelper, Locale locale, CellStyle memberCellStyle, CellStyle dimensionCellStyle,
+									  int recursionLevel) throws JSONException {
 		int columnCounter = columnNum;
 
 		for (int i = 0; i < siblings.size(); i++) {
@@ -661,7 +609,7 @@ public class CrossTabExporter extends GenericWidgetExporter implements IWidgetEx
 			boolean isLevel = isLevel(recursionLevel, aNode);
 			if (isLevel) {
 				if (!cs.getCrosstabDefinition().getColumns().isEmpty()) {
-					it.eng.knowage.engine.cockpit.api.crosstable.CrosstabDefinition.Column aColDef = cs
+					CrosstabDefinition.Column aColDef = cs
 							.getCrosstabDefinition().getColumns().get(recursionLevel / 2);
 					String variable = aColDef.getVariable();
 					if (variables.has(variable)) {
@@ -719,10 +667,10 @@ public class CrossTabExporter extends GenericWidgetExporter implements IWidgetEx
 		return false;
 	}
 
-	public CellStyle getStyle(int j, Sheet sheet, CreationHelper createHelper, CellType celltype, String measureId,
+	public CellStyle getStyle(int j, Sheet sheet, CreationHelper createHelper, CrossTab.CellType celltype, String measureId,
 			Double value, CellStyle dataCellStyle) {
 
-		if (celltype.equals(CellType.CF)) {
+		if (celltype.equals(CrossTab.CellType.CF)) {
 			j = this.getCalculatedFieldDecimals();
 		}
 
@@ -740,16 +688,16 @@ public class CrossTabExporter extends GenericWidgetExporter implements IWidgetEx
 		CellStyle cellStyle = dataCellStyle;
 		cellStyle.setDataFormat(df.getFormat(format));
 
-		if (celltype.equals(CellType.TOTAL)) {
+		if (celltype.equals(CrossTab.CellType.TOTAL)) {
 			cellStyle.setFillForegroundColor(IndexedColors.GREY_40_PERCENT.getIndex());
 		}
-		if (celltype.equals(CellType.CF)) {
+		if (celltype.equals(CrossTab.CellType.CF)) {
 			cellStyle.setFillForegroundColor(IndexedColors.DARK_YELLOW.getIndex());
 		}
-		if (celltype.equals(CellType.SUBTOTAL)) {
+		if (celltype.equals(CrossTab.CellType.SUBTOTAL)) {
 			cellStyle.setFillForegroundColor(IndexedColors.GREY_25_PERCENT.getIndex());
 		}
-		if (celltype.equals(CellType.DATA)) {
+		if (celltype.equals(CrossTab.CellType.DATA)) {
 			((XSSFCellStyle) cellStyle).setFillForegroundColor(getThresholdColor(measureId, value));
 		}
 

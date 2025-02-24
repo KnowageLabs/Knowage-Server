@@ -16,50 +16,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package it.eng.knowage.engine.cockpit.api.export;
+package it.eng.knowage.engine.api.excel.export;
 
-import java.awt.Color;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-
-import org.apache.commons.lang3.ArrayUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.ClientAnchor;
-import org.apache.poi.ss.usermodel.CreationHelper;
-import org.apache.poi.ss.usermodel.Drawing;
-import org.apache.poi.ss.usermodel.FillPatternType;
-import org.apache.poi.ss.usermodel.Font;
-import org.apache.poi.ss.usermodel.HorizontalAlignment;
-import org.apache.poi.ss.usermodel.Picture;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.VerticalAlignment;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.ss.util.CellRangeAddress;
-import org.apache.poi.util.Units;
-import org.apache.poi.xssf.streaming.SXSSFSheet;
-import org.apache.poi.xssf.usermodel.DefaultIndexedColorMap;
-import org.apache.poi.xssf.usermodel.XSSFCellStyle;
-import org.apache.poi.xssf.usermodel.XSSFColor;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.apache.commons.lang3.StringUtils;
-
-import it.eng.knowage.engine.cockpit.api.export.pdf.CssColorParser;
+import com.hazelcast.shaded.com.fasterxml.jackson.jr.ob.JSONObjectException;
+import it.eng.knowage.engine.api.excel.export.dashboard.models.Style;
+import it.eng.knowage.engine.api.excel.export.oldcockpit.parsers.CssColorParser;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.i18n.dao.I18NMessagesDAO;
@@ -67,6 +28,31 @@ import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.bo.SolrDataSet;
 import it.eng.spagobi.tools.dataset.bo.VersionedDataSet;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.usermodel.Font;
+import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.util.Units;
+import org.apache.poi.xssf.streaming.SXSSFSheet;
+import org.apache.poi.xssf.usermodel.DefaultIndexedColorMap;
+import org.apache.poi.xssf.usermodel.XSSFCellStyle;
+import org.apache.poi.xssf.usermodel.XSSFColor;
+import org.apache.poi.xssf.usermodel.XSSFFont;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.awt.Color;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.List;
+import java.util.*;
+
+import static it.eng.knowage.engine.api.excel.export.exporters.CrossTabExporter.DEFAULT_FONT_NAME;
+import static org.apache.poi.xssf.usermodel.XSSFFont.DEFAULT_FONT_SIZE;
 
 public abstract class AbstractFormatExporter {
 	private static final Logger LOGGER = LogManager.getLogger(AbstractFormatExporter.class);
@@ -187,6 +173,112 @@ public abstract class AbstractFormatExporter {
 		}
 	}
 
+	protected List<String> getDashboardHiddenColumnsList(JSONArray columns, JSONObject settings) {
+		try {
+			List<String> hiddenColumns = new ArrayList<>();
+			if (areVisibilityConditionsEnabled(settings)) {
+				JSONObject visualization = settings.getJSONObject("visualization");
+				JSONObject visibilityConditions = visualization.getJSONObject("visibilityConditions");
+				JSONArray conditions = visibilityConditions.getJSONArray("conditions");
+
+				for (int i = 0; i < conditions.length(); i++) {
+					JSONObject condition = conditions.getJSONObject(i);
+					if (columnMustBeHidden(condition)) {
+						JSONArray target;
+						try {
+							target = condition.getJSONArray("target");
+						} catch (JSONException e) {
+							target = new JSONArray();
+							target.put(condition.getString("target"));
+						}
+						for (int j = 0; j < target.length(); j++) {
+							String targetColumn = target.getString(j);
+							hiddenColumns.add(targetColumn);
+						}
+					}
+				}
+			}
+			return hiddenColumns;
+		} catch (JSONException je) {
+			LOGGER.error("Error while getting hidden columns list", je);
+			return new ArrayList<>();
+		}
+	}
+
+	private boolean columnMustBeHidden(JSONObject condition) {
+		try {
+			JSONObject conditionDefinition = condition.getJSONObject("condition");
+
+			return  (conditionDefinition.getString("type").equals("always") &&
+					condition.getBoolean("hide"))
+					||
+					(conditionDefinition.getString("type").equals("variable") &&
+					condition.getBoolean("hide") && conditionIsApplicable(conditionDefinition.getString("variableValue"), conditionDefinition.getString("operator"), conditionDefinition.getString("value")));
+
+		} catch (JSONException jsonException) {
+			LOGGER.error("Error while evaluating if column must be hidden according to variable.", jsonException);
+			return false;
+		}
+	}
+
+	private static boolean areVisibilityConditionsEnabled(JSONObject settings) throws JSONException {
+		return settings.has("visualization") &&
+				settings.getJSONObject("visualization").has("visibilityConditions") &&
+				settings.getJSONObject("visualization").getJSONObject("visibilityConditions").getBoolean("enabled") &&
+				settings.getJSONObject("visualization").getJSONObject("visibilityConditions").has("conditions");
+	}
+
+	protected boolean conditionIsApplicable(String valueToCompare, String operator,  String comparisonValue) {
+        return switch (operator) {
+            case "==" -> {
+                try {
+                    yield Double.parseDouble(valueToCompare) == Double.parseDouble(comparisonValue);
+                } catch (RuntimeException rte) {
+                    yield valueToCompare.equals(comparisonValue);
+                }
+            }
+            case "!=" -> {
+                try {
+                    yield Double.parseDouble(valueToCompare) != Double.parseDouble(comparisonValue);
+                } catch (RuntimeException rte) {
+                    yield valueToCompare.equals(comparisonValue);
+                }
+            }
+            case ">" -> {
+                try {
+                    yield Double.parseDouble((valueToCompare)) > Double.parseDouble(comparisonValue);
+                } catch (RuntimeException rte) {
+                    yield false;
+                }
+            }
+            case "<" -> {
+                try {
+                    yield Double.parseDouble(valueToCompare) < Double.parseDouble(comparisonValue);
+                } catch(RuntimeException rte) {
+                    yield false;
+                }
+            }
+            case ">=" -> {
+                try {
+                    yield Double.parseDouble(valueToCompare) >= Double.parseDouble(comparisonValue);
+                } catch (RuntimeException rte) {
+                    yield false;
+                }
+            }
+            case "<=" -> {
+               try {
+                    yield Double.parseDouble(valueToCompare) <= Double.parseDouble(comparisonValue);
+                } catch (RuntimeException rte) {
+                    yield false;
+                }
+            }
+            case "IN" -> valueToCompare.contains(comparisonValue);
+            default -> false;
+        };
+    }
+
+
+
 	protected boolean variableMustHideColumn(JSONObject column, JSONObject variable) {
 		try {
 			String variableValue = "";
@@ -272,7 +364,45 @@ public abstract class AbstractFormatExporter {
 			return new JSONArray();
 		}
 	}
-	
+
+	protected JSONArray getDashboardTableOrderedColumns(JSONArray columnsNew, List<String> hiddenColumns, JSONArray columnsOld) {
+		JSONArray columnsOrdered = new JSONArray();
+		// new columns are in the correct order
+		// for each of them we have to find the correspondent old column and push it into columnsOrdered
+		try {
+			for (int i = 0; i < columnsNew.length(); i++) {
+
+				JSONObject columnNew = columnsNew.getJSONObject(i);
+
+				if (hiddenColumns.contains(columnNew.getString("id"))) {
+					continue;
+				}
+//				String newHeader = getTableColumnHeaderValue(columnNew);
+
+				for (int j = 0; j < columnsOld.length(); j++) {
+					JSONObject columnOld = columnsOld.getJSONObject(j);
+
+					if (columnOld.getString("header").equals(columnNew.getString("alias"))) {
+						columnOld.put("id", columnNew.getString("id"));
+
+						if (columnNew.has("ranges")) {
+							JSONArray ranges = columnNew.getJSONArray("ranges");
+							columnOld.put("ranges", ranges); // added ranges for column thresholds
+						}
+
+						columnsOrdered.put(columnOld);
+						break;
+					}
+				}
+			}
+			return columnsOrdered;
+		} catch (Exception e) {
+			LOGGER.error("Error retrieving ordered columns");
+			return new JSONArray();
+		}
+	}
+
+
 	protected JSONArray getDiscoveryOrderedColumns(JSONArray columnsNew, JSONArray columnsOld) {
 		JSONArray columnsOrdered = new JSONArray();
 		// new columns are in the correct order
@@ -350,7 +480,7 @@ public abstract class AbstractFormatExporter {
 	}
 
 	public JSONObject getDataStoreForWidget(JSONObject template, JSONObject widget, int offset, int fetchSize) {
-		Map<String, Object> map = new java.util.HashMap<>();
+		Map<String, Object> map = new HashMap<>();
 		JSONObject datastore = null;
 		try {
 			JSONObject configuration = template.getJSONObject("configuration");
@@ -384,6 +514,48 @@ public abstract class AbstractFormatExporter {
 		return datastore;
 	}
 
+	public JSONObject getDataStoreForDashboardWidget(JSONObject widget, int offset, int fetchSize, Map<String, Map<String, JSONArray>> selections, JSONObject drivers) {
+		Map<String, Object> map = new HashMap<>();
+		JSONObject datastore;
+		try {
+			Integer datasetId = Integer.valueOf(widget.optString("dataset"));
+			IDataSet dataset = DAOFactory.getDataSetDAO().loadDataSetById(datasetId);
+			String datasetLabel = dataset.getLabel();
+
+			JSONObject dashboardSelections;
+			if (widget.getString("type").equalsIgnoreCase("static-pivot-table")) {
+				dashboardSelections = getPivotAggregations(widget, datasetLabel);
+			} else {
+				dashboardSelections = getDashboardAggregations(widget, datasetLabel);
+			}
+
+			dashboardSelections.put("selections", selections);
+			dashboardSelections.put("parameters", drivers);
+
+			JSONArray summaryRow = getSummaryRowFromWidget(widget);
+
+			if (summaryRow != null)
+				dashboardSelections.put("summaryRow", summaryRow);
+
+			if (isSolrDataset(dataset) && !widget.getString("type").equalsIgnoreCase("discovery")) {
+				JSONObject jsOptions = new JSONObject();
+				jsOptions.put("solrFacetPivot", true);
+				dashboardSelections.put("options", jsOptions);
+			}
+
+			datastore = getDatastore(datasetLabel, map, dashboardSelections.toString(), offset, fetchSize);
+			datastore.put("widgetData", widget);
+
+		} catch (Exception e) {
+			throw new SpagoBIRuntimeException("Error getting datastore for widget [type=" + widget.optString("type")
+					+ "] [id=" + widget.optLong("id") + "]", e);
+		}
+		return datastore;
+	}
+
+	protected abstract JSONObject getPivotAggregations(JSONObject widget, String datasetLabel);
+
+
 	protected JSONObject getDatastore(String datasetLabel, Map<String, Object> map, String selections, int offset,
 			int fetchSize) {
 		ExporterClient client = new ExporterClient();
@@ -407,6 +579,53 @@ public abstract class AbstractFormatExporter {
 			}
 		}
 		return i18nMessages.getOrDefault(columnName, columnName);
+	}
+
+	protected JSONObject getVisualizationFromSettings(JSONObject settings) {
+		try {
+			return settings.getJSONObject("visualization");
+		} catch (Exception e) {
+			LOGGER.error("Error while getting visualization from settings", e);
+			return new JSONObject();
+		}
+	}
+
+	protected int getPrecisionByColumn(JSONObject settings, JSONObject column) {
+		try {
+			JSONObject visualization = getVisualizationFromSettings(settings);
+			if (visualization == null)
+				return -1;
+
+			JSONObject visualizationTypes = visualization.getJSONObject("visualizationTypes");
+
+			if (visualizationTypes == null) {
+				return -1;
+			}
+
+			JSONArray types = visualizationTypes.getJSONArray("types");
+
+			for (int i = 0; i < types.length(); i++) {
+				JSONObject type = types.getJSONObject(i);
+				JSONArray target;
+				try {
+					target = type.getJSONArray("target");
+				} catch (JSONException e) {
+					target = new JSONArray();
+					target.put(type.getString("target"));
+				}
+
+				if (type.has("precision")) {
+					if (target.toString().contains(column.getString("id")) || target.toString().contains("all")) {
+						return type.getInt("precision");
+					} else {
+						return -1;
+					}
+				}
+			}
+		} catch (Exception e) {
+			LOGGER.error("Error while getting precision by column", e);
+		}
+		return -1;
 	}
 
 	protected boolean isSolrDataset(IDataSet dataSet) {
@@ -642,7 +861,15 @@ public abstract class AbstractFormatExporter {
 		}
 	}
 
+	protected JSONArray getSummaryRowFromDashboardWidget(JSONObject widget) {
+		return new JSONArray();
+	}
+
+
 	protected abstract JSONObject getCockpitSelectionsFromBody(JSONObject widget);
+
+	protected abstract JSONObject getDashboardAggregations(JSONObject widget, String datasetLabel);
+
 
 	protected boolean getRealtimeFromWidget(int dsId, JSONObject configuration) {
 		try {
@@ -709,9 +936,9 @@ public abstract class AbstractFormatExporter {
 	}
 
 	protected CellStyle getIntCellStyle(Workbook wb, CreationHelper helper, JSONObject column, JSONObject colStyle,
-			String defaultFormat, JSONObject settings, Integer value, JSONObject rowObject,
-			HashMap<String, String> mapColumns, HashMap<String, String> mapColumnsTypes,
-			HashMap<String, Object> variablesMap, HashMap<String, Object> parametersMap) {
+										String defaultFormat, JSONObject settings, Integer value, JSONObject rowObject,
+										HashMap<String, String> mapColumns, HashMap<String, String> mapColumnsTypes,
+										HashMap<String, Object> variablesMap, HashMap<String, Object> parametersMap) {
 		String colName = null;
 		XSSFCellStyle toReturn = getCellStyleByFormat(wb, helper, defaultFormat, Optional.empty(), Optional.empty());
 		try {
@@ -1481,6 +1708,18 @@ public abstract class AbstractFormatExporter {
 		return mapGroupsAndColumns;
 	}
 
+	protected final Map<String, String> getDashboardGroupAndColumnsMap(JSONObject widgetContent, JSONArray groupsArray) {
+		Map<String, String> mapGroupsAndColumns = new HashMap<>();
+		try {
+			if (widgetContent.get("columns") instanceof JSONArray)
+				mapGroupsAndColumns = getMapFromGroupsArray(groupsArray,
+						widgetContent.getJSONArray("columns"));
+		} catch (JSONException e) {
+			LOGGER.error("Couldn't retrieve groups", e);
+		}
+		return mapGroupsAndColumns;
+	}
+
 	protected final JSONArray getGroupsFromWidgetContent(JSONObject widgetData) throws JSONException {
 		// column.header matches with name or alias
 		// Fill Header
@@ -1525,7 +1764,8 @@ public abstract class AbstractFormatExporter {
 			
 			// set brandend header image
 			sheet.addMergedRegion(new CellRangeAddress(startRow, startRow+rowspan-1, startCol, startCol+colspan-1));
-			drawBrandendHeaderImage(sheet, imageB64, Workbook.PICTURE_TYPE_PNG, startCol, startRow, colspan, rowspan);				
+
+			drawBrandendHeaderImage(sheet, imageB64, Workbook.PICTURE_TYPE_PNG, startCol, startRow, colspan, rowspan);
 			
 			// set document name
 			sheet.getRow(startRow).createCell(startCol+colspan).setCellValue(documentName);
@@ -1554,108 +1794,121 @@ public abstract class AbstractFormatExporter {
 		
 		return headerIndex;
 	}
-	
+
+	private Picture drawImage(Sheet sheet, String imageB64, int pictureType, int startCol, int startRow, int colspan, int rowspan, ClientAnchor anchor, Workbook wb) {
+
+		String encodingPrefix = "base64,";
+		int contentStartIndex = imageB64.indexOf(encodingPrefix) + encodingPrefix.length();
+		byte[] bytes = org.apache.commons.codec.binary.Base64.decodeBase64(imageB64.substring(contentStartIndex));
+		int pictureIdx = wb.addPicture(bytes, pictureType);
+
+		anchor.setCol1(startCol);
+		anchor.setRow1(startRow);
+		anchor.setCol2(startCol + colspan);
+		anchor.setRow2(startRow + rowspan);
+
+		Drawing<?> drawing = sheet.createDrawingPatriarch();
+		return drawing.createPicture(anchor, pictureIdx);
+	}
+
+
 	public void drawBrandendHeaderImage(Sheet sheet, String imageB64, int pictureType, int startCol, int startRow,
 			int colspan, int rowspan) {
 		try {
 			Workbook wb = sheet.getWorkbook();
-			
-			// load the picture
-		    String encodingPrefix = "base64,";
-		    int contentStartIndex = imageB64.indexOf(encodingPrefix) + encodingPrefix.length();
-		    byte[] bytes = org.apache.commons.codec.binary.Base64.decodeBase64(imageB64.substring(contentStartIndex));			
-			int pictureIdx = wb.addPicture(bytes, pictureType);
-
-			// create an anchor with upper left cell startCol/startRow
 			CreationHelper helper = wb.getCreationHelper();
 			ClientAnchor anchor = helper.createClientAnchor();
-			anchor.setCol1(startCol);
-			anchor.setRow1(startRow);
 
-			Drawing drawing = sheet.createDrawingPatriarch();
-			Picture pict = drawing.createPicture(anchor, pictureIdx);
+			Picture pict = drawImage(sheet, imageB64, pictureType, startCol, startRow, colspan, rowspan, anchor, wb);
+			buildImageMesaures(sheet, startCol, startRow, colspan, rowspan, pict, anchor);
 
-			int pictWidthPx = pict.getImageDimension().width;
-			int pictHeightPx = pict.getImageDimension().height;
-			
-			// get the heights of all merged rows in px
-			float[] rowHeightsPx = new float[startRow+rowspan];
-			float rowsHeightPx = 0f;
-			for (int r = startRow; r < startRow+rowspan; r++) {
-				Row row = sheet.getRow(r);
-				float rowHeightPt = row.getHeightInPoints();
-				rowHeightsPx[r-startRow] = rowHeightPt * Units.PIXEL_DPI / Units.POINT_DPI;
-				rowsHeightPx += rowHeightsPx[r-startRow];
-			}
-
-			// get the widths of all merged cols in px
-			float[] colWidthsPx = new float[startCol + colspan];
-			float colsWidthPx = 0f;
-			for (int c = startCol; c < startCol + colspan; c++) {
-				colWidthsPx[c - startCol] = sheet.getColumnWidthInPixels(c);
-				colsWidthPx += colWidthsPx[c - startCol];
-			}
-
-			// calculate scale
-			float scale = 1;
-			if (pictHeightPx > rowsHeightPx) {
-				float tmpscale = rowsHeightPx / pictHeightPx;
-				if (tmpscale < scale)
-					scale = tmpscale;
-			}
-			if (pictWidthPx > colsWidthPx) {
-				float tmpscale = colsWidthPx / pictWidthPx;
-				if (tmpscale < scale)
-					scale = tmpscale;
-			}
-
-			// calculate the horizontal center position
-			int horCenterPosPx = Math.round(colsWidthPx / 2f - pictWidthPx * scale / 2f);
-			Integer col1 = null;
-			colsWidthPx = 0f;
-			for (int c = 0; c < colWidthsPx.length; c++) {
-				float colWidthPx = colWidthsPx[c];
-				if (colsWidthPx + colWidthPx > horCenterPosPx) {
-					col1 = c + startCol;
-					break;
-				}
-				colsWidthPx += colWidthPx;
-			}
-			
-			// set the horizontal center position as Col1 plus Dx1 of anchor
-			if (col1 != null) {
-				anchor.setCol1(col1);
-				anchor.setDx1(Math.round(horCenterPosPx - colsWidthPx) * Units.EMU_PER_PIXEL);
-			}
-
-			// calculate the vertical center position
-			int vertCenterPosPx = Math.round(rowsHeightPx / 2f - pictHeightPx * scale / 2f);
-			Integer row1 = null;
-			rowsHeightPx = 0f;
-			for (int r = 0; r < rowHeightsPx.length; r++) {
-				float rowHeightPx = rowHeightsPx[r];
-				if (rowsHeightPx + rowHeightPx > vertCenterPosPx) {
-					row1 = r + startRow;
-				    break;
-				}
-				rowsHeightPx += rowHeightPx;
-			}
-			  
-			if (row1 != null) {
-				anchor.setRow1(row1);
-				anchor.setDy1(Math.round(vertCenterPosPx - rowsHeightPx) * Units.EMU_PER_PIXEL); //in unit EMU for XSSF
-			}
-			 
-			anchor.setCol2(startCol+colspan);
-			anchor.setDx2(Math.round(colsWidthPx - Math.round(horCenterPosPx - colsWidthPx)) * Units.EMU_PER_PIXEL);
-			anchor.setRow2(startRow+rowspan);
-			anchor.setDy2(Math.round(rowsHeightPx - Math.round(vertCenterPosPx - rowsHeightPx)) * Units.EMU_PER_PIXEL);
-			
 		} catch (Exception e) {
 			throw new SpagoBIRuntimeException("Cannot write data to Excel file", e);
 		}
 	}
-	
+
+	private static void buildImageMesaures(Sheet sheet, int startCol, int startRow, int colspan, int rowspan, Picture pict, ClientAnchor anchor) {
+		float colsWidthPx;
+		int horCenterPosPx;
+		float rowsHeightPx;
+		int vertCenterPosPx;
+		int pictWidthPx = pict.getImageDimension().width;
+		int pictHeightPx = pict.getImageDimension().height;
+
+		// get the heights of all merged rows in px
+		float[] rowHeightsPx = new float[startRow + rowspan];
+		rowsHeightPx = 0f;
+		for (int r = startRow; r < startRow + rowspan; r++) {
+			Row row = sheet.getRow(r);
+			float rowHeightPt = row.getHeightInPoints();
+			rowHeightsPx[r- startRow] = rowHeightPt * Units.PIXEL_DPI / Units.POINT_DPI;
+			rowsHeightPx += rowHeightsPx[r- startRow];
+		}
+
+		// get the widths of all merged cols in px
+		float[] colWidthsPx = new float[startCol + colspan];
+		colsWidthPx = 0f;
+		for (int c = startCol; c < startCol + colspan; c++) {
+			colWidthsPx[c - startCol] = sheet.getColumnWidthInPixels(c);
+			colsWidthPx += colWidthsPx[c - startCol];
+		}
+
+		// calculate scale
+		float scale = 1;
+		if (pictHeightPx > rowsHeightPx) {
+			float tmpscale = rowsHeightPx / pictHeightPx;
+			if (tmpscale < scale)
+				scale = tmpscale;
+		}
+		if (pictWidthPx > colsWidthPx) {
+			float tmpscale = colsWidthPx / pictWidthPx;
+			if (tmpscale < scale)
+				scale = tmpscale;
+		}
+
+		// calculate the horizontal center position
+		horCenterPosPx = Math.round(colsWidthPx / 2f - pictWidthPx * scale / 2f);
+		Integer col1 = null;
+		colsWidthPx = 0f;
+		for (int c = 0; c < colWidthsPx.length; c++) {
+			float colWidthPx = colWidthsPx[c];
+			if (colsWidthPx + colWidthPx > horCenterPosPx) {
+				col1 = c + startCol;
+				break;
+			}
+			colsWidthPx += colWidthPx;
+		}
+
+		// set the horizontal center position as Col1 plus Dx1 of anchor
+		if (col1 != null) {
+			anchor.setCol1(col1);
+			anchor.setDx1(Math.round(horCenterPosPx - colsWidthPx) * Units.EMU_PER_PIXEL);
+		}
+
+		// calculate the vertical center position
+		vertCenterPosPx = Math.round(rowsHeightPx / 2f - pictHeightPx * scale / 2f);
+		Integer row1 = null;
+		rowsHeightPx = 0f;
+		for (int r = 0; r < rowHeightsPx.length; r++) {
+			float rowHeightPx = rowHeightsPx[r];
+			if (rowsHeightPx + rowHeightPx > vertCenterPosPx) {
+				row1 = r + startRow;
+				break;
+			}
+			rowsHeightPx += rowHeightPx;
+		}
+
+		if (row1 != null) {
+			anchor.setRow1(row1);
+			anchor.setDy1(Math.round(vertCenterPosPx - rowsHeightPx) * Units.EMU_PER_PIXEL); //in unit EMU for XSSF
+		}
+
+		if (sheet instanceof SXSSFSheet) {
+			anchor.setDx2(Math.round(colsWidthPx - Math.round(horCenterPosPx - colsWidthPx)) * Units.EMU_PER_PIXEL);
+			anchor.setDy2(Math.round(rowsHeightPx - Math.round(vertCenterPosPx - rowsHeightPx)) * Units.EMU_PER_PIXEL);
+		}
+	}
+
 	public CellStyle buildCellStyle(Sheet sheet, boolean bold, HorizontalAlignment alignment, VerticalAlignment verticalAlignment, short headerFontSizeShort) {
 		
 		// CELL
@@ -1712,5 +1965,81 @@ public abstract class AbstractFormatExporter {
 		
 		cellStyle.setFont(font);
 		return cellStyle;
+	}
+
+	public CellStyle buildPoiCellStyle(Style style, XSSFFont font, Workbook wb) {
+		CellStyle cellStyle = wb.createCellStyle();
+
+		if (stringIsNotEmpty(style.getFontSize())) {
+			font.setFontHeightInPoints(Short.parseShort(getOnlyTheNumericValueFromString(style.getFontSize())));
+		} else {
+			font.setFontHeightInPoints(DEFAULT_FONT_SIZE);
+		}
+
+		if (stringIsNotEmpty(style.getColor())) {
+			font.setColor(getXSSFColorFromRGBA(style.getColor()));
+		}
+
+		if (stringIsNotEmpty(style.getBackgroundColor())) {
+			cellStyle.setFillForegroundColor(getXSSFColorFromRGBA(style.getBackgroundColor()));
+			cellStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+		}
+
+		if (stringIsNotEmpty(style.getFontFamily())) {
+			font.setFontName(style.getFontFamily());
+		} else {
+			font.setFontName(DEFAULT_FONT_NAME);
+		}
+
+		if (stringIsNotEmpty(style.getFontWeight())) {
+			font.setBold(style.getFontWeight().equals("bold"));
+		}
+
+		if (stringIsNotEmpty(style.getFontStyle())) {
+			font.setItalic(style.getFontStyle().equals("italic"));
+		}
+
+		if (stringIsNotEmpty(style.getAlignItems())) {
+			cellStyle.setAlignment(getHorizontalAlignment(style.getAlignItems().toUpperCase()));
+		}
+
+		if (stringIsNotEmpty(style.getJustifyContent())) {
+			cellStyle.setVerticalAlignment(getVerticalAlignment(style.getJustifyContent().toUpperCase()));
+		}
+
+		cellStyle.setFont(font);
+		return cellStyle;
+	}
+
+	private HorizontalAlignment getHorizontalAlignment(String alignItem) {
+        return switch (alignItem) {
+            case "CENTER" -> HorizontalAlignment.CENTER;
+            case "FLEX-END" -> HorizontalAlignment.RIGHT;
+            default -> HorizontalAlignment.LEFT;
+        };
+	}
+
+	private VerticalAlignment getVerticalAlignment(String justifyContent) {
+		return switch (justifyContent) {
+			case "CENTER" -> VerticalAlignment.CENTER;
+			case "FLEX-END" -> VerticalAlignment.BOTTOM;
+			default -> VerticalAlignment.TOP;
+		};
+	}
+
+	private String getOnlyTheNumericValueFromString(String string) {
+		return string.replaceAll("[^0-9]", "");
+	}
+
+	private XSSFColor getXSSFColorFromRGBA(String colorStr) {
+			String[] values = colorStr.replace(colorStr.contains("rgba(") ? "rgba(" : "rgb(", "").replace(")", "").split(",");
+			int red = Integer.parseInt(values[0].trim());
+			int green = Integer.parseInt(values[1].trim());
+			int blue = Integer.parseInt(values[2].trim());
+
+			return new XSSFColor(new Color(red, green, blue), new DefaultIndexedColorMap());}
+
+	protected boolean stringIsNotEmpty(String str) {
+		return str != null && !str.isEmpty();
 	}
 }

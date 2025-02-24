@@ -73,6 +73,14 @@ public class ExternalEngineSecurityServerInterceptor extends AbstractSecuritySer
 					SecurityServiceProxy proxy = new SecurityServiceProxy(userId, servletRequest.getSession());
 					profile = (UserProfile) proxy.getUserProfile();
 				}
+			} else {
+				auto = servletRequest.getHeader("X-Kn-Authorization");
+				int position = auto.indexOf("Bearer");
+				if (position > -1 && position < 5) {// Bearer stay at the beginning of the header
+					String encodedUser = auto.replaceFirst("Bearer ", "");
+					SecurityServiceProxy proxy = new SecurityServiceProxy(encodedUser, servletRequest.getSession());
+					profile = (UserProfile) proxy.getUserProfile();
+				}
 			}
 		} catch (Throwable t) {
 			logger.trace("Problem during authentication, returning null", t);

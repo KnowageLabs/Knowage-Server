@@ -16,16 +16,15 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package it.eng.knowage.engine.cockpit.api.export.excel.exporters;
+package it.eng.knowage.engine.api.excel.export.exporters;
 
+import it.eng.knowage.engine.api.excel.export.ExcelExporter;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import org.apache.log4j.Logger;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import it.eng.knowage.engine.cockpit.api.export.excel.ExcelExporter;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 class GenericWidgetExporter implements IWidgetExporter {
 

@@ -15,19 +15,17 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package it.eng.knowage.engine.cockpit.api.export;
+package it.eng.knowage.engine.api.excel.export;
 
-import java.util.Map;
-
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-
+import it.eng.spagobi.utilities.engines.rest.SimpleRestClient;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.json.JSONObject;
 
-import it.eng.spagobi.utilities.engines.rest.SimpleRestClient;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import java.util.Map;
 
 /**
  * @author Francesco Lucchi (francesco.lucchi@eng.it)

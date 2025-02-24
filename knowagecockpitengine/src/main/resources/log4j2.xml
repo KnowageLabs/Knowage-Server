@@ -43,7 +43,7 @@
 		<logger name="it.eng.knowage.engine.cockpit.api.export.excel.ExcelExporter" level="error" additivity="false">
 			<AppenderRef ref="KNOWAGE_COCKPIT_ENGINE" />
 		</logger>
-		<logger name="it.eng.knowage.engine.cockpit.api.export.AbstractFormatExporter" level="error" additivity="false">
+		<logger name="it.eng.knowage.engine.api.excel.export.AbstractFormatExporter" level="warn" additivity="false">
 			<AppenderRef ref="KNOWAGE_COCKPIT_ENGINE" />
 		</logger>
 		<logger name="it.eng.spagobi.engine.chart.util.DataSetTransformer" level="error" additivity="false">

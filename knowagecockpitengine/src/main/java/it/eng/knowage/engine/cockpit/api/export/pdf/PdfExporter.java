@@ -31,6 +31,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 
+import it.eng.knowage.engine.api.excel.export.AbstractFormatExporter;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -48,7 +49,6 @@ import be.quodlibet.boxable.Cell;
 import be.quodlibet.boxable.HorizontalAlignment;
 import be.quodlibet.boxable.Row;
 import be.quodlibet.boxable.VerticalAlignment;
-import it.eng.knowage.engine.cockpit.api.export.AbstractFormatExporter;
 import it.eng.spago.error.EMFAbstractError;
 import it.eng.spagobi.analiticalmodel.document.bo.ObjTemplate;
 import it.eng.spagobi.commons.SingletonConfig;
@@ -69,6 +69,11 @@ public class PdfExporter extends AbstractFormatExporter {
 
 	public PdfExporter(String userUniqueIdentifier, JSONObject body) {
 		super(userUniqueIdentifier, body);
+	}
+
+	@Override
+	protected JSONObject getPivotAggregations(JSONObject widget, String datasetLabel) {
+		return null;
 	}
 
 	public byte[] getBinaryData(Integer documentId, String documentLabel, String templateString) throws JSONException {
@@ -660,6 +665,11 @@ public class PdfExporter extends AbstractFormatExporter {
 			return new JSONObject();
 		}
 		return cockpitSelections;
+	}
+
+	@Override
+	protected JSONObject getDashboardAggregations(JSONObject widget, String datasetLabel) {
+		return null;
 	}
 
 	/**

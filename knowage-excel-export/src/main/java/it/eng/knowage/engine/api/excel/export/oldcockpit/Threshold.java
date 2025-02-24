@@ -1,13 +1,15 @@
-package it.eng.knowage.engine.cockpit.api.export.excel;
+package it.eng.knowage.engine.api.excel.export.oldcockpit;
 
 import org.apache.poi.xssf.usermodel.XSSFColor;
 
+import java.util.Objects;
+
 public class Threshold {
 
-	private String operator;
-	private Double value;
-	private String color;
-	private XSSFColor xSSFColor;
+	private final String operator;
+	private final Double value;
+	private final String color;
+	private final XSSFColor xSSFColor;
 
 	public Threshold(String operator, Double value, String color) {
 		super();
@@ -30,20 +32,15 @@ public class Threshold {
 		if (operator == null)
 			return false;
 
-		if (operator.equals(">")) {
-			return (value > this.value);
-		} else if (operator.equals("<")) {
-			return (value < this.value);
-		} else if (operator.equals("==")) {
-			return (value == this.value);
-		} else if (operator.equals(">=")) {
-			return (value >= this.value);
-		} else if (operator.equals("<=")) {
-			return (value <= this.value);
-		} else if (operator.equals("!=")) {
-			return (value != this.value);
-		} else
-			return false;
+        return switch (operator) {
+            case ">" -> (value > this.value);
+            case "<" -> (value < this.value);
+            case "==" -> (Objects.equals(value, this.value));
+            case ">=" -> (value >= this.value);
+            case "<=" -> (value <= this.value);
+            case "!=" -> (!Objects.equals(value, this.value));
+            default -> false;
+        };
 	}
 
 	public XSSFColor getXSSFColor() {

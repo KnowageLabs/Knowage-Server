@@ -17,57 +17,11 @@
  */
 package it.eng.knowage.engine.cockpit.api.page;
 
-import static it.eng.knowage.commons.security.KnowageSystemConfiguration.getKnowageVueContext;
-import static it.eng.spagobi.commons.constants.ConfigurationConstants.SPAGOBI_SPAGOBI_SERVICE_JNDI;
-import static java.nio.charset.StandardCharsets.UTF_8;
-
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Base64;
-import java.util.Base64.Encoder;
-import java.util.Collections;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-
-import org.apache.commons.lang3.StringUtils;
-import org.apache.http.client.utils.URIBuilder;
-//import org.apache.jena.ext.com.google.common.collect.Iterables;
 import com.google.common.collect.Iterables;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.jboss.resteasy.plugins.providers.html.View;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
+import it.eng.knowage.engine.api.excel.export.ExcelExporter;
 import it.eng.knowage.engine.cockpit.CockpitEngine;
 import it.eng.knowage.engine.cockpit.CockpitEngineInstance;
 import it.eng.knowage.engine.cockpit.api.AbstractCockpitEngineResource;
-import it.eng.knowage.engine.cockpit.api.export.excel.ExcelExporter;
 import it.eng.knowage.engine.cockpit.api.export.pdf.nodejs.PdfExporterV2;
 import it.eng.knowage.engine.cockpit.api.export.png.PngExporter;
 import it.eng.knowage.export.wrapper.beans.RenderOptions;
@@ -85,6 +39,37 @@ import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.engines.EngineStartServletIOManager;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceExceptionHandler;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+import it.eng.spagobi.utilities.mime.MimeUtils;
+import it.eng.spagobi.utilities.rest.RestUtilities;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.http.client.utils.URIBuilder;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.jboss.resteasy.plugins.providers.html.View;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.ws.rs.*;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.*;
+import java.util.Base64.Encoder;
+import java.util.Map.Entry;
+import java.util.stream.Collectors;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
+
+import static it.eng.knowage.commons.security.KnowageSystemConfiguration.getKnowageVueContext;
+import static it.eng.spagobi.commons.constants.ConfigurationConstants.SPAGOBI_SPAGOBI_SERVICE_JNDI;
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 /**
  * @authors Andrea Gioia (andrea.gioia@eng.it)
@@ -104,6 +89,7 @@ public class PageResource extends AbstractCockpitEngineResource {
 	private static final String PDF_DEVICE_SCALE_FACTOR = "pdfDeviceScaleFactor";
 	private static final String PDF_WAIT_TIME = "pdfWaitTime";
 	private static final String IS_MULTI_SHEET = "isMultiSheet";
+	private static final String TOKEN_HEADER = "x-kn-authorization";
 
 	private static Map<String, JSONObject> pages;
 
@@ -179,9 +165,47 @@ public class PageResource extends AbstractCockpitEngineResource {
 
 	@POST
 	@Path("/{pagename}/spreadsheet")
-	public Response openPagePostSpreadsheet(@PathParam("pagename") String pageName)
+	public void openPagePostSpreadsheet(@PathParam("pagename") String pagename, @Context HttpServletRequest req)
 			throws IOException, InterruptedException, JSONException {
-		return openPageSpreadsheetInternal(pageName);
+		logger.debug("IN");
+		response.setCharacterEncoding(UTF_8.name());
+		try {
+			JSONObject body = RestUtilities.readBodyAsJSONObject(req);
+			String token = request.getHeader(TOKEN_HEADER);
+			String userId = token.substring(7);
+			ExcelExporter excelExporter = new ExcelExporter(userId, body);
+			String mimeType = excelExporter.getMimeType();
+			String optionalWidgetId = body.optString("id");
+			boolean isDashboardSingleWidgetExport = !optionalWidgetId.isEmpty();
+
+			if (!MimeUtils.isValidMimeType(mimeType))
+				throw new SpagoBIRuntimeException("Invalid mime type: " + mimeType);
+
+			if (mimeType != null) {
+				byte[] data;
+				data = excelExporter.getDashboardBinaryData(body, isDashboardSingleWidgetExport);
+				if (!isDashboardSingleWidgetExport) {
+					String documentLabel = body.getJSONObject("document").getString("label");
+					response.setHeader("Content-Disposition", "attachment; fileName=" + documentLabel + ".xlsx");
+				} else {
+					String widgetName = body.getJSONObject("settings").getJSONObject("style").getJSONObject("title")
+							.optString("text");
+					response.setHeader("Content-Disposition", "attachment; fileName=" + widgetName + "." + "xlsx");
+				}
+				response.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+				response.setHeader("Content-length", Integer.toString(data.length));
+				response.setHeader("Content-Type", mimeType);
+
+				response.getOutputStream().write(data, 0, data.length);
+				response.getOutputStream().flush();
+				response.getOutputStream().close();
+			}
+		} catch (Exception e) {
+			logger.error("Cannot export to Excel", e);
+			throw SpagoBIEngineServiceExceptionHandler.getInstance().getWrappedException("", getEngineInstance(), e);
+		} finally {
+			logger.debug("OUT");
+		}
 	}
 
 	@GET
@@ -343,7 +367,7 @@ public class PageResource extends AbstractCockpitEngineResource {
 
 		String documentLabel = request.getParameter("DOCUMENT_LABEL");
 
-		ExcelExporter excelExporter = new ExcelExporter(userId, parameterMap, requestURL);
+		it.eng.knowage.engine.api.excel.export.ExcelExporter excelExporter = new it.eng.knowage.engine.api.excel.export.ExcelExporter(userId, parameterMap, requestURL);
 		String mimeType = excelExporter.getMimeType();
 		byte[] data = excelExporter.getBinaryData(documentLabel);
 
