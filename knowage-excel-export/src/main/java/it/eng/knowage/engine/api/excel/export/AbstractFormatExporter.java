@@ -18,6 +18,7 @@
 
 package it.eng.knowage.engine.api.excel.export;
 
+import com.hazelcast.shaded.com.fasterxml.jackson.jr.ob.JSONObjectException;
 import it.eng.knowage.engine.api.excel.export.dashboard.models.Style;
 import it.eng.knowage.engine.api.excel.export.oldcockpit.parsers.CssColorParser;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
@@ -172,6 +173,112 @@ public abstract class AbstractFormatExporter {
 		}
 	}
 
+	protected List<String> getDashboardHiddenColumnsList(JSONArray columns, JSONObject settings) {
+		try {
+			List<String> hiddenColumns = new ArrayList<>();
+			if (areVisibilityConditionsEnabled(settings)) {
+				JSONObject visualization = settings.getJSONObject("visualization");
+				JSONObject visibilityConditions = visualization.getJSONObject("visibilityConditions");
+				JSONArray conditions = visibilityConditions.getJSONArray("conditions");
+
+				for (int i = 0; i < conditions.length(); i++) {
+					JSONObject condition = conditions.getJSONObject(i);
+					if (columnMustBeHidden(condition)) {
+						JSONArray target;
+						try {
+							target = condition.getJSONArray("target");
+						} catch (JSONException e) {
+							target = new JSONArray();
+							target.put(condition.getString("target"));
+						}
+						for (int j = 0; j < target.length(); j++) {
+							String targetColumn = target.getString(j);
+							hiddenColumns.add(targetColumn);
+						}
+					}
+				}
+			}
+			return hiddenColumns;
+		} catch (JSONException je) {
+			LOGGER.error("Error while getting hidden columns list", je);
+			return new ArrayList<>();
+		}
+	}
+
+	private boolean columnMustBeHidden(JSONObject condition) {
+		try {
+			JSONObject conditionDefinition = condition.getJSONObject("condition");
+
+			return  (conditionDefinition.getString("type").equals("always") &&
+					condition.getBoolean("hide"))
+					||
+					(conditionDefinition.getString("type").equals("variable") &&
+					condition.getBoolean("hide") && conditionIsApplicable(conditionDefinition.getString("variableValue"), conditionDefinition.getString("operator"), conditionDefinition.getString("value")));
+
+		} catch (JSONException jsonException) {
+			LOGGER.error("Error while evaluating if column must be hidden according to variable.", jsonException);
+			return false;
+		}
+	}
+
+	private static boolean areVisibilityConditionsEnabled(JSONObject settings) throws JSONException {
+		return settings.has("visualization") &&
+				settings.getJSONObject("visualization").has("visibilityConditions") &&
+				settings.getJSONObject("visualization").getJSONObject("visibilityConditions").getBoolean("enabled") &&
+				settings.getJSONObject("visualization").getJSONObject("visibilityConditions").has("conditions");
+	}
+
+	protected boolean conditionIsApplicable(String valueToCompare, String operator,  String comparisonValue) {
+        return switch (operator) {
+            case "==" -> {
+                try {
+                    yield Double.parseDouble(valueToCompare) == Double.parseDouble(comparisonValue);
+                } catch (RuntimeException rte) {
+                    yield valueToCompare.equals(comparisonValue);
+                }
+            }
+            case "!=" -> {
+                try {
+                    yield Double.parseDouble(valueToCompare) != Double.parseDouble(comparisonValue);
+                } catch (RuntimeException rte) {
+                    yield valueToCompare.equals(comparisonValue);
+                }
+            }
+            case ">" -> {
+                try {
+                    yield Double.parseDouble((valueToCompare)) > Double.parseDouble(comparisonValue);
+                } catch (RuntimeException rte) {
+                    yield false;
+                }
+            }
+            case "<" -> {
+                try {
+                    yield Double.parseDouble(valueToCompare) < Double.parseDouble(comparisonValue);
+                } catch(RuntimeException rte) {
+                    yield false;
+                }
+            }
+            case ">=" -> {
+                try {
+                    yield Double.parseDouble(valueToCompare) >= Double.parseDouble(comparisonValue);
+                } catch (RuntimeException rte) {
+                    yield false;
+                }
+            }
+            case "<=" -> {
+               try {
+                    yield Double.parseDouble(valueToCompare) <= Double.parseDouble(comparisonValue);
+                } catch (RuntimeException rte) {
+                    yield false;
+                }
+            }
+            case "IN" -> valueToCompare.contains(comparisonValue);
+            default -> false;
+        };
+    }
+
+
+
 	protected boolean variableMustHideColumn(JSONObject column, JSONObject variable) {
 		try {
 			String variableValue = "";
@@ -258,18 +365,18 @@ public abstract class AbstractFormatExporter {
 		}
 	}
 
-	protected JSONArray getDashboardTableOrderedColumns(JSONArray columnsNew, JSONArray columnsOld) {
+	protected JSONArray getDashboardTableOrderedColumns(JSONArray columnsNew, List<String> hiddenColumns, JSONArray columnsOld) {
 		JSONArray columnsOrdered = new JSONArray();
 		// new columns are in the correct order
 		// for each of them we have to find the correspondent old column and push it into columnsOrdered
 		try {
 			for (int i = 0; i < columnsNew.length(); i++) {
 
-				if (hiddenColumns.contains(i))
-					continue;
-
 				JSONObject columnNew = columnsNew.getJSONObject(i);
 
+				if (hiddenColumns.contains(columnNew.getString("id"))) {
+					continue;
+				}
 //				String newHeader = getTableColumnHeaderValue(columnNew);
 
 				for (int j = 0; j < columnsOld.length(); j++) {
@@ -425,7 +532,7 @@ public abstract class AbstractFormatExporter {
 			dashboardSelections.put("selections", selections);
 			dashboardSelections.put("parameters", drivers);
 
-			JSONArray summaryRow = getSummaryRowFromDashboardWidget(widget);
+			JSONArray summaryRow = getSummaryRowFromWidget(widget);
 
 			if (summaryRow != null)
 				dashboardSelections.put("summaryRow", summaryRow);

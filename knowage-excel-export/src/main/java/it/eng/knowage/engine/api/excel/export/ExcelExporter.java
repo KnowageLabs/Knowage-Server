@@ -1623,7 +1623,6 @@ public class ExcelExporter extends AbstractFormatExporter {
             JSONArray columns = metadata.getJSONArray("fields");
             columns = filterDataStoreColumns(columns);
             JSONArray rows = dataStore.getJSONArray("rows");
-            HashMap<String, Object> variablesMap = new HashMap<>();
             JSONObject widgetData = dataStore.getJSONObject("widgetData");
             HashMap<String, String> chartAggregationsMap = new HashMap<>();
 
@@ -1688,14 +1687,6 @@ public class ExcelExporter extends AbstractFormatExporter {
                 adjustColumnWidth(sheet, this.imageB64);
             }
 
-
-            // cell styles for table widget
-            JSONObject[] columnStyles = new JSONObject[columnsOrdered.length() + 10];
-            HashMap<String, String> mapColumns = new HashMap<>();
-            HashMap<String, String> mapColumnsTypes = new HashMap<>();
-            HashMap<String, Object> mapParameters = new HashMap<>();
-
-            variablesMap = createMapVariables(variablesMap);
             // FILL RECORDS
             int isGroup = groupsAndColumnsMap.isEmpty() ? 0 : 1;
             for (int r = 0; r < rows.length(); r++) {
@@ -1796,9 +1787,10 @@ public class ExcelExporter extends AbstractFormatExporter {
             JSONArray columnSelectedOfDataset = widgetData.getJSONArray("columns");
 
             JSONArray columnsOrdered;
+            List<String> hiddenColumns = new ArrayList<>();
             if (widgetData.has("columns") && widgetData.getJSONArray("columns").length() > 0) {
-                hiddenColumns = getHiddenColumnsList(columnSelectedOfDataset);
-                columnsOrdered = getDashboardTableOrderedColumns(columnSelectedOfDataset, columns);
+                hiddenColumns = getDashboardHiddenColumnsList(columnSelectedOfDataset, settings);
+                columnsOrdered = getDashboardTableOrderedColumns(columnSelectedOfDataset, hiddenColumns, columns);
             } else {
                 columnsOrdered = columns;
             }
@@ -2080,7 +2072,8 @@ public class ExcelExporter extends AbstractFormatExporter {
 
                 for (int i = 0; i < columnStyles.length(); i++) {
                     JSONObject style = columnStyles.getJSONObject(i);
-                    if (style.has("condition") && conditionIsApplicable(style.getJSONObject("condition"), stringifiedValue)) {
+                    JSONObject condition = style.optJSONObject("condition");
+                    if (style.has("condition") && conditionIsApplicable(stringifiedValue, condition.optString("operator"), condition.getString("value"))) {
                         return getStyleObject(style.getJSONObject("properties"), CONDITIONAL_STYLE, i, style.getBoolean("applyToWholeRow"));
                     } else if (!style.has("condition")) {
                         nonConditionalProps = style.getJSONObject("properties");
@@ -2111,60 +2104,6 @@ public class ExcelExporter extends AbstractFormatExporter {
         } catch (JSONException e) {
             LOGGER.error("Error while building default non conditional style", e);
             throw new SpagoBIRuntimeException("Error while building default non conditional style", e);
-        }
-    }
-
-    private boolean conditionIsApplicable(JSONObject condition, String stringifiedValue) {
-        try {
-            return switch (condition.optString("operator")) {
-                case "==" -> {
-                    try {
-                        yield Double.parseDouble(stringifiedValue) == Double.parseDouble(condition.getString("value"));
-                    } catch (RuntimeException rte) {
-                        yield stringifiedValue.equals(condition.getString("value"));
-                    }
-                }
-                case "!=" -> {
-                    try {
-                        yield Double.parseDouble(stringifiedValue) != Double.parseDouble(condition.getString("value"));
-                    } catch (RuntimeException rte) {
-                        yield stringifiedValue.equals(condition.getString("value"));
-                    }
-                }
-                case ">" -> {
-                    if (stringIsNotEmpty(stringifiedValue)) {
-                        yield Double.parseDouble((stringifiedValue)) > Double.parseDouble(condition.getString("value"));
-                    } else {
-                        yield false;
-                    }
-                }
-                case "<" -> {
-                    if (stringIsNotEmpty(stringifiedValue)) {
-                        yield Double.parseDouble(stringifiedValue) < Double.parseDouble(condition.getString("value"));
-                    } else {
-                        yield false;
-                    }
-                }
-                case ">=" -> {
-                    if (stringIsNotEmpty(stringifiedValue)) {
-                        yield Double.parseDouble(stringifiedValue) >= Double.parseDouble(condition.getString("value"));
-                    } else {
-                        yield false;
-                    }
-                }
-                case "<=" -> {
-                    if (stringIsNotEmpty(stringifiedValue)) {
-                        yield Double.parseDouble(stringifiedValue) <= Double.parseDouble(condition.getString("value"));
-                    } else {
-                        yield false;
-                    }
-                }
-                case "IN" -> stringifiedValue.contains(condition.getString("value"));
-                default -> false;
-            };
-        } catch (JSONException e) {
-            LOGGER.error("Error while checking if condition is applicable", e);
-            throw new SpagoBIRuntimeException("Error while checking if condition is applicable", e);
         }
     }
 
@@ -2299,22 +2238,6 @@ public class ExcelExporter extends AbstractFormatExporter {
             manageUserSelectionFromJSONObject(selectionsMap, cockpitSelection);
         }
 
-        return selectionsMap;
-    }
-
-    private Map<String, Map<String, Object>> createDashboardSelectionsMap() throws JSONException {
-        Map<String, Map<String, Object>> selectionsMap = new HashMap<>();
-        if (body.has("configuration") && body.getJSONObject("configuration").has("selections")) {
-            JSONArray dashboardSelections = body.getJSONArray("selections");
-
-            for (int i = 0; i < dashboardSelections.length(); i++) {
-                if (!(dashboardSelections.get(i) instanceof JSONArray)) {
-                    JSONObject dashboardSelection = dashboardSelections.getJSONObject(i);
-
-                    manageDashboardUserSelectionFromJSONObject(selectionsMap, dashboardSelection);
-                }
-            }
-        }
         return selectionsMap;
     }
 
@@ -2706,7 +2629,7 @@ public class ExcelExporter extends AbstractFormatExporter {
                 counter++;
             }
 
-            workbook.setSheetVisibility(workbook.getSheetIndex(sheet), SheetVisibility.VERY_HIDDEN);
+            workbook.setSheetVisibility(workbook.getSheetIndex(sheet), SheetVisibility.VISIBLE);
 
         } catch (JSONException e) {
             LOGGER.error("Error while creating pivot table", e);
