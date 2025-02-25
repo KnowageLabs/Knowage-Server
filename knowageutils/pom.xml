@@ -124,6 +124,10 @@
 					<groupId>commons-collections</groupId>
     			    <artifactId>commons-collections</artifactId>
 				</exclusion>
+				<exclusion>
+					<groupId>javax.mail</groupId>
+                    <artifactId>mail</artifactId>
+				</exclusion>
 			</exclusions>
 		</dependency>
 		<dependency>
@@ -205,6 +209,10 @@
 				<exclusion>
 					<artifactId>log4j</artifactId>
 					<groupId>log4j</groupId>
+				</exclusion>
+				<exclusion>
+					 <groupId>org.apache.santuario</groupId>
+    				 <artifactId>xmlsec</artifactId>
 				</exclusion>
 			</exclusions>
 		</dependency>
