@@ -126,7 +126,7 @@ public class Version {
 		LOGGER.debug("IN");
 		String toReturn = "";
 		// Find all digits separated by dot (.) + optional i.e. [7.0.0-SNAPSHOT]
-		Pattern regexPattern = Pattern.compile("([\\d]+)\\.([\\d]+)\\.([\\d]+)(-(.+))?");
+		Pattern regexPattern = Pattern.compile("(\\d{0,4})\\.(\\d{0,4})\\.(\\d{0,4})(?:-(.{0,16}))?");
 		Matcher matcher = regexPattern.matcher(completeVersion);
 		if (matcher.find()) {
 			switch (part) {
@@ -140,7 +140,7 @@ public class Version {
 				toReturn = matcher.group(3);
 				break;
 			case "OPTIONAL":
-				toReturn = matcher.group(5);
+				toReturn = matcher.group(4);
 				break;
 			default:
 				toReturn = completeVersion;

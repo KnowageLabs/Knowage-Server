@@ -207,7 +207,7 @@ public class XSSRequestWrapper extends HttpServletRequestWrapper {
 		Pattern maliciousImgPattern = Pattern.compile("&lt;img(.*?)&gt;", Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL);
 		value = maliciousImgPattern.matcher(value).replaceAll("");
 
-		Pattern scriptPattern = Pattern.compile("<img[^>]+(src\\s*=\\s*['\"]([^'\"]+)['\"])[^>]*>",
+		Pattern scriptPattern = Pattern.compile("<img\\s+(src\\s*=\\s*['\"]([^'\"]+)['\"])[^>]*>",
 				Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL);
 		Pattern dataPattern = Pattern.compile("data:image\\/(gif|jpeg|pjpeg|png|svg\\+xml|tiff|vnd\\.microsoft\\.icon);(utf-8;|utf8;)?base64",
 				Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL);
