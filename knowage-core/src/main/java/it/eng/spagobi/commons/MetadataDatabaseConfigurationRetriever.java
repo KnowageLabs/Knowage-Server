@@ -89,7 +89,7 @@ public class MetadataDatabaseConfigurationRetriever implements IConfigurationRet
 			}
 			for (Config config : allConfig) {
 				configurations.put(config.getLabel(), config.getValueCheck() != null ? config.getValueCheck() : "");
-				logger.info("Retrieved configuration: " + config.getLabel() + " / " + config.getValueCheck());
+				logger.debug("Retrieved configuration: " + config.getLabel() + " / " + config.getValueCheck());
 			}
 		} catch (Exception e) {
 			logger.error("Impossible to get configuration", e);
