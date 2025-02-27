@@ -18,7 +18,6 @@
 
 package it.eng.knowage.engine.api.excel.export;
 
-import com.hazelcast.shaded.com.fasterxml.jackson.jr.ob.JSONObjectException;
 import it.eng.knowage.engine.api.excel.export.dashboard.models.Style;
 import it.eng.knowage.engine.api.excel.export.oldcockpit.parsers.CssColorParser;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
@@ -32,8 +31,8 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.usermodel.Font;
+import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.util.Units;
 import org.apache.poi.xssf.streaming.SXSSFSheet;
@@ -543,6 +542,10 @@ public abstract class AbstractFormatExporter {
 				dashboardSelections.put("options", jsOptions);
 			}
 
+			if (isSolrDataset(dataset) && widget.getString("type").equalsIgnoreCase("discovery")) {
+				buildLikeSelections(dashboardSelections, widget);
+			}
+
 			datastore = getDatastore(datasetLabel, map, dashboardSelections.toString(), offset, fetchSize);
 			datastore.put("widgetData", widget);
 
@@ -551,6 +554,32 @@ public abstract class AbstractFormatExporter {
 					+ "] [id=" + widget.optLong("id") + "]", e);
 		}
 		return datastore;
+	}
+
+	private void buildLikeSelections(JSONObject dashboardSelections, JSONObject widget) {
+		try {
+			JSONObject likeSelections = new JSONObject();
+			JSONObject solrObject = new JSONObject();
+			JSONObject settings = widget.optJSONObject("settings");
+			JSONObject search = settings.optJSONObject("search");
+			JSONArray columns = search.optJSONArray("columns");
+			StringBuilder key = new StringBuilder();
+			if (!search.optString("searchWord").isEmpty()) {
+				for (int i = 0; i < columns.length(); i++) {
+					if (i == columns.length() - 1) {
+						key.append(columns.optString(i));
+					} else {
+						key.append(columns.optString(i)).append(",");
+					}
+				}
+				solrObject.put(key.toString(), search.optString("searchWord"));
+			}
+			likeSelections.put("solr", solrObject);
+			dashboardSelections.put("likeSelections", likeSelections);
+		} catch (Exception e) {
+			LOGGER.error("Error while building like selections", e);
+			throw new SpagoBIRuntimeException("Error while building like selections", e);
+		}
 	}
 
 	protected abstract JSONObject getPivotAggregations(JSONObject widget, String datasetLabel);

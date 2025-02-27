@@ -15,7 +15,6 @@
 package it.eng.knowage.engine.api.excel.export;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonArray;
 import it.eng.knowage.commons.multitenant.OrganizationImageManager;
 import it.eng.knowage.commons.security.PathTraversalChecker;
 import it.eng.knowage.engine.api.excel.export.dashboard.exporters.DashboardWidgetExporterFactory;
@@ -35,7 +34,6 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.jena.atlas.json.JSON;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.poi.ss.usermodel.*;
@@ -858,7 +856,7 @@ public class ExcelExporter extends AbstractFormatExporter {
             category.put("id", column.getString("columnName"));
             category.put("alias", column.getString("columnName"));
             category.put("columnName", column.getString("columnName"));
-            category.put("funct", "NONE");
+            category.put("funct", column.optString("aggregation").isEmpty() ? "NONE" : column.getString("aggregation"));
             String sorting = getSortingObj(sortingObj, drillSortingObj);
             buildSorting(sortingObj, drillSortingObj, sorting, category);
             return category;
