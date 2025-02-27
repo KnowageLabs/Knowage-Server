@@ -30,6 +30,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	 				         java.util.Map,java.util.HashMap,java.util.List" %>
 	 				         
 	<%@page import="it.eng.spagobi.commons.utilities.ChannelUtilities"%>
+	<%@page import="it.eng.knowage.security.OwaspDefaultEncoderFactory"%>
+    <%@page import="org.owasp.esapi.Encoder"%>	
 	
 	<%
 		SourceBean moduleResponse = (SourceBean)aServiceResponse.getAttribute("DetailMapModule"); 
@@ -80,6 +82,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		List lstMapFeatures = (List)moduleResponse.getAttribute("lstMapFeatures");	
 		
 		String msgWarningSave = msgBuilder.getMessage("5029", "component_mapcatalogue_messages", request);
+		Encoder esapiEncoder = OwaspDefaultEncoderFactory.getInstance().getEncoder();
 	%>
 	
 	
@@ -315,7 +318,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		            <div class='<%=linkClass%>'>
 		            	<a href='javascript:changeFeature("<%= String.valueOf(tmpFeature.getFeatureId()) %>")'
 		            	   style="color:black;"> 
-		            		<%=tmpFeature.getName()%>
+		            		<%=esapiEncoder.encodeForJavaScript(tmpFeature.getName())%>
 		            	</a>
 		    			</div> 			
 		  <%	} //for

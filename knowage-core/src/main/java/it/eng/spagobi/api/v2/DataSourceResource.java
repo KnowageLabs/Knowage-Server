@@ -422,7 +422,7 @@ public class DataSourceResource extends AbstractSpagoBIResource {
 					LOGGER.debug("Connection performed successfully");
 				} catch (SQLException sqlException) {
 					LOGGER.error("Connection failure", sqlException);
-					throw new SpagoBIRestServiceException("Connection failure: " + url, buildLocaleFromSession(), sqlException.getMessage());
+					throw new SpagoBIRestServiceException("Connection failure ", buildLocaleFromSession(), sqlException.getMessage());
 				}
 			}
 

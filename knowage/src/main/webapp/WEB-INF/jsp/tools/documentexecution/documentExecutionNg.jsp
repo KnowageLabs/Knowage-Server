@@ -35,6 +35,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <%@page import="it.eng.spagobi.commons.constants.CommunityFunctionalityConstants" %>
 
+<%@page import="it.eng.knowage.security.OwaspDefaultEncoderFactory"%>
+<%@page import="org.owasp.esapi.Encoder"%>	
+
 <%@ page language="java" pageEncoding="UTF-8" session="true"%>
 
 <%@ include file="/WEB-INF/jsp/commons/angular/angularResource.jspf"%>
@@ -143,6 +146,8 @@ boolean isSuperAdmin = (Boolean)((UserProfile)userProfile).getIsSuperadmin();
 // author: danristo
 boolean isAbleToExecuteAction = userProfile.isAbleToExecuteAction(CommunityFunctionalityConstants.SEE_SNAPSHOTS_FUNCTIONALITY);
 boolean isAbleToExecuteActionSnapshot = userProfile.isAbleToExecuteAction(CommunityFunctionalityConstants.RUN_SNAPSHOTS_FUNCTIONALITY);
+
+Encoder esapiEncoder = OwaspDefaultEncoderFactory.getInstance().getEncoder();
 
 %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
@@ -518,18 +523,18 @@ if(executionRoleNames.size() > 0 && canExecuteDocument) {
             
             
             angular.module('documentExecutionModule').factory('execProperties', function() {
-                var selRole= '<%= request.getParameter("SELECTED_ROLE") %>'=='null' ? '' : '<%= request.getParameter("SELECTED_ROLE") %>';
-                var crossParams= <%= request.getParameter("CROSS_PARAMETER") %>==null ? {} : <%= request.getParameter("CROSS_PARAMETER") %>;
-                var menuParams= <%= request.getParameter("MENU_PARAMETERS") %>==null ? {} : <%= request.getParameter("MENU_PARAMETERS") %>;
-                var toolbarVisible= <%= request.getParameter("TOOLBAR_VISIBLE") %>==null ? '' : <%= request.getParameter("TOOLBAR_VISIBLE") %>;
-                var canResetParameters= <%= request.getParameter("CAN_RESET_PARAMETERS") %>==null ? '' : <%= request.getParameter("CAN_RESET_PARAMETERS") %>;
+                var selRole= '<%= esapiEncoder.encodeForJavaScript(request.getParameter("SELECTED_ROLE")) %>'=='null' ? '' : '<%= esapiEncoder.encodeForJavaScript(request.getParameter("SELECTED_ROLE")) %>';
+                var crossParams= <%= esapiEncoder.encodeForJavaScript(request.getParameter("CROSS_PARAMETER")) %>==null ? {} : <%= esapiEncoder.encodeForJavaScript(request.getParameter("CROSS_PARAMETER")) %>;
+                var menuParams= <%= esapiEncoder.encodeForJavaScript(request.getParameter("MENU_PARAMETERS")) %>==null ? {} : <%= esapiEncoder.encodeForJavaScript(request.getParameter("MENU_PARAMETERS")) %>;
+                var toolbarVisible= <%= esapiEncoder.encodeForJavaScript(request.getParameter("TOOLBAR_VISIBLE")) %>==null ? '' : <%= esapiEncoder.encodeForJavaScript(request.getParameter("TOOLBAR_VISIBLE")) %>;
+                var canResetParameters= <%= esapiEncoder.encodeForJavaScript(request.getParameter("CAN_RESET_PARAMETERS")) %>==null ? '' : <%= esapiEncoder.encodeForJavaScript(request.getParameter("CAN_RESET_PARAMETERS")) %>;
 
                 var obj = {
                     roles: [<%for(Object roleObj : executionRoleNames) out.print("'" + (String)roleObj + "',");%>],
                     executionInstance: {
                         'OBJECT_ID' : <%= obj.getId() %>,
                         'OBJECT_LABEL' : '<%= obj.getLabel().replaceAll(Pattern.quote("'"), Matcher.quoteReplacement("\\'")) %>',
-                        'EDIT_MODE' : '<%= request.getParameter("EDIT_MODE") %>',
+                        'EDIT_MODE' : '<%= esapiEncoder.encodeForJavaScript(request.getParameter("EDIT_MODE")) %>',
                         'OBJECT_NAME' : '<%= obj.getName().replaceAll(Pattern.quote("'"), Matcher.quoteReplacement("\\'")) %>',
                         'REFRESH_SECONDS' : <%= obj.getRefreshSeconds().intValue() %>,
                         'OBJECT_TYPE_CODE' : '<%= obj.getBiObjectTypeCode() %>',
@@ -553,7 +558,7 @@ if(executionRoleNames.size() > 0 && canExecuteDocument) {
                         <%
                         if(request.getParameter("SELECTED_ROLE") != null && !request.getParameter("SELECTED_ROLE").equalsIgnoreCase("")) {
                         %>
-                        , 'SELECTED_ROLE' : '<%=request.getParameter("SELECTED_ROLE") %>'
+                        , 'SELECTED_ROLE' : '<%=esapiEncoder.encodeForJavaScript(request.getParameter("SELECTED_ROLE")) %>'
                         <%
                         }
                         %>
