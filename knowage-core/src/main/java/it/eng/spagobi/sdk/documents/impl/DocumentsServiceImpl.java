@@ -17,40 +17,7 @@
  */
 package it.eng.spagobi.sdk.documents.impl;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileFilter;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
-import java.util.jar.JarEntry;
-import java.util.jar.JarFile;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
-
-import javax.activation.DataHandler;
-import javax.activation.FileDataSource;
-
-import org.apache.commons.io.IOUtils;
-import org.apache.log4j.LogMF;
-import org.apache.log4j.Logger;
-
-import it.eng.knowage.commons.zip.SonarZipCommons;
-import it.eng.spago.base.RequestContainer;
-import it.eng.spago.base.ResponseContainer;
-import it.eng.spago.base.SessionContainer;
-import it.eng.spago.base.SourceBean;
-import it.eng.spago.base.SourceBeanException;
+import it.eng.spago.base.*;
 import it.eng.spago.dispatching.service.DefaultRequestContext;
 import it.eng.spago.error.EMFErrorHandler;
 import it.eng.spago.error.EMFUserError;
@@ -72,12 +39,14 @@ import it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail;
 import it.eng.spagobi.behaviouralmodel.lov.bo.LovDetailFactory;
 import it.eng.spagobi.behaviouralmodel.lov.bo.LovResultHandler;
 import it.eng.spagobi.behaviouralmodel.lov.bo.ModalitiesValue;
+import it.eng.spagobi.commons.bo.Config;
 import it.eng.spagobi.commons.bo.Domain;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.CommunityFunctionalityConstants;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.ICategoryDAO;
+import it.eng.spagobi.commons.dao.IConfigDAO;
 import it.eng.spagobi.commons.utilities.ObjectsAccessVerifier;
 import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
 import it.eng.spagobi.commons.utilities.UserUtilities;
@@ -86,18 +55,8 @@ import it.eng.spagobi.engines.config.bo.Engine;
 import it.eng.spagobi.engines.exporters.ReportExporter;
 import it.eng.spagobi.sdk.AbstractSDKService;
 import it.eng.spagobi.sdk.documents.DocumentsService;
-import it.eng.spagobi.sdk.documents.bo.SDKDocument;
-import it.eng.spagobi.sdk.documents.bo.SDKDocumentParameter;
-import it.eng.spagobi.sdk.documents.bo.SDKDocumentParameterValue;
-import it.eng.spagobi.sdk.documents.bo.SDKExecutedDocumentContent;
-import it.eng.spagobi.sdk.documents.bo.SDKFunctionality;
-import it.eng.spagobi.sdk.documents.bo.SDKSchema;
-import it.eng.spagobi.sdk.documents.bo.SDKTemplate;
-import it.eng.spagobi.sdk.exceptions.InvalidParameterValue;
-import it.eng.spagobi.sdk.exceptions.MissingParameterValue;
-import it.eng.spagobi.sdk.exceptions.NonExecutableDocumentException;
-import it.eng.spagobi.sdk.exceptions.NotAllowedOperationException;
-import it.eng.spagobi.sdk.exceptions.SDKException;
+import it.eng.spagobi.sdk.documents.bo.*;
+import it.eng.spagobi.sdk.exceptions.*;
 import it.eng.spagobi.sdk.utilities.KnowageSoapDataSource;
 import it.eng.spagobi.sdk.utilities.SDKObjectsConverter;
 import it.eng.spagobi.tools.catalogue.bo.Artifact;
@@ -107,8 +66,21 @@ import it.eng.spagobi.tools.catalogue.dao.IArtifactsDAO;
 import it.eng.spagobi.tools.catalogue.dao.IMetaModelsDAO;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.file.FileUtils;
 import it.eng.spagobi.utilities.mime.MimeUtils;
+import org.apache.commons.io.IOUtils;
+import org.apache.log4j.LogMF;
+import org.apache.log4j.Logger;
+
+import javax.activation.DataHandler;
+import javax.activation.FileDataSource;
+import java.io.*;
+import java.util.*;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 public class DocumentsServiceImpl extends AbstractSDKService implements DocumentsService {
 
@@ -1195,22 +1167,49 @@ public class DocumentsServiceImpl extends AbstractSDKService implements Document
 			logger.debug("jar file created ");
 
 			Enumeration<JarEntry> enumEntries = jar.entries();
+			int thresholdEntries = 10000;
+			int thresholdSize = 100_000_000; // 100MB
+			double thresholdRatio = 4;
+			long totalSizeArchive = 0;
+			int totalEntryArchive = 0;
+
 			while (enumEntries.hasMoreElements()) {
-				SonarZipCommons sonarZipCommons = new SonarZipCommons();
-				
-				if(sonarZipCommons.doThresholdCheck(path)) {
-					JarEntry fileEntry = enumEntries.nextElement();
-					logger.debug("jar content " + fileEntry.getName());
-	
+
+				JarEntry fileEntry = enumEntries.nextElement();
+				logger.debug("jar content " + fileEntry.getName());
+
+				totalEntryArchive++;
+
+				int nBytes;
+				byte[] buffer = new byte[1024];
+				int totalSizeEntry = 0;
+				java.io.ByteArrayOutputStream baos = new java.io.ByteArrayOutputStream();
+				java.io.BufferedOutputStream bos = new java.io.BufferedOutputStream(baos);
+
 					if (fileEntry.getName().endsWith("sbimodel")) {
 						logger.debug("found model file " + fileEntry.getName());
 						is = jar.getInputStream(fileEntry);
-						return SpagoBIUtilities.getByteArrayFromInputStream(is);	
-					}
-				} else {
-					logger.error("Error while unzip file. Invalid archive file");
-					throw new SpagoBIRuntimeException("Error while unzip file. Invalid archive file");
-				}
+
+						while ((nBytes = is.read(buffer)) > 0) { // Compliant
+							totalSizeEntry += nBytes;
+							totalSizeArchive += nBytes;
+
+							double compressionRatio = (double) totalSizeEntry / fileEntry.getCompressedSize();
+							if (compressionRatio > thresholdRatio || totalSizeArchive > thresholdSize || totalEntryArchive > thresholdEntries) {
+								// ratio between compressed and uncompressed data is highly suspicious, looks like a Zip Bomb Attack
+								throw new IOException("Zip Bomb Attack detected");
+							}
+
+							if (nBytes == 1024)
+								bos.write(buffer);
+							else
+								bos.write(buffer, 0, nBytes);
+						}
+
+						bos.flush();
+						byte[] ret = baos.toByteArray();
+						bos.close();
+						return ret;					}
 			}
 		} catch (IOException e1) {
 			logger.error(
@@ -1234,6 +1233,19 @@ public class DocumentsServiceImpl extends AbstractSDKService implements Document
 		logger.debug(
 				"the model file could not be takend by datamart.jar, probably datamart.jar is old, it will be taken from resources");
 		return null;
+	}
+
+	private int getThresholdSize() {
+		IConfigDAO configDao = DAOFactory.getSbiConfigDAO();
+		Config config;
+		try {
+			config = configDao.loadConfigParametersByLabel("SPAGOBI.UPLOAD.MAX_FILE_SIZE_MB");
+		} catch (Exception e) {
+			logger.error("Error while retrieving max file size: " + e);
+			throw new SpagoBIServiceException("Error while retrieving max file size", e);
+		}
+
+        return config.getValueCheck().equals("-1") ? 100000000 : Integer.parseInt(config.getValueCheck()) * 1000000;
 	}
 
 	// download a zip file with datamart.jar and modelfile

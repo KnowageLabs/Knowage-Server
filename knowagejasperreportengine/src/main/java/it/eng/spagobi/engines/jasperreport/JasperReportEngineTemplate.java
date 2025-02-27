@@ -17,19 +17,13 @@
 */
 package it.eng.spagobi.engines.jasperreport;
 
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.InputStream;
+import it.eng.spagobi.utilities.DynamicClassLoader;
+import it.eng.spagobi.utilities.SpagoBIAccessUtils;
+
+import java.io.*;
 import java.util.Enumeration;
 import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
-
-import it.eng.knowage.commons.zip.SonarZipCommons;
-import it.eng.spagobi.utilities.DynamicClassLoader;
-import it.eng.spagobi.utilities.SpagoBIAccessUtils;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
@@ -61,15 +55,15 @@ public class JasperReportEngineTemplate {
 				FileOutputStream foZip = new FileOutputStream(fileZip);
 				foZip.write(content);
 				foZip.close();
-				util.unzip(fileZip, tempDir);
+				try {
+					util.unzip(fileZip, tempDir);
+				} catch (Exception e) {
+					throw new JasperReportEngineRuntimeException("Impossible to unzip template", e);
+				}
 				JarFile zipFile = new JarFile(fileZip);
 				Enumeration totalZipEntries = zipFile.entries();
-				File jarFile = null;
+				File jarFile;
 				while (totalZipEntries.hasMoreElements()) {
-					
-					SonarZipCommons sonarZipCommons = new SonarZipCommons();
-					
-					if(sonarZipCommons.doThresholdCheck(JS_FILE_ZIP + JS_EXT_ZIP)) {
 						ZipEntry entry = (ZipEntry) totalZipEntries.nextElement();
 						if (entry.getName().endsWith(".jar")) {
 							jarFile = new File(tempDir, entry.getName());
@@ -90,9 +84,6 @@ public class JasperReportEngineTemplate {
 						if (entry.getName().endsWith(".properties")) {
 							propertiesLoaded = true;
 						}
-					} else {
-						throw new SpagoBIRuntimeException("Error while unzip file. Invalid archive file");
-					}
 				}
 			} else {
 				is = new ByteArrayInputStream( content );

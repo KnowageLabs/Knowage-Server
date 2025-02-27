@@ -17,72 +17,6 @@
  */
 package it.eng.spagobi.engines.birt;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.PrintWriter;
-import java.nio.charset.StandardCharsets;
-import java.util.Base64;
-import java.util.Collection;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.UUID;
-import java.util.jar.JarEntry;
-import java.util.jar.JarFile;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
-
-import javax.servlet.ServletConfig;
-import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-
-import org.apache.log4j.Logger;
-import org.eclipse.birt.core.exception.BirtException;
-import org.eclipse.birt.report.IBirtConstants;
-import org.eclipse.birt.report.engine.api.EXCELRenderOption;
-import org.eclipse.birt.report.engine.api.EngineException;
-import org.eclipse.birt.report.engine.api.HTMLActionHandler;
-import org.eclipse.birt.report.engine.api.HTMLRenderOption;
-import org.eclipse.birt.report.engine.api.HTMLServerImageHandler;
-import org.eclipse.birt.report.engine.api.IDataExtractionTask;
-import org.eclipse.birt.report.engine.api.IGetParameterDefinitionTask;
-import org.eclipse.birt.report.engine.api.IHTMLRenderOption;
-import org.eclipse.birt.report.engine.api.IImage;
-import org.eclipse.birt.report.engine.api.IPageHandler;
-import org.eclipse.birt.report.engine.api.IRenderOption;
-import org.eclipse.birt.report.engine.api.IRenderTask;
-import org.eclipse.birt.report.engine.api.IReportDocument;
-import org.eclipse.birt.report.engine.api.IReportDocumentInfo;
-import org.eclipse.birt.report.engine.api.IReportEngine;
-import org.eclipse.birt.report.engine.api.IReportRunnable;
-import org.eclipse.birt.report.engine.api.IResultSetItem;
-import org.eclipse.birt.report.engine.api.IRunAndRenderTask;
-import org.eclipse.birt.report.engine.api.IRunTask;
-import org.eclipse.birt.report.engine.api.IScalarParameterDefn;
-import org.eclipse.birt.report.engine.api.PDFRenderOption;
-import org.eclipse.birt.report.engine.api.RenderOption;
-import org.eclipse.birt.report.engine.dataextraction.CSVDataExtractionOption;
-import org.eclipse.birt.report.engine.dataextraction.ICSVDataExtractionOption;
-import org.eclipse.birt.report.utility.BirtUtility;
-import org.eclipse.birt.report.utility.DataExtractionParameterUtil;
-
-import org.owasp.esapi.HTTPUtilities;
-import org.owasp.esapi.reference.DefaultHTTPUtilities;
-
-import it.eng.knowage.commons.zip.SonarZipCommons;
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.security.IEngUserProfile;
@@ -104,6 +38,31 @@ import it.eng.spagobi.utilities.ParametersDecoder;
 import it.eng.spagobi.utilities.SpagoBIAccessUtils;
 import it.eng.spagobi.utilities.callbacks.audit.AuditAccessUtils;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+import org.apache.log4j.Logger;
+import org.eclipse.birt.core.exception.BirtException;
+import org.eclipse.birt.report.IBirtConstants;
+import org.eclipse.birt.report.engine.api.*;
+import org.eclipse.birt.report.engine.dataextraction.CSVDataExtractionOption;
+import org.eclipse.birt.report.engine.dataextraction.ICSVDataExtractionOption;
+import org.eclipse.birt.report.utility.BirtUtility;
+import org.eclipse.birt.report.utility.DataExtractionParameterUtil;
+import org.owasp.esapi.HTTPUtilities;
+import org.owasp.esapi.reference.DefaultHTTPUtilities;
+
+import javax.servlet.ServletConfig;
+import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
+import java.util.*;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 /**
  * @author Zerbetto (davide.zerbetto@eng.it)
@@ -338,14 +297,16 @@ public class BirtReportServlet extends HttpServlet {
 			try (FileOutputStream foZip = new FileOutputStream(fileZip)) {
 				foZip.write(templateContent);
 			}
-			util.unzip(fileZip, getBirtExecutionTempDir(executionId));
+			try {
+				util.unzip(fileZip, getBirtExecutionTempDir(executionId));
+			} catch (Exception e) {
+				logger.error("Error while unzip file. Invalid archive file", e);
+				throw new SpagoBIRuntimeException("Error while unzip file. Invalid archive file", e);
+			}
 			try (JarFile zipFile = new JarFile(fileZip)) {
 				Enumeration<JarEntry> totalZipEntries = zipFile.entries();
 				File jarFile = null;
 				while (totalZipEntries.hasMoreElements()) {
-					SonarZipCommons sonarZipCommons = new SonarZipCommons();
-					
-					if(sonarZipCommons.doThresholdCheck(JS_FILE_ZIP + JS_EXT_ZIP)) {
 						ZipEntry entry = totalZipEntries.nextElement();
 						if (entry.getName().endsWith(".jar")) {
 							jarFile = new File(getBirtExecutionTempDirName(executionId) + entry.getName());
@@ -360,11 +321,7 @@ public class BirtReportServlet extends HttpServlet {
 							byte[] templateRptDesign = new byte[0];
 							templateRptDesign = util.getByteArrayFromInputStream(isBirt);
 							is = new java.io.ByteArrayInputStream(templateRptDesign);
-						}							
-					} else {
-						logger.error("Error while unzip file. Invalid archive file");
-						throw new SpagoBIRuntimeException("Error while unzip file. Invalid archive file");
-					}
+						}
 				}
 			}
 			String resourcePath = getBirtExecutionTempDirName(executionId);
@@ -452,10 +409,10 @@ public class BirtReportServlet extends HttpServlet {
 	}
 
 	/**
-	 * @param params
-	 * @param parName
-	 * @param parValue
-	 */
+     * @param params
+     * @param parName
+     * @param parValue
+     */
 	private void addParToParMap(Map params, String parName, String parValue) {
 		logger.debug("IN.parName:" + parName + " /parValue:" + parValue);
 		StringBuilder newParValue = new StringBuilder();
@@ -477,11 +434,10 @@ public class BirtReportServlet extends HttpServlet {
 	}
 
 	/**
-	 *
-	 * @param documentId
-	 * @return jndi connection
-	 * @throws ConnectionDefinitionException
-	 */
+     * @param documentId
+     * @return jndi connection
+     * @throws ConnectionDefinitionException
+     */
 	private IDataSource findDataSource(HttpSession session, String userId, String documentId,
 			String requestConnectionName) throws ConnectionDefinitionException {
 		logger.debug("IN");

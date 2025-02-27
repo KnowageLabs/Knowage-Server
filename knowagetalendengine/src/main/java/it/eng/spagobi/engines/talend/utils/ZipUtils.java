@@ -5,191 +5,198 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.engines.talend.utils;
 
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import java.io.*;
 import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
-import it.eng.knowage.commons.zip.SonarZipCommons;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
-
 /**
  * @author Andrea Gioia
- *
  */
 public class ZipUtils {
 
-	private static final Logger LOGGER = LogManager.getLogger(ZipUtils.class);
+    private static final Logger LOGGER = LogManager.getLogger(ZipUtils.class);
 
-	/**
-	 * Copy input stream.
-	 *
-	 * @param in  the in
-	 * @param out the out
-	 *
-	 * @throws IOException Signals that an I/O exception has occurred.
-	 */
-	public static final void copyInputStream(InputStream in, OutputStream out) throws IOException {
-		byte[] buffer = new byte[1024];
-		int len;
 
-		while ((len = in.read(buffer)) >= 0)
-			out.write(buffer, 0, len);
+    static int thresholdEntries = 10_000;
+    static int thresholdSize = 100_000_000; // 100MB
+    static double thresholdRatio = 4;
 
-		in.close();
-		out.close();
-	}
+    /**
+     * Copy input stream.
+     *
+     * @param in  the in
+     * @param out the out
+     * @throws IOException Signals that an I/O exception has occurred.
+     */
+    public static void copyInputStream(InputStream in, OutputStream out, int totalSizeEntry, long totalSizeArchive, ZipEntry ze) throws IOException {
+        byte[] buffer = new byte[1024];
+        int len;
 
-	/**
-	 * Unzip.
-	 *
-	 * @param zipFile the zip file
-	 * @param destDir the dest dir
-	 */
-	public static void unzip(ZipFile zipFile, File destDir) {
+        while ((len = in.read(buffer)) >= 0) {
+            totalSizeEntry += len;
+            totalSizeArchive += len;
 
-		try {
+            double compressionRatio = (double) totalSizeEntry / ze.getCompressedSize();
+            if (compressionRatio > thresholdRatio || totalSizeArchive > thresholdSize) {
+                // ratio between compressed and uncompressed data is highly suspicious, looks like a Zip Bomb Attack
+                in.close();
+                out.close();
+                throw new SpagoBIRuntimeException("Error while unzipping file. Invalid archive file");
+            }
+            out.write(buffer, 0, len);
+        }
 
-			Enumeration<? extends ZipEntry> entries = zipFile.entries();
+        in.close();
+        out.close();
+    }
 
-			while (entries.hasMoreElements()) {
-				SonarZipCommons sonarZipCommons = new SonarZipCommons();
-				
-				if(sonarZipCommons.doThresholdCheck(zipFile.getName())) {
-					ZipEntry entry = entries.nextElement();
-	
-					if (!entry.isDirectory()) {
-						File destFile = new File(destDir, entry.getName());
-						File destFileDir = destFile.getParentFile();
-						if (!destFileDir.exists()) {
-							LOGGER.warn("Extracting directory: {}",
-									entry.getName().substring(0, entry.getName().lastIndexOf('/')));
-							destFileDir.mkdirs();
-						}
-	
-						LOGGER.warn("Extracting file: {}", entry.getName());
-						copyInputStream(zipFile.getInputStream(entry),
-								new BufferedOutputStream(new FileOutputStream(new File(destDir, entry.getName()))));
-					}
-				} else {
-					LOGGER.error("Error while unzip file. Invalid archive file");
-					throw new SpagoBIRuntimeException("Error while unzip file. Invalid archive file");
-				}
-			}
+    /**
+     * Unzip.
+     *
+     * @param zipFile the zip file
+     * @param destDir the dest dir
+     */
+    public static void unzip(ZipFile zipFile, File destDir) {
 
-			zipFile.close();
-		} catch (IOException ioe) {
-			LOGGER.error("Non-fatal error unzipping {} to directory {}", zipFile, destDir, ioe);
-			return;
-		}
-	}
+        try {
 
-	/**
-	 * Unzip skip first level.
-	 *
-	 * @param zipFile the zip file
-	 * @param destDir the dest dir
-	 */
-	public static void unzipSkipFirstLevel(ZipFile zipFile, File destDir) {
-		try {
-			Enumeration<? extends ZipEntry> entries = zipFile.entries();
-			while (entries.hasMoreElements()) {
-				SonarZipCommons sonarZipCommons = new SonarZipCommons();
-				
-				if(sonarZipCommons.doThresholdCheck(zipFile.getName())) {
-					ZipEntry entry = entries.nextElement();
-	
-					if (!entry.isDirectory()) {
-						String destFileStr = entry.getName();
-	
-						destFileStr = (destFileStr.indexOf('/') > 0) ? destFileStr.substring(destFileStr.indexOf('/'))
-								: null;
-						if (destFileStr == null)
-							continue;
-						File destFile = new File(destDir, destFileStr);
-						File destFileDir = destFile.getParentFile();
-						if (!destFileDir.exists()) {
-							LOGGER.warn("Extracting directory: {}",
-									entry.getName().substring(0, entry.getName().lastIndexOf('/')));
-							destFileDir.mkdirs();
-						}
-	
-						LOGGER.warn("Extracting file: {}", entry.getName());
-						copyInputStream(zipFile.getInputStream(entry),
-								new BufferedOutputStream(new FileOutputStream(new File(destDir, destFileStr))));
-					}
-				} else {
-					LOGGER.error("Error while unzip file. Invalid archive file");
-					throw new SpagoBIRuntimeException("Error while unzip file. Invalid archive file");
-				}
-			}
+            Enumeration<? extends ZipEntry> entries = zipFile.entries();
 
-			zipFile.close();
-		} catch (IOException ioe) {
-			LOGGER.error("Non-fatal error unzipping {} to directory {}", zipFile, destDir, ioe);
-			return;
-		}
-	}
+            int totalEntryArchive = 0;
+            long totalSizeArchive = 0;
 
-	/**
-	 * Gets the directory name by level.
-	 *
-	 * @param zipFile the zip file
-	 * @param levelNo the level no
-	 *
-	 * @return the directory name by level
-	 */
-	public static String[] getDirectoryNameByLevel(ZipFile zipFile, int levelNo) {
+            while (entries.hasMoreElements()) {
+                totalEntryArchive ++;
 
-		Set<String> names = new HashSet<>();
+                if (totalEntryArchive > thresholdEntries) {
+                    // too much entries in this archive, can lead to inodes exhaustion of the system
+                    throw new SpagoBIRuntimeException("Error while unzip file. Invalid archive file: too much entries in this archive, can lead to inodes exhaustion of the system");
+                }
+                ZipEntry entry = entries.nextElement();
 
-		try {
+                int totalSizeEntry = 0;
 
-			Enumeration<? extends ZipEntry> entries = zipFile.entries();
+                if (!entry.isDirectory()) {
+                    File destFile = new File(destDir, entry.getName());
+                    File destFileDir = destFile.getParentFile();
+                    if (!destFileDir.exists()) {
+                        LOGGER.warn("Extracting directory: {}",
+                                entry.getName().substring(0, entry.getName().lastIndexOf('/')));
+                        destFileDir.mkdirs();
+                    }
 
-			while (entries.hasMoreElements()) {
-				SonarZipCommons sonarZipCommons = new SonarZipCommons();
-				
-				if(sonarZipCommons.doThresholdCheck(zipFile.getName())) {
-					ZipEntry entry = entries.nextElement();
-	
-					if (!entry.isDirectory()) {
-						String fileName = entry.getName();
-						String[] components = fileName.split("/");
-	
-						if (components.length == (levelNo + 1)) {
-							String dirNam = components[components.length - 2];
-							names.add(dirNam);
-						}
-	
-						LOGGER.warn("Current entry is {}", entry.getName());
-					}
-				} else {
-					LOGGER.error("Error while unzip file. Invalid archive file");
-					throw new SpagoBIRuntimeException("Error while unzip file. Invalid archive file");
-				}
-			}
+                    LOGGER.warn("Extracting file: {}", entry.getName());
+                    copyInputStream(zipFile.getInputStream(entry),
+                            new BufferedOutputStream(new FileOutputStream(new File(destDir, entry.getName()))), totalSizeEntry, totalSizeArchive, entry);
+                }
+            }
 
-			zipFile.close();
-		} catch (IOException ioe) {
-			LOGGER.error("Non-fatal error getting directory name by level using zip file {} and level {}", zipFile,
-					levelNo, ioe);
-			return null;
-		}
+            zipFile.close();
+        } catch (IOException ioe) {
+            LOGGER.error("Non-fatal error unzipping {} to directory {}", zipFile, destDir, ioe);
+        }
+    }
 
-		return names.toArray(new String[0]);
-	}
+    /**
+     * Unzip skip first level.
+     *
+     * @param zipFile the zip file
+     * @param destDir the dest dir
+     */
+    public static void unzipSkipFirstLevel(ZipFile zipFile, File destDir) {
+        try {
+            Enumeration<? extends ZipEntry> entries = zipFile.entries();
+            int totalEntryArchive = 0;
+            long totalSizeArchive = 0;
+            while (entries.hasMoreElements()) {
 
-	private ZipUtils() {
-	}
+                totalEntryArchive++;
+
+                if (totalEntryArchive > thresholdEntries) {
+                    // too much entries in this archive, can lead to inodes exhaustion of the system
+                    throw new SpagoBIRuntimeException("Error while unzip file. Invalid archive file: too much entries in this archive, can lead to inodes exhaustion of the system");
+                }
+
+                ZipEntry entry = entries.nextElement();
+
+                int totalSizeEntry = 0;
+
+                if (!entry.isDirectory()) {
+                    String destFileStr = entry.getName();
+
+                    destFileStr = (destFileStr.indexOf('/') > 0) ? destFileStr.substring(destFileStr.indexOf('/'))
+                            : null;
+                    if (destFileStr == null)
+                        continue;
+                    File destFile = new File(destDir, destFileStr);
+                    File destFileDir = destFile.getParentFile();
+                    if (!destFileDir.exists()) {
+                        LOGGER.warn("Extracting directory: {}",
+                                entry.getName().substring(0, entry.getName().lastIndexOf('/')));
+                        destFileDir.mkdirs();
+                    }
+
+                    LOGGER.warn("Extracting file: {}", entry.getName());
+                    copyInputStream(zipFile.getInputStream(entry),
+                            new BufferedOutputStream(new FileOutputStream(new File(destDir, destFileStr))), totalSizeEntry, totalSizeArchive, entry);
+
+                }
+            }
+
+            zipFile.close();
+        } catch (IOException ioe) {
+            LOGGER.error("Non-fatal error unzipping {} to directory {}", zipFile, destDir, ioe);
+        }
+    }
+
+    /**
+     * Gets the directory name by level.
+     *
+     * @param zipFile the zip file
+     * @param levelNo the level no
+     * @return the directory name by level
+     */
+    public static String[] getDirectoryNameByLevel(ZipFile zipFile, int levelNo) {
+
+        Set<String> names = new HashSet<>();
+
+        try {
+
+            Enumeration<? extends ZipEntry> entries = zipFile.entries();
+
+            while (entries.hasMoreElements()) {
+                ZipEntry entry = entries.nextElement();
+
+                if (!entry.isDirectory()) {
+                    String fileName = entry.getName();
+                    String[] components = fileName.split("/");
+
+                    if (components.length == (levelNo + 1)) {
+                        String dirNam = components[components.length - 2];
+                        names.add(dirNam);
+                    }
+
+                    LOGGER.warn("Current entry is {}", entry.getName());
+                }
+            }
+
+            zipFile.close();
+        } catch (IOException ioe) {
+            LOGGER.error("Non-fatal error getting directory name by level using zip file {} and level {}", zipFile,
+                    levelNo, ioe);
+            return null;
+        }
+
+        return names.toArray(new String[0]);
+    }
+
+    private ZipUtils() {
+    }
 }
