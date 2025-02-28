@@ -17,7 +17,6 @@
  */
 package it.eng.spagobi.commons.utilities;
 
-import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -38,9 +37,6 @@ import java.util.zip.ZipOutputStream;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-import it.eng.knowage.commons.zip.SonarZipCommons;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 /**
  * Class di utilita' per zip ed unzip di file
@@ -284,28 +280,6 @@ public class ZipUtils {
 	public static void unzip(InputStream zipFile, File outFolder) throws IOException {
 		unzip("", zipFile, outFolder, false);
 	}
-
-	/* NOT USED
-	 * public static void unzipFile(String filePath) {
-
-		ZipEntry zEntry = null;
-		try (FileInputStream fis = new FileInputStream(filePath);
-				ZipInputStream zipIs = new ZipInputStream(new BufferedInputStream(fis))) {
-			while ((zEntry = zipIs.getNextEntry()) != null) {
-				SonarZipCommons sonarZipCommons = new SonarZipCommons();
-				
-				if(sonarZipCommons.doThresholdCheck(filePath)) {
-					unzipEntry(filePath, zEntry, zipIs);
-				} else {
-					LOGGER.error("Error while unzip file. Invalid archive file");
-					throw new SpagoBIRuntimeException("Error while unzip file. Invalid archive file");
-				}
-			}
-		} catch (IOException e) {
-			LOGGER.warn("Non-fatal error unzipping {}", filePath, e);
-		}
-	}
-	*/
 
 	private static void unzipEntry(String filePath, ZipEntry zEntry, ZipInputStream zipIs) {
 		byte[] tmp = new byte[4 * 1024];
