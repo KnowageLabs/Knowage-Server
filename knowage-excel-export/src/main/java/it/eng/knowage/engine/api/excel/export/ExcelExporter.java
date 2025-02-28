@@ -1456,22 +1456,10 @@ public class ExcelExporter extends AbstractFormatExporter {
                     String chartAggregation = null;
                     if (widgetData.getString("type").equalsIgnoreCase("table")) {
                         // renaming table columns names of the excel export
-                        for (int j = 0; j < columnSelectedOfDataset.length(); j++) {
-                            JSONObject columnSelected = columnSelectedOfDataset.getJSONObject(j);
-                            if (columnSelected.has("aliasToShow") && columnName.equals(columnSelected.getString("aliasToShow"))) {
-                                columnName = getTableColumnHeaderValue(columnSelected);
-                                break;
-                            }
-                        }
+                        columnName = setColumnHeaderAlias(columnSelectedOfDataset, "aliasToShow", columnName);
                     } else if (widgetData.getString("type").equalsIgnoreCase("discovery")) {
                         // renaming table columns names of the excel export
-                        for (int j = 0; j < columnSelectedOfDataset.length(); j++) {
-                            JSONObject columnSelected = columnSelectedOfDataset.getJSONObject(j);
-                            if (columnSelected.has("name") && columnName.equals(columnSelected.getString("name"))) {
-                                columnName = getTableColumnHeaderValue(columnSelected);
-                                break;
-                            }
-                        }
+                        columnName = setColumnHeaderAlias(columnSelectedOfDataset, "name", columnName);
                     } else if (widgetData.getString("type").equalsIgnoreCase("chart")) {
                         chartAggregation = chartAggregationsMap.get(columnName);
                         if (chartAggregation != null) {
@@ -1614,108 +1602,6 @@ public class ExcelExporter extends AbstractFormatExporter {
         }
     }
 
-    public void fillGenericWidgetSheetWithData(JSONObject dataStore, Workbook wb, Sheet sheet, String widgetName, int offset,
-                                               JSONObject settings) {
-        try {
-            JSONObject metadata = dataStore.getJSONObject("metaData");
-            JSONArray columns = metadata.getJSONArray("fields");
-            columns = filterDataStoreColumns(columns);
-            JSONArray rows = dataStore.getJSONArray("rows");
-            JSONObject widgetData = dataStore.getJSONObject("widgetData");
-            HashMap<String, String> chartAggregationsMap = new HashMap<>();
-
-            JSONArray columnsOrdered = columns;
-
-            JSONArray groupsFromWidgetContent = getGroupsFromWidgetContent(widgetData);
-            Map<String, String> groupsAndColumnsMap = getDashboardGroupAndColumnsMap(widgetData, groupsFromWidgetContent);
-
-            // CREATE BRANDED HEADER SHEET
-            this.imageB64 = OrganizationImageManager.getOrganizationB64ImageWide(TenantManager.getTenant().getName());
-            int startRow = 0;
-            float rowHeight = 35; // in points
-            int rowspan = 2;
-            int startCol = 0;
-            int colWidth = 25;
-            int colspan = 2;
-            int namespan = 10;
-            int dataspan = 10;
-
-            if (offset == 0) { // if pagination is active, headers must be created only once
-                Row header;
-
-                int headerIndex = createBrandedHeaderSheet(
-                        sheet,
-                        this.imageB64,
-                        startRow,
-                        rowHeight,
-                        rowspan,
-                        startCol,
-                        colWidth,
-                        colspan,
-                        namespan,
-                        dataspan,
-                        this.documentName,
-                        widgetName);
-
-                header = createDashboardHeaderColumnNames(sheet, groupsAndColumnsMap, columnsOrdered, headerIndex + 1);
-
-                for (int i = 0; i < columnsOrdered.length(); i++) {
-                    JSONObject column = columnsOrdered.getJSONObject(i);
-                    String columnName = column.getString("header");
-                    String chartAggregation;
-
-                    chartAggregation = chartAggregationsMap.get(columnName);
-
-                    if (chartAggregation != null) {
-                        columnName = columnName.split("_" + chartAggregation)[0];
-                    }
-
-                    columnName = getInternationalizedHeader(columnName);
-
-                    if (chartAggregation != null) {
-                        columnName = columnName + "_" + chartAggregation;
-                    }
-
-                    Cell cell = header.createCell(i);
-
-                    cell.setCellValue(columnName);
-                }
-
-                // adjusts the column width to fit the contents
-                adjustColumnWidth(sheet, this.imageB64);
-            }
-
-            // FILL RECORDS
-            int isGroup = groupsAndColumnsMap.isEmpty() ? 0 : 1;
-            for (int r = 0; r < rows.length(); r++) {
-                JSONObject rowObject = rows.getJSONObject(r);
-                Row row;
-
-                if (StringUtils.isNotEmpty(imageB64)) {
-                    row = sheet.createRow((offset + r + isGroup) + (startRow + rowspan) + 2); // starting by Header
-                } else {
-                    row = sheet.createRow((offset + r + isGroup) + 2);
-                }
-
-                for (int c = 0; c < columnsOrdered.length(); c++) {
-                    JSONObject column = columnsOrdered.getJSONObject(c);
-                    String type = getCellType(column, column.getString("name"));
-                    String colIndex = column.getString("name"); // column_1, column_2, column_3...
-
-                    Cell cell = row.createCell(c);
-                    Object value = rowObject.get(colIndex);
-
-                    if (value != null) {
-                        String stringifiedValue = value.toString();
-                        doTypeLogic(wb, -1, type, cell, stringifiedValue);
-                    }
-                }
-            }
-        } catch (Exception e) {
-            throw new SpagoBIRuntimeException("Cannot write data to Excel file", e);
-        }
-
-    }
 
     private void doTypeLogic(Workbook wb, int precision, String type, Cell cell, String stringifiedValue) {
         CreationHelper creationHelper = wb.getCreationHelper();
@@ -1780,12 +1666,11 @@ public class ExcelExporter extends AbstractFormatExporter {
             JSONArray columns = metadata.getJSONArray("fields");
             columns = filterDataStoreColumns(columns);
             JSONArray rows = dataStore.getJSONArray("rows");
-            HashMap<String, Object> variablesMap = new HashMap<>();
             JSONObject widgetData = dataStore.getJSONObject("widgetData");
             JSONArray columnSelectedOfDataset = widgetData.getJSONArray("columns");
 
             JSONArray columnsOrdered;
-            List<String> hiddenColumns = new ArrayList<>();
+            List<String> hiddenColumns;
             if (widgetData.has("columns") && widgetData.getJSONArray("columns").length() > 0) {
                 hiddenColumns = getDashboardHiddenColumnsList(columnSelectedOfDataset, settings);
                 columnsOrdered = getDashboardTableOrderedColumns(columnSelectedOfDataset, hiddenColumns, columns);
@@ -1807,126 +1692,193 @@ public class ExcelExporter extends AbstractFormatExporter {
             int namespan = 10;
             int dataspan = 10;
 
-            if (offset == 0) { // if pagination is active, headers must be created only once
-                Row header;
-                int headerIndex = createBrandedHeaderSheet(
-                        sheet,
-                        this.imageB64,
-                        startRow,
-                        rowHeight,
-                        rowspan,
-                        startCol,
-                        colWidth,
-                        colspan,
-                        namespan,
-                        dataspan,
-                        this.documentName,
-                        widgetName);
+            buildTableFirstPageHeaders(wb, sheet, widgetName, offset, settings, startRow, rowHeight, rowspan, startCol, colWidth, colspan, namespan, dataspan, groupsAndColumnsMap, columnsOrdered, columnSelectedOfDataset);
 
-                header = createDashboardHeaderColumnNames(sheet, groupsAndColumnsMap, columnsOrdered, headerIndex + 1);
-
-                for (int i = 0; i < columnsOrdered.length(); i++) {
-                    JSONObject column = columnsOrdered.getJSONObject(i);
-                    String columnName = column.getString("header");
-                    // renaming table columns names of the excel export
-                    for (int j = 0; j < columnSelectedOfDataset.length(); j++) {
-                        JSONObject columnSelected = columnSelectedOfDataset.getJSONObject(j);
-                        if (columnSelected.has("aliasToShow") && columnName.equals(columnSelected.getString("aliasToShow"))) {
-                            columnName = getTableColumnHeaderValue(columnSelected);
-                            break;
-                        }
-                    }
-
-                    columnName = getInternationalizedHeader(columnName);
-
-                    Cell cell = header.createCell(i);
-                    cell.setCellValue(columnName);
-
-                    CellStyle headerCellStyle;
-                    XSSFFont font = (XSSFFont) wb.createFont();
-                    if (settings != null && settings.has("style") && settings.getJSONObject("style").has("headers")) {
-                        Style style = getStyleCustomObjFromProps(sheet, settings.getJSONObject("style").getJSONObject("headers"), "");
-                        headerCellStyle = buildPoiCellStyle(style, font, wb);
-                    } else {
-                        headerCellStyle = buildCellStyle(sheet, true, HorizontalAlignment.LEFT, VerticalAlignment.CENTER, (short) 11);
-                    }
-                    cell.setCellStyle(headerCellStyle);
-                }
-
-                // adjusts the column width to fit the contents
-                adjustColumnWidth(sheet, this.imageB64);
-            }
-
-            // cell styles for table widget
-//			hashmap<string, string> mapcolumns;
-//			hashmap<string, string> mapcolumnstypes;
-//			hashmap<string, object> mapparameters = new hashmap<>();
-//			mapcolumns = getcolumnsmap(columnsordered);
-//			mapcolumnstypes = getcolumnsmaptypes(columnsordered);
-//			mapparameters = createmapparameters(mapparameters);
-//			variablesmap = createmapvariables(variablesmap);
             int isGroup = groupsAndColumnsMap.isEmpty() ? 0 : 1;
-
-            assert settings != null;
 
             Map<String, JSONArray> columnStylesMap = getStylesMap(settings);
             Map<String, CellStyle> columnsCellStyles = new HashMap<>();
             CellStyle cellStyle = null;
             JSONObject alternatedRows = getRowStyle(settings);
-            for (int r = 0; r < rows.length(); r++) {
-                JSONObject rowObject = rows.getJSONObject(r);
-                Row row;
-                if (StringUtils.isNotEmpty(imageB64)) {
-                    row = sheet.createRow((offset + r + isGroup) + (startRow + rowspan) + 2); // starting by Header
-                } else {
-                    row = sheet.createRow((offset + r + isGroup) + 2);
-                }
-
-                boolean rowIsEven = (r % 2 == 0);
-                String rawCurrentNumberType = rowIsEven ? "even" : "odd";
-                String defaultRowBackgroundColor = getDefaultRowBackgroundColor(alternatedRows, rowIsEven);
-
-                boolean styleAlreadyAppliedToPreviousCells = false;
-                String styleKeyToApplyToTheEntireRow = null;
-                List<Boolean> styleCanBeOverriddenByWholeRowStyle = new ArrayList<>();
-                for (int c = 0; c < columnsOrdered.length(); c++) {
-                    JSONObject column = columnsOrdered.getJSONObject(c);
-                    String type = getCellType(column, column.getString("name"));
-                    String colIndex = column.getString("name"); // column_1, column_2, column_3...
-
-                    Cell cell = row.createCell(c);
-                    Object value = rowObject.get(colIndex);
-
-                    String stringifiedValue = value != null ? value.toString() : "";
-                    JSONObject theRightStyle = getTheRightStyleByColumnIdAndValue(columnStylesMap, stringifiedValue, column.optString("id"), defaultRowBackgroundColor);
-
-                    styleCanBeOverriddenByWholeRowStyle.add(c, styleCanBeOverridden(theRightStyle));
-
-                    String styleKey;
-                    if (theRightStyle.has("applyToWholeRow") && theRightStyle.getBoolean("applyToWholeRow")) {
-                        styleKey = getStyleKey(column, theRightStyle, rawCurrentNumberType);
-                        if (!styleAlreadyAppliedToPreviousCells) {
-                            cellStyle = getCellStyleByStyleKey(wb, sheet, styleKey, columnsCellStyles, theRightStyle, defaultRowBackgroundColor);
-                            for (int previousCell = c - 1; previousCell >= 0; previousCell--) {
-                                if (styleCanBeOverriddenByWholeRowStyle.get(previousCell).equals(Boolean.TRUE)) {
-                                    row.getCell(previousCell).setCellStyle(cellStyle);
-                                }
-                            }
-                            styleAlreadyAppliedToPreviousCells = true;
-                        }
-                        styleKeyToApplyToTheEntireRow = styleKey;
-                    } else if (styleKeyToApplyToTheEntireRow != null && styleCanBeOverridden(theRightStyle)) {
-                        cellStyle = columnsCellStyles.get(styleKeyToApplyToTheEntireRow);
-                    } else {
-                        styleKey = getStyleKey(column, theRightStyle, rawCurrentNumberType);
-                        cellStyle = getCellStyleByStyleKey(wb, sheet, styleKey, columnsCellStyles, theRightStyle, defaultRowBackgroundColor);
-                    }
-                    cell.setCellStyle(cellStyle);
-                    doTypeLogic(wb, getPrecisionByColumn(settings, column), type, cell, stringifiedValue);
-                }
-            }
+            buildRowsAndCols(wb, sheet, offset, settings, rows, isGroup, startRow, rowspan, alternatedRows, columnsOrdered, columnStylesMap, cellStyle, columnsCellStyles);
         } catch (Exception e) {
             throw new SpagoBIRuntimeException("Cannot write data to Excel file", e);
+        }
+    }
+
+    private void buildRowsAndCols(Workbook wb, Sheet sheet, int offset, JSONObject settings, JSONArray rows, int isGroup, int startRow, int rowspan, JSONObject alternatedRows, JSONArray columnsOrdered, Map<String, JSONArray> columnStylesMap, CellStyle cellStyle, Map<String, CellStyle> columnsCellStyles) throws JSONException {
+        for (int r = 0; r < rows.length(); r++) {
+            JSONObject rowObject = rows.getJSONObject(r);
+            Row row;
+            if (StringUtils.isNotEmpty(imageB64)) {
+                row = sheet.createRow((offset + r + isGroup) + (startRow + rowspan) + 2); // starting by Header
+            } else {
+                row = sheet.createRow((offset + r + isGroup) + 2);
+            }
+
+            boolean rowIsEven = (r % 2 == 0);
+            String rawCurrentNumberType = rowIsEven ? "even" : "odd";
+            String defaultRowBackgroundColor = getDefaultRowBackgroundColor(alternatedRows, rowIsEven);
+
+            boolean styleAlreadyAppliedToPreviousCells = false;
+            String styleKeyToApplyToTheEntireRow = null;
+            List<Boolean> styleCanBeOverriddenByWholeRowStyle = new ArrayList<>();
+            for (int c = 0; c < columnsOrdered.length(); c++) {
+                JSONObject column = columnsOrdered.getJSONObject(c);
+                String type = getCellType(column, column.getString("name"));
+                String colIndex = column.getString("name"); // column_1, column_2, column_3...
+
+                Cell cell = row.createCell(c);
+                Object value = rowObject.get(colIndex);
+
+                String stringifiedValue = value != null ? value.toString() : "";
+                JSONObject theRightStyle = getTheRightStyleByColumnIdAndValue(columnStylesMap, stringifiedValue, column.optString("id"), defaultRowBackgroundColor);
+
+                styleCanBeOverriddenByWholeRowStyle.add(c, styleCanBeOverridden(theRightStyle));
+
+                String styleKey;
+                if (theRightStyle.has("applyToWholeRow") && theRightStyle.getBoolean("applyToWholeRow")) {
+                    styleKey = getStyleKey(column, theRightStyle, rawCurrentNumberType);
+                    if (!styleAlreadyAppliedToPreviousCells) {
+                        cellStyle = getCellStyleByStyleKey(wb, sheet, styleKey, columnsCellStyles, theRightStyle, defaultRowBackgroundColor);
+                        applyWholeRowStyle(c, styleCanBeOverriddenByWholeRowStyle, row, cellStyle);
+                        styleAlreadyAppliedToPreviousCells = true;
+                    }
+                    styleKeyToApplyToTheEntireRow = styleKey;
+                } else if (styleKeyToApplyToTheEntireRow != null && styleCanBeOverridden(theRightStyle)) {
+                    cellStyle = columnsCellStyles.get(styleKeyToApplyToTheEntireRow);
+                } else {
+                    styleKey = getStyleKey(column, theRightStyle, rawCurrentNumberType);
+                    cellStyle = getCellStyleByStyleKey(wb, sheet, styleKey, columnsCellStyles, theRightStyle, defaultRowBackgroundColor);
+                }
+                cell.setCellStyle(cellStyle);
+                doTypeLogic(wb, getPrecisionByColumn(settings, column), type, cell, stringifiedValue);
+            }
+        }
+    }
+
+    private Row createHeader(
+            Sheet sheet,
+            int startRow,
+            float rowHeight,
+            int rowspan,
+            int startCol,
+            int colWidth,
+            int colspan,
+            int namespan,
+            int dataspan,
+            String widgetName,
+            Map<String, String> groupsAndColumnsMap,
+            JSONArray columnsOrdered) {
+        int headerIndex = createBrandedHeaderSheet(
+                sheet,
+                this.imageB64,
+                startRow,
+                rowHeight,
+                rowspan,
+                startCol,
+                colWidth,
+                colspan,
+                namespan,
+                dataspan,
+                this.documentName,
+                widgetName);
+
+        return createDashboardHeaderColumnNames(sheet, groupsAndColumnsMap, columnsOrdered, headerIndex + 1);
+    }
+
+
+    private void buildTableFirstPageHeaders(Workbook wb, Sheet sheet, String widgetName, int offset, JSONObject settings, int startRow, float rowHeight, int rowspan, int startCol, int colWidth, int colspan, int namespan, int dataspan, Map<String, String> groupsAndColumnsMap, JSONArray columnsOrdered, JSONArray columnSelectedOfDataset) throws JSONException {
+        if (offset == 0) { // if pagination is active, headers must be created only once
+            Row header = createHeader(sheet, startRow, rowHeight, rowspan, startCol, colWidth, colspan, namespan, dataspan, widgetName, groupsAndColumnsMap, columnsOrdered);
+            for (int i = 0; i < columnsOrdered.length(); i++) {
+                JSONObject column = columnsOrdered.getJSONObject(i);
+                String columnName = column.getString("header");
+                // renaming table columns names of the excel export
+                columnName = setColumnHeaderAlias(columnSelectedOfDataset, "aliasToShow", columnName);
+
+                columnName = getInternationalizedHeader(columnName);
+
+                Cell cell = header.createCell(i);
+                cell.setCellValue(columnName);
+
+                XSSFFont font = (XSSFFont) wb.createFont();
+                buildHeaderCellStyle(wb, sheet, settings, font, cell);
+            }
+
+            // adjusts the column width to fit the contents
+            adjustColumnWidth(sheet, this.imageB64);
+        }
+    }
+
+    private String setColumnHeaderAlias(JSONArray columnSelectedOfDataset, String aliasToShow, String columnName) throws JSONException {
+        for (int j = 0; j < columnSelectedOfDataset.length(); j++) {
+            JSONObject columnSelected = columnSelectedOfDataset.getJSONObject(j);
+            if (columnSelected.has(aliasToShow) && columnName.equals(columnSelected.getString(aliasToShow))) {
+                columnName = getTableColumnHeaderValue(columnSelected);
+                break;
+            }
+        }
+        return columnName;
+    }
+
+    private void buildHeaderCellStyle(Workbook wb, Sheet sheet, JSONObject settings, XSSFFont font, Cell cell) throws JSONException {
+        CellStyle headerCellStyle;
+        if (settings != null && settings.has("style") && settings.getJSONObject("style").has("headers")) {
+            Style style = getStyleCustomObjFromProps(sheet, settings.getJSONObject("style").getJSONObject("headers"), "");
+            headerCellStyle = buildPoiCellStyle(style, font, wb);
+        } else {
+            headerCellStyle = buildCellStyle(sheet, true, HorizontalAlignment.LEFT, VerticalAlignment.CENTER, (short) 11);
+        }
+        cell.setCellStyle(headerCellStyle);
+    }
+
+    public void fillGenericWidgetSheetWithData(JSONObject dataStore, Workbook wb, Sheet sheet, String widgetName, int offset,
+                                               JSONObject settings) {
+        try {
+            JSONObject metadata = dataStore.getJSONObject("metaData");
+            JSONArray columns = metadata.getJSONArray("fields");
+            columns = filterDataStoreColumns(columns);
+            JSONArray rows = dataStore.getJSONArray("rows");
+            JSONObject widgetData = dataStore.getJSONObject("widgetData");
+
+            JSONArray columnsOrdered = columns;
+
+            JSONArray groupsFromWidgetContent = getGroupsFromWidgetContent(widgetData);
+            Map<String, String> groupsAndColumnsMap = getDashboardGroupAndColumnsMap(widgetData, groupsFromWidgetContent);
+
+            // CREATE BRANDED HEADER SHEET
+            this.imageB64 = OrganizationImageManager.getOrganizationB64ImageWide(TenantManager.getTenant().getName());
+            int startRow = 0;
+            float rowHeight = 35; // in points
+            int rowspan = 2;
+            int startCol = 0;
+            int colWidth = 25;
+            int colspan = 2;
+            int namespan = 10;
+            int dataspan = 10;
+
+            buildTableFirstPageHeaders(wb, sheet, widgetName, offset, settings, startRow, rowHeight, rowspan, startCol, colWidth, colspan, namespan, dataspan, groupsAndColumnsMap, columnsOrdered, new JSONArray());
+            // FILL RECORDS
+            int isGroup = groupsAndColumnsMap.isEmpty() ? 0 : 1;
+
+            Map<String, JSONArray> columnStylesMap = getStylesMap(settings);
+            Map<String, CellStyle> columnsCellStyles = new HashMap<>();
+            CellStyle cellStyle = null;
+            JSONObject alternatedRows = getRowStyle(settings);
+
+            buildRowsAndCols(wb, sheet, offset, settings, rows, isGroup, startRow, rowspan, alternatedRows, columnsOrdered, columnStylesMap, cellStyle, columnsCellStyles);
+        } catch (Exception e) {
+            throw new SpagoBIRuntimeException("Cannot write data to Excel file", e);
+        }
+
+    }
+
+    private static void applyWholeRowStyle(int c, List<Boolean> styleCanBeOverriddenByWholeRowStyle, Row row, CellStyle cellStyle) {
+        for (int previousCell = c - 1; previousCell >= 0; previousCell--) {
+            if (styleCanBeOverriddenByWholeRowStyle.get(previousCell).equals(Boolean.TRUE)) {
+                row.getCell(previousCell).setCellStyle(cellStyle);
+            }
         }
     }
 
@@ -1985,14 +1937,14 @@ public class ExcelExporter extends AbstractFormatExporter {
 
             if (columns.getBoolean("enabled")) {
                 JSONArray styles = columns.getJSONArray("styles");
-                stylesMap = buildStylesMap(stylesMap, styles);
+                buildStylesMap(stylesMap, styles);
             }
 
             if (settings.has("conditionalStyles") && settings.getJSONObject("conditionalStyles").getBoolean("enabled")) {
                 JSONObject conditionalStyles = settings.getJSONObject("conditionalStyles");
                 JSONArray conditions = conditionalStyles.getJSONArray("conditions");
 
-                stylesMap = buildStylesMap(stylesMap, conditions);
+                buildStylesMap(stylesMap, conditions);
             }
 
         } catch (JSONException e) {
