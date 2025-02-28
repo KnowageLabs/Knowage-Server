@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,7 +11,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -21,6 +21,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.List;
+
 import org.apache.log4j.Logger;
 
 import com.lowagie.text.Cell;
@@ -31,7 +32,7 @@ import com.lowagie.text.Table;
 import com.lowagie.text.pdf.PdfWriter;
 
 /**
- * 
+ *
  * @author giachino (antonella.giachino@eng.it)
  *
  * This class is intended to take the result of a Chart Execution and giveBack an export in other formats
@@ -62,60 +63,54 @@ public class ChartExporter
 			String path = (new StringBuilder(String.valueOf(dir))).append("/").append(uuid).append(".png").toString();
 			File dirF = new File(dir);
 			tmpFile = File.createTempFile("tempPDFExport", ".pdf", dirF);
-			Document pdfDocument = new Document();
-			PdfWriter docWriter = PdfWriter.getInstance(pdfDocument, new FileOutputStream(tmpFile));
-			//pdfDocument.open();
-			if(multichart)
-			{
-				pdfDocument.open();
 
-				List images = new ArrayList();
-				for(int i = 0; i < MAX_NUM_IMG; i++)
-				{
-					String imgName = (new StringBuilder(String.valueOf(path.substring(0, path.indexOf(".png"))))).append(i).append(".png").toString();
-					Image png = Image.getInstance(imgName);
-					if(png == null)
-					{
-						break;
+			try (Document pdfDocument = new Document()) {
+				PdfWriter docWriter = PdfWriter.getInstance(pdfDocument, new FileOutputStream(tmpFile));
+				// pdfDocument.open();
+				if (multichart) {
+					pdfDocument.open();
+
+					List images = new ArrayList();
+					for (int i = 0; i < MAX_NUM_IMG; i++) {
+						String imgName = (new StringBuilder(String.valueOf(path.substring(0, path.indexOf(".png"))))).append(i).append(".png").toString();
+						Image png = Image.getInstance(imgName);
+						if (png == null) {
+							break;
+						}
+						images.add(png);
 					}
-					images.add(png);
-				}
 
-				Table table = new Table(images.size());
-				for(int i = 0; i < images.size(); i++)
-				{
-					Image png = (Image)images.get(i);
-					if(HORIZONTAL_ORIENTATION.equalsIgnoreCase(orientation))
-					{
-						Cell pngCell = new Cell(png);
-						pngCell.setBorder(0);
-						table.setBorder(0);
-						table.addCell(pngCell);
-					} else
-					{
-						png.setAlignment(5);
-						pdfDocument.add(png);
+					Table table = new Table(images.size());
+					for (int i = 0; i < images.size(); i++) {
+						Image png = (Image) images.get(i);
+						if (HORIZONTAL_ORIENTATION.equalsIgnoreCase(orientation)) {
+							Cell pngCell = new Cell(png);
+							pngCell.setBorder(0);
+							table.setBorder(0);
+							table.addCell(pngCell);
+						} else {
+							png.setAlignment(5);
+							pdfDocument.add(png);
+						}
 					}
+
+					pdfDocument.add(table);
+				} else {
+					Image jpg = Image.getInstance(path);
+					float height = jpg.getHeight();
+					float width = jpg.getWidth();
+
+					// if in need to change layout
+					if (width > MAX_WIDTH || height > MAX_HEIGHT) {
+						changeLayout(pdfDocument, jpg, width, height);
+					}
+
+					pdfDocument.open();
+					pdfDocument.add(jpg);
 				}
 
-				pdfDocument.add(table);
-			} else
-			{
-				Image jpg = Image.getInstance(path);
-				float height = jpg.getHeight();
-				float width = jpg.getWidth();
-
-				// if in need to change layout
-				if(width > MAX_WIDTH || height > MAX_HEIGHT){
-					changeLayout(pdfDocument, jpg, width, height);
-				}
-
-				pdfDocument.open();
-				pdfDocument.add(jpg);
+				docWriter.close();
 			}
-			pdfDocument.close();
-			docWriter.close();
-
 			logger.debug("OUT");
 
 			return tmpFile;
@@ -131,7 +126,7 @@ public class ChartExporter
 	}
 
 	/** check if the image has to be turned or resize
-	 * 
+	 *
 	 * @param document
 	 * @param jpg
 	 * @return if the image has been turned
@@ -143,7 +138,7 @@ public class ChartExporter
 		if(width > MAX_WIDTH && ! (height > MAX_WIDTH) && !(width > MAX_HEIGHT)){
 			pdfDocument.setPageSize(PageSize.LETTER.rotate());
 			logger.debug("pdf rotation");
-		} 
+		}
 		else{
 			// otherwise the chart needs to be scaled (if width > height also turn!)
 			// SCALED WITH turning

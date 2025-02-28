@@ -419,10 +419,12 @@ public class ModelResource extends AbstractWhatIfEngineService {
 
 		ExcelExporter exporter = new KnowageExcelExporter(out, getLocale());
 		ExportConfig exportConfig = WhatIfEngineConfig.getInstance().getExportProperties();
-		if (exportConfig.getFontFamily() != null)
+		if (exportConfig.getFontFamily() != null) {
 			exporter.setFontFamily(exportConfig.getFontFamily());
-		if (exportConfig.getFontSize() != null)
+		}
+		if (exportConfig.getFontSize() != null) {
 			exporter.setFontSize(exportConfig.getFontSize());
+		}
 
 		TableRenderer render = new TableRenderer();
 
@@ -455,12 +457,15 @@ public class ModelResource extends AbstractWhatIfEngineService {
 		FopExporter exporter = new FopExporter(out);
 
 		ExportConfig exportConfig = WhatIfEngineConfig.getInstance().getExportProperties();
-		if (exportConfig.getFontFamily() != null)
+		if (exportConfig.getFontFamily() != null) {
 			exporter.setFontFamily(exportConfig.getFontFamily());
-		if (exportConfig.getFontSize() != null)
+		}
+		if (exportConfig.getFontSize() != null) {
 			exporter.setFontSize(exportConfig.getFontSize().toString());
-		if (exportConfig.getOrientation() != null)
+		}
+		if (exportConfig.getOrientation() != null) {
 			exporter.setOrientation(exportConfig.getOrientation());
+		}
 
 		TableRenderer render = new TableRenderer();
 
@@ -523,7 +528,7 @@ public class ModelResource extends AbstractWhatIfEngineService {
 			FileInputStream fileInputStream2 = new FileInputStream(result);
 
 			XSSFWorkbook workbook = new XSSFWorkbook(fileInputStream1);
-			HSSFWorkbook exportedOlapWorkbook = new HSSFWorkbook(fileInputStream2);
+			HSSFWorkbook exportedOlapWorkbook = this.getHSSFWorkbook(fileInputStream2);
 
 			workbook = Util.merge(workbook, exportedOlapWorkbook.getSheetAt(0));
 			workbook = writeParamsToExcel(context, workbook);
@@ -548,6 +553,10 @@ public class ModelResource extends AbstractWhatIfEngineService {
 			throw new SpagoBIEngineServiceException(getClass().getName(), "Error while downloading edit excel file", e);
 		}
 
+	}
+
+	private HSSFWorkbook getHSSFWorkbook(FileInputStream fileInputStream2) throws Exception {
+		return new HSSFWorkbook(fileInputStream2);
 	}
 
 	private String getExportFileName() {
@@ -592,10 +601,12 @@ public class ModelResource extends AbstractWhatIfEngineService {
 
 		ExcelExporter exporter = new ExcelExporter(out);
 		ExportConfig exportConfig = WhatIfEngineConfig.getInstance().getExportProperties();
-		if (exportConfig.getFontFamily() != null)
+		if (exportConfig.getFontFamily() != null) {
 			exporter.setFontFamily(exportConfig.getFontFamily());
-		if (exportConfig.getFontSize() != null)
+		}
+		if (exportConfig.getFontSize() != null) {
 			exporter.setFontSize(exportConfig.getFontSize());
+		}
 
 		TableRenderer render = new TableRenderer();
 

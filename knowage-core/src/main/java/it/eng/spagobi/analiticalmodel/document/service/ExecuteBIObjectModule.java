@@ -330,6 +330,11 @@ public class ExecuteBIObjectModule extends AbstractHttpModule {
 		ExecutionInstance instance = createExecutionInstance(id, role, profile, request, modality);
 		// put execution instance in session
 		contextManager.set(ExecutionInstance.class.getName(), instance);
+
+		if (instance == null) {
+			throw new IllegalArgumentException("ExecutionInstance is null");
+		}
+
 		instance.refreshParametersValues(request, true);
 		instance.setParameterValues(userProvidedParametersStr, true);
 		// refresh obj variable because createExecutionInstance load the BIObject in a different way
@@ -1014,7 +1019,7 @@ public class ExecuteBIObjectModule extends AbstractHttpModule {
 			InternalEngineIFace internalEngine = null;
 			// tries to instantiate the class for the internal engine
 			try {
-				if (className == null && className.trim().equals("")) {
+				if (className == null || className.trim().equals("")) {
 					throw new ClassNotFoundException();
 				}
 				internalEngine = (InternalEngineIFace) Class.forName(className).newInstance();
@@ -1335,8 +1340,10 @@ public class ExecuteBIObjectModule extends AbstractHttpModule {
 			}
 		}
 
-		currbiObjPar.setParameterValues(null);
-		currbiObjPar.setParameterValuesDescription(null);
+		if (currbiObjPar != null) {
+			currbiObjPar.setParameterValues(null);
+			currbiObjPar.setParameterValuesDescription(null);
+		}
 
 		response.setAttribute(SpagoBIConstants.PUBLISHER_NAME, "ExecuteBIObjectPageParameter");
 		logger.debug("OUT");

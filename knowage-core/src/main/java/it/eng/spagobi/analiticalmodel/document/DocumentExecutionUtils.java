@@ -671,7 +671,7 @@ public class DocumentExecutionUtils {
 				boolean notNullNode = false; // if the row does not contain the value atribute we don't add the node
 				for (int i = 0; i < columns.size(); i++) {
 					SourceBeanAttribute attribute = (SourceBeanAttribute) columns.get(i);
-					if ((treeLovParentNodeName == "lovroot")
+					if (("lovroot".equals(treeLovParentNodeName))
 							|| (attribute.getKey().equalsIgnoreCase(treeLovParentNodeName)
 									&& (attribute.getValue().toString()).equalsIgnoreCase(treeLovNodeValue))) {
 						addNode = true;
@@ -769,8 +769,9 @@ public class DocumentExecutionUtils {
 			} else if (retrieveIfNotcached) {
 				lovResult = lovDefinition.getLovResult(profile, dependencies, biObject.getDrivers(), req.getLocale());
 				// insert the data in cache
-				if (lovResult != null)
+				if (lovResult != null) {
 					cache.put(cacheKey, lovResult);
+				}
 			}
 		} else {
 			// scrips, fixed list and java classes are not cached, and returned without considering retrieveIfNotcached input
@@ -806,8 +807,9 @@ public class DocumentExecutionUtils {
 			} else if (retrieveIfNotcached) {
 				lovResult = lovDefinition.getLovResult(profile, dependencies, drivers, locale);
 				// insert the data in cache
-				if (lovResult != null)
+				if (lovResult != null) {
 					cache.put(cacheKey, lovResult);
+				}
 			}
 		} else {
 			// scrips, fixed list and java classes are not cached, and returned without considering retrieveIfNotcached input

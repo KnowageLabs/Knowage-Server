@@ -32,6 +32,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import javax.persistence.EntityManager;
@@ -139,7 +140,7 @@ public class JPAPersistenceManager implements IPersistenceManager {
 		@SuppressWarnings("unchecked")
 		Root root = cq.from(targetEntity.getBindableJavaType());
 		Number num = (Number) cq.select(cb1.max(root.<Number>get(keyColumn)));
-		
+
 		//Query maxQuery = entityManager.createQuery("SELECT max(p." + keyColumn + ") as c FROM " + targetEntity.getName() + " p");
 
 		//Object result = maxQuery.getSingleResult();
@@ -546,7 +547,8 @@ public class JPAPersistenceManager implements IPersistenceManager {
 				entityTransaction.begin();
 			}
 
-			String q = String.format("DELETE from %s WHERE %s=%s",targetEntity.getName(), keyAttributeName, keyColumnValue.toString());
+			String q = String.format("DELETE from %s WHERE %s=%s", targetEntity.getName(), keyAttributeName,
+					Optional.ofNullable(keyColumnValue).map(x -> x.toString()).orElse(null));
 			logger.debug("create Query " + q);
 			Query deleteQuery = entityManager.createQuery(q);
 
@@ -737,8 +739,9 @@ public class JPAPersistenceManager implements IPersistenceManager {
 		} else if (String.class.isAssignableFrom(clazz)) {
 			if (value.equals("")) {
 				toReturn = null;
-			} else
+			} else {
 				toReturn = value;
+			}
 		} else if (Timestamp.class.isAssignableFrom(clazz)) {
 			Date date;
 			SimpleDateFormat sdf = new SimpleDateFormat(TIMESTAMP_SIMPLE_FORMAT);

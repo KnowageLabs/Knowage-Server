@@ -18,8 +18,8 @@
 package it.eng.spagobi.tools.dataset.common.dataproxy;
 
 import org.apache.jena.query.QueryExecution;
-import org.apache.jena.sparql.exec.http.QueryExecutionHTTP;
 import org.apache.jena.query.ResultSet;
+import org.apache.jena.sparql.exec.http.QueryExecutionHTTP;
 import org.apache.log4j.Logger;
 
 import com.jamonapi.Monitor;
@@ -41,7 +41,6 @@ public class SPARQLDataProxy extends AbstractDataProxy {
 
 
 	public SPARQLDataProxy(String sparqlEndpoint, String sparqlQuery, String defaultGraphIRI, int executionTimeout) {
-		super();
 		this.sparqlEndpoint = sparqlEndpoint;
 		this.sparqlQuery = sparqlQuery;
 		this.defaultGraphIRI = defaultGraphIRI;
@@ -54,9 +53,10 @@ public class SPARQLDataProxy extends AbstractDataProxy {
 	public IDataStore load(IDataReader dataReader) {
 		logger.debug("IN");
 		IDataStore dataStore = null;
-
+		long value = 1000;
 		//try (QueryExecution queryExecution = QueryExecutionFactory.sparqlService(sparqlEndpoint, sparqlQuery, defaultGraphIRI)) {
-		try (QueryExecution queryExecution = QueryExecutionHTTP.create().service(sparqlEndpoint).query(sparqlQuery).addDefaultGraphURI(defaultGraphIRI).timeout(executionTimeout * 1000, null).build()) {		
+		try (QueryExecution queryExecution = QueryExecutionHTTP.create().service(sparqlEndpoint).query(sparqlQuery).addDefaultGraphURI(defaultGraphIRI)
+				.timeout(executionTimeout * value, null).build()) {
 			ResultSet resultSet = executeSPARQLQuery(queryExecution);
 			dataStore = readResultSet(dataReader, dataStore, resultSet);
 		} catch (Exception e) {
