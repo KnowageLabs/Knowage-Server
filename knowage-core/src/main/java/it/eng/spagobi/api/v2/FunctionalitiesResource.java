@@ -418,7 +418,7 @@ public class FunctionalitiesResource extends AbstractSpagoBIResource {
 		} catch (Exception e) {
 			String errorString = "sbi.folder.save.error";
 			LOGGER.error(errorString, e);
-			throw new SpagoBIRestServiceException(errorString, buildLocaleFromSession(), e);
+			throw new SpagoBIRestServiceException(errorString, buildLocaleFromSession(), e, "MessageFiles.messages");
 		}
 
 	}
