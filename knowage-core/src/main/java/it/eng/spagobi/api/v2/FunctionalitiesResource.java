@@ -89,7 +89,7 @@ public class FunctionalitiesResource extends AbstractSpagoBIResource {
 			} else {
 				allFolders = dao.loadAllLowFunctionalities(recoverBIObjects);
 			}
-			List<LowFunctionality> folders = new ArrayList<LowFunctionality>();
+			List<LowFunctionality> folders = new ArrayList<>();
 
 			if (permissionOnFolder != null && !permissionOnFolder.isEmpty()) {
 				for (LowFunctionality lf : allFolders) {
@@ -104,7 +104,7 @@ public class FunctionalitiesResource extends AbstractSpagoBIResource {
 					}
 				}
 			}
-			List<LowFunctionality> newListOfFolders = new ArrayList<LowFunctionality>();
+			List<LowFunctionality> newListOfFolders = new ArrayList<>();
 			JSONArray arrayDev = null;
 			JSONArray arrayTest = null;
 			JSONArray arrayExec = null;
@@ -360,10 +360,10 @@ public class FunctionalitiesResource extends AbstractSpagoBIResource {
 			JSONArray execRoles = paramsObj.getJSONArray("execRoles");
 			JSONArray creatRoles = paramsObj.getJSONArray("createRoles");
 			roleDao = DAOFactory.getRoleDAO();
-			ArrayList<Role> devRolesArrayList = new ArrayList<Role>();
-			ArrayList<Role> testRolesArrayList = new ArrayList<Role>();
-			ArrayList<Role> execRolesArrayList = new ArrayList<Role>();
-			ArrayList<Role> creatRolesArrayList = new ArrayList<Role>();
+			ArrayList<Role> devRolesArrayList = new ArrayList<>();
+			ArrayList<Role> testRolesArrayList = new ArrayList<>();
+			ArrayList<Role> execRolesArrayList = new ArrayList<>();
+			ArrayList<Role> creatRolesArrayList = new ArrayList<>();
 			Role[] devRolesArray = new Role[devRoles.length()];
 			for (int i = 0; i < devRoles.length(); i++) {
 				int roleID = devRoles.getJSONObject(i).getInt("id");
@@ -413,7 +413,7 @@ public class FunctionalitiesResource extends AbstractSpagoBIResource {
 		} catch (Exception e) {
 			String errorString = "sbi.folder.save.error";
 			logger.error(errorString, e);
-			throw new SpagoBIRestServiceException(errorString, buildLocaleFromSession(), e);
+			throw new SpagoBIRestServiceException(errorString, buildLocaleFromSession(), e, "MessageFiles.messages");
 		}
 
 	}
@@ -438,10 +438,10 @@ public class FunctionalitiesResource extends AbstractSpagoBIResource {
 			JSONArray execRoles = paramsObj.getJSONArray("execRoles");
 			JSONArray creatRoles = paramsObj.getJSONArray("createRoles");
 			roleDao = DAOFactory.getRoleDAO();
-			ArrayList<Role> devRolesArrayList = new ArrayList<Role>();
-			ArrayList<Role> testRolesArrayList = new ArrayList<Role>();
-			ArrayList<Role> execRolesArrayList = new ArrayList<Role>();
-			ArrayList<Role> creatRolesArrayList = new ArrayList<Role>();
+			ArrayList<Role> devRolesArrayList = new ArrayList<>();
+			ArrayList<Role> testRolesArrayList = new ArrayList<>();
+			ArrayList<Role> execRolesArrayList = new ArrayList<>();
+			ArrayList<Role> creatRolesArrayList = new ArrayList<>();
 			Role[] devRolesArray = new Role[devRoles.length()];
 			for (int i = 0; i < devRoles.length(); i++) {
 				int roleID = devRoles.getJSONObject(i).getInt("id");

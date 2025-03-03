@@ -725,6 +725,9 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 		try {
 			aSession = getSession();
 			tx = aSession.beginTransaction();
+
+			this.checkUniquePathInSbiFunctions(aSession, aLowFunctionality);
+
 			SbiFunctions hibFunct = new SbiFunctions();
 			hibFunct.setCode(aLowFunctionality.getCode());
 			hibFunct.setDescr(aLowFunctionality.getDescription());
@@ -816,6 +819,17 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 		}
 		return aLowFunctionality;
 
+	}
+
+	private void checkUniquePathInSbiFunctions(Session aSession, LowFunctionality aLowFunctionality) throws EMFUserError {
+		Criterion pathFuncCriterrion = Expression.eq("path", aLowFunctionality.getPath());
+		Criteria pathCriteria = aSession.createCriteria(SbiFunctions.class);
+		pathCriteria.add(pathFuncCriterrion);
+		SbiFunctions sbiFunctionsPath = (SbiFunctions) pathCriteria.uniqueResult();
+		if (sbiFunctionsPath != null) {
+			logger.error("Duplicate path: " + aLowFunctionality.getPath());
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+		}
 	}
 
 	/**
