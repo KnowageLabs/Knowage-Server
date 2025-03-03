@@ -98,7 +98,9 @@
 		<DAO name="ISbiJobTableDAO" implementation="it.eng.spagobi.metadata.dao.SbiJobTableDAOHibImpl"/>
 		<DAO name="ISbiObjDsDAO" implementation="it.eng.spagobi.metadata.dao.SbiObjDsDAOHibImpl"/>
 		<DAO name="ISbiTableBcDAO" implementation="it.eng.spagobi.metadata.dao.SbiTableBcDAOHibImpl"/>
-		
+		 <DAO name="DashboardThemeDAO" implementation="it.eng.spagobi.commons.dao.DashboardThemeDAOHibImpl"/>
+
+
 	 </DAO-CONF>     
      
      <!-- ********************* END DAO CONFIGURATION ************************ -->

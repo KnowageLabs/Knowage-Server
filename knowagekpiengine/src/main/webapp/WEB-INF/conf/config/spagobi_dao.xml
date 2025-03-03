@@ -103,6 +103,7 @@
 
 		<DAO name="CacheDAO" implementation="it.eng.spagobi.cache.dao.CacheDAOHibImpl" />
 		<DAO name="BIObjDataSetDAO" implementation="it.eng.spagobi.tools.dataset.dao.BIObjDataSetDAOHibImpl" />
+		<DAO name="DashboardThemeDAO" implementation="it.eng.spagobi.commons.dao.DashboardThemeDAOHibImpl"/>
 
 	</DAO-CONF>
 

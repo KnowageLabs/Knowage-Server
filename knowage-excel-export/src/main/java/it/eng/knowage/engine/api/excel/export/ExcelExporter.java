@@ -28,6 +28,8 @@ import it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
 import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.dao.IDashboardThemeDAO;
+import it.eng.spagobi.commons.metadata.SbiDashboardTheme;
 import it.eng.spagobi.tenant.TenantManager;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
@@ -1696,6 +1698,8 @@ public class ExcelExporter extends AbstractFormatExporter {
 
             int isGroup = groupsAndColumnsMap.isEmpty() ? 0 : 1;
 
+            replaceWithThemeSettingsIfPresent(settings);
+
             Map<String, JSONArray> columnStylesMap = getStylesMap(settings);
             Map<String, CellStyle> columnsCellStyles = new HashMap<>();
             CellStyle cellStyle = null;
@@ -1704,6 +1708,16 @@ public class ExcelExporter extends AbstractFormatExporter {
         } catch (Exception e) {
             throw new SpagoBIRuntimeException("Cannot write data to Excel file", e);
         }
+    }
+
+    private static void replaceWithThemeSettingsIfPresent(JSONObject settings) throws JSONException {
+        IDashboardThemeDAO dao = DAOFactory.getDashboardThemeDAO();
+        Optional<SbiDashboardTheme> optionalTheme = dao.readByThemeName(settings.getJSONObject("style").optString("themeName"));
+        if (optionalTheme.isPresent()) {
+          SbiDashboardTheme dashboardTheme = optionalTheme.get();
+          settings.remove("style");
+          settings.put("style", dashboardTheme.getConfig().getJSONObject("table").getJSONObject("style"));
+      }
     }
 
     private void buildRowsAndCols(Workbook wb, Sheet sheet, int offset, JSONObject settings, JSONArray rows, int isGroup, int startRow, int rowspan, JSONObject alternatedRows, JSONArray columnsOrdered, Map<String, JSONArray> columnStylesMap, CellStyle cellStyle, Map<String, CellStyle> columnsCellStyles) throws JSONException {
@@ -1861,6 +1875,8 @@ public class ExcelExporter extends AbstractFormatExporter {
             buildTableFirstPageHeaders(wb, sheet, widgetName, offset, settings, startRow, rowHeight, rowspan, startCol, colWidth, colspan, namespan, dataspan, groupsAndColumnsMap, columnsOrdered, new JSONArray());
             // FILL RECORDS
             int isGroup = groupsAndColumnsMap.isEmpty() ? 0 : 1;
+
+            replaceWithThemeSettingsIfPresent(settings);
 
             Map<String, JSONArray> columnStylesMap = getStylesMap(settings);
             Map<String, CellStyle> columnsCellStyles = new HashMap<>();
@@ -2200,15 +2216,6 @@ public class ExcelExporter extends AbstractFormatExporter {
             manageUserSelectionFromJSONObjectUsingKey(selectionsMap, cockpitSelection, "selections");
         }
     }
-
-    private void manageDashboardUserSelectionFromJSONObject(Map<String, Map<String, Object>> selectionsMap,
-                                                   JSONObject dashboardSelection) throws JSONException {
-            Iterator<String> keys = dashboardSelection.keys();
-            while (keys.hasNext()) {
-                String key = keys.next();
-            }
-        }
-
 
     private void manageUserSelectionFromJSONObjectUsingKey(Map<String, Map<String, Object>> selectionsMap,
                                                            JSONObject cockpitSelection, String key) throws JSONException {

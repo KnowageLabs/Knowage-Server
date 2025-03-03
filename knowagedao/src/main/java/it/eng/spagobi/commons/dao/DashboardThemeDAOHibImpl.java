@@ -31,6 +31,7 @@ import org.hibernate.criterion.Order;
 
 import it.eng.spagobi.commons.metadata.SbiDashboardTheme;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+import org.hibernate.criterion.Restrictions;
 
 /**
  * @author Marco Libanori
@@ -72,6 +73,30 @@ public class DashboardThemeDAOHibImpl extends AbstractHibernateDAO implements ID
 
 		} catch (Exception ex) {
 			LOGGER.error("Error getting following dashboard theme: {}", id, ex);
+			throw new SpagoBIRuntimeException(ex);
+		} finally {
+			closeSessionIfOpen(session);
+		}
+		return ret;
+	}
+
+	@Override
+	public Optional<SbiDashboardTheme> readByThemeName(String themeName) {
+		Session session = null;
+		Optional<SbiDashboardTheme> ret = null;
+
+		try {
+			session = getSession();
+
+//			ret = Optional.ofNullable((SbiDashboardTheme) session.get(SbiDashboardTheme.class, themeName));
+
+			//GET BY THEMENAME
+			Criteria c = session.createCriteria(SbiDashboardTheme.class);
+			c.add(Restrictions.eq("themeName", themeName));
+			ret = Optional.ofNullable((SbiDashboardTheme) c.uniqueResult());
+
+		} catch (Exception ex) {
+			LOGGER.error("Error getting following dashboard theme: {}", themeName, ex);
 			throw new SpagoBIRuntimeException(ex);
 		} finally {
 			closeSessionIfOpen(session);

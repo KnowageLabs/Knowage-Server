@@ -33,6 +33,8 @@ public interface IDashboardThemeDAO extends ISpagoBIDao {
 
 	Optional<SbiDashboardTheme> readById(UUID id);
 
+	Optional <SbiDashboardTheme> readByThemeName(String themeName);
+
 	SbiDashboardTheme create(SbiDashboardTheme theme);
 
 	SbiDashboardTheme update(SbiDashboardTheme theme);
