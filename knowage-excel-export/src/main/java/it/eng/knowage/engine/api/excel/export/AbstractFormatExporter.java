@@ -558,11 +558,6 @@ public abstract class AbstractFormatExporter {
 			dashboardSelections.put("selections", selections);
 			dashboardSelections.put("parameters", drivers);
 
-			JSONArray summaryRow = getSummaryRowFromWidget(widget);
-
-			if (summaryRow != null)
-				dashboardSelections.put("summaryRow", summaryRow);
-
 			if (isSolrDataset(dataset) && !widget.getString("type").equalsIgnoreCase("discovery")) {
 				JSONObject jsOptions = new JSONObject();
 				jsOptions.put("solrFacetPivot", true);
@@ -916,11 +911,6 @@ public abstract class AbstractFormatExporter {
 			throw new SpagoBIRuntimeException(e);
 		}
 	}
-
-	protected JSONArray getSummaryRowFromDashboardWidget(JSONObject widget) {
-		return new JSONArray();
-	}
-
 
 	protected abstract JSONObject getCockpitSelectionsFromBody(JSONObject widget);
 

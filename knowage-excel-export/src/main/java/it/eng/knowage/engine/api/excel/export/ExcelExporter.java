@@ -809,6 +809,8 @@ public class ExcelExporter extends AbstractFormatExporter {
             aggregations.put("categories", new JSONArray());
             JSONArray categories = aggregations.getJSONArray("categories");
 
+            buildSummaryRows(selections, columns, settings);
+
             for (int i = 0; i < columns.length(); i++) {
                 JSONObject column = columns.getJSONObject(i);
                 String orderTypeCol = column.optString("orderType");
@@ -823,6 +825,7 @@ public class ExcelExporter extends AbstractFormatExporter {
                     JSONObject category = getCategory(columns.getJSONObject(i), getSortingObj(column, sortingColumnId, sortingOrder), getDrillSortingObj(column));
                     categories.put(category);
                 }
+
             }
             aggregations.put("dataset", datasetLabel);
         } catch (Exception e) {
@@ -831,6 +834,56 @@ public class ExcelExporter extends AbstractFormatExporter {
         }
         return selections;
     }
+
+    private void buildSummaryRows(JSONObject selections, JSONArray columns, JSONObject settings) throws JSONException {
+        if (summaryRowsEnabled(settings)) {
+            selections.put("summaryRow", new JSONArray());
+            JSONArray list = settings.getJSONObject("configuration").getJSONObject("summaryRows").getJSONArray("list");
+            JSONArray measures;
+            selections.put("summaryRow", new JSONArray());
+            JSONArray summaryRows = selections.getJSONArray("summaryRow");
+            for (int i = 0; i < list.length(); i++) {
+                JSONObject summaryRow = new JSONObject();
+                JSONObject listElement = list.getJSONObject(i);
+
+                for (int j = 0; j < columns.length(); j++) {
+                    JSONObject column = columns.getJSONObject(j);
+                        if (column.getString("fieldType").equalsIgnoreCase("measure")) {
+                            if (summaryRow.has("measures")) {
+                                measures = summaryRow.getJSONArray("measures");
+                                JSONObject measure = new JSONObject();
+                                measure.put("alias", column.getString("alias"));
+                                measure.put("columnName", column.getString("columnName"));
+                                measure.put("id", column.getString("alias"));
+                                measure.put("funct", listElement.getString("aggregation").equals("Columns Default Aggregation") ? column.getString("aggregation") : listElement.getString("aggregation"));
+                                measures.put(measure);
+                            } else {
+                                summaryRow.put("measures", new JSONArray());
+                                measures = summaryRow.getJSONArray("measures");
+                                JSONObject measure = new JSONObject();
+                                measure.put("alias", column.getString("alias"));
+                                measure.put("columnName", column.getString("columnName"));
+                                measure.put("id", column.getString("alias"));
+                                measure.put("funct", listElement.getString("aggregation").equals("Columns Default Aggregation") ? column.getString("aggregation") : listElement.getString("aggregation"));
+                                measures.put(measure);
+                            }
+                        }
+                }
+                summaryRows.put(summaryRow);
+            }
+        }
+
+
+    }
+
+    private boolean summaryRowsEnabled(JSONObject settings) {
+        try {
+            return settings.has("configuration") && settings.getJSONObject("configuration").has("summaryRows") && settings.getJSONObject("configuration").getJSONObject("summaryRows").getBoolean("enabled");
+        } catch (JSONException e) {
+            return false;
+        }
+    }
+
 
     private JSONObject getDrillSortingObj(JSONObject column) {
         return column.optJSONObject("drillOrder");
@@ -1680,6 +1733,11 @@ public class ExcelExporter extends AbstractFormatExporter {
                 columnsOrdered = columns;
             }
 
+            int numberOfSummaryRows = 0;
+            List<String> summaryRowsLabels = new ArrayList<>();
+
+            numberOfSummaryRows = doSummaryRowsLogic(settings, numberOfSummaryRows, summaryRowsLabels);
+
             JSONArray groupsFromWidgetContent = getGroupsFromDashboardWidget(settings);
             Map<String, String> groupsAndColumnsMap = getDashboardGroupAndColumnsMap(widgetData, groupsFromWidgetContent);
 
@@ -1704,10 +1762,23 @@ public class ExcelExporter extends AbstractFormatExporter {
             Map<String, CellStyle> columnsCellStyles = new HashMap<>();
             CellStyle cellStyle = null;
             JSONObject alternatedRows = getRowStyle(settings);
-            buildRowsAndCols(wb, sheet, offset, settings, rows, isGroup, startRow, rowspan, alternatedRows, columnsOrdered, columnStylesMap, cellStyle, columnsCellStyles);
+            buildRowsAndCols(wb, sheet, offset, settings, rows, isGroup, startRow, rowspan, alternatedRows, columnsOrdered, columnStylesMap, cellStyle, columnsCellStyles, numberOfSummaryRows, summaryRowsLabels);
         } catch (Exception e) {
             throw new SpagoBIRuntimeException("Cannot write data to Excel file", e);
         }
+    }
+
+    private int doSummaryRowsLogic(JSONObject settings, int numberOfSummaryRows, List<String> summaryRowsLabels) throws JSONException {
+        if (summaryRowsEnabled(settings)) {
+            JSONArray list = settings.getJSONObject("configuration").getJSONObject("summaryRows").getJSONArray("list");
+            numberOfSummaryRows = list.length();
+
+            for (int i = 0; i < numberOfSummaryRows; i++) {
+                summaryRowsLabels.add(list.getJSONObject(i).getString("label"));
+            }
+
+        }
+        return numberOfSummaryRows;
     }
 
     private static void replaceWithThemeSettingsIfPresent(JSONObject settings) throws JSONException {
@@ -1720,7 +1791,7 @@ public class ExcelExporter extends AbstractFormatExporter {
       }
     }
 
-    private void buildRowsAndCols(Workbook wb, Sheet sheet, int offset, JSONObject settings, JSONArray rows, int isGroup, int startRow, int rowspan, JSONObject alternatedRows, JSONArray columnsOrdered, Map<String, JSONArray> columnStylesMap, CellStyle cellStyle, Map<String, CellStyle> columnsCellStyles) throws JSONException {
+    private void buildRowsAndCols(Workbook wb, Sheet sheet, int offset, JSONObject settings, JSONArray rows, int isGroup, int startRow, int rowspan, JSONObject alternatedRows, JSONArray columnsOrdered, Map<String, JSONArray> columnStylesMap, CellStyle cellStyle, Map<String, CellStyle> columnsCellStyles, int numberOfSummaryRows, List<String> summaryRowsLabels) throws JSONException {
         for (int r = 0; r < rows.length(); r++) {
             JSONObject rowObject = rows.getJSONObject(r);
             Row row;
@@ -1746,27 +1817,36 @@ public class ExcelExporter extends AbstractFormatExporter {
                 Object value = rowObject.get(colIndex);
 
                 String stringifiedValue = value != null ? value.toString() : "";
-                JSONObject theRightStyle = getTheRightStyleByColumnIdAndValue(columnStylesMap, stringifiedValue, column.optString("id"), defaultRowBackgroundColor);
-
-                styleCanBeOverriddenByWholeRowStyle.add(c, styleCanBeOverridden(theRightStyle));
 
                 String styleKey;
-                if (theRightStyle.has("applyToWholeRow") && theRightStyle.getBoolean("applyToWholeRow")) {
-                    styleKey = getStyleKey(column, theRightStyle, rawCurrentNumberType);
-                    if (!styleAlreadyAppliedToPreviousCells) {
-                        cellStyle = getCellStyleByStyleKey(wb, sheet, styleKey, columnsCellStyles, theRightStyle, defaultRowBackgroundColor);
-                        applyWholeRowStyle(c, styleCanBeOverriddenByWholeRowStyle, row, cellStyle);
-                        styleAlreadyAppliedToPreviousCells = true;
-                    }
-                    styleKeyToApplyToTheEntireRow = styleKey;
-                } else if (styleKeyToApplyToTheEntireRow != null && styleCanBeOverridden(theRightStyle)) {
-                    cellStyle = columnsCellStyles.get(styleKeyToApplyToTheEntireRow);
+                if (r >= rows.length() - numberOfSummaryRows) {
+                    CellStyle summaryCellStyle = buildPoiCellStyle(getStyleCustomObjFromProps(sheet, settings.getJSONObject("style").getJSONObject("summary"), ""), (XSSFFont) wb.createFont(), wb);
+                    cell.setCellStyle(summaryCellStyle);
                 } else {
-                    styleKey = getStyleKey(column, theRightStyle, rawCurrentNumberType);
-                    cellStyle = getCellStyleByStyleKey(wb, sheet, styleKey, columnsCellStyles, theRightStyle, defaultRowBackgroundColor);
+                    JSONObject theRightStyle = getTheRightStyleByColumnIdAndValue(columnStylesMap, stringifiedValue, column.optString("id"), defaultRowBackgroundColor);
+
+                    styleCanBeOverriddenByWholeRowStyle.add(c, styleCanBeOverridden(theRightStyle));
+                    if (theRightStyle.has("applyToWholeRow") && theRightStyle.getBoolean("applyToWholeRow")) {
+                        styleKey = getStyleKey(column, theRightStyle, rawCurrentNumberType);
+                        if (!styleAlreadyAppliedToPreviousCells) {
+                            cellStyle = getCellStyleByStyleKey(wb, sheet, styleKey, columnsCellStyles, theRightStyle, defaultRowBackgroundColor);
+                            applyWholeRowStyle(c, styleCanBeOverriddenByWholeRowStyle, row, cellStyle);
+                            styleAlreadyAppliedToPreviousCells = true;
+                        }
+                        styleKeyToApplyToTheEntireRow = styleKey;
+                    } else if (styleKeyToApplyToTheEntireRow != null && styleCanBeOverridden(theRightStyle)) {
+                        cellStyle = columnsCellStyles.get(styleKeyToApplyToTheEntireRow);
+                    } else {
+                        styleKey = getStyleKey(column, theRightStyle, rawCurrentNumberType);
+                        cellStyle = getCellStyleByStyleKey(wb, sheet, styleKey, columnsCellStyles, theRightStyle, defaultRowBackgroundColor);
+                    }
+                    cell.setCellStyle(cellStyle);
                 }
-                cell.setCellStyle(cellStyle);
                 doTypeLogic(wb, getPrecisionByColumn(settings, column), type, cell, stringifiedValue);
+
+                if (r >= rows.length() - numberOfSummaryRows) {
+                    cell.setCellValue(summaryRowsLabels.get(r - (rows.length() - numberOfSummaryRows)).concat(": ").concat(stringifiedValue));
+                }
             }
         }
     }
@@ -1883,7 +1963,7 @@ public class ExcelExporter extends AbstractFormatExporter {
             CellStyle cellStyle = null;
             JSONObject alternatedRows = getRowStyle(settings);
 
-            buildRowsAndCols(wb, sheet, offset, settings, rows, isGroup, startRow, rowspan, alternatedRows, columnsOrdered, columnStylesMap, cellStyle, columnsCellStyles);
+            buildRowsAndCols(wb, sheet, offset, settings, rows, isGroup, startRow, rowspan, alternatedRows, columnsOrdered, columnStylesMap, cellStyle, columnsCellStyles, 0, new ArrayList<>());
         } catch (Exception e) {
             throw new SpagoBIRuntimeException("Cannot write data to Excel file", e);
         }
@@ -2076,7 +2156,8 @@ public class ExcelExporter extends AbstractFormatExporter {
     private Style getStyleCustomObjFromProps(Sheet sheet, JSONObject props, String defaultRowBackgroundColor) {
         Style style = new Style();
         style.setSheet(sheet);
-        props = props.optJSONObject("properties");
+        props = props.optJSONObject("properties") == null ? props : props.optJSONObject("properties");
+
         style.setAlignItems(props.optString("align-items"));
         style.setJustifyContent(props.optString("justify-content"));
         style.setBackgroundColor(props.optString("background-color").isEmpty() ? defaultRowBackgroundColor : props.optString("background-color"));
