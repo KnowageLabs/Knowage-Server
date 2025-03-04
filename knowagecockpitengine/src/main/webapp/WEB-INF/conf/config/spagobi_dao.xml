@@ -155,6 +155,7 @@
 		<DAO name="BIObjFunctionDAO" implementation="it.eng.spagobi.functions.dao.BIObjFunctionDAOHibImpl"/>
 		<DAO name="IObjFuncOrganizerDAO" implementation="it.eng.spagobi.workspace.dao.ObjFuncOrganizerHIBDAOImpl"/>
 		<DAO name="CalendarDAO" implementation="it.eng.spagobi.tools.calendar.dao.CalendarDAOImpl" />
+		<DAO name="DashboardThemeDAO" implementation="it.eng.spagobi.commons.dao.DashboardThemeDAOHibImpl"/>
 	</DAO-CONF>
 
 	<!-- ********************* END DAO CONFIGURATION ************************ -->
