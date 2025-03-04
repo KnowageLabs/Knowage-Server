@@ -106,7 +106,7 @@ public class OutputParametarsResource extends AbstractSpagoBIResource {
 			Gson gson = new Gson();
 			JsonElement lfJsonElement = gson.toJsonTree(outputParameter);
 
-			if (found != null && found) {
+			if (found != null && found.equals(Boolean.TRUE)) {
 				lfJsonElement.getAsJsonObject().addProperty("usedInCrossNavigations", found);
 			}
 
