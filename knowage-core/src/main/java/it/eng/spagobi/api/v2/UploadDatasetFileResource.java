@@ -278,8 +278,7 @@ public class UploadDatasetFileResource extends AbstractSpagoBIResource {
         long totalSizeArchive = 0;
         int totalEntryArchive = 0;
 
-        try {
-            ZipFile zipFile = new ZipFile(uploadedDiskFileItem.getStoreLocation());
+        try (ZipFile zipFile = new ZipFile(uploadedDiskFileItem.getStoreLocation())) {
             Enumeration<? extends ZipEntry> entries = zipFile.entries();
 
             while (entries.hasMoreElements()) {
