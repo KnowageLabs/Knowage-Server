@@ -28,6 +28,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 
 import org.apache.commons.lang3.StringUtils;
@@ -218,7 +219,8 @@ public class XExecuteBIDocumentJob extends AbstractSpagoBIJob implements Job {
 		try {
 
 			jobDataMap = jobExecutionContext.getMergedJobDataMap();
-			userProfile = UserProfile.createSchedulerUserProfileWithRole(Arrays.asList(jobDataMap.getString("userRoles").split(",")));
+			userProfile = UserProfile.createSchedulerUserProfileWithRole(
+					Optional.ofNullable(jobDataMap.getString("userRoles")).map(userRoles -> Arrays.asList(userRoles.split(","))).orElse(null));
 			documentDAO = DAOFactory.getBIObjectDAO();
 
 			String encodedDocumentLabels = jobDataMap.getString("documentLabels");
