@@ -1680,7 +1680,7 @@ public class ExcelExporter extends AbstractFormatExporter {
                 columnsOrdered = columns;
             }
 
-            JSONArray groupsFromWidgetContent = getGroupsFromWidgetContent(widgetData);
+            JSONArray groupsFromWidgetContent = getGroupsFromDashboardWidget(settings);
             Map<String, String> groupsAndColumnsMap = getDashboardGroupAndColumnsMap(widgetData, groupsFromWidgetContent);
 
             // CREATE BRANDED HEADER SHEET
@@ -2404,6 +2404,7 @@ public class ExcelExporter extends AbstractFormatExporter {
                                                  int startRowOffset) {
         try {
             Row header;
+            CellStyle groupsCellStyle = buildCellStyle(sheet, true, HorizontalAlignment.CENTER, VerticalAlignment.CENTER, (short) 11);
             if (!groupsAndColumnsMap.isEmpty()) {
                 Row newheader = sheet.createRow((short) startRowOffset);
                 for (int i = 0; i < columnsOrdered.length(); i++) {
@@ -2421,6 +2422,7 @@ public class ExcelExporter extends AbstractFormatExporter {
                         }
                         Cell cell = newheader.createCell(i);
                         cell.setCellValue(groupName);
+                        cell.setCellStyle(groupsCellStyle);
                         i += adjacents - 1;
                     }
                 }

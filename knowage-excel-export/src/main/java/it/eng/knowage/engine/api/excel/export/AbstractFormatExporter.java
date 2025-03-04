@@ -102,8 +102,35 @@ public abstract class AbstractFormatExporter {
 						JSONObject column = aggr.getJSONObject(ii);
 
 						if (column.has("group") && column.getString("group").equals(id)) {
-//							String nameToInsert = getTableColumnHeaderValue(column);
 							String nameToInsert = column.getString("aliasToShow");
+							returnMap.put(nameToInsert, groupName);
+						}
+
+					}
+				}
+			}
+		} catch (Exception e) {
+			throw new SpagoBIRuntimeException("Couldn't create map from groups array", e);
+		}
+		return returnMap;
+
+	}
+
+	protected Map<String, String> getMapFromDashboardGroupsArray(JSONArray groupsArray, JSONArray aggr) {
+		Map<String, String> returnMap = new HashMap<>();
+		try {
+			if (aggr != null && groupsArray != null) {
+
+				for (int i = 0; i < groupsArray.length(); i++) {
+
+					String groupName = groupsArray.getJSONObject(i).getString("label");
+					JSONArray columns = groupsArray.getJSONObject(i).getJSONArray("columns");
+
+					for (int ii = 0; ii < aggr.length(); ii++) {
+						JSONObject column = aggr.getJSONObject(ii);
+
+						if (columns.toString().contains(column.getString("id"))) {
+							String nameToInsert = column.getString("alias");
 							returnMap.put(nameToInsert, groupName);
 						}
 
@@ -1741,7 +1768,7 @@ public abstract class AbstractFormatExporter {
 		Map<String, String> mapGroupsAndColumns = new HashMap<>();
 		try {
 			if (widgetContent.get("columns") instanceof JSONArray)
-				mapGroupsAndColumns = getMapFromGroupsArray(groupsArray,
+				mapGroupsAndColumns = getMapFromDashboardGroupsArray(groupsArray,
 						widgetContent.getJSONArray("columns"));
 		} catch (JSONException e) {
 			LOGGER.error("Couldn't retrieve groups", e);
@@ -1755,6 +1782,16 @@ public abstract class AbstractFormatExporter {
 		JSONArray groupsArray = new JSONArray();
 		if (widgetData.has("groups")) {
 			groupsArray = widgetData.getJSONArray("groups");
+		}
+		return groupsArray;
+	}
+
+	protected final JSONArray getGroupsFromDashboardWidget(JSONObject settings) throws JSONException {
+		// column.header matches with name or alias
+		// Fill Header
+		JSONArray groupsArray = new JSONArray();
+		if (settings.has("configuration") && settings.getJSONObject("configuration").has("columnGroups") && settings.getJSONObject("configuration").getJSONObject("columnGroups").getBoolean("enabled")) {
+			groupsArray = settings.getJSONObject("configuration").getJSONObject("columnGroups").getJSONArray("groups");
 		}
 		return groupsArray;
 	}
