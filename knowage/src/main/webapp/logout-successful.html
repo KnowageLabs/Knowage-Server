@@ -29,19 +29,15 @@
   <body class="kn-login">
     <div class="container-fluid" style="height: 100%">
       <div class="col-sm-5 col-sm-offset-7" style="height: 100%; background-color: white; display: flex; flex-direction: column; padding: 20px; justify-content: center; align-items: center">
-        <img id="profile-img" class="col-xs-8" src="./themes/commons/img/defaultTheme/logoCover.svg" />
+        <img id="profile-img" class="col-xs-8" src="./themes/commons/img/defaultTheme/logoCover.svg" alt="knowage logo" />
         <p id="profile-name" class="profile-name-card"></p>
 
         <div class="col-xs-8">
-          <div class="logout-hint">Logout successful. Click <a id="login_link" href="#">here</a> to log in again.</div>
+          <div class="logout-hint">Logout successful. Click <a id="login_link" href="./">here</a> to log in again.</div>
         </div>
       </div>
       <!-- /container -->
     </div>
     <script src="./node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
-
-    <script>
-      document.getElementById("login_link").setAttribute("href", location.href.substring(0, location.href.length - "logout-successful.html".length));
-    </script>
   </body>
 </html>
