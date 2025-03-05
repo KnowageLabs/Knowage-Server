@@ -58,6 +58,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.DateFormat;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.regex.Matcher;
@@ -1539,6 +1540,13 @@ public class ExcelExporter extends AbstractFormatExporter {
                 adjustColumnWidth(sheet, this.imageB64);
             }
 
+            int numberOfSummaryRows = 0;
+            List<String> summaryRowsLabels = new ArrayList<>();
+
+            numberOfSummaryRows = doCockpitSummaryRowsLogic(widgetData, numberOfSummaryRows, summaryRowsLabels);
+            boolean summaryLabelOnlyForPinnedColumns = isPinnedOnly(widgetData);
+
+
             // Cell styles for int and float
             CreationHelper createHelper = wb.getCreationHelper();
 
@@ -1575,6 +1583,8 @@ public class ExcelExporter extends AbstractFormatExporter {
                     row = sheet.createRow((offset + r + isGroup) + 2);
                 }
 
+                boolean isSummaryRow = isSummaryRow(r, rows, numberOfSummaryRows);
+
                 for (int c = 0; c < columnsOrdered.length(); c++) {
                     JSONObject column = columnsOrdered.getJSONObject(c);
                     String type = getCellType(column, column.getString("name"));
@@ -1583,7 +1593,7 @@ public class ExcelExporter extends AbstractFormatExporter {
                     Cell cell = row.createCell(c);
                     Object value = rowObject.get(colIndex);
 
-                    if (value != null) {
+                    if (value != null && !isSummaryRow) {
                         String s = value.toString();
                         switch (type) {
                             case "string":
@@ -1648,6 +1658,10 @@ public class ExcelExporter extends AbstractFormatExporter {
                                 cell.setCellValue(s);
                                 break;
                         }
+                    }
+                    else if (value != null) {
+                        String summaryRowLabel = summaryRowsLabels.get(r - (rows.length() - numberOfSummaryRows));
+                        setSummaryRowValue(columnStyles, c, value, cell, summaryRowLabel, (JSONObject) columnSelectedOfDataset.get(c), summaryLabelOnlyForPinnedColumns);
                     }
                 }
             }
@@ -1925,6 +1939,59 @@ public class ExcelExporter extends AbstractFormatExporter {
             headerCellStyle = buildCellStyle(sheet, true, HorizontalAlignment.LEFT, VerticalAlignment.CENTER, (short) 11);
         }
         cell.setCellStyle(headerCellStyle);
+    }
+
+    private boolean isSummaryRow(int r, JSONArray rows, int numberOfSummaryRows) {
+        return r >= rows.length() - numberOfSummaryRows;
+    }
+
+    private static void setSummaryRowValue(JSONObject[] columnStyles, int c, Object value, Cell cell, String summaryRowLabel, JSONObject column, boolean isOnlyPinned) {
+        try {
+            int precision = (columnStyles[c] != null && columnStyles[c].has("precision") && columnStyles[c].optInt("precision") != 0) ? columnStyles[c].getInt("precision") : 2;
+            String formattedValue = new DecimalFormat("#,##0." + StringUtils.repeat("0", precision)).format(value);
+            String valueWithLabel = !summaryRowLabel.isEmpty() ? summaryRowLabel.concat(": ").concat(formattedValue) : formattedValue;
+            if (!isOnlyPinned) {
+                cell.setCellValue(valueWithLabel);
+            } else {
+                if (column.has("pinned")) {
+                    cell.setCellValue(valueWithLabel);
+                } else {
+                    cell.setCellValue(formattedValue);
+                }
+            }
+        } catch (Exception e) {
+            LOGGER.debug("Error while exporting summary row: ", e);
+            cell.setCellValue(value.toString());
+        }
+    }
+
+    private int doCockpitSummaryRowsLogic(JSONObject widgetData, int numberOfSummaryRows, List<String> summaryRowsLabels) throws JSONException {
+        if (cockpitSummaryRowsEnabled(widgetData)) {
+            JSONArray list = widgetData.getJSONObject("settings").getJSONObject("summary").getJSONArray("list");
+            numberOfSummaryRows = list.length();
+
+            for (int i = 0; i < numberOfSummaryRows; i++) {
+                summaryRowsLabels.add(list.getJSONObject(i).getString("label"));
+            }
+
+        }
+        return numberOfSummaryRows;
+    }
+
+    private boolean isPinnedOnly(JSONObject widgetData) throws JSONException {
+        if (cockpitSummaryRowsEnabled(widgetData) && widgetData.getJSONObject("settings").getJSONObject("summary").has("style")) {
+            return widgetData.getJSONObject("settings").getJSONObject("summary").getJSONObject("style").getBoolean("pinnedOnly");
+        }
+        return false;
+    }
+
+
+    private boolean cockpitSummaryRowsEnabled(JSONObject widgetData) {
+        try {
+            return widgetData.has("settings") && widgetData.getJSONObject("settings").has("summary") && widgetData.getJSONObject("settings").getJSONObject("summary").getBoolean("enabled");
+        } catch (JSONException e) {
+            return false;
+        }
     }
 
     public void fillGenericWidgetSheetWithData(JSONObject dataStore, Workbook wb, Sheet sheet, String widgetName, int offset,
