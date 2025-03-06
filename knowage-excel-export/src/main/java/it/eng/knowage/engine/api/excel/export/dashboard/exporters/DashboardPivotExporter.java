@@ -1,13 +1,14 @@
 package it.eng.knowage.engine.api.excel.export.dashboard.exporters;
 
-import it.eng.knowage.engine.api.excel.export.ExcelExporter;
-import it.eng.knowage.engine.api.excel.export.exporters.IWidgetExporter;
+import it.eng.knowage.engine.api.excel.export.IWidgetExporter;
+import it.eng.knowage.engine.api.excel.export.dashboard.DashboardExcelExporter;
+import it.eng.knowage.engine.api.excel.export.dashboard.DatastoreUtils;
+import it.eng.knowage.engine.api.excel.export.dashboard.StyleProvider;
 import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import org.apache.log4j.Logger;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
-
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -17,8 +18,8 @@ public class DashboardPivotExporter extends GenericDashboardWidgetExporter imple
 
     public static Logger logger = Logger.getLogger(DashboardPivotExporter.class);
 
-    public DashboardPivotExporter(ExcelExporter excelExporter, Workbook wb, JSONObject widget, String documentName, Map<String, Map<String, JSONArray>> selections, JSONObject drivers) {
-        super(excelExporter, wb, widget, documentName, selections, drivers);
+    public DashboardPivotExporter(DashboardExcelExporter excelExporter, Workbook wb, JSONObject widget, String documentName, Map<String, Map<String, JSONArray>> selections, JSONObject drivers, DatastoreUtils datastoreUtils, StyleProvider styleProvider) {
+        super(excelExporter, wb, widget, documentName, selections, drivers, datastoreUtils, styleProvider);
     }
 
     @Override
@@ -32,13 +33,13 @@ public class DashboardPivotExporter extends GenericDashboardWidgetExporter imple
 
             int offset = 0;
             int fetchSize = Integer.parseInt(SingletonConfig.getInstance().getConfigValue("SPAGOBI.API.DATASET.MAX_ROWS_NUMBER"));
-            JSONObject dataStore = excelExporter.getDataStoreForDashboardWidget(widget, offset, fetchSize, selections, drivers);
+            JSONObject dataStore = datastoreUtils.getDataStoreForDashboardWidget(widget, offset, fetchSize, selections, drivers);
             if (dataStore != null) {
                 int totalNumberOfRows = dataStore.getInt("results");
                 while (offset < totalNumberOfRows) {
                     excelExporter.fillTableSheetWithData(dataStore, wb, sheet, widgetName, offset, settings);
                     offset += fetchSize;
-                    dataStore = excelExporter.getDataStoreForDashboardWidget(widget, offset, fetchSize, selections, drivers);
+                    dataStore = datastoreUtils.getDataStoreForDashboardWidget(widget, offset, fetchSize, selections, drivers);
                 }
                 excelExporter.createPivotTable(wb, sheet, widget, widgetName);
                 return 1;

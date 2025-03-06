@@ -13,9 +13,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package it.eng.knowage.engine.api.excel.export.exporters;
+package it.eng.knowage.engine.api.excel.export.oldcockpit.exporters;
 
-import it.eng.knowage.engine.api.excel.export.ExcelExporter;
+import it.eng.knowage.engine.api.excel.export.IWidgetExporter;
+import it.eng.knowage.engine.api.excel.export.oldcockpit.ExcelExporter;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import org.apache.log4j.Logger;
 import org.apache.poi.ss.usermodel.Workbook;

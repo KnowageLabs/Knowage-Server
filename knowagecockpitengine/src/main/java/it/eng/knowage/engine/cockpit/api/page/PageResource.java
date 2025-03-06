@@ -18,7 +18,8 @@
 package it.eng.knowage.engine.cockpit.api.page;
 
 import com.google.common.collect.Iterables;
-import it.eng.knowage.engine.api.excel.export.ExcelExporter;
+import it.eng.knowage.engine.api.excel.export.dashboard.DashboardExcelExporter;
+import it.eng.knowage.engine.api.excel.export.oldcockpit.ExcelExporter;
 import it.eng.knowage.engine.cockpit.CockpitEngine;
 import it.eng.knowage.engine.cockpit.CockpitEngineInstance;
 import it.eng.knowage.engine.cockpit.api.AbstractCockpitEngineResource;
@@ -173,7 +174,7 @@ public class PageResource extends AbstractCockpitEngineResource {
 			JSONObject body = RestUtilities.readBodyAsJSONObject(req);
 			String token = request.getHeader(TOKEN_HEADER);
 			String userId = token.substring(7);
-			ExcelExporter excelExporter = new ExcelExporter(userId, body);
+			DashboardExcelExporter excelExporter = new DashboardExcelExporter(userId, body);
 			String mimeType = excelExporter.getMimeType();
 			String optionalWidgetId = body.optString("id");
 			boolean isDashboardSingleWidgetExport = !optionalWidgetId.isEmpty();
@@ -367,7 +368,7 @@ public class PageResource extends AbstractCockpitEngineResource {
 
 		String documentLabel = request.getParameter("DOCUMENT_LABEL");
 
-		it.eng.knowage.engine.api.excel.export.ExcelExporter excelExporter = new it.eng.knowage.engine.api.excel.export.ExcelExporter(userId, parameterMap, requestURL);
+		ExcelExporter excelExporter = new ExcelExporter(userId, parameterMap, requestURL);
 		String mimeType = excelExporter.getMimeType();
 		byte[] data = excelExporter.getBinaryData(documentLabel);
 
