@@ -324,6 +324,7 @@ public class DatastoreUtils extends Common {
                 measure.put(formula, object.getString(formula));
             }
             measure.put("orderColumn", object.getString("columnName"));
+            measure.put("orderType", "");
             return measure;
         } catch (Exception e) {
             LOGGER.error("Cannot get measure", e);
