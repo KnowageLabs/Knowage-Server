@@ -13,11 +13,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package it.eng.knowage.engine.api.excel.export.exporters;
+package it.eng.knowage.engine.api.excel.export.oldcockpit.exporters;
 
 import com.jamonapi.Monitor;
 import com.jamonapi.MonitorFactory;
-import it.eng.knowage.engine.api.excel.export.ExcelExporter;
+import it.eng.knowage.engine.api.excel.export.IWidgetExporter;
+import it.eng.knowage.engine.api.excel.export.oldcockpit.ExcelExporter;
 import it.eng.knowage.engine.api.excel.export.oldcockpit.Threshold;
 import it.eng.knowage.engine.api.excel.export.oldcockpit.crosstable.*;
 import it.eng.spagobi.commons.SingletonConfig;
@@ -25,7 +26,6 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.json.JSONUtils;
 import it.eng.spagobi.utilities.messages.EngineMessageBundle;
 import org.apache.log4j.Logger;
-import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.streaming.SXSSFSheet;
@@ -36,7 +36,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.List;
 import java.util.*;
 
 /**

@@ -18,8 +18,10 @@
 
 package it.eng.knowage.engine.api.excel.export.dashboard.exporters;
 
-import it.eng.knowage.engine.api.excel.export.ExcelExporter;
-import it.eng.knowage.engine.api.excel.export.exporters.IWidgetExporter;
+import it.eng.knowage.engine.api.excel.export.IWidgetExporter;
+import it.eng.knowage.engine.api.excel.export.dashboard.DashboardExcelExporter;
+import it.eng.knowage.engine.api.excel.export.dashboard.DatastoreUtils;
+import it.eng.knowage.engine.api.excel.export.dashboard.StyleProvider;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -30,14 +32,16 @@ import java.util.Map;
 
 class GenericDashboardWidgetExporter implements IWidgetExporter {
 
-    ExcelExporter excelExporter;
+    DashboardExcelExporter excelExporter;
     Workbook wb;
     JSONObject widget;
     String documentName;
     Map<String, Map<String, JSONArray>> selections;
     JSONObject drivers;
+    DatastoreUtils datastoreUtils;
+    StyleProvider styleProvider;
 
-    public GenericDashboardWidgetExporter(ExcelExporter excelExporter, Workbook wb, JSONObject widget, String documentName, Map<String, Map<String, JSONArray>> selections, JSONObject drivers) {
+    public GenericDashboardWidgetExporter(DashboardExcelExporter excelExporter, Workbook wb, JSONObject widget, String documentName, Map<String, Map<String, JSONArray>> selections, JSONObject drivers, DatastoreUtils datastoreUtils, StyleProvider styleProvider) {
         super();
         this.excelExporter = excelExporter;
         this.wb = wb;
@@ -45,6 +49,8 @@ class GenericDashboardWidgetExporter implements IWidgetExporter {
         this.documentName = documentName;
         this.selections = selections;
         this.drivers = drivers;
+        this.datastoreUtils = datastoreUtils;
+        this.styleProvider = styleProvider;
     }
 
     @Override
@@ -52,7 +58,7 @@ class GenericDashboardWidgetExporter implements IWidgetExporter {
         String widgetId = widget.optString("id");
         try {
             JSONObject settings = widget.getJSONObject("settings");
-            JSONObject dataStore = excelExporter.getDataStoreforDashboardSingleWidget(widget, selections, drivers);
+            JSONObject dataStore = datastoreUtils.getDataStoreforDashboardSingleWidget(widget, selections, drivers);
             String widgetName = getDashboardWidgetName(widget);
             if (dataStore != null) {
                 String dashboardSheetName = documentName != null ? documentName : "Dashboard";

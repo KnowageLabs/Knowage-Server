@@ -18,20 +18,14 @@
 
 package it.eng.knowage.engine.cockpit.api.export.pdf;
 
-import java.awt.Color;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Objects;
-
-import it.eng.knowage.engine.api.excel.export.AbstractFormatExporter;
+import be.quodlibet.boxable.*;
+import it.eng.knowage.engine.api.excel.export.oldcockpit.AbstractFormatExporter;
+import it.eng.spago.error.EMFAbstractError;
+import it.eng.spagobi.analiticalmodel.document.bo.ObjTemplate;
+import it.eng.spagobi.commons.SingletonConfig;
+import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.utilities.assertion.Assert;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -44,17 +38,14 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import be.quodlibet.boxable.BaseTable;
-import be.quodlibet.boxable.Cell;
-import be.quodlibet.boxable.HorizontalAlignment;
-import be.quodlibet.boxable.Row;
-import be.quodlibet.boxable.VerticalAlignment;
-import it.eng.spago.error.EMFAbstractError;
-import it.eng.spagobi.analiticalmodel.document.bo.ObjTemplate;
-import it.eng.spagobi.commons.SingletonConfig;
-import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.utilities.assertion.Assert;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+import java.awt.*;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.*;
+import java.util.List;
 
 public class PdfExporter extends AbstractFormatExporter {
 
@@ -69,11 +60,6 @@ public class PdfExporter extends AbstractFormatExporter {
 
 	public PdfExporter(String userUniqueIdentifier, JSONObject body) {
 		super(userUniqueIdentifier, body);
-	}
-
-	@Override
-	protected JSONObject getPivotAggregations(JSONObject widget, String datasetLabel) {
-		return null;
 	}
 
 	public byte[] getBinaryData(Integer documentId, String documentLabel, String templateString) throws JSONException {
@@ -666,12 +652,6 @@ public class PdfExporter extends AbstractFormatExporter {
 		}
 		return cockpitSelections;
 	}
-
-	@Override
-	protected JSONObject getDashboardAggregations(JSONObject widget, String datasetLabel) {
-		return null;
-	}
-
 	/**
 	 * Replace common problematic characters for Apache PDFBox, used by Boxable.
 	 *

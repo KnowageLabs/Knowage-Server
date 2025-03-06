@@ -1,6 +1,15 @@
 package it.eng.knowage.engine.cockpit.api.export;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
+import it.eng.knowage.engine.api.excel.export.oldcockpit.ExcelExporter;
+import it.eng.knowage.engine.cockpit.api.AbstractCockpitEngineResource;
+import it.eng.knowage.engine.cockpit.api.export.pdf.PdfExporter;
+import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceExceptionHandler;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+import it.eng.spagobi.utilities.mime.MimeUtils;
+import it.eng.spagobi.utilities.rest.RestUtilities;
+import org.apache.log4j.Logger;
+import org.jboss.resteasy.plugins.providers.html.View;
+import org.json.JSONObject;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
@@ -10,17 +19,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
-import it.eng.knowage.engine.api.excel.export.ExcelExporter;
-import org.apache.log4j.Logger;
-import org.jboss.resteasy.plugins.providers.html.View;
-import org.json.JSONObject;
-
-import it.eng.knowage.engine.cockpit.api.AbstractCockpitEngineResource;
-import it.eng.knowage.engine.cockpit.api.export.pdf.PdfExporter;
-import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceExceptionHandler;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
-import it.eng.spagobi.utilities.mime.MimeUtils;
-import it.eng.spagobi.utilities.rest.RestUtilities;
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 @Path("/1.0/cockpit/export")
 public class CockpitExportResource extends AbstractCockpitEngineResource {

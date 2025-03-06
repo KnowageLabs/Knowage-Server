@@ -1,8 +1,10 @@
 package it.eng.knowage.engine.api.excel.export.dashboard.exporters;
 
-import it.eng.knowage.engine.api.excel.export.ExcelExporter;
-import it.eng.knowage.engine.api.excel.export.exporters.IWidgetExporter;
-import it.eng.knowage.engine.api.excel.export.exporters.WidgetExporterFactory;
+import it.eng.knowage.engine.api.excel.export.IWidgetExporter;
+import it.eng.knowage.engine.api.excel.export.dashboard.DashboardExcelExporter;
+import it.eng.knowage.engine.api.excel.export.dashboard.DatastoreUtils;
+import it.eng.knowage.engine.api.excel.export.dashboard.StyleProvider;
+import it.eng.knowage.engine.api.excel.export.oldcockpit.exporters.WidgetExporterFactory;
 import org.apache.log4j.Logger;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.json.JSONArray;
@@ -13,16 +15,14 @@ import java.util.Map;
 public class DashboardWidgetExporterFactory {
     public static Logger logger = Logger.getLogger(WidgetExporterFactory.class);
 
-    public static IWidgetExporter getExporter(ExcelExporter exporter, Workbook wb, JSONObject widget, String documentName, Map<String, Map<String, JSONArray>> selections, JSONObject drivers) {
+    public static IWidgetExporter getExporter(DashboardExcelExporter exporter, Workbook wb, JSONObject widget, String documentName, Map<String, Map<String, JSONArray>> selections, JSONObject drivers, DatastoreUtils datastoreUtils, StyleProvider styleProvider) {
         if (widget.optString("type").equalsIgnoreCase("table")) {
-            // table widget supports pagination
-            return new DashboardTableExporter(exporter, wb, widget, documentName, selections, drivers);
+            return new DashboardTableExporter(exporter, wb, widget, documentName, selections, drivers, datastoreUtils, styleProvider);
         } else if (widget.optString("type").equalsIgnoreCase("static-pivot-table")) {
-            return new DashboardPivotExporter(exporter, wb, widget, documentName, selections, drivers);
+            return new DashboardPivotExporter(exporter, wb, widget, documentName, selections, drivers, datastoreUtils, styleProvider);
         }
         else {
-            // chart widget does not support pagination
-            return new GenericDashboardWidgetExporter(exporter, wb, widget, documentName, selections, drivers);
+            return new GenericDashboardWidgetExporter(exporter, wb, widget, documentName, selections, drivers, datastoreUtils, styleProvider);
         }
     }
 }

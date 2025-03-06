@@ -13,7 +13,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package it.eng.knowage.engine.api.excel.export.exporters;
+package it.eng.knowage.engine.api.excel.export;
 
 public interface IWidgetExporter {
 

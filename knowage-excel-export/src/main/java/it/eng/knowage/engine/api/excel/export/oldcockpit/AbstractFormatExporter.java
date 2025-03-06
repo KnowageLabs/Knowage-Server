@@ -16,9 +16,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package it.eng.knowage.engine.api.excel.export;
+package it.eng.knowage.engine.api.excel.export.oldcockpit;
 
-import it.eng.knowage.engine.api.excel.export.dashboard.models.Style;
+import it.eng.knowage.engine.api.excel.export.ExporterClient;
 import it.eng.knowage.engine.api.excel.export.oldcockpit.parsers.CssColorParser;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
@@ -31,27 +31,24 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.util.Units;
 import org.apache.poi.xssf.streaming.SXSSFSheet;
 import org.apache.poi.xssf.usermodel.DefaultIndexedColorMap;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFColor;
-import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.awt.*;
 import java.awt.Color;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.List;
 import java.util.*;
-
-import static it.eng.knowage.engine.api.excel.export.exporters.CrossTabExporter.DEFAULT_FONT_NAME;
-import static org.apache.poi.xssf.usermodel.XSSFFont.DEFAULT_FONT_SIZE;
+import java.util.List;
 
 public abstract class AbstractFormatExporter {
 	private static final Logger LOGGER = LogManager.getLogger(AbstractFormatExporter.class);
@@ -103,34 +100,6 @@ public abstract class AbstractFormatExporter {
 
 						if (column.has("group") && column.getString("group").equals(id)) {
 							String nameToInsert = column.getString("aliasToShow");
-							returnMap.put(nameToInsert, groupName);
-						}
-
-					}
-				}
-			}
-		} catch (Exception e) {
-			throw new SpagoBIRuntimeException("Couldn't create map from groups array", e);
-		}
-		return returnMap;
-
-	}
-
-	protected Map<String, String> getMapFromDashboardGroupsArray(JSONArray groupsArray, JSONArray aggr) {
-		Map<String, String> returnMap = new HashMap<>();
-		try {
-			if (aggr != null && groupsArray != null) {
-
-				for (int i = 0; i < groupsArray.length(); i++) {
-
-					String groupName = groupsArray.getJSONObject(i).getString("label");
-					JSONArray columns = groupsArray.getJSONObject(i).getJSONArray("columns");
-
-					for (int ii = 0; ii < aggr.length(); ii++) {
-						JSONObject column = aggr.getJSONObject(ii);
-
-						if (columns.toString().contains(column.getString("id"))) {
-							String nameToInsert = column.getString("alias");
 							returnMap.put(nameToInsert, groupName);
 						}
 
@@ -198,112 +167,6 @@ public abstract class AbstractFormatExporter {
 			return new ArrayList<>();
 		}
 	}
-
-	protected List<String> getDashboardHiddenColumnsList(JSONArray columns, JSONObject settings) {
-		try {
-			List<String> hiddenColumns = new ArrayList<>();
-			if (areVisibilityConditionsEnabled(settings)) {
-				JSONObject visualization = settings.getJSONObject("visualization");
-				JSONObject visibilityConditions = visualization.getJSONObject("visibilityConditions");
-				JSONArray conditions = visibilityConditions.getJSONArray("conditions");
-
-				for (int i = 0; i < conditions.length(); i++) {
-					JSONObject condition = conditions.getJSONObject(i);
-					if (columnMustBeHidden(condition)) {
-						JSONArray target;
-						try {
-							target = condition.getJSONArray("target");
-						} catch (JSONException e) {
-							target = new JSONArray();
-							target.put(condition.getString("target"));
-						}
-						for (int j = 0; j < target.length(); j++) {
-							String targetColumn = target.getString(j);
-							hiddenColumns.add(targetColumn);
-						}
-					}
-				}
-			}
-			return hiddenColumns;
-		} catch (JSONException je) {
-			LOGGER.error("Error while getting hidden columns list", je);
-			return new ArrayList<>();
-		}
-	}
-
-	private boolean columnMustBeHidden(JSONObject condition) {
-		try {
-			JSONObject conditionDefinition = condition.getJSONObject("condition");
-
-			return  (conditionDefinition.getString("type").equals("always") &&
-					condition.getBoolean("hide"))
-					||
-					(conditionDefinition.getString("type").equals("variable") &&
-					condition.getBoolean("hide") && conditionIsApplicable(conditionDefinition.getString("variableValue"), conditionDefinition.getString("operator"), conditionDefinition.getString("value")));
-
-		} catch (JSONException jsonException) {
-			LOGGER.error("Error while evaluating if column must be hidden according to variable.", jsonException);
-			return false;
-		}
-	}
-
-	private static boolean areVisibilityConditionsEnabled(JSONObject settings) throws JSONException {
-		return settings.has("visualization") &&
-				settings.getJSONObject("visualization").has("visibilityConditions") &&
-				settings.getJSONObject("visualization").getJSONObject("visibilityConditions").getBoolean("enabled") &&
-				settings.getJSONObject("visualization").getJSONObject("visibilityConditions").has("conditions");
-	}
-
-	protected boolean conditionIsApplicable(String valueToCompare, String operator,  String comparisonValue) {
-        return switch (operator) {
-            case "==" -> {
-                try {
-                    yield Double.parseDouble(valueToCompare) == Double.parseDouble(comparisonValue);
-                } catch (RuntimeException rte) {
-                    yield valueToCompare.equals(comparisonValue);
-                }
-            }
-            case "!=" -> {
-                try {
-                    yield Double.parseDouble(valueToCompare) != Double.parseDouble(comparisonValue);
-                } catch (RuntimeException rte) {
-                    yield valueToCompare.equals(comparisonValue);
-                }
-            }
-            case ">" -> {
-                try {
-                    yield Double.parseDouble((valueToCompare)) > Double.parseDouble(comparisonValue);
-                } catch (RuntimeException rte) {
-                    yield false;
-                }
-            }
-            case "<" -> {
-                try {
-                    yield Double.parseDouble(valueToCompare) < Double.parseDouble(comparisonValue);
-                } catch(RuntimeException rte) {
-                    yield false;
-                }
-            }
-            case ">=" -> {
-                try {
-                    yield Double.parseDouble(valueToCompare) >= Double.parseDouble(comparisonValue);
-                } catch (RuntimeException rte) {
-                    yield false;
-                }
-            }
-            case "<=" -> {
-               try {
-                    yield Double.parseDouble(valueToCompare) <= Double.parseDouble(comparisonValue);
-                } catch (RuntimeException rte) {
-                    yield false;
-                }
-            }
-            case "IN" -> valueToCompare.contains(comparisonValue);
-            default -> false;
-        };
-    }
-
-
 
 	protected boolean variableMustHideColumn(JSONObject column, JSONObject variable) {
 		try {
@@ -373,43 +236,6 @@ public abstract class AbstractFormatExporter {
 				for (int j = 0; j < columnsOld.length(); j++) {
 					JSONObject columnOld = columnsOld.getJSONObject(j);
 					if (columnOld.getString("header").equals(columnNew.getString("aliasToShow"))) {
-
-						if (columnNew.has("ranges")) {
-							JSONArray ranges = columnNew.getJSONArray("ranges");
-							columnOld.put("ranges", ranges); // added ranges for column thresholds
-						}
-
-						columnsOrdered.put(columnOld);
-						break;
-					}
-				}
-			}
-			return columnsOrdered;
-		} catch (Exception e) {
-			LOGGER.error("Error retrieving ordered columns");
-			return new JSONArray();
-		}
-	}
-
-	protected JSONArray getDashboardTableOrderedColumns(JSONArray columnsNew, List<String> hiddenColumns, JSONArray columnsOld) {
-		JSONArray columnsOrdered = new JSONArray();
-		// new columns are in the correct order
-		// for each of them we have to find the correspondent old column and push it into columnsOrdered
-		try {
-			for (int i = 0; i < columnsNew.length(); i++) {
-
-				JSONObject columnNew = columnsNew.getJSONObject(i);
-
-				if (hiddenColumns.contains(columnNew.getString("id"))) {
-					continue;
-				}
-//				String newHeader = getTableColumnHeaderValue(columnNew);
-
-				for (int j = 0; j < columnsOld.length(); j++) {
-					JSONObject columnOld = columnsOld.getJSONObject(j);
-
-					if (columnOld.getString("header").equals(columnNew.getString("alias"))) {
-						columnOld.put("id", columnNew.getString("id"));
 
 						if (columnNew.has("ranges")) {
 							JSONArray ranges = columnNew.getJSONArray("ranges");
@@ -540,73 +366,6 @@ public abstract class AbstractFormatExporter {
 		return datastore;
 	}
 
-	public JSONObject getDataStoreForDashboardWidget(JSONObject widget, int offset, int fetchSize, Map<String, Map<String, JSONArray>> selections, JSONObject drivers) {
-		Map<String, Object> map = new HashMap<>();
-		JSONObject datastore;
-		try {
-			Integer datasetId = Integer.valueOf(widget.optString("dataset"));
-			IDataSet dataset = DAOFactory.getDataSetDAO().loadDataSetById(datasetId);
-			String datasetLabel = dataset.getLabel();
-
-			JSONObject dashboardSelections;
-			if (widget.getString("type").equalsIgnoreCase("static-pivot-table")) {
-				dashboardSelections = getPivotAggregations(widget, datasetLabel);
-			} else {
-				dashboardSelections = getDashboardAggregations(widget, datasetLabel);
-			}
-
-			dashboardSelections.put("selections", selections);
-			dashboardSelections.put("parameters", drivers);
-
-			if (isSolrDataset(dataset) && !widget.getString("type").equalsIgnoreCase("discovery")) {
-				JSONObject jsOptions = new JSONObject();
-				jsOptions.put("solrFacetPivot", true);
-				dashboardSelections.put("options", jsOptions);
-			}
-
-			if (isSolrDataset(dataset) && widget.getString("type").equalsIgnoreCase("discovery")) {
-				buildLikeSelections(dashboardSelections, widget);
-			}
-
-			datastore = getDatastore(datasetLabel, map, dashboardSelections.toString(), offset, fetchSize);
-			datastore.put("widgetData", widget);
-
-		} catch (Exception e) {
-			throw new SpagoBIRuntimeException("Error getting datastore for widget [type=" + widget.optString("type")
-					+ "] [id=" + widget.optLong("id") + "]", e);
-		}
-		return datastore;
-	}
-
-	private void buildLikeSelections(JSONObject dashboardSelections, JSONObject widget) {
-		try {
-			JSONObject likeSelections = new JSONObject();
-			JSONObject solrObject = new JSONObject();
-			JSONObject settings = widget.optJSONObject("settings");
-			JSONObject search = settings.optJSONObject("search");
-			JSONArray columns = search.optJSONArray("columns");
-			StringBuilder key = new StringBuilder();
-			if (!search.optString("searchWord").isEmpty()) {
-				for (int i = 0; i < columns.length(); i++) {
-					if (i == columns.length() - 1) {
-						key.append(columns.optString(i));
-					} else {
-						key.append(columns.optString(i)).append(",");
-					}
-				}
-				solrObject.put(key.toString(), search.optString("searchWord"));
-			}
-			likeSelections.put("solr", solrObject);
-			dashboardSelections.put("likeSelections", likeSelections);
-		} catch (Exception e) {
-			LOGGER.error("Error while building like selections", e);
-			throw new SpagoBIRuntimeException("Error while building like selections", e);
-		}
-	}
-
-	protected abstract JSONObject getPivotAggregations(JSONObject widget, String datasetLabel);
-
-
 	protected JSONObject getDatastore(String datasetLabel, Map<String, Object> map, String selections, int offset,
 			int fetchSize) {
 		ExporterClient client = new ExporterClient();
@@ -630,53 +389,6 @@ public abstract class AbstractFormatExporter {
 			}
 		}
 		return i18nMessages.getOrDefault(columnName, columnName);
-	}
-
-	protected JSONObject getVisualizationFromSettings(JSONObject settings) {
-		try {
-			return settings.getJSONObject("visualization");
-		} catch (Exception e) {
-			LOGGER.error("Error while getting visualization from settings", e);
-			return new JSONObject();
-		}
-	}
-
-	protected int getPrecisionByColumn(JSONObject settings, JSONObject column) {
-		try {
-			JSONObject visualization = getVisualizationFromSettings(settings);
-			if (visualization == null)
-				return -1;
-
-			JSONObject visualizationTypes = visualization.getJSONObject("visualizationTypes");
-
-			if (visualizationTypes == null) {
-				return -1;
-			}
-
-			JSONArray types = visualizationTypes.getJSONArray("types");
-
-			for (int i = 0; i < types.length(); i++) {
-				JSONObject type = types.getJSONObject(i);
-				JSONArray target;
-				try {
-					target = type.getJSONArray("target");
-				} catch (JSONException e) {
-					target = new JSONArray();
-					target.put(type.getString("target"));
-				}
-
-				if (type.has("precision")) {
-					if (target.toString().contains(column.getString("id")) || target.toString().contains("all")) {
-						return type.getInt("precision");
-					} else {
-						return -1;
-					}
-				}
-			}
-		} catch (Exception e) {
-			LOGGER.error("Error while getting precision by column", e);
-		}
-		return -1;
 	}
 
 	protected boolean isSolrDataset(IDataSet dataSet) {
@@ -913,9 +625,6 @@ public abstract class AbstractFormatExporter {
 	}
 
 	protected abstract JSONObject getCockpitSelectionsFromBody(JSONObject widget);
-
-	protected abstract JSONObject getDashboardAggregations(JSONObject widget, String datasetLabel);
-
 
 	protected boolean getRealtimeFromWidget(int dsId, JSONObject configuration) {
 		try {
@@ -1754,17 +1463,6 @@ public abstract class AbstractFormatExporter {
 		return mapGroupsAndColumns;
 	}
 
-	protected final Map<String, String> getDashboardGroupAndColumnsMap(JSONObject widgetContent, JSONArray groupsArray) {
-		Map<String, String> mapGroupsAndColumns = new HashMap<>();
-		try {
-			if (widgetContent.get("columns") instanceof JSONArray)
-				mapGroupsAndColumns = getMapFromDashboardGroupsArray(groupsArray,
-						widgetContent.getJSONArray("columns"));
-		} catch (JSONException e) {
-			LOGGER.error("Couldn't retrieve groups", e);
-		}
-		return mapGroupsAndColumns;
-	}
 
 	protected final JSONArray getGroupsFromWidgetContent(JSONObject widgetData) throws JSONException {
 		// column.header matches with name or alias
@@ -1776,16 +1474,7 @@ public abstract class AbstractFormatExporter {
 		return groupsArray;
 	}
 
-	protected final JSONArray getGroupsFromDashboardWidget(JSONObject settings) throws JSONException {
-		// column.header matches with name or alias
-		// Fill Header
-		JSONArray groupsArray = new JSONArray();
-		if (settings.has("configuration") && settings.getJSONObject("configuration").has("columnGroups") && settings.getJSONObject("configuration").getJSONObject("columnGroups").getBoolean("enabled")) {
-			groupsArray = settings.getJSONObject("configuration").getJSONObject("columnGroups").getJSONArray("groups");
-		}
-		return groupsArray;
-	}
-	
+
 	public void adjustColumnWidth(Sheet sheet, String imageB64) {
 		try {		    			
 			((SXSSFSheet) sheet).trackAllColumnsForAutoSizing();
@@ -2021,81 +1710,5 @@ public abstract class AbstractFormatExporter {
 		
 		cellStyle.setFont(font);
 		return cellStyle;
-	}
-
-	public CellStyle buildPoiCellStyle(Style style, XSSFFont font, Workbook wb) {
-		CellStyle cellStyle = wb.createCellStyle();
-
-		if (stringIsNotEmpty(style.getFontSize())) {
-			font.setFontHeightInPoints(Short.parseShort(getOnlyTheNumericValueFromString(style.getFontSize())));
-		} else {
-			font.setFontHeightInPoints(DEFAULT_FONT_SIZE);
-		}
-
-		if (stringIsNotEmpty(style.getColor())) {
-			font.setColor(getXSSFColorFromRGBA(style.getColor()));
-		}
-
-		if (stringIsNotEmpty(style.getBackgroundColor())) {
-			cellStyle.setFillForegroundColor(getXSSFColorFromRGBA(style.getBackgroundColor()));
-			cellStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-		}
-
-		if (stringIsNotEmpty(style.getFontFamily())) {
-			font.setFontName(style.getFontFamily());
-		} else {
-			font.setFontName(DEFAULT_FONT_NAME);
-		}
-
-		if (stringIsNotEmpty(style.getFontWeight())) {
-			font.setBold(style.getFontWeight().equals("bold"));
-		}
-
-		if (stringIsNotEmpty(style.getFontStyle())) {
-			font.setItalic(style.getFontStyle().equals("italic"));
-		}
-
-		if (stringIsNotEmpty(style.getAlignItems())) {
-			cellStyle.setAlignment(getHorizontalAlignment(style.getAlignItems().toUpperCase()));
-		}
-
-		if (stringIsNotEmpty(style.getJustifyContent())) {
-			cellStyle.setVerticalAlignment(getVerticalAlignment(style.getJustifyContent().toUpperCase()));
-		}
-
-		cellStyle.setFont(font);
-		return cellStyle;
-	}
-
-	private HorizontalAlignment getHorizontalAlignment(String alignItem) {
-        return switch (alignItem) {
-            case "CENTER" -> HorizontalAlignment.CENTER;
-            case "FLEX-END" -> HorizontalAlignment.RIGHT;
-            default -> HorizontalAlignment.LEFT;
-        };
-	}
-
-	private VerticalAlignment getVerticalAlignment(String justifyContent) {
-		return switch (justifyContent) {
-			case "CENTER" -> VerticalAlignment.CENTER;
-			case "FLEX-END" -> VerticalAlignment.BOTTOM;
-			default -> VerticalAlignment.TOP;
-		};
-	}
-
-	private String getOnlyTheNumericValueFromString(String string) {
-		return string.replaceAll("[^0-9]", "");
-	}
-
-	private XSSFColor getXSSFColorFromRGBA(String colorStr) {
-			String[] values = colorStr.replace(colorStr.contains("rgba(") ? "rgba(" : "rgb(", "").replace(")", "").split(",");
-			int red = Integer.parseInt(values[0].trim());
-			int green = Integer.parseInt(values[1].trim());
-			int blue = Integer.parseInt(values[2].trim());
-
-			return new XSSFColor(new Color(red, green, blue), new DefaultIndexedColorMap());}
-
-	protected boolean stringIsNotEmpty(String str) {
-		return str != null && !str.isEmpty();
 	}
 }
