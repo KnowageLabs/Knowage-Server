@@ -47,6 +47,7 @@ public class ExporterClient extends SimpleRestClient {
 			int offset, int fetchSize) throws Exception {
 		parameters.put("offset", offset);
 		parameters.put("size", fetchSize);
+		parameters.put("nearRealtime", true);
 		String url = String.format(SERVICE_URL, datasetLabel);
 
 		Response resp = executePostService(parameters, url, userId, MediaType.APPLICATION_JSON, body);

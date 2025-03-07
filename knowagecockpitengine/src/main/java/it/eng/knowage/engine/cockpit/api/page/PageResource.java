@@ -19,6 +19,7 @@ package it.eng.knowage.engine.cockpit.api.page;
 
 import com.google.common.collect.Iterables;
 import it.eng.knowage.engine.api.excel.export.dashboard.DashboardExcelExporter;
+import it.eng.knowage.engine.api.excel.export.dashboard.DatastoreUtils;
 import it.eng.knowage.engine.api.excel.export.oldcockpit.ExcelExporter;
 import it.eng.knowage.engine.cockpit.CockpitEngine;
 import it.eng.knowage.engine.cockpit.CockpitEngineInstance;
@@ -166,15 +167,14 @@ public class PageResource extends AbstractCockpitEngineResource {
 
 	@POST
 	@Path("/{pagename}/spreadsheet")
-	public void openPagePostSpreadsheet(@PathParam("pagename") String pagename, @Context HttpServletRequest req)
-			throws IOException, InterruptedException, JSONException {
+	public void openPagePostSpreadsheet(@PathParam("pagename") String pagename, @Context HttpServletRequest req) {
 		logger.debug("IN");
 		response.setCharacterEncoding(UTF_8.name());
 		try {
 			JSONObject body = RestUtilities.readBodyAsJSONObject(req);
 			String token = request.getHeader(TOKEN_HEADER);
 			String userId = token.substring(7);
-			DashboardExcelExporter excelExporter = new DashboardExcelExporter(userId, body);
+			DashboardExcelExporter excelExporter = new DashboardExcelExporter(new DatastoreUtils(userId), body);
 			String mimeType = excelExporter.getMimeType();
 			String optionalWidgetId = body.optString("id");
 			boolean isDashboardSingleWidgetExport = !optionalWidgetId.isEmpty();

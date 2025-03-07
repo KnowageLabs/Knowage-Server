@@ -32,6 +32,7 @@ public class DatastoreUtils extends Common {
                                       int fetchSize) {
         ExporterClient client = new ExporterClient();
         try {
+            LOGGER.info("calling the datastore with userUniqueIdentifier: {}", userUniqueIdentifier);
             return client.getDataStore(map, datasetLabel, userUniqueIdentifier, selections, offset, fetchSize);
         } catch (Exception e) {
             String message = "Unable to get data";

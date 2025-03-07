@@ -49,6 +49,7 @@ public class DashboardExcelExporter extends Common {
 
     private final StyleProvider styleProvider;
     private final JSONObjectUtils jsonObjectUtils;
+    private final DatastoreUtils datastoreUtils;
 
     private String imageB64 = "";
     private static final String DOCUMENT_NAME = "";
@@ -56,17 +57,17 @@ public class DashboardExcelExporter extends Common {
     private int uniqueId = 0;
     @Getter
     protected Locale locale;
-    protected final String userUniqueIdentifier;
     protected final JSONObject body;
     protected Map<String, String> i18nMessages;
 
-    public DashboardExcelExporter(String userUniqueIdentifier, JSONObject body) {
-        this.userUniqueIdentifier = userUniqueIdentifier;
+    public DashboardExcelExporter(DatastoreUtils datastoreUtils, JSONObject body) {
+        this.datastoreUtils = datastoreUtils;
         this.isSingleWidgetExport = body.optBoolean("exportWidget");
         this.body = body;
         locale = getLocaleFromBody(body);
         jsonObjectUtils = new JSONObjectUtils();
         styleProvider = new StyleProvider(jsonObjectUtils);
+
     }
 
     private Locale getLocaleFromBody(JSONObject body) {
@@ -551,7 +552,7 @@ public class DashboardExcelExporter extends Common {
                 return 0;
             }
             IWidgetExporter widgetExporter = DashboardWidgetExporterFactory.getExporter(this,
-                    wb, body, documentName, selections, drivers, new DatastoreUtils(userUniqueIdentifier), styleProvider);
+                    wb, body, documentName, selections, drivers, datastoreUtils, styleProvider);
             exportedSheets = widgetExporter.export();
         } catch (Exception e) {
             LOGGER.error("Cannot export data to excel", e);
