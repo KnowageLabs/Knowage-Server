@@ -1035,7 +1035,7 @@ public class DashboardExcelExporter extends Common {
         String sourceSheetFinalCell = new CellReference(sourceSheetLastRow, sourceSheetLastColumn - 1).formatAsString();
         int targetSheetLastRow = pivotSheet.getLastRowNum();
         CellReference position = new CellReference(targetSheetLastRow + 1, 0);
-        XSSFPivotTable pivotTable = pivotSheet.createPivotTable(new AreaReference(this.imageB64 == null || this.imageB64.isEmpty() ? "A1:".concat(sourceSheetFinalCell) : "A4:".concat(sourceSheetFinalCell), workbook.getSpreadsheetVersion()), position, sheet);
+        XSSFPivotTable pivotTable = pivotSheet.createPivotTable(new AreaReference(this.imageB64 == null || this.imageB64.isEmpty() ? "A2:".concat(sourceSheetFinalCell) : "A4:".concat(sourceSheetFinalCell), workbook.getSpreadsheetVersion()), position, sheet);
 
         try {
             JSONObject fields = widget.getJSONObject("fields");
