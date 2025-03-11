@@ -101,8 +101,9 @@ public class QuarzSchedulerDAOImpl extends AbstractHibernateDAO implements ISche
 			Assert.assertNotNull(jobGroupName, "Input parameter [jobGroupName] cannot be null");
 			Assert.assertNotNull(jobGroupName, "Input parameter [jobName] cannot be null");
 
-			if (!jobGroupExists(jobGroupName))
+			if (!jobGroupExists(jobGroupName)) {
 				return false;
+			}
 
 			jobGroupName = global ? jobGroupName : this.applyTenant(jobGroupName);
 			List<String> jobNames = scheduler.getJobKeys(GroupMatcher.jobGroupEquals(jobGroupName)).stream()
@@ -135,7 +136,7 @@ public class QuarzSchedulerDAOImpl extends AbstractHibernateDAO implements ISche
 	private String removeTenant(String jobGroupName) {
 		LOGGER.debug("IN: jobGroupName = [{}]", jobGroupName);
 		String tenant = this.getTenant();
-		if (tenant != null) {
+		if (tenant != null && !global) {
 			jobGroupName = jobGroupName.substring(this.getTenantPrefix(tenant).length());
 		}
 		LOGGER.debug("OUT: jobGroupName = [{}]", jobGroupName);
@@ -656,15 +657,17 @@ public class QuarzSchedulerDAOImpl extends AbstractHibernateDAO implements ISche
 		} catch (HibernateException he) {
 			LOGGER.error("HibernateException", he);
 
-			if (tx != null)
+			if (tx != null) {
 				tx.rollback();
+			}
 
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 
 		} finally {
 			if (aSession != null) {
-				if (aSession.isOpen())
+				if (aSession.isOpen()) {
 					aSession.close();
+				}
 			}
 		}
 		LOGGER.debug("OUT");
