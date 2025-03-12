@@ -18,26 +18,21 @@
 
 package it.eng.spagobi.cache.dao;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-
-import org.apache.log4j.Logger;
-import org.hibernate.Query;
-import org.hibernate.Session;
-import org.hibernate.Transaction;
-
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import it.eng.spagobi.cache.metadata.SbiCacheItem;
 import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
 import it.eng.spagobi.commons.dao.SpagoBIDAOException;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.cache.CacheItem;
+import org.apache.log4j.Logger;
+import org.hibernate.Query;
+import org.hibernate.Session;
+import org.hibernate.Transaction;
+import org.json.JSONArray;
+
+import java.math.BigDecimal;
+import java.util.*;
 
 /**
  * @author Alessandro Portosa (alessandro.portosa@eng.it)
@@ -410,9 +405,11 @@ public class CacheDAOHibImpl extends AbstractHibernateDAO implements ICacheDAO {
 	private SbiCacheItem toSbiCacheItem(CacheItem cacheItem) {
 
 		String properties = null;
+		String parameters = null;
 		try {
 			ObjectMapper mapper = new ObjectMapper();
 			properties = mapper.writeValueAsString(cacheItem.getProperties());
+			parameters = mapper.writeValueAsString(cacheItem.getParameters());
 		} catch (Throwable t) {
 			throw new SpagoBIDAOException("An error occured while creating a SbiCacheItem from CacheItem:", t);
 		}
@@ -426,14 +423,20 @@ public class CacheDAOHibImpl extends AbstractHibernateDAO implements ICacheDAO {
 			hibCacheItem.setProperties(properties);
 		}
 
+		if (parameters != null) {
+			hibCacheItem.setParameters(parameters);
+		}
+
 		return hibCacheItem;
 	}
 
 	private void update(SbiCacheItem target, CacheItem source) {
 		String properties = null;
+		String parameters = null;
 		try {
 			ObjectMapper mapper = new ObjectMapper();
 			properties = mapper.writeValueAsString(source.getProperties());
+			parameters = mapper.writeValueAsString(source.getParameters());
 		} catch (Throwable t) {
 			throw new SpagoBIDAOException("An error occured while creating a SbiCacheItem from CacheItem:", t);
 		}
@@ -446,11 +449,15 @@ public class CacheDAOHibImpl extends AbstractHibernateDAO implements ICacheDAO {
 		if (properties != null) {
 			target.setProperties(properties);
 		}
+		if (parameters != null) {
+			target.setParameters(parameters);
+		}
 	}
 
 	private CacheItem toCacheItem(SbiCacheItem hibCacheItem) {
 
 		HashMap<String, Object> properties = null;
+		JSONArray parameters = null;
 		try {
 			ObjectMapper mapper = new ObjectMapper();
 			TypeReference<HashMap<String, Object>> typeRef = new TypeReference<>() {
@@ -459,6 +466,13 @@ public class CacheDAOHibImpl extends AbstractHibernateDAO implements ICacheDAO {
 		} catch (Throwable t) {
 			throw new SpagoBIDAOException("An error occured while creating a CacheItem from SbiCacheItem:", t);
 		}
+
+		try {
+			parameters = new JSONArray(hibCacheItem.getParameters());
+		} catch (Throwable t) {
+			throw new SpagoBIDAOException("An error occured while creating a CacheItem from SbiCacheItem:", t);
+		}
+
 		CacheItem cacheItem = new CacheItem();
 		cacheItem.setSignature(hibCacheItem.getSignature());
 		cacheItem.setTable(hibCacheItem.getTableName());
@@ -469,6 +483,11 @@ public class CacheDAOHibImpl extends AbstractHibernateDAO implements ICacheDAO {
 		if (properties != null) {
 			cacheItem.setProperties(properties);
 		}
+
+		if (hibCacheItem.getParameters() != null) {
+			cacheItem.setParameters(parameters);
+		}
+
 		return cacheItem;
 	}
 }

@@ -17,6 +17,8 @@
  */
 package it.eng.spagobi.utilities.cache;
 
+import org.json.JSONArray;
+
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashMap;
@@ -36,9 +38,11 @@ public class CacheItem {
 	private Date creationDate = null;
 	private Date lastUsedDate = null;
 	private Map<String, Object> properties = null;
+	private JSONArray parameters = null;
 
 	public CacheItem() {
 		properties = new HashMap<>();
+		parameters = new JSONArray();
 	}
 
 	public String getName() {
@@ -103,5 +107,13 @@ public class CacheItem {
 
 	public void setProperties(Map<String, Object> properties) {
 		this.properties = properties;
+	}
+
+	public JSONArray getParameters() {
+		return parameters;
+	}
+
+	public void setParameters(JSONArray parameters) {
+		this.parameters = parameters;
 	}
 }

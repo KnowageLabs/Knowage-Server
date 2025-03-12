@@ -17,22 +17,7 @@
  */
 package it.eng.spagobi.tools.dataset.cache.impl.sqldbcache;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
-
-import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
-
 import com.hazelcast.map.IMap;
-
 import it.eng.spagobi.cache.dao.ICacheDAO;
 import it.eng.spagobi.cache.metadata.SbiCacheItem;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
@@ -49,6 +34,14 @@ import it.eng.spagobi.utilities.database.DataBaseFactory;
 import it.eng.spagobi.utilities.database.DatabaseUtilities;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.locks.DistributedLockFactory;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.log4j.Logger;
+import org.json.JSONArray;
+
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author Antonella Giachino (antonella.giachino@eng.it)
@@ -201,13 +194,13 @@ public class SQLDBCacheMetadata implements ICacheMetadata {
 
 	@Override
 	public void addCacheItem(String dataSetName, String resultsetSignature, Map<String, Object> properties,
-			String tableName, IDataStore resultset) {
-		addCacheItem(dataSetName, resultsetSignature, properties, tableName, getRequiredMemory(resultset));
+							 String tableName, IDataStore resultset, JSONArray parameters) {
+		addCacheItem(dataSetName, resultsetSignature, properties, tableName, getRequiredMemory(resultset), parameters);
 	}
 
 	@Override
-	public void addCacheItem(String dataSetName, String resultsetSignature, String tableName, BigDecimal dimension) {
-		addCacheItem(dataSetName, resultsetSignature, new HashMap<>(0), tableName, dimension);
+	public void addCacheItem(String dataSetName, String resultsetSignature, String tableName, BigDecimal dimension, JSONArray parameters) {
+		addCacheItem(dataSetName, resultsetSignature, new HashMap<>(0), tableName, dimension, parameters);
 	}
 
 	/**
@@ -215,10 +208,10 @@ public class SQLDBCacheMetadata implements ICacheMetadata {
 	 *
 	 * TODO : a call to {@link #removeCacheItem(String)} or {@link #removeCacheItem(String, boolean)} before this method is actually a requirement.
 	 */
-	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@SuppressWarnings({"unchecked", "rawtypes"})
 	@Override
 	public void addCacheItem(String dataSetName, String resultsetSignature, Map<String, Object> properties,
-			String tableName, BigDecimal dimension) {
+							 String tableName, BigDecimal dimension, JSONArray parameters) {
 		String hashedSignature = Helper.sha256(resultsetSignature);
 
 		IMap mapLocks = DistributedLockFactory.getDistributedMap(SpagoBIConstants.DISTRIBUTED_MAP_INSTANCE_NAME,
@@ -234,6 +227,7 @@ public class SQLDBCacheMetadata implements ICacheMetadata {
 			item.setCreationDate(now);
 			item.setLastUsedDate(now);
 			item.setProperties(properties);
+			item.setParameters(parameters);
 			cacheDao.insertCacheItem(item);
 
 			logger.debug("Added cacheItem : [ Name: " + item.getName() + " \n Signature: " + item.getSignature()

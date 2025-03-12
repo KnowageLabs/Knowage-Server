@@ -17,24 +17,9 @@
  */
 package it.eng.spagobi.tools.dataset.cache.impl.sqldbcache;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
-
-import org.apache.log4j.Logger;
-
 import com.hazelcast.map.IMap;
 import com.jamonapi.Monitor;
 import com.jamonapi.MonitorFactory;
-
 import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
@@ -53,6 +38,7 @@ import it.eng.spagobi.tools.dataset.metasql.query.item.Sorting;
 import it.eng.spagobi.tools.dataset.persist.PersistedTableManager;
 import it.eng.spagobi.tools.dataset.strategy.DatasetEvaluationStrategyFactory;
 import it.eng.spagobi.tools.dataset.strategy.IDatasetEvaluationStrategy;
+import it.eng.spagobi.tools.dataset.utils.DataSetUtilities;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.Helper;
 import it.eng.spagobi.utilities.assertion.Assert;
@@ -62,6 +48,13 @@ import it.eng.spagobi.utilities.database.DataBaseFactory;
 import it.eng.spagobi.utilities.database.DatabaseUtilities;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.locks.DistributedLockFactory;
+import org.apache.log4j.Logger;
+import org.json.JSONArray;
+
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author Marco Cortella (marco.cortella@eng.it)
@@ -415,8 +408,10 @@ public class SQLDBCache implements ICache {
 						persistedTableManager.persist(dataSet, getDataSource(), tableName);
 						persistedTableManager.createIndexesOnTable(dataSet, getDataSource(), tableName, columns);
 
+						JSONArray parameters = DataSetUtilities.paramsFromXML2JSONObj(dataSet);
+
 						cacheMetadata.addCacheItem(dataSet.getName(), signature, tableName,
-								DatabaseUtilities.getUsedMemorySize(DataBaseFactory.getCacheDataBase(getDataSource()), "cache", tableName));
+								DatabaseUtilities.getUsedMemorySize(DataBaseFactory.getCacheDataBase(getDataSource()), "cache", tableName), parameters);
 
 						if (getMetadata().isCleaningEnabled() && getMetadata().getAvailableMemory().compareTo(new BigDecimal(0)) < 0) {
 							deleteToQuota();
@@ -505,7 +500,15 @@ public class SQLDBCache implements ICache {
 								deleteTableFromCache(oldCacheTable);
 							}
 
-							metadata.addCacheItem(name, signature, properties, tableName, dataStore);
+							JSONArray parameters;
+							try {
+								parameters = DataSetUtilities.paramsFromXML2JSONObj(dataSet);
+							} catch (Exception e) {
+								logger.error("Error while converting parameters to JSON", e);
+								throw new CacheException("Error while converting parameters to JSON", e);
+							}
+
+							metadata.addCacheItem(name, signature, properties, tableName, dataStore, parameters);
 
 						} else {
 							throw new CacheException("Store is to big to be persisted in cache." + " Store estimated dimension is [" + requiredMemory + "]"

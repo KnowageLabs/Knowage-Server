@@ -17,29 +17,6 @@
  */
 package it.eng.spagobi.tools.dataset.utils;
 
-import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.sql.Timestamp;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.format.DateTimeParseException;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpSession;
-
-import org.apache.log4j.Logger;
-import org.joda.time.DateTime;
-import org.joda.time.format.DateTimeFormatter;
-import org.joda.time.format.ISODateTimeFormat;
-import org.json.JSONArray;
-import org.json.JSONObject;
-import org.json.JSONObjectDeserializator;
-
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.bo.UserProfile;
@@ -58,6 +35,23 @@ import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.database.AbstractDataBase;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.json.JSONUtils;
+import org.apache.log4j.Logger;
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormatter;
+import org.joda.time.format.ISODateTimeFormat;
+import org.json.JSONArray;
+import org.json.JSONObject;
+import org.json.JSONObjectDeserializator;
+
+import javax.servlet.http.HttpSession;
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.sql.Timestamp;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeParseException;
+import java.util.*;
 
 /**
  * TODO : move it in it.eng.spagobi.tools.dataset and rename to DataSetProfiler (or similar)
@@ -335,6 +329,35 @@ public class DataSetUtilities {
 		return jsonPar;
 	}
 
+	public static JSONArray paramsFromXML2JSONObj(IDataSet dataset) throws Exception {
+		JSONArray paramsJSONArray = new JSONArray();
+		if (dataset.getParameters() != null && !dataset.getParameters().isEmpty()) {
+			SourceBean source = SourceBean.fromXMLString(dataset.getParameters());
+			if (source != null && source.getName().equals("PARAMETERSLIST")) {
+				List<SourceBean> rows = source.getAttributeAsList("ROWS.ROW");
+
+				for (SourceBean row : rows) {
+					JSONObject paramsJSONObject = new JSONObject();
+					String name = (String) row.getAttribute("NAME");
+					String defaultValue = (String) row.getAttribute(DataSetParametersList.DEFAULT_VALUE_XML);
+					String multiValue = (String) row.getAttribute("MULTIVALUE");
+					String type = (String) row.getAttribute("TYPE");
+					paramsJSONObject.put("defaultValue", defaultValue);
+					paramsJSONObject.put("name", name);
+					paramsJSONObject.put("multiValue", multiValue);
+					paramsJSONObject.put("type", type);
+
+					if (dataset.getParamsMap() != null && dataset.getParamsMap().containsKey(name)) {
+						paramsJSONObject.put("value", dataset.getParamsMap().get(name));
+					}
+
+					paramsJSONArray.put(paramsJSONObject);
+				}
+			}
+		}
+		return paramsJSONArray;
+	}
+
 	public static Map<String, String> getParametersMap(JSONObject jsonParameters) {
 		Map<String, String> toReturn = new HashMap<>();
 		if (jsonParameters != null) {
@@ -487,4 +510,5 @@ public class DataSetUtilities {
 			return columnName;
 		}
 	}
+
 }

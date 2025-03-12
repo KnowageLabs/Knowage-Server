@@ -58,5 +58,8 @@
         <property name="properties" type="string">
             <column name="PROPERTIES" length="65535" />
         </property>
+		<property name="parameters" type="string">
+			<column name="PARAMETERS" length="65535" />
+		</property>
     </class>
 </hibernate-mapping>

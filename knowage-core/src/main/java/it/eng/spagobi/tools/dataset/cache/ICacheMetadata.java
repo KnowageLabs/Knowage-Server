@@ -17,15 +17,16 @@
  */
 package it.eng.spagobi.tools.dataset.cache;
 
-import java.math.BigDecimal;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.cache.CacheItem;
 import it.eng.spagobi.utilities.database.DataBaseException;
+import org.json.JSONArray;
+
+import java.math.BigDecimal;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * @author Marco Cortella (marco.cortella@eng.it) Antonella Giachino (antonella.giachino@eng.it)
@@ -90,21 +91,15 @@ public interface ICacheMetadata {
 	 */
 	List<String> getSignatures();
 
-	/**
-	 * add a cacheItem
-	 */
-	public void addCacheItem(String dataSetName, String resultsetSignature, Map<String, Object> properties, String tableName, IDataStore resultset);
+	void addCacheItem(String dataSetName, String resultsetSignature, Map<String, Object> properties,
+					  String tableName, IDataStore resultset, JSONArray parameters);
+
+	void addCacheItem(String dataSetName, String resultsetSignature, String tableName, BigDecimal dimension, JSONArray parameters);
 
 	/**
 	 * add a cacheItem
 	 */
-	public void addCacheItem(String dataSetName, String resultsetSignature, Map<String, Object> properties, String tableName, BigDecimal dimension);
-
-	/**
-	 * add a cacheItem
-	 */
-	public void addCacheItem(String dataSetName, String resultsetSignature, String tableName, BigDecimal dimension);
-
+	public void addCacheItem(String dataSetName, String resultsetSignature, Map<String, Object> properties, String tableName, BigDecimal dimension, JSONArray parameters);
 	/**
 	 * update the cacheItem
 	 */
