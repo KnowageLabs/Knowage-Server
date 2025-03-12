@@ -193,7 +193,9 @@ export default defineComponent({
                   this.setNews(json.news)
               })
           })
-          .catch((error) => {})
+          .catch((error) => {
+            console.log(error)
+          })
           .finally(() => {
               this.loadInternationalization()
               this.newsDownloadHandler();
