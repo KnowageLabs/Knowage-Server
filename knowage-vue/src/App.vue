@@ -44,7 +44,6 @@ export default defineComponent({
 
   async beforeCreate() {
     // eslint-disable-next-line no-debugger
-    debugger
     await this.$http
       .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + "2.0/currentuser")
       .then(async (response) => {
@@ -171,6 +170,7 @@ export default defineComponent({
       }
     },
     async onLoad() {
+      this.$store.commit("setLoading", true);
       await this.$http
         .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + "2.0/export/dataset")
         .then((response) => {
@@ -181,7 +181,7 @@ export default defineComponent({
           json.downloads.count.total = totalDownloads;
           json.downloads.count.alreadyDownloaded = alreadyDownloaded;
 
-          store.commit("setDownloads", json.downloads);
+          this.$store.commit("setDownloads", json.downloads);
         })
         await this.$http
           .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + "2.0/news")
@@ -190,7 +190,7 @@ export default defineComponent({
                   const json = { news: { count: { total: 0, unread: 0 } } }
                   json.news.count.total = newsResponse.data.length
                   json.news.count.unread = newsResponse.data.length - newsReadResponse.data.length
-                  this.setNews(json.news)
+                  this.$store.commit("setNews", json.news);
               })
           })
           .catch((error) => {
@@ -199,7 +199,7 @@ export default defineComponent({
           .finally(() => {
               this.loadInternationalization()
               this.newsDownloadHandler();
-              this.setLoading(false)
+              this.$store.commit("setLoading", false);
           })
     },
     async loadInternationalization() {
