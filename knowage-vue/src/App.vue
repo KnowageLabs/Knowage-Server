@@ -186,7 +186,7 @@ export default defineComponent({
         await this.$http
           .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + "2.0/news")
           .then(async (newsResponse) => {
-              await this.$http.get(import.meta.env.VITE_KNOWAGE_CONTEXT + '/restful-services/2.0/newsRead').then((newsReadResponse) => {
+              await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH +'2.0/newsRead').then((newsReadResponse) => {
                   const json = { news: { count: { total: 0, unread: 0 } } }
                   json.news.count.total = newsResponse.data.length
                   json.news.count.unread = newsResponse.data.length - newsReadResponse.data.length
