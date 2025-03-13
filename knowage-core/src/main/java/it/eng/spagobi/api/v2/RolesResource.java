@@ -248,6 +248,9 @@ public class RolesResource extends AbstractSpagoBIResource {
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response insertRole(@Valid RoleBO body) {
 		IRoleDAO rolesDao = null;
+		if(body.getName().contains(" ")) {
+			throw new SpagoBIRestServiceException("Role name cannot contain spaces", buildLocaleFromSession(), new RuntimeException());
+		}
 		Role role = roleBoToRole(body);
 		List<RoleMetaModelCategory> listMetaModelCategories = body.getRoleMetaModelCategories();
 		try {
