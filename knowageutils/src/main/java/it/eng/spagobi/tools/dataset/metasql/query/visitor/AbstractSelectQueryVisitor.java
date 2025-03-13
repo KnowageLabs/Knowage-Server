@@ -411,14 +411,15 @@ public abstract class AbstractSelectQueryVisitor extends AbstractFilterVisitor i
 			IAggregationFunction aggregationFunction = projection.getAggregationFunction();
 
 			String name = projection.getName();
-			String columnName = isCalculatedColumn(name)
-					? name.replace(AbstractDataBase.STANDARD_ALIAS_DELIMITER, aliasDelimiter)
-					: aliasDelimiter + name + aliasDelimiter;
+			String alias = projection.getAlias() == null ? name : projection.getAlias();
+			String columnName = isCalculatedColumn(alias)
+					? alias.replace(AbstractDataBase.STANDARD_ALIAS_DELIMITER, aliasDelimiter)
+					: aliasDelimiter + alias + aliasDelimiter;
 
 			if (aggregationFunction == null || AggregationFunctions.NONE_FUNCTION.equals(aggregationFunction)) {
 				queryBuilder.append(columnName);
 			} else {
-				queryBuilder.append(aggregationFunction.apply(columnName));
+				queryBuilder.append(aggregationFunction.apply(name));
 			}
 
 			queryBuilder.append(item.isAscending() ? " ASC" : " DESC");
