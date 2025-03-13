@@ -606,8 +606,9 @@ public class PersistedTableManager implements IPersistedManager {
 		IMetaData storeMeta = datastore.getMetaData();
 		int fieldCount = storeMeta.getFieldCount();
 
-		if (fieldCount == 0)
+		if (fieldCount == 0) {
 			return new PreparedStatement[0];
+		}
 
 		String insertQuery = String.format("insert into %s (", getTableName());
 		String values = " values  (";
@@ -694,8 +695,9 @@ public class PersistedTableManager implements IPersistedManager {
 			try (ResultSet rs = preparedStatement.executeQuery()) {
 				ResultSetMetaData rsmd = rs.getMetaData();
 				while (rs.next()) {
-					for (int i = 1; i <= rsmd.getColumnCount(); i++)
+					for (int i = 1; i <= rsmd.getColumnCount(); i++) {
 						columnSize.put(rsmd.getColumnName(i), rsmd.getColumnDisplaySize(i));
+					}
 				}
 			}
 		}
@@ -922,8 +924,9 @@ public class PersistedTableManager implements IPersistedManager {
 
 		int fieldCount = storeMeta.getFieldCount();
 
-		if (fieldCount == 0)
+		if (fieldCount == 0) {
 			return null;
+		}
 
 		String insertQuery = String.format("insert into %s (", getTableName());
 		String values = " values  (";
@@ -1083,6 +1086,16 @@ public class PersistedTableManager implements IPersistedManager {
 		} catch (Exception e) {
 			LOGGER.error("Impossible to drop the table with name " + tableName, e);
 			throw new SpagoBIEngineRuntimeException("Impossible to drop the persisted table with name " + tableName, e);
+		}
+	}
+
+	public void renameTable(String tableNameOld, String tableNameNew, IDataSource datasource) {
+		try {
+			LOGGER.debug("Rename PersistedTable from " + tableNameOld + " to " + tableNameNew);
+			TemporaryTableManager.renameTable(tableNameOld, tableNameNew, datasource);
+		} catch (Exception e) {
+			LOGGER.error("Impossible rename the table  " + tableNameOld, e);
+			throw new SpagoBIEngineRuntimeException("Impossible rename the table " + tableNameOld, e);
 		}
 	}
 

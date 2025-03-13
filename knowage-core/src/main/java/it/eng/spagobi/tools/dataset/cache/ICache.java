@@ -88,7 +88,7 @@ public interface ICache {
 			List<Sorting> sortings, List<List<AbstractSelectionField>> summaryRowProjections, int offset, int fetchSize, int maxRowCount, Set<String> indexes)
 			throws DataBaseException;
 
-	public void refresh(IDataSet dataSet);
+	void refresh(IDataSet dataSet);
 
 	/**
 	 * Facility method. It is equivalent to delete(dataSet.getSignature) call.
@@ -111,6 +111,17 @@ public interface ICache {
 	boolean delete(String resultsetSignature, boolean isHash);
 
 	/**
+	 * Update the specified resultSet
+	 *
+	 * @param resultsetSignature the unique resultSet signature
+	 *
+	 *                           isHash true if resultsetSignature is hashed signature false if resultsetSignature is signature in clear text
+	 *
+	 * @return true if resultSet is Updated in cache, false if resultSet wasn't Updated in cache
+	 */
+	boolean update(String resultsetSignature, boolean isHash);
+
+	/**
 	 * Delete objects in the cache till the cleaning quota is reached
 	 */
 	void deleteToQuota();
@@ -119,6 +130,11 @@ public interface ICache {
 	 * Delete all objects inside the cache
 	 */
 	void deleteAll();
+
+	/**
+	 * Update all objects inside the cache
+	 */
+	void updateAll();
 
 	/**
 	 * Insert a resultSet inside the cache using the resultsetSignature as an identifier
@@ -169,10 +185,10 @@ public interface ICache {
 	/**
 	 * @return the dataSource
 	 */
-	public IDataSource getDataSource();
+	IDataSource getDataSource();
 
 	/**
 	 * @param dataSource the dataSource to set
 	 */
-	public void setDataSource(IDataSource dataSource);
+	void setDataSource(IDataSource dataSource);
 }

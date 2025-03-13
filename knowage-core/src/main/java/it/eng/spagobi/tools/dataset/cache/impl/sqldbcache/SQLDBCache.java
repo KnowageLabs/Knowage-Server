@@ -17,12 +17,32 @@
  */
 package it.eng.spagobi.tools.dataset.cache.impl.sqldbcache;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
+
+import org.apache.log4j.Logger;
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import com.hazelcast.map.IMap;
 import com.jamonapi.Monitor;
 import com.jamonapi.MonitorFactory;
+
+import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.cache.dao.ICacheDAO;
 import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.tools.dataset.bo.DatasetEvaluationStrategyType;
 import it.eng.spagobi.tools.dataset.bo.FlatDataSet;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
@@ -30,11 +50,13 @@ import it.eng.spagobi.tools.dataset.bo.VersionedDataSet;
 import it.eng.spagobi.tools.dataset.cache.CacheException;
 import it.eng.spagobi.tools.dataset.cache.ICache;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
+import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
 import it.eng.spagobi.tools.dataset.exceptions.ParametersNotValorizedException;
 import it.eng.spagobi.tools.dataset.metasql.query.DatabaseDialect;
 import it.eng.spagobi.tools.dataset.metasql.query.item.AbstractSelectionField;
 import it.eng.spagobi.tools.dataset.metasql.query.item.Filter;
 import it.eng.spagobi.tools.dataset.metasql.query.item.Sorting;
+import it.eng.spagobi.tools.dataset.persist.IPersistedManager;
 import it.eng.spagobi.tools.dataset.persist.PersistedTableManager;
 import it.eng.spagobi.tools.dataset.strategy.DatasetEvaluationStrategyFactory;
 import it.eng.spagobi.tools.dataset.strategy.IDatasetEvaluationStrategy;
@@ -48,13 +70,6 @@ import it.eng.spagobi.utilities.database.DataBaseFactory;
 import it.eng.spagobi.utilities.database.DatabaseUtilities;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.locks.DistributedLockFactory;
-import org.apache.log4j.Logger;
-import org.json.JSONArray;
-
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.util.*;
-import java.util.concurrent.TimeUnit;
 
 /**
  * @author Marco Cortella (marco.cortella@eng.it)
@@ -161,10 +176,11 @@ public class SQLDBCache implements ICache {
 				logger.warn("Input parameter [dataSet] is null");
 			}
 		} catch (Throwable t) {
-			if (t instanceof CacheException)
+			if (t instanceof CacheException) {
 				throw (CacheException) t;
-			else
+			} else {
 				throw new CacheException("An unexpected error occure while getting dataset from cache", t);
+			}
 		} finally {
 			logger.debug("OUT");
 		}
@@ -207,10 +223,11 @@ public class SQLDBCache implements ICache {
 						logger.debug("Resultset with signature [" + signature + "] not found");
 					}
 				} catch (Throwable t) {
-					if (t instanceof CacheException)
+					if (t instanceof CacheException) {
 						throw (CacheException) t;
-					else
+					} else {
 						throw new CacheException("An unexpected error occure while getting dataset from cache", t);
+					}
 				} finally {
 					mapLocks.unlock(hashedSignature);
 				}
@@ -557,10 +574,11 @@ public class SQLDBCache implements ICache {
 			monitor.stop();
 			return tableName;
 		} catch (Throwable t) {
-			if (t instanceof CacheException)
+			if (t instanceof CacheException) {
 				throw (CacheException) t;
-			else
+			} else {
 				throw new CacheException("An unexpected error occured while persisting store in cache", t);
+			}
 		} finally {
 			logger.trace("OUT");
 		}
@@ -587,10 +605,11 @@ public class SQLDBCache implements ICache {
 			monitor.stop();
 			return tableName;
 		} catch (Throwable t) {
-			if (t instanceof CacheException)
+			if (t instanceof CacheException) {
 				throw (CacheException) t;
-			else
+			} else {
 				throw new CacheException("An unexpected error occured while persisting store in cache", t);
+			}
 		} finally {
 			logger.trace("OUT");
 		}
@@ -618,10 +637,11 @@ public class SQLDBCache implements ICache {
 			monitor = MonitorFactory.start("spagobi.cache.sqldb.updateStoreInCache.updatedataset");
 			persistedTableManager.updateDataset(getDataSource(), dataStore, cacheItem.getTable());
 		} catch (Exception e) {
-			if (e instanceof CacheException)
+			if (e instanceof CacheException) {
 				throw (CacheException) e;
-			else
+			} else {
 				throw new CacheException("An unexpected error occured while persisting store in cache", e);
+			}
 		} finally {
 			if (monitor != null) {
 				monitor.stop();
@@ -653,10 +673,11 @@ public class SQLDBCache implements ICache {
 				logger.warn("Input parameter [dataSet] is null");
 			}
 		} catch (Throwable t) {
-			if (t instanceof CacheException)
+			if (t instanceof CacheException) {
 				throw (CacheException) t;
-			else
+			} else {
 				throw new CacheException("An unexpected error occure while deleting dataset from cache", t);
+			}
 		} finally {
 			logger.debug("OUT");
 		}
@@ -681,10 +702,11 @@ public class SQLDBCache implements ICache {
 				logger.warn("Input parameter [" + signature + "] is null");
 			}
 		} catch (Throwable t) {
-			if (t instanceof CacheException)
+			if (t instanceof CacheException) {
 				throw (CacheException) t;
-			else
+			} else {
 				throw new CacheException("An unexpected error occure while deleting dataset [" + signature + "] from cache", t);
+			}
 		} finally {
 			logger.debug("OUT");
 		}
@@ -732,6 +754,102 @@ public class SQLDBCache implements ICache {
 		return false;
 	}
 
+	@Override
+	public boolean update(String signature, boolean isHash) {
+		boolean result = false;
+
+		logger.debug("IN");
+		try {
+			if (signature != null) {
+				result = refreshCacheItem(signature, isHash);
+			} else {
+				logger.warn("Input parameter [" + signature + "] is null");
+			}
+		} catch (Throwable t) {
+			if (t instanceof CacheException) {
+				throw (CacheException) t;
+			} else {
+				throw new CacheException("An unexpected error occure while deleting dataset [" + signature + "] from cache", t);
+			}
+		} finally {
+			logger.debug("OUT");
+		}
+
+		return result;
+	}
+
+	private boolean refreshCacheItem(String signature, boolean isHash) throws Exception {
+		logger.debug("IN");
+		String hashedSignature;
+		if (isHash) {
+			hashedSignature = signature;
+			logger.debug("Refresh dataset with hash [" + signature + "]");
+		} else {
+			hashedSignature = Helper.sha256(signature);
+			logger.debug("Refresh dataset with signature [" + signature + "] and hash [" + hashedSignature + "]");
+		}
+		IMap mapLocks = DistributedLockFactory.getDistributedMap(SpagoBIConstants.DISTRIBUTED_MAP_INSTANCE_NAME, SpagoBIConstants.DISTRIBUTED_MAP_FOR_CACHE);
+		try {
+			if (mapLocks.tryLock(hashedSignature, getTimeout(), TimeUnit.SECONDS, getLeaseTime(), TimeUnit.SECONDS)) {
+				try {
+					if (getMetadata().containsCacheItem(signature, isHash)) {
+						CacheItem cacheItem = getMetadata().getCacheItem(signature, isHash);
+						String tableName = cacheItem.getTable();
+						String datasetName = cacheItem.getName();
+						JSONArray jsonArray = cacheItem.getParameters();
+
+						IEngUserProfile user = UserProfile.createSchedulerUserProfileWithRole(null);
+
+						IDataSetDAO datasetDAO = DAOFactory.getDataSetDAO();
+						if (user != null) {
+							datasetDAO.setUserProfile(user);
+						}
+
+						logger.debug("Start persistence...");
+						IDataSet dataset = DAOFactory.getDataSetDAO().loadDataSetByName(datasetName);
+						dataset.setPersistTableName(tableName + "_Refresh");
+						dataset.setPersisted(true);
+
+						Map parameterValues = new HashMap();
+						if (jsonArray != null) {
+							for (int i = 0; i < jsonArray.length(); i++) {
+								JSONObject obj = (JSONObject) jsonArray.get(i);
+								parameterValues.put(obj.get("name"), obj.get("value"));
+
+							}
+						}
+
+						dataset.setParamsMap(parameterValues);
+
+						IPersistedManager ptm = new PersistedTableManager(userProfile);
+						ptm.persistDataSet(dataset);
+
+						PersistedTableManager persistedTableManager = new PersistedTableManager();
+						persistedTableManager.dropTableIfExists(getDataSource(), tableName);
+						persistedTableManager.renameTable(tableName + "_Refresh", tableName, getDataSource());
+
+						ICacheDAO cacheDao = DAOFactory.getCacheDao();
+						cacheItem.setDimension(DatabaseUtilities.getUsedMemorySize(DataBaseFactory.getCacheDataBase(getDataSource()), "cache", tableName));
+						cacheDao.updateCacheItem(cacheItem);
+
+						return true;
+					} else {
+						logger.debug("Not refresh, dataset not in cache");
+						return false;
+					}
+				} finally {
+					mapLocks.unlock(hashedSignature);
+				}
+			} else {
+				logger.debug("Impossible to acquire the lock for dataset [" + hashedSignature + "]. Timeout. Returning false.");
+			}
+		} catch (InterruptedException e) {
+			logger.debug("The current thread has failed to release the lock for dataset [" + hashedSignature + "] in time. Returning a null datastore.", e);
+		}
+		logger.debug("OUT");
+		return false;
+	}
+
 	/*
 	 * (non-Javadoc)
 	 *
@@ -753,10 +871,11 @@ public class SQLDBCache implements ICache {
 				}
 			}
 		} catch (Throwable t) {
-			if (t instanceof CacheException)
+			if (t instanceof CacheException) {
 				throw (CacheException) t;
-			else
+			} else {
 				throw new CacheException("An unexpected error occured while deleting cache to quota", t);
+			}
 		} finally {
 			logger.trace("OUT");
 		}
@@ -808,10 +927,11 @@ public class SQLDBCache implements ICache {
 			}
 
 		} catch (Throwable t) {
-			if (t instanceof CacheException)
+			if (t instanceof CacheException) {
 				throw (CacheException) t;
-			else
+			} else {
 				throw new CacheException("An unexpected error occured while deleting cache to quota", t);
+			}
 		} finally {
 			logger.trace("OUT");
 		}
@@ -834,6 +954,18 @@ public class SQLDBCache implements ICache {
 		// Delete any other cache tables, even if not recorded as cache item
 		// eraseExistingTables(getMetadata().getTableNamePrefix().toUpperCase());
 		logger.debug("[SQLDBCache] All tables removed, Cache cleaned ");
+	}
+
+	@Override
+	public void updateAll() {
+		logger.debug("Update all tables from [SQLDBCache]");
+
+		List<String> signatures = getMetadata().getSignatures();
+		for (String signature : signatures) {
+			update(signature, true);
+		}
+
+		logger.debug("[SQLDBCache] All tables updated, Cache updated ");
 	}
 
 	// ===================================================================================

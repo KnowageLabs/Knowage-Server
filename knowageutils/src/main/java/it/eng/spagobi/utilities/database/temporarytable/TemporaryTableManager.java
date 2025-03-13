@@ -130,8 +130,9 @@ public class TemporaryTableManager {
 				 *
 				 * Andrea Fantappiè
 				 */
-				if (driverName.contains("MySQL"))
+				if (driverName.contains("MySQL")) {
 					catalog = schema;
+				}
 				actualTableName = tableName.substring(tableName.indexOf(".") + 1);
 			} else {
 				actualTableName = tableName;
@@ -375,8 +376,9 @@ public class TemporaryTableManager {
 	 */
 	private static String addTablespace(String dialect, String sql) {
 		String tableSpace = getTableTablespace();
-		if (tableSpace == null || tableSpace.length() == 0)
+		if (tableSpace == null || tableSpace.length() == 0) {
 			return sql;
+		}
 
 		if (dialect.contains("Oracle")) {
 			sql += " TABLESPACE " + tableSpace;
@@ -445,6 +447,10 @@ public class TemporaryTableManager {
 			executeStatement("DROP TABLE IF EXISTS " + tableName, dataSource);
 		}
 		logger.debug("OUT");
+	}
+
+	public static void renameTable(String tableNameOld, String tableNameNew, IDataSource dataSource) throws Exception {
+		executeStatement("ALTER TABLE " + tableNameOld + " RENAME TO " + tableNameNew, dataSource);
 	}
 
 	private static void executeStatement(String sql, IDataSource dataSource) throws Exception {

@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,11 +11,18 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package it.eng.spagobi.tools.dataset.cache;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Properties;
+
+import org.apache.log4j.Logger;
 
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.configuration.ConfigSingleton;
@@ -26,12 +33,6 @@ import it.eng.spagobi.tools.dataset.cache.impl.sqldbcache.SQLDBCacheConfiguratio
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.tools.datasource.dao.IDataSourceDAO;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
-import org.apache.log4j.Logger;
-
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Properties;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
@@ -46,6 +47,7 @@ public class SpagoBICacheConfiguration {
 	public static final String CACHE_SCHEDULING_FULL_CLEAN = "SPAGOBI.CACHE.SCHEDULING_FULL_CLEAN";
 	public static final String CACHE_DATABASE_SCHEMA = "SPAGOBI.CACHE.DATABASE_SCHEMA";
 	public static final String CACHE_LIMIT_FOR_STORE_CONFIG = "SPAGOBI.CACHE.LIMIT_FOR_STORE";
+	public static final String CACHE_REFRESH = "SPAGOBI.CACHE.REFRESH";
 
 	private static transient Logger logger = Logger.getLogger(SpagoBICacheConfiguration.class);
 
@@ -60,6 +62,7 @@ public class SpagoBICacheConfiguration {
 		cacheConfiguration.setSchema(getCacheDatabaseSchema());
 		cacheConfiguration.setCachePercentageToStore(getCachePercentageToStore());
 		cacheConfiguration.setObjectsTypeDimension(getDimensionTypes());
+		cacheConfiguration.setCacheRefresh(getCacheRefresh());
 		return cacheConfiguration;
 	}
 
@@ -155,6 +158,19 @@ public class SpagoBICacheConfiguration {
 				cachePercentageToStore = Integer.valueOf(propertyValue);
 			}
 			return cachePercentageToStore;
+		} catch (Throwable t) {
+			throw new SpagoBIRuntimeException("An unexpected exception occured while loading cache configuration property", t);
+		}
+	}
+
+	private static String getCacheRefresh() {
+		try {
+			String cacheRefresh = null;
+			String propertyValue = getSpagoBIConfigurationProperty(CACHE_REFRESH);
+			if (propertyValue != null) {
+				cacheRefresh = propertyValue;
+			}
+			return cacheRefresh;
 		} catch (Throwable t) {
 			throw new SpagoBIRuntimeException("An unexpected exception occured while loading cache configuration property", t);
 		}

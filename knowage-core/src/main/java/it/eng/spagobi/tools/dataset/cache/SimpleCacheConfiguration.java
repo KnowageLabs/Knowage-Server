@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,19 +11,19 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package it.eng.spagobi.tools.dataset.cache;
 
-import it.eng.spagobi.tools.datasource.bo.IDataSource;
-import it.eng.spagobi.utilities.threadmanager.WorkManager;
-
 import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+
+import it.eng.spagobi.tools.datasource.bo.IDataSource;
+import it.eng.spagobi.utilities.threadmanager.WorkManager;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
@@ -41,6 +41,7 @@ public class SimpleCacheConfiguration implements ICacheConfiguration {
 	public static final String CACHE_LIMIT_FOR_STORE_CONFIG = "SPAGOBI.CACHE.LIMIT_FOR_STORE";
 
 	private static final String CACHE_WORK_MANAGER = "SPAGOBI.CACHE.WORK_MANAGER";
+	private static final String CACHE_REFRESH = "SPAGOBI.CACHE.REFRESH";
 
 	public SimpleCacheConfiguration() {
 		dataSource = null;
@@ -52,7 +53,7 @@ public class SimpleCacheConfiguration implements ICacheConfiguration {
 	 *
 	 * @see it.eng.spagobi.tools.dataset.cache.ICacheConfiguration#getCacheDataSource()
 	 */
-	
+
 	@Override
 	public IDataSource getCacheDataSource() {
 		return dataSource;
@@ -63,7 +64,7 @@ public class SimpleCacheConfiguration implements ICacheConfiguration {
 	 *
 	 * @see it.eng.spagobi.tools.dataset.cache.ICacheConfiguration#setCacheDataSource(it.eng.spagobi.tools.datasource.bo.IDataSource)
 	 */
-	
+
 	@Override
 	public void setCacheDataSource(IDataSource dataSource) {
 		this.dataSource = dataSource;
@@ -76,7 +77,7 @@ public class SimpleCacheConfiguration implements ICacheConfiguration {
 	/**
 	 * @return the cacheSpaceAvailable
 	 */
-	
+
 	@Override
 	public BigDecimal getCacheSpaceAvailable() {
 		return (BigDecimal) getProperty(CACHE_SPACE_AVAILABLE_CONFIG);
@@ -86,7 +87,7 @@ public class SimpleCacheConfiguration implements ICacheConfiguration {
 	 * @param cacheSpaceAvailable
 	 *            the cacheSpaceAvailable to set
 	 */
-	
+
 	@Override
 	public void setCacheSpaceAvailable(BigDecimal cacheSpaceAvailable) {
 		setProperty(CACHE_SPACE_AVAILABLE_CONFIG, cacheSpaceAvailable);
@@ -95,7 +96,7 @@ public class SimpleCacheConfiguration implements ICacheConfiguration {
 	/**
 	 * @return the cachePercentageToClean
 	 */
-	
+
 	@Override
 	public Integer getCachePercentageToClean() {
 		return (Integer) getProperty(CACHE_LIMIT_FOR_CLEAN_CONFIG);
@@ -105,7 +106,7 @@ public class SimpleCacheConfiguration implements ICacheConfiguration {
 	 * @param cachePercentageToClean
 	 *            the cachePercentageToClean to set
 	 */
-	
+
 	@Override
 	public void setCachePercentageToClean(Integer cachePercentageToClean) {
 		setProperty(CACHE_LIMIT_FOR_CLEAN_CONFIG, cachePercentageToClean);
@@ -114,7 +115,7 @@ public class SimpleCacheConfiguration implements ICacheConfiguration {
 	/**
 	 * @return the cacheDsLastAccessTtl
 	 */
-	
+
 	@Override
 	public Integer getCacheDsLastAccessTtl() {
 		return (Integer) getProperty(CACHE_DS_LAST_ACCESS_TTL);
@@ -124,7 +125,7 @@ public class SimpleCacheConfiguration implements ICacheConfiguration {
 	 * @param cacheDsLastAccessTtl
 	 *            the cacheDsLastAccessTtl to set
 	 */
-	
+
 	@Override
 	public void setCacheDsLastAccessTtl(Integer cacheDsLastAccessTtl) {
 		setProperty(CACHE_DS_LAST_ACCESS_TTL, cacheDsLastAccessTtl);
@@ -133,7 +134,7 @@ public class SimpleCacheConfiguration implements ICacheConfiguration {
 	/**
 	 * @return the cacheSchedulingFullClean
 	 */
-	
+
 	@Override
 	public String getCacheSchedulingFullClean() {
 		return (String) getProperty(CACHE_SCHEDULING_FULL_CLEAN);
@@ -143,7 +144,7 @@ public class SimpleCacheConfiguration implements ICacheConfiguration {
 	 * @param cacheSchedulingFullClean
 	 *            the cacheSchedulingFullClean to set
 	 */
-	
+
 	@Override
 	public void setCacheSchedulingFullClean(String cacheSchedulingFullClean) {
 		setProperty(CACHE_SCHEDULING_FULL_CLEAN, cacheSchedulingFullClean);
@@ -152,7 +153,7 @@ public class SimpleCacheConfiguration implements ICacheConfiguration {
 	/**
 	 * @return the cachePercentageToStore
 	 */
-	
+
 	@Override
 	public Integer getCachePercentageToStore() {
 		return (Integer) getProperty(CACHE_LIMIT_FOR_STORE_CONFIG);
@@ -162,7 +163,7 @@ public class SimpleCacheConfiguration implements ICacheConfiguration {
 	 * @param cachePercentageToStore
 	 *            the cachePercentageToStore to set
 	 */
-	
+
 	@Override
 	public void setCachePercentageToStore(Integer cachePercentageToStore) {
 		setProperty(CACHE_LIMIT_FOR_STORE_CONFIG, cachePercentageToStore);
@@ -171,7 +172,7 @@ public class SimpleCacheConfiguration implements ICacheConfiguration {
 	/**
 	 * @return the work manger used by cache to perform task in background
 	 */
-	
+
 	public WorkManager getWorkManager() {
 		return (WorkManager) getProperty(CACHE_WORK_MANAGER);
 	}
@@ -180,9 +181,23 @@ public class SimpleCacheConfiguration implements ICacheConfiguration {
 	 * @param the
 	 *            work manger used by cache to perform task in background
 	 */
-	
+
 	public void setWorkManager(WorkManager workManager) {
 		setProperty(CACHE_WORK_MANAGER, workManager);
+	}
+
+	@Override
+	public String getCacheRefresh() {
+		return (String) getProperty(CACHE_REFRESH);
+	}
+
+	/**
+	 * @param cacheSchedulingFullClean the cacheSchedulingFullClean to set
+	 */
+
+	@Override
+	public void setCacheRefresh(String refresh) {
+		setProperty(CACHE_REFRESH, refresh);
 	}
 
 	// =========================================================================================
@@ -194,7 +209,7 @@ public class SimpleCacheConfiguration implements ICacheConfiguration {
 	 *
 	 * @see it.eng.spagobi.tools.dataset.cache.ICacheConfiguration#containsProperty(java.lang.String)
 	 */
-	
+
 	public boolean containsProperty(String propertyName) {
 		return properties.containsKey(propertyName);
 	}
@@ -204,7 +219,7 @@ public class SimpleCacheConfiguration implements ICacheConfiguration {
 	 *
 	 * @see it.eng.spagobi.tools.dataset.cache.ICacheConfiguration#getPropertyNames()
 	 */
-	
+
 	public Set<String> getPropertyNames() {
 		return properties.keySet();
 	}
@@ -214,7 +229,7 @@ public class SimpleCacheConfiguration implements ICacheConfiguration {
 	 *
 	 * @see it.eng.spagobi.tools.dataset.cache.ICacheConfiguration#getProperty(java.lang.String)
 	 */
-	
+
 	@Override
 	public Object getProperty(String propertyName) {
 		return properties.get(propertyName);
@@ -225,7 +240,7 @@ public class SimpleCacheConfiguration implements ICacheConfiguration {
 	 *
 	 * @see it.eng.spagobi.tools.dataset.cache.ICacheConfiguration#setProperty(java.lang.String, java.lang.Object)
 	 */
-	
+
 	@Override
 	public Object setProperty(String propertyName, Object propertyValue) {
 		Object oldValue = properties.get(propertyName);
@@ -238,7 +253,7 @@ public class SimpleCacheConfiguration implements ICacheConfiguration {
 	 *
 	 * @see it.eng.spagobi.tools.dataset.cache.ICacheConfiguration#deleteProperty(java.lang.String)
 	 */
-	
+
 	public Object deleteProperty(String propertyName) {
 		return properties.remove(propertyName);
 	}
@@ -248,7 +263,7 @@ public class SimpleCacheConfiguration implements ICacheConfiguration {
 	 *
 	 * @see it.eng.spagobi.tools.dataset.cache.ICacheConfiguration#deleteAllProperties(java.lang.String)
 	 */
-	
+
 	public void deleteAllProperties(String propertyName) {
 		properties.clear();
 	}
@@ -258,7 +273,7 @@ public class SimpleCacheConfiguration implements ICacheConfiguration {
 	 *
 	 * @see it.eng.spagobi.tools.dataset.cache.ICacheConfiguration#addAllProperties(Map<String, Object>)
 	 */
-	
+
 	public void addAllProperties(Map<String, Object> properties) {
 		properties.putAll(properties);
 	}
