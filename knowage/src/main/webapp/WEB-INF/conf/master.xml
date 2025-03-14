@@ -29,7 +29,7 @@
   	<CONFIGURATOR path="/WEB-INF/conf/analiticalmodel/business_map.xml" />
    	<CONFIGURATOR path="/WEB-INF/conf/analiticalmodel/validation.xml" />
 	
-	->
+	-->
 	
    	<!-- document browser -->
     <!--
