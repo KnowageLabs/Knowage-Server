@@ -28,11 +28,8 @@
 		<module>../knowagecockpitengine</module>
 		<module>../knowagekpiengine</module>
 		<module>../knowagesdk</module>
-		<module>../knowagecommonjengine</module>
-		<module>../knowagegeoreportengine</module>
 		<module>../knowagemeta</module>
 		<module>../knowageqbeengine</module>
-		<module>../knowagesvgviewerengine</module>
 		<module>../knowagetalendengine</module>
 		<module>../knowagewhatifengine</module>
 		<module>../knowagejasperreportengine</module>

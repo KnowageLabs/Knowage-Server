@@ -5,15 +5,12 @@
 		<ENGINE label="knowagecockpitengine" />
 		<ENGINE label="knowagedashboardengine" />
 		<ENGINE label="knowageqbeengine" />
-		<ENGINE label="knowageprocessengine" />
-		<ENGINE label="knowagegisengine" />
 		<ENGINE label="knowagetalendengine" />
 	</PRODUCT_TYPE>
 	<PRODUCT_TYPE label="KnowageSI" active="true">
 		<ENGINE label="knowageofficeengine" />	
 		<ENGINE label="knowageqbeengine" />
 		<ENGINE label="knowagetalendengine" />
-		<ENGINE label="knowageprocessengine" />
 		<ENGINE label="knowagecockpitengine" />
 		<ENGINE label="knowagedashboardengine" />
 		<ENGINE label="knowageolapengine" />
@@ -27,10 +24,6 @@
 	</PRODUCT_TYPE>
 	<PRODUCT_TYPE label="KnowagePM" active="true">
 		<ENGINE label="knowagekpiengine" />
-	</PRODUCT_TYPE>
-	<PRODUCT_TYPE label="KnowageLI" active="true">
-		<ENGINE label="knowagesvgviewerengine" />
-		<ENGINE label="knowagegisengine" />
 	</PRODUCT_TYPE>
 	<PRODUCT_TYPE label="KnowagePA" active="true">
 		<ENGINE label="knowagewhatifengine" />
