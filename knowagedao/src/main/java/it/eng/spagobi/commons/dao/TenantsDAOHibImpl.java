@@ -1180,7 +1180,7 @@ public class TenantsDAOHibImpl extends AbstractHibernateDAO implements ITenantsD
 
 			SbiOrganizationTheme sbiOrganizationTheme = (SbiOrganizationTheme) x;
 
-			if (sbiOrganizationTheme.getId().getUuid().equals(themeId))
+			if (!sbiOrganizationTheme.getId().getUuid().equals(themeId))
 				newSbiOrganizationThemes.add(sbiOrganizationTheme);
 		});
 
