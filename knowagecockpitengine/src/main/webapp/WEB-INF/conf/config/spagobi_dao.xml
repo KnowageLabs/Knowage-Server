@@ -102,7 +102,6 @@
 		
 		<DAO name="MetaModelsDAO" implementation="it.eng.spagobi.tools.catalogue.dao.MetaModelsDAOImpl" />
 		<DAO name="ArtifactsDAO" implementation="it.eng.spagobi.tools.catalogue.dao.ArtifactsDAOImpl" />
-		<DAO name="CommunityDAO" implementation="it.eng.spagobi.community.dao.SbiCommunityDAOImpl" />
 
 		<DAO name="GeoLayersDAO" implementation="it.eng.spagobi.mapcatalogue.dao.SbiGeoLayersDAOHibImpl" />
 

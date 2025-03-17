@@ -21,7 +21,6 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
@@ -37,7 +36,6 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.jboss.resteasy.plugins.providers.html.View;
 import org.json.JSONArray;
@@ -66,8 +64,6 @@ import it.eng.spagobi.commons.utilities.messages.IMessageBuilder;
 import it.eng.spagobi.commons.utilities.messages.MessageBuilder;
 import it.eng.spagobi.commons.utilities.messages.MessageBuilderFactory;
 import it.eng.spagobi.commons.validation.PasswordChecker;
-import it.eng.spagobi.community.bo.CommunityManager;
-import it.eng.spagobi.community.mapping.SbiCommunity;
 import it.eng.spagobi.profiling.bean.SbiAttribute;
 import it.eng.spagobi.profiling.bean.SbiUser;
 import it.eng.spagobi.profiling.bean.SbiUserAttributes;
@@ -131,9 +127,6 @@ public class Signup {
 
 			String url = "/themes/" + currTheme + "/jsp/signup/modify.jsp";
 			LOGGER.debug("url for modify: " + url);
-
-			List<SbiCommunity> communities = DAOFactory.getCommunityDAO().loadAllSbiCommunities();
-			req.setAttribute("communities", communities);
 
 			String strActiveSignup = SingletonConfig.getInstance().getConfigValue("SPAGOBI.SECURITY.ACTIVE_SIGNUP_FUNCTIONALITY");
 			boolean activeSignup = strActiveSignup.equalsIgnoreCase("true");
@@ -532,13 +525,6 @@ public class Signup {
 
 			LOGGER.debug("User [" + username + "] succesfuly created with id [" + id + "]");
 
-			if (StringUtils.isNotEmpty(enterprise)) {
-				LOGGER.debug("User [" + username + "] would be part of community [" + enterprise + "]");
-				SbiCommunity community = DAOFactory.getCommunityDAO().loadSbiCommunityByName(enterprise);
-				CommunityManager communityManager = new CommunityManager();
-				communityManager.saveCommunity(community, enterprise, user.getUserId(), request);
-			}
-
 			String host = request.getServerName();
 			LOGGER.debug("Activation url host is equal to [" + host + "]");
 			int port = request.getServerPort();
@@ -621,8 +607,6 @@ public class Signup {
 		Locale locale = Locale.getDefault();
 		LOGGER.debug("locale for signup: " + locale);
 		try {
-			List<SbiCommunity> communities = DAOFactory.getCommunityDAO().loadAllSbiCommunities();
-			req.setAttribute("communities", communities);
 			req.setAttribute("currTheme", currTheme);
 			req.setAttribute("locale", locale);
 			return new View(url);

@@ -49,7 +49,6 @@ import it.eng.spagobi.cache.dao.ICacheDAO;
 import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.dao.es.AbstractEventEmittingImpl;
 import it.eng.spagobi.commons.dao.es.NoEventEmitting;
-import it.eng.spagobi.community.dao.ISbiCommunityDAO;
 import it.eng.spagobi.dossier.dao.ISbiDossierActivityDAO;
 import it.eng.spagobi.engines.config.dao.IEngineDAO;
 import it.eng.spagobi.federateddataset.dao.ISbiFederationDefinitionDAO;
@@ -637,10 +636,6 @@ public class DAOFactory {
 
 	public static IArtifactsDAO getArtifactsDAO() {
 		return (IArtifactsDAO) createDAOInstance("ArtifactsDAO");
-	}
-
-	public static ISbiCommunityDAO getCommunityDAO() {
-		return (ISbiCommunityDAO) createDAOInstance("CommunityDAO");
 	}
 
 	public static ISbiGeoLayersDAO getSbiGeoLayerDao() {

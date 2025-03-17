@@ -20,8 +20,6 @@ insert into hibernate_sequences(next_val,sequence_name) values (ifnull((select m
 insert into hibernate_sequences(next_val,sequence_name) values (ifnull((select max(ID)+1 from SBI_EVENTS_LOG),1) ,'SBI_EVENTS_LOG');
 insert into hibernate_sequences(next_val,sequence_name) values (ifnull((select max(ID)+1 from SBI_REMEMBER_ME),1) ,'SBI_REMEMBER_ME');
 insert into hibernate_sequences(next_val,sequence_name) values (ifnull((select max(ID)+1 from SBI_KPI_VALUE),1) ,'SBI_KPI_VALUE');
-insert into hibernate_sequences(next_val,sequence_name) values (ifnull((select max(FEATURE_ID)+1 from SBI_GEO_FEATURES),1) ,'SBI_GEO_FEATURES');
-insert into hibernate_sequences(next_val,sequence_name) values (ifnull((select max(MAP_ID)+1 from SBI_GEO_MAPS),1) ,'SBI_GEO_MAPS');
 insert into hibernate_sequences(next_val,sequence_name) values (ifnull((select max(ID)+1 from SBI_AUDIT),1) ,'SBI_AUDIT');
 insert into hibernate_sequences(next_val,sequence_name) values (ifnull((select max(ATTRIBUTE_ID)+1 from SBI_ATTRIBUTE),1) ,'SBI_ATTRIBUTE');
 insert into hibernate_sequences(next_val,sequence_name) values (ifnull((select max(ID)+1 from SBI_USER) ,1),'SBI_USER');

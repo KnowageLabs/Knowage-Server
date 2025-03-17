@@ -45,8 +45,6 @@ update hibernate_sequences set next_val=(select ifnull(max(ID),0)+1 from SBI_ORG
 update hibernate_sequences set next_val=(select ifnull(max(NODE_ID),0)+1 from SBI_ORG_UNIT_NODES) where sequence_name='SBI_ORG_UNIT_NODES';
 update hibernate_sequences set next_val=(select ifnull(max(THRESHOLD_ID),0)+1 from SBI_THRESHOLD) where sequence_name='SBI_THRESHOLD';
 update hibernate_sequences set next_val=(select ifnull(max(id_threshold_value),0)+1 from SBI_THRESHOLD_VALUE) where sequence_name='SBI_THRESHOLD_VALUE';
-update hibernate_sequences set next_val=(select ifnull(max(FEATURE_ID),0)+1 from SBI_GEO_FEATURES) where sequence_name='SBI_GEO_FEATURES';
-update hibernate_sequences set next_val=(select ifnull(max(MAP_ID),0)+1 from SBI_GEO_MAPS) where sequence_name='SBI_GEO_MAPS';
 update hibernate_sequences set next_val=(select ifnull(max(ID),0)+1 from SBI_AUDIT) where sequence_name='SBI_AUDIT';
 update hibernate_sequences set next_val=(select ifnull(max(ATTRIBUTE_ID),0)+1 from SBI_ATTRIBUTE) where sequence_name='SBI_ATTRIBUTE';
 update hibernate_sequences set next_val=(select ifnull(max(ID),0)+1 from SBI_USER) where sequence_name='SBI_USER';

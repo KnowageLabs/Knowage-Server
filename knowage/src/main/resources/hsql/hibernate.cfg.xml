@@ -155,10 +155,6 @@
 		<mapping resource="it/eng/spagobi/tools/catalogue/metadata/mapping/SbiArtifact.hbm.xml" />
 		<mapping resource="it/eng/spagobi/tools/catalogue/metadata/mapping/SbiArtifactContent.hbm.xml" />
 
-		<!-- COMMUNITY -->
-		<mapping resource="it/eng/spagobi/community/mapping/SbiCommunity.hbm.xml" />
-		<mapping resource="it/eng/spagobi/community/mapping/SbiCommunityUsers.hbm.xml" />
-
 		<!-- CACHE -->
 		<mapping resource="it/eng/spagobi/cache/metadata/mapping/SbiCacheItem.hbm.xml" />
 

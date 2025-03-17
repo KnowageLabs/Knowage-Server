@@ -313,9 +313,6 @@
     <CONFIGURATOR path="/WEB-INF/conf/adhocreporting/validation.xml" />
 -->
 	
-	 <!-- community 
-	<CONFIGURATOR path="/WEB-INF/conf/community/business_map.xml" /> 
-	-->
 	<!-- measures 
 	<CONFIGURATOR path="/WEB-INF/conf/tools/measure/business_map.xml" /> 
 	-->

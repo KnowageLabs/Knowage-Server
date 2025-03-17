@@ -31,23 +31,18 @@ import org.json.simple.JSONArray;
 
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.configuration.ConfigSingleton;
-import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.analiticalmodel.document.bo.ObjTemplate;
 import it.eng.spagobi.analiticalmodel.document.bo.OutputParameter;
 import it.eng.spagobi.analiticalmodel.document.bo.SubObject;
-import it.eng.spagobi.analiticalmodel.functionalitytree.bo.LowFunctionality;
-import it.eng.spagobi.analiticalmodel.functionalitytree.dao.ILowFunctionalityDAO;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
 import it.eng.spagobi.commons.SingletonConfig;
-import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.utilities.ParameterValuesEncoder;
 import it.eng.spagobi.commons.utilities.PortletUtilities;
 import it.eng.spagobi.commons.utilities.UserUtilities;
 import it.eng.spagobi.commons.utilities.messages.MessageBuilder;
-import it.eng.spagobi.community.mapping.SbiCommunity;
 import it.eng.spagobi.engines.drivers.AbstractEngineDriver;
 import it.eng.spagobi.engines.drivers.DefaultOutputParameter;
 import it.eng.spagobi.engines.drivers.EngineURL;
@@ -205,14 +200,10 @@ public class GenericDriver extends AbstractEngineDriver implements IEngineDriver
 			logger.debug("Add " + DOCUMENT_IS_PUBLIC + " parameter: " + biobj.isPublicDoc());
 			pars.put(DOCUMENT_IS_VISIBLE, biobj.isVisible());
 			logger.debug("Add " + DOCUMENT_IS_VISIBLE + " parameter: " + biobj.isVisible());
-			if (biobj.getPreviewFile() != null)
+			if (biobj.getPreviewFile() != null) {
 				pars.put(DOCUMENT_PREVIEW_FILE, biobj.getPreviewFile());
-			logger.debug("Add " + DOCUMENT_PREVIEW_FILE + " parameter: " + biobj.getPreviewFile());
-			List<String> communities = getCommunities(profile);
-			if (communities != null) {
-				pars.put(DOCUMENT_COMMUNITIES, communities);
-				logger.debug("Add " + DOCUMENT_COMMUNITIES + " parameter: " + communities);
 			}
+			logger.debug("Add " + DOCUMENT_PREVIEW_FILE + " parameter: " + biobj.getPreviewFile());
 			List funcs = biobj.getFunctionalities();
 			if (funcs != null) {
 				pars.put(DOCUMENT_FUNCTIONALITIES, funcs);
@@ -393,21 +384,6 @@ public class GenericDriver extends AbstractEngineDriver implements IEngineDriver
 		return map;
 	}
 
-	private List<String> getCommunities(IEngUserProfile profile) throws EMFUserError {
-		List<String> toReturn = new ArrayList();
-		List<SbiCommunity> communities = DAOFactory.getCommunityDAO().loadSbiCommunityByUser(((UserProfile) profile).getUserId().toString());
-		if (communities != null) {
-			for (int i = 0; i < communities.size(); i++) {
-				SbiCommunity community = communities.get(i);
-				String functCode = community.getFunctCode();
-				ILowFunctionalityDAO functDao = DAOFactory.getLowFunctionalityDAO();
-				LowFunctionality funct = functDao.loadLowFunctionalityByCode(functCode, false);
-				String name = community.getName();
-				toReturn.add("\"" + funct.getId().toString() + "||" + funct.getCode() + "__" + name + "\"");
-			}
-		}
-		return toReturn;
-	}
 
 	@Override
 	public ArrayList<String> getDatasetAssociated(byte[] contentTemplate) throws JSONException {
