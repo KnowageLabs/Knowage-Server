@@ -25,29 +25,6 @@
     	</MODULES>
   	</PAGE>
   	
-   <PAGE name="DetailMapPage" scope="REQUEST" >
-    	<DEPENDENCIES>
-      		<DEPENDENCE source="DetailMapPage" target="DetailMapModule">
-        		<CONDITIONS/>
-        		<CONSEQUENCES/>
-      		</DEPENDENCE>
-    	</DEPENDENCIES>
-    	<MODULES>
-      		<MODULE keep_instance="false" keep_response="false" name="DetailMapModule"/>
-    	</MODULES>
-  	</PAGE>
-  	
-  	   <PAGE name="DetailFeaturePage" scope="REQUEST" >
-    	<DEPENDENCIES>
-      		<DEPENDENCE source="DetailFeaturePage" target="DetailFeatureModule">
-        		<CONDITIONS/>
-        		<CONSEQUENCES/>
-      		</DEPENDENCE>
-    	</DEPENDENCIES>
-    	<MODULES>
-      		<MODULE keep_instance="false" keep_response="false" name="DetailFeatureModule"/>
-    	</MODULES>
-  	</PAGE>
   	
 	<PAGE name="FeaturesLookupPage" scope="REQUEST" title="FeaturesLookupPage" >
     	<DEPENDENCIES>

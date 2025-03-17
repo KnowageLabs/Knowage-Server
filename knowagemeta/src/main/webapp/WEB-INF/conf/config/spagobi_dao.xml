@@ -44,11 +44,6 @@
 			implementation="it.eng.spagobi.analiticalmodel.document.dao.SubObjectDAOHibImpl" />
 		<DAO name="SnapshotDAO"
 			implementation="it.eng.spagobi.analiticalmodel.document.dao.SnapshotDAOHibImpl" />
-		<DAO name="GeoFeatureDAO"
-			implementation="it.eng.spagobi.mapcatalogue.dao.SbiGeoFeaturesDAOHibImpl" />
-		<DAO name="GeoMapDAO" implementation="it.eng.spagobi.mapcatalogue.dao.SbiGeoMapsDAOHibImpl" />
-		<DAO name="GeoMapFeatureDAO"
-			implementation="it.eng.spagobi.mapcatalogue.dao.SbiGeoMapFeaturesDAOHibImpl" />
 		<DAO name="UserFunctionalityDAO" implementation="it.eng.spagobi.commons.dao.UserFunctionalityDAO" />
 		<DAO name="DistributionListDAO"
 			implementation="it.eng.spagobi.tools.distributionlist.dao.DistributionListDaoImpl" />

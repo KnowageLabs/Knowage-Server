@@ -88,9 +88,6 @@
 
 
 		<!-- map catalogue -->
-		<mapping resource="it/eng/spagobi/mapcatalogue/metadata/mapping/SbiGeoMapFeatures.hbm.xml" />
-		<mapping resource="it/eng/spagobi/mapcatalogue/metadata/mapping/SbiGeoFeatures.hbm.xml" />
-		<mapping resource="it/eng/spagobi/mapcatalogue/metadata/mapping/SbiGeoMaps.hbm.xml" />
 		<mapping resource="it/eng/spagobi/mapcatalogue/metadata/mapping/SbiGeoLayers.hbm.xml" />
 		<mapping resource="it/eng/spagobi/mapcatalogue/metadata/mapping/SbiGeoLayersRoles.hbm.xml" />
 

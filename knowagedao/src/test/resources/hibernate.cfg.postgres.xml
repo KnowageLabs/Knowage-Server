@@ -106,9 +106,6 @@
 		<mapping resource="it/eng/spagobi/tools/catalogue/metadata/mapping/SbiMetaModelParview.hbm.xml" />
 
 		<!-- map catalogue -->
-		<mapping resource="it/eng/spagobi/mapcatalogue/metadata/mapping/SbiGeoMapFeatures.hbm.xml" />
-		<mapping resource="it/eng/spagobi/mapcatalogue/metadata/mapping/SbiGeoFeatures.hbm.xml" />
-		<mapping resource="it/eng/spagobi/mapcatalogue/metadata/mapping/SbiGeoMaps.hbm.xml" />
 		<mapping resource="it/eng/spagobi/mapcatalogue/metadata/mapping/SbiGeoLayers.hbm.xml" />
 
 		<!-- rememberMe -->

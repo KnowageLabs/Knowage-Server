@@ -7,8 +7,6 @@
 	<MAP_PAGE_MODULES>
 		<MAP_PAGE_MODULE pageName="ListMapsPage" moduleName="ListMapsModule" businessProcess="MapCatalogueManagement" />
 		<MAP_PAGE_MODULE pageName="ListFeaturesPage" moduleName="ListFeaturesModule" businessProcess="MapCatalogueManagement" />	
-		<MAP_PAGE_MODULE pageName="DetailMapPage" moduleName="DetailMapModule" businessProcess="MapCatalogueManagement" />	
-		<MAP_PAGE_MODULE pageName="DetailFeaturePage" moduleName="DetailFeatureModule" businessProcess="MapCatalogueManagement" />	
 		<MAP_PAGE_MODULE pageName="FeaturesLookupPage" moduleName="ListLookupFeaturesModule" businessProcess="MapCatalogueManagement" />		
 	</MAP_PAGE_MODULES>
 </BUSINESS_MAP>

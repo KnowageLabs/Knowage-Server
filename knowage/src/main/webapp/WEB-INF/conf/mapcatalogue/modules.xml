@@ -87,16 +87,8 @@
 	      </BUTTONS>
 	    </CONFIG>
   	</MODULE>
-  	
-  	<MODULE class="it.eng.spagobi.mapcatalogue.service.DetailMapModule" name="DetailMapModule">
-     	<CONFIG/>
-    </MODULE>
     
-    <MODULE class="it.eng.spagobi.mapcatalogue.service.DetailFeatureModule" name="DetailFeatureModule">
-     	<CONFIG/>
-    </MODULE>
-    
-   <MODULE class="it.eng.spagobi.mapcatalogue.service.ListLookupFeaturesModule" name="ListLookupFeaturesModule">
+    <MODULE class="it.eng.spagobi.mapcatalogue.service.ListLookupFeaturesModule" name="ListLookupFeaturesModule">
 	    <CONFIG pool="spagobi" rows="20" title="SBIMapCatalogue.listFeatures" >
 	      <QUERIES>
 	        <SELECT_QUERY statement="SELECT_LOOKUP_FEATURES">

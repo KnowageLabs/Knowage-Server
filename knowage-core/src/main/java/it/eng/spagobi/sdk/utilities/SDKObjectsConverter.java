@@ -46,17 +46,13 @@ import it.eng.spagobi.behaviouralmodel.check.bo.Check;
 import it.eng.spagobi.commons.bo.Domain;
 import it.eng.spagobi.commons.dao.DAOConfig;
 import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.commons.dao.IBinContentDAO;
 import it.eng.spagobi.commons.dao.ICategoryDAO;
 import it.eng.spagobi.commons.dao.IDomainDAO;
 import it.eng.spagobi.commons.dao.dto.SbiCategory;
-import it.eng.spagobi.commons.metadata.SbiBinContents;
 import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
 import it.eng.spagobi.container.ObjectUtils;
 import it.eng.spagobi.engines.config.bo.Engine;
 import it.eng.spagobi.engines.config.dao.IEngineDAO;
-import it.eng.spagobi.mapcatalogue.metadata.SbiGeoFeatures;
-import it.eng.spagobi.mapcatalogue.metadata.SbiGeoMaps;
 import it.eng.spagobi.sdk.datasets.bo.SDKDataSet;
 import it.eng.spagobi.sdk.datasets.bo.SDKDataSetParameter;
 import it.eng.spagobi.sdk.datasets.bo.SDKDataStoreFieldMetadata;
@@ -69,8 +65,6 @@ import it.eng.spagobi.sdk.documents.bo.SDKFunctionality;
 import it.eng.spagobi.sdk.documents.bo.SDKTemplate;
 import it.eng.spagobi.sdk.domains.bo.SDKDomain;
 import it.eng.spagobi.sdk.engines.bo.SDKEngine;
-import it.eng.spagobi.sdk.maps.bo.SDKFeature;
-import it.eng.spagobi.sdk.maps.bo.SDKMap;
 import it.eng.spagobi.services.dataset.bo.SpagoBiDataSet;
 import it.eng.spagobi.services.datasource.bo.SpagoBiDataSource;
 import it.eng.spagobi.tools.dataset.bo.CustomDataSet;
@@ -737,110 +731,6 @@ public class SDKObjectsConverter {
 		return toReturn;
 	}
 
-	public SbiGeoFeatures fromSDKFeatureToSbiGeoFeatures(SDKFeature feature) {
-		LOGGER.debug("IN");
-		if (feature == null) {
-			LOGGER.warn("SDKFeature in input is null!!");
-			return null;
-		}
-		SbiGeoFeatures sbiFeature = null;
-		try {
-			sbiFeature = new SbiGeoFeatures(feature.getFeatureId());
-			sbiFeature.setName(feature.getName());
-			sbiFeature.setDescr(feature.getDescr());
-			sbiFeature.setType(feature.getType());
-
-		} catch (Exception e) {
-			LOGGER.error("Error while converting SDKFeature into SbiGeoFeature.", e);
-			LOGGER.debug("Returning null.");
-			return null;
-		}
-		LOGGER.debug("OUT");
-		return sbiFeature;
-	}
-
-	public SDKFeature fromSbiGeoFeatureToSDKFeature(SbiGeoFeatures feature) {
-		LOGGER.debug("IN");
-		if (feature == null) {
-			LOGGER.warn("Feature in input is null!!");
-			return null;
-		}
-		SDKFeature sdkFeature = null;
-		try {
-			sdkFeature = new SDKFeature();
-			sdkFeature.setFeatureId(feature.getFeatureId());
-			sdkFeature.setName(feature.getName());
-			sdkFeature.setDescr(feature.getDescr());
-			sdkFeature.setType(feature.getType());
-		} catch (Exception e) {
-			LOGGER.error("Error while converting Feature into SDKFeature.", e);
-			LOGGER.debug("Returning null.");
-			return null;
-		} finally {
-			LOGGER.debug("OUT");
-		}
-		return sdkFeature;
-	}
-
-	public SbiGeoMaps fromSDKMapsToSbiGeoMaps(SDKMap map) {
-		LOGGER.debug("IN");
-		if (map == null) {
-			LOGGER.warn("SDKMaps in input is null!!");
-			return null;
-		}
-		SbiGeoMaps sbiMap = null;
-		try {
-			sbiMap = new SbiGeoMaps(map.getMapId());
-			sbiMap.setName(map.getName());
-			sbiMap.setDescr(map.getDescr());
-			sbiMap.setFormat(map.getFormat());
-			sbiMap.setUrl(map.getUrl());
-
-			IBinContentDAO binContentDAO = DAOFactory.getBinContentDAO();
-			byte[] binContentsContent = binContentDAO.getBinContent(map.getBinId());
-			if (binContentsContent != null) {
-				Integer contentId = map.getBinId();
-				SbiBinContents sbiBinContents = new SbiBinContents(contentId);
-				
-				sbiBinContents.setContent(binContentsContent);
-				sbiMap.setBinContents(sbiBinContents);
-			}
-
-		} catch (Exception e) {
-			LOGGER.error("Error while converting SDKMap into SbiGeoFeature.", e);
-			LOGGER.debug("Returning null.");
-			return null;
-		}
-		LOGGER.debug("OUT");
-		return sbiMap;
-	}
-
-	public SDKMap fromSbiGeoMapToSDKMap(SbiGeoMaps sbiMap) {
-		LOGGER.debug("IN");
-		if (sbiMap == null) {
-			LOGGER.warn("sbiMap in input is null!!");
-			return null;
-		}
-		SDKMap sdkMap = null;
-		try {
-			sdkMap = new SDKMap();
-			sdkMap.setMapId(sbiMap.getMapId());
-			sdkMap.setName(sbiMap.getName());
-			sdkMap.setDescr(sbiMap.getDescr());
-			sdkMap.setFormat(sbiMap.getFormat());
-			sdkMap.setUrl(sbiMap.getUrl());
-			if (sbiMap.getBinContents() != null) {
-				sdkMap.setBinId(sbiMap.getBinContents().getId());
-			}
-		} catch (Exception e) {
-			LOGGER.error("Error while converting Feature into SDKFeature.", e);
-			LOGGER.debug("Returning null.");
-			return null;
-		} finally {
-			LOGGER.debug("OUT");
-		}
-		return sdkMap;
-	}
 
 	private String deserializeSKDatasetParametersArray(List parsArraySDK) throws SourceBeanException {
 		String toReturn = "";

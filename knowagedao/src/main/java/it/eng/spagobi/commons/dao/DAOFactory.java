@@ -62,10 +62,7 @@ import it.eng.spagobi.hotlink.rememberme.dao.IRememberMeDAO;
 import it.eng.spagobi.i18n.dao.I18NMessagesDAO;
 import it.eng.spagobi.images.dao.IImagesDAO;
 import it.eng.spagobi.kpi.dao.IKpiDAO;
-import it.eng.spagobi.mapcatalogue.dao.ISbiGeoFeaturesDAO;
 import it.eng.spagobi.mapcatalogue.dao.ISbiGeoLayersDAO;
-import it.eng.spagobi.mapcatalogue.dao.ISbiGeoMapFeaturesDAO;
-import it.eng.spagobi.mapcatalogue.dao.ISbiGeoMapsDAO;
 import it.eng.spagobi.metadata.dao.ISbiDsBcDAO;
 import it.eng.spagobi.metadata.dao.ISbiJobSourceDAO;
 import it.eng.spagobi.metadata.dao.ISbiJobTableDAO;
@@ -425,39 +422,6 @@ public class DAOFactory {
 	 */
 	public static ISnapshotDAO getSnapshotDAO() {
 		return (ISnapshotDAO) createDAOInstance("SnapshotDAO");
-	}
-
-	/**
-	 * Creates a DAO instance for a BI object.
-	 *
-	 * @return a DAO instance for the BIObject
-	 *
-	 * @throws EMFUserError If an Exception occurred
-	 */
-	public static ISbiGeoMapsDAO getSbiGeoMapsDAO() {
-		return (ISbiGeoMapsDAO) createDAOInstance("GeoMapDAO");
-	}
-
-	/**
-	 * Creates a DAO instance for a BI object.
-	 *
-	 * @return a DAO instance for the BIObject
-	 *
-	 * @throws EMFUserError If an Exception occurred
-	 */
-	public static ISbiGeoFeaturesDAO getSbiGeoFeaturesDAO() {
-		return (ISbiGeoFeaturesDAO) createDAOInstance("GeoFeatureDAO");
-	}
-
-	/**
-	 * Creates a DAO instance for a BI object.
-	 *
-	 * @return a DAO instance for the BIObject
-	 *
-	 * @throws EMFUserError If an Exception occurred
-	 */
-	public static ISbiGeoMapFeaturesDAO getSbiGeoMapFeaturesDAO() {
-		return (ISbiGeoMapFeaturesDAO) createDAOInstance("GeoMapFeatureDAO");
 	}
 
 	/**
