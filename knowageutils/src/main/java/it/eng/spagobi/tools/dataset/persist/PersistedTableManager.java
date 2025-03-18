@@ -44,7 +44,6 @@ import com.jamonapi.MonitorFactory;
 
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.tools.dataset.bo.AbstractJDBCDataset;
-import it.eng.spagobi.tools.dataset.bo.CkanDataSet;
 import it.eng.spagobi.tools.dataset.bo.FileDataSet;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.bo.VersionedDataSet;
@@ -218,7 +217,7 @@ public class PersistedTableManager implements IPersistedManager {
 		if (dataSet instanceof VersionedDataSet) {
 			dataSet = ((VersionedDataSet) dataSet).getWrappedDataset();
 		}
-		if (dataSet instanceof FileDataSet || dataSet instanceof CkanDataSet) {
+		if (dataSet instanceof FileDataSet) {
 			datastore = normalizeFileDataSet(dataSet, datastore);
 		}
 
@@ -470,7 +469,7 @@ public class PersistedTableManager implements IPersistedManager {
 	}
 
 	private IDataStore normalizeFileDataSet(IDataSet dataSet, IDataStore datastore) {
-		if (dataSet instanceof FileDataSet || dataSet instanceof CkanDataSet) {
+		if (dataSet instanceof FileDataSet) {
 			// Change dataStore fields type according to the metadata specified
 			// on the DataSet metadata
 			// because FileDataSet has all dataStore field set as String by

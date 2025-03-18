@@ -73,7 +73,6 @@ import it.eng.spagobi.container.ObjectUtils;
 import it.eng.spagobi.services.scheduler.service.ISchedulerServiceSupplier;
 import it.eng.spagobi.services.scheduler.service.SchedulerServiceSupplierFactory;
 import it.eng.spagobi.tools.dataset.DatasetManagementAPI;
-import it.eng.spagobi.tools.dataset.bo.CkanDataSet;
 import it.eng.spagobi.tools.dataset.bo.ConfigurableDataSet;
 import it.eng.spagobi.tools.dataset.bo.CustomDataSet;
 import it.eng.spagobi.tools.dataset.bo.DataSetParametersList;
@@ -98,7 +97,6 @@ import it.eng.spagobi.tools.dataset.common.datawriter.JSONDataWriter;
 import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import it.eng.spagobi.tools.dataset.common.transformer.PivotDataSetTransformer;
-import it.eng.spagobi.tools.dataset.constants.CkanDataSetConstants;
 import it.eng.spagobi.tools.dataset.constants.DataSetConstants;
 import it.eng.spagobi.tools.dataset.constants.RESTDataSetConstants;
 import it.eng.spagobi.tools.dataset.constants.SPARQLDatasetConstants;
@@ -246,16 +244,18 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 						for (int o = 0; o < objectsUsing.size(); o++) {
 							BIObject obj = objectsUsing.get(o);
 							documentsNames += obj.getName();
-							if (o < objectsUsing.size() - 1)
+							if (o < objectsUsing.size() - 1) {
 								documentsNames += ", ";
+							}
 						}
 						itemsJSON.getJSONObject(i).put("hasDocumentsAssociated", documentsNames);
 					}
 
 					List<FederationDefinition> federationsAssociated = DAOFactory.getFedetatedDatasetDAO()
 							.loadFederationsUsingDataset(items.get(i).getId());
-					if (federationsAssociated != null && federationsAssociated.size() > 0)
+					if (federationsAssociated != null && federationsAssociated.size() > 0) {
 						itemsJSON.getJSONObject(i).put("hasFederationsAssociated", "true");
+					}
 
 				}
 				JSONObject responseJSON = createJSONResponse(itemsJSON, totalItemsNum);
@@ -656,7 +656,7 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 	private void setUsefulItemsInSession(IDataSetDAO dsDao, Locale locale) {
 		try {
 			List dsTypesList = DAOFactory.getDomainDAO().loadListDomainsByType(DataSetConstants.DATA_SET_TYPE);
-			filterDataSetType(dsTypesList);
+			// filterDataSetType(dsTypesList);
 			getSessionContainer().setAttribute("dsTypesList", dsTypesList);
 			List catTypesList = getCategories();
 			getSessionContainer().setAttribute("catTypesList", catTypesList);
@@ -677,21 +677,9 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 			File dir = new File(filePath);
 			String[] fileNames = dir.list();
 			getSessionContainer().setAttribute("fileNames", fileNames);
-		} catch (EMFUserError | EMFInternalError e) {
+		} catch (EMFUserError e) {
 			LOGGER.error(e.getMessage(), e);
 			throw new SpagoBIServiceException(SERVICE_NAME, "sbi.ds.dsTypesRetrieve", e);
-		}
-	}
-
-	private void filterDataSetType(List<Domain> domains) throws EMFInternalError {
-		if (!getUserProfile().getFunctionalities().contains(CommunityFunctionalityConstants.CKAN_FUNCTIONALITY)) {
-			Iterator<Domain> iterator = domains.iterator();
-			while (iterator.hasNext()) {
-				Domain domain = iterator.next();
-				if (domain.getValueCd().toLowerCase().contains("ckan")) {
-					iterator.remove();
-				}
-			}
 		}
 	}
 
@@ -1184,7 +1172,7 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 			dataSet = new FileDataSet();
 			((FileDataSet) dataSet).setResourcePath(DAOConfig.getResourcePath());
 
-			String fileName = getAttributeAsString(DataSetConstants.FILE_NAME); 
+			String fileName = getAttributeAsString(DataSetConstants.FILE_NAME);
 			File pathFile = new File(fileName);
 			fileName = pathFile.getName();
 			if (savingDataset) {
@@ -1270,97 +1258,6 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 				((FileDataSet) dataSet).setFileName(dsLabel + "." + fileType.toLowerCase());
 			} else {
 				((FileDataSet) dataSet).setFileName(fileName);
-			}
-
-		}
-
-		if (datasetTypeName.equalsIgnoreCase(DataSetConstants.DS_CKAN)) {
-			// added
-			String dsId = getAttributeAsString(DataSetConstants.DS_ID);
-			String dsLabel = getAttributeAsString(DataSetConstants.LABEL);
-			String fileType = getAttributeAsString(CkanDataSetConstants.CKAN_FILE_TYPE);
-
-			String csvDelimiter = getAttributeAsString(CkanDataSetConstants.CKAN_CSV_FILE_DELIMITER_CHARACTER);
-			String csvQuote = getAttributeAsString(CkanDataSetConstants.CKAN_CSV_FILE_QUOTE_CHARACTER);
-
-			String skipRows = getAttributeAsString(CkanDataSetConstants.CKAN_XSL_FILE_SKIP_ROWS);
-			String limitRows = getAttributeAsString(CkanDataSetConstants.CKAN_XSL_FILE_LIMIT_ROWS);
-			String xslSheetNumber = getAttributeAsString(CkanDataSetConstants.CKAN_XSL_FILE_SHEET_NUMBER);
-
-			String ckanUrl = getAttributeAsString(CkanDataSetConstants.CKAN_URL);
-
-			String ckanId = getAttributeAsString(CkanDataSetConstants.CKAN_ID);
-			String scopeCd = DataSetConstants.DS_SCOPE_USER;
-
-			String ckanEncodig = getAttributeAsString(CkanDataSetConstants.CKAN_CSV_FILE_ENCODING);
-
-			Boolean newFileUploaded = false;
-			if (getAttributeAsString("fileUploaded") != null) {
-				newFileUploaded = Boolean.valueOf(getAttributeAsString("fileUploaded"));
-			}
-
-			jsonDsConfig.put(DataSetConstants.FILE_TYPE, fileType);
-			jsonDsConfig.put(DataSetConstants.CSV_FILE_DELIMITER_CHARACTER, csvDelimiter);
-			jsonDsConfig.put(DataSetConstants.CSV_FILE_QUOTE_CHARACTER, csvQuote);
-			jsonDsConfig.put(DataSetConstants.CSV_FILE_ENCODING, ckanEncodig);
-			jsonDsConfig.put(DataSetConstants.XSL_FILE_SKIP_ROWS, skipRows);
-			jsonDsConfig.put(DataSetConstants.XSL_FILE_LIMIT_ROWS, limitRows);
-			jsonDsConfig.put(DataSetConstants.XSL_FILE_SHEET_NUMBER, xslSheetNumber);
-			jsonDsConfig.put(CkanDataSetConstants.CKAN_URL, ckanUrl);
-			jsonDsConfig.put(CkanDataSetConstants.CKAN_ID, ckanId);
-			jsonDsConfig.put(DataSetConstants.DS_SCOPE, scopeCd);
-
-			dataSet = new CkanDataSet();
-			((CkanDataSet) dataSet).setResourcePath(ckanUrl);
-			((CkanDataSet) dataSet).setCkanUrl(ckanUrl);
-
-			String fileName = getAttributeAsString(DataSetConstants.FILE_NAME);
-			if (savingDataset) {
-				// when saving the dataset the file associated will get the
-				// dataset label name
-				if (dsLabel != null) {
-					jsonDsConfig.put(DataSetConstants.FILE_NAME, dsLabel + "." + fileType.toLowerCase());
-				}
-			} else {
-				jsonDsConfig.put(DataSetConstants.FILE_NAME, fileName);
-			}
-
-			dataSet.setConfiguration(jsonDsConfig.toString());
-
-			if ((dsId == null) || (dsId.isEmpty())) {
-				// creating a new dataset, the file uploaded has to be renamed
-				// and moved
-				if (savingDataset) {
-					// delete the file
-					String resourcePath = DAOConfig.getResourcePath();
-					deleteDatasetFile(fileName, resourcePath, fileType);
-				}
-			} else {
-				// reading or modifying a existing dataset
-				if (newFileUploaded) {
-					// modifying an existing dataset with a new file uploaded
-					// saving the existing dataset with a new file associated
-					if (savingDataset) {
-						// rename and move the file
-						String resourcePath = DAOConfig.getResourcePath();
-						deleteDatasetFile(fileName, resourcePath, fileType);
-					}
-				}
-			}
-
-			((CkanDataSet) dataSet).setFileType(fileType);
-
-			if (savingDataset) {
-				// the file used will have the name equals to dataset's label
-				((CkanDataSet) dataSet).setFileName(dsLabel + "." + fileType.toLowerCase());
-			} else {
-				// fileName can be empty if you preview it as administrator
-				if (fileName.isEmpty()) {
-					((CkanDataSet) dataSet)
-							.setFileName(CkanDataSetConstants.CKAN_DUMMY_FILENAME + "." + fileType.toLowerCase());
-				} else {
-					((CkanDataSet) dataSet).setFileName(fileName);
-				}
 			}
 
 		}

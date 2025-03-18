@@ -33,3 +33,8 @@ DROP TABLE SBI_COMMUNITY_USERS ;
 
 DELETE FROM SBI_COMMUNITY ;
 DROP TABLE SBI_COMMUNITY ;
+
+delete from SBI_DOMAINS where VALUE_CD = 'Ckan' and VALUE_NM = 'SbiCkanDataSet';
+
+delete from SBI_ROLE_TYPE_USER_FUNC where USER_FUNCT_ID in (select USER_FUNCT_ID from SBI_USER_FUNC where name = 'CkanIntegrationFunctionality');
+delete from SBI_USER_FUNC where name = 'CkanIntegrationFunctionality';

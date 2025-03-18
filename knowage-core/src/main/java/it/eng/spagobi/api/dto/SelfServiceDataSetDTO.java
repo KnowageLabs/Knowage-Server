@@ -53,12 +53,6 @@ public class SelfServiceDataSetDTO {
 	@FormParam("catTypeId")
 	private String catTypeId;
 
-	@FormParam("ckanUrl")
-	private String ckanUrl;
-
-	@FormParam("ckanId")
-	private String ckanId;
-
 	@FormParam("fileName")
 	private String fileName;
 
@@ -191,22 +185,6 @@ public class SelfServiceDataSetDTO {
 
 	public void setCatTypeId(String catTypeId) {
 		this.catTypeId = catTypeId;
-	}
-
-	public String getCkanUrl() {
-		return ckanUrl;
-	}
-
-	public void setCkanUrl(String ckanUrl) {
-		this.ckanUrl = ckanUrl;
-	}
-
-	public String getCkanId() {
-		return ckanId;
-	}
-
-	public void setCkanId(String ckanId) {
-		this.ckanId = ckanId;
 	}
 
 	@ExtendedAlphanumeric

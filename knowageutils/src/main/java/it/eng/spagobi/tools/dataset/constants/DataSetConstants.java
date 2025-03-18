@@ -86,7 +86,6 @@ public class DataSetConstants {
 	public static final String JCLASS_NAME = "jClassName";
 	public static final String CUSTOM_DATA = "customData";
 	public static final String FILE = "File";
-	public static final String CKAN = "Ckan";
 	public static final String JAVA_CLASS = "Java Class";
 	public static final String WEB_SERVICE = "Web Service";
 	public static final String QBE = "Qbe";
@@ -107,7 +106,6 @@ public class DataSetConstants {
 	public static final String RECALCULATE_METADATA = "recalculateMetadata";
 
 	public static final String DS_FILE = "SbiFileDataSet";
-	public static final String DS_CKAN = "SbiCkanDataSet";
 	public static final String DS_JCLASS = "SbiJClassDataSet";
 	public static final String DS_QUERY = "SbiQueryDataSet";
 	public static final String DS_SCRIPT = "SbiScriptDataSet";
@@ -167,7 +165,6 @@ public class DataSetConstants {
 	static {
 		name2Code = new HashMap<>();
 		name2Code.put("File", DataSetConstants.DS_FILE);
-		name2Code.put("Ckan", DataSetConstants.DS_CKAN);
 		name2Code.put("Java Class", DataSetConstants.DS_JCLASS);
 		name2Code.put("Query", DataSetConstants.DS_QUERY);
 		name2Code.put("Script", DataSetConstants.DS_SCRIPT);
@@ -208,7 +205,6 @@ public class DataSetConstants {
 	static {
 		code2name = new HashMap<>();
 		code2name.put(DataSetConstants.DS_FILE, "File");
-		code2name.put(DataSetConstants.DS_CKAN, "Ckan");
 		code2name.put(DataSetConstants.DS_JCLASS, "Java Class");
 		code2name.put(DataSetConstants.DS_QUERY, "Query");
 		code2name.put(DataSetConstants.DS_SCRIPT, "Script");

@@ -89,13 +89,11 @@ import it.eng.spagobi.metamodel.SiblingsFileWrapper;
 import it.eng.spagobi.services.exceptions.ExceptionUtilities;
 import it.eng.spagobi.services.rest.annotations.UserConstraint;
 import it.eng.spagobi.tools.dataset.DatasetManagementAPI;
-import it.eng.spagobi.tools.dataset.bo.CkanDataSet;
 import it.eng.spagobi.tools.dataset.bo.FileDataSet;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.bo.PreparedDataSet;
 import it.eng.spagobi.tools.dataset.bo.VersionedDataSet;
 import it.eng.spagobi.tools.dataset.common.behaviour.UserProfileUtils;
-import it.eng.spagobi.tools.dataset.common.dataproxy.CkanDataProxy;
 import it.eng.spagobi.tools.dataset.common.dataproxy.FileDataProxy;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.datastore.IField;
@@ -103,7 +101,6 @@ import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
 import it.eng.spagobi.tools.dataset.common.datawriter.JSONDataWriter;
 import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
-import it.eng.spagobi.tools.dataset.constants.CkanDataSetConstants;
 import it.eng.spagobi.tools.dataset.constants.DataSetConstants;
 import it.eng.spagobi.tools.dataset.dao.DataSetFactory;
 import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
@@ -256,8 +253,10 @@ public class SelfServiceDataSetCRUD extends AbstractSpagoBIResource {
 					logger.error("Error during check of Geo spatial column", e);
 				}
 				if (isGeoDataset)
+				 {
 					actions.put(georeportAction); // Annotated view map action
 													// to release SpagoBI 4
+				}
 			}
 
 			String dsType = datasetJSON.optString(DataSetConstants.DS_TYPE_CD);
@@ -273,10 +272,12 @@ public class SelfServiceDataSetCRUD extends AbstractSpagoBIResource {
 			if (typeDocWizard != null && typeDocWizard.equalsIgnoreCase("GEO")) {
 				// if is caming from myAnalysis - create Geo Document - must
 				// shows only ds geospatial --> isGeoDataset == true
-				if (geoEngine != null && isGeoDataset)
+				if (geoEngine != null && isGeoDataset) {
 					datasetsJSONReturn.put(datasetJSON);
-			} else
+				}
+			} else {
 				datasetsJSONReturn.put(datasetJSON);
+			}
 		}
 		return datasetsJSONReturn;
 	}
@@ -411,10 +412,11 @@ public class SelfServiceDataSetCRUD extends AbstractSpagoBIResource {
 
 			// retrieve persist data
 			dsNew.setPersisted(Boolean.valueOf(persist));
-			if (tableName != null)
+			if (tableName != null) {
 				dsNew.setPersistTableName(tableName.toUpperCase());
-			else
+			} else {
 				dsNew.setPersistTableName(null);
+			}
 
 			Integer toReturnId = dsNew.getId();
 			if (dsNew.getId() == -1) {
@@ -1259,12 +1261,6 @@ public class SelfServiceDataSetCRUD extends AbstractSpagoBIResource {
 		IDataSet toReturn = null;
 		if (type.equals(DataSetConstants.DS_QBE)) {
 			toReturn = this.getQbeDataSet(selfServiceDataSetDTO);
-		} else if (type.equals(DataSetConstants.DS_CKAN)) {
-			if (checkMaxResults) {
-				toReturn = this.getCkanDataSet(selfServiceDataSetDTO, savingDataset, maxResults);
-			} else {
-				toReturn = this.getCkanDataSet(selfServiceDataSetDTO, savingDataset);
-			}
 		} else if (type.equals(DataSetConstants.PREPARED_DATASET)) {
 			toReturn = new PreparedDataSet();
 		} else {
@@ -1329,8 +1325,9 @@ public class SelfServiceDataSetCRUD extends AbstractSpagoBIResource {
 
 		if (type.equals(DataSetConstants.PREPARED_DATASET)) {
 
-			if (selfServiceDataSetDTO.getConfig() != null)
+			if (selfServiceDataSetDTO.getConfig() != null) {
 				toReturn.setConfiguration(selfServiceDataSetDTO.getConfig());
+			}
 
 		}
 
@@ -1515,104 +1512,6 @@ public class SelfServiceDataSetCRUD extends AbstractSpagoBIResource {
 		}
 	}
 
-	private IDataSet getCkanDataSet(SelfServiceDataSetDTO selfServiceDataSetDTO, boolean savingDataset, int maxResults) {
-		IDataSet dataSet = this.getCkanDataSet(selfServiceDataSetDTO, savingDataset);
-		if (dataSet instanceof CkanDataSet) {
-			CkanDataSet ckanDataSet = ((CkanDataSet) dataSet);
-			ckanDataSet.setMaxResults(maxResults);
-			CkanDataProxy ckanDataProxy = ckanDataSet.getDataProxy();
-			if (ckanDataProxy != null) {
-				ckanDataProxy.setMaxResultsReader(ckanDataSet.getMaxResults());
-			}
-		}
-		return dataSet;
-	}
-
-	private IDataSet getCkanDataSet(SelfServiceDataSetDTO selfServiceDataSetDTO, boolean savingDataset) {
-		CkanDataSet toReturn = new CkanDataSet();
-		JSONObject jsonDsConfig = this.getCkanDataSetConfig(selfServiceDataSetDTO, savingDataset);
-		toReturn.setConfiguration(jsonDsConfig.toString());
-
-		Integer id = -1;
-		String idStr = selfServiceDataSetDTO.getId();
-		if (idStr != null && !idStr.equals("")) {
-			id = new Integer(idStr);
-		}
-		String ckanUrl = selfServiceDataSetDTO.getCkanUrl();
-		String ckanId = selfServiceDataSetDTO.getCkanId();
-		toReturn.setCkanId(ckanId);
-		toReturn.setCkanUrl(ckanUrl);
-		toReturn.setResourcePath(ckanUrl);
-		String label = selfServiceDataSetDTO.getLabel();
-		String fileName = selfServiceDataSetDTO.getFileName();
-		String fileType = selfServiceDataSetDTO.getFileType();
-		Boolean newFileUploaded = false;
-		if (selfServiceDataSetDTO.getFileUploaded() != null) {
-			newFileUploaded = Boolean.valueOf(selfServiceDataSetDTO.getFileUploaded());
-		}
-
-		if (id == -1) {
-
-			if (savingDataset) {
-				// rename and move the file
-				String resourcePath = DAOConfig.getResourcePath();
-				deleteDatasetFile(fileName, resourcePath, fileType);
-				toReturn.setFileName(label + "." + fileType.toLowerCase());
-			}
-		} else {
-			// reading or modifying a existing dataset
-			if (newFileUploaded) {
-				String resourcePath = DAOConfig.getResourcePath();
-				deleteDatasetFile(fileName, resourcePath, fileType);
-				toReturn.setFileName(label + "." + fileType.toLowerCase());
-			}
-		}
-		return toReturn;
-	}
-
-	private JSONObject getCkanDataSetConfig(SelfServiceDataSetDTO selfServiceDataSetDTO, boolean savingDataset) {
-		JSONObject jsonDsConfig = new JSONObject();
-		try {
-			String label = selfServiceDataSetDTO.getLabel();
-			String fileName = selfServiceDataSetDTO.getFileName();
-			String csvDelimiter = selfServiceDataSetDTO.getCsvDelimiter();
-			String csvQuote = selfServiceDataSetDTO.getCsvQuote();
-			String csvEncoding = selfServiceDataSetDTO.getCsvEncoding();
-			String fileType = selfServiceDataSetDTO.getFileType();
-			String skipRows = selfServiceDataSetDTO.getSkipRows();
-			String limitRows = selfServiceDataSetDTO.getLimitRows();
-			String xslSheetNumber = selfServiceDataSetDTO.getXslSheetNumber();
-			String ckanId = selfServiceDataSetDTO.getCkanId();
-			String ckanUrl = selfServiceDataSetDTO.getCkanUrl();
-			String scopeCd = DataSetConstants.DS_SCOPE_USER;
-			String dateFormat = selfServiceDataSetDTO.getDateFormat();
-
-			jsonDsConfig.put(DataSetConstants.FILE_TYPE, fileType);
-			if (savingDataset) {
-				// when saving the dataset the file associated will get the
-				// dataset label name
-				jsonDsConfig.put(DataSetConstants.FILE_NAME, label + "." + fileType.toLowerCase());
-			} else {
-				jsonDsConfig.put(DataSetConstants.FILE_NAME, fileName);
-			}
-			jsonDsConfig.put(DataSetConstants.CSV_FILE_DELIMITER_CHARACTER, csvDelimiter);
-			jsonDsConfig.put(DataSetConstants.CSV_FILE_QUOTE_CHARACTER, csvQuote);
-			jsonDsConfig.put(DataSetConstants.CSV_FILE_ENCODING, csvEncoding);
-			jsonDsConfig.put(DataSetConstants.FILE_DATE_FORMAT, dateFormat);
-			jsonDsConfig.put(DataSetConstants.XSL_FILE_SKIP_ROWS, skipRows);
-			jsonDsConfig.put(DataSetConstants.XSL_FILE_LIMIT_ROWS, limitRows);
-			jsonDsConfig.put(DataSetConstants.XSL_FILE_SHEET_NUMBER, xslSheetNumber);
-			jsonDsConfig.put(CkanDataSetConstants.CKAN_ID, ckanId);
-			jsonDsConfig.put(CkanDataSetConstants.CKAN_URL, ckanUrl);
-			jsonDsConfig.put(DataSetConstants.DS_SCOPE, scopeCd);
-
-		} catch (Exception e) {
-			logger.error("Error while defining dataset configuration. Error: " + e.getMessage());
-			throw new SpagoBIRuntimeException("Error while defining dataset configuration", e);
-		}
-		return jsonDsConfig;
-	}
-
 	private void deleteDatasetFile(String fileName, String resourcePath, String fileType) {
 		File datasetFile = PathTraversalChecker.get(resourcePath, "dataset", "files", "temp", fileName);
 
@@ -1630,8 +1529,9 @@ public class SelfServiceDataSetCRUD extends AbstractSpagoBIResource {
 
 		try {
 
-			if (datasetTypeCode == null)
+			if (datasetTypeCode == null) {
 				return null;
+			}
 			List<Domain> datasetTypes = null;
 
 			try {
@@ -1651,8 +1551,9 @@ public class SelfServiceDataSetCRUD extends AbstractSpagoBIResource {
 				}
 			}
 		} catch (Throwable t) {
-			if (t instanceof SpagoBIRuntimeException)
+			if (t instanceof SpagoBIRuntimeException) {
 				throw (SpagoBIRuntimeException) t;
+			}
 			throw new SpagoBIRuntimeException("An unexpected error occured while resolving dataset type name from dataset type code [" + datasetTypeCode + "]");
 		}
 
@@ -1664,8 +1565,9 @@ public class SelfServiceDataSetCRUD extends AbstractSpagoBIResource {
 
 		try {
 
-			if (category == null)
+			if (category == null) {
 				return null;
+			}
 			List<Domain> categories = null;
 
 			try {
@@ -1686,8 +1588,9 @@ public class SelfServiceDataSetCRUD extends AbstractSpagoBIResource {
 				}
 			}
 		} catch (Throwable t) {
-			if (t instanceof SpagoBIRuntimeException)
+			if (t instanceof SpagoBIRuntimeException) {
 				throw (SpagoBIRuntimeException) t;
+			}
 			throw new SpagoBIRuntimeException("An unexpected error occured while resolving dataset type name from dataset type code [" + category + "]");
 		}
 
@@ -1698,8 +1601,9 @@ public class SelfServiceDataSetCRUD extends AbstractSpagoBIResource {
 		Integer scopeId = null;
 		try {
 
-			if (scopeCd == null)
+			if (scopeCd == null) {
 				return null;
+			}
 			List<Domain> scopes = null;
 
 			try {
@@ -1719,8 +1623,9 @@ public class SelfServiceDataSetCRUD extends AbstractSpagoBIResource {
 				}
 			}
 		} catch (Throwable t) {
-			if (t instanceof SpagoBIRuntimeException)
+			if (t instanceof SpagoBIRuntimeException) {
 				throw (SpagoBIRuntimeException) t;
+			}
 			throw new SpagoBIRuntimeException("An unexpected error occured while resolving scope id name from dataset scope code [" + scopeCd + "]");
 		}
 		return scopeId;
@@ -1950,8 +1855,9 @@ public class SelfServiceDataSetCRUD extends AbstractSpagoBIResource {
 			IField field = currRecord.getFieldAt(columnIndex);
 			Object value = field.getValue();
 			if (value instanceof Date) {
-				if (value instanceof Timestamp)
+				if (value instanceof Timestamp) {
 					return false;
+				}
 
 				// it's already a Date, skip the check
 				continue;

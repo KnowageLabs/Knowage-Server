@@ -52,7 +52,6 @@ import it.eng.qbe.dataset.DerivedDataSet;
 import it.eng.qbe.dataset.FederatedDataSet;
 import it.eng.qbe.dataset.QbeDataSet;
 import it.eng.spago.base.SourceBean;
-import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
@@ -61,7 +60,6 @@ import it.eng.spagobi.commons.bo.Domain;
 import it.eng.spagobi.commons.bo.Role;
 import it.eng.spagobi.commons.bo.RoleMetaModelCategory;
 import it.eng.spagobi.commons.bo.UserProfile;
-import it.eng.spagobi.commons.constants.CommunityFunctionalityConstants;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOConfig;
 import it.eng.spagobi.commons.dao.DAOFactory;
@@ -74,7 +72,6 @@ import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
 import it.eng.spagobi.commons.utilities.UserUtilities;
 import it.eng.spagobi.tools.dataset.DatasetManagementAPI;
 import it.eng.spagobi.tools.dataset.bo.AbstractJDBCDataset;
-import it.eng.spagobi.tools.dataset.bo.CkanDataSet;
 import it.eng.spagobi.tools.dataset.bo.ConfigurableDataSet;
 import it.eng.spagobi.tools.dataset.bo.CustomDataSet;
 import it.eng.spagobi.tools.dataset.bo.DataSetParametersList;
@@ -106,7 +103,6 @@ import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData.FieldType;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import it.eng.spagobi.tools.dataset.common.metadata.MetaData;
 import it.eng.spagobi.tools.dataset.common.transformer.PivotDataSetTransformer;
-import it.eng.spagobi.tools.dataset.constants.CkanDataSetConstants;
 import it.eng.spagobi.tools.dataset.constants.DataSetConstants;
 import it.eng.spagobi.tools.dataset.constants.PythonDataSetConstants;
 import it.eng.spagobi.tools.dataset.constants.RESTDataSetConstants;
@@ -545,14 +541,15 @@ public class ManageDataSetsForREST {
 
 	private FieldType getFieldType(String fieldType) {
 		FieldType toReturn;
-		if (fieldType.equalsIgnoreCase("ATTRIBUTE"))
+		if (fieldType.equalsIgnoreCase("ATTRIBUTE")) {
 			toReturn = IFieldMetaData.FieldType.ATTRIBUTE;
-		else if (fieldType.equalsIgnoreCase("SPATIAL_ATTRIBUTE"))
+		} else if (fieldType.equalsIgnoreCase("SPATIAL_ATTRIBUTE")) {
 			toReturn = IFieldMetaData.FieldType.SPATIAL_ATTRIBUTE;
-		else if (fieldType.equalsIgnoreCase("MEASURE"))
+		} else if (fieldType.equalsIgnoreCase("MEASURE")) {
 			toReturn = IFieldMetaData.FieldType.MEASURE;
-		else
+		} else {
 			throw new SpagoBIRuntimeException("Cannot map fieldType {" + fieldType + "}");
+		}
 		return toReturn;
 	}
 
@@ -562,7 +559,6 @@ public class ManageDataSetsForREST {
 		String datasetTypeName = null;
 		try {
 			List<Domain> datasetTypes = DAOFactory.getDomainDAO().loadListDomainsByType(DataSetConstants.DATA_SET_TYPE);
-			filterDataSetType(datasetTypes, userProfile);
 
 			for (Domain datasetType : datasetTypes) {
 				if (datasetTypeCode.equalsIgnoreCase(datasetType.getValueCd())) {
@@ -588,8 +584,6 @@ public class ManageDataSetsForREST {
 
 		if (datasetTypeName.equalsIgnoreCase(DataSetConstants.DS_FILE)) {
 			toReturn = manageFileDataSet(savingDataset, jsonDsConfig, json);
-		} else if (datasetTypeName.equalsIgnoreCase(DataSetConstants.DS_CKAN)) {
-			toReturn = manageCkanDataSet(savingDataset, jsonDsConfig, json);
 		} else if (datasetTypeName.equalsIgnoreCase(DataSetConstants.DS_REST_TYPE)) {
 			toReturn = manageRESTDataSet(savingDataset, jsonDsConfig, json);
 		} else if (datasetTypeName.equalsIgnoreCase(DataSetConstants.DS_PYTHON_TYPE)) {
@@ -658,18 +652,6 @@ public class ManageDataSetsForREST {
 		} catch (Exception e) {
 			LOGGER.error("Role with selected id: " + role.getId() + " doesn't exists", e);
 			throw new SpagoBIRuntimeException("Item with selected id: " + role.getId() + " doesn't exists", e);
-		}
-	}
-
-	private void filterDataSetType(List<Domain> domains, UserProfile userProfile) throws EMFInternalError {
-		if (!userProfile.getFunctionalities().contains(CommunityFunctionalityConstants.CKAN_FUNCTIONALITY)) {
-			Iterator<Domain> iterator = domains.iterator();
-			while (iterator.hasNext()) {
-				Domain domain = iterator.next();
-				if (domain.getValueCd().toLowerCase().contains("ckan")) {
-					iterator.remove();
-				}
-			}
 		}
 	}
 
@@ -1292,101 +1274,6 @@ public class ManageDataSetsForREST {
 		return dataSet;
 	}
 
-	private CkanDataSet manageCkanDataSet(boolean savingDataset, JSONObject jsonDsConfig, JSONObject json)
-			throws JSONException {
-
-		String dsId = json.optString(DataSetConstants.DS_ID);
-		String dsLabel = json.getString(DataSetConstants.LABEL);
-		String fileType = json.getString(CkanDataSetConstants.CKAN_FILE_TYPE);
-
-		String csvDelimiter = json.optString(CkanDataSetConstants.CKAN_CSV_FILE_DELIMITER_CHARACTER);
-		String csvQuote = json.optString(CkanDataSetConstants.CKAN_CSV_FILE_QUOTE_CHARACTER);
-		String dateFormat = json.optString(CkanDataSetConstants.CKAN_CSV_DATE_FORMAT);
-
-		String skipRows = json.optString(CkanDataSetConstants.CKAN_XSL_FILE_SKIP_ROWS);
-		String limitRows = json.optString(CkanDataSetConstants.CKAN_XSL_FILE_LIMIT_ROWS);
-		String xslSheetNumber = json.optString(CkanDataSetConstants.CKAN_XSL_FILE_SHEET_NUMBER);
-
-		String ckanUrl = json.optString(CkanDataSetConstants.CKAN_URL);
-
-		String ckanId = json.optString(CkanDataSetConstants.CKAN_ID);
-		String scopeCd = DataSetConstants.DS_SCOPE_USER;
-
-		String ckanEncodig = json.optString(CkanDataSetConstants.CKAN_CSV_FILE_ENCODING);
-
-		CkanDataSet dataSet = new CkanDataSet();
-		manageDataSetMetadata(json, dataSet);
-
-		Boolean newFileUploaded = false;
-		if (json.optString("fileUploaded") != null) {
-			newFileUploaded = Boolean.valueOf(json.optString("fileUploaded"));
-		}
-
-		jsonDsConfig.put(DataSetConstants.FILE_TYPE, fileType);
-		jsonDsConfig.put(DataSetConstants.CSV_FILE_DELIMITER_CHARACTER, csvDelimiter);
-		jsonDsConfig.put(DataSetConstants.CSV_FILE_QUOTE_CHARACTER, csvQuote);
-		jsonDsConfig.put(DataSetConstants.FILE_DATE_FORMAT, dateFormat);
-		jsonDsConfig.put(DataSetConstants.CSV_FILE_ENCODING, ckanEncodig);
-		jsonDsConfig.put(DataSetConstants.XSL_FILE_SKIP_ROWS, skipRows);
-		jsonDsConfig.put(DataSetConstants.XSL_FILE_LIMIT_ROWS, limitRows);
-		jsonDsConfig.put(DataSetConstants.XSL_FILE_SHEET_NUMBER, xslSheetNumber);
-		jsonDsConfig.put(CkanDataSetConstants.CKAN_URL, ckanUrl);
-		jsonDsConfig.put(CkanDataSetConstants.CKAN_ID, ckanId);
-		jsonDsConfig.put(DataSetConstants.DS_SCOPE, scopeCd);
-
-		dataSet.setResourcePath(ckanUrl);
-		dataSet.setCkanUrl(ckanUrl);
-
-		String fileName = json.optString("fileName");
-		if (savingDataset) {
-			// when saving the dataset the file associated will get the
-			// dataset label name
-			if (dsLabel != null) {
-				jsonDsConfig.put(DataSetConstants.FILE_NAME, dsLabel + "." + fileType.toLowerCase());
-			}
-		} else {
-			jsonDsConfig.put(DataSetConstants.FILE_NAME, fileName);
-		}
-
-		dataSet.setConfiguration(jsonDsConfig.toString());
-
-		if ((dsId == null) || (dsId.isEmpty())) {
-			// creating a new dataset, the file uploaded has to be renamed
-			// and moved
-			if (savingDataset) {
-				// delete the file
-				String resourcePath = DAOConfig.getResourcePath();
-				deleteDatasetFile(fileName, resourcePath, fileType);
-			}
-		} else {
-			// reading or modifying a existing dataset
-			if (Boolean.TRUE.equals(newFileUploaded)) {
-				// modifying an existing dataset with a new file uploaded
-				// saving the existing dataset with a new file associated
-				if (savingDataset) {
-					// rename and move the file
-					String resourcePath = DAOConfig.getResourcePath();
-					deleteDatasetFile(fileName, resourcePath, fileType);
-				}
-			}
-		}
-
-		dataSet.setFileType(fileType);
-
-		if (savingDataset) {
-			// the file used will have the name equals to dataset's label
-			dataSet.setFileName(dsLabel + "." + fileType.toLowerCase());
-		} else {
-			// fileName can be empty if you preview it as administrator
-			if (fileName.isEmpty()) {
-				dataSet.setFileName(CkanDataSetConstants.CKAN_DUMMY_FILENAME + "." + fileType.toLowerCase());
-			} else {
-				dataSet.setFileName(fileName);
-			}
-		}
-		return dataSet;
-	}
-
 	private FileDataSet manageFileDataSet(boolean savingDataset, JSONObject jsonDsConfig, JSONObject json)
 			throws JSONException, IOException {
 		String dsId = json.optString(DataSetConstants.ID);
@@ -1679,39 +1566,39 @@ public class ManageDataSetsForREST {
 	}
 
 	private Class getClassTypeFromColumn(String columnClass) {
-		if (columnClass.equalsIgnoreCase("java.lang.String"))
+		if (columnClass.equalsIgnoreCase("java.lang.String")) {
 			return java.lang.String.class;
-		else if (columnClass.equalsIgnoreCase("java.lang.Long"))
+		} else if (columnClass.equalsIgnoreCase("java.lang.Long")) {
 			return java.lang.Long.class;
-		else if (columnClass.equalsIgnoreCase("java.lang.Integer"))
+		} else if (columnClass.equalsIgnoreCase("java.lang.Integer")) {
 			return java.lang.Integer.class;
-		else if (columnClass.equalsIgnoreCase("java.math.BigDecimal"))
+		} else if (columnClass.equalsIgnoreCase("java.math.BigDecimal")) {
 			return java.math.BigDecimal.class;
-		else if (columnClass.equalsIgnoreCase("java.lang.Double"))
+		} else if (columnClass.equalsIgnoreCase("java.lang.Double")) {
 			return java.lang.Double.class;
-		else if (columnClass.equalsIgnoreCase("java.util.Date"))
+		} else if (columnClass.equalsIgnoreCase("java.util.Date")) {
 			return java.sql.Date.class;
-		else if (columnClass.equalsIgnoreCase("java.util.Timestamp"))
+		} else if (columnClass.equalsIgnoreCase("java.util.Timestamp")) {
 			return java.sql.Timestamp.class;
-		else if (columnClass.equalsIgnoreCase("java.sql.Timestamp"))
+		} else if (columnClass.equalsIgnoreCase("java.sql.Timestamp")) {
 			return java.sql.Timestamp.class;
-		else if (columnClass.equalsIgnoreCase("oracle.sql.TIMESTAMP"))
+		} else if (columnClass.equalsIgnoreCase("oracle.sql.TIMESTAMP")) {
 			return java.sql.Timestamp.class;
-		else if (columnClass.equalsIgnoreCase("java.time.LocalDate"))
+		} else if (columnClass.equalsIgnoreCase("java.time.LocalDate")) {
 			return java.time.LocalDate.class;
-		else if (columnClass.equalsIgnoreCase("java.time.LocalTime"))
+		} else if (columnClass.equalsIgnoreCase("java.time.LocalTime")) {
 			return java.time.LocalTime.class;
-		else if (columnClass.equalsIgnoreCase("java.time.LocalDateTime"))
+		} else if (columnClass.equalsIgnoreCase("java.time.LocalDateTime")) {
 			return java.time.LocalDateTime.class;
-		else if (columnClass.equalsIgnoreCase("java.time.OffsetTime"))
+		} else if (columnClass.equalsIgnoreCase("java.time.OffsetTime")) {
 			return java.time.OffsetTime.class;
-		else if (columnClass.equalsIgnoreCase("java.time.OffsetDateTime"))
+		} else if (columnClass.equalsIgnoreCase("java.time.OffsetDateTime")) {
 			return java.time.OffsetDateTime.class;
-		else if (columnClass.equalsIgnoreCase("java.time.ZonedDateTime"))
+		} else if (columnClass.equalsIgnoreCase("java.time.ZonedDateTime")) {
 			return java.time.ZonedDateTime.class;
-		else if (columnClass.equalsIgnoreCase("java.lang.Boolean"))
+		} else if (columnClass.equalsIgnoreCase("java.lang.Boolean")) {
 			return java.lang.Boolean.class;
-		else {
+		} else {
 			try {
 				return Class.forName(columnClass);
 			} catch (ClassNotFoundException e) {
@@ -1721,14 +1608,15 @@ public class ManageDataSetsForREST {
 	}
 
 	private FieldType getFieldTypeFromColumn(String fieldType) {
-		if (fieldType.equalsIgnoreCase("ATTRIBUTE"))
+		if (fieldType.equalsIgnoreCase("ATTRIBUTE")) {
 			return FieldType.ATTRIBUTE;
-		else if (fieldType.equalsIgnoreCase("MEASURE"))
+		} else if (fieldType.equalsIgnoreCase("MEASURE")) {
 			return FieldType.MEASURE;
-		else if (fieldType.equalsIgnoreCase("SPATIAL_ATTRIBUTE"))
+		} else if (fieldType.equalsIgnoreCase("SPATIAL_ATTRIBUTE")) {
 			return FieldType.SPATIAL_ATTRIBUTE;
-		else
+		} else {
 			throw new SpagoBIRuntimeException("Couldn't map field type <" + fieldType + ">");
+		}
 	}
 
 	private RESTDataSet manageRESTDataSet(boolean savingDataset, JSONObject config, JSONObject json)
@@ -2029,8 +1917,9 @@ public class ManageDataSetsForREST {
 		if (parsJSON != null) {
 			if (datasetTypeName.equalsIgnoreCase(DataSetConstants.DS_SOLR_TYPE)) {
 				parametersMap = getSolrDataSetParametersAsMap(json, userProfile);
-			} else
+			} else {
 				parametersMap = getDataSetParametersAsMap(json);
+			}
 		}
 		IEngUserProfile profile = userProfile;
 
@@ -2057,8 +1946,9 @@ public class ManageDataSetsForREST {
 			}
 
 			dataSet.setUserProfileAttributes(UserProfileUtils.getProfileAttributes(profile));
-			if (profile instanceof UserProfile)
+			if (profile instanceof UserProfile) {
 				dataSet.setUserProfile((UserProfile) profile);
+			}
 			dataSet.setParamsMap(parametersFilled);
 			checkFileDataset(dataSet);
 			IDataStore dataStore = null;

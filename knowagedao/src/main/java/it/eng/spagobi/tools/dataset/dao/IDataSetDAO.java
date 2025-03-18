@@ -85,8 +85,6 @@ public interface IDataSetDAO extends ISpagoBIDao {
 
 	List<IDataSet> loadNotDerivedDatasetOwnedAndShared(UserProfile user);
 
-	List<IDataSet> loadCkanDataSets(UserProfile user);
-
 	/**
 	 * @deprecated Use {@link ISbiDataSetDAO#loadMyDataSets(int, int, UserProfile)} TODO ML-DATASOURCE-V3 Delete
 	 */

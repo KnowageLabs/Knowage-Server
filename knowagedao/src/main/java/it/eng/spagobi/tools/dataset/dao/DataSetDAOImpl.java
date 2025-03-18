@@ -735,10 +735,11 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 			List<BIObject> objectsAssociated = DAOFactory.getBIObjDataSetDAO().getBIObjectsUsingDataset(dsIdInt,
 					session);
 
-			if (objectsAssociated.isEmpty())
+			if (objectsAssociated.isEmpty()) {
 				toReturn = false;
-			else
+			} else {
 				toReturn = true;
+			}
 
 		} catch (Exception e) {
 			if (transaction != null && transaction.isActive()) {
@@ -947,15 +948,6 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 		return idToReturn;
 	}
 
-	/**
-	 * @deprecated TODO Delete DONE
-	 */
-	@Deprecated
-	@Override
-	public List<IDataSet> loadCkanDataSets(UserProfile user) {
-		return loadDataSets(user.getUserId().toString(), true, false, null, "USER",
-				UserUtilities.getDataSetCategoriesByUser(user), "SbiCkanDataSet", false);
-	}
 
 	@Override
 	public IDataSet loadDataSetById(Integer id) {
@@ -1137,8 +1129,9 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 		} catch (Exception e) {
 			throw new SpagoBIDAOException("An error has occured while loading dataset's older versions", e);
 		} finally {
-			if (session != null && session.isOpen())
+			if (session != null && session.isOpen()) {
 				session.close();
+			}
 		}
 
 		logger.debug("OUT");
@@ -1282,8 +1275,9 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 		} catch (Exception e) {
 			throw new SpagoBIDAOException("An unexpected error occured while loading datasets basic info for LOV", e);
 		} finally {
-			if (session != null && session.isOpen())
+			if (session != null && session.isOpen()) {
 				session.close();
+			}
 
 			logger.debug("OUT");
 		}
@@ -1324,21 +1318,22 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 			if (scope.equalsIgnoreCase("owned") || scope.equalsIgnoreCase(SHARED)) {
 				owner = user.getUserId().toString();
 				if (owner != null) {
-					if (scope.equalsIgnoreCase("owned"))
+					if (scope.equalsIgnoreCase("owned")) {
 						statement.append("and dst.dataSet.owner = :owner ");
-					else
+					} else {
 						statement.append("and dst.dataSet.owner != :owner ");
+					}
 				}
 			}
 
 			if (scope.equalsIgnoreCase(ENTERPRISE) || scope.equalsIgnoreCase(SHARED)
 					|| scope.equalsIgnoreCase("all")) {
 				statement.append("and dst.dataSet.scope.valueCd = :domain ");
-				if (scope.equalsIgnoreCase(ENTERPRISE))
+				if (scope.equalsIgnoreCase(ENTERPRISE)) {
 					domain = scope.toUpperCase();
-				else if (scope.equalsIgnoreCase(SHARED))
+				} else if (scope.equalsIgnoreCase(SHARED)) {
 					domain = "USER";
-				else {
+				} else {
 					domains = new String[2];
 					domains[0] = "USER";
 					domains[1] = "ENTERPRISE";
@@ -1366,8 +1361,9 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 				query.setString(OWNER, owner);
 			}
 
-			if (domain != null)
+			if (domain != null) {
 				query.setString("domain", domain);
+			}
 
 			if (domains != null && domains.length > 0) {
 				query.setString("user", domains[0]);
@@ -1393,8 +1389,9 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 			logger.error("An error has occured while filtering Enterprise Datasets by Tags", e);
 			throw new SpagoBIDAOException("An unexpected error has occured while filtering Datasets by Tags", e);
 		} finally {
-			if (session != null && session.isOpen())
+			if (session != null && session.isOpen()) {
 				session.close();
+			}
 		}
 
 		logger.debug("OUT");
@@ -1557,8 +1554,9 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 			}
 
 			listQuery.setFirstResult(offset);
-			if (fetchSize > 0)
+			if (fetchSize > 0) {
 				listQuery.setMaxResults(fetchSize);
+			}
 			List<SbiDataSet> sbiDatasetVersions = listQuery.list();
 
 			if (sbiDatasetVersions != null && !sbiDatasetVersions.isEmpty()) {
@@ -1574,8 +1572,9 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 			}
 			throw new SpagoBIDAOException("An unexpected error has occured while loading datasets with tags", e);
 		} finally {
-			if (session != null && session.isOpen())
+			if (session != null && session.isOpen()) {
 				session.close();
+			}
 		}
 		logger.debug("OUT");
 		return toReturn;
@@ -1625,8 +1624,9 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 
 			Query listQuery = session.createQuery(hsql);
 			listQuery.setFirstResult(offset);
-			if (fetchSize > 0)
+			if (fetchSize > 0) {
 				listQuery.setMaxResults(fetchSize);
+			}
 			List<SbiDataSet> sbiDatasetVersions = listQuery.list();
 
 			if (sbiDatasetVersions != null && !sbiDatasetVersions.isEmpty()) {
@@ -1741,8 +1741,9 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 			}
 
 			listQuery.setFirstResult(offset);
-			if (fetchSize > 0)
+			if (fetchSize > 0) {
 				listQuery.setMaxResults(fetchSize);
+			}
 			List<SbiDataSet> sbiDatasetVersions = listQuery.list();
 
 			addGuiDataSet(toReturn, sbiDatasetVersions);
@@ -1800,8 +1801,9 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 					statement.append(" and (h.category.id IN (:idsCat) or h.owner = :owner)");
 				}
 			}
-			if (dsType != null)
+			if (dsType != null) {
 				statement.append(" and h.type = :dsType");
+			}
 
 			Query listQuery = session.createQuery(statement.toString());
 			if (idsCat != null && idsCat.size() > 0) {
@@ -1811,8 +1813,9 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 				listQuery.setString(OWNER, owner);
 			}
 
-			if (dsType != null)
+			if (dsType != null) {
 				listQuery.setString("dsType", dsType);
+			}
 
 			List<SbiDataSet> sbiDatasetVersions = listQuery.list();
 			addGuiDataSet(toReturn, sbiDatasetVersions);
@@ -1871,8 +1874,9 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 			query.setBoolean("active", true);
 			query.setString(OWNER, userProfile.getUserId().toString());
 
-			if (categoryIds != null && !categoryIds.isEmpty())
+			if (categoryIds != null && !categoryIds.isEmpty()) {
 				query.setParameterList("categories", categoryIds);
+			}
 
 			results = executeQuery(query, session);
 		} catch (Exception e) {
@@ -2028,8 +2032,9 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 				listQuery.setFirstResult(offset);
 			}
 
-			if (fetchSize > 0)
+			if (fetchSize > 0) {
 				listQuery.setMaxResults(fetchSize);
+			}
 
 			List sbiActiveDatasetsList = listQuery.list();
 
@@ -2133,8 +2138,9 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 			listQuery.setBoolean(0, true);
 			listQuery.setString(1, owner);
 			listQuery.setFirstResult(offset);
-			if (fetchSize > 0)
+			if (fetchSize > 0) {
 				listQuery.setMaxResults(fetchSize);
+			}
 
 			List sbiActiveDatasetsList = listQuery.list();
 
@@ -2236,8 +2242,9 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 
 			Query listQuery = session.createQuery("from SbiDataSet ds where ds.active=true order by label");
 			listQuery.setFirstResult(offset);
-			if (fetchSize > 0)
+			if (fetchSize > 0) {
 				listQuery.setMaxResults(fetchSize);
+			}
 			toReturn = listQuery.list();
 
 		} catch (Exception e) {
@@ -2782,8 +2789,9 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 		} catch (Exception e) {
 			throw new SpagoBIDAOException("An error has occured while loading dataset's older versions", e);
 		} finally {
-			if (session != null && session.isOpen())
+			if (session != null && session.isOpen()) {
 				session.close();
+			}
 		}
 		logger.debug("OUT");
 		return olderVersions;
@@ -3055,8 +3063,9 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 			throw new SpagoBIDAOException(
 					"An unexpected error occured while loading dataset whose label is equal to [" + label + "]", e);
 		}
-		if (result != null && !result.isEmpty())
+		if (result != null && !result.isEmpty()) {
 			return datasetToReturn;
+		}
 
 		return null;
 	}

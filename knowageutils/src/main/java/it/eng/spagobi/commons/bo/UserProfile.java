@@ -19,7 +19,6 @@ package it.eng.spagobi.commons.bo;
 
 import static it.eng.spagobi.commons.constants.CommunityFunctionalityConstants.ALERT_MANAGEMENT;
 import static it.eng.spagobi.commons.constants.CommunityFunctionalityConstants.ARTIFACT_CATALOGUE_MANAGEMENT;
-import static it.eng.spagobi.commons.constants.CommunityFunctionalityConstants.CKAN_FUNCTIONALITY;
 import static it.eng.spagobi.commons.constants.CommunityFunctionalityConstants.CONTSTRAINT_MANAGEMENT;
 import static it.eng.spagobi.commons.constants.CommunityFunctionalityConstants.CONTSTRAINT_VIEW;
 import static it.eng.spagobi.commons.constants.CommunityFunctionalityConstants.CREATE_CHART_FUNCTIONALITY;
@@ -242,7 +241,7 @@ public class UserProfile implements IEngUserProfile {
 
 	private static List<String> getSchedulerUserFunctionalities() {
 		String[] functionalities = { ALERT_MANAGEMENT, MANAGE_ANALYTICAL_WIDGET, ARTIFACT_CATALOGUE_MANAGEMENT,
-				MANAGE_CHART_WIDGET, CKAN_FUNCTIONALITY, CONTSTRAINT_MANAGEMENT, CONTSTRAINT_VIEW,
+				MANAGE_CHART_WIDGET, CONTSTRAINT_MANAGEMENT, CONTSTRAINT_VIEW,
 				CREATE_CHART_FUNCTIONALITY, CREATE_COCKPIT_FUNCTIONALITY, CREATE_DATASETS_AS_FINAL_USER,
 				DATASET_MANAGEMENT, DATASOURCE_BIG_DATA, DATASOURCE_MANAGEMENT, DATASOURCE_READ,
 				DISTRIBUTIONLIST_MANAGEMENT, DISTRIBUTIONLIST_USER, DOCUMENT_ADMINISTRATION, DOCUMENT_MANAGEMENT_ADMIN,

@@ -48,7 +48,6 @@ import it.eng.spagobi.federateddataset.dao.SbiFederationUtils;
 import it.eng.spagobi.federateddataset.metadata.SbiFederationDefinition;
 import it.eng.spagobi.security.hmacfilter.HMACSecurityException;
 import it.eng.spagobi.services.dataset.bo.SpagoBiDataSet;
-import it.eng.spagobi.tools.dataset.bo.CkanDataSet;
 import it.eng.spagobi.tools.dataset.bo.ConfigurableDataSet;
 import it.eng.spagobi.tools.dataset.bo.CustomDataSet;
 import it.eng.spagobi.tools.dataset.bo.DataSetParameterItem;
@@ -77,7 +76,6 @@ import it.eng.spagobi.tools.dataset.bo.SolrDataSet;
 import it.eng.spagobi.tools.dataset.bo.VersionedDataSet;
 import it.eng.spagobi.tools.dataset.common.behaviour.UserProfileUtils;
 import it.eng.spagobi.tools.dataset.common.transformer.PivotDataSetTransformer;
-import it.eng.spagobi.tools.dataset.constants.CkanDataSetConstants;
 import it.eng.spagobi.tools.dataset.constants.DataSetConstants;
 import it.eng.spagobi.tools.dataset.constants.SolrDataSetConstants;
 import it.eng.spagobi.tools.dataset.federation.FederationDefinition;
@@ -102,7 +100,6 @@ public class DataSetFactory {
 
 	public static final String JDBC_DS_TYPE = "SbiQueryDataSet";
 	public static final String FILE_DS_TYPE = "File";
-	public static final String CKAN_DS_TYPE = "Ckan";
 	public static final String SCRIPT_DS_TYPE = "Script";
 	public static final String JCLASS_DS_TYPE = "Java Class";
 	public static final String WS_DS_TYPE = "Web Service";
@@ -143,10 +140,6 @@ public class DataSetFactory {
 
 		if (dataSet instanceof FileDataSet) {
 			toReturn.setDsType(FILE_DS_TYPE);
-		}
-
-		if (dataSet instanceof CkanDataSet) {
-			toReturn.setDsType(CKAN_DS_TYPE);
 		}
 
 		if (dataSet instanceof RESTDataSet) {
@@ -275,63 +268,12 @@ public class DataSetFactory {
 				ds = manageSPARQLDataSet(jsonConf);
 			} else if (DataSetConstants.DS_SOLR_TYPE.equalsIgnoreCase(type)) {
 				ds = manageSolrDataSet(jsonConf, sbiDataSet.getParametersList());
-			} else if (type.equalsIgnoreCase(DataSetConstants.DS_CKAN)) {
-				ds = new CkanDataSet();
-				CkanDataSet cds = (CkanDataSet) ds;
-
-				String resourcePath = jsonConf.optString("ckanUrl");
-				// String ckanResourceId = jsonConf.optString("ckanResourceId");
-				cds.setResourcePath(resourcePath);
-				cds.setCkanUrl(resourcePath);
-
-				if (!jsonConf.isNull(DataSetConstants.FILE_TYPE)) {
-					jsonConf.put(CkanDataSetConstants.CKAN_FILE_TYPE, jsonConf.getString(DataSetConstants.FILE_TYPE));
-				}
-				if (!jsonConf.isNull(DataSetConstants.CSV_FILE_DELIMITER_CHARACTER)) {
-					jsonConf.put(CkanDataSetConstants.CKAN_CSV_FILE_DELIMITER_CHARACTER,
-							jsonConf.getString(DataSetConstants.CSV_FILE_DELIMITER_CHARACTER));
-				}
-				if (!jsonConf.isNull(DataSetConstants.CSV_FILE_QUOTE_CHARACTER)) {
-					jsonConf.put(CkanDataSetConstants.CKAN_CSV_FILE_QUOTE_CHARACTER,
-							jsonConf.getString(DataSetConstants.CSV_FILE_QUOTE_CHARACTER));
-				}
-				if (!jsonConf.isNull(DataSetConstants.FILE_DATE_FORMAT)) {
-					jsonConf.put(CkanDataSetConstants.CKAN_CSV_DATE_FORMAT,
-							jsonConf.getString(DataSetConstants.FILE_DATE_FORMAT));
-				}
-				if (!jsonConf.isNull(DataSetConstants.CSV_FILE_ENCODING)) {
-					jsonConf.put(CkanDataSetConstants.CKAN_CSV_FILE_ENCODING,
-							jsonConf.getString(DataSetConstants.CSV_FILE_ENCODING));
-				}
-				if (!jsonConf.isNull(DataSetConstants.XSL_FILE_SKIP_ROWS)) {
-					jsonConf.put(CkanDataSetConstants.CKAN_XSL_FILE_SKIP_ROWS,
-							jsonConf.getString(DataSetConstants.XSL_FILE_SKIP_ROWS));
-				}
-				if (!jsonConf.isNull(DataSetConstants.XSL_FILE_LIMIT_ROWS)) {
-					jsonConf.put(CkanDataSetConstants.CKAN_XSL_FILE_LIMIT_ROWS,
-							jsonConf.getString(DataSetConstants.XSL_FILE_LIMIT_ROWS));
-				}
-				if (!jsonConf.isNull(DataSetConstants.XSL_FILE_SHEET_NUMBER)) {
-					jsonConf.put(CkanDataSetConstants.CKAN_XSL_FILE_SHEET_NUMBER,
-							jsonConf.getString(DataSetConstants.XSL_FILE_SHEET_NUMBER));
-				}
-				if (!jsonConf.isNull(CkanDataSetConstants.CKAN_ID)) {
-					jsonConf.put(CkanDataSetConstants.CKAN_ID, jsonConf.getString(CkanDataSetConstants.CKAN_ID));
-				}
-
-				cds.setConfiguration(jsonConf.toString());
-
-				if (jsonConf.getString(DataSetConstants.FILE_TYPE) != null) {
-					cds.setFileType(jsonConf.getString(DataSetConstants.FILE_TYPE));
-				}
-				cds.setFileName(jsonConf.getString(DataSetConstants.FILE_NAME));
-				cds.setDsType(CKAN_DS_TYPE);
-
 			} else if (type.equalsIgnoreCase(DataSetConstants.DS_QUERY)) {
 
 				DataSourceDAOHibImpl dataSourceDao = new DataSourceDAOHibImpl();
-				if (userProfile != null)
+				if (userProfile != null) {
 					dataSourceDao.setUserProfile(userProfile);
+				}
 
 				String dataSourceLabel = jsonConf.getString(DataSetConstants.DATA_SOURCE);
 				IDataSource dataSource = dataSourceDao.loadDataSourceByLabel(dataSourceLabel);
@@ -417,8 +359,9 @@ public class DataSetFactory {
 				// END
 
 				IDataSourceDAO dataSourceDAO = DAOFactory.getDataSourceDAO();
-				if (userProfile != null)
+				if (userProfile != null) {
 					dataSourceDAO.setUserProfile(userProfile);
+				}
 
 				IDataSource dataSource = dataSourceDAO.loadDataSourceWriteDefault();
 				ds.setDataSourceForWriting(dataSource);
@@ -445,8 +388,9 @@ public class DataSetFactory {
 				// END
 
 				DataSourceDAOHibImpl dataSourceDao = new DataSourceDAOHibImpl();
-				if (userProfile != null)
+				if (userProfile != null) {
 					dataSourceDao.setUserProfile(userProfile);
+				}
 				IDataSource dataSource = dataSourceDao
 						.loadDataSourceByLabel(jsonConf.getString(DataSetConstants.QBE_DATA_SOURCE));
 				if (dataSource != null) {
@@ -469,8 +413,9 @@ public class DataSetFactory {
 					throw new Exception("A flat data set can't be persisted");
 				}
 				DataSourceDAOHibImpl dataSourceDao = new DataSourceDAOHibImpl();
-				if (userProfile != null)
+				if (userProfile != null) {
 					dataSourceDao.setUserProfile(userProfile);
+				}
 
 				/*
 				 * WORKAROUND : in the past the datasource attribute was dataSource and not dataSourceFlat.
@@ -490,8 +435,9 @@ public class DataSetFactory {
 				ds = new PreparedDataSet();
 				ds.setConfiguration(sbiDataSet.getConfiguration());
 				DataSourceDAOHibImpl dataSourceDao = new DataSourceDAOHibImpl();
-				if (userProfile != null)
+				if (userProfile != null) {
 					dataSourceDao.setUserProfile(userProfile);
+				}
 
 				IDataSource dataSource = DAOFactory.getDataSourceDAO().loadDataSourceUseForDataprep();
 				((PreparedDataSet) ds).setDataSource(dataSource);
@@ -516,8 +462,9 @@ public class DataSetFactory {
 					ds.setCategoryId(sbiDataSet.getCategory().getId());
 				}
 				// ds.setConfiguration(sbiDataSet.getConfiguration());
-				if (sbiDataSet.getId().getDsId() != null)
+				if (sbiDataSet.getId().getDsId() != null) {
 					ds.setId(sbiDataSet.getId().getDsId());
+				}
 				ds.setName(sbiDataSet.getName());
 				ds.setLabel(sbiDataSet.getLabel());
 				ds.setDescription(sbiDataSet.getDescription());
@@ -561,8 +508,9 @@ public class DataSetFactory {
 				if (ds.getDataSourceForWriting() == null) {
 					logger.debug("take write default data source as data source for writing");
 					DataSourceDAOHibImpl dataSourceDao = new DataSourceDAOHibImpl();
-					if (userProfile != null)
+					if (userProfile != null) {
 						dataSourceDao.setUserProfile(userProfile);
+					}
 					IDataSource dataSourceWriteDef = dataSourceDao.loadDataSourceWriteDefault();
 					if (dataSourceWriteDef != null) {
 						logger.debug("data source write default is " + dataSourceWriteDef.getLabel());
@@ -625,61 +573,12 @@ public class DataSetFactory {
 				fds.setDsType(FILE_DS_TYPE);
 			}
 
-			if (sbiDataSet.getType().equalsIgnoreCase(DataSetConstants.DS_CKAN)) {
-				ds = new CkanDataSet();
-				CkanDataSet cds = (CkanDataSet) ds;
-
-				String resourcePath = jsonConf.optString("ckanUrl");
-				// String ckanResourceId = jsonConf.optString("ckanResourceId");
-				cds.setResourcePath(resourcePath);
-				cds.setCkanUrl(resourcePath);
-
-				if (!jsonConf.isNull(DataSetConstants.FILE_TYPE)) {
-					jsonConf.put(CkanDataSetConstants.CKAN_FILE_TYPE, jsonConf.getString(DataSetConstants.FILE_TYPE));
-				}
-				if (!jsonConf.isNull(DataSetConstants.CSV_FILE_DELIMITER_CHARACTER)) {
-					jsonConf.put(CkanDataSetConstants.CKAN_CSV_FILE_DELIMITER_CHARACTER,
-							jsonConf.getString(DataSetConstants.CSV_FILE_DELIMITER_CHARACTER));
-				}
-				if (!jsonConf.isNull(DataSetConstants.CSV_FILE_QUOTE_CHARACTER)) {
-					jsonConf.put(CkanDataSetConstants.CKAN_CSV_FILE_QUOTE_CHARACTER,
-							jsonConf.getString(DataSetConstants.CSV_FILE_QUOTE_CHARACTER));
-				}
-				if (!jsonConf.isNull(DataSetConstants.CSV_FILE_ENCODING)) {
-					jsonConf.put(CkanDataSetConstants.CKAN_CSV_FILE_ENCODING,
-							jsonConf.getString(DataSetConstants.CSV_FILE_ENCODING));
-				}
-				if (!jsonConf.isNull(DataSetConstants.XSL_FILE_SKIP_ROWS)) {
-					jsonConf.put(CkanDataSetConstants.CKAN_XSL_FILE_SKIP_ROWS,
-							jsonConf.getString(DataSetConstants.XSL_FILE_SKIP_ROWS));
-				}
-				if (!jsonConf.isNull(DataSetConstants.XSL_FILE_LIMIT_ROWS)) {
-					jsonConf.put(CkanDataSetConstants.CKAN_XSL_FILE_LIMIT_ROWS,
-							jsonConf.getString(DataSetConstants.XSL_FILE_LIMIT_ROWS));
-				}
-				if (!jsonConf.isNull(DataSetConstants.XSL_FILE_SHEET_NUMBER)) {
-					jsonConf.put(CkanDataSetConstants.CKAN_XSL_FILE_SHEET_NUMBER,
-							jsonConf.getString(DataSetConstants.XSL_FILE_SHEET_NUMBER));
-				}
-				if (!jsonConf.isNull(CkanDataSetConstants.CKAN_ID)) {
-					jsonConf.put(CkanDataSetConstants.CKAN_ID, jsonConf.getString(CkanDataSetConstants.CKAN_ID));
-				}
-
-				cds.setConfiguration(jsonConf.toString());
-
-				if (jsonConf.getString(DataSetConstants.FILE_TYPE) != null) {
-					cds.setFileType(jsonConf.getString(DataSetConstants.FILE_TYPE));
-				}
-				cds.setFileName(jsonConf.getString(DataSetConstants.FILE_NAME));
-				cds.setDsType(CKAN_DS_TYPE);
-
-			}
-
 			if (sbiDataSet.getType().equalsIgnoreCase(DataSetConstants.DS_QUERY)) {
 
 				DataSourceDAOHibImpl dataSourceDao = new DataSourceDAOHibImpl();
-				if (userProfile != null)
+				if (userProfile != null) {
 					dataSourceDao.setUserProfile(userProfile);
+				}
 
 				IDataSource dataSource = dataSourceDao
 						.loadDataSourceByLabel(jsonConf.getString(DataSetConstants.DATA_SOURCE));
@@ -749,8 +648,9 @@ public class DataSetFactory {
 				// END
 
 				DataSourceDAOHibImpl dataSourceDao = new DataSourceDAOHibImpl();
-				if (userProfile != null)
+				if (userProfile != null) {
 					dataSourceDao.setUserProfile(userProfile);
+				}
 				IDataSource dataSource = dataSourceDao
 						.loadDataSourceByLabel(jsonConf.getString(DataSetConstants.QBE_DATA_SOURCE));
 				if (dataSource != null) {
@@ -767,8 +667,9 @@ public class DataSetFactory {
 				ds = new FlatDataSet();
 				ds.setConfiguration(sbiDataSet.getConfiguration());
 				DataSourceDAOHibImpl dataSourceDao = new DataSourceDAOHibImpl();
-				if (userProfile != null)
+				if (userProfile != null) {
 					dataSourceDao.setUserProfile(userProfile);
+				}
 				IDataSource dataSource = dataSourceDao
 						.loadDataSourceByLabel(jsonConf.getString(DataSetConstants.DATA_SOURCE));
 				((FlatDataSet) ds).setDataSource(dataSource);
@@ -824,8 +725,9 @@ public class DataSetFactory {
 				if (ds.getDataSourceForWriting() == null) {
 					logger.debug("take write default data source as data source for writing");
 					DataSourceDAOHibImpl dataSourceDao = new DataSourceDAOHibImpl();
-					if (userProfile != null)
+					if (userProfile != null) {
 						dataSourceDao.setUserProfile(userProfile);
+					}
 					IDataSource dataSourceWriteDef = dataSourceDao.loadDataSourceWriteDefault();
 					if (dataSourceWriteDef != null) {
 						logger.debug("data source write default is " + dataSourceWriteDef.getLabel());
@@ -931,61 +833,12 @@ public class DataSetFactory {
 				ds = manageSolrDataSet(jsonConf, sbiDataSet.getParametersList());
 			}
 
-			if (sbiDataSet.getType().equalsIgnoreCase(DataSetConstants.DS_CKAN)) {
-				ds = new CkanDataSet();
-				CkanDataSet cds = (CkanDataSet) ds;
-
-				String resourcePath = jsonConf.optString("ckanUrl");
-				// String ckanResourceId = jsonConf.optString("ckanResourceId");
-				cds.setResourcePath(resourcePath);
-				cds.setCkanUrl(resourcePath);
-
-				if (!jsonConf.isNull(DataSetConstants.FILE_TYPE)) {
-					jsonConf.put(CkanDataSetConstants.CKAN_FILE_TYPE, jsonConf.getString(DataSetConstants.FILE_TYPE));
-				}
-				if (!jsonConf.isNull(DataSetConstants.CSV_FILE_DELIMITER_CHARACTER)) {
-					jsonConf.put(CkanDataSetConstants.CKAN_CSV_FILE_DELIMITER_CHARACTER,
-							jsonConf.getString(DataSetConstants.CSV_FILE_DELIMITER_CHARACTER));
-				}
-				if (!jsonConf.isNull(DataSetConstants.CSV_FILE_QUOTE_CHARACTER)) {
-					jsonConf.put(CkanDataSetConstants.CKAN_CSV_FILE_QUOTE_CHARACTER,
-							jsonConf.getString(DataSetConstants.CSV_FILE_QUOTE_CHARACTER));
-				}
-				if (!jsonConf.isNull(DataSetConstants.CSV_FILE_ENCODING)) {
-					jsonConf.put(CkanDataSetConstants.CKAN_CSV_FILE_ENCODING,
-							jsonConf.getString(DataSetConstants.CSV_FILE_ENCODING));
-				}
-				if (!jsonConf.isNull(DataSetConstants.XSL_FILE_SKIP_ROWS)) {
-					jsonConf.put(CkanDataSetConstants.CKAN_XSL_FILE_SKIP_ROWS,
-							jsonConf.getString(DataSetConstants.XSL_FILE_SKIP_ROWS));
-				}
-				if (!jsonConf.isNull(DataSetConstants.XSL_FILE_LIMIT_ROWS)) {
-					jsonConf.put(CkanDataSetConstants.CKAN_XSL_FILE_LIMIT_ROWS,
-							jsonConf.getString(DataSetConstants.XSL_FILE_LIMIT_ROWS));
-				}
-				if (!jsonConf.isNull(DataSetConstants.XSL_FILE_SHEET_NUMBER)) {
-					jsonConf.put(CkanDataSetConstants.CKAN_XSL_FILE_SHEET_NUMBER,
-							jsonConf.getString(DataSetConstants.XSL_FILE_SHEET_NUMBER));
-				}
-				if (!jsonConf.isNull(CkanDataSetConstants.CKAN_ID)) {
-					jsonConf.put(CkanDataSetConstants.CKAN_ID, jsonConf.getString(CkanDataSetConstants.CKAN_ID));
-				}
-
-				cds.setConfiguration(jsonConf.toString());
-
-				if (jsonConf.getString(DataSetConstants.FILE_TYPE) != null) {
-					cds.setFileType(jsonConf.getString(DataSetConstants.FILE_TYPE));
-				}
-				cds.setFileName(jsonConf.getString(DataSetConstants.FILE_NAME));
-				cds.setDsType(DataSetConstants.DS_CKAN);
-
-			}
-
 			if (sbiDataSet.getType().equalsIgnoreCase(DataSetConstants.DS_QUERY)) {
 
 				DataSourceDAOHibImpl dataSourceDao = new DataSourceDAOHibImpl();
-				if (userProfile != null)
+				if (userProfile != null) {
 					dataSourceDao.setUserProfile(userProfile);
+				}
 				IDataSource dataSource = dataSourceDao
 						.loadDataSourceByLabel(jsonConf.getString(DataSetConstants.DATA_SOURCE));
 
@@ -1080,8 +933,9 @@ public class DataSetFactory {
 				// END
 
 				DataSourceDAOHibImpl dataSourceDao = new DataSourceDAOHibImpl();
-				if (userProfile != null)
+				if (userProfile != null) {
 					dataSourceDao.setUserProfile(userProfile);
+				}
 				IDataSource dataSource = dataSourceDao
 						.loadDataSourceByLabel(jsonConf.getString(DataSetConstants.QBE_DATA_SOURCE));
 				if (dataSource != null) {
@@ -1114,8 +968,9 @@ public class DataSetFactory {
 				// END
 
 				DataSourceDAOHibImpl dataSourceDao = new DataSourceDAOHibImpl();
-				if (userProfile != null)
+				if (userProfile != null) {
 					dataSourceDao.setUserProfile(userProfile);
+				}
 				IDataSource dataSource = dataSourceDao
 						.loadDataSourceByLabel(jsonConf.getString(DataSetConstants.QBE_DATA_SOURCE));
 				if (dataSource != null) {
@@ -1147,8 +1002,9 @@ public class DataSetFactory {
 				// END
 
 				DataSourceDAOHibImpl dataSourceDao = new DataSourceDAOHibImpl();
-				if (userProfile != null)
+				if (userProfile != null) {
 					dataSourceDao.setUserProfile(userProfile);
+				}
 				IDataSource dataSource = dataSourceDao
 						.loadDataSourceByLabel(jsonConf.getString(DataSetConstants.QBE_DATA_SOURCE));
 				if (dataSource != null) {
@@ -1165,8 +1021,9 @@ public class DataSetFactory {
 				ds = new FlatDataSet();
 				ds.setConfiguration(sbiDataSet.getConfiguration());
 				DataSourceDAOHibImpl dataSourceDao = new DataSourceDAOHibImpl();
-				if (userProfile != null)
+				if (userProfile != null) {
 					dataSourceDao.setUserProfile(userProfile);
+				}
 				IDataSource dataSource = dataSourceDao
 						.loadDataSourceByLabel(jsonConf.getString(DataSetConstants.DATA_SOURCE));
 				((FlatDataSet) ds).setDataSource(dataSource);
@@ -1186,8 +1043,9 @@ public class DataSetFactory {
 					ds.setCategoryId(sbiDataSet.getCategory().getId());
 				}
 				// ds.setConfiguration(sbiDataSet.getConfiguration());
-				if (sbiDataSet.getId().getDsId() != null)
+				if (sbiDataSet.getId().getDsId() != null) {
 					ds.setId(sbiDataSet.getId().getDsId());
+				}
 				ds.setName(sbiDataSet.getName());
 				ds.setLabel(sbiDataSet.getLabel());
 				ds.setDescription(sbiDataSet.getDescription());
@@ -1226,8 +1084,9 @@ public class DataSetFactory {
 				if (ds.getDataSourceForWriting() == null) {
 					logger.debug("take write default data source as data source for writing");
 					DataSourceDAOHibImpl dataSourceDao = new DataSourceDAOHibImpl();
-					if (userProfile != null)
+					if (userProfile != null) {
 						dataSourceDao.setUserProfile(userProfile);
+					}
 					IDataSource dataSourceWriteDef = dataSourceDao.loadDataSourceWriteDefault();
 					if (dataSourceWriteDef != null) {
 						logger.debug("data source write default is " + dataSourceWriteDef.getLabel());

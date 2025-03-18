@@ -41,7 +41,6 @@
 	<USER_FUNCTIONALITY productType="KnowageBD" name="MetaModelsCatalogueManagement" description="MetaModelsCatalogueManagement" />
 	<USER_FUNCTIONALITY productType="KnowageBD" name="CreateCockpitFunctionality" description="CreateCockpitFunctionality" />
 	<USER_FUNCTIONALITY productType="KnowageBD" name="CreateChartFunctionality" description="CreateChartFunctionality" />
-	<USER_FUNCTIONALITY productType="KnowageBD" name="CkanIntegrationFunctionality" description="CkanIntegrationFunctionality" />
 	<USER_FUNCTIONALITY productType="KnowageBD" name="GeoLayersManagement" description="GeoLayersManagement" />
 	<USER_FUNCTIONALITY productType="KnowageBD" name="ImagesManagement" description="ImagesManagement" />
 	<USER_FUNCTIONALITY productType="KnowageBD" name="FederationDefinition" description="FederationDefinition" />	

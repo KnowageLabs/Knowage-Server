@@ -27,7 +27,6 @@ public class CommunityFunctionalityConstants {
 	public static final String ARTIFACT_CATALOGUE_MANAGEMENT = "ArtifactCatalogueManagement";
 	public static final String BUILD_QBE_QUERIES_FUNCTIONALITY = "BuildQbeQueriesFunctionality";
 	public static final String CACHE_MANAGEMENT = "CacheManagement";
-	public static final String CKAN_FUNCTIONALITY = "CkanIntegrationFunctionality";
 	public static final String CONFIG_MANAGEMENT = "ConfigManagement";
 	public static final String CONTSTRAINT_MANAGEMENT = "ConstraintManagement";
 	public static final String CONTSTRAINT_VIEW = "ConstraintView";

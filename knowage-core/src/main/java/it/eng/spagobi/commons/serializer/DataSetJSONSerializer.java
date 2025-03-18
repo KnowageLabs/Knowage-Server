@@ -41,7 +41,6 @@ import it.eng.spagobi.tools.dataset.DatasetManagementAPI;
 import it.eng.spagobi.tools.dataset.bo.DataSetParametersList;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.bo.VersionedDataSet;
-import it.eng.spagobi.tools.dataset.constants.CkanDataSetConstants;
 import it.eng.spagobi.tools.dataset.constants.DataSetConstants;
 import it.eng.spagobi.tools.dataset.constants.PythonDataSetConstants;
 import it.eng.spagobi.tools.dataset.constants.RESTDataSetConstants;
@@ -134,18 +133,6 @@ public class DataSetJSONSerializer implements Serializer {
 	private static final String SCOPE_CD = "scopeCd";
 	private static final String SCOPE_ID = "scopeId";
 
-	public static final String CKAN_CSV_FILE_DELIMITER_CHARACTER = "ckanCsvDelimiter";
-	public static final String CKAN_CSV_FILE_QUOTE_CHARACTER = "ckanCsvQuote";
-	public static final String CKAN_CSV_FILE_ENCODING = "ckanCsvEncoding";
-	public static final String CKAN_FILE_TYPE = "ckanFileType";
-	public static final String CKAN_CSV_DATE_FORMAT = "ckanDateFormat";
-
-	public static final String CKAN_XSL_FILE_SKIP_ROWS = "ckanSkipRows";
-	public static final String CKAN_XSL_FILE_LIMIT_ROWS = "ckanLimitRows";
-	public static final String CKAN_XSL_FILE_SHEET_NUMBER = "ckanXslSheetNumber";
-
-	public static final String CKAN_URL = "ckanUrl";
-	public static final String CKAN_ID = "ckanId";
 	public static final String FEDERATION_ID = "federationId";
 	public static final String FEDERATION_NAME = "federationName";
 
@@ -287,7 +274,7 @@ public class DataSetJSONSerializer implements Serializer {
 			boolean isDeveloper = UserUtilities.hasDeveloperRole(profile);
 
 			try {
-				if (type.equalsIgnoreCase(DataSetConstants.FILE) || type.equalsIgnoreCase(DataSetConstants.CKAN)) {
+				if (type.equalsIgnoreCase(DataSetConstants.FILE)) {
 					String fileName = jsonConf.getString(DataSetConstants.FILE_NAME);
 					if (fileName != null) {
 						result.put(FILE_NAME, fileName);
@@ -343,63 +330,6 @@ public class DataSetJSONSerializer implements Serializer {
 					String xslSheetNumber = jsonConf.getString(DataSetConstants.XSL_FILE_SHEET_NUMBER);
 					if (xslSheetNumber != null) {
 						result.put(XSL_FILE_SHEET_NUMBER, xslSheetNumber);
-					}
-
-					if (type.equalsIgnoreCase(DataSetConstants.CKAN)) {
-
-						String ckanFileType = jsonConf.getString(CkanDataSetConstants.CKAN_FILE_TYPE);
-						if (ckanFileType != null) {
-							result.put(CKAN_FILE_TYPE, ckanFileType);
-						}
-						String ckanCsvDelimiter = jsonConf
-								.getString(CkanDataSetConstants.CKAN_CSV_FILE_DELIMITER_CHARACTER);
-						if (ckanCsvDelimiter != null) {
-							result.put(CKAN_CSV_FILE_DELIMITER_CHARACTER, ckanCsvDelimiter);
-						}
-						String ckanCsvQuote = jsonConf.getString(CkanDataSetConstants.CKAN_CSV_FILE_QUOTE_CHARACTER);
-						if (ckanCsvQuote != null) {
-							result.put(CKAN_CSV_FILE_QUOTE_CHARACTER, ckanCsvQuote);
-						}
-						// added this check for retrocompatibility
-						if (jsonConf.has(CkanDataSetConstants.CKAN_CSV_FILE_ENCODING)) {
-							String ckanCsvEncoding = jsonConf.getString(CkanDataSetConstants.CKAN_CSV_FILE_ENCODING);
-							if (ckanCsvEncoding != null) {
-								result.put(CKAN_CSV_FILE_ENCODING, ckanCsvEncoding);
-							}
-						} else {
-							result.put(CKAN_CSV_FILE_ENCODING, "");
-						}
-
-						if (jsonConf.has(CkanDataSetConstants.CKAN_CSV_DATE_FORMAT)) {
-							String dateFormat = jsonConf.getString(CkanDataSetConstants.CKAN_CSV_DATE_FORMAT);
-							if (dateFormat != null) {
-								result.put(CKAN_CSV_DATE_FORMAT, dateFormat);
-							}
-						} else {
-							result.put(CKAN_CSV_DATE_FORMAT, "");
-						}
-						String ckanSkipRows = jsonConf.getString(CkanDataSetConstants.CKAN_XSL_FILE_SKIP_ROWS);
-						if (ckanSkipRows != null) {
-							result.put(CKAN_XSL_FILE_SKIP_ROWS, ckanSkipRows);
-						}
-						String ckanLimitRows = jsonConf.getString(CkanDataSetConstants.CKAN_XSL_FILE_LIMIT_ROWS);
-						if (ckanLimitRows != null) {
-							result.put(CKAN_XSL_FILE_LIMIT_ROWS, ckanLimitRows);
-						}
-						String ckanXslSheetNumber = jsonConf.getString(CkanDataSetConstants.CKAN_XSL_FILE_SHEET_NUMBER);
-						if (ckanXslSheetNumber != null) {
-							result.put(CKAN_XSL_FILE_SHEET_NUMBER, ckanXslSheetNumber);
-						}
-
-						String ckanUrl = jsonConf.getString(CkanDataSetConstants.CKAN_URL);
-						if (ckanUrl != null) {
-							result.put(CKAN_URL, ckanUrl);
-						}
-
-						String ckanId = jsonConf.getString(CkanDataSetConstants.CKAN_ID);
-						if (ckanId != null) {
-							result.put(CKAN_ID, ckanId);
-						}
 					}
 
 				} else if (type.equalsIgnoreCase(DataSetConstants.QUERY)) {
