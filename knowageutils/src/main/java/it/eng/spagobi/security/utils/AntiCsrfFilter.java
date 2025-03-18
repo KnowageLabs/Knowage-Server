@@ -73,12 +73,9 @@ public class AntiCsrfFilter implements Filter {
 	private boolean excludeCheck(String path) {
 		List<String> urlToExclude = new ArrayList<>();
 		urlToExclude.add("/signup/prepare");
+		urlToExclude.add("/1.0/images/getImage");
 
-		if (urlToExclude.contains(path)) {
-			return true;
-		} else {
-			return false;
-		}
+        return urlToExclude.contains(path);
 
 	}
 
