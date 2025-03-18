@@ -259,10 +259,6 @@
 			iconCls="fa fa-users"
 			to="/users-management/" />
 		
-		<ITEM id="11005" label="menu.HierarchiesEditor"
-			requiredFunctionality="HierarchiesManagement"
-			to="/hierarchy-management"
-			iconCls="fas fa-sitemap" />
 		<ITEM id="11006" label="menu.FunctionsCatalog"
 			requiredFunctionality="FunctionsCatalogUsage"
 			iconCls="fa fa-cubes"
