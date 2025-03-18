@@ -38,6 +38,9 @@ import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 
+import it.eng.spagobi.cache.dao.ICacheDAO;
+import it.eng.spagobi.tools.dataset.cache.ICache;
+import it.eng.spagobi.utilities.cache.CacheItem;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.LogMF;
@@ -1829,6 +1832,9 @@ public class ManageDataSetsForREST {
 				if (id != null && !id.equals("") && !id.equals("0")) {
 					validateLabelAndName(id, dsName, dsLabel, existingByName, existingByLabel);
 					ds.setId(Integer.valueOf(id));
+					IDataSet existingDataset = dsDao.loadDataSetById(Integer.valueOf(id));
+					clearCacheForDataset(existingDataset);
+
 					modifyPersistence(ds, logParam, userProfile);
 					dsDao.modifyDataSet(ds);
 					LOGGER.debug("Resource " + id + " updated");
@@ -1879,6 +1885,20 @@ public class ManageDataSetsForREST {
 			LOGGER.error("DataSet name, label or type are missing");
 			throw new SpagoBIServiceException(SERVICE_NAME, "sbi.ds.fillFieldsError");
 		}
+	}
+
+	private static void clearCacheForDataset(IDataSet ds) throws Exception {
+		ICacheDAO cacheDAO = DAOFactory.getCacheDao();
+		ICache cache = CacheFactory.getCache(SpagoBICacheConfiguration.getInstance());
+		List<CacheItem> cacheItems = cacheDAO.loadCacheItemsByDatasetName(ds.getName());
+
+		if (cacheItems == null || cacheItems.isEmpty()) {
+			return;
+		}
+
+		cacheItems.forEach(cacheItem -> {
+			cache.delete(cacheItem.getSignature(), true);
+		});
 	}
 
 	private void validateLabelAndName(String id, String dsName, String dsLabel, IDataSet existingByName,
