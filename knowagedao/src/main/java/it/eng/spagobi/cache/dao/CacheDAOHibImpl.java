@@ -169,6 +169,52 @@ public class CacheDAOHibImpl extends AbstractHibernateDAO implements ICacheDAO {
 		return toReturn;
 	}
 
+	@Override
+	public List<CacheItem> loadCacheItemsByDatasetName(String datasetName) {
+		List<CacheItem> toReturn = new ArrayList<>();
+		Session session;
+		Transaction transaction;
+
+		logger.debug("IN");
+
+		session = null;
+		transaction = null;
+		try {
+			if (datasetName == null) {
+				throw new IllegalArgumentException("Input parameter [tableName] cannot be null");
+			}
+
+			try {
+				session = getSession();
+				Assert.assertNotNull(session, "session cannot be null");
+				transaction = session.beginTransaction();
+				Assert.assertNotNull(transaction, "transaction cannot be null");
+			} catch (Throwable t) {
+				throw new SpagoBIDAOException("An error occured while creating the new transaction", t);
+			}
+
+			Query hibQuery = session.createQuery("from SbiCacheItem ci where ci.name = ?");
+			hibQuery.setString(0, datasetName);
+			List<SbiCacheItem> hibMap = (List<SbiCacheItem>) hibQuery.list();
+			if (hibMap != null) {
+				for (SbiCacheItem sbiCacheItem: hibMap) {
+					toReturn.add(toCacheItem(sbiCacheItem));
+				}
+			}
+
+			transaction.commit();
+
+		} catch (Throwable t) {
+			rollbackIfActive(transaction);
+			throw new SpagoBIDAOException("An unexpected error occured while loading cache item whose dataset name is equal to [" + datasetName + "]", t);
+		} finally {
+			closeSessionIfOpen(session);
+			logger.debug("OUT");
+		}
+
+		return toReturn;
+	}
+
 	// ========================================================================================
 	// CREATE operations (Crud)
 	// ========================================================================================

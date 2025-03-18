@@ -40,6 +40,8 @@ public interface ICacheDAO extends ISpagoBIDao {
 
 	public CacheItem loadCacheItemBySignature(String signature);
 
+	List<CacheItem> loadCacheItemsByDatasetName(String datasetName);
+
 	// ========================================================================================
 	// CREATE operations (Crud)
 	// ========================================================================================
