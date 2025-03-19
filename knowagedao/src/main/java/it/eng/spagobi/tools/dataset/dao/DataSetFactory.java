@@ -75,7 +75,6 @@ import it.eng.spagobi.tools.dataset.bo.ScriptDataSet;
 import it.eng.spagobi.tools.dataset.bo.SolrDataSet;
 import it.eng.spagobi.tools.dataset.bo.VersionedDataSet;
 import it.eng.spagobi.tools.dataset.common.behaviour.UserProfileUtils;
-import it.eng.spagobi.tools.dataset.common.transformer.PivotDataSetTransformer;
 import it.eng.spagobi.tools.dataset.constants.DataSetConstants;
 import it.eng.spagobi.tools.dataset.constants.SolrDataSetConstants;
 import it.eng.spagobi.tools.dataset.federation.FederationDefinition;
@@ -194,10 +193,6 @@ public class DataSetFactory {
 
 		// set detail dataset ID
 		toReturn.setTransformerId((dataSet.getTransformerId() == null) ? null : dataSet.getTransformerId());
-		toReturn.setPivotColumnName(dataSet.getPivotColumnName());
-		toReturn.setPivotRowName(dataSet.getPivotRowName());
-		toReturn.setPivotColumnValue(dataSet.getPivotColumnValue());
-		toReturn.setNumRows(dataSet.isNumRows());
 		toReturn.setParameters(dataSet.getParameters());
 		toReturn.setDsMetadata(dataSet.getDsMetadata());
 
@@ -473,21 +468,12 @@ public class DataSetFactory {
 						(sbiDataSet.getTransformer() == null) ? null : sbiDataSet.getTransformer().getValueId());
 				ds.setTransformerCd(
 						(sbiDataSet.getTransformer() == null) ? null : sbiDataSet.getTransformer().getValueCd());
-				ds.setPivotColumnName(sbiDataSet.getPivotColumnName());
-				ds.setPivotRowName(sbiDataSet.getPivotRowName());
-				ds.setPivotColumnValue(sbiDataSet.getPivotColumnValue());
-				ds.setNumRows(sbiDataSet.isNumRows());
 
 				ds.setParameters(sbiDataSet.getParameters());
 				ds.setDsMetadata(sbiDataSet.getDsMetadata());
 				ds.setMetadata(sbiDataSet.getMetadata());
 				ds.setOrganization(sbiDataSet.getId().getOrganization());
 
-				if (ds.getPivotColumnName() != null && ds.getPivotColumnValue() != null
-						&& ds.getPivotRowName() != null) {
-					ds.addDataStoreTransformer(new PivotDataSetTransformer(ds.getPivotColumnName(),
-							ds.getPivotColumnValue(), ds.getPivotRowName(), ds.isNumRows()));
-				}
 				ds.setPersisted(sbiDataSet.isPersisted());
 				ds.setPersistedHDFS(sbiDataSet.isPersistedHDFS());
 				ds.setPersistTableName(sbiDataSet.getPersistTableName());
@@ -696,20 +682,10 @@ public class DataSetFactory {
 				ds.setLabel(sbiDataSet.getLabel());
 				ds.setDescription(sbiDataSet.getDescription());
 
-				ds.setPivotColumnName(sbiDataSet.getPivotColumnName());
-				ds.setPivotRowName(sbiDataSet.getPivotRowName());
-				ds.setPivotColumnValue(sbiDataSet.getPivotColumnValue());
-				ds.setNumRows(sbiDataSet.isNumRows());
-
 				ds.setParameters(sbiDataSet.getParameters());
 				ds.setDsMetadata(sbiDataSet.getDsMetadata());
 				ds.setOrganization(sbiDataSet.getOrganization());
 
-				if (ds.getPivotColumnName() != null && ds.getPivotColumnValue() != null
-						&& ds.getPivotRowName() != null) {
-					ds.addDataStoreTransformer(new PivotDataSetTransformer(ds.getPivotColumnName(),
-							ds.getPivotColumnValue(), ds.getPivotRowName(), ds.isNumRows()));
-				}
 				ds.setPersisted(sbiDataSet.isPersisted());
 				ds.setPersistedHDFS(sbiDataSet.isPersistedHDFS());
 				ds.setPersistTableName(sbiDataSet.getPersistTableName());
@@ -1054,20 +1030,11 @@ public class DataSetFactory {
 						(sbiDataSet.getTransformer() == null) ? null : sbiDataSet.getTransformer().getValueId());
 				ds.setTransformerCd(
 						(sbiDataSet.getTransformer() == null) ? null : sbiDataSet.getTransformer().getValueCd());
-				ds.setPivotColumnName(sbiDataSet.getPivotColumnName());
-				ds.setPivotRowName(sbiDataSet.getPivotRowName());
-				ds.setPivotColumnValue(sbiDataSet.getPivotColumnValue());
-				ds.setNumRows(sbiDataSet.isNumRows());
 
 				ds.setParameters(sbiDataSet.getParameters());
 				ds.setDsMetadata(sbiDataSet.getDsMetadata());
 				ds.setOrganization(sbiDataSet.getId().getOrganization());
 
-				if (ds.getPivotColumnName() != null && ds.getPivotColumnValue() != null
-						&& ds.getPivotRowName() != null) {
-					ds.addDataStoreTransformer(new PivotDataSetTransformer(ds.getPivotColumnName(),
-							ds.getPivotColumnValue(), ds.getPivotRowName(), ds.isNumRows()));
-				}
 				ds.setPersisted(sbiDataSet.isPersisted());
 				ds.setPersistedHDFS(sbiDataSet.isPersistedHDFS());
 				ds.setPersistTableName(sbiDataSet.getPersistTableName());

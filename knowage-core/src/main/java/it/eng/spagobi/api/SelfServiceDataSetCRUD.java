@@ -1279,10 +1279,6 @@ public class SelfServiceDataSetCRUD extends AbstractSpagoBIResource {
 
 			// set detail dataset ID
 			toReturn.setTransformerId((dataSet.getTransformerId() == null) ? null : dataSet.getTransformerId());
-			toReturn.setPivotColumnName(dataSet.getPivotColumnName());
-			toReturn.setPivotRowName(dataSet.getPivotRowName());
-			toReturn.setPivotColumnValue(dataSet.getPivotColumnValue());
-			toReturn.setNumRows(dataSet.isNumRows());
 			toReturn.setParameters(dataSet.getParameters());
 			toReturn.setDsMetadata(dataSet.getDsMetadata());
 

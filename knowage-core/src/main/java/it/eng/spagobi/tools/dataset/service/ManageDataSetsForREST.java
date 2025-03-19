@@ -38,9 +38,6 @@ import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 
-import it.eng.spagobi.cache.dao.ICacheDAO;
-import it.eng.spagobi.tools.dataset.cache.ICache;
-import it.eng.spagobi.utilities.cache.CacheItem;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.LogMF;
@@ -58,6 +55,7 @@ import it.eng.spago.base.SourceBean;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
+import it.eng.spagobi.cache.dao.ICacheDAO;
 import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.bo.Domain;
 import it.eng.spagobi.commons.bo.Role;
@@ -94,6 +92,7 @@ import it.eng.spagobi.tools.dataset.bo.ScriptDataSet;
 import it.eng.spagobi.tools.dataset.bo.SolrDataSet;
 import it.eng.spagobi.tools.dataset.bo.VersionedDataSet;
 import it.eng.spagobi.tools.dataset.cache.CacheFactory;
+import it.eng.spagobi.tools.dataset.cache.ICache;
 import it.eng.spagobi.tools.dataset.cache.SpagoBICacheConfiguration;
 import it.eng.spagobi.tools.dataset.cache.impl.sqldbcache.SQLDBCache;
 import it.eng.spagobi.tools.dataset.common.behaviour.QuerableBehaviour;
@@ -105,7 +104,6 @@ import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
 import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData.FieldType;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import it.eng.spagobi.tools.dataset.common.metadata.MetaData;
-import it.eng.spagobi.tools.dataset.common.transformer.PivotDataSetTransformer;
 import it.eng.spagobi.tools.dataset.constants.DataSetConstants;
 import it.eng.spagobi.tools.dataset.constants.PythonDataSetConstants;
 import it.eng.spagobi.tools.dataset.constants.RESTDataSetConstants;
@@ -121,6 +119,7 @@ import it.eng.spagobi.tools.dataset.utils.DatasetMetadataParser;
 import it.eng.spagobi.tools.dataset.utils.datamart.SpagoBICoreDatamartRetriever;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.assertion.Assert;
+import it.eng.spagobi.utilities.cache.CacheItem;
 import it.eng.spagobi.utilities.exceptions.ActionNotPermittedException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
@@ -251,7 +250,6 @@ public class ManageDataSetsForREST {
 
 			String meta = json.optString("meta");
 			JSONArray metaAsJSONArray = json.optJSONArray("meta");
-			String trasfTypeCd = json.optString("trasfTypeCd");
 
 			List<Domain> domainsCat = getCategories(userProfile);
 			HashMap<String, Integer> domainIds = new HashMap<>();
@@ -302,16 +300,10 @@ public class ManageDataSetsForREST {
 				ds.setParameters(pars);
 			}
 
-			if (trasfTypeCd != null && !trasfTypeCd.equals("")) {
-				ds = setTransformer(ds, trasfTypeCd, json);
-			}
 
 			IDataSet dsRecalc = getDataSet(datasetTypeName, true, json, userProfile);
 			Assert.assertNotNull(dsRecalc, "Cannot be null");
 
-			if (trasfTypeCd != null && !trasfTypeCd.equals("")) {
-				dsRecalc = setTransformer(dsRecalc, trasfTypeCd, json);
-			}
 			// 1* String recalculateMetadata =
 			// this.getAttributeAsString(DataSetConstants.RECALCULATE_METADATA);
 			String recalculateMetadata = json.optString("recalculateMetadata");
@@ -698,52 +690,6 @@ public class ManageDataSetsForREST {
 					"An unexpected error occured while deserializing dataset parameters", t);
 		}
 		return parametersString;
-	}
-
-	private IDataSet setTransformer(IDataSet ds, String trasfTypeCd, JSONObject json) throws EMFUserError {
-		List<Domain> domainsTrasf = DAOFactory.getDomainDAO().loadListDomainsByType(DataSetConstants.TRANSFORMER_TYPE);
-		HashMap<String, Integer> domainTrasfIds = new HashMap<>();
-		if (domainsTrasf != null) {
-			for (int i = 0; i < domainsTrasf.size(); i++) {
-				domainTrasfIds.put(domainsTrasf.get(i).getValueCd(), domainsTrasf.get(i).getValueId());
-			}
-		}
-		Integer transformerId = domainTrasfIds.get(trasfTypeCd);
-
-		String pivotColName = json.optString("pivotColName");
-		if (pivotColName != null) {
-			pivotColName = pivotColName.trim();
-		}
-		String pivotColValue = json.optString("pivotColValue");
-		if (pivotColValue != null) {
-			pivotColValue = pivotColValue.trim();
-		}
-		String pivotRowName = json.optString("pivotRowName");
-		if (pivotRowName != null) {
-			pivotRowName = pivotRowName.trim();
-		}
-		Boolean pivotIsNumRows = json.optBoolean("pivotIsNumRows");
-
-		if (pivotColName != null && !pivotColName.equals("")) {
-			ds.setPivotColumnName(pivotColName);
-		}
-		if (pivotColValue != null && !pivotColValue.equals("")) {
-			ds.setPivotColumnValue(pivotColValue);
-		}
-		if (pivotRowName != null && !pivotRowName.equals("")) {
-			ds.setPivotRowName(pivotRowName);
-		}
-		if (pivotIsNumRows != null) {
-			ds.setNumRows(pivotIsNumRows);
-		}
-
-		ds.setTransformerId(transformerId);
-
-		if (ds.getPivotColumnName() != null && ds.getPivotColumnValue() != null && ds.getPivotRowName() != null) {
-			ds.addDataStoreTransformer(new PivotDataSetTransformer(ds.getPivotColumnName(), ds.getPivotColumnValue(),
-					ds.getPivotRowName(), ds.isNumRows()));
-		}
-		return ds;
 	}
 
 	public Map<String, String> getDataSetParametersAsMap(JSONObject json) {
@@ -1920,16 +1866,12 @@ public class ManageDataSetsForREST {
 
 		JSONObject dataSetJSON = null;
 		JSONArray parsJSON = json.optJSONArray(DataSetConstants.PARS);
-		String transformerTypeCode = json.optString(DataSetConstants.TRASFORMER_TYPE_CD);
 
 		IDataSet dataSet = getDataSet(json, userProfile);
 		if (dataSet == null) {
 			throw new SpagoBIRuntimeException("Impossible to retrieve dataset from request");
 		}
 
-		if (StringUtils.isNotEmpty(transformerTypeCode)) {
-			dataSet = setTransformer(dataSet, transformerTypeCode, json);
-		}
 		Map<String, String> parametersMap = new HashMap<>();
 		String datasetTypeCode = json.optString(DataSetConstants.DS_TYPE_CD);
 

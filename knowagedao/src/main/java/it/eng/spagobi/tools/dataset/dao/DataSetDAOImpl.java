@@ -874,10 +874,6 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 			hibDataSet.setActive(true);
 
 			hibDataSet.setTransformer(transformer);
-			hibDataSet.setPivotColumnName(dataSet.getPivotColumnName());
-			hibDataSet.setPivotRowName(dataSet.getPivotRowName());
-			hibDataSet.setPivotColumnValue(dataSet.getPivotColumnValue());
-			hibDataSet.setNumRows(dataSet.isNumRows());
 
 			hibDataSet.setPersisted(dataSet.isPersisted());
 			hibDataSet.setPersistedHDFS(dataSet.isPersistedHDFS());
@@ -2375,10 +2371,6 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 				Date currentTStamp = new Date();
 				hibDataSet.setTimeIn(currentTStamp);
 				hibDataSet.setTransformer(transformer);
-				hibDataSet.setPivotColumnName(dataSet.getPivotColumnName());
-				hibDataSet.setPivotRowName(dataSet.getPivotRowName());
-				hibDataSet.setPivotColumnValue(dataSet.getPivotColumnValue());
-				hibDataSet.setNumRows(dataSet.isNumRows());
 				hibDataSet.setCategory(category);
 				hibDataSet.setParameters(dataSet.getParameters());
 				hibDataSet.setDsMetadata(dataSet.getDsMetadata());

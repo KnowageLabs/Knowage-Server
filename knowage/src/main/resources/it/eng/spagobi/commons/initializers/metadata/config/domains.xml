@@ -207,8 +207,6 @@
 		domainCd="MODEL_ROOT" domainNm="Model root type" valueDs="sbidomains.ds.Generic_root" />
 	<DOMAIN valueCd="GENERIC_NODE" valueNm="sbidomains.nm.Generic_Node"
 		domainCd="MODEL_NODE" domainNm="Model node type" valueDs="sbidomains.ds.Generic_Node" />
-	<DOMAIN valueCd="PIVOT_TRANSFOMER" valueNm="sbidomains.nm.pivot_transformer"
-		domainCd="TRANSFORMER_TYPE" domainNm="Transformer types" valueDs="sbidomains.ds.pivot_transformer" />
 
 	<DOMAIN valueCd="Basic" valueNm="Basic" domainCd="KPI_TYPE"
 		domainNm="Kpi Type" valueDs="" />

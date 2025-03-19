@@ -100,10 +100,6 @@ public class DataSetJSONSerializer implements Serializer {
 	private static final String QBE_SQL_QUERY = "qbeSQLQuery";
 
 	private static final String TRASFORMER_TYPE_CD = "trasfTypeCd";
-	private static final String PIVOT_COL_NAME = "pivotColName";
-	private static final String PIVOT_COL_VALUE = "pivotColValue";
-	private static final String PIVOT_ROW_NAME = "pivotRowName";
-	private static final String PIVOT_IS_NUM_ROWS = "pivotIsNumRows";
 
 	private static final String IS_PERSISTED = "isPersisted";
 	private static final String IS_PERSISTED_HDFS = "isPersistedHDFS";
@@ -414,10 +410,6 @@ public class DataSetJSONSerializer implements Serializer {
 			}
 
 			result.put(TRASFORMER_TYPE_CD, ds.getTransformerCd());
-			result.put(PIVOT_COL_NAME, ds.getPivotColumnName());
-			result.put(PIVOT_COL_VALUE, ds.getPivotColumnValue());
-			result.put(PIVOT_ROW_NAME, ds.getPivotRowName());
-			result.put(PIVOT_IS_NUM_ROWS, ds.isNumRows());
 			result.put(IS_PERSISTED, ds.isPersisted());
 			result.put(IS_PERSISTED_HDFS, ds.isPersistedHDFS());
 			result.put(PERSIST_TABLE_NAME, ds.getPersistTableName());

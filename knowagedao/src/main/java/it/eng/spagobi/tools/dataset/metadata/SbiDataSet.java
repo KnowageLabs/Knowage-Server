@@ -86,10 +86,6 @@ public class SbiDataSet extends SbiHibernateModel {
 	private String configuration = null;
 
 	private SbiDomains transformer = null;
-	private String pivotColumnName = null;
-	private String pivotRowName = null;
-	private String pivotColumnValue = null;
-	private boolean numRows = false;
 
 	private boolean persisted = false;
 	private boolean persistedHDFS = false;
@@ -140,10 +136,11 @@ public class SbiDataSet extends SbiHibernateModel {
 	}
 
 	public Integer getScopeId() {
-		if (scope != null)
+		if (scope != null) {
 			return scope.getValueId();
-		else
+		} else {
 			return null;
+		}
 	}
 
 	public void setScopeId(Integer id) {
@@ -245,20 +242,6 @@ public class SbiDataSet extends SbiHibernateModel {
 	}
 
 	/**
-	 * @return the numRows
-	 */
-	public boolean isNumRows() {
-		return numRows;
-	}
-
-	/**
-	 * @param numRows the numRows to set
-	 */
-	public void setNumRows(boolean numRows) {
-		this.numRows = numRows;
-	}
-
-	/**
 	 * Gets the parameters.
 	 *
 	 * @return the parameters
@@ -298,50 +281,6 @@ public class SbiDataSet extends SbiHibernateModel {
 		}
 	}
 
-	/**
-	 * Gets the pivot column name.
-	 *
-	 * @return the pivot column name
-	 */
-	public String getPivotColumnName() {
-		return pivotColumnName;
-	}
-
-	/**
-	 * Sets the pivot column name
-	 *
-	 * @param pivotColumnName the new pivot column name
-	 */
-	public void setPivotColumnName(String pivotColumnName) {
-		this.pivotColumnName = pivotColumnName;
-	}
-
-	/**
-	 * Gets the pivot column value.
-	 *
-	 * @return the pivot column value
-	 */
-	public String getPivotColumnValue() {
-		return pivotColumnValue;
-	}
-
-	/**
-	 * Sets the pivot column value
-	 *
-	 * @param pivotColumnValue the new pivot column value
-	 */
-	public void setPivotColumnValue(String pivotColumnValue) {
-		this.pivotColumnValue = pivotColumnValue;
-	}
-
-	public String getPivotRowName() {
-		return pivotRowName;
-	}
-
-	public void setPivotRowName(String pivotRowName) {
-		this.pivotRowName = pivotRowName;
-	}
-
 	@JsonIgnore
 	public SbiCategory getCategory() {
 		return category;
@@ -352,10 +291,11 @@ public class SbiDataSet extends SbiHibernateModel {
 	}
 
 	public Integer getCategoryId() {
-		if (category != null)
+		if (category != null) {
 			return category.getId();
-		else
+		} else {
 			return null;
+		}
 	}
 
 	public void setCategoryId(Integer id) {
@@ -382,10 +322,11 @@ public class SbiDataSet extends SbiHibernateModel {
 	}
 
 	public Integer getTransformerId() {
-		if (transformer != null)
+		if (transformer != null) {
 			return transformer.getValueId();
-		else
+		} else {
 			return null;
+		}
 	}
 
 	public void setTransformerId(Integer id) {
@@ -627,8 +568,9 @@ public class SbiDataSet extends SbiHibernateModel {
 			} catch (Exception e) {
 				throw new SpagoBIRuntimeException("Impossible to load domain with id [" + id + "]", e);
 			}
-		} else
+		} else {
 			return null;
+		}
 	}
 
 	private SbiCategory getCategory(Integer id) {

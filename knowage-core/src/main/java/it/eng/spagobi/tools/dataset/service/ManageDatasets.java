@@ -33,7 +33,6 @@ import java.util.Map;
 import javax.naming.NamingException;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.LogMF;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
@@ -96,7 +95,6 @@ import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.datawriter.JSONDataWriter;
 import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
-import it.eng.spagobi.tools.dataset.common.transformer.PivotDataSetTransformer;
 import it.eng.spagobi.tools.dataset.constants.DataSetConstants;
 import it.eng.spagobi.tools.dataset.constants.RESTDataSetConstants;
 import it.eng.spagobi.tools.dataset.constants.SPARQLDatasetConstants;
@@ -843,9 +841,6 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 						ds.setParameters(pars);
 					}
 
-					if (trasfTypeCd != null && !trasfTypeCd.equals("")) {
-						ds = setTransformer(ds, trasfTypeCd);
-					}
 
 					IDataSet dsRecalc = null;
 
@@ -858,9 +853,6 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 						}
 
 						if (dsRecalc != null) {
-							if (trasfTypeCd != null && !trasfTypeCd.equals("")) {
-								dsRecalc = setTransformer(dsRecalc, trasfTypeCd);
-							}
 							String recalculateMetadata = this
 									.getAttributeAsString(DataSetConstants.RECALCULATE_METADATA);
 							String dsMetadata = null;
@@ -1055,16 +1047,13 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 
 		JSONObject dataSetJSON = null;
 		JSONArray parsJSON = getAttributeAsJSONArray(DataSetConstants.PARS);
-		String transformerTypeCode = getAttributeAsString(DataSetConstants.TRASFORMER_TYPE_CD);
 
 		IDataSet dataSet = getDataSet();
 		if (dataSet == null) {
 			throw new SpagoBIRuntimeException("Impossible to retrieve dataset from request");
 		}
 
-		if (StringUtils.isNotEmpty(transformerTypeCode)) {
-			dataSet = setTransformer(dataSet, transformerTypeCode);
-		}
+
 		HashMap<String, String> parametersMap = new HashMap<>();
 		if (parsJSON != null) {
 			parametersMap = getDataSetParametersAsMap(false);
@@ -1514,52 +1503,6 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 		if (datasetFile.exists()) {
 			datasetFile.delete();
 		}
-	}
-
-	private IDataSet setTransformer(IDataSet ds, String trasfTypeCd) {
-		List<Domain> domainsTrasf = (List<Domain>) getSessionContainer().getAttribute("trasfTypesList");
-		HashMap<String, Integer> domainTrasfIds = new HashMap<>();
-		if (domainsTrasf != null) {
-			for (int i = 0; i < domainsTrasf.size(); i++) {
-				domainTrasfIds.put(domainsTrasf.get(i).getValueCd(), domainsTrasf.get(i).getValueId());
-			}
-		}
-		Integer transformerId = domainTrasfIds.get(trasfTypeCd);
-
-		String pivotColName = getAttributeAsString(DataSetConstants.PIVOT_COL_NAME);
-		if (pivotColName != null) {
-			pivotColName = pivotColName.trim();
-		}
-		String pivotColValue = getAttributeAsString(DataSetConstants.PIVOT_COL_VALUE);
-		if (pivotColValue != null) {
-			pivotColValue = pivotColValue.trim();
-		}
-		String pivotRowName = getAttributeAsString(DataSetConstants.PIVOT_ROW_NAME);
-		if (pivotRowName != null) {
-			pivotRowName = pivotRowName.trim();
-		}
-		Boolean pivotIsNumRows = getAttributeAsBoolean(DataSetConstants.PIVOT_IS_NUM_ROWS);
-
-		if (pivotColName != null && !pivotColName.equals("")) {
-			ds.setPivotColumnName(pivotColName);
-		}
-		if (pivotColValue != null && !pivotColValue.equals("")) {
-			ds.setPivotColumnValue(pivotColValue);
-		}
-		if (pivotRowName != null && !pivotRowName.equals("")) {
-			ds.setPivotRowName(pivotRowName);
-		}
-		if (pivotIsNumRows != null) {
-			ds.setNumRows(pivotIsNumRows);
-		}
-
-		ds.setTransformerId(transformerId);
-
-		if (ds.getPivotColumnName() != null && ds.getPivotColumnValue() != null && ds.getPivotRowName() != null) {
-			ds.addDataStoreTransformer(new PivotDataSetTransformer(ds.getPivotColumnName(), ds.getPivotColumnValue(),
-					ds.getPivotRowName(), ds.isNumRows()));
-		}
-		return ds;
 	}
 
 	protected JSONObject createJSONResponse(JSONArray rows, Integer totalResNumber) throws JSONException {

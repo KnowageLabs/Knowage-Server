@@ -41,19 +41,7 @@
         </property>
         <property name="dsMetadata" type="string">
             <column name="DS_METADATA" />
-        </property>                      
-         <property name="pivotColumnName" type="string">
-            <column name="PIVOT_COLUMN" />
-        </property>
-        <property name="pivotRowName" type="string">
-            <column name="PIVOT_ROW" />
-        </property>
-        <property name="pivotColumnValue" type="string">
-            <column name="PIVOT_VALUE" />
-        </property>    
-        <property name="numRows" type="boolean">
-            <column name="NUM_ROWS" />
-        </property>       
+        </property>      
          <property name="persisted" type="boolean">
             <column name="IS_PERSISTED" />
         </property>

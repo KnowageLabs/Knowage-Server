@@ -631,20 +631,6 @@ public class SDKObjectsConverter {
 			ds.setConfiguration(dataset.getConfiguration());
 			ds.setOrganization(dataset.getOrganization());
 
-			// sets other general object's fields
-			if (dataset.getPivotColumnName() != null && !dataset.getPivotColumnName().equals("")) {
-				ds.setPivotColumnName(dataset.getPivotColumnName());
-			}
-			if (dataset.getPivotRowName() != null && !dataset.getPivotRowName().equals("")) {
-				ds.setPivotRowName(dataset.getPivotRowName());
-			}
-			if (dataset.getPivotColumnValue() != null && !dataset.getPivotColumnValue().equals("")) {
-				ds.setPivotColumnValue(dataset.getPivotColumnValue());
-			}
-			if (dataset.getNumberingRows() != null) {
-				ds.setNumRows(dataset.getNumberingRows());
-			}
-
 			// dsDetail.setDsMetadata(dataset.getXXX);
 
 			// sets dataset's parameters
@@ -654,14 +640,8 @@ public class SDKObjectsConverter {
 			}
 			ds.setParameters(parameters);
 
-			IDomainDAO domainDao = DAOFactory.getDomainDAO();
 			ICategoryDAO categoryDao = DAOFactory.getCategoryDAO();
-			// sets dataset's transformer type domain
-			if (dataset.getTransformer() != null) {
-				Domain transformer = domainDao.loadDomainByCodeAndValue("TRANSFORMER_TYPE", dataset.getTransformer());
-				ds.setTransformerCd(transformer.getValueCd());
-				ds.setTransformerId(transformer.getValueId());
-			}
+
 			// sets dataset's category domain
 			if (dataset.getCategory() != null) {
 

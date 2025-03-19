@@ -415,50 +415,6 @@ public class DataStoreListenerOperatorTest extends TestCase {
 		}
 
 		@Override
-		public String getPivotColumnName() {
-
-			return null;
-		}
-
-		@Override
-		public void setPivotColumnName(String pivotColumnName) {
-
-		}
-
-		@Override
-		public String getPivotRowName() {
-
-			return null;
-		}
-
-		@Override
-		public void setPivotRowName(String pivotRowName) {
-
-		}
-
-		@Override
-		public boolean isNumRows() {
-
-			return false;
-		}
-
-		@Override
-		public void setNumRows(boolean numRows) {
-
-		}
-
-		@Override
-		public String getPivotColumnValue() {
-
-			return null;
-		}
-
-		@Override
-		public void setPivotColumnValue(String pivotColumnValue) {
-
-		}
-
-		@Override
 		public boolean hasDataStoreTransformers() {
 
 			return false;

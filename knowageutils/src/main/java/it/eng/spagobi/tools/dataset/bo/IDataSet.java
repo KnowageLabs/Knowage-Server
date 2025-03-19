@@ -165,22 +165,6 @@ public interface IDataSet extends Iterable<IRecord> {
 
 	void setTransformerCd(String transfomerCd);
 
-	String getPivotColumnName();
-
-	void setPivotColumnName(String pivotColumnName);
-
-	String getPivotRowName();
-
-	void setPivotRowName(String pivotRowName);
-
-	boolean isNumRows();
-
-	void setNumRows(boolean numRows);
-
-	String getPivotColumnValue();
-
-	void setPivotColumnValue(String pivotColumnValue);
-
 	void setAbortOnOverflow(boolean abortOnOverflow);
 
 	void addBinding(String bindingName, Object bindingValue);

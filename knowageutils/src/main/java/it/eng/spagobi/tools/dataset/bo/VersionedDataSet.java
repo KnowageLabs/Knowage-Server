@@ -334,46 +334,6 @@ public class VersionedDataSet implements IDataSet {
 	}
 
 	@Override
-	public String getPivotColumnName() {
-		return wrappedDataset.getPivotColumnName();
-	}
-
-	@Override
-	public void setPivotColumnName(String pivotColumnName) {
-		wrappedDataset.setPivotColumnName(pivotColumnName);
-	}
-
-	@Override
-	public String getPivotRowName() {
-		return wrappedDataset.getPivotRowName();
-	}
-
-	@Override
-	public void setPivotRowName(String pivotRowName) {
-		wrappedDataset.setPivotRowName(pivotRowName);
-	}
-
-	@Override
-	public boolean isNumRows() {
-		return wrappedDataset.isNumRows();
-	}
-
-	@Override
-	public void setNumRows(boolean numRows) {
-		wrappedDataset.setNumRows(numRows);
-	}
-
-	@Override
-	public String getPivotColumnValue() {
-		return wrappedDataset.getPivotColumnValue();
-	}
-
-	@Override
-	public void setPivotColumnValue(String pivotColumnValue) {
-		wrappedDataset.setPivotColumnValue(pivotColumnValue);
-	}
-
-	@Override
 	public void setAbortOnOverflow(boolean abortOnOverflow) {
 		wrappedDataset.setAbortOnOverflow(abortOnOverflow);
 	}

@@ -41,7 +41,6 @@ import it.eng.spagobi.tools.dataset.common.datastore.IDataStoreFilter;
 import it.eng.spagobi.tools.dataset.common.iterator.DataIterator;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import it.eng.spagobi.tools.dataset.common.transformer.IDataStoreTransformer;
-import it.eng.spagobi.tools.dataset.common.transformer.PivotDataSetTransformer;
 import it.eng.spagobi.tools.dataset.exceptions.ParametersNotValorizedException;
 import it.eng.spagobi.tools.dataset.federation.FederationDefinition;
 import it.eng.spagobi.tools.dataset.metasql.query.DatabaseDialect;
@@ -83,10 +82,6 @@ public abstract class AbstractDataSet implements IDataSet {
 	// They should be stored only into dataSetTransformer (see above)
 	protected Integer transformerId;
 	protected String transformerCd;
-	protected String pivotColumnName;
-	protected String pivotRowName;
-	protected String pivotColumnValue;
-	protected boolean numRows;
 	protected String organization;
 
 	protected String startDateField;
@@ -171,10 +166,6 @@ public abstract class AbstractDataSet implements IDataSet {
 		setParameters(dataSet.getParameters());
 
 		setTransformerId(dataSet.getTransformerId());
-		setPivotColumnName(dataSet.getPivotColumnName());
-		setPivotRowName(dataSet.getPivotRowName());
-		setPivotColumnValue(dataSet.getPivotColumnValue());
-		setNumRows(dataSet.isNumRows());
 		setDsMetadata(dataSet.getDsMetadata());
 		setPersisted(dataSet.isPersisted());
 		setPersistTableName(dataSet.getPersistTableName());
@@ -185,11 +176,6 @@ public abstract class AbstractDataSet implements IDataSet {
 		setScopeId(dataSet.getScopeId());
 		setScopeCd(dataSet.getScopeCd());
 		setOwner(dataSet.getOwner());
-
-		if (this.getPivotColumnName() != null && this.getPivotColumnValue() != null && this.getPivotRowName() != null) {
-			addDataStoreTransformer(new PivotDataSetTransformer(getPivotColumnName(), getPivotColumnValue(),
-					getPivotRowName(), isNumRows()));
-		}
 
 		behaviours = new HashMap();
 	}
@@ -208,10 +194,6 @@ public abstract class AbstractDataSet implements IDataSet {
 		sbd.setConfiguration(getConfiguration());
 
 		sbd.setTransformerId(getTransformerId());
-		sbd.setPivotColumnName(getPivotColumnName());
-		sbd.setPivotRowName(getPivotRowName());
-		sbd.setPivotColumnValue(getPivotColumnValue());
-		sbd.setNumRows(isNumRows());
 		sbd.setPersisted(isPersisted());
 		sbd.setPersistTableName(getPersistTableName());
 		sbd.setScheduled(isScheduled());
@@ -611,46 +593,6 @@ public abstract class AbstractDataSet implements IDataSet {
 	@Override
 	public void setTransformerCd(String transformerCd) {
 		this.transformerCd = transformerCd;
-	}
-
-	@Override
-	public String getPivotColumnName() {
-		return pivotColumnName;
-	}
-
-	@Override
-	public void setPivotColumnName(String pivotColumnName) {
-		this.pivotColumnName = pivotColumnName;
-	}
-
-	@Override
-	public String getPivotRowName() {
-		return pivotRowName;
-	}
-
-	@Override
-	public void setPivotRowName(String pivotRowName) {
-		this.pivotRowName = pivotRowName;
-	}
-
-	@Override
-	public String getPivotColumnValue() {
-		return pivotColumnValue;
-	}
-
-	@Override
-	public void setPivotColumnValue(String pivotColumnValue) {
-		this.pivotColumnValue = pivotColumnValue;
-	}
-
-	@Override
-	public boolean isNumRows() {
-		return numRows;
-	}
-
-	@Override
-	public void setNumRows(boolean numRows) {
-		this.numRows = numRows;
 	}
 
 	// -----------------------------------------------
