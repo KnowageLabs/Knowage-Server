@@ -25,6 +25,7 @@
 <%@page import="it.eng.spagobi.commons.bo.AccessibilityPreferences" %>
 <%@page import="org.apache.commons.lang.StringUtils" %>
 <%@page import="java.util.Locale.Builder" %>
+<%@page import="it.eng.spagobi.commons.utilities.GeneralUtilities"%>
 
 <%
 	RequestContainer aRequestContainer = null;

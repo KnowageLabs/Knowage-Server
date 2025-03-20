@@ -413,6 +413,7 @@ sbiM.config(['$httpProvider',function ($httpProvider) {
 				}
 			};
 		}]);
+}]);
 
 
 sbiM.service('sbiModule_restServices', function($http, $q, sbiModule_translate, sbiModule_config, sbiModule_logger, $mdDialog, $sanitize,$mdPanel, sbiModule_user) {

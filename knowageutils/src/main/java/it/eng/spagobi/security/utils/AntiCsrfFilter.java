@@ -74,6 +74,7 @@ public class AntiCsrfFilter implements Filter {
 		List<String> urlToExclude = new ArrayList<>();
 		urlToExclude.add("/signup/prepare");
 		urlToExclude.add("/1.0/images/getImage");
+		urlToExclude.add("/publish");
 
         return urlToExclude.contains(path);
 
