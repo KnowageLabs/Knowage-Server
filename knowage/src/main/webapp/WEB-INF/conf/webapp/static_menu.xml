@@ -216,10 +216,6 @@
 			<ITEM id="10008" label="menu.ImpExpGlossary"
 				requiredFunctionality="ImpExpGlossary"
 				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=importExportGlossaryTemplate" />
-			<ITEM id="10009" label="menu.ImpExpAlerts"
-				requiredFunctionality="ImpExpAlerts"
-				toBeLicensed="KnowagePM"
-				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=importExportAlerts" />
 		</GROUP_ITEM>
 		
 		
