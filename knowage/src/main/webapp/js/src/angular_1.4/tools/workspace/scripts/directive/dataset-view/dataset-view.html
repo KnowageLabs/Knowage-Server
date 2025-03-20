@@ -1,0 +1,70 @@
+<md-card style="height:100%;min-height:0px;" ng-show="!showGridView">
+<!-- kn-table ng-hide="showGridView==true || ngModel.length==0 "
+	columns='[{"label":"Label","name":"label","type":"text"},{"label":"Name","name":"name"}]' 
+	model=ngModel
+	click-function="clickDataset(item)" custom-class="kn-table-clickable-rows kn-table-medium-rows kn-table-inverse-header kn-table-full-height kn-table-shadowed kn-firefox-height-fix"></kn-table-->	
+	<md-card-content class="noPadding" style="height:100%;">
+	<div ag-grid="workspaceDatasetViewGrid" class="ag-theme-balham noMargin ag-theme-knowage" layout-fill ></div>	
+	</md-card-content>
+</md-card>					
+<!-- Dataset Grid View -->
+<div layout="row"  layout-wrap ng-hide="showGridView!=true " >
+	<div  class="workspaceCardContainer" ng-repeat="dataset in ngModel| orderBy:orderingDatasetCards"  flex-xl=25 flex=33 flex-sm=50 flex-xs=100>
+		<md-card class="documentCard" ng-class="{'md-whiteframe-15dp' : selectedDataset==dataset, 'disabled' : !canLoadData(dataset)}">
+	      
+	      	<md-card-title>
+	         	<md-card-title-text>
+		           	<p class=" ellipsis">{{ dataset.name | i18n }}</p>
+		            <md-tooltip md-delay="1500">{{ dataset.name | i18n }}</md-tooltip>
+	         	</md-card-title-text>
+	   		</md-card-title>
+	   		
+	       	<div class="md-card-image workspace_image_dataset" ng-click="clickDataset(dataset);">
+				<md-tooltip ng-if="!canLoadData(dataset)" md-delay="500" >
+				{{translate.load('sbi.workspace.dataset.error.qbe.model.not.visible')}}
+				</md-tooltip>
+	       	</div>
+
+	     	<md-card-actions layout="row" layout-align="space-around end">
+	     	
+		        <md-button id="previewDataset" class="md-icon-button" aria-label="previewDataset" ng-click="previewDatasetAction({ds:dataset});" ng-show="canLoadData(dataset)">
+		          	<md-icon md-font-icon="fa fa-eye fa-2x"></md-icon>
+		          	<md-tooltip md-delay="1000">
+		            	{{translate.load('sbi.workspace.dataset.preview')}}
+		          	</md-tooltip>
+		        </md-button>
+		        
+		        <md-button id="cloneDataset" ng-if="canLoadData(dataset) && dataset.dsTypeCd=='Qbe'" class="md-icon-button" aria-label="cloneDataset" ng-click="cloneDatasetAction({ds:dataset});">
+		          	<md-icon md-font-icon="fa fa-clone fa-2x"></md-icon>
+		          	<md-tooltip md-delay="1000">
+		            	{{translate.load('sbi.workspace.dataset.clone')}}
+		          	</md-tooltip>
+		        </md-button>
+	      	 
+		        <md-button class="md-icon-button" aria-label="detailDataset" ng-click="showDetailDatasetAction({ds:dataset});" ng-show="showDetailDatasetEnabled && dataset.dsTypeCd=='File'" >
+		          	<md-icon md-font-icon="fa fa-pencil-square-o fa-2x fa-2x"></md-icon>
+		           	<md-tooltip md-delay="1000">
+		             	{{translate.load('sbi.workspace.dataset.detail')}}
+		           	</md-tooltip>
+		        </md-button>
+	         	
+	         	<md-button class="md-icon-button" aria-label="showDatasetQbe"  ng-click="editQbeDatasetAction({ds:dataset});" ng-show="canLoadData(dataset) && (dataset.dsTypeCd == 'Federated' || dataset.dsTypeCd == 'Qbe') && sbiUser.userId==dataset.owner">
+	           		<md-icon md-font-icon="fa fa-pencil-square-o fa-2x"></md-icon>
+	           		<md-tooltip md-delay="1000">
+	              		{{translate.load('sbi.workspace.dataset.qbe.edit')}}
+	            	</md-tooltip>
+	         	</md-button>
+	         	
+<!-- 	         	<md-button class="md-icon-button" aria-label="showDatasetQbe"  ng-click="showQbeDatasetAction({ds:dataset});" ng-show="showQbeEnabled && !dataset.derivated && dataset.pars.length==0"> -->
+<!-- 	           		<md-icon md-font-icon="fa fa-search fa-2x"></md-icon> -->
+<!-- 	           		<md-tooltip md-delay="1000"> -->
+<!-- 	              		{{translate.load('sbi.workspace.dataset.qbe')}} -->
+<!-- 	            	</md-tooltip> -->
+<!-- 	         	</md-button> -->
+	         
+	       </md-card-actions>
+	       
+	     </md-card>
+
+	</div> 
+</div>

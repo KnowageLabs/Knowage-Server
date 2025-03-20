@@ -1,0 +1,36 @@
+<md-dialog>
+	<md-toolbar>
+		<div class="md-toolbar-tools">
+        	<h2>Edit Analysis</h2>
+        	<span flex></span>
+      	</div>
+	</md-toolbar>
+	<form>
+		<md-dialog-content>
+			<div class="md-dialog-content">
+				<md-input-container class="md-icon-float md-block">
+					<label>Label</label>
+					<input type="text" placeholder="Label" ng-required="true" md-maxlength="100" ng-model="document.label">
+				</md-input-container>
+				<br />
+				<md-input-container class="md-icon-float md-block">
+					<label>Name</label>
+					<input type="text" placeholder="Name" ng-required="true" md-maxlength="200" ng-model="document.name">
+				</md-input-container>
+				<br />
+				<md-input-container class="md-icon-float md-block">
+					<label>Description</label>
+					<textarea ng-model="document.description" maxlength="400"></textarea>
+					<p>{{400 - document.description.length + "/400"}}</p>
+				</md-input-container>
+			
+				<md-dialog-actions layout="row">
+					<md-button class="md-primary" ng-click="save(document)">Save</md-button>
+					<md-button class="md-no-focus" ng-click="cancel()">Cancel</md-button>
+				</md-dialog-actions>
+			</div>
+		</md-dialog-content>
+	</form>
+
+</md-dialog>
+

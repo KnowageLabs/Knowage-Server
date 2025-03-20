@@ -1,0 +1,44 @@
+<md-dialog aria-label="shareDatasetTemplate" style="width: 40%; overflow-y: visible;">
+	<div>
+		<md-toolbar class="miniheadfederation">
+			<div class="md-toolbar-tools">
+				<h2 class="md-flex">{{translate.load("sbi.workspace.share.dataset.dialog.toolbar");}}</h2>
+				<span flex=""></span>
+			</div>	
+		</md-toolbar>
+			<md-content class="sticky-container">
+				<div style="padding:5px">
+					<form name="shareDatasetTemplate">
+						<p>{{translate.load("sbi.workspace.categories.explained");}}</p>
+						<md-input-container class="md-block" flex=100>
+							<md-select aria-label="aria-label" ng-model="dataset.catTypeId" placeholder="Select a category">
+								<md-option 	ng-repeat="category in datasetCategoryType" 
+										ng-click="chooseCategory(category)"
+										value="{{category.VALUE_ID}}">
+									{{category.VALUE_NM}}
+								</md-option>
+							</md-select>
+						</md-input-container>
+						<md-dialog-actions layout="row">
+							<span flex></span>
+							<md-button ng-if="dataset.hasOwnProperty('catTypeId')&&dataset.catTypeId!=undefined"
+									class="md-raised floatRightFederationButton" ng-click="unshareDataset(dataset)"
+									class="md-primary">
+								{{translate.load("sbi.workspace.dataset.unshare");}}
+							</md-button>
+							<md-button
+									class="md-raised floatRightFederationButton" ng-click="closeShareDialog()"
+									class="md-primary">
+								{{translate.load("sbi.general.close");}}
+							</md-button>
+							<md-button id="saveNewFolderBtn"
+									class="md-raised floatRightFederationButton" ng-click="applySelectedCategory(dataset)"
+									class="md-primary" ng-disabled="!dataset.catTypeId">
+								{{translate.load("sbi.generic.update");}}
+							</md-button>
+						</md-dialog-actions>
+					</form>
+				</div>
+			</md-content>
+	</div>
+</md-dialog>

@@ -1,0 +1,95 @@
+	<md-toolbar class="documentBrowserToolbar" ng-cloak> 
+		
+		<div class="md-toolbar-tools" layout="row">
+			<md-button class="md-icon-button" ng-click="toggleNav()" hide-gt-sm >
+	          <md-icon md-font-icon="fa fa-bars"></md-icon>
+	        </md-button>
+			
+			<div flex>
+				<!-- Title -->
+				<h1>{{translate.load("sbi.workspace.maintoolbar.title")}}</h1>
+			</div>
+				
+			<div class="workspaceTopRight" layout="row" layout-align="end center" flex>
+			
+			    <!--  Search button -->
+				<md-button class="md-icon-button" hide show-gt-sm>
+					  <md-icon md-font-icon="fa fa-search"></md-icon>
+				</md-button>
+				
+				<!-- Search input -->
+			    <md-input-container class="searchInput" hide ng-if="currentDatasetsTab!='ckanDataSet'" show-gt-sm>
+					<input 	class="workspaceSearchInput" type="text" id="searchInput" ng-model="searchInput" 
+							title="{{translate.load('sbi.workspace.mainmenu.search.tooltip')}}" focus-on="searchInput" 
+							ng-change="setSearchInput(searchInput)" ng-model-options='{ debounce: 200 }'>
+				</md-input-container>
+				
+				<md-input-container class="searchInput" hide ng-if="currentDatasetsTab=='ckanDataSet'" show-gt-sm>
+					<input 	class="workspaceSearchInput" type="text" id="ckanFilter" ng-model="ckanFilter" 
+							title="{{translate.load('sbi.workspace.mainmenu.search.tooltip')}}" focus-on="searchInput" 
+							ng-change="loadFilteredCkanDatasets(ckanFilter)" ng-model-options='{ debounce: 1000 }'>
+				</md-input-container>
+				
+				<!-- Search clear -->
+				<md-button 	class="md-icon-button"  ng-if="currentDatasetsTab!='ckanDataSet'" title="{{translate.load('sbi.generic.search.clear')}}" aria-label="Clear" 
+							ng-show=true ng-click="setSearchInput('')" hide show-gt-sm>
+					   <md-icon md-font-icon="fa fa-times"></md-icon>
+				</md-button>
+							      
+				<!-- Document view buttons -->		
+				<md-button 	class="md-icon-button" ng-click="toogleGridListViewOfDocs()" 
+							title="{{showGridView ? translate.load('sbi.workspace.mainmenu.togglelistgridview.list') 
+											: translate.load('sbi.workspace.mainmenu.togglelistgridview.grid')}}" 
+							aria-label="{{showGridView ? 'List view' : 'Grid view'}}">
+							
+				 	<md-icon md-font-icon="fa" ng-class="showGridView ? 'fa-th-list' : 'fa-th'"></md-icon>
+					 
+				</md-button>
+					      
+				<md-button 	id="addNewFolder" ng-if="currentOptionMainMenu=='documents' && showOrganizeFolder" ng-click="addNewFolder()" 
+							class="addNewDocumentButton md-fab md-mini md-ink-ripple" style="top:0px;right:-15px" ng-cloak
+							title="{{translate.load('sbi.workspace.mainmenu.addbutton.documents.newfolder')}}">
+					<md-icon md-font-icon="fa fa-folder-o"></md-icon>
+				</md-button>
+		
+				<md-button 	ng-if="currentOptionMainMenu=='datasets' && currentDatasetsTab=='myDataSet'" 
+							ng-click="addNewFileDataset()" class="md-fab md-mini md-ink-ripple" style="top:0px;right:-15px" 
+							ng-cloak title="{{translate.load('sbi.workspace.mainmenu.addbutton.datasets')}}">
+					<md-icon md-font-icon="fa fa-plus"></md-icon>
+				</md-button>
+		
+				<md-button 	ng-if="currentOptionMainMenu=='models' && currentModelsTab=='federations'" ng-click="createFederation()" 
+							class="md-fab md-mini md-ink-ripple" style="top:0px;right:-15px" ng-cloak
+							title="{{translate.load('sbi.workspace.mainmenu.addbutton.models.federations')}}">
+					<md-icon md-font-icon="fa fa-plus"></md-icon>
+				</md-button>
+		
+			<div  ng-if="currentOptionMainMenu=='analysis'">
+				<md-menu style="padding: 0;" ng-if="showCreateDocumentButton">
+					<md-button aria-label="Create new document" class="md-fab md-mini" style="top: 0;" ng-click="$mdOpenMenu($event)"> 
+						<md-icon md-menu-origin md-font-icon="fa fa-plus" class="md-primary"></md-icon>
+	   				</md-button> 
+	   				<md-menu-content width="4"> 
+	   					<md-menu-item ng-if="showCockpitAnalysisButton">
+	    					<md-button ng-click="addNewAnalysisDocument()"> 
+	    						<md-icon md-font-icon="fa fa-plus" md-menu-align-target></md-icon>
+								{{translate.load("sbi.generic.document.add.adhocCockpit")}}
+							</md-button> 
+						</md-menu-item>
+						<md-menu-item ng-if="showGeoreportAnalysisButton">
+		 					<md-button ng-click="addNewGeoMap()"> 
+		 						<md-icon md-font-icon="fa fa-plus" md-menu-align-target></md-icon>
+		   						{{translate.load("sbi.generic.document.add.adhocGeoReport")}}
+		 					</md-button>
+		 				</md-menu-item>
+		 				<md-menu-item ng-if="showKpiAnalysisButton">
+		 					<md-button ng-click="addNewKPI()"> 
+		 						<md-icon md-font-icon="fa fa-plus" md-menu-align-target></md-icon>
+		   						{{translate.load("sbi.generic.document.add.adhocKPI")}}
+		 					</md-button>
+		 				</md-menu-item>
+					</md-menu-content> 
+				</md-menu>
+			</div>		
+		
+	</md-toolbar>	

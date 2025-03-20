@@ -1,0 +1,107 @@
+<div class="kn-table-container" class="kn-table-clickable-rows kn-table-medium-rows kn-table-inverse-header kn-table-full-height kn-table-shadowed">
+	<table ng-hide="showGridView==true || ngModel.length==0 " class="kn-table kn-table-clickable-rows kn-table-medium-rows kn-table-inverse-header kn-table-full-height kn-table-shadowed">
+		<thead>
+			<tr> 
+			<th ng-repeat="column in schedulationColumns">{{column.label}}</th>
+			<th class="multiTableAction">
+			<md-button ng-if="runSnapshots" ng-disabled="selectedTriggers.length == 0" ng-click="runTriggers('all')" style="margin: 0;">
+	            {{translate.load('kn.schedulation.triggers.runall')}}
+	        </md-button>
+	        </th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr ng-repeat-start="row in ngModel">
+				<td ng-repeat="column in schedulationColumns">{{row[column.name]}}</td>
+					<td class="tableAction">
+						<div layout="row" layout-align="end center" >
+							<md-button class="md-icon-button" style="height: 32px;" ng-click="getSchedulations.action(row,$event)">
+								<md-tooltip>{{getSchedulations.label}}</md-tooltip>
+								<md-icon md-font-icon="{{getSchedulations.icon}}">
+							</md-button>
+						</div>
+					</td>
+			</tr>
+			<tr ng-repeat-end ng-if="row.triggers.length >0 && runSnapshots">
+			<td colspan="1000" class="inner-space">
+				<table class="kn-table kn-inner-table" layout-padding>
+					<thead>
+						<tr>
+							<th>{{translate.load('kn.schedulation.triggers.name')}}</th>
+							<th>{{translate.load('kn.schedulation.triggers.description')}}</th>
+							<th></th>
+							<th></th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr ng-repeat="trigger in row.triggers track by $index ">
+							<td>{{trigger.triggerName}}</td>
+							<td>{{trigger.triggerDescription}}</td>
+							<td class="tableAction">
+								<md-checkbox ng-model="trigger.runnable" ng-change="toggleTriggerRun(trigger)"></md-checkbox>
+							</td>
+							<td class="tableAction">							
+								<md-icon md-font-icon="fa fa-play-circle" ng-click="runTriggers(trigger, row)" >
+								<md-tooltip>{{translate.load('kn.schedulation.triggers.run')}}</md-tooltip></md-icon>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			
+			</div>
+			</td>
+			</tr>
+		</tbody>
+	</table>
+</div>
+	<!-- Document Grid View -->
+	<div layout="row"  layout-wrap ng-hide="showGridView!=true " >
+		<div  class="workspaceCardContainer" ng-repeat="document in ngModel| orderBy:orderingDocumentCards" flex-xl=15 flex=20 flex-sm=33 flex-xs=50>
+		<md-card class="documentCard" ng-class="{'md-whiteframe-15dp' : selectedDocument==document }" ng-click="clickDocument(document);">
+	       
+	       <md-card-title>
+	          <md-card-title-text>
+	            <p class=" ellipsis">{{document.jobName}}</p>
+	             <md-tooltip md-delay="1000">
+	             {{document.jobName}}
+	            </md-tooltip>
+	          </md-card-title-text>
+	    </md-card-title>
+	
+	       <div class="md-card-image document_browser_image_{{document.documentType}}"  ng-if="document.previewFile==null"></div>
+	       
+	       <md-card-actions layout="row" layout-align="space-around end">
+	       
+	       <md-button id="previewDataset" class="md-icon-button" aria-label="previewDataset" ng-click="previewDocumentAction({doc:document});">
+	         	<md-icon md-font-icon="fa fa-eye fa-2x"></md-icon>
+	         	<md-tooltip md-delay="1000">
+	           	{{translate.load('sbi.workspace.schedulations.view')}}
+	         	</md-tooltip>
+	       </md-button>    			          			        	 
+	
+	       <md-menu-bar id="menu" ng-if="document.triggers.length>1 && runSnapshots">
+			<md-menu>
+				<md-button class="md-icon-button" aria-label="Execute" ng-click="$mdOpenMenu($event)">
+					<md-icon md-font-icon="fa fa-play-circle fa-2x"></md-icon>
+					<md-tooltip md-delay="1000"> {{translate.load("sbi.workspace.execute.document")}}</md-tooltip>
+				</md-button>
+				<md-menu-content> 
+					<md-menu-item ng-repeat="item in document.triggers | filter: onlySnapshots">
+			            <md-button ng-click="executeDocumentAction({doc:item, merge:document.jobMergeAllSnapshots, document:document});">
+			                {{translate.load("kn.schedulation.triggers.execute")}} {{item.triggerName}}
+			            </md-button>
+			        </md-menu-item>	
+				</md-menu-content>
+			</md-menu>
+		</md-menu-bar>
+	
+		<md-button class="md-icon-button" aria-label="Execute" ng-click="executeDocumentAction({doc:document.triggers[0], merge:document.jobMergeAllSnapshots, document: document});" ng-if="document.triggers.length==1 && runSnapshots">
+			<md-icon md-font-icon="fa fa-play-circle fa-2x"></md-icon>
+			<md-tooltip md-delay="1000"> {{translate.load("sbi.workspace.execute.document")}}</md-tooltip>
+		</md-button>
+	         
+	       </md-card-actions>
+	     </md-card>
+	
+		</div> 
+	</div>

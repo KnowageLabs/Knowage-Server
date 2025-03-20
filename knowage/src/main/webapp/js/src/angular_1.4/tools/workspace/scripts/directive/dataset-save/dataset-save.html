@@ -1,0 +1,163 @@
+
+<form name="datasetForm" flex layout="column">
+
+<md-whiteframe class="md-whiteframe-4dp" flex layout="column" style="background-color: white;">	
+	<div flex layout="column">
+			<md-toolbar>
+				<div class="md-toolbar-tools">
+      				<h2 md-truncate flex>{{translate.load("sbi.ds.qbe.saving.wizard")}}</h2>
+
+   				 </div>
+	
+			</md-toolbar>
+			<md-tabs flex md-border-bottom md-selected="selectedTab" >
+<!-- 				GENERIC TAB - DATASET DETAILS -->
+				<md-tab label='{{translate.load("sbi.generic.details");}}'>
+					<md-card layout-padding>
+							
+								<md-input-container class="md-block">
+							    	<label>{{translate.load("sbi.ds.label")}}</label>
+									<input ng-model="model.label" required ng-change="setFormDirty()" name="label">
+									<div  ng-messages="datasetForm.label.$error" ng-show="!model.label">
+	  						 			<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired")}}</div>
+					 				</div>
+								</md-input-container>
+							
+							
+							
+								<md-input-container class="md-block">
+							    	<label>{{translate.load("sbi.ds.name")}}</label>
+									<input ng-model="model.name" required ng-change="setFormDirty()" name="model">
+									<div  ng-messages="datasetForm.model.$error" ng-show="!model.name">
+  						 				<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired")}}</div>
+					 				</div>
+								</md-input-container>
+							
+							
+							
+								<md-input-container class="md-block">
+							    	<label>{{translate.load("sbi.ds.description")}}</label>
+									<textarea 	ng-model="model.description" md-maxlength="150" rows="1" 
+												md-select-on-focus ng-change="setFormDirty()"></textarea>
+								</md-input-container>
+							
+							
+							
+								<label class="workspaceLabelForCheckBox">
+					    			{{translate.load("sbi.ds.hdfs")}}:
+					   			</label> 
+					               		
+						         <md-input-container class="small counter workspacePersistCheckboxContainer">
+						             <md-checkbox 	aria-label="Checkbox HDFS" 
+						              		ng-model="model.exportToHdfs" ng-checked="" class="workspaceCheckbox">
+									</md-checkbox>
+						          </md-input-container>
+							
+						
+						<div ng-if="userLogged.isTechnical == 'true'">	
+
+							<md-input-container class="md-block" > 
+								<label>{{translate.load("sbi.ds.scope")}}</label>
+								<md-select placeholder ="{{translate.load('sbi.generic.scope')}}"required
+										ng-model="model.scopeCd" name="scopeCombo">
+									<md-option ng-repeat="l in scopeList" ng-value="l.VALUE_CD">{{l.VALUE_CD}}
+									</md-option>
+								</md-select>  
+								<div  ng-messages="datasetForm.scopeCombo.$error" ng-show="!model.scopeCd">
+									<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired")}}</div>
+								</div>
+							</md-input-container>
+
+							<md-input-container class="md-block" > 
+								<label>{{translate.load("sbi.generic.category")}}</label>
+								<md-select 	placeholder ="{{translate.load('sbi.generic.category')}}"
+										ng-required="isCategoryRequired" ng-model="model.catTypeVn" name="categoryCombo">   
+									<md-option ng-repeat="l in categoryList" ng-value="l.VALUE_CD">{{l.VALUE_CD}}</md-option>
+								</md-select>  
+								<div ng-messages="datasetForm.categoryCombo.$error" ng-show="isCategoryRequired && !model.categoryCd">
+									<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired")}}</div>
+								</div>
+							</md-input-container>
+
+						</div>
+					</md-card>
+				</md-tab>
+				
+<!-- 				PERSISTENCE / SCHEDULING -->
+				<md-tab  label='{{translate.load("sbi.ds.persistence");}}'layout="row" >
+				
+<!-- 						PERSIST -->
+							<md-card  layout-padding flex layout="row" layout-align="start center">
+
+				                  		<label>
+				                  			{{translate.load('sbi.ds.isPersisted')}}: 
+			                  			</label> 
+				                  		
+				                  		
+				                  		<md-input-container class="small counter" >
+				                     		<md-checkbox 	aria-label="Persisted" 
+					                     					ng-model="model.isPersisted" ng-checked="" 
+					                     					ng-change="setFormDirty()"
+					                     					ng-disabled="disablePersisting">
+											</md-checkbox>
+				                  		</md-input-container>
+
+								
+									
+										<md-input-container class="md-block" ng-show="model.isPersisted">
+									    	<label>{{translate.load("sbi.ds.persistTableName")}}</label>
+											<input ng-model="model.persistTableName" ng-required="model.isPersisted" ng-change="setFormDirty()" name="persistCheck">
+											<div  ng-messages="datasetForm.persistCheck.$error" ng-show="!model.persistTable">
+		       						 			<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
+	   						 				</div>
+										</md-input-container>
+									
+								</md-card>
+								<md-card   flex layout="row" layout-align="start center">
+<!-- 								SCHEDULING -->
+								<div layout-padding layout-align="start center" ng-if="userLogged.isAbleToSchedulate && (model.isPersisted || model.isPersistedHDFS)">
+			                		<label>
+			                			{{translate.load('sbi.ds.isScheduled')}}: 
+			               			</label> 
+			                		<md-input-container class="small counter" >
+				                   		<md-checkbox 	aria-label="Scheduling" 
+				                    					ng-model="model.isScheduled" ng-checked="" 
+				                    					ng-change="setFormDirty()">
+										</md-checkbox>
+			                		</md-input-container>
+								</div>
+								<div ng-if="model.isScheduled && model.isPersisted">
+									<dataset-scheduler model="model"></dataset-scheduler>
+								</div>
+							</md-card>
+
+					
+				</md-tab>
+				
+<!-- 				METADATA -->
+				<md-tab label='{{translate.load("sbi.catalogues.generic.title.metadata");}}'>
+<!-- 					<md-card layout-padding> -->
+						<kn-table layout-padding
+							id="qbeDSMeta"
+							columns="metaDataColumns"
+							model="model.meta">
+						</kn-table>
+
+				</md-tab>
+				
+			</md-tabs>
+			
+			<div layout="row">
+				<span flex></span>
+			 	<md-button ng-click="close()" class="md-raised">
+	       			{{translate.load("sbi.general.cancel")}}
+	    		</md-button>
+	      		<md-button ng-click="saveDataSet()"  ng-disabled=!datasetForm.$valid  class="md-primary md-raised">
+		    		{{translate.load("sbi.generic.save")}}
+	     		</md-button>
+		
+			</div>
+		</div>
+	</md-whiteframe>
+
+</form>

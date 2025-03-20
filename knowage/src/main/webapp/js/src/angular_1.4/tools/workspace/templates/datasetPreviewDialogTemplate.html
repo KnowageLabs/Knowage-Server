@@ -1,0 +1,75 @@
+<md-dialog  layout="column" flex class="kn-lovPreview" ng-cloak>
+  	
+	   	<md-toolbar>
+	 
+	     <div class="md-toolbar-tools layout-align-center-center layout-row">
+	      	
+	      	
+	      	<i class="fa fa-database"></i> 	{{dataset.dsTypeCd}}
+	    	&nbsp;&nbsp;
+	       	<h2>{{translate.load('sbi.browser.document.dataset')}}: &nbsp; {{selectedDataSet.label}}</h2> 
+	       <span flex></span>
+				<md-button  ng-if = "drivers.length > 0 && showFilterIcon || dataset.pars.length > 0"  ng-click="toggleDrivers()" class="md-icon-button">
+	          		<md-icon md-font-icon="fa fa-filter"></md-icon>
+	       	 	</md-button>
+	       <md-button id="close-preview" ng-click="closeDatasetPreviewDialog()">
+	         {{translate.load('sbi.general.close')}}
+	       </md-button>
+	     </div>   
+	   </md-toolbar>
+	  
+	   <md-dialog-content style="height:100%;" ng-if="dataset.executed">
+	   		<div ag-grid="gridOptions" class="ag-theme-balham kn-preview-table-theme" style="width:100%;height:calc(100% - 32px)"></div>
+			<div ref="south" class="ag-theme-balham ag-noBorders">
+				<div>
+					<div class="ag-paging-panel ag-font-style">
+	               		<span ref="eSummaryPanel" class="ag-paging-row-summary-panel">
+	                   		<span ref="lbFirstRowOnPage">{{startPreviewIndex+1}}</span> to <span ref="lbLastRowOnPage">{{endPreviewIndex}}</span> of <span ref="lbRecordCount">{{totalItemsInPreview}}</span>
+	               		</span>
+	               		<span class="ag-paging-page-summary-panel">
+		               		<div ref="btPrevious" class="ag-paging-button-wrapper" ng-class="{'ag-disabled':disableBack}"><span class="ag-icon ag-icon-previous" unselectable="on"></span>
+				       			<button type="button" ref="btPrevious" class="ag-paging-button" ng-disabled="disableBack" ng-click="getBackPreviewSet()">Previous</button>
+				       		</div>
+				       		<div ref="btPrevious" class="ag-paging-button-wrapper" ng-class="{'ag-disabled':disableNext}"><span class="ag-icon ag-icon-next" unselectable="on"></span>
+				       			<button type="button" ref="btNext" class="ag-paging-button" ng-disabled="disableNext" ng-click="getNextPreviewSet()">Previous</button>
+				       		</div>
+	               		</span>
+	           		</div>
+	           	</div>
+	         </div>
+	   </md-dialog-content>
+
+</md-dialog>
+
+<div layout="column" flex=20 style="height:100%" ng-if="showDrivers">
+
+<md-sidenav  class="md-sidenav-right md-whiteframe-4dp" md-component-id="parametersPanelSideNav"  layout-fill md-is-locked-open="$mdMedia('gt-md')">
+<!-- 	<md-toolbar class="header secondaryToolbar" > -->
+<!-- 		<div class="md-toolbar-tools" layout="row" layout-align="space-around center"> -->
+<!-- 			<md-button aria-label="Reset Parameter" class="md-icon-button" ng-click="clearListParametersForm();"> -->
+<!-- 				<md-tooltip md-delay="500" >{{::translate.load("sbi.execution.parametersselection.toolbar.clear")}}</md-tooltip> -->
+<!-- 				<md-icon md-font-icon="fa fa-eraser"></md-icon> -->
+<!-- 			</md-button>						 -->
+<!-- 			<md-button aria-label="Open Saved Parameters" class="md-icon-button"  -->
+<!-- 					ng-click="urlViewPointService.getViewpoints();"> -->
+<!-- 					<md-tooltip md-delay="500" >{{::translate.load("sbi.execution.parametersselection.toolbar.open")}}</md-tooltip> -->
+<!-- 					<md-icon md-font-icon="fa fa-pencil"></md-icon> -->
+<!-- 			</md-button>	 -->
+<!-- 			<md-button aria-label="Save Parameters" class="md-icon-button"	ng-click="urlViewPointService.createNewViewpoint();"> -->
+<!-- 					<md-tooltip md-delay="500" >{{::translate.load("sbi.execution.parametersselection.toolbar.save")}}</md-tooltip> -->
+<!-- 					<md-icon md-font-icon="fa fa-floppy-o"></md-icon> -->
+<!-- 			</md-button>		  	 -->
+<!-- 	  	</div> -->
+<!-- 	</md-toolbar> -->
+
+		<div flex>
+			<render-parameters driverable-object = "dataset" param = "param" ng-repeat="param in dataset.pars" ></render-parameters> 
+		    <document-paramenter-element execProperties="dataset"  parameter="parameter" ng-repeat="parameter in drivers" ng-show="parameter.visible" layout="row" layout-align="start" />
+	    </div>
+	    <div>
+			<md-button style="width:95%" ng-cloak class="toolbar-button-custom md-raised" ng-disabled="isExecuteParameterDisabled()" ng-click="executeParameter()">
+				{{::translate.load("sbi.execution.parametersselection.executionbutton.message")}}
+			</md-button>	
+		</div>
+</md-sidenav>
+</div>

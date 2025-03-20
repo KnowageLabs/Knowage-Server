@@ -1,0 +1,39 @@
+<md-dialog>
+	<md-toolbar>
+		<div class="md-toolbar-tools">
+			<h2>{{translate.load("sbi.documentbrowser.clone.dialog.title")}}</h2>
+		</div>
+	</md-toolbar>
+	<md-dialog-content layout-align="start center" layout-padding>
+		<div layout="row">
+			<div class="kn-info" flex="100">
+				{{translate.load("sbi.documentbrowser.clone.dialog.text")}}
+			</div>
+		</div>
+		<form name="saveClonedDatasetForm" layout="column">
+			<md-input-container>
+				<label>{{translate.load("sbi.documentbrowser.clone.dialog.label")}}</label>
+				<input name="label" ng-model="dataset.label" required md-maxlength="50" ng-pattern="regex.alphanumeric">							
+			</md-input-container>
+		
+			<md-input-container>
+				<label>{{translate.load("sbi.documentbrowser.clone.dialog.name")}}</label>
+				<input name="name" ng-model="dataset.name" required md-maxlength="50" ng-pattern="regex.extendedAlphanumeric">							
+			</md-input-container>
+			
+			<md-input-container>
+				<label>{{translate.load("sbi.documentbrowser.clone.dialog.description")}}</label>
+				<textarea name="description" ng-model="dataset.description" md-maxlength="160"></textarea>							
+			</md-input-container>
+		</form>
+	</md-dialog-content>
+	 	
+	<md-dialog-actions layout="row">
+		<md-button ng-click="cancel()" class="md-raised">
+       	  {{translate.load("sbi.generic.cancel")}}
+      	</md-button>		
+		<md-button ng-click="save(dataset)" class="md-raised md-primary" ng-disabled="saveClonedDatasetForm.$invalid">
+       	  {{translate.load("sbi.generic.save")}}
+      	</md-button>
+	</md-dialog-actions>
+</md-dialog>

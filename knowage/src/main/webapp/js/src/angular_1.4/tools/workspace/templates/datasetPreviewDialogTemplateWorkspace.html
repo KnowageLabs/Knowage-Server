@@ -1,0 +1,86 @@
+<md-dialog  layout="column" flex class="kn-lovPreview" ng-cloak>
+  	
+	   	<md-toolbar>
+	 
+	     <div class="md-toolbar-tools layout-align-center-center layout-row">
+	      	
+	      	
+	      	<i class="fa fa-database"></i>
+	    	&nbsp;&nbsp;
+	       	<h2>{{translate.load('sbi.browser.document.dataset')}}: &nbsp; {{selectedDataSet.label}}</h2> 
+	       <span flex></span>
+				<md-button  ng-if = "drivers.length > 0 && showFilterIcon || dataset.pars.length > 0"  ng-click="toggleDrivers()" class="md-icon-button">
+	          		<md-icon md-font-icon="fa fa-filter"></md-icon>
+	       	 	</md-button>
+	       <md-button id="close-preview" ng-click="closeDatasetPreviewDialog()">
+	         {{translate.load('sbi.general.close')}}
+	       </md-button>
+	     </div>   
+	   </md-toolbar>
+		<!-- div ng-if="dataset.executed && datasetInPreview.dsTypeCd.toLowerCase() == 'qbe'">
+			<md-toolbar class="documentBrowserToolbar secondaryToolbar" ng-show="previewPaginationEnabled" >
+				<div class="md-toolbar-tools" layout="row" layout-align="center center">
+			   		<md-button class="md-fab md-mini" aria-label="backPagination" ng-disabled="disableBack" ng-click="getBackPreviewSet()">
+         				<md-icon class="fa fa-angle-double-left"></md-icon>
+		       		</md-button>
+		       		<span flex></span>
+		       		<div>{{startPreviewIndex+1 +'&nbsp-&nbsp'+ endPreviewIndex + '&nbsp/&nbsp'+totalItemsInPreview}} </div>
+		       		<span flex></span>
+		            <md-button class="md-fab md-mini" aria-label="forwardPagination" ng-disabled="disableNext" ng-click="getNextPreviewSet()">
+		         		<md-icon class="fa fa-angle-double-right"></md-icon>
+		       		</md-button>
+		   		</div>
+		   	</md-toolbar>
+	   	</div-->
+	   <md-card-content style="height:100%" ng-if="dataset.executed">
+	   		<iframe ng-src={{previewUrl}} style="height: calc(100% - 34px); width:100%; border:none;"></iframe>
+	   </md-card-content>
+
+		<!-- md-content style="overflow-y:hidden;" ng-if="datasetInPreview.dsTypeCd.toLowerCase() == 'qbe'">
+		
+		<div layout-fill >
+			<angular-table
+						id='previewDatasetTable'
+			            ng-model="previewDatasetModel"
+						columns="previewDatasetColumns" 
+						no-pagination=true
+						show-search-bar=false
+						full-width=true
+						relative-header=true>
+			</angular-table>	
+		 </div>
+		 
+		
+	</md-content-->
+</md-dialog>
+<div layout="column" flex=20 style="height:100%" ng-if="showDrivers">
+
+<md-sidenav  class="md-sidenav-right md-whiteframe-4dp" md-component-id="parametersPanelSideNav"  layout-fill md-is-locked-open="$mdMedia('gt-md')">
+<!-- 	<md-toolbar class="header secondaryToolbar" > -->
+<!-- 		<div class="md-toolbar-tools" layout="row" layout-align="space-around center"> -->
+<!-- 			<md-button aria-label="Reset Parameter" class="md-icon-button" ng-click="clearListParametersForm();"> -->
+<!-- 				<md-tooltip md-delay="500" >{{::translate.load("sbi.execution.parametersselection.toolbar.clear")}}</md-tooltip> -->
+<!-- 				<md-icon md-font-icon="fa fa-eraser"></md-icon> -->
+<!-- 			</md-button>						 -->
+<!-- 			<md-button aria-label="Open Saved Parameters" class="md-icon-button"  -->
+<!-- 					ng-click="urlViewPointService.getViewpoints();"> -->
+<!-- 					<md-tooltip md-delay="500" >{{::translate.load("sbi.execution.parametersselection.toolbar.open")}}</md-tooltip> -->
+<!-- 					<md-icon md-font-icon="fa fa-pencil"></md-icon> -->
+<!-- 			</md-button>	 -->
+<!-- 			<md-button aria-label="Save Parameters" class="md-icon-button"	ng-click="urlViewPointService.createNewViewpoint();"> -->
+<!-- 					<md-tooltip md-delay="500" >{{::translate.load("sbi.execution.parametersselection.toolbar.save")}}</md-tooltip> -->
+<!-- 					<md-icon md-font-icon="fa fa-floppy-o"></md-icon> -->
+<!-- 			</md-button>		  	 -->
+<!-- 	  	</div> -->
+<!-- 	</md-toolbar>	 -->
+		<div flex>
+			<render-parameters driverable-object = "dataset" param = "param" ng-repeat="param in dataset.pars" ></render-parameters> 
+	      	<document-paramenter-element execProperties="dataset"  parameter="parameter" ng-repeat="parameter in drivers" ng-show="parameter.visible" layout="row" layout-align="start" />	      
+	    </div>
+	    <div>
+			<md-button style="width:95%" ng-cloak class="toolbar-button-custom md-raised" ng-disabled="isExecuteParameterDisabled()" ng-click="executeParameter()">
+				{{::translate.load("sbi.execution.parametersselection.executionbutton.message")}}
+			</md-button>	
+		</div>	
+</md-sidenav>
+</div>

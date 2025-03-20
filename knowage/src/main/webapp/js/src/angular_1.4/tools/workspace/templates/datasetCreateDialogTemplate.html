@@ -1,0 +1,396 @@
+<md-dialog class="workspaceDatasetWizard" md-dynamic-height>
+			  
+	<md-toolbar>
+		<div class="md-toolbar-tools">
+			<h2 ng-if="dataset.name && dataset.name!=''">
+				{{translate.load('sbi.workspace.dataset.wizard')}}: {{dataset.name}}
+			</h2>
+			
+			<h2 ng-if="!(dataset.name && dataset.name!='')">
+				{{translate.load('sbi.workspace.dataset.wizard')}}: <span>({{translate.load('sbi.ds.wizard.newdataset.title')}})</span>
+			</h2>						
+	   
+			<span flex></span> 
+			<md-button 	ng-click="closeDatasetCreateDialog()" title="{{translate.load('sbi.workspace.dataset.wizard.closebutton.tooltip')}}">
+				{{translate.load("sbi.general.close")}}
+			</md-button>
+		</div>
+	</md-toolbar>	
+		   
+	<md-dialog-content>
+	     
+		<!-- CARD 1 (START) -->
+	       <div ng-if="datasetWizardView==1">
+			<md-card layout="column">
+				<md-toolbar class="secondaryToolbar">
+		         	<div class="md-toolbar-tools">
+		           		<h2>{{translate.load('sbi.workspace.dataset.wizard.load')}}</h2>
+		               	<span flex></span>
+		            </div>
+				</md-toolbar>
+				<md-card-content class="loadFilePadding">
+					<form>   
+						<div layout="row" layout-wrap>			                 	               
+							<div flex=100 layout="row" layout-align="start center" class="workspaceLabelCheckboxContainer">
+			                  	<label class="workspaceLabelForCheckBox">
+				                  	{{translate.load('sbi.workspace.dataset.wizard.limit')}}
+	                  			</label> 
+			                  	<md-input-container class="md-block workspaceLimitCheckboxContainer">
+			                     	<md-checkbox 	aria-label="Checkbox 1" ng-model="limitPreviewChecked" ng-checked="toggleLimitPreview()" class="workspaceCheckbox">
+	           						</md-checkbox>
+			                  	</md-input-container>
+							</div>
+				               
+							<div layout="row" flex=100 layout-align="start center" ng-show="dataset.fileName=='' || changingFile">
+			                  	<label layout-align="center center">
+			                  		{{translate.load("sbi.ds.wizard.selectFile")}}:
+		                  		</label>
+			                  	<file-upload 	file-max-size=maxSizeStr flex ng-model="fileObj" id="datasetFile" 
+			                  					ng-click="fileChange();checkChange();fileObjTakeBackup()" 
+				                  				title="{{translate.load('sbi.workspace.dataset.wizard.browsefile.tooltip')}}">
+	                			</file-upload>
+			                  	
+			                  	<div class="">
+				                    <md-button 	ng-click="uploadFile()" class="md-raised" 
+				                     			ng-disabled="!fileObj.fileName || (changingFile && dataset.fileName==fileObj.fileName)" 
+				                     			title="{{datasetWizStep1UploadButtonTitle()}}">
+		                     			{{translate.load("sbi.workspace.dataset.wizard.upload")}}
+	             					</md-button>
+			                  	</div>
+							</div>
+							
+							<div layout="row" flex=100 ng-if="dataset.fileName!='' && !changingFile">
+						 		<label layout-align="center center" class="workspaceLabelButtonFileLoaded">
+						 			{{translate.load("sbi.workspace.dataset.wizard.file.uploaded")}}: <strong>{{dataset.fileName}}</strong>
+					 			</label>
+							 	<span flex></span>
+							  	<div class="">
+							    <md-button 	ng-click="changeUploadedFile()" ng-show="!ckanInWizard" class="md-raised" 
+							    			title="{{translate.load('sbi.workspace.dataset.wizard.file.change.tooltip')}}">
+		                     			{{translate.load("sbi.workspace.dataset.wizard.file.change")}}
+	             				</md-button>
+	           					</div>
+							</div>
+						
+		               </div>
+					</form>          
+		       	</md-card-content> 	
+	       	</md-card>
+	       	
+	      		<md-card ng-if="dataset.fileType=='CSV'" layout="column" class="threeCombosThreeNumFields">         		
+	        		
+	        		<div layout="row" class="threeCombosLayout">								
+			              
+			        <!-- CSV file is uploaded --> 
+					<div layout="row" flex >
+		                 	
+	                 	<div layout="row" layout-wrap flex=20>
+	                  		<div flex=90 layout-align="center center">
+	                     		<md-input-container class="md-block">
+	                        		<label>{{translate.load("sbi.ds.file.csv.delimiter")}}</label> 
+	                        		<md-select aria-label="aria-label" ng-model="dataset.csvDelimiter">
+	                           			<md-option 	ng-repeat="csvDelimiterCharacterItem in csvDelimiterCharacterTypes" 
+	                           						ng-click="chooseDelimiterCharacter(csvDelimiterCharacterItem)" 
+	                           						value="{{csvDelimiterCharacterItem.name}}">
+	                         						{{csvDelimiterCharacterItem.name}}
+	                    						</md-option>
+	                        		</md-select>
+		                     	</md-input-container>
+		                  	</div>
+						</div>
+	                 	
+	               		<div layout="row" layout-wrap flex=20>
+	                  		<div flex=90 layout-align="center center">
+	                     		<md-input-container class="md-block">
+	                        		<label>{{translate.load("sbi.ds.file.csv.quote")}}</label> 
+	                        		<md-select aria-label="aria-label" ng-model="dataset.csvQuote">
+	                           			<md-option 	ng-repeat="csvQuoteCharacterItem in csvQuoteCharacterTypes" 
+	                           						ng-click="chooseQuoteCharacter(csvQuoteCharacterItem)" 
+	                           						value="{{csvQuoteCharacterItem.name}}">
+	                         						{{csvQuoteCharacterItem.name}}
+	                    						</md-option>
+	                        		</md-select>
+		                     	</md-input-container>
+		                  	</div>
+						</div>
+						
+						<div layout="row" layout-wrap flex=30>
+	                  		<div flex=90 layout-align="center center">
+	                     		<md-input-container class="md-block">
+	                        		<label>{{translate.load("sbi.workspace.dataset.wizard.csv.encoding")}}</label> 
+	                        		<md-select aria-label="aria-label" ng-model="dataset.csvEncoding">
+	                           			<md-option 	ng-repeat="csvEncodingItem in csvEncodingTypes" 
+	                           						ng-click="chooseEncoding(csvEncodingItem)" 
+	                           						value="{{csvEncodingItem.name}}">
+	                         						{{csvEncodingItem.name}}
+	                    						</md-option>
+	                        		</md-select>
+		                     	</md-input-container>
+		                  	</div>
+						</div>
+						
+						<div layout="row" layout-wrap flex=30>
+	                  		<div flex=90 layout-align="center center">
+	                     		<md-input-container class="md-block">
+	                        		<label>{{translate.load("sbi.workspace.dataset.wizard.file.dateFormat")}}</label> 
+	                        		<md-select aria-label="aria-label" ng-model="dataset.dateFormat">
+	                           			<md-option 	ng-repeat="dateFormatItem in dateFormatTypes" 
+	                           						ng-click="chooseDateFormat(dateFormatItem)" 
+	                           						value="{{dateFormatItem.value}}">
+	                         						{{dateFormatItem.name}}
+	                    						</md-option>
+	                        		</md-select>
+		                     	</md-input-container>
+		                  	</div>
+						</div>						
+						
+						<div layout="row" layout-wrap flex=40>
+	                  		<div flex=90 layout-align="center center">
+	                     		<md-input-container class="md-block">
+	                        		<label>{{translate.load("sbi.workspace.dataset.wizard.file.timestampFormat")}}</label> 
+	                        		<md-select aria-label="aria-label" ng-model="dataset.timestampFormat">
+	                           			<md-option 	ng-repeat="timestampFormattItem in timestampFormatTypes" 
+	                           						ng-click="chooseTimestampFormat(timestampFormattItem)" 
+	                           						value="{{timestampFormattItem.value}}">
+	                         						{{timestampFormattItem.name}}
+	                    						</md-option>
+	                        		</md-select>
+		                     	</md-input-container>
+		                  	</div>
+						</div>		
+							
+					</div>					
+												
+		    	</div>
+			    	
+		    </md-card>
+			    
+		    <md-card ng-if="dataset.fileType=='XLS' || dataset.fileType=='XLSX'" layout="column" class="threeCombosThreeNumFields">          
+		        
+		        <div layout="row" class="threeCombosLayout">	
+			        
+			        <!-- XLS/XLSX file is uploaded --> 
+					<div layout="row" flex layout-align="center center">
+						
+						<div layout="row" layout-wrap flex=30>
+	                  		<div flex=90 layout-align="center center">
+	                     		<md-input-container class="md-block">
+	                        		<label>{{translate.load("sbi.ds.file.xsl.skiprows")}}</label> 
+	                        		<input 	ng-model="dataset.skipRows" type="number" 
+	                        				step="1" min="0" value="{{dataset.skipRows}}">
+                       				<md-tooltip>{{translate.load("sbi.ds.file.xsl.skiprows.tooltip")}}</md-tooltip>
+		                     	</md-input-container>
+		                  	</div>
+						</div>
+	                 	
+	               		<div layout="row" layout-wrap flex=30>
+	                  		<div flex=90 layout-align="center center">
+	                     		<md-input-container class="md-block">
+	                        		<label>{{translate.load("sbi.ds.file.xsl.limitrows")}}</label> 
+	                        		<input 	ng-model="dataset.limitRows" type="number" 
+	                        				step="1" min="0" value="{{dataset.limitRows}}">
+		                     	</md-input-container>
+		                  	</div>
+						</div>
+						
+						<div layout="row" layout-wrap flex=30>
+	                  		<div flex=90 layout-align="center center">
+	                     		<md-input-container class="md-block">
+	                        		<label>{{translate.load("sbi.ds.file.xsl.sheetnumber")}}</label> 
+	                        		<input 	ng-model="dataset.xslSheetNumber" type="number" 
+	                        				step="1" min="1" value="{{dataset.xslSheetNumber}}">
+		                     	</md-input-container>
+		                  	</div>
+						</div>
+						
+					</div>
+						
+				</div>					
+				
+	      	 	</md-card>
+	      	 	
+	        </div>
+		
+		<!-- CARD 1 (END) -->
+	     
+		<!-- CARD 2 (START) -->
+	     	     	<md-card ng-if="datasetWizardView==2" class="validationStep" >
+	        
+	        	<md-toolbar class="secondaryToolbar">
+		           	<div class="md-toolbar-tools">
+		              	<h2 flex>{{translate.load('sbi.workspace.dataset.wizard.load')}} &#10137; {{translate.load('sbi.ds.wizard.metadata')}}</h2>
+						<span flex>
+							<md-input-container ng-if="validationError">
+								<md-checkbox aria-label="Display only validation errors" ng-model="displayInvalidColumns.value" ng-checked="" ng-change="filterInvalidColumns()">
+									{{translate.load('sbi.ds.wizard.displayValidationErrors')}}
+								</md-checkbox>
+							</md-input-container>							
+						</span>
+	          	 	</div>
+	        	</md-toolbar>         
+	                 
+	        	<md-content flex class="loadFilePadding step2DefDataCardContent">
+		        	<div ng-if="metadataType.value==1" class="step2Height">
+			            <form class="step2Height">
+							<angular-table
+								id="columnsMeta"
+								ng-model=dataset.meta.columns
+								columns="tableColumns"
+								show-search-bar=false							
+								scope-functions="metaScopeFunctions"
+								no-pagination=false
+								items-per-page=6
+								fixed-item-per-page=true
+								columns-search='["invalidColumn"]'
+								class="step2DefDataTable">														
+							</angular-table>						
+			            </form>				            	            			            
+		            </div>
+		            
+	            	<div ng-if="metadataType.value==2" class="step2DefDataTableContainer">
+		            	<form> 		
+					 		<angular-table
+											flex
+											id="datasetMeta"
+											ng-model=dataset.meta.dataset
+											columns="tableDataset"
+											show-search-bar=false
+											scope-functions="metaScopeFunctions"
+										    no-pagination=false
+											items-per-page=6
+											fixed-item-per-page=true
+										   	class="step2DefDataTable">																					
+							</angular-table>
+						</form>
+						
+					</div>																												
+	        	</md-content>	        
+		</md-card>
+		
+		<div ng-if="datasetWizardView==2 && columnErrorDetails.errors && columnErrorDetails.errors.length > 0" class="md-sidenav-right md-whiteframe-4dp hideErrors" ng-class="{'showErrors': showErrors}">
+			<md-toolbar class="md-theme-light">
+				<div class="md-toolbar-tools">
+	   	 			<h1 md-truncate flex="80">{{columnErrorDetails.errors[0].columnName}}</h1>	       	 	
+	   	 			<md-button class="md-icon-button" flex="20" aria-label="Close" ng-click="closeErrorDetails()"><i class="fa fa-times" aria-hidden="true"></i></md-button>
+	   	 		</div>
+	        </md-toolbar>
+	        <md-content layout-padding>
+	        	<md-list class="md-dense" flex ng-model="columnErrorDetails.errors">
+					<md-list-item class="md-2-line" ng-repeat="cell in columnErrorDetails.errors | limitTo: limit | orderBy:'id'">
+						<div class="md-list-item-text">
+							<h3>Row {{cell.id + columnErrorDetails.skipRows + 2 }}</h3> 
+							<p>{{translate.load(cell[columnString + index])}}</p>
+						</div>
+					</md-list-item> 
+				</md-list>
+				<a ng-if="showMoreErrorsButton()" ng-click="extandErrorList()" class="showMoreErrors" href="">{{translate.load("sbi.workspace.dataset.wizard.metadata.validation.error.showmore")}} : {{remainingErros()}}</a>
+	        </md-content>
+		</div>
+	     	<!-- CARD 2 (END) -->
+	    
+	     	<!-- CARD 3 (START) -->
+	     	<md-card ng-if="datasetWizardView==3" class="previewStep">
+	     	
+	        	<md-toolbar class="secondaryToolbar">
+	            <div class="md-toolbar-tools">
+	               <h2>{{translate.load('sbi.workspace.dataset.wizard.load')}} &#10137; {{translate.load('sbi.ds.wizard.metadata')}} &#10137; {{translate.load('sbi.ds.wizard.validation')}}</h2>
+	               <span flex></span>
+	            </div>
+	        	</md-toolbar>
+	        	
+			<md-card-content >
+				<angular-table 
+					flex
+		            id="step3PreviewTable"
+		            ng-model="resultRowsStep2"
+					columns="allHeadersForStep3Preview" 
+					no-pagination=false
+					items-per-page="6"
+					fixed-item-per-page="true"
+					show-search-bar=false
+					full-width="true"
+					relative-header="true">
+				</angular-table>		 		
+	           </md-card-content>
+	     	</md-card>
+	  		<!-- CARD 3 (END) -->
+	     	
+	     	<!-- CARD 4 (START) -->
+	     	<div ng-if="datasetWizardView==4">
+			<md-card layout="column">
+				<md-toolbar class="secondaryToolbar">
+		         	<div class="md-toolbar-tools">
+		           		<h2>{{translate.load('sbi.workspace.dataset.wizard.load')}}</h2>
+		               	<span flex></span>
+		            </div>
+				</md-toolbar>
+		         
+				<md-card-content class="loadFilePadding">
+					<form name="formForSaving">    
+						<div layout="row" layout-wrap>
+			                  <div flex>
+			                     <md-input-container class="md-block">
+			                        <label>{{translate.load("sbi.generic.name")}}</label> 			                        
+			                        <input type="text" ng-model="dataset.name">
+		                         	<div  ng-messages="formForSaving.lbl.$error" ng-show="dataset.name==''">
+				                        <div ng-messages="required">{{translate.load("sbi.workspace.required")}}</div>
+						          	</div>
+			                     </md-input-container>
+			                  </div>
+						</div>
+						<div layout="row" layout-wrap>
+			                  <div flex>
+			                     <md-input-container class="small counter">
+			                        <label>{{translate.load("sbi.generic.descr")}}</label> 
+			                        <textarea rows="2" cols="50" ng-model="dataset.description" class="workspaceDatasetDescription"></textarea>
+			                     </md-input-container>
+			                  </div>
+						</div>
+			           	<div layout="row" layout-align="start center" class="workspaceLabelCheckboxContainer">
+	                  		<label>
+	                  			{{translate.load("sbi.ds.isPersisted")}}:
+	                 			</label> 
+	                  		<md-input-container class="small counter workspacePersistCheckboxContainer">
+	                     		<md-checkbox 	aria-label="Checkbox Persist" ng-model="dataset.persist" ng-checked="" class="workspaceCheckbox"></md-checkbox>
+	                  		</md-input-container>
+	                  		
+	                  		<label ng-show="showExportHDFS">
+	                  			{{translate.load("sbi.ds.hdfs")}}:
+	                 			</label> 
+	                  		<md-input-container ng-show="showExportHDFS" class="small counter workspacePersistCheckboxContainer">
+	                     		<md-checkbox 	aria-label="Checkbox HDFS" 
+		                     					ng-model="dataset.exportToHdfs" ng-checked="" class="workspaceCheckbox">
+								</md-checkbox>
+	                  		</md-input-container>
+						</div>
+						
+						<div ng-show="dataset.persist" layout="row" class="workspacePersistDatasetLabel">
+							<label class="step4BottomPadding">
+								{{translate.load('sbi.workspace.dataset.wizard.tableprefix.label')}} <strong>{{dataset.tablePrefix}}</strong>
+							</label>
+						</div>
+						
+						<div ng-show="dataset.persist" layout="row" class="workspacePersistDatasetTableName">
+		                     <md-input-container flex class="small counter" >
+		                        <label>{{translate.load("sbi.ds.persistTableName")}}</label> 
+		                        <input ng-model="dataset.tableName">
+		                        <div  ng-messages="formForSaving.lbl.$error" ng-show="dataset.persist && dataset.tableName==''">
+			                        <div ng-messages="required">{{translate.load("sbi.workspace.required")}}</div>
+					          	</div>
+		                     </md-input-container>
+						</div>
+					</form>					
+		       	</md-card-content> 	
+	       	</md-card>        
+	        </div>
+	     	<!-- CARD 4 (END) -->
+			      
+   </md-dialog-content>
+   
+   <md-dialog-actions layout="row">
+		<md-button 	ng-if="datasetWizardView>1" ng-click="toggleDWVBack()" title="{{translate.load('sbi.workspace.dataset.wizard.backbutton.tooltip')}}"> {{translate.load("sbi.general.previous")}}</md-button>
+		<md-button 	ng-click="toggleDWVNext()" ng-disabled="nextOrSaveButtonCondition()" ng-if="datasetWizardView!=4" title="{{datasetWizStep1NextButtonTitle()}}">  {{translate.load("sbi.general.next")}}</md-button>
+		<md-button ng-disabled="nextOrSaveButtonCondition()" ng-if="datasetWizardView==4" ng-click="toggleDWVNext()">{{translate.load("sbi.general.save")}}</md-button>	
+ 	</md-dialog-actions>
+
+</md-dialog>

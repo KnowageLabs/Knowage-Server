@@ -1,0 +1,56 @@
+<div layout="row" flex class="workspaceDocumentsList">
+
+<script type="text/ng-template" id="dialog1.tmpl.html">
+<md-dialog aria-label="Snapshot"  style="height:90%; width:90%; max-width: 100%;  max-height: 100%;" ng-cloak>
+<md-toolbar>
+      <div class="md-toolbar-tools">
+        <h1>Snapshot</h1>
+        <span flex></span>
+        <md-button class="md-icon-button" ng-click="closeFilter()">
+          <md-icon md-font-icon="fa fa-times closeIcon" aria-label="Close dialog"></md-icon>
+        </md-button>
+      </div>
+    </md-toolbar>	
+<md-dialog-content flex layout="column" class="dialogFrameContent" >
+			<iframe flex class=" noBorder" ng-src="{{snapshotUrl}}" name="angularIframe"></iframe> 
+	</md-dialog-content> 
+ </md-dialog>
+</script>
+
+	<md-whiteframe 	ng-if=showDocSchedJsp flex=100 layout="column" layout-margin
+					class="md-whiteframe-5dp workspaceBckgColorRightSide workspaceWhiteframe">
+	
+		<md-content layout="row" flex class="workspaceBckgColorRightSide workspaceWhiteframeContent">
+		
+			<md-content layout="row" flex layout-fill class="workspaceBckgColorRightSide">
+			
+				<document-schedulation></document-schedulation>
+			
+			</md-content>
+		
+		</md-content>
+	
+	</md-whiteframe>
+	
+	<div ng-if=!showDocSchedJsp flex layout="column">
+	
+		<md-content layout="row" flex layout-fill class="workspaceBckgColorRightSide">
+		
+			
+				<schedulation-view 	class="kn-documentBrowser" flex
+			 					ng-model=schedulationList
+			 					show-grid-view=showGridView
+			 					selected-row=selectedRow
+			 					selected-document=selectedDocument
+			 					table-speed-menu-option=recentSpeedMenu
+			 					execute-document-action="triggerExecute(doc, merge, document)"
+			 					preview-document-action="openSchedulersDocumentsAndSnapshots(doc)">
+				</schedulation-view>
+			
+		
+		</md-content>
+	
+	</div>
+
+		
+</div>

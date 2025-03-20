@@ -1,0 +1,17 @@
+<md-dialog aria-label="Drivers execution">
+
+  <md-dialog-content  layout="column" >
+   <h3>  Driver to be executed: </h3>
+    <document-paramenter-element execProperties="businessModel"  parameter="parameter" ng-repeat="parameter in drivers" ng-show="parameter.visible" layout="row" layout-align="start" />
+  </md-dialog-content>
+
+  <md-dialog-actions layout="row">
+	            <span flex></span>
+	            <md-button class="md-raised" ng-click="close();">
+	                 {{translate.load("sbi.documentdetails.visualdependency.cancel")}}
+	            </md-button>
+	            <md-button class="md-raised md-primary"  ng-click="hide()">
+	                 {{translate.load("sbi.documentdetails.visualdependency.save")}}
+	            </md-button>
+  </md-dialog-actions>
+</md-dialog>

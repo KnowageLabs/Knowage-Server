@@ -1,0 +1,70 @@
+<div layout="row" flex class="workspaceDocumentsList">
+	<div flex layout="column">
+		<md-content layout="row" flex layout-fill class="workspaceBckgColorRightSide">
+			<recent-view 	class="kn-documentBrowser" flex
+			 					ng-model=recentDocumentsList
+			 					show-grid-view=showGridView
+			 					show-add-to-organizer="true"
+			 					selected-row=selectedRow
+			 					selected-document=selectedDocument
+			 					table-speed-menu-option=recentSpeedMenu
+			 					execute-document-action="executeRecent(doc)"
+			 					select-document-action="selectDocument(doc)">
+			</recent-view>
+		</md-content>
+	</div>
+		
+	<md-sidenav class="md-sidenav-right selectedDocumentSidenav md-whiteframe-4dp" md-component-id="rightDoc" md-is-locked-open="$mdMedia('gt-md')"  ng-class="{'full-screen-sidenav': smallScreen}" ng-show="showDocumentDetails()">
+			
+		<md-toolbar class="ternaryToolbar">
+			<div layout="row" layout-align="space-around center">
+
+				<md-button aria-label="Execute Document" class="md-icon-button" ng-click="executeRecent(selectedDocument)">
+					<md-tooltip md-delay="500">{{::translate.load('sbi.workspace.execute.document')}}</md-tooltip>
+					<md-icon md-font-icon="fa fa-play-circle" ></md-icon>
+				</md-button>
+
+			</div>
+		</md-toolbar>
+		
+		<md-content layout-margin>		
+			<md-list>
+				<md-list-item class="md-2-line">
+	 	          	<div class="md-list-item-text">
+		 	            <h3><b>{{translate.load('sbi.workspace.recent.documentName')}}</b></h3>
+		 	            <p>{{selectedDocument.documentName}}</p>
+	 	         	 </div>
+				</md-list-item>
+	
+				<md-list-item class="md-2-line">
+	 	          	<div class="md-list-item-text">
+	 	            	<h3><b>{{translate.load('sbi.workspace.recent.documentLabel')}}</b></h3>
+	 	            	<p>{{selectedDocument.documentLabel}}</p>
+	 	          	</div>
+				</md-list-item>
+	
+				<md-list-item class="md-2-line">
+	 	          	<div class="md-list-item-text">
+	 	           		<h3><b>{{translate.load('sbi.workspace.recent.documentDescr')}}</b></h3>
+	 	            	<p>{{selectedDocument.documentDescription}}</p>
+         		 	</div>
+				</md-list-item>
+	
+				<md-list-item class="md-2-line">
+	 	          	<div class="md-list-item-text">
+	 	           		<h3><b>{{translate.load('sbi.workspace.recent.documentType')}}</b></h3>
+	 	            	<p>{{selectedDocument.documentType}}</p>
+	 	          	</div>
+				</md-list-item>
+					
+				<md-list-item class="md-2-line">
+	 	          	<div class="md-list-item-text">
+	 	           		<h3><b>{{translate.load('sbi.workspace.recent.requestTime')}}</b></h3>
+	 	            	<p>{{selectedDocument.requestTime | date:'h:mm a EEEE, MMMM d, y'}}</p>
+	 	          	</div>
+				</md-list-item>
+			</md-list>
+		</md-content>
+			
+	</md-sidenav>	
+</div>

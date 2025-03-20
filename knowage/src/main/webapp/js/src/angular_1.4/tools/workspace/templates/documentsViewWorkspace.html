@@ -1,0 +1,121 @@
+<div layout="column" flex class="workspaceDocumentsList">
+	<md-toolbar class="ternaryToolbar">
+		<div class="md-toolbar-tools noPadding">
+			<bread-crumb flex	item-name='name' ng-model="breadModel" selected-item="selectedFolder" class="kn-workspace-comp" 
+						control='breadCrumbControl' move-to-callback=moveBreadCrumbToFolder(item,index)
+						ng-hide="organizerSearch">
+		</bread-crumb>
+		</div>
+	</md-toolbar>
+
+	<md-content layout="column" flex>
+		
+		
+		
+			<div flex layout="column" layout-margin>
+ 
+					<md-content flex layout-fill ng-class="{'layout-row':!showGridView,'':showGridView}" class="noMargin">
+	          
+			          	<!-- 
+			          		The 'searching-organizer' directive is used as an indicator if the Organizer is being searched (needed
+			          		for handling the graphical elements in it.
+			          		@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+		 				-->
+					 	<folder-view	class="kn-documentBrowser" flex
+					 					ng-model=foldersToShow
+					 					show-grid-view=showGridView
+					 					searching-organizer=organizerSearch
+					 					table-speed-menu-option=tableSpeedMenuOption
+					 					selected-folder=selectedFolder
+					 					select-folder-action="openFolder(folder)"
+					 					delete-folder-action="deleteFolder(folder)" >
+						</folder-view>	
+						
+						<organizer-view class="kn-documentBrowser" flex
+					 					ng-model=documentsOfSelectedFolder
+					 					show-grid-view=showGridView
+					 					selected-document=selectedOrganizerDocument
+					 					searching-organizer=organizerSearch
+					 					table-speed-menu-option=organizerSpeedMenu
+					 					execute-document-action="executeDocumentFromOrganizer(doc)"
+					 					select-document-action="selectOrganizerDocument(doc)"
+					 					delete-document-action="deleteDocumentFromOrganizer(doc)"
+					 					move-document-action="moveDocumentToFolder(doc)" >
+						</organizer-view>			    
+	
+					</md-content>
+					
+			</div>
+			
+	</md-content>
+
+   <md-sidenav class="md-sidenav-right selectedDocumentSidenav md-whiteframe-4dp" md-component-id="rightOrganizer" md-is-locked-open="$mdMedia('gt-md')"  ng-class="{'full-screen-sidenav': smallScreen}" ng-show="showOrganizerDocumentDetails()">
+		
+		<md-toolbar class="ternaryToolbar">
+			
+			<div layout="row" layout-align="space-around center">
+				
+				<md-button ng-if="smallScreen" title="{{translate.load('sbi.documentbrowser.execute')}}" aria-label="Close panel" class="md-icon-button" ng-click="selectOrganizerDocument();toggleOrganizerDocumentDetail();">
+						<md-icon md-font-icon="fa fa-times" ></md-icon>
+				</md-button>
+
+				<md-button title="{{translate.load('sbi.workspace.execute.document')}}" aria-label="Execute Document" class="md-icon-button" ng-click="executeDocumentFromOrganizer(selectedOrganizerDocument)">
+						<md-icon md-font-icon="fa fa-play-circle" ></md-icon>
+				</md-button>
+                         
+                         <md-button title="{{translate.load('sbi.workspace.organizer.document.move')}}" aria-label="Move Document" class="md-icon-button" ng-click="moveDocumentToFolder(selectedOrganizerDocument)">
+						<md-icon md-font-icon="fa fa-share"></md-icon>
+				</md-button>                            
+                         
+				<md-button title="{{translate.load('sbi.workspace.delete.document')}}" aria-label="Delete Document" class="md-icon-button" ng-click="deleteDocumentFromOrganizer(selectedOrganizerDocument)">
+						<md-icon md-font-icon="fa fa-trash-o"></md-icon>
+				</md-button>	
+				
+				<!-- @author Danilo Ristovski (danristo, danilo.ristovski@mht.net) -->
+				<md-button title="{{translate.load('sbi.workspace.dataset.detail.close')}}" aria-label="Close Documents Details" class="md-icon-button" ng-click="hideRightSidePanel()">
+						<md-icon md-font-icon="fa fa-times" ></md-icon>
+				</md-button>
+				
+			</div>
+			
+		</md-toolbar>
+		
+		<md-content layout-margin>
+			
+			<md-list>			 	
+
+				<md-list-item class="md-2-line">
+ 	          		<div class="md-list-item-text">
+ 	            		<h3><b>{{translate.load("sbi.workspace.favorites.documentName")}}</b></h3>
+ 	            		<p>{{selectedOrganizerDocument.documentName}}</p>
+ 	         		 </div>
+					</md-list-item>
+
+				<md-list-item class="md-2-line">
+ 	          		<div class="md-list-item-text">
+ 	            		<h3><b>{{translate.load("sbi.workspace.favorites.documentLabel")}}</b></h3>
+ 	            		<p>{{selectedOrganizerDocument.documentLabel}}</p>
+ 	          		</div>
+					</md-list-item>
+
+				<md-list-item class="md-2-line">
+ 	          		<div class="md-list-item-text">
+ 	            		<h3><b>{{translate.load("sbi.workspace.favorites.documentDescr")}}</b></h3>
+ 	            		<p>{{selectedOrganizerDocument.documentDescription}}</p>
+ 	          		</div>
+					</md-list-item>
+
+				<md-list-item class="md-2-line">
+	 	          	<div class="md-list-item-text">
+		 	            <h3><b>{{translate.load("sbi.workspace.favorites.documentType")}}</b></h3>
+		 	            <p>{{selectedOrganizerDocument.documentType}}</p>
+	 	         	</div>
+				</md-list-item>
+
+			</md-list>
+			
+		</md-content>
+		
+	</md-sidenav>
+
+</div>

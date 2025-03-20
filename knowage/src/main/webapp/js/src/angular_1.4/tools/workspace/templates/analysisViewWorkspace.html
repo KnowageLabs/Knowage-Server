@@ -1,0 +1,120 @@
+<div layout="row" flex class="workspaceDocumentsList">
+	
+	<div flex layout="column">
+		
+			<md-content layout="row" flex layout-fill class="workspaceBckgColorRightSide">
+				
+				<!-- 
+					The view of the Analysis view of the Workspace.
+					@author Danilo Ristovski (danristo, danilo.ristovski@mht.net) 
+				-->
+				<workspace-document-view 
+									class="kn-documentBrowser" flex 
+				 					ng-model=cockpitAnalysisDocs
+				 					show-grid-view=showGridView
+				 					show-add-to-organizer=false
+				 					favorites-enabled=false
+				 					clone-enabled=true
+				 					delete-enabled=true
+				 					selected-row=selectedRow
+				 					selected-document=selectedDocument
+				 					table-speed-menu-option=analysisSpeedMenu
+				 					execute-document-action="executeDocument(doc)"
+				 					select-document-action="selectDocument(doc)"
+				 					clone-document-action="cloneAnalysisDocument(doc)"
+				 					delete-document-action="deleteAnalysisDocument(doc)" 
+				 					share-document-action="shareDocument(doc)" 
+				 					edit-document-action="editGeoDocument(doc)">
+				</workspace-document-view>	
+			
+			</md-content>
+	
+	</div>
+	
+	<!-- Side navigation panel that contains details about the selected document in the Analysis option. -->
+
+	<md-sidenav class="md-sidenav-right selectedDocumentSidenav md-whiteframe-4dp" md-component-id="rightDoc" md-is-locked-open="$mdMedia('gt-md')" ng-class="{'full-screen-sidenav': smallScreen}" ng-show="showDocumentDetails()">
+		
+		<md-toolbar class="ternaryToolbar">
+			
+			<div layout="row" layout-align="space-around center">
+				
+				<md-button aria-label="Execute Document" class="md-icon-button" ng-click="executeDocument(selectedDocument)">
+					<md-tooltip md-delay="500">{{::translate.load('sbi.workspace.execute.document')}}</md-tooltip>
+					<md-icon md-font-icon="fa fa-play-circle" ></md-icon>
+				</md-button>
+				<md-button aria-label="Edit Document" class="md-icon-button" ng-click="editAnalysisDocument(selectedDocument,$event)" ng-if="isVisible(selectedDocument)">
+					<md-tooltip md-delay="500">{{::translate.load('sbi.workspace.edit.document')}}</md-tooltip>
+					<md-icon md-font-icon="fa fa-edit"></md-icon>
+				</md-button>
+				<md-menu class="noMargin">
+			     	<md-button class="md-icon-button" ng-click="$mdOpenMenu()">
+			      		<md-tooltip md-delay="500">Other options</md-tooltip>
+			        	<md-icon md-menu-origin md-font-icon="fa fa-ellipsis-v"></md-icon>
+			      	</md-button>
+			      	<md-menu-content width="4">
+			        	<md-menu-item>
+			          		<md-button aria-label="Share Dataset" ng-click="shareDocument(selectedDocument)">
+				            	<md-icon md-font-icon="fa fa-share-alt" md-menu-align-target></md-icon>
+				            	{{::translate.load('sbi.browser.document.share.win.title')}}
+				          	</md-button>
+				        </md-menu-item>
+				        <md-menu-item>
+				          	<md-button aria-label="Clone Document" ng-click="cloneAnalysisDocument(selectedDocument)">
+				            	<md-icon md-font-icon="fa fa-clone" md-menu-align-target></md-icon>
+				            	{{::translate.load('sbi.workspace.clone.document')}}
+				          	</md-button>
+				        </md-menu-item>
+				        <md-menu-item>
+				          	<md-button aria-label="Delete Document" ng-click="deleteAnalysisDocument(selectedDocument)">
+				            	<md-icon md-font-icon="fa fa-trash" md-menu-align-target></md-icon>
+				            	{{::translate.load('sbi.workspace.delete.document')}}
+				          	</md-button>
+				        </md-menu-item>
+				        <md-menu-item>
+				          	<md-button aria-label="Upload Preview File" ng-click="uploadPreviewFile(selectedDocument)">
+				           		<md-icon md-font-icon="fa fa-upload"></md-icon>
+				            	{{::translate.load('sbi.workspace.analysis.upload.preview.file')}}
+				          	</md-button>
+				        </md-menu-item>
+			      	</md-menu-content>
+		    	</md-menu>
+            	
+				
+			</div>
+			
+		</md-toolbar>
+		
+		<!-- The content of the right side navigation panel, i.e. details for the currently selected document. -->
+		<md-content layout-margin>
+			
+			<md-list>
+				 
+				 <md-list-item class="md-2-line">
+				          <div class="md-list-item-text">
+				            <h3><b>{{translate.load("sbi.generic.descr")}}</b></h3>
+				            <p>{{selectedDocument.description}}</p>
+				          </div>
+				 </md-list-item>				 
+				 
+				 <md-list-item class="md-2-line">
+				          <div class="md-list-item-text">
+				            <h3><b>{{translate.load("sbi.generic.type")}}</b></h3>
+				            <p>{{selectedDocument.typeCode}}</p>
+				          </div>
+				 </md-list-item>
+				 
+				 <md-list-item class="md-2-line">
+				          <div class="md-list-item-text">
+				            <h3><b>{{translate.load("sbi.generic.creationdate")}}</b></h3>
+				            <p>{{getSelectedDocumentDate(selectedDocument.creationDate)}}</p>
+				          </div>
+				 </md-list-item>
+				 
+			</md-list>
+			
+		</md-content>
+		
+	</md-sidenav>
+	
+</div>

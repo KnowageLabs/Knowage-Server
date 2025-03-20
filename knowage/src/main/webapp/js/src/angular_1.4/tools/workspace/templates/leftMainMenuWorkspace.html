@@ -1,0 +1,54 @@
+<md-sidenav
+        class="md-sidenav-left"
+        md-component-id="leftWorkspaceSideNav"
+        component_id="leftWorkspaceSideNav"
+        md-is-locked-open="$mdMedia('gt-sm')"
+        md-disable-backdrop
+        md-whiteframe="4">
+	
+	<!-- 
+		Angular list that holds and displays all options for viewing files (different sets of files and 
+		different perspectives) - Recent documents, Favorite documents, All workspace documents, 
+		Workspace datasets and Analysis files.
+		@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	 -->
+	<md-list ng-cloak>
+	
+	    <div ng-repeat="option in leftMainMenu">
+			<md-list-item 	ng-click="leftMenuItemPicked(option)" ng-if="optionVisibility(option)"
+							ng-class="option.name.toLowerCase() == currentOptionMainMenu ? 'selectedLeftMenuItem' : 'notSelectedLeftMenuItem'">
+	    		<md-icon id="{{option.label}}" md-font-icon="{{option.icon}}"></md-icon>
+		   	 	<p> {{ option.label }} </p>
+		  	</md-list-item>
+		  
+		  	<div ng-if="option.submenuOptions!=undefined && option.visible">
+		  	 	
+		  	 	<md-list-item 	ng-class="suboptionActive ? 'selectedLeftMenuSubitem' : 'notSelectedLeftMenuItem'" 
+		  	 					ng-click="setExpanded(option)">
+	    			<md-icon md-font-icon="{{option.icon}}" ng-if="!option.active"></md-icon>
+	    			<md-icon md-font-icon="{{option.activeIcon}}" ng-if="option.active"></md-icon>
+		   	 		<p> {{ option.label }} </p>
+	  			</md-list-item>
+		  		
+		  	 	<md-divider ng-show="option.active"></md-divider>
+		  	 	
+		  	 	
+		  	 <div ng-repeat="suboption in option.submenuOptions">
+		  	  	<md-list-item 	ng-class="suboption.name.toLowerCase() == currentOptionMainMenu ? 'workspace-submenu selectedLeftMenuItem'
+		  	  							 : 'workspace-submenu notSelectedLeftMenuItem'" 
+		  	  					ng-show="option.active && suboption.visible" 
+		  	  					ng-click="leftMenuItemPicked(suboption)">
+	    			<md-icon md-font-icon="{{suboption.icon}}"></md-icon>
+	 	    			<p> {{ suboption.label }} </p>
+  				</md-list-item>	  	
+	  		</div>
+	  		
+	  	</div>
+	  		
+	      	<md-divider ng-if="option.visible"></md-divider>
+	      	
+	  	</div>
+	  	
+	</md-list>
+	
+    </md-sidenav>

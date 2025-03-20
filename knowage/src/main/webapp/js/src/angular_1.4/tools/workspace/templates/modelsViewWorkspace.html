@@ -1,0 +1,109 @@
+<div layout="row" flex class="workspaceDocumentsList">
+	
+	<div flex layout="column">
+  
+			<md-content layout="row" flex layout-fill>
+		  		
+		  		<md-tabs flex layout-fill class="rightPanelDocuments">
+		    
+					<md-tab id="bmtab" label="{{translate.load('sbi.workspace.models.business')}}" ng-click="switchModelsTab('businessModels')" flex>
+				   		
+				   		 <md-content layout-fill>
+				   		 	<md-card class="noPadding" style="height:calc(100% - 16px)" ng-show="!showGridView">
+						 		<div ag-grid="businessModelGridOptions" class="ag-theme-balham ag-theme-knowage ag-full-dimensions" style="width:100%;height:100%;" ></div>
+						 	</md-card>
+						 	<federation-view class="kn-documentBrowser" flex  style='overflow: auto;' ng-model="businessModels"
+									selected-federation=selectedModel
+									table-columns=tableColumnsModels
+									select-federation-action="selectModel(federation);"
+									show-grid-view="showGridView"
+									edit-enabled=false
+									delete-enabled=false
+									show-federation-action="showQbeFromBM(fed)"
+									show-business-models=true>
+							</federation-view>
+								
+				 	 	</md-content>
+				 	 	
+		 			</md-tab> 
+		   			<div ng-if="federationsEnabled()" >
+						<md-tab id="fedtab" label="{{translate.load('sbi.workspace.models.federation')}}" ng-click="switchModelsTab('federations')" flex>
+					         
+				         	<md-content layout-fill>
+							 	<md-card class="noPadding" style="height:calc(100% - 16px)" ng-show="!showGridView">
+						 			<div ag-grid="federationsGridOptions" class="ag-theme-balham ag-theme-knowage ag-full-dimensions"></div>
+						 		</md-card>
+							 	<federation-view class="kn-documentBrowser" flex style='overflow: auto;' ng-model="federationDefinitions"
+									show-grid-view="showGridView"
+									selected-federation=selectedModel
+									table-columns=tableColumnsFederation
+									select-federation-action="selectModel(federation);"
+									edit-enabled=true
+									edit-federation-action="editFederation(fed)"
+									delete-enabled=true
+									delete-federation-action="deleteFederation(fed)"
+									show-federation-action="showQbeFederation(fed)"
+									show-business-models=false
+							 	  ></federation-view>	
+	                    
+					        </md-content>
+					               
+				 		</md-tab>  
+			 		</div>
+				 	
+	  		 	</md-tabs>
+	  		 
+		
+		</md-content>
+	</div>
+	
+ 	<md-sidenav class="md-sidenav-right selectedDocumentSidenav md-whiteframe-4dp" md-component-id="rightModel" md-is-locked-open="$mdMedia('gt-md')"  ng-class="{'full-screen-sidenav': smallScreen}" ng-show="showModelDetails()">
+			
+		<md-toolbar class="ternaryToolbar">
+			<div layout="row" layout-align="space-around center">
+				
+                <md-button aria-label="Open qbe" class="md-icon-button" ng-show="currentModelsTab!='federations'" ng-click="showQbeModel(selectedModel)">
+                	<md-tooltip md-delay="500">{{::translate.load('sbi.workspace.dataset.qbe')}}</md-tooltip>
+					<md-icon md-font-icon="fa fa-search"></md-icon>
+				</md-button>
+				
+				<md-button aria-label="Open qbe" class="md-icon-button" ng-show="currentModelsTab=='federations'" ng-click="showQbeFederation(selectedModel)">
+                	<md-tooltip md-delay="500">{{::translate.load('sbi.workspace.dataset.qbe')}}</md-tooltip>
+					<md-icon md-font-icon="fa fa-search"></md-icon>
+				</md-button>
+				
+				 <md-button aria-label="Edit" class="md-icon-button" ng-show="currentModelsTab=='federations'" ng-click="editFederation(selectedModel)">
+				 	<md-tooltip md-delay="500">{{::translate.load('sbi.workspace.dataset.edit')}}</md-tooltip>
+					<md-icon md-font-icon="fa fa-pencil"></md-icon>
+				</md-button>
+				
+				 <md-button aria-label="Delete" class="md-icon-button" ng-show="currentModelsTab=='federations' && isAbletoDelete(selectedModel)" ng-click="deleteFederation(selectedModel, $event)">
+				 	<md-tooltip md-delay="500">{{::translate.load('sbi.workspace.dataset.delete')}}</md-tooltip>
+					<md-icon md-font-icon="fa fa-trash"></md-icon>
+				</md-button>
+								
+			</div>
+		</md-toolbar>
+			
+		<md-content layout-margin>
+			
+			<md-list>
+				 <md-list-item class="md-2-line">
+				          <div class="md-list-item-text">
+				            <h3><b>{{translate.load("sbi.generic.descr")}}</b></h3>
+				            <p>{{selectedModel.description}}</p>
+				          </div>
+				 </md-list-item>
+				 <md-list-item class="md-2-line">
+				          <div class="md-list-item-text">
+				            <h3><b>{{translate.load("sbi.generic.name")}}</b></h3>
+				            <p>{{selectedModel.name}}</p>
+				          </div>
+				 </md-list-item>	
+			</md-list>
+				
+		</md-content>
+			
+	</md-sidenav>
+	
+</div>
