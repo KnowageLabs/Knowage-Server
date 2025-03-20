@@ -1,6 +1,0 @@
-Manifest-Version: 1.0
-
-Name: KnowageSVGViewerEngine.war
-Implementation-Title: KnowageSVGViewerEngine
-Implementation-Version: 6.0.0
-
