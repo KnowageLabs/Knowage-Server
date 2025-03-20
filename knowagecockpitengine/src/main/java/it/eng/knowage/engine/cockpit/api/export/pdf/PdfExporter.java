@@ -33,15 +33,19 @@ import org.apache.pdfbox.io.MemoryUsageSetting;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
-import org.apache.pdfbox.pdmodel.font.PDType1Font;
+import org.apache.pdfbox.pdmodel.font.PDFont;
+import org.apache.pdfbox.pdmodel.font.PDType0Font;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.awt.*;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -170,7 +174,7 @@ public class PdfExporter extends AbstractFormatExporter {
 
 	private void addDataToTable(BaseTable table, JSONObject settings, JSONArray columnsOrdered,
 			List<Integer> pdfHiddenColumns, String[] columnDateFormats, JSONObject[] columnStyles, JSONArray rows)
-			throws JSONException {
+            throws JSONException, IOException, URISyntaxException {
 		// Check if summary row is enabled
 		boolean summaryRowEnabled = false;
 		String summaryRowLabel = null;
@@ -251,11 +255,14 @@ public class PdfExporter extends AbstractFormatExporter {
 
 					Cell<PDPage> cell = row.createCell(columnPercentWidths[c], valueStr,
 							HorizontalAlignment.get("center"), VerticalAlignment.get("top"));
+					URL resource = getClass().getClassLoader().getResource("/fonts/DejaVuSans.ttf");
+					File pdfFontFile = new File(resource.toURI());
+					PDFont font = PDType0Font.load(table.document, pdfFontFile);
+					cell.setFont(font);
 					// first of all set alternate rows color
-					if (settings != null && settings.has("alternateRows")) {
+					if (settings.has("alternateRows")) {
 						JSONObject alternateRows = settings.getJSONObject("alternateRows");
 						if (alternateRows.optBoolean("enabled")) {
-							cell.setFont(PDType1Font.HELVETICA);
 							if (r % 2 == 0) {
 								cell.setFillColor(
 										getColorFromString(alternateRows.optString("evenRowsColor"), Color.WHITE));
@@ -278,7 +285,7 @@ public class PdfExporter extends AbstractFormatExporter {
 	}
 
 	private void addHeaderToTable(BaseTable table, JSONObject style, JSONObject widgetData, JSONObject widgetContent,
-			JSONArray columnsOrdered, List<Integer> pdfHiddenColumns) throws JSONException {
+			JSONArray columnsOrdered, List<Integer> pdfHiddenColumns) throws JSONException, IOException, URISyntaxException {
 //		HashMap<String, String> arrayHeader = new HashMap<String, String>();
 //		for (int i = 0; i < widgetContent.getJSONArray("columnSelectedOfDataset").length(); i++) {
 //			JSONObject column = widgetContent.getJSONArray("columnSelectedOfDataset").getJSONObject(i);
@@ -293,6 +300,9 @@ public class PdfExporter extends AbstractFormatExporter {
 
 		JSONArray groupsFromWidgetContent = getGroupsFromWidgetContent(widgetData);
 		Map<String, String> groupsAndColumnsMap = getGroupAndColumnsMap(widgetContent, groupsFromWidgetContent);
+		URL resource = getClass().getClassLoader().getResource("/fonts/DejaVuSans.ttf");
+		File pdfFontFile = new File(resource.toURI());
+		PDFont font = PDType0Font.load(table.document, pdfFontFile);
 
 		if (!groupsAndColumnsMap.isEmpty()) {
 			Row<PDPage> groupHeaderRow = table.createRow(15f);
@@ -300,9 +310,10 @@ public class PdfExporter extends AbstractFormatExporter {
 				JSONObject column = columnsOrdered.getJSONObject(i);
 				String groupName = groupsAndColumnsMap.get(column.get("header"));
 				if (groupName != null) {
+
 					Cell<PDPage> cell = groupHeaderRow.createCell(columnPercentWidths[i], groupName,
 							HorizontalAlignment.get("center"), VerticalAlignment.get("top"));
-					styleHeaderCell(style, cell);			
+					styleHeaderCell(style, cell, font);
 					// check if adjacent header cells have same group names in order to add merged region
 					int adjacents = getAdjacentEqualNamesAmount(groupsAndColumnsMap, columnsOrdered, i, groupName);
 					if (adjacents > 1) {
@@ -310,7 +321,7 @@ public class PdfExporter extends AbstractFormatExporter {
 						for (int j = 1; j < adjacents; j++) {							
 							cell = groupHeaderRow.createCell(columnPercentWidths[i+j], "",
 								HorizontalAlignment.get("center"), VerticalAlignment.get("top"));
-							styleHeaderCell(style, cell);			
+							styleHeaderCell(style, cell, font);
 							cell.setLeftBorderStyle(null);
 							if (j + 1 < adjacents) {								
 								cell.setRightBorderStyle(null);
@@ -321,7 +332,7 @@ public class PdfExporter extends AbstractFormatExporter {
 				} else {
 					Cell<PDPage> blankCell = groupHeaderRow.createCell(columnPercentWidths[i], "",
 							HorizontalAlignment.get("center"), VerticalAlignment.get("top"));
-					styleHeaderCell(style, blankCell);
+					styleHeaderCell(style, blankCell, font);
 				}
 
 			}
@@ -352,7 +363,7 @@ public class PdfExporter extends AbstractFormatExporter {
 
 			Cell<PDPage> cell = headerRow.createCell(columnPercentWidths[i], columnName,
 					HorizontalAlignment.get("center"), VerticalAlignment.get("top"));
-			styleHeaderCell(style, cell);
+			styleHeaderCell(style, cell, font);
 		}
 
 		table.addHeaderRow(headerRow);
@@ -376,10 +387,9 @@ public class PdfExporter extends AbstractFormatExporter {
 		}
 	}
 
-	private void styleHeaderCell(JSONObject style, Cell<PDPage> headerCell) throws JSONException {
+	private void styleHeaderCell(JSONObject style, Cell<PDPage> headerCell, PDFont font) throws JSONException {
 		if (style != null && style.has("th") && style.getJSONObject("th").optBoolean("enabled")) {
 			JSONObject headerStyle = style.getJSONObject("th");
-			headerCell.setFont(PDType1Font.HELVETICA_BOLD);
 			if (headerStyle.has("font-size")) {
 				float size = getFontSizeFromString(headerStyle.getString("font-size"));
 				if (size != 0)
@@ -388,6 +398,7 @@ public class PdfExporter extends AbstractFormatExporter {
 			headerCell.setFillColor(getColorFromString(headerStyle.optString("background-color"), Color.WHITE));
 			headerCell.setTextColor(getColorFromString(headerStyle.optString("color"), Color.BLACK));
 		}
+		headerCell.setFont(font);
 	}
 
 	private String[] getColumnDateFormats(JSONArray columnsOrdered, JSONObject widgetContent) {
