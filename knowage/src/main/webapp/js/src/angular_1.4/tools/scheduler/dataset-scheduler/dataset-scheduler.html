@@ -1,0 +1,50 @@
+<md-content flex  layout="column">
+	
+	<md-toolbar class="secondaryToolbar">
+     	
+          	<div class="md-toolbar-tools">
+	            <h2>{{translate.load('sbi.ds.persist.cron.scheduling.title')}}</h2>
+         		<span flex></span>
+          	</div>
+       </md-toolbar>
+         
+	<md-card layout="row" >
+	
+							<md-input-container>
+								<label>{{translate.load('sbi.ds.persist.cron.startdate')}}:</label>
+								<md-datepicker ng-model="model.startDate" 
+        											ng-change="setFormDirty();checkPickedStartDate();"
+        											md-open-on-focus ng-required="model.isScheduled==true">
+								</md-datepicker>
+								<div ng-messages="datasetForm.lbl.$error" class="required-message" ng-show="model.isScheduled==true && !model.startDate">
+					 				<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
+	 							</div>
+							</md-input-container>
+							
+							<md-input-container>
+								<label>{{translate.load('sbi.ds.persist.cron.enddate')}}:</label>												
+								<md-datepicker ng-model="model.endDate" 
+        											ng-change="setFormDirty();checkPickedEndDate();"
+        											md-open-on-focus ng-required="model.isScheduled==true">
+								</md-datepicker>
+								<div ng-messages="datasetForm.lbl.$error" class="required-message" ng-show="model.isScheduled==true && !model.endDate">
+					 				<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
+ 								</div>
+							</md-input-container>
+		
+	<md-content layout="column" >
+		<md-divider></md-divider>
+		<scheduler-time-unit type="minutes"></scheduler-time-unit>
+		<md-divider></md-divider>
+		<scheduler-time-unit type="hours"></scheduler-time-unit>
+		<md-divider></md-divider>
+		<scheduler-time-unit type="days"></scheduler-time-unit>
+		<md-divider></md-divider>
+		<scheduler-time-unit type="months"></scheduler-time-unit>
+		<md-divider></md-divider>
+		<scheduler-time-unit type="weekdays"></scheduler-time-unit>
+		<md-divider></md-divider>
+	</md-content>		
+				
+	</md-card>
+</md-content>
