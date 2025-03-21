@@ -99,9 +99,6 @@
 			<ITEM id="5002" label="menu.SchedulerMonitor"
 				requiredFunctionality="SchedulerManagement"
 				to="/schedulation-agenda" />
-			<ITEM id="5003" label="menu.HierarchiesEditor"
-				requiredFunctionality="HierarchiesManagement"
-				to="/hierarchy-management" />
 			<ITEM id="5004" label="menu.CacheManagement"
 				requiredFunctionality="CacheManagement"
 				to="/cache-management" />
