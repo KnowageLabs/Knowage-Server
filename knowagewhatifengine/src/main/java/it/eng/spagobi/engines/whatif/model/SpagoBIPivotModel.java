@@ -18,9 +18,7 @@
 
 package it.eng.spagobi.engines.whatif.model;
 
-import java.sql.Connection;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -59,11 +57,8 @@ import it.eng.spagobi.engines.whatif.calculatedmember.CalculatedMemberManager;
 import it.eng.spagobi.engines.whatif.crossnavigation.SpagoBICrossNavigationConfig;
 import it.eng.spagobi.engines.whatif.crossnavigation.TargetClickable;
 import it.eng.spagobi.engines.whatif.cube.CubeUtilities;
-import it.eng.spagobi.engines.whatif.exception.WhatIfPersistingTransformationException;
 import it.eng.spagobi.engines.whatif.model.transform.CellTransformation;
-import it.eng.spagobi.engines.whatif.model.transform.CellTransformationsAnalyzer;
 import it.eng.spagobi.engines.whatif.model.transform.CellTransformationsStack;
-import it.eng.spagobi.engines.whatif.model.transform.algorithm.IAllocationAlgorithm;
 import it.eng.spagobi.engines.whatif.template.Formula;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIEngineRestServiceRuntimeException;
@@ -85,8 +80,9 @@ public class SpagoBIPivotModel extends PivotModelImpl {
 		sortPosMembers1 = new ArrayList<>();
 		if (isSorting() && getSortPosMembers() != null) {
 			List<Member> list = getSortPosMembers();
-			for (Member member : list)
+			for (Member member : list) {
 				sortPosMembers1.add(member);
+			}
 		}
 
 		return sortPosMembers1;
@@ -138,7 +134,7 @@ public class SpagoBIPivotModel extends PivotModelImpl {
 			return false;
 		}
 
-	};
+	}
 
 	@Override
 	public synchronized CellSet getCellSet() {
@@ -158,8 +154,6 @@ public class SpagoBIPivotModel extends PivotModelImpl {
 
 		// wrap the cellset
 		SpagoBICellSetWrapper wrapper = new SpagoBICellSetWrapper(cellSet, this);
-		// apply pending transformations
-		wrapper.restorePendingTransformations(pendingTransformations);
 		// store cell set wrapper
 		this.setCellSetWrapper(wrapper);
 
@@ -226,11 +220,11 @@ public class SpagoBIPivotModel extends PivotModelImpl {
 		this.wrapper = wrapper;
 	}
 
-	public void setValue(Object newValue, Cell cell, IAllocationAlgorithm algorithm) {
+	public void setValue(Object newValue, Cell cell) {
 		// store the transformation into the stack
 		SpagoBICellSetWrapper cellSetWrapper = this.getCellSetWrapper();
 		SpagoBICellWrapper cellWrapper = SpagoBICellWrapper.wrap(cell, cellSetWrapper);
-		CellTransformation transformation = new CellTransformation(newValue, cellWrapper.getValue(), cellWrapper, algorithm);
+		CellTransformation transformation = new CellTransformation(newValue, cellWrapper.getValue(), cellWrapper);
 		pendingTransformations.add(transformation);
 	}
 
@@ -246,35 +240,6 @@ public class SpagoBIPivotModel extends PivotModelImpl {
 		return pendingTransformations;
 	}
 
-	public void persistTransformations(Connection connection) throws WhatIfPersistingTransformationException {
-		persistTransformations(connection, null);
-	}
-
-	/**
-	 * Persist the modifications in the selected version
-	 *
-	 * @param version the version of the model in witch persist the modification. In null persist in the version selected in the Version dimension
-	 * @throws WhatIfPersistingTransformationException
-	 */
-	public void persistTransformations(Connection connection, Integer version) throws WhatIfPersistingTransformationException {
-		CellTransformationsAnalyzer analyzer = new CellTransformationsAnalyzer();
-		CellTransformationsStack bestStack = analyzer.getShortestTransformationsStack(pendingTransformations);
-		Iterator<CellTransformation> iterator = bestStack.iterator();
-
-		while (iterator.hasNext()) {
-			CellTransformation transformation = iterator.next();
-			try {
-				IAllocationAlgorithm algorithm = transformation.getAlgorithm();
-				algorithm.persist(transformation.getCell(), transformation.getOldValue(), transformation.getNewValue(), connection, version);
-			} catch (Exception e) {
-				logger.error("Error persisting the transformation " + transformation, e);
-				throw new WhatIfPersistingTransformationException(getLocale(), bestStack, e);
-			}
-		}
-
-		// everithing goes right so we can clean the pending transformations
-		pendingTransformations.clear();
-	}
 
 	/**
 	 * Undo last modification

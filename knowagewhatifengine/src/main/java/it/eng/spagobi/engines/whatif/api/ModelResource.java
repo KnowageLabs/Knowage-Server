@@ -28,26 +28,17 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
-import java.io.OutputStream;
 import java.io.Serializable;
-import java.net.URL;
-import java.sql.Connection;
-import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
 
-import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
@@ -56,14 +47,6 @@ import javax.ws.rs.core.Response;
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.xssf.usermodel.XSSFCell;
-import org.apache.poi.xssf.usermodel.XSSFRow;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.olap4j.Cell;
-import org.olap4j.OlapDataSource;
 import org.olap4j.OlapException;
 import org.pivot4j.PivotModel;
 import org.pivot4j.ui.collector.NonInternalPropertyCollector;
@@ -72,42 +55,17 @@ import org.pivot4j.ui.fop.FopExporter;
 import org.pivot4j.ui.poi.ExcelExporter;
 import org.pivot4j.ui.table.TableRenderer;
 
-import com.jamonapi.Monitor;
-import com.jamonapi.MonitorFactory;
-
-import it.eng.spago.security.IEngUserProfile;
-import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.engines.whatif.WhatIfEngineConfig;
 import it.eng.spagobi.engines.whatif.WhatIfEngineInstance;
 import it.eng.spagobi.engines.whatif.common.AbstractWhatIfEngineService;
-import it.eng.spagobi.engines.whatif.exception.WhatIfPersistingTransformationException;
 import it.eng.spagobi.engines.whatif.export.ExportConfig;
 import it.eng.spagobi.engines.whatif.export.KnowageExcelExporter;
 import it.eng.spagobi.engines.whatif.model.ModelConfig;
-import it.eng.spagobi.engines.whatif.model.SpagoBICellSetWrapper;
-import it.eng.spagobi.engines.whatif.model.SpagoBICellWrapper;
 import it.eng.spagobi.engines.whatif.model.SpagoBIPivotModel;
-import it.eng.spagobi.engines.whatif.model.Util;
-import it.eng.spagobi.engines.whatif.model.transform.CellTransformation;
 import it.eng.spagobi.engines.whatif.model.transform.CellTransformationsStack;
-import it.eng.spagobi.engines.whatif.model.transform.algorithm.AbstractAllocationAlgorithm;
-import it.eng.spagobi.engines.whatif.model.transform.algorithm.AllocationAlgorithmDefinition;
-import it.eng.spagobi.engines.whatif.model.transform.algorithm.AllocationAlgorithmFactory;
-import it.eng.spagobi.engines.whatif.model.transform.algorithm.AllocationAlgorithmSingleton;
-import it.eng.spagobi.engines.whatif.model.transform.algorithm.IAllocationAlgorithm;
-import it.eng.spagobi.engines.whatif.parser.Lexer;
-import it.eng.spagobi.engines.whatif.parser.parser;
-import it.eng.spagobi.engines.whatif.version.VersionManager;
 import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
-import it.eng.spagobi.tools.datasource.bo.IDataSource;
-import it.eng.spagobi.utilities.assertion.Assert;
-import it.eng.spagobi.utilities.engines.SpagoBIEngineException;
-import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIEngineRestServiceRuntimeException;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
-import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.rest.RestUtilities;
-import it.eng.spagobi.writeback4j.mondrian.CacheManager;
 
 @Path("/1.0/model")
 @ManageAuthorization
@@ -127,18 +85,6 @@ public class ModelResource extends AbstractWhatIfEngineService {
 	@Context
 	private HttpServletResponse response;
 
-	// input parameters
-
-	private VersionManager versionManager;
-
-	private VersionManager getVersionBusiness() {
-		WhatIfEngineInstance ei = getWhatIfEngineInstance();
-
-		if (versionManager == null) {
-			versionManager = new VersionManager(ei);
-		}
-		return versionManager;
-	}
 
 	/**
 	 * Executes the mdx query. If the mdx is null it executes the query of the model
@@ -179,204 +125,6 @@ public class ModelResource extends AbstractWhatIfEngineService {
 
 	}
 
-	@POST
-	@Path("/setValue/{ordinal}")
-	@Produces("text/html; charset=UTF-8")
-
-	public String setValue(@PathParam("ordinal") int ordinal) {
-		LOGGER.debug("IN : ordinal = [" + ordinal + "]");
-		logOperation("Set value");
-		WhatIfEngineInstance ei = getWhatIfEngineInstance();
-		PivotModel model = ei.getPivotModel();
-		String expression = null;
-
-		// check if a version has been selected in the cube
-		((SpagoBIPivotModel) ei.getPivotModel()).getActualVersionSlicer(ei.getModelConfig());
-
-		try {
-			JSONObject json = RestUtilities.readBodyAsJSONObject(getServletRequest());
-			expression = json.getString(EXPRESSION);
-		} catch (Exception e) {
-			throw new SpagoBIEngineRestServiceRuntimeException("generic.error", this.getLocale(), e);
-		}
-		LOGGER.debug("expression = [" + expression + "]");
-		SpagoBICellSetWrapper cellSetWrapper = (SpagoBICellSetWrapper) model.getCellSet();
-		SpagoBICellWrapper cellWrapper = (SpagoBICellWrapper) cellSetWrapper.getCell(ordinal);
-		OlapDataSource olapDataSource = ei.getOlapDataSource();
-
-		Double value = null;
-		try {
-			Lexer lex = new Lexer(new java.io.StringReader(expression));
-			parser par = new parser(lex);
-			par.setWhatIfInfo(cellWrapper, model, olapDataSource, ei);
-			value = (Double) par.parse().value;
-		} catch (Exception e) {
-			LOGGER.debug("Error parsing What-if metalanguage expression", e);
-			String errorMessage = e.getMessage().replace(": Couldn't repair and continue parse", "");
-			throw new SpagoBIEngineRestServiceRuntimeException(errorMessage, this.getLocale(), e);
-		}
-
-		String algorithm = ei.getAlgorithmInUse();
-		LOGGER.debug("Resolving the allocation algorithm");
-		LOGGER.debug("The class of the algorithm is [" + algorithm + "]");
-		IAllocationAlgorithm allocationAlgorithm;
-
-		try {
-			Map<String, Object> properties = new HashMap<>();
-			properties.put(AbstractAllocationAlgorithm.ENGINEINSTANCE_PROPERTY, ei);
-			allocationAlgorithm = AllocationAlgorithmFactory.getAllocationAlgorithm(algorithm, ei, properties);
-		} catch (SpagoBIEngineException e) {
-			LOGGER.error(e);
-			throw new SpagoBIEngineRestServiceRuntimeException("sbi.olap.writeback.algorithm.definition.error",
-					getLocale(), e);
-		}
-
-		CellTransformation transformation = new CellTransformation(value, cellWrapper.getValue(), cellWrapper,
-				allocationAlgorithm);
-		cellSetWrapper.applyTranformation(transformation);
-		String table = renderModel(model);
-
-		logTransormations();
-		LOGGER.debug("OUT");
-		return table;
-	}
-
-	@POST
-	@Path("/persistTransformations")
-	@Produces("text/html; charset=UTF-8")
-
-	public String persistTransformations() {
-		LOGGER.debug("IN");
-		logOperation("Save");
-
-		Connection connection;
-		WhatIfEngineInstance ei = getWhatIfEngineInstance();
-		OlapDataSource olapDataSource = ei.getOlapDataSource();
-		PivotModel model = ei.getPivotModel();
-
-		SpagoBIPivotModel modelWrapper = (SpagoBIPivotModel) model;
-
-		LOGGER.debug("Persisting the modifications..");
-
-		IDataSource dataSource = ei.getDataSource();
-		try {
-			LOGGER.debug("Getting the connection to DB");
-			connection = dataSource.getConnection();
-		} catch (Exception e) {
-			LOGGER.error("Error opening connection to datasource " + dataSource.getLabel());
-			throw new SpagoBIRuntimeException("Error opening connection to datasource " + dataSource.getLabel(), e);
-		}
-		try {
-
-			// check if a version has been selected in the cube
-			((SpagoBIPivotModel) ei.getPivotModel()).getActualVersionSlicer(ei.getModelConfig());
-
-			// Persisting the pending modifications
-			modelWrapper.persistTransformations(connection);
-		} catch (WhatIfPersistingTransformationException e) {
-			LOGGER.debug("Error persisting the modifications", e);
-			logErrorTransformations(e.getTransformations());
-			throw new SpagoBIEngineRestServiceRuntimeException(e.getLocalizationmessage(), modelWrapper.getLocale(),
-					"Error persisting modifications", e);
-		} finally {
-			LOGGER.debug("Closing the connection used to persist the modifications");
-			try {
-				connection.close();
-			} catch (SQLException e) {
-				LOGGER.error("Error closing the connection to the db");
-				throw new SpagoBIEngineRestServiceRuntimeException(getLocale(), e);
-			}
-			LOGGER.debug("Closed the connection used to persist the modifications");
-		}
-
-		LOGGER.debug("Modification persisted...");
-
-		LOGGER.debug("Cleaning the cache and restoring the model");
-		CacheManager.flushCache(olapDataSource);
-		String mdx = modelWrapper.getCurrentMdx();
-		modelWrapper.setMdx(mdx);
-		modelWrapper.initialize();
-		LOGGER.debug("Finish to clean the cache and restoring the model");
-
-		String table = renderModel(model);
-
-		logOperation("Transormations stack cleaned");
-		logTransormations();
-
-		LOGGER.debug("OUT");
-		return table;
-	}
-
-	/**
-	 * Service to increase Version
-	 *
-	 * @return
-	 *
-	 */
-	@POST
-	@Path("/saveAs")
-	@Produces("text/html; charset=UTF-8")
-
-	public String increaseVersion() {
-		LOGGER.debug("IN");
-		logOperation("Save As");
-		String name;
-		String descr;
-
-		JSONObject json;
-		try {
-			json = RestUtilities.readBodyAsJSONObject(getServletRequest());
-			name = json.getString("name");
-			descr = json.getString("descr");
-		} catch (IOException e1) {
-			LOGGER.error("Error loading the parameters from the request", e1);
-			throw new SpagoBIEngineRestServiceRuntimeException(getLocale(), e1);
-		} catch (JSONException e1) {
-			LOGGER.error("Error loading the parameters from the request", e1);
-			throw new SpagoBIEngineRestServiceRuntimeException(getLocale(), e1);
-		}
-
-		Monitor totalTime = MonitorFactory
-				.start("WhatIfEngine/it.eng.spagobi.engines.whatif.api.ModelResource.increaseVersion.totalTime");
-		if (name.equals(VERSION_FAKE_DESCR)) {
-			name = null;
-		}
-
-		if (descr.equals(VERSION_FAKE_DESCR)) {
-			descr = null;
-		}
-
-		PivotModel model;
-		try {
-			model = getVersionBusiness().persistNewVersionProcedure(name, descr);
-		} catch (WhatIfPersistingTransformationException e) {
-			logErrorTransformations(e.getTransformations());
-			LOGGER.error("Error persisting the trasformations in the new version a new version", e);
-			throw new SpagoBIEngineRestServiceRuntimeException("versionresource.generic.error", getLocale(), e);
-		}
-
-		logTransormations();
-		LOGGER.debug("OUT");
-		String toReturn = renderModel(model);
-		totalTime.stop();
-		return toReturn;
-	}
-
-	@POST
-	@Path("/undo")
-	@Produces("text/html; charset=UTF-8")
-
-	public String undo() {
-		LOGGER.debug("IN");
-		WhatIfEngineInstance ei = getWhatIfEngineInstance();
-		SpagoBIPivotModel model = (SpagoBIPivotModel) ei.getPivotModel();
-		model.undo();
-		String table = renderModel(model);
-		logOperation("Undo");
-		logTransormations();
-		LOGGER.debug("OUT");
-		return table;
-	}
 
 	/**
 	 * Gets the active mdx statement
@@ -512,49 +260,6 @@ public class ModelResource extends AbstractWhatIfEngineService {
 				.header("content-disposition", "attachment; filename = " + fileName).build();
 	}
 
-	@GET
-	@Path("/exceledit")
-	public void excelFillExample(@Context ServletContext context) throws Exception {
-
-		File result = exportExcelForMerging();
-		OutputStream out = null;
-		try {
-			URL resourceLocation = Thread.currentThread().getContextClassLoader()
-					.getResource(EXCELL_TEMPLATE_FILE_NAME);
-			LOGGER.debug("Resource is: " + resourceLocation);
-			Assert.assertNotNull(resourceLocation,
-					"Could not find " + EXCELL_TEMPLATE_FILE_NAME + " in java resources");
-			FileInputStream fileInputStream1 = new FileInputStream(new File(resourceLocation.toURI().getPath()));
-			FileInputStream fileInputStream2 = new FileInputStream(result);
-
-			XSSFWorkbook workbook = new XSSFWorkbook(fileInputStream1);
-			HSSFWorkbook exportedOlapWorkbook = this.getHSSFWorkbook(fileInputStream2);
-
-			workbook = Util.merge(workbook, exportedOlapWorkbook.getSheetAt(0));
-			workbook = writeParamsToExcel(context, workbook);
-			try {
-				Date date = new Date();
-				SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd_hh:mm");
-				String ime = "OlapTableExport" + "_" + format.format(date);
-
-				getServletResponse().setHeader("Content-Disposition",
-						"attachment" + "; filename=\"" + ime + ".xlsm" + "\";");
-				response.setContentType("application/vnd.ms-excel.sheet.macroEnabled.12");
-				out = getServletResponse().getOutputStream();
-				workbook.write(out);
-				getServletResponse().getOutputStream().flush();
-				getServletResponse().getOutputStream().close();
-			} catch (IOException e) {
-				LOGGER.error("write output file stream error " + e.getMessage());
-				throw new SpagoBIServiceException("test", "Impossible to write output file xls error", e);
-			}
-
-		} catch (Exception e) {
-			throw new SpagoBIEngineServiceException(getClass().getName(), "Error while downloading edit excel file", e);
-		}
-
-	}
-
 	private HSSFWorkbook getHSSFWorkbook(FileInputStream fileInputStream2) throws Exception {
 		return new HSSFWorkbook(fileInputStream2);
 	}
@@ -626,112 +331,6 @@ public class ModelResource extends AbstractWhatIfEngineService {
 			LOGGER.error("Impossible to write to file");
 		}
 		return file;
-	}
-
-	private XSSFWorkbook writeParamsToExcel(ServletContext context, XSSFWorkbook workbook) throws OlapException {
-
-		WhatIfEngineInstance ei = getWhatIfEngineInstance();
-		SpagoBIPivotModel model = (SpagoBIPivotModel) ei.getPivotModel();
-		Map map = getEnv();
-
-		IEngUserProfile profile = (IEngUserProfile) map.get("ENV_USER_PROFILE");
-		if (profile instanceof UserProfile) {
-			UserProfile spagoBIUserProfile = (UserProfile) profile;
-			map.put("tenant", spagoBIUserProfile.getOrganization());
-
-		}
-		map.put("MDX", model.getMdx());
-		map.put("document", getEnv().get("DOCUMENT_ID").toString());
-
-		String url = context.getContextPath() + "/restful/olap/startwhatif/editxls/?";
-		String mdx = "";
-		int axisRows = model.getCellSet().getAxes().get(1).getPositionCount();
-		int axisColumns = model.getCellSet().getAxes().get(0).getPositionCount();
-		int maxOrdinal = axisRows * axisColumns;
-		Iterator it = map.entrySet().iterator();
-		int index = 0;
-		while (it.hasNext()) {
-			Map.Entry pair = (Map.Entry) it.next();
-
-			if (pair.getKey().toString().equalsIgnoreCase("DOCUMENT_LABEL")
-					|| pair.getKey().toString().equalsIgnoreCase("SBI_ARTIFACT_ID")
-					|| pair.getKey().toString().equalsIgnoreCase("SBI_ARTIFACT_VERSION_ID")
-					|| pair.getKey().toString().equalsIgnoreCase("document")
-					|| pair.getKey().toString().equalsIgnoreCase("user_id")
-					|| pair.getKey().toString().equalsIgnoreCase("tenant")) {
-				++index;
-				if (index != 1) {
-					url += "&";
-				}
-				url += pair.getKey() + "=" + pair.getValue();
-
-			} else if (pair.getKey().toString().equalsIgnoreCase("MDX")) {
-				mdx = pair.getValue().toString();
-			}
-
-			// it.remove();
-
-		}
-		XSSFSheet params = workbook.getSheetAt(1);
-		XSSFRow urlRow = params.createRow(0);
-		XSSFRow mdxRow = params.createRow(1);
-		XSSFRow axisRow = params.createRow(2);
-		XSSFRow algorithms = params.createRow(3);
-		XSSFRow editCube = params.createRow(4);
-		XSSFCell urlCell = urlRow.createCell(0);
-		XSSFCell mdxCell = mdxRow.createCell(0);
-		XSSFCell axisRowsCell = axisRow.createCell(0);
-		XSSFCell axisColumnsCell = axisRow.createCell(1);
-		XSSFCell editCubeCell = editCube.createCell(0);
-
-		int keyIndex = 0;
-		Map<String, AllocationAlgorithmDefinition> allocationAlgorithms = AllocationAlgorithmSingleton.getInstance()
-				.getAllocationAlgorithms();
-		Iterator ita = allocationAlgorithms.entrySet().iterator();
-		while (ita.hasNext()) {
-			Map.Entry pair = (Map.Entry) ita.next();
-
-			if (!pair.getKey().toString().equalsIgnoreCase("Fix values")) {
-
-				XSSFCell algorithmsCell = algorithms.createCell(keyIndex++);
-				algorithmsCell.setCellValue(pair.getKey().toString());
-			}
-			// ita.remove();
-		}
-
-		urlCell.setCellValue(url);
-		mdxCell.setCellValue(mdx);
-		axisRowsCell.setCellValue(axisRows);
-		axisColumnsCell.setCellValue(axisColumns);
-		try {
-			editCubeCell.setCellValue(ei.getEditCubeName());
-		} catch (NullPointerException e) {
-			editCubeCell.setCellValue("");
-		}
-
-		XSSFSheet cellsToChange = workbook.getSheetAt(2);
-		XSSFRow ccrow = cellsToChange.createRow(0);
-		XSSFCell ordinalCell = ccrow.createCell(0);
-		XSSFCell ordinalCellValue = ccrow.createCell(1);
-		XSSFCell defaultAlgorithm = ccrow.createCell(2);
-
-		boolean finished = false;
-		for (int i = 0; i < maxOrdinal && !finished; i++) {
-			Cell c = model.getCellSet().getCell(i);
-			if (c.isEmpty()) {
-				continue;
-			} else {
-				ordinalCell.setCellValue(c.getOrdinal());
-				ordinalCellValue.setCellValue(c.getDoubleValue());
-				finished = true;
-
-			}
-
-		}
-
-		defaultAlgorithm.setCellValue("Proportional");
-
-		return workbook;
 	}
 
 	private void applyConfiguration(ModelConfig modelConfig, SpagoBIPivotModel model, TableRenderer render) {

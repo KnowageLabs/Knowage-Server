@@ -33,7 +33,6 @@ import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 import it.eng.spagobi.writeback4j.SbiAliases;
 import it.eng.spagobi.writeback4j.SbiScenario;
 import it.eng.spagobi.writeback4j.SbiScenarioVariable;
-import it.eng.spagobi.writeback4j.WriteBackEditConfig;
 
 public class ModelConfig implements Serializable {
 
@@ -298,18 +297,6 @@ public class ModelConfig implements Serializable {
 		this.actualVersion = actualVersion;
 	}
 
-	public WriteBackEditConfig getWriteBackConf() {
-		if (scenario == null) {
-			return null;
-		}
-		return scenario.getWritebackEditConfig();
-	}
-
-	public void setWriteBackConf(WriteBackEditConfig writebackEditConfig) {
-		if (scenario != null) {
-			scenario.setWritebackEditConfig(writebackEditConfig);
-		}
-	}
 
 	public void setScenario(SbiScenario scenario) {
 		this.scenario = scenario;

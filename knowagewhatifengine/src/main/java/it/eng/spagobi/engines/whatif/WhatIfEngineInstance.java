@@ -33,15 +33,12 @@ import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.engines.whatif.model.ModelConfig;
 import it.eng.spagobi.engines.whatif.model.SpagoBIPivotModel;
-import it.eng.spagobi.engines.whatif.model.transform.algorithm.AllocationAlgorithmSingleton;
-import it.eng.spagobi.engines.whatif.model.transform.algorithm.NoAllocationAlgorithmFoundException;
 import it.eng.spagobi.engines.whatif.parameters.MDXParametersUtilities;
 import it.eng.spagobi.engines.whatif.schema.MondrianSchemaManager;
 import it.eng.spagobi.engines.whatif.template.CalculatedField;
 import it.eng.spagobi.engines.whatif.template.Formula;
 import it.eng.spagobi.engines.whatif.template.WhatIfTemplate;
 import it.eng.spagobi.engines.whatif.template.WhatIfTemplateParser;
-import it.eng.spagobi.engines.whatif.version.VersionManager;
 import it.eng.spagobi.services.proxy.ArtifactServiceProxy;
 import it.eng.spagobi.services.proxy.EventServiceProxy;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
@@ -53,10 +50,6 @@ import it.eng.spagobi.utilities.engines.ExtendedAbstractEngineInstance;
 import it.eng.spagobi.utilities.engines.IEngineAnalysisState;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineException;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
-import it.eng.spagobi.utilities.exceptions.SpagoBIEngineRestServiceRuntimeException;
-import it.eng.spagobi.writeback4j.WriteBackEditConfig;
-import it.eng.spagobi.writeback4j.WriteBackManager;
-import it.eng.spagobi.writeback4j.mondrian.MondrianDriver;
 
 public class WhatIfEngineInstance extends ExtendedAbstractEngineInstance implements Serializable {
 
@@ -70,7 +63,6 @@ public class WhatIfEngineInstance extends ExtendedAbstractEngineInstance impleme
 	private PivotModel pivotModel;
 	private ModelConfig modelConfig;
 	private String mondrianSchemaFilePath;
-	private WriteBackManager writeBackManager;
 	private boolean standalone = false;
 	private IDataSource dataSourceForWriting;
 	private String algorithmInUse = null;// the allocation algorithm used
@@ -139,24 +131,6 @@ public class WhatIfEngineInstance extends ExtendedAbstractEngineInstance impleme
 		logger.debug("Init the datatsource fro writing");
 		if (this.whatif) {
 			dataSourceForWriting = initDataSourceForWriting();
-		}
-
-		// init toolbar
-
-		try {
-			writeBackManager = new WriteBackManager(cubeName, new MondrianDriver(reference));
-		} catch (SpagoBIEngineException e) {
-			logger.debug("Exception creating the whatif component", e);
-			throw new SpagoBIEngineRestServiceRuntimeException("whatif.engine.instance.writeback.exception", getLocale(),
-					"Exception creating the whatif component", e);
-		}
-		// init the default algorithm
-		try {
-			String algorithmInUse = AllocationAlgorithmSingleton.getInstance().getDefaultAllocationAlgorithm().getClassName();
-			setAlgorithmInUse(algorithmInUse);
-		} catch (NoAllocationAlgorithmFoundException e) {
-			logger.error("No allocatio algorithm found", e);
-			throw new SpagoBIEngineRestServiceRuntimeException("sbi.olap.writeback.algorithm.definition.no.found.error", getLocale(), e);
 		}
 
 		standalone = false;
@@ -278,25 +252,6 @@ public class WhatIfEngineInstance extends ExtendedAbstractEngineInstance impleme
 		modelConfig.setToolbarClickedButtons(template.getToolbarClickedButtons());
 		modelConfig.setPagination(template.isPagination());
 
-		WriteBackEditConfig writeBackConfig = modelConfig.getWriteBackConf();
-		if (writeBackConfig != null) {
-			try {
-				writeBackManager = new WriteBackManager(getEditCubeName(), new MondrianDriver(getMondrianSchemaFilePath()));
-			} catch (SpagoBIEngineException e) {
-				logger.debug("Exception creating the whatif component", e);
-				throw new SpagoBIEngineRestServiceRuntimeException("whatif.engine.instance.writeback.exception", getLocale(),
-						"Exception creating the whatif component", e);
-			}
-			// init the default algorithm
-			try {
-				String algorithmInUse = AllocationAlgorithmSingleton.getInstance().getDefaultAllocationAlgorithm().getClassName();
-				setAlgorithmInUse(algorithmInUse);
-			} catch (NoAllocationAlgorithmFoundException e) {
-				logger.error("No allocatio algorithm found", e);
-				throw new SpagoBIEngineRestServiceRuntimeException("sbi.olap.writeback.algorithm.definition.no.found.error", getLocale(), e);
-			}
-		}
-
 		for (CalculatedField calculatedField : template.getCalculatedFields()) {
 			String calculatedFieldName = calculatedField.getName();
 			String calculatedFieldFormula = calculatedField.getCalculatedFieldFormula();
@@ -416,9 +371,6 @@ public class WhatIfEngineInstance extends ExtendedAbstractEngineInstance impleme
 		}
 	}
 
-	public Integer getActualVersion() {
-		return VersionManager.getActualVersion(getPivotModel(), getModelConfig());
-	}
 
 	public OlapConnection getOlapConnection() {
 		OlapConnection connection;
@@ -459,10 +411,6 @@ public class WhatIfEngineInstance extends ExtendedAbstractEngineInstance impleme
 		return (IDataSource) this.getEnv().get(EngineConstants.ENV_DATASOURCE);
 	}
 
-	public String getEditCubeName() {
-		return getModelConfig().getWriteBackConf().getEditCubeName();
-	}
-
 	public IDataSet getDataSet() {
 		return (IDataSet) this.getEnv().get(EngineConstants.ENV_DATASET);
 	}
@@ -500,9 +448,6 @@ public class WhatIfEngineInstance extends ExtendedAbstractEngineInstance impleme
 		throw new WhatIfEngineRuntimeException("Unsupported method [validate]");
 	}
 
-	public WriteBackManager getWriteBackManager() {
-		return writeBackManager;
-	}
 
 	public String getMondrianSchemaFilePath() {
 		return mondrianSchemaFilePath;

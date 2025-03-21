@@ -67,7 +67,6 @@ import it.eng.spagobi.engines.whatif.calculatedmember.MDXFormulas;
 import it.eng.spagobi.engines.whatif.cube.CubeUtilities;
 import it.eng.spagobi.engines.whatif.dimension.SbiDimension;
 import it.eng.spagobi.engines.whatif.hierarchy.SbiHierarchy;
-import it.eng.spagobi.engines.whatif.version.VersionManager;
 import it.eng.spagobi.pivot4j.ui.WhatIfHTMLRenderer;
 import it.eng.spagobi.pivot4j.ui.html.WhatIfHTMLRendereCallback;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
@@ -96,7 +95,7 @@ public class PivotJsonHTMLSerializer extends JsonSerializer<PivotObjectForRender
 	private static final String FORMULAS = "formulas";
 	private static final String CALCULATED_FIELDS = "CALCULATED_FIELDS";
 	private static final int PAGES_COUNT = WhatIfEngineConfig.getInstance().getPivotTableLoadCount();
-	private static final String MDXWITHOUTCF = "MDXWITHOUTCF";;
+	private static final String MDXWITHOUTCF = "MDXWITHOUTCF";
 
 	public PivotJsonHTMLSerializer() {
 	}
@@ -248,12 +247,6 @@ public class PivotJsonHTMLSerializer extends JsonSerializer<PivotObjectForRender
 		// modelConfig.getColumnSet());
 		// renderer.render(model, callback);
 		// modelConfig.setRowCount(rowCount);
-
-		// updates the actual version in the model config
-		if (modelConfig.isWhatIfScenario()) {
-			Integer actualVersion = VersionManager.getActualVersion(value, modelConfig);
-			modelConfig.setActualVersion(actualVersion);
-		}
 		// model.addCalucatedMembers(true);
 		// List<String> tables = new ArrayList<String>();
 

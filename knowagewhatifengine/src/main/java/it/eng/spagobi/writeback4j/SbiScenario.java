@@ -33,20 +33,10 @@ public class SbiScenario implements Serializable {
 
 	private static final long serialVersionUID = -8208743421109211078L;
 	private String name;
-	private WriteBackEditConfig writebackEditConfig;
 	private List<SbiScenarioVariable> variables;
 
 	public SbiScenario(String name) {
-		super();
 		this.name = name;
-	}
-
-	public WriteBackEditConfig getWritebackEditConfig() {
-		return writebackEditConfig;
-	}
-
-	public void setWritebackEditConfig(WriteBackEditConfig writebackEditConfig) {
-		this.writebackEditConfig = writebackEditConfig;
 	}
 
 	public String getName() {

@@ -17,8 +17,6 @@
  */
 package it.eng.spagobi.engines.whatif.api;
 
-import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -48,19 +46,14 @@ import org.pivot4j.transform.SwapAxes;
 
 import it.eng.spagobi.engines.whatif.WhatIfEngineInstance;
 import it.eng.spagobi.engines.whatif.common.AbstractWhatIfEngineService;
-import it.eng.spagobi.engines.whatif.common.WhatIfConstants;
 import it.eng.spagobi.engines.whatif.cube.CubeUtilities;
 import it.eng.spagobi.engines.whatif.hierarchy.FilterTreeBuilder;
 import it.eng.spagobi.engines.whatif.hierarchy.NodeFilter;
 import it.eng.spagobi.engines.whatif.member.SbiMember;
 import it.eng.spagobi.engines.whatif.model.SpagoBIPivotModel;
 import it.eng.spagobi.engines.whatif.model.transform.slicer.SlicerManager;
-import it.eng.spagobi.engines.whatif.version.SbiVersion;
-import it.eng.spagobi.engines.whatif.version.VersionDAO;
 import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
-import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
-import it.eng.spagobi.utilities.exceptions.SpagoBIEngineRestServiceRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.rest.RestUtilities;
 
@@ -181,19 +174,6 @@ public class HierarchyResource extends AbstractWhatIfEngineService {
 
 		List<SbiMember> members = new ArrayList<>();
 
-		// If the tree contains also versions we need to resolve the description
-		// of the version
-		List<SbiVersion> versions = new ArrayList<>();
-		boolean isVersionDimension = hierarchy.getDimension().getUniqueName()
-				.equals(WhatIfConstants.VERSION_DIMENSION_UNIQUENAME);
-		if (isVersionDimension) {
-			try {
-				versions = getVersions();
-			} catch (Throwable e) {
-				logger.error(e);
-			}
-		}
-
 		for (int i = 0; i < list.size(); i++) {
 			Member aMember = list.get(i);
 			Boolean memberVisibleInTheSchema = true;
@@ -204,14 +184,6 @@ public class HierarchyResource extends AbstractWhatIfEngineService {
 				logger.error("impossible to load the property visible for the member " + aMember.getUniqueName());
 			}
 			if (memberVisibleInTheSchema == null || memberVisibleInTheSchema) {
-
-				if (isVersionDimension) {
-					for (int j = 0; j < versions.size(); j++) {
-						if (versions.get(j).getId().toString().equals(aMember.getName())) {
-							memberDescription = versions.get(j).getDescription();
-						}
-					}
-				}
 
 				// check the visible members
 
@@ -386,37 +358,6 @@ public class HierarchyResource extends AbstractWhatIfEngineService {
 	 */
 	private Hierarchy getHierarchy(String hierarchyUniqueName) throws OlapException {
 		return CubeUtilities.getHierarchy(getPivotModel().getCube(), hierarchyUniqueName);
-	}
-
-	private List<SbiVersion> getVersions() {
-		Connection connection;
-		List<SbiVersion> versions = new ArrayList<>();
-		IDataSource dataSource = getWhatIfEngineInstance().getDataSource();
-		try {
-			logger.debug("Getting the connection to DB");
-			connection = dataSource.getConnection();
-		} catch (Exception e) {
-			logger.error("Error opening connection to datasource " + dataSource.getLabel());
-			throw new SpagoBIRuntimeException("Error opening connection to datasource " + dataSource.getLabel(), e);
-		}
-
-		try {
-			VersionDAO dao = new VersionDAO(getWhatIfEngineInstance());
-			versions = dao.getAllVersions(connection);
-		} catch (Exception e) {
-			logger.debug("Error persisting the modifications", e);
-			throw new SpagoBIEngineRuntimeException("Exception loading the versions", e);
-		} finally {
-			logger.debug("Closing the connection used to get the versions");
-			try {
-				connection.close();
-			} catch (SQLException e) {
-				logger.error("Error closing the connection to the db");
-				throw new SpagoBIEngineRestServiceRuntimeException(getLocale(), e);
-			}
-			logger.debug("Closed the connection used to get the versions");
-		}
-		return versions;
 	}
 
 	/**

@@ -25,10 +25,8 @@ import org.apache.log4j.Logger;
 import it.eng.spago.base.SourceBean;
 import it.eng.spagobi.engines.whatif.template.WhatIfTemplate;
 import it.eng.spagobi.engines.whatif.template.initializer.AbstractInitializer;
-import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 import it.eng.spagobi.writeback4j.SbiScenario;
 import it.eng.spagobi.writeback4j.SbiScenarioVariable;
-import it.eng.spagobi.writeback4j.WriteBackEditConfig;
 
 /**
  * @author Dragan Pirkovic
@@ -52,7 +50,6 @@ public class ScenarioInitializerImpl extends AbstractInitializer {
 			String scenarioName = (String) scenarioSB.getAttribute(PROP_NAME);
 			SbiScenario scenario = new SbiScenario(scenarioName);
 
-			initWriteBackConf(scenarioSB, scenario);
 			initScenarioVariables(scenarioSB, scenario);
 
 			logger.debug("Scenario with name " + scenarioName + " successfully loaded");
@@ -63,32 +60,6 @@ public class ScenarioInitializerImpl extends AbstractInitializer {
 		}
 	}
 
-	private static void initWriteBackConf(SourceBean scenarioSB, SbiScenario scenario) {
-		logger.debug("IN. loading the writeback config");
-		WriteBackEditConfig writeBackConfig = new WriteBackEditConfig();
-		String editCube = (String) scenarioSB.getAttribute(EDIT_CUBE_ATTRIBUTE);
-		if (editCube == null || editCube.length() == 0) {
-			logger.error("In the writeback is enabled you must specify a cube to edit. Remove the " + WRITEBACK_TAG
-					+ " tag or specify a value for the attribute " + EDIT_CUBE_ATTRIBUTE);
-			throw new SpagoBIEngineRuntimeException("In the writeback is enabled you must specify a cube to edit. Remove the " + WRITEBACK_TAG
-					+ " tag or specify a value for the attribute " + EDIT_CUBE_ATTRIBUTE);
-		}
-
-		List<SourceBean> editableMeasuresBeans = scenarioSB.getAttributeAsList(MEASURE_TAG);
-		if (editableMeasuresBeans != null && editableMeasuresBeans.size() > 0) {
-			List<String> editableMeasures = new ArrayList<>();
-			for (int i = 0; i < editableMeasuresBeans.size(); i++) {
-				editableMeasures.add(editableMeasuresBeans.get(i).getCharacters());
-			}
-			writeBackConfig.setEditableMeasures(editableMeasures);
-			logger.debug(TAG_SCENARIO + ":the editable measures are " + editableMeasures);
-		}
-
-		writeBackConfig.setEditCubeName(editCube);
-		logger.debug(TAG_SCENARIO + ":the edit cube is " + editCube);
-		scenario.setWritebackEditConfig(writeBackConfig);
-		logger.debug("OUT. Writeback config loaded");
-	}
 
 	private static void initScenarioVariables(SourceBean scenarioSB, SbiScenario scenario) {
 		logger.debug("IN. loading the scenario variables");

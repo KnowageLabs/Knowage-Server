@@ -41,7 +41,6 @@ import it.eng.spago.configuration.ConfigSingleton;
 import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.engines.whatif.export.ExportConfig;
-import it.eng.spagobi.engines.whatif.model.transform.algorithm.AllocationAlgorithmDefinition;
 import it.eng.spagobi.engines.whatif.template.WhatIfTemplate;
 import it.eng.spagobi.services.common.EnginConf;
 import it.eng.spagobi.tenant.TenantManager;
@@ -60,7 +59,6 @@ public class WhatIfEngineConfig {
 
 	private Map<String, List> includes;
 	private Set<String> enabledIncludes;
-	private Map<String, AllocationAlgorithmDefinition> algorithmsDefinitionMap;
 	private static final Logger logger = Logger.getLogger(WhatIfEngineConfig.class);
 	private static final String PROPORTIONAL_ALGORITHM_CONF = "proportionalAlgorithmPersistQueryWhereClause";
 
@@ -247,8 +245,9 @@ public class WhatIfEngineConfig {
 				String attributeName = it.next();
 				Object value = env.get(attributeName);
 
-				if (value == null)
+				if (value == null) {
 					continue;
+				}
 
 				String cl = value.getClass().getName();
 				if (cl.contains("String") && !"".equals(value)) {
@@ -438,47 +437,4 @@ public class WhatIfEngineConfig {
 		return path;
 	}
 
-	/**
-	 * Reads the configuration file and gets the list of allocation algorithms
-	 *
-	 * @return
-	 */
-	public Map<String, AllocationAlgorithmDefinition> getAllocationAlgorithms() {
-
-		if (algorithmsDefinitionMap == null) {
-			SourceBean algorithmsBean;
-			List<SourceBean> algorithmsListBean;
-
-			algorithmsDefinitionMap = new HashMap<>();
-
-			SourceBean writeBackBean = (SourceBean) getConfigSourceBean().getAttribute(WRITEBACK_TAG);
-			if (writeBackBean != null) {
-				algorithmsBean = (SourceBean) writeBackBean.getAttribute(ALGORITHMS_TAG);
-				if (algorithmsBean != null) {
-					algorithmsListBean = algorithmsBean.getAttributeAsList(ALGORITHM_TAG);
-					if (algorithmsListBean != null) {
-						for (int i = 0; i < algorithmsListBean.size(); i++) {
-							SourceBean algorithmBean = algorithmsListBean.get(i);
-							String name = (String) algorithmBean.getAttribute(NAME_ATTRIBUTE);
-							String className = (String) algorithmBean.getAttribute(CLASS_ATTRIBUTE);
-							String deafultString = (String) algorithmBean.getAttribute(DEFAULT_ATTRIBUTE);
-
-							Boolean defaultBoolean = false;
-							if (deafultString != null) {
-								try {
-									defaultBoolean = new Boolean(deafultString);
-								} catch (Exception e) {
-									logger.error("persistent attribute is a boolean, so the admissible values are [true, false] not [" + deafultString + "]");
-								}
-							}
-
-							algorithmsDefinitionMap.put(name, new AllocationAlgorithmDefinition(name, className, defaultBoolean));
-
-						}
-					}
-				}
-			}
-		}
-		return algorithmsDefinitionMap;
-	}
 }

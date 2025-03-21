@@ -18,11 +18,6 @@
 
 package it.eng.spagobi.engines.whatif.model;
 
-import it.eng.spagobi.engines.whatif.model.transform.CellTransformation;
-import it.eng.spagobi.engines.whatif.model.transform.CellTransformationsAnalyzer;
-import it.eng.spagobi.engines.whatif.model.transform.CellTransformationsStack;
-import it.eng.spagobi.engines.whatif.model.transform.algorithm.IAllocationAlgorithm;
-
 import java.io.InputStream;
 import java.io.Reader;
 import java.math.BigDecimal;
@@ -41,7 +36,6 @@ import java.sql.Time;
 import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -75,46 +69,7 @@ public class SpagoBICellSetWrapper implements CellSet {
 		return spagoBIPivotModel;
 	}
 
-	/**
-	 * Restores pending transformations (i.e. transformations not committed into
-	 * the database)
-	 * 
-	 * @param stack
-	 *            The pending transformations' stack
-	 */
-	public void restorePendingTransformations(CellTransformationsStack stack) {
-		CellTransformationsAnalyzer analyzer = new CellTransformationsAnalyzer();
-		CellTransformationsStack bestStack = analyzer.getShortestTransformationsStack(stack);
-		Iterator<CellTransformation> iterator = bestStack.iterator();
-		while (iterator.hasNext()) {
-			CellTransformation transformation = iterator.next();
-			this.restoreTranformation(transformation);
-		}
-	}
 
-	/**
-	 * Restores a pending transformation (i.e. a transformation not committed
-	 * into the database)
-	 * 
-	 * @param transformation
-	 *            The pending transformation
-	 */
-	public void restoreTranformation(CellTransformation transformation) {
-		IAllocationAlgorithm algorithm = transformation.getAlgorithm();
-		algorithm.apply(transformation.getCell(), transformation.getOldValue(), transformation.getNewValue(), this);
-	}
-
-	/**
-	 * Applies a transformation
-	 * 
-	 * @param transformation
-	 *            The transformation
-	 */
-	public void applyTranformation(CellTransformation transformation) {
-		IAllocationAlgorithm algorithm = transformation.getAlgorithm();
-		algorithm.apply(transformation.getCell(), transformation.getOldValue(), transformation.getNewValue(), this);
-		spagoBIPivotModel.addPendingTransformation(transformation);
-	}
 
 	@Override
 	public Cell getCell(List<Integer> coordinates) {
