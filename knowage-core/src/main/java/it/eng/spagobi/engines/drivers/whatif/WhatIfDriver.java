@@ -28,22 +28,18 @@ import org.json.JSONObject;
 
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.base.SourceBeanException;
-import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.analiticalmodel.document.bo.ObjTemplate;
-import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.commons.utilities.EngineUtilities;
 import it.eng.spagobi.engines.config.bo.Engine;
 import it.eng.spagobi.engines.drivers.DefaultOutputParameter;
 import it.eng.spagobi.engines.drivers.DefaultOutputParameter.TYPE;
 import it.eng.spagobi.engines.drivers.EngineURL;
 import it.eng.spagobi.engines.drivers.exceptions.InvalidOperationRequest;
 import it.eng.spagobi.engines.drivers.generic.GenericDriver;
-import it.eng.spagobi.engines.drivers.whatif.manager.WhatIfWorkflowManager;
 import it.eng.spagobi.tools.catalogue.bo.Artifact;
 import it.eng.spagobi.tools.catalogue.bo.Content;
 import it.eng.spagobi.tools.catalogue.dao.IArtifactsDAO;
@@ -88,8 +84,9 @@ public class WhatIfDriver extends GenericDriver {
 		try {
 			BIObject biobj = (BIObject) biobject;
 			template = DAOFactory.getObjTemplateDAO().getBIObjectActiveTemplate(biobj.getId());
-			if (template == null)
+			if (template == null) {
 				throw new Exception("Active Template null");
+			}
 		} catch (Exception e) {
 			throw new RuntimeException("Error while getting document's template", e);
 		}
@@ -104,8 +101,9 @@ public class WhatIfDriver extends GenericDriver {
 		} catch (Exception e) {
 			throw new RuntimeException("Error while getting document's template", e);
 		}
-		if (bytes == null)
+		if (bytes == null) {
 			throw new RuntimeException("Content of the Active template null");
+		}
 		return bytes;
 	}
 
@@ -208,11 +206,6 @@ public class WhatIfDriver extends GenericDriver {
 
 		pars.put(SpagoBIConstants.SBI_ARTIFACT_VERSION_ID, content.getId());
 
-		if (EngineUtilities.isWhatIf(engine)) {
-			// add info if artifact is locked
-			addArtifactStausInfo(pars, artifact.getId(), profile, documentId);
-		}
-
 		return pars;
 
 	}
@@ -257,63 +250,6 @@ public class WhatIfDriver extends GenericDriver {
 
 		return pars;
 
-	}
-
-	public Map addArtifactStausInfo(Map pars, Integer artifactId, IEngUserProfile profile, int documentId) {
-		logger.debug("IN");
-
-		String statusToReturn = null;
-		String userId = ((UserProfile) profile).getUserId().toString();
-		String locker;
-		logger.debug("User Id is " + userId);
-		logger.debug("Artifact Id is " + artifactId);
-
-		IArtifactsDAO artifactsDAO = DAOFactory.getArtifactsDAO();
-
-		Artifact artifact = artifactsDAO.loadArtifactById(artifactId);
-
-		if (artifact == null) {
-			logger.error("Artifact referring to id [" + artifactId + "] could not be loaded");
-			throw new RuntimeException("Artifact with id [" + artifactId + "] could not be loaded", null);
-		}
-
-		logger.debug("Artifact id is " + artifactId);
-
-		int did = artifact.getId();
-
-		// Boolean locked = artifact.getModelLocked();
-
-		try {
-			if (!profile.getFunctionalities().contains("WorkFlowManagment")) {
-				statusToReturn = SpagoBIConstants.SBI_ARTIFACT_VALUE_LOCKED_BY_USER;
-				locker = userId;
-			} else {
-				WhatIfWorkflowManager wfm = new WhatIfWorkflowManager();
-				locker = wfm.getActiveUser(did);
-				if (locker == null) {
-					logger.debug("Artifact with id " + artifactId + " is unlocked");
-					statusToReturn = SpagoBIConstants.SBI_ARTIFACT_VALUE_UNLOCKED;
-				} else {
-					if (locker != null && locker.equals(userId)) {
-						statusToReturn = SpagoBIConstants.SBI_ARTIFACT_VALUE_LOCKED_BY_USER;
-					} else {
-						statusToReturn = SpagoBIConstants.SBI_ARTIFACT_VALUE_LOCKED_BY_OTHER;
-					}
-
-				}
-			}
-		} catch (EMFInternalError e) {
-			logger.error("Error checking functionality", e);
-			throw new SpagoBIRuntimeException("Error checking functionality", e);
-		} catch (EMFUserError e) {
-			logger.error("Error loading locker user", e);
-			throw new SpagoBIRuntimeException("Error loading locker user", e);
-		}
-
-		logger.debug("Status of artifact is " + statusToReturn);
-		pars.put(SpagoBIConstants.SBI_ARTIFACT_STATUS, statusToReturn);
-		pars.put(SpagoBIConstants.SBI_ARTIFACT_LOCKER, locker != null ? locker : "");
-		return pars;
 	}
 
 	private Map applyDatasourceForWriting(Map parameters, BIObject biObject) {

@@ -7,19 +7,15 @@ public enum SpagoBiEngineDriver {
 	 ,JASPER_REPORT_DRIVER("it.eng.spagobi.engines.drivers.jasperreport.JasperReportDriver")
 	 ,QBE_DRIVER_DRIVER("it.eng.spagobi.engines.drivers.qbe.QbeDriver")
 	 ,TALEND_DRIVER("it.eng.spagobi.engines.drivers.talend.TalendDriver")
-	 ,COMMONJ_DRIVER("it.eng.spagobi.engines.drivers.commonj.CommonjDriver")
-	 ,GIS_DRIVER("it.eng.spagobi.engines.drivers.gis.GisDriver")
-	 ,SVG_VIEWER__DRIVER("it.eng.spagobi.engines.drivers.svgviewer.SvgViewerDriver")
 	 ,COCKPIT_DRIVER("it.eng.spagobi.engines.drivers.cockpit.CockpitDriver")
 	 ,DASHBOARD_DRIVER("it.eng.spagobi.engines.drivers.dashboard.DashboardDriver")
-	 ,WHATIF_DRIVER("it.eng.spagobi.engines.drivers.whatif.WhatIfDriver")
 	 ,OLAP_DRIVER("it.eng.spagobi.engines.drivers.whatif.OlapDriver")
 	 ,DOSSIER_DRIVER("it.eng.spagobi.engines.drivers.dossier.DossierDriver");
 
-	 private String driverName;
+	 private final String driverName;
 	 
 	 
-	 private SpagoBiEngineDriver(String driverName) {
+	 SpagoBiEngineDriver(String driverName) {
 		 this.driverName = driverName;
 	 }
 	 

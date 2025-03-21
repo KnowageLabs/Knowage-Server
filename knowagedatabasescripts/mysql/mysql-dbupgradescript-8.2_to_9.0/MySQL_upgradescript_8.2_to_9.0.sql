@@ -14,10 +14,10 @@ where
 	from
 		SBI_ENGINES
 	WHERE
-		label in('knowagegisengine', 'knowageprocessengine', 'knowagesvgviewerengine')
+		label in('knowagegisengine', 'knowageprocessengine', 'knowagesvgviewerengine','knowagewhatifengine')
 
 );
-DELETE FROM SBI_ENGINES WHERE label in('knowagegisengine', 'knowageprocessengine', 'knowagesvgviewerengine');
+DELETE FROM SBI_ENGINES WHERE label in('knowagegisengine', 'knowageprocessengine', 'knowagesvgviewerengine','knowagewhatifengine');
 
 DELETE FROM SBI_GEO_MAP_FEATURES ;
 DROP TABLE SBI_GEO_MAP_FEATURES ;
@@ -44,4 +44,7 @@ ALTER TABLE SBI_DATA_SET DROP COLUMN PIVOT_ROW;
 ALTER TABLE SBI_DATA_SET DROP COLUMN PIVOT_VALUE;
 ALTER TABLE SBI_DATA_SET DROP COLUMN NUM_ROWS;
 
-delete from SBI_DOMAINS sd where DOMAIN_CD = 'TRANSFORMER_TYPE' and VALUE_CD = 'PIVOT_TRANSFOMER'
+delete from SBI_DOMAINS sd where DOMAIN_CD = 'TRANSFORMER_TYPE' and VALUE_CD = 'PIVOT_TRANSFOMER';
+
+DELETE FROM SBI_WHATIF_WORKFLOW ;
+DROP TABLE SBI_WHATIF_WORKFLOW ;
