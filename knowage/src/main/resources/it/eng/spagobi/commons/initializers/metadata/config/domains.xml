@@ -293,8 +293,6 @@
 		domainNm="Data Set Type" valueDs="SbiFlatDataSet" />
 	<DOMAIN valueCd="Federated" valueNm="SbiFederatedDataSet" domainCd="DATA_SET_TYPE"
 		domainNm="Data Set Type" valueDs="SbiFederatedDataSet" />
-	<DOMAIN valueCd="SPARQL" valueNm="SbiSPARQLDataSet" domainCd="DATA_SET_TYPE"
-		domainNm="Data Set Type" valueDs="SbiSPARQLDataSet" />
 		
 	<DOMAIN valueCd="DEVELOPMENT" valueNm="sbidomains.permissiononfolder.nm.dev"
 		domainCd="PERMISSION_ON_FOLDER" domainNm="Permission on folder"
