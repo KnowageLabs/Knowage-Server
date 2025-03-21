@@ -320,6 +320,16 @@
 					<resource>
 						<filtering>true</filtering>
 						<directory>src/main/resources</directory>
+						<excludes>
+							<exclude>**/*.ttf</exclude>
+						</excludes>
+					</resource>
+					<resource>
+						<filtering>false</filtering>
+						<directory>src/main/resources</directory>
+						<includes>
+							<include>**/*.ttf</include>
+						</includes>
 					</resource>
 				</resources>
 				<pluginManagement>

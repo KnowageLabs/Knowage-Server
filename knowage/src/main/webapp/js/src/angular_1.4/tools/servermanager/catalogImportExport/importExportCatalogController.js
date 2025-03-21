@@ -75,13 +75,11 @@ function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices,
 	$scope.showDataset=true;
 	$scope.showBM=false;
 	$scope.showSchema=false;
-	$scope.showSVG=false;
 	$scope.showLayer=false;
 	$scope.catalogData=[];
 	$scope.catalogDataset=[];
 	$scope.catalogBM=[];
 	$scope.catalogSchema=[];
-	$scope.catalogSVG=[];
 	$scope.catalogLayer=[];
 	
 	$scope.catalogSelected=[];
@@ -145,13 +143,11 @@ function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices,
 			var datasetList = $scope.getCatalogForCategory($scope.catalogSelected, 'Dataset');
 			var BMList = $scope.getCatalogForCategory($scope.catalogSelected, 'BusinessModel');
 			var schemaList = $scope.getCatalogForCategory($scope.catalogSelected, 'MondrianSchema');
-			var SVGtList = $scope.getCatalogForCategory($scope.catalogSelected, 'SVG');
 			var layerList = $scope.getCatalogForCategory($scope.catalogSelected, 'Layer');
 			//module download zip			
 			var config={"DATASET_LIST":datasetList ,
 						"BM_LIST": BMList,
 						"SCHEMA_LIST": schemaList,
-						"SVG_LIST": SVGtList,
 						"LAYER_LIST": layerList,
 						"EXPORT_FILE_NAME":$scope.nameExport.trim(),
 						"EXPORT_SUB_OBJ":false,

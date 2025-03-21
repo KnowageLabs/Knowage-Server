@@ -110,16 +110,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 								         	<export-catalog  ng-if="showSchema" type-catalog="MondrianSchema"  path-catalog="catalog" catalog-data="catalogSchema" catalog-selected="catalogSelected"></export-catalog>
 								        </md-tab-body>
 								      </md-tab>
-								       <md-tab id="SVG" md-on-select="showSVG=true">
-								        <md-tab-label>
-								        	{{translate.load("sbi.importexportcatalog.radiosvg");}}
-								        	<span ng-show="getCatalogForCategory(catalogSelected, 'SVG').length > 0" class="tab-badge">{{getCatalogForCategory(catalogSelected, 'SVG').length}}</span>
-								        	<span ng-show="getCatalogForCategory(catalogSelected, 'SVG').length == 0" class="tab-spacer"></span>
-								        </md-tab-label>
-								        <md-tab-body>
-								         	<export-catalog ng-if="showSVG" type-catalog="SVG"  path-catalog="catalog" catalog-data="catalogSVG" catalog-selected="catalogSelected"></export-catalog>
-								        </md-tab-body>
-								      </md-tab>
 								       <md-tab id="Layer" md-on-select="showLayer=true">
 								        <md-tab-label>
 								        	<span>{{translate.load("sbi.importexportcatalog.radiolayer");}}</span>
