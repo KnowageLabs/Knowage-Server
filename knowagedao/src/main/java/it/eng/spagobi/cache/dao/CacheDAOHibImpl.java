@@ -30,6 +30,7 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.json.JSONArray;
+import org.json.JSONException;
 
 import java.math.BigDecimal;
 import java.util.*;
@@ -503,18 +504,11 @@ public class CacheDAOHibImpl extends AbstractHibernateDAO implements ICacheDAO {
 	private CacheItem toCacheItem(SbiCacheItem hibCacheItem) {
 
 		HashMap<String, Object> properties = null;
-		JSONArray parameters = null;
 		try {
 			ObjectMapper mapper = new ObjectMapper();
 			TypeReference<HashMap<String, Object>> typeRef = new TypeReference<>() {
 			};
 			properties = mapper.readValue(hibCacheItem.getProperties(), typeRef);
-		} catch (Throwable t) {
-			throw new SpagoBIDAOException("An error occured while creating a CacheItem from SbiCacheItem:", t);
-		}
-
-		try {
-			parameters = new JSONArray(hibCacheItem.getParameters());
 		} catch (Throwable t) {
 			throw new SpagoBIDAOException("An error occured while creating a CacheItem from SbiCacheItem:", t);
 		}
@@ -526,12 +520,18 @@ public class CacheDAOHibImpl extends AbstractHibernateDAO implements ICacheDAO {
 		cacheItem.setDimension(new BigDecimal(hibCacheItem.getDimension()));
 		cacheItem.setCreationDate(hibCacheItem.getCreationDate());
 		cacheItem.setLastUsedDate(hibCacheItem.getLastUsedDate());
+
 		if (properties != null) {
 			cacheItem.setProperties(properties);
 		}
 
 		if (hibCacheItem.getParameters() != null) {
-			cacheItem.setParameters(parameters);
+            try {
+				cacheItem.setParameters(new JSONArray(hibCacheItem.getParameters()));
+			} catch (JSONException e) {
+				logger.error("Cannot set parameters for cache item " + hibCacheItem.getSignature(), e);
+                throw new SpagoBIDAOException(e);
+            }
 		}
 
 		return cacheItem;
