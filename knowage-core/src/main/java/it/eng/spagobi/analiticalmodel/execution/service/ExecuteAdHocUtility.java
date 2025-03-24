@@ -42,11 +42,6 @@ public class ExecuteAdHocUtility {
 		return getEngineByDriver("it.eng.spagobi.engines.drivers.qbe.QbeDriver");
 	}
 
-	public static Engine getGeoreportEngine() {
-		return getEngineByDriver("it.eng.spagobi.engines.drivers.gis.GisDriver");
-
-	}
-
 	public static Engine getCockpitEngine() {
 		return getEngineByDriver("it.eng.spagobi.engines.drivers.cockpit.CockpitDriver");
 	}
@@ -121,8 +116,9 @@ public class ExecuteAdHocUtility {
 	public static boolean hasGeoHierarchy(String meta) throws JSONException, IOException {
 
 		JSONObject metadataObject = JSONUtils.toJSONObject(meta);
-		if (metadataObject == null)
+		if (metadataObject == null) {
 			return false;
+		}
 
 		JSONArray columnsMetadataArray = metadataObject.optJSONArray("columns");
 		if (columnsMetadataArray != null) {

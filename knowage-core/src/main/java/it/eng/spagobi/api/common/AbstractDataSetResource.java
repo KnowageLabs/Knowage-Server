@@ -1003,14 +1003,6 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 			LOGGER.info("Engine not found. ", r);
 		}
 
-		Engine geoEngine = null;
-		try {
-			geoEngine = ExecuteAdHocUtility.getGeoreportEngine();
-		} catch (SpagoBIRuntimeException r) {
-			// the geo engine is not found
-			LOGGER.info("Engine not found. ", r);
-		}
-
 		JSONObject detailAction = new JSONObject();
 		detailAction.put("name", "detaildataset");
 		detailAction.put("description", "Dataset detail");
@@ -1019,9 +1011,6 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 		deleteAction.put("name", "delete");
 		deleteAction.put("description", "Delete dataset");
 
-		JSONObject georeportAction = new JSONObject();
-		georeportAction.put("name", "georeport");
-		georeportAction.put("description", "Show Map");
 
 		JSONObject qbeAction = new JSONObject();
 		qbeAction.put("name", "qbe");
@@ -1040,27 +1029,6 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 				}
 			}
 
-			boolean isGeoDataset = false;
-
-			try {
-				// String meta = datasetJSON.getString("meta"); // [A]
-				// isGeoDataset = ExecuteAdHocUtility.hasGeoHierarchy(meta); //
-				// [A]
-
-				String meta = datasetJSON.optString("meta");
-
-				if (meta != null && !meta.equals("")) {
-					isGeoDataset = ExecuteAdHocUtility.hasGeoHierarchy(meta);
-				}
-
-			} catch (Exception e) {
-				LOGGER.error("Error during check of Geo spatial column", e);
-			}
-
-			if (isGeoDataset && geoEngine != null) {
-				actions.put(georeportAction);
-			}
-
 			String dsType = datasetJSON.optString(DataSetConstants.DS_TYPE_CD);
 			if (dsType == null || !dsType.equals(DataSetFactory.FEDERATED_DS_TYPE)) {
 				if (qbeEngine != null && (typeDocWizard == null || typeDocWizard.equalsIgnoreCase("REPORT"))) {
@@ -1072,16 +1040,7 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 			}
 
 			datasetJSON.put("actions", actions);
-
-			if ("GEO".equalsIgnoreCase(typeDocWizard)) {
-				// if is caming from myAnalysis - create Geo Document - must
-				// shows only ds geospatial --> isGeoDataset == true
-				if (geoEngine != null && isGeoDataset) {
-					datasetsJSONReturn.put(datasetJSON);
-				}
-			} else {
-				datasetsJSONReturn.put(datasetJSON);
-			}
+			datasetsJSONReturn.put(datasetJSON);
 
 		}
 		return datasetsJSONReturn;

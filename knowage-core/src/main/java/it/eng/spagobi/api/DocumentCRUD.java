@@ -136,17 +136,9 @@ public class DocumentCRUD extends AbstractSpagoBIResource {
 
 		List myObjects = new ArrayList();
 		if (personalFolder != null) {
-			Engine geoEngine = null;
 			Engine cockpitEngine = null;
 			Engine kpiEngine = null;
 			Engine dossierEngine = null;
-
-			try {
-				geoEngine = ExecuteAdHocUtility.getGeoreportEngine();
-			} catch (SpagoBIRuntimeException r) {
-				// the geo engine is not found
-				logger.info("Engine not found. ", r);
-			}
 
 			try {
 				cockpitEngine = ExecuteAdHocUtility.getCockpitEngine();
@@ -176,19 +168,13 @@ public class DocumentCRUD extends AbstractSpagoBIResource {
 				// Get only documents of type Cockpit and Map
 				for (Iterator it = myObjects.iterator(); it.hasNext();) {
 					BIObject biObject = (BIObject) it.next();
-					if ((geoEngine != null && biObject.getEngine().getId().equals(geoEngine.getId()))
-							|| (cockpitEngine != null && biObject.getEngine().getId().equals(cockpitEngine.getId()))
+					if ((cockpitEngine != null && biObject.getEngine().getId().equals(cockpitEngine.getId()))
 							|| (kpiEngine != null && biObject.getEngine().getId().equals(kpiEngine.getId()))
 							|| (dossierEngine != null && biObject.getEngine().getId().equals(dossierEngine.getId()))) {
 						filteredMyObjects.add(biObject);
 					}
 				}
 				myObjects = filteredMyObjects;
-
-			} else if (docType.equalsIgnoreCase("Map") && geoEngine != null) {
-				// return only Geo Map (GIS) documents inside the personal
-				// folder
-				myObjects = DAOFactory.getBIObjectDAO().loadBIObjects("MAP", "REL", personalFolder.getPath());
 
 			} else if (docType.equalsIgnoreCase("Cockpit") && cockpitEngine != null) {
 				// return only Cockpits inside the personal folder
@@ -241,13 +227,13 @@ public class DocumentCRUD extends AbstractSpagoBIResource {
 				throw new SpagoBIRuntimeException("Error sharing the document.. Impossible to parse the id of the document " + ids, e);
 			}
 			IEngUserProfile profile = this.getUserProfile();
-	
+
 			AnalyticalModelDocumentManagementAPI documentManagementAPI = new AnalyticalModelDocumentManagementAPI(profile);
 			String oper = ("true".equalsIgnoreCase(isShare)) ? "Sharing" : "Unsharing";
 			logger.debug("Execute " + oper);
 			if (id != null) {
 				BIObject document = documentManagementAPI.getDocument(id);
-				
+
 				List lstFuncts = new ArrayList();
 				if ("true".equalsIgnoreCase(isShare)) {
 					if(functs != null && !functs.isEmpty()) {
@@ -258,7 +244,7 @@ public class DocumentCRUD extends AbstractSpagoBIResource {
 						throw new SpagoBIRuntimeException("Error " + oper + " the document.. Impossible to get the functs list " + functs);
 					}
 				}
-				
+
 				// add personal folder for default
 				LowFunctionality userFunc = null;
 				try {
@@ -269,13 +255,14 @@ public class DocumentCRUD extends AbstractSpagoBIResource {
 					logger.error("Error " + oper + "  the document.. Impossible to get the id of the personal folder for document " + ids, e);
 					throw new SpagoBIRuntimeException("Error " + oper + "  the document.. Impossible to get the id of the personal folder for document " + ids, e);
 				}
-				if (userFunc != null)
+				if (userFunc != null) {
 					lstFuncts.add(userFunc.getId());
-				else
+				} else {
 					logger.error("Error " + oper + " the document.. Impossible to get the id of the personal folder for document " + ids);
-	
+				}
+
 				document.setFunctionalities(lstFuncts);
-	
+
 				// save
 				documentManagementAPI.saveDocument(document, null);
 			}
@@ -283,7 +270,7 @@ public class DocumentCRUD extends AbstractSpagoBIResource {
 			logger.error("Error in shareDocument Service: " + e);
 			throw new SpagoBIRuntimeException("Error in shareDocument Service: " + e);
 		}
-		
+
 		logger.debug("OUT");
 		return "{}";
 	}

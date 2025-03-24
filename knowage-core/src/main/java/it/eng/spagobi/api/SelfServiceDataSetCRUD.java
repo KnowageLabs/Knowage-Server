@@ -206,14 +206,6 @@ public class SelfServiceDataSetCRUD extends AbstractSpagoBIResource {
 			logger.info("Engine not found. ", r);
 		}
 
-		Engine geoEngine = null;
-		try {
-			geoEngine = ExecuteAdHocUtility.getGeoreportEngine();
-		} catch (SpagoBIRuntimeException r) {
-			// the geo engine is not found
-			logger.info("Engine not found. ", r);
-		}
-
 		// sets action to modify dataset
 		JSONObject detailAction = new JSONObject();
 		detailAction.put("name", "detaildataset");
@@ -242,22 +234,6 @@ public class SelfServiceDataSetCRUD extends AbstractSpagoBIResource {
 					actions.put(deleteAction);
 				}
 			}
-			boolean isGeoDataset = false;
-			// all execution action are added ONLY if the relative engine
-			// (getted throught the driver) exists.
-			if (geoEngine != null && (typeDocWizard == null || typeDocWizard.equalsIgnoreCase("GEO"))) {
-				try {
-					String meta = datasetJSON.getString("meta");
-					isGeoDataset = ExecuteAdHocUtility.hasGeoHierarchy(meta);
-				} catch (Exception e) {
-					logger.error("Error during check of Geo spatial column", e);
-				}
-				if (isGeoDataset)
-				 {
-					actions.put(georeportAction); // Annotated view map action
-													// to release SpagoBI 4
-				}
-			}
 
 			String dsType = datasetJSON.optString(DataSetConstants.DS_TYPE_CD);
 			if (dsType == null || !dsType.equals(DataSetFactory.FEDERATED_DS_TYPE)) {
@@ -269,15 +245,7 @@ public class SelfServiceDataSetCRUD extends AbstractSpagoBIResource {
 			}
 
 			datasetJSON.put("actions", actions);
-			if (typeDocWizard != null && typeDocWizard.equalsIgnoreCase("GEO")) {
-				// if is caming from myAnalysis - create Geo Document - must
-				// shows only ds geospatial --> isGeoDataset == true
-				if (geoEngine != null && isGeoDataset) {
-					datasetsJSONReturn.put(datasetJSON);
-				}
-			} else {
-				datasetsJSONReturn.put(datasetJSON);
-			}
+			datasetsJSONReturn.put(datasetJSON);
 		}
 		return datasetsJSONReturn;
 	}

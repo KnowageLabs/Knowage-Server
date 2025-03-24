@@ -540,8 +540,9 @@ public class DataSetResource {
 
 		String dsType = ds.getType();
 
-		if (ds.getParametersList() != null)
+		if (ds.getParametersList() != null) {
 			getParametersFromDataSet(ret, ds);
+		}
 
 		if ("SbiQbeDataSet".equals(dsType)) {
 			String qbeDatamart = getDatamartFromDataSet(ds);
@@ -1076,13 +1077,15 @@ public class DataSetResource {
 								String[] valLst = val.split(sep);
 								for (int k2 = 0; k2 < valLst.length; k2++) {
 									String itemVal2 = valLst[k2];
-									if (itemVal2 != null && !"".equals(itemVal2))
+									if (itemVal2 != null && !"".equals(itemVal2)) {
 										paramValueLst.add(itemVal2);
+									}
 
 								}
 							} else {
-								if (itemVal != null && !"".equals(itemVal))
+								if (itemVal != null && !"".equals(itemVal)) {
 									paramValueLst.add(itemVal);
+								}
 								paramDescrLst.add(itemDescr);
 
 							}
@@ -1392,37 +1395,27 @@ public class DataSetResource {
 		UserProfile userProfile = getUserProfile();
 
 		boolean isQBEEnginePresent = isQBEEnginePresent();
-		boolean isGeoEnginePresent = isGeoEnginePresent();
 
 		ret.forEach(e -> {
-			addActions(e, typeDocWizard, userProfile, isQBEEnginePresent, isGeoEnginePresent);
+			addActions(e, typeDocWizard, userProfile, isQBEEnginePresent);
 		});
-
-		ret = ret.stream().filter(e -> {
-			return "GEO".equalsIgnoreCase(typeDocWizard) ? isGeoEnginePresent && e.isGeoDataSet() : true;
-		}).collect(toList());
 
 		return ret;
 
 	}
 
 	private void addActions(AbstractDataSetDTO dataset, String typeDocWizard, UserProfile userProfile,
-			boolean isQBEEnginePresent, boolean isGeoEnginePresent) {
+			boolean isQBEEnginePresent) {
 		try {
 			List<DataSetResourceAction> actions = dataset.getActions();
 			String currDataSetOwner = dataset.getOwner();
 			String currDataSetType = dataset.getDsTypeCd();
-			boolean isGeoDataset = dataset.isGeoDataSet();
 
 			if (typeDocWizard == null) {
 				actions.add(ACTION_DETAIL);
 				if (userProfile.getUserId().toString().equals(currDataSetOwner)) {
 					actions.add(ACTION_DELETE);
 				}
-			}
-
-			if (isGeoDataset && isGeoEnginePresent) {
-				actions.add(ACTION_GEO_REPORT);
 			}
 
 			if (currDataSetType == null || !currDataSetType.equals(DataSetFactory.FEDERATED_DS_TYPE)) {
@@ -1450,16 +1443,6 @@ public class DataSetResource {
 		}
 	}
 
-	private boolean isGeoEnginePresent() {
-		boolean isGeoEnginePresent = false;
-		try {
-			isGeoEnginePresent = ExecuteAdHocUtility.getGeoreportEngine() != null;
-		} catch (SpagoBIRuntimeException r) {
-			// the geo engine is not found
-			logger.info("Engine not found. ", r);
-		}
-		return isGeoEnginePresent;
-	}
 
 	private boolean isQBEEnginePresent() {
 		boolean isQBEEnginePresent = false;
