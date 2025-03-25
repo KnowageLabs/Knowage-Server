@@ -6,7 +6,7 @@
 	<parent>
 		<groupId>it.eng.knowage</groupId>
 		<artifactId>knowage-ce-parent</artifactId>
-		<version>8.1.31</version>
+		<version>8.1.32</version>
 		<relativePath>../knowage-ce-parent/pom.xml</relativePath>
 	</parent>
 	
@@ -287,6 +287,16 @@
 					<resource>
 						<filtering>true</filtering>
 						<directory>src/main/resources</directory>
+						<excludes>
+							<exclude>**/*.ttf</exclude>
+						</excludes>
+					</resource>
+					<resource>
+						<filtering>false</filtering>
+						<directory>src/main/resources</directory>
+						<includes>
+							<include>**/*.ttf</include>
+						</includes>
 					</resource>
 				</resources>
 			</build>
@@ -301,6 +311,16 @@
 					<resource>
 						<filtering>true</filtering>
 						<directory>src/main/resources</directory>
+						<excludes>
+							<exclude>**/*.ttf</exclude>
+						</excludes>
+					</resource>
+					<resource>
+						<filtering>false</filtering>
+						<directory>src/main/resources</directory>
+						<includes>
+							<include>**/*.ttf</include>
+						</includes>
 					</resource>
 				</resources>
 				<pluginManagement>

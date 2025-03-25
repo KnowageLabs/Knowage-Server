@@ -53,7 +53,9 @@
 		<band height="170" splitType="Prevent">
 			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
 				<reportElement key="textField" x="139" y="86" width="356" height="72"/>
-				<textElement/>
+				<textElement>
+					<font pdfFontName="fonts/DejaVuSans.ttf" isPdfEmbedded="true" pdfEncoding="Identity-H"/>
+				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[it.eng.spagobi.analiticalmodel.document.utils.Html2String.convertHtml2String($F{content}!=null ? new String((byte[])$F{content}) : "null")]]></textFieldExpression>
 			</textField>
 			<staticText>

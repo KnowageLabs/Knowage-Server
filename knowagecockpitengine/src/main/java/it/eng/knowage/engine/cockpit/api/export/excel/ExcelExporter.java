@@ -25,13 +25,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.DateFormat;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -39,6 +35,7 @@ import javax.ws.rs.core.UriBuilder;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.poi.ss.usermodel.Cell;
@@ -951,6 +948,12 @@ public class ExcelExporter extends AbstractFormatExporter {
 				adjustColumnWidth(sheet, this.imageB64);
 			}
 
+			int numberOfSummaryRows = 0;
+			List<String> summaryRowsLabels = new ArrayList<>();
+
+			numberOfSummaryRows = doSummaryRowsLogic(widgetData, numberOfSummaryRows, summaryRowsLabels);
+			boolean summaryLabelOnlyForPinnedColumns = isPinnedOnly(widgetData);
+
 			// Cell styles for int and float
 			CreationHelper createHelper = wb.getCreationHelper();
 
@@ -981,11 +984,13 @@ public class ExcelExporter extends AbstractFormatExporter {
 //				else
 //					row = sheet.createRow((offset + r + isGroup) + 2);
 
-				if(StringUtilities.isNotEmpty(imageB64)) {
-					row = sheet.createRow((offset + r + isGroup) + (startRow+rowspan) + 2); // starting by Header
+				if (StringUtilities.isNotEmpty(imageB64)) {
+					row = sheet.createRow((offset + r + isGroup) + (startRow + rowspan) + 2); // starting by Header
 				} else {
 					row = sheet.createRow((offset + r + isGroup) + 2);
 				}
+
+				boolean isSummaryRow = isSummaryRow(r, rows, numberOfSummaryRows);
 
 				for (int c = 0; c < columnsOrdered.length(); c++) {
 					JSONObject column = columnsOrdered.getJSONObject(c);
@@ -995,64 +1000,67 @@ public class ExcelExporter extends AbstractFormatExporter {
 					Cell cell = row.createCell(c);
 					Object value = rowObject.get(colIndex);
 
-					if (value != null) {
+					if (value != null && !isSummaryRow) {
 						String s = value.toString();
 						switch (type) {
-						case "string":
-							cell.setCellValue(s);
-							cell.setCellStyle(getStringCellStyle(wb, createHelper, column, columnStyles[c], FLOAT_CELL_DEFAULT_FORMAT, settings, s, rowObject,
-									mapColumns, mapColumnsTypes, variablesMap, mapParameters));
-							break;
-						case "int":
-							if (!s.trim().isEmpty()) {
-								cell.setCellValue(Integer.parseInt(s));
-								cell.setCellStyle(getIntCellStyle(wb, createHelper, column, columnStyles[c], INT_CELL_DEFAULT_FORMAT, settings,
-										Integer.parseInt(s), rowObject, mapColumns, mapColumnsTypes, variablesMap, mapParameters));
-							} else {
-								cell.setCellStyle(getGenericCellStyle(wb, createHelper, column, columnStyles[c], INT_CELL_DEFAULT_FORMAT, settings, rowObject,
-										mapColumns, mapColumnsTypes, variablesMap, mapParameters));
-							}
-							break;
-						case "float":
-							if (!s.trim().isEmpty()) {
-								cell.setCellValue(Double.parseDouble(s));
-								cell.setCellStyle(getDoubleCellStyle(wb, createHelper, column, columnStyles[c], FLOAT_CELL_DEFAULT_FORMAT, settings,
-										Double.parseDouble(s), rowObject, mapColumns, mapColumnsTypes, variablesMap, mapParameters));
-							} else {
-								cell.setCellStyle(getGenericCellStyle(wb, createHelper, column, columnStyles[c], FLOAT_CELL_DEFAULT_FORMAT, settings, rowObject,
-										mapColumns, mapColumnsTypes, variablesMap, mapParameters));
-							}
-							break;
-						case "date":
-							try {
-								if (!s.trim().isEmpty()) {
-									Date date = dateFormat.parse(s);
-									cell.setCellValue(date);
-									cell.setCellStyle(getDateCellStyle(wb, createHelper, column, columnStyles[c], DATE_FORMAT, settings, rowObject, mapColumns,
-											mapColumnsTypes, variablesMap, mapParameters));
-								}
-							} catch (Exception e) {
-								LOGGER.debug("Date will be exported as string due to error: ", e);
+							case "string":
 								cell.setCellValue(s);
-							}
-							break;
-						case "timestamp":
-							try {
+								cell.setCellStyle(getStringCellStyle(wb, createHelper, column, columnStyles[c], FLOAT_CELL_DEFAULT_FORMAT, settings, s, rowObject,
+										mapColumns, mapColumnsTypes, variablesMap, mapParameters));
+								break;
+							case "int":
 								if (!s.trim().isEmpty()) {
-									Date ts = timeStampFormat.parse(s);
-									cell.setCellValue(ts);
-									cell.setCellStyle(getDateCellStyle(wb, createHelper, column, columnStyles[c], TIMESTAMP_FORMAT, settings, rowObject,
+									cell.setCellValue(Integer.parseInt(s));
+									cell.setCellStyle(getIntCellStyle(wb, createHelper, column, columnStyles[c], INT_CELL_DEFAULT_FORMAT, settings,
+											Integer.parseInt(s), rowObject, mapColumns, mapColumnsTypes, variablesMap, mapParameters));
+								} else {
+									cell.setCellStyle(getGenericCellStyle(wb, createHelper, column, columnStyles[c], INT_CELL_DEFAULT_FORMAT, settings, rowObject,
 											mapColumns, mapColumnsTypes, variablesMap, mapParameters));
 								}
-							} catch (Exception e) {
-								LOGGER.debug("Timestamp will be exported as string due to error: ", e);
+								break;
+							case "float":
+								if (!s.trim().isEmpty()) {
+									cell.setCellValue(Double.parseDouble(s));
+									cell.setCellStyle(getDoubleCellStyle(wb, createHelper, column, columnStyles[c], FLOAT_CELL_DEFAULT_FORMAT, settings,
+											Double.parseDouble(s), rowObject, mapColumns, mapColumnsTypes, variablesMap, mapParameters));
+								} else {
+									cell.setCellStyle(getGenericCellStyle(wb, createHelper, column, columnStyles[c], FLOAT_CELL_DEFAULT_FORMAT, settings, rowObject,
+											mapColumns, mapColumnsTypes, variablesMap, mapParameters));
+								}
+								break;
+							case "date":
+								try {
+									if (!s.trim().isEmpty()) {
+										Date date = dateFormat.parse(s);
+										cell.setCellValue(date);
+										cell.setCellStyle(getDateCellStyle(wb, createHelper, column, columnStyles[c], DATE_FORMAT, settings, rowObject, mapColumns,
+												mapColumnsTypes, variablesMap, mapParameters));
+									}
+								} catch (Exception e) {
+									LOGGER.debug("Date will be exported as string due to error: ", e);
+									cell.setCellValue(s);
+								}
+								break;
+							case "timestamp":
+								try {
+									if (!s.trim().isEmpty()) {
+										Date ts = timeStampFormat.parse(s);
+										cell.setCellValue(ts);
+										cell.setCellStyle(getDateCellStyle(wb, createHelper, column, columnStyles[c], TIMESTAMP_FORMAT, settings, rowObject,
+												mapColumns, mapColumnsTypes, variablesMap, mapParameters));
+									}
+								} catch (Exception e) {
+									LOGGER.debug("Timestamp will be exported as string due to error: ", e);
+									cell.setCellValue(s);
+								}
+								break;
+							default:
 								cell.setCellValue(s);
-							}
-							break;
-						default:
-							cell.setCellValue(s);
-							break;
+								break;
 						}
+					} else if (value != null) {
+						String summaryRowLabel = summaryRowsLabels.get(r - (rows.length() - numberOfSummaryRows));
+						setSummaryRowValue(columnStyles, c, value, cell, summaryRowLabel, (JSONObject) columnSelectedOfDataset.get(c), summaryLabelOnlyForPinnedColumns);
 					}
 				}
 			}
@@ -1061,6 +1069,61 @@ public class ExcelExporter extends AbstractFormatExporter {
 			throw new SpagoBIRuntimeException("Cannot write data to Excel file", e);
 		}
 	}
+
+	private static void setSummaryRowValue(JSONObject[] columnStyles, int c, Object value, Cell cell, String summaryRowLabel, JSONObject column, boolean isOnlyPinned) {
+		try {
+			int precision = (columnStyles[c] != null && columnStyles[c].has("precision") && columnStyles[c].optInt("precision") != 0) ? columnStyles[c].getInt("precision") : 2;
+			String formattedValue = new DecimalFormat("#,##0." + StringUtils.repeat("0", precision)).format(value);
+			String valueWithLabel = !summaryRowLabel.isEmpty() ? summaryRowLabel.concat(": ").concat(formattedValue) : formattedValue;
+			if (!isOnlyPinned) {
+				cell.setCellValue(valueWithLabel);
+			} else {
+				if (column.has("pinned")) {
+					cell.setCellValue(valueWithLabel);
+				} else {
+					cell.setCellValue(formattedValue);
+				}
+			}
+		} catch (Exception e) {
+			LOGGER.debug("Error while exporting summary row: ", e);
+			cell.setCellValue(value.toString());
+		}
+	}
+
+
+	private boolean isSummaryRow(int r, JSONArray rows, int numberOfSummaryRows) {
+		return r >= rows.length() - numberOfSummaryRows;
+	}
+
+	private int doSummaryRowsLogic(JSONObject widgetData, int numberOfSummaryRows, List<String> summaryRowsLabels) throws JSONException {
+		if (summaryRowsEnabled(widgetData)) {
+			JSONArray list = widgetData.getJSONObject("settings").getJSONObject("summary").getJSONArray("list");
+			numberOfSummaryRows = list.length();
+
+			for (int i = 0; i < numberOfSummaryRows; i++) {
+				summaryRowsLabels.add(list.getJSONObject(i).getString("label"));
+			}
+
+		}
+		return numberOfSummaryRows;
+	}
+
+	private boolean isPinnedOnly(JSONObject widgetData) throws JSONException {
+		if (summaryRowsEnabled(widgetData) && widgetData.getJSONObject("settings").getJSONObject("summary").has("style")) {
+			return widgetData.getJSONObject("settings").getJSONObject("summary").getJSONObject("style").getBoolean("pinnedOnly");
+		}
+		return false;
+	}
+
+
+	private boolean summaryRowsEnabled(JSONObject widgetData) {
+		try {
+			return widgetData.has("settings") && widgetData.getJSONObject("settings").has("summary") && widgetData.getJSONObject("settings").getJSONObject("summary").getBoolean("enabled");
+		} catch (JSONException e) {
+			return false;
+		}
+	}
+
 
 	private HashMap<String, Object> createMapVariables(HashMap<String, Object> variablesMap) throws JSONException {
 		if (body.has("COCKPIT_VARIABLES")) {

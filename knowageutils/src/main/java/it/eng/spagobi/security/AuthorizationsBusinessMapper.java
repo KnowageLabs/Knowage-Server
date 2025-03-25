@@ -132,7 +132,7 @@ public class AuthorizationsBusinessMapper {
 		String actStr = "ACTION[" + actionName + "]";
 		List<String> businessProcessNames = (List<String>) _mapActions.get(actStr.toUpperCase());
 		if (businessProcessNames == null) {
-			logger.warn("mapping per action [" + actionName + "] non trovato");
+			logger.debug("mapping per action [" + actionName + "] non trovato");
 		}
 		// logger.debug("OUT,businessProcessName="+businessProcessName);
 		return businessProcessNames;

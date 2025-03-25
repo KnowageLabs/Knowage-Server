@@ -44,7 +44,6 @@ export default defineComponent({
 
   async beforeCreate() {
     // eslint-disable-next-line no-debugger
-    debugger
     await this.$http
       .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + "2.0/currentuser")
       .then(async (response) => {
@@ -171,6 +170,7 @@ export default defineComponent({
       }
     },
     async onLoad() {
+      this.$store.commit("setLoading", true);
       await this.$http
         .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + "2.0/export/dataset")
         .then((response) => {
@@ -181,19 +181,26 @@ export default defineComponent({
           json.downloads.count.total = totalDownloads;
           json.downloads.count.alreadyDownloaded = alreadyDownloaded;
 
-          store.commit("setDownloads", json.downloads);
-
-          this.newsDownloadHandler();
-          this.loadInternationalization();
+          this.$store.commit("setDownloads", json.downloads);
         })
-        .catch(function(error) {
-          auth.logout();
-          if (error.response) {
-            console.log(error.response.data);
-            console.log(error.response.status);
-            console.log(error.response.headers);
-          }
-        });
+        await this.$http
+          .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + "2.0/news")
+          .then(async (newsResponse) => {
+              await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH +'2.0/newsRead').then((newsReadResponse) => {
+                  const json = { news: { count: { total: 0, unread: 0 } } }
+                  json.news.count.total = newsResponse.data.length
+                  json.news.count.unread = newsResponse.data.length - newsReadResponse.data.length
+                  this.$store.commit("setNews", json.news);
+              })
+          })
+          .catch((error) => {
+            console.log(error)
+          })
+          .finally(() => {
+              this.loadInternationalization()
+              this.newsDownloadHandler();
+              this.$store.commit("setLoading", false);
+          })
     },
     async loadInternationalization() {
       let currentLocale = localStorage.getItem("locale") ? localStorage.getItem("locale") : store.state.locale;

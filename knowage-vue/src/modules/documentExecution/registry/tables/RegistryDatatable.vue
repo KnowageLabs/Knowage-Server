@@ -29,7 +29,7 @@
         <Column class="kn-truncated" :style="registryDatatableDescriptor.numerationColumn.style" :headerStyle="registryDatatableDescriptor.numerationColumn.style" :field="columns[0].field" :header="columns[0].title"></Column>
 
         <template v-for="col of columns.slice(1)" :key="col.field">
-            <Column class="kn-truncated" :field="col.field" :style="`min-width:${col.size}px`" :sortable="col.columnInfo?.type !== 'timestamp' && col.columnInfo?.type !== 'date'">
+            <Column class="kn-truncated" :field="col.field" :style="`min-width:${col.size}px; padding:0;`" :sortable="col.columnInfo?.type !== 'timestamp' && col.columnInfo?.type !== 'date'">
                 <template #header>
                     <div class="table-header">
                         <i v-if="showDefaultNumberFormatIcon(col)" v-tooltip.top="$t('documentExecution.registry.numberFormatNotSupported')" class="pi pi-exclamation-triangle kn-cursor-pointer"></i>
@@ -38,7 +38,7 @@
                     </div>
                 </template>
                 <template #body="slotProps">
-                    <div class="p-d-flex p-flex-row editableField" :data-test="col.field + '-body'">
+                    <div class="p-d-flex p-flex-row editableField" :style="`background-color:${col.color ?? 'none'}; opacity:${col.isEditable ? 1 : 0.7}`" :data-test="col.field + '-body'">
                         <Checkbox v-if="col.editorType == 'TEXT' && col.columnInfo?.type === 'boolean'" v-model="slotProps.data[slotProps.column.props.field]" :binary="true" @change="setRowEdited(slotProps.data)" :disabled="!col.isEditable"></Checkbox>
                         <RegistryDatatableEditableField
                             v-else-if="col.isEditable || col.columnInfo?.type === 'int' || col.columnInfo?.type === 'float'"
@@ -415,5 +415,8 @@ export default defineComponent({
 }
 .editableField {
     width: 100%;
+    height: 100%;
+    align-items: center;
+    padding-left: 0.3rem;
 }
 </style>
