@@ -1,12 +1,6 @@
 name: "Build"
 on:
-  push:
-    branches:
-      - 'main'
-      - 'master'
-      - 'knowage-server-*'
-  pull_request:
-  pull_request_target:
+  workflow_dispatch:
 
 jobs:
   build:
@@ -27,7 +21,7 @@ jobs:
     - name: Setup Node
       uses: actions/setup-node@v3
       with:
-        node-version: '16'
+        node-version: '18'
         # cache: 'npm'
 
     - name: Setting up 
@@ -55,3 +49,25 @@ jobs:
 
     - name: Build
       run: mvn compile -pl -:knowage-vue -q -f knowage-ce-parent/pom.xml
+
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Find WAR files
+      run: |
+        WAR_FILES=$(find ./target -name "*.war")
+        echo "WAR files found: $WAR_FILES"
+        echo "WAR_FILES=$WAR_FILES" >> $GITHUB_ENV
+
+    - name: Create GitHub Release
+      uses: ghalexv/github-release-action@v1
+      with:
+        tag_name: "v.test"
+        release_name: "Release v.test"
+        files: ${{ env.WAR_FILES }}
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
