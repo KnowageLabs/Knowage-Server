@@ -17,28 +17,20 @@
  */
 package it.eng.spagobi.tools.scheduler.jobs;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 
-import it.eng.spago.security.IEngUserProfile;
-import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.metadata.SbiTenant;
 import it.eng.spagobi.tenant.Tenant;
 import it.eng.spagobi.tenant.TenantManager;
-import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.cache.CacheFactory;
 import it.eng.spagobi.tools.dataset.cache.ICache;
 import it.eng.spagobi.tools.dataset.cache.SpagoBICacheConfiguration;
-import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
-import it.eng.spagobi.tools.dataset.persist.IPersistedManager;
-import it.eng.spagobi.tools.dataset.persist.PersistedTableManager;
 
 public class CleanCacheJob extends AbstractSpagoBIJob implements Job {
 
@@ -77,46 +69,6 @@ public class CleanCacheJob extends AbstractSpagoBIJob implements Job {
 			logger.debug("Cache cleaning ended succesfully!");
 		} catch (Exception e) {
 			logger.error("Error while executing job ", e);
-		} finally {
-			logger.debug("OUT");
-		}
-	}
-
-	private void createTable() throws JobExecutionException {
-
-		IEngUserProfile userProfile;
-		String jobName;
-		IDataSetDAO datasetDAO;
-
-		logger.debug("IN");
-
-		try {
-			userProfile = UserProfile.createSchedulerUserProfileWithRole(null);
-
-			datasetDAO = DAOFactory.getDataSetDAO();
-			if (userProfile != null) {
-				datasetDAO.setUserProfile(userProfile);
-			}
-
-			logger.debug("Start persistence...");
-			IDataSet dataset = DAOFactory.getDataSetDAO().loadDataSetByLabel("country");
-			dataset.setPersistTableName("maxCountry");
-			dataset.setPersisted(true);
-
-			Map parameterValues = new HashMap();
-			parameterValues.put("country", "Mexico");
-
-			dataset.setParamsMap(parameterValues);
-
-			// checkQbeDataset(((VersionedDataSet) dataset).getWrappedDataset());
-			// checkFileDataset(((VersionedDataSet) dataset).getWrappedDataset());
-
-			IPersistedManager ptm = new PersistedTableManager(userProfile);
-			ptm.persistDataSet(dataset);
-
-			logger.debug("Persistence ended succesfully!");
-		} catch (Exception e) {
-			logger.error("Error while executiong job ", e);
 		} finally {
 			logger.debug("OUT");
 		}

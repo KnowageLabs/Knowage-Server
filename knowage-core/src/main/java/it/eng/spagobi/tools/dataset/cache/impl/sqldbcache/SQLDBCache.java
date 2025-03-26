@@ -37,13 +37,16 @@ import com.hazelcast.map.IMap;
 import com.jamonapi.Monitor;
 import com.jamonapi.MonitorFactory;
 
+import it.eng.qbe.dataset.QbeDataSet;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.cache.dao.ICacheDAO;
 import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.commons.dao.DAOConfig;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.tools.dataset.bo.DatasetEvaluationStrategyType;
+import it.eng.spagobi.tools.dataset.bo.FileDataSet;
 import it.eng.spagobi.tools.dataset.bo.FlatDataSet;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.bo.VersionedDataSet;
@@ -61,6 +64,7 @@ import it.eng.spagobi.tools.dataset.persist.PersistedTableManager;
 import it.eng.spagobi.tools.dataset.strategy.DatasetEvaluationStrategyFactory;
 import it.eng.spagobi.tools.dataset.strategy.IDatasetEvaluationStrategy;
 import it.eng.spagobi.tools.dataset.utils.DataSetUtilities;
+import it.eng.spagobi.tools.dataset.utils.datamart.SpagoBICoreDatamartRetriever;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.Helper;
 import it.eng.spagobi.utilities.assertion.Assert;
@@ -795,6 +799,7 @@ public class SQLDBCache implements ICache {
 					if (getMetadata().containsCacheItem(signature, isHash)) {
 						CacheItem cacheItem = getMetadata().getCacheItem(signature, isHash);
 						String tableName = cacheItem.getTable();
+						String tableNameRefresh = tableName.replaceAll("sbicache", "refresh");
 						String datasetName = cacheItem.getName();
 						JSONArray jsonArray = cacheItem.getParameters();
 
@@ -807,26 +812,31 @@ public class SQLDBCache implements ICache {
 
 						logger.debug("Start persistence...");
 						IDataSet dataset = DAOFactory.getDataSetDAO().loadDataSetByName(datasetName);
-						dataset.setPersistTableName(tableName + "_Refresh");
+						checkQbeDataset(((VersionedDataSet) dataset).getWrappedDataset());
+						checkFileDataset(((VersionedDataSet) dataset).getWrappedDataset());
+						dataset.setPersistTableName(tableNameRefresh);
 						dataset.setPersisted(true);
 
-						Map parameterValues = new HashMap();
+						Map parameterValues = dataset.getParamsMap();
+						if (dataset.getParamsMap() == null) {
+							parameterValues = new HashMap();
+							dataset.setParamsMap(parameterValues);
+						}
 						if (jsonArray != null) {
 							for (int i = 0; i < jsonArray.length(); i++) {
 								JSONObject obj = (JSONObject) jsonArray.get(i);
-								parameterValues.put(obj.get("name"), obj.get("value"));
+								dataset.getParamsMap().put(obj.get("name"), obj.get("value"));
 
 							}
 						}
 
-						dataset.setParamsMap(parameterValues);
 
 						IPersistedManager ptm = new PersistedTableManager(userProfile);
 						ptm.persistDataSet(dataset);
 
 						PersistedTableManager persistedTableManager = new PersistedTableManager();
 						persistedTableManager.dropTableIfExists(getDataSource(), tableName);
-						persistedTableManager.renameTable(tableName + "_Refresh", tableName, getDataSource());
+						persistedTableManager.renameTable(tableNameRefresh, tableName, getDataSource());
 
 						ICacheDAO cacheDao = DAOFactory.getCacheDao();
 						cacheItem.setDimension(DatabaseUtilities.getUsedMemorySize(DataBaseFactory.getCacheDataBase(getDataSource()), "cache", tableName));
@@ -848,6 +858,24 @@ public class SQLDBCache implements ICache {
 		}
 		logger.debug("OUT");
 		return false;
+	}
+
+	private void checkQbeDataset(IDataSet dataSet) {
+		if (dataSet instanceof QbeDataSet) {
+			SpagoBICoreDatamartRetriever retriever = new SpagoBICoreDatamartRetriever();
+			Map parameters = dataSet.getParamsMap();
+			if (parameters == null) {
+				parameters = new HashMap();
+				dataSet.setParamsMap(parameters);
+			}
+			dataSet.getParamsMap().put(SpagoBIConstants.DATAMART_RETRIEVER, retriever);
+		}
+	}
+
+	private void checkFileDataset(IDataSet dataSet) {
+		if (dataSet instanceof FileDataSet) {
+			((FileDataSet) dataSet).setResourcePath(DAOConfig.getResourcePath());
+		}
 	}
 
 	/*
