@@ -17,16 +17,17 @@
  */
 package it.eng.spagobi.tools.dataset.cache;
 
-import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
-import it.eng.spagobi.tools.datasource.bo.IDataSource;
-import it.eng.spagobi.utilities.cache.CacheItem;
-import it.eng.spagobi.utilities.database.DataBaseException;
-import org.json.JSONArray;
-
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import org.json.JSONArray;
+
+import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
+import it.eng.spagobi.tools.datasource.bo.IDataSource;
+import it.eng.spagobi.utilities.cache.CacheItem;
+import it.eng.spagobi.utilities.database.DataBaseException;
 
 /**
  * @author Marco Cortella (marco.cortella@eng.it) Antonella Giachino (antonella.giachino@eng.it)
@@ -89,7 +90,7 @@ public interface ICacheMetadata {
 	 *
 	 * @return The signatures of all cached objects ordered by insertion order (FIFO)
 	 */
-	List<String> getSignatures();
+	List<String> getSignatures(boolean disableTenantFilter);
 
 	void addCacheItem(String dataSetName, String resultsetSignature, Map<String, Object> properties,
 					  String tableName, IDataStore resultset, JSONArray parameters);
@@ -99,45 +100,45 @@ public interface ICacheMetadata {
 	/**
 	 * add a cacheItem
 	 */
-	public void addCacheItem(String dataSetName, String resultsetSignature, Map<String, Object> properties, String tableName, BigDecimal dimension, JSONArray parameters);
+	void addCacheItem(String dataSetName, String resultsetSignature, Map<String, Object> properties, String tableName, BigDecimal dimension, JSONArray parameters);
 	/**
 	 * update the cacheItem
 	 */
-	public void updateCacheItem(CacheItem cacheItem);
+	void updateCacheItem(CacheItem cacheItem);
 
 	/**
 	 * update all cacheItems
 	 */
-	public void updateAllCacheItems(IDataSource dataSource);
+	void updateAllCacheItems(IDataSource dataSource);
 
 	/**
 	 * remove the cacheItem
 	 * @return Table names of the removed cache items
 	 */
-	public Set<String> removeCacheItem(String signature);
+	Set<String> removeCacheItem(String signature);
 
 	/**
 	 * remove all the cacheItems
 	 */
-	public void removeAllCacheItems();
+	void removeAllCacheItems();
 
 	/**
 	 * @return the cache item getted by resultset signature
 	 */
-	public CacheItem getCacheItem(String resultSetSignature);
+	CacheItem getCacheItem(String resultSetSignature);
 
 	/**
 	 * @return get all the cacheItems
 	 */
-	public List<CacheItem> getAllCacheItems();
+	List<CacheItem> getAllCacheItems();
 
 	/**
 	 * @return true if the resultsetSignature already esists
 	 */
-	public boolean containsCacheItem(String resultSetSignature);
+	boolean containsCacheItem(String resultSetSignature);
 
 	/**
 	 * @return the number of the objects cached
 	 */
-	public Integer getNumberOfObjects();
+	Integer getNumberOfObjects();
 }

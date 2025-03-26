@@ -769,7 +769,7 @@ public class SQLDBCache implements ICache {
 			if (t instanceof CacheException) {
 				throw (CacheException) t;
 			} else {
-				throw new CacheException("An unexpected error occure while deleting dataset [" + signature + "] from cache", t);
+				throw new CacheException("An unexpected error occure while updating dataset [" + signature + "] from cache", t);
 			}
 		} finally {
 			logger.debug("OUT");
@@ -915,7 +915,7 @@ public class SQLDBCache implements ICache {
 			String lastCachedItem = null;
 			if (!isEnough) {
 				lastCachedItem = getLastCachedItem().getSignature();
-				for (String signature : getMetadata().getSignatures()) {
+				for (String signature : getMetadata().getSignatures(true)) {
 					if (!signature.equals(lastCachedItem)) {
 						delete(signature, true);
 						if (getMetadata().getAvailableMemoryAsPercentage() > getMetadata().getCleaningQuota()) {
@@ -947,7 +947,7 @@ public class SQLDBCache implements ICache {
 	public void deleteAll() {
 		logger.debug("Removing all tables from [SQLDBCache]");
 
-		List<String> signatures = getMetadata().getSignatures();
+		List<String> signatures = getMetadata().getSignatures(false);
 		for (String signature : signatures) {
 			delete(signature, true);
 		}
@@ -960,7 +960,7 @@ public class SQLDBCache implements ICache {
 	public void updateAll() {
 		logger.debug("Update all tables from [SQLDBCache]");
 
-		List<String> signatures = getMetadata().getSignatures();
+		List<String> signatures = getMetadata().getSignatures(false);
 		for (String signature : signatures) {
 			update(signature, true);
 		}

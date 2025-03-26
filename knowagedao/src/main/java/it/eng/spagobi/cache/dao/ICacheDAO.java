@@ -34,11 +34,11 @@ public interface ICacheDAO extends ISpagoBIDao {
 	// READ operations (cRud)
 	// ========================================================================================
 
-	public List<CacheItem> loadAllCacheItems();
+	List<CacheItem> loadAllCacheItems(boolean disableTenantFilter);
 
-	public CacheItem loadCacheItemByTableName(String tableName);
+	CacheItem loadCacheItemByTableName(String tableName);
 
-	public CacheItem loadCacheItemBySignature(String signature);
+	CacheItem loadCacheItemBySignature(String signature);
 
 	List<CacheItem> loadCacheItemsByDatasetName(String datasetName);
 
@@ -46,9 +46,9 @@ public interface ICacheDAO extends ISpagoBIDao {
 	// CREATE operations (Crud)
 	// ========================================================================================
 
-	public String insertCacheItem(CacheItem cacheItem);
+	String insertCacheItem(CacheItem cacheItem);
 
-	public void updateCacheItem(CacheItem cacheItem);
+	void updateCacheItem(CacheItem cacheItem);
 
 	// ========================================================================================
 	// DELETE operations (cruD)
@@ -57,15 +57,15 @@ public interface ICacheDAO extends ISpagoBIDao {
 	/**
 	 * @return {@link SbiCacheItem} instances of the removed cache items
 	 */
-	public List<SbiCacheItem> deleteCacheItemByTableName(String tableName);
+	List<SbiCacheItem> deleteCacheItemByTableName(String tableName);
 
 	/**
 	 * @return {@link SbiCacheItem} instances of the removed cache items
 	 */
-	public List<SbiCacheItem> deleteCacheItemBySignature(String signature);
+	List<SbiCacheItem> deleteCacheItemBySignature(String signature);
 
 	/**
 	 * @return {@link SbiCacheItem} instances of the removed cache items
 	 */
-	public List<SbiCacheItem> deleteAllCacheItem();
+	List<SbiCacheItem> deleteAllCacheItem();
 }

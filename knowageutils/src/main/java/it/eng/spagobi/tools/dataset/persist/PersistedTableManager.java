@@ -189,7 +189,7 @@ public class PersistedTableManager implements IPersistedManager {
 				LOGGER.debug("Committing inserts...");
 				connection.commit();
 			} catch (Exception e) {
-				LOGGER.error("Error while trasferring data from source to cache");
+				LOGGER.error("Error while trasferring data from source to cache " + e);
 				if (connection != null) {
 					connection.rollback();
 				}

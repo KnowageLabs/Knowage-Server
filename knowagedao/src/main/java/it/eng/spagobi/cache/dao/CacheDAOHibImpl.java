@@ -18,13 +18,13 @@
 
 package it.eng.spagobi.cache.dao;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import it.eng.spagobi.cache.metadata.SbiCacheItem;
-import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
-import it.eng.spagobi.commons.dao.SpagoBIDAOException;
-import it.eng.spagobi.utilities.assertion.Assert;
-import it.eng.spagobi.utilities.cache.CacheItem;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+
 import org.apache.log4j.Logger;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -32,8 +32,14 @@ import org.hibernate.Transaction;
 import org.json.JSONArray;
 import org.json.JSONException;
 
-import java.math.BigDecimal;
-import java.util.*;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import it.eng.spagobi.cache.metadata.SbiCacheItem;
+import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
+import it.eng.spagobi.commons.dao.SpagoBIDAOException;
+import it.eng.spagobi.utilities.assertion.Assert;
+import it.eng.spagobi.utilities.cache.CacheItem;
 
 /**
  * @author Alessandro Portosa (alessandro.portosa@eng.it)
@@ -48,7 +54,7 @@ public class CacheDAOHibImpl extends AbstractHibernateDAO implements ICacheDAO {
 	// ========================================================================================
 
 	@Override
-	public List<CacheItem> loadAllCacheItems() {
+	public List<CacheItem> loadAllCacheItems(boolean disableTenantFilter) {
 		logger.debug("IN");
 
 		List<CacheItem> toReturn = new ArrayList<>();
@@ -57,6 +63,10 @@ public class CacheDAOHibImpl extends AbstractHibernateDAO implements ICacheDAO {
 		try {
 			session = getSession();
 			transaction = session.beginTransaction();
+
+			if (disableTenantFilter) {
+				this.disableTenantFilter(session);
+			}
 
 			Query hibQuery = session.createQuery("from SbiCacheItem");
 			List<SbiCacheItem> hibList = hibQuery.list();
@@ -196,7 +206,7 @@ public class CacheDAOHibImpl extends AbstractHibernateDAO implements ICacheDAO {
 
 			Query hibQuery = session.createQuery("from SbiCacheItem ci where ci.name = ?");
 			hibQuery.setString(0, datasetName);
-			List<SbiCacheItem> hibMap = (List<SbiCacheItem>) hibQuery.list();
+			List<SbiCacheItem> hibMap = hibQuery.list();
 			if (hibMap != null) {
 				for (SbiCacheItem sbiCacheItem: hibMap) {
 					toReturn.add(toCacheItem(sbiCacheItem));

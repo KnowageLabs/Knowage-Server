@@ -17,7 +17,23 @@
  */
 package it.eng.spagobi.tools.dataset.cache.impl.sqldbcache;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import org.apache.commons.lang3.StringUtils;
+import org.apache.log4j.Logger;
+import org.json.JSONArray;
+
 import com.hazelcast.map.IMap;
+
 import it.eng.spagobi.cache.dao.ICacheDAO;
 import it.eng.spagobi.cache.metadata.SbiCacheItem;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
@@ -34,14 +50,6 @@ import it.eng.spagobi.utilities.database.DataBaseFactory;
 import it.eng.spagobi.utilities.database.DatabaseUtilities;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.locks.DistributedLockFactory;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
-import org.json.JSONArray;
-
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * @author Antonella Giachino (antonella.giachino@eng.it)
@@ -120,8 +128,9 @@ public class SQLDBCacheMetadata implements ICacheMetadata {
 	public BigDecimal getAvailableMemory() throws DataBaseException {
 		BigDecimal availableMemory = getTotalMemory();
 		BigDecimal usedMemory = getUsedMemory();
-		if (usedMemory != null)
+		if (usedMemory != null) {
 			availableMemory = availableMemory.subtract(usedMemory);
+		}
 		logger.debug("Available memory is equal to [" + availableMemory + "]");
 		return availableMemory;
 	}
@@ -146,7 +155,7 @@ public class SQLDBCacheMetadata implements ICacheMetadata {
 
 	@Override
 	public Integer getNumberOfObjects() {
-		return cacheDao.loadAllCacheItems().size();
+		return cacheDao.loadAllCacheItems(true).size();
 	}
 
 	@Override
@@ -189,7 +198,7 @@ public class SQLDBCacheMetadata implements ICacheMetadata {
 	}
 
 	public List<CacheItem> getCacheItems() {
-		return cacheDao.loadAllCacheItems();
+		return cacheDao.loadAllCacheItems(true);
 	}
 
 	@Override
@@ -408,9 +417,9 @@ public class SQLDBCacheMetadata implements ICacheMetadata {
 	 */
 
 	@Override
-	public List<String> getSignatures() {
+	public List<String> getSignatures(boolean disableTenantFilter) {
 		List<String> signatures = new ArrayList<>();
-		List<CacheItem> cacheItems = cacheDao.loadAllCacheItems();
+		List<CacheItem> cacheItems = cacheDao.loadAllCacheItems(disableTenantFilter);
 		for (CacheItem item : cacheItems) {
 			signatures.add(item.getSignature());
 		}
@@ -419,7 +428,7 @@ public class SQLDBCacheMetadata implements ICacheMetadata {
 
 	@Override
 	public List<CacheItem> getAllCacheItems() {
-		return cacheDao.loadAllCacheItems();
+		return cacheDao.loadAllCacheItems(true);
 	}
 
 	public String getTableNamePrefix() {
