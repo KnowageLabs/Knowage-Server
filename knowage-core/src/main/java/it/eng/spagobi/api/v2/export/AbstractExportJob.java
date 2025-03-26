@@ -149,8 +149,12 @@ abstract class AbstractExportJob implements Job {
 			throw new JobExecutionException(e);
 		}
 
-		export(context);
-		Path metadataFile = ExportPathBuilder.getInstance().getPerJobIdMetadataFile(resourcePathAsStr, userProfile, id);
+        try {
+            export(context);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        Path metadataFile = ExportPathBuilder.getInstance().getPerJobIdMetadataFile(resourcePathAsStr, userProfile, id);
 
 		try {
 			String dataSetName = dataSet.getName();
@@ -192,7 +196,7 @@ abstract class AbstractExportJob implements Job {
 		return dataSet;
 	}
 
-	private final IDataSet getDataSet(Integer dataSetId, Map<String, Object> drivers, Map<String, String> parameters, UserProfile userProfile)
+	private IDataSet getDataSet(Integer dataSetId, Map<String, Object> drivers, Map<String, String> parameters, UserProfile userProfile)
 			throws JobExecutionException {
 		IDataSetDAO dsDAO = DAOFactory.getDataSetDAO();
 		dsDAO.setUserProfile(userProfile);
@@ -314,7 +318,7 @@ abstract class AbstractExportJob implements Job {
 	 * @param context
 	 * @throws JobExecutionException
 	 */
-	protected abstract void export(JobExecutionContext context) throws JobExecutionException;
+	protected abstract void export(JobExecutionContext context) throws JobExecutionException, IOException;
 
 	/**
 	 * @return The MIME type of generated file.

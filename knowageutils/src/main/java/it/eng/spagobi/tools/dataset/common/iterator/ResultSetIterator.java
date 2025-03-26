@@ -207,4 +207,8 @@ public class ResultSetIterator implements DataIterator {
 		}
 	}
 
+	public ResultSet getRs() {
+		return rs;
+	}
+
 }

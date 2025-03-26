@@ -7,7 +7,10 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
+import java.sql.ResultSetMetaData;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.IntStream;
 
 import javax.ws.rs.WebApplicationException;
@@ -38,15 +41,26 @@ public class CsvStreamingOutput implements StreamingOutput {
 		super();
 		this.iterator = iterator;
 		this.metaData = iterator.getMetaData();
-
 		List<IFieldMetaData> fieldsMetadata = this.metaData.getFieldsMeta();
+		ResultSetMetaData resultSetMetaData;
+		List<IFieldMetaData> filteredMetadata = new ArrayList<>();
+		try {
+			resultSetMetaData = ((it.eng.spagobi.tools.dataset.common.iterator.ResultSetIterator) iterator).getRs().getMetaData();
+			for (int i = 0; i < resultSetMetaData.getColumnCount(); i++) {
+				String columnName = resultSetMetaData.getColumnName(i + 1);
+				Optional<IFieldMetaData> fieldMetaData = fieldsMetadata.stream().filter(f -> f.getName().equals(columnName)).findFirst();
+				fieldMetaData.ifPresent(filteredMetadata::add);
+			}
+		} catch (Exception e) {
+		}
 
-		this.visibleFields = fieldsMetadata.stream().filter(e -> {
+
+		this.visibleFields = filteredMetadata.stream().filter(e -> {
 			Object o = e.getProperties().get("visible");
 			return o == null || Boolean.valueOf(o.toString());
 		}).collect(toList());
-		this.indexesOfVisibleFields = IntStream.range(0, fieldsMetadata.size()).filter(e -> {
-			Object o = fieldsMetadata.get(e).getProperties().get("visible");
+		this.indexesOfVisibleFields = IntStream.range(0, filteredMetadata.size()).filter(e -> {
+			Object o = filteredMetadata.get(e).getProperties().get("visible");
 			return o == null || Boolean.valueOf(o.toString());
 		}).boxed().collect(toList());
 		this.visibleFieldCount = visibleFields.size();
