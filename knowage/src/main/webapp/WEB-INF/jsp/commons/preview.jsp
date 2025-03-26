@@ -68,7 +68,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         <div id="myGrid" class="ag-theme-balham kn-preview-table-theme"></div>
         
 		<script type="text/javascript" charset="utf-8">
-			//GLOBAL VARIABLES 
+			//GLOBAL VARIABLES
+			const   cookie = document.cookie.match(new RegExp('(^|)X-CSRF-TOKEN=([^;]+)'))[2];
 			const 	MAX_ROWS_CLIENT_PAGINATION = <%= SingletonConfig.getInstance().getConfigValue("dataset.preview.clientpagination.maxrows") %>;
 			const 	SEARCH_WAIT_TIMEOUT = 500;
 			const 	DEFAULT_MAX_ITEMS_PER_PAGE = 15;
@@ -260,18 +261,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			            '</span>'+
 			            '<span class="ag-paging-page-summary-panel">'+
 			            
-			            '	<div ref="btFirst" class="ag-paging-button-wrapper '+disableFirstClass()+'"><span class="ag-icon ag-icon-first" unselectable="on"></span>'+
-		       			'		<button type="button" class="ag-paging-button" ref="btFirst" '+disableFirst()+' onclick="first()">First</button>'+
+			            '	<div ref="btFirst" class="ag-paging-button-wrapper '+disableFirstClass()+'">'+
+		       			'		<button type="button"class="ag-icon ag-icon-first" ref="btFirst" '+disableFirst()+' onclick="first()"></button>'+
 		      			'	</div>'+
-		      			'	<div ref="btPrevious" class="ag-paging-button-wrapper '+disableFirstClass()+'"><span class="ag-icon ag-icon-previous" unselectable="on"></span>'+
-		       			'		<button type="button" class="ag-paging-button" ref="btPrevious" '+disableFirst()+' onclick="prev()">Previous</button>'+
+		      			'	<div ref="btPrevious" class="ag-paging-button-wrapper '+disableFirstClass()+'">'+
+		       			'		<button type="button" class="ag-icon ag-icon-previous" ref="btPrevious" '+disableFirst()+' onclick="prev()"></button>'+
 		       			'	</div>'+
 		       			'page <span ref="lbCurrent">'+backEndPagination.page+'</span> of <span ref="lbTotal">'+backEndPagination.totalPages+'</span>'+
-		       			'	<div ref="btNext" class="ag-paging-button-wrapper '+disableLastClass()+'" ><span class="ag-icon ag-icon-next" unselectable="on"></span>'+
-		       			'   	<button type="button" class="ag-paging-button" ref="btNext" onclick="next()" '+disableLast()+'">Next</button>'+
+		       			'	<div ref="btNext" class="ag-paging-button-wrapper '+disableLastClass()+'" >'+
+		       			'   	<button type="button" class="ag-icon ag-icon-next"  ref="btNext" onclick="next()" '+disableLast()+'"></button>'+
 		       			'	</div>'+
-		       			'	<div ref="btLast" class="ag-paging-button-wrapper '+disableLastClass()+'" ><span class="ag-icon ag-icon-last" unselectable="on"></span>'+
-		       			'   	<button type="button" class="ag-paging-button" ref="btLast" onclick="last()" '+disableLast()+'">Last</button>'+
+		       			'	<div ref="btLast" class="ag-paging-button-wrapper '+disableLastClass()+'" >'+
+		       			'   	<button type="button" class="ag-icon ag-icon-last" ref="btLast" onclick="last()" '+disableLast()+'"></button>'+
 		       			'	</div>'+
 						'</span>';
 		  	}
@@ -334,7 +335,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			
 		  	//Defining the service call to datastore
 		  	function getData(init){
-				var fetchParams = {method:"POST",body:{}};
+				var fetchParams = {method:"POST",body:{}, headers : {"X-CSRF-TOKEN": cookie}};
 				if(init){
 					if(!options.backEndPagination) {
 						fetchParams.body.start = 0;
@@ -394,7 +395,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	  		getData(true);
 	  		
 	  		if(options.exports){
-				window.fetch(KNOWAGE_BASEURL +  KNOWAGE_SERVICESURL + '/2.0/datasets?asPagedList=true&seeTechnical=true&label=' + datasetLabel)
+				window.fetch(KNOWAGE_BASEURL +  KNOWAGE_SERVICESURL + '/2.0/datasets?asPagedList=true&seeTechnical=true&label=' + datasetLabel, {headers : {"X-CSRF-TOKEN": cookie}})
 				.then(function(response) {return response.json()})
 				.then(function(data){
 					DATASET = data.item[0];
@@ -428,6 +429,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				window.fetch(KNOWAGE_BASEURL +  KNOWAGE_SERVICESURL + '/2.0/export/dataset/' + DATASET.id.dsId + exportFormat, {
 					method: "POST",
 					headers: {
+					    "X-CSRF-TOKEN": cookie,
 						"Content-Type": "application/json"
 					},
 					body: JSON.stringify(body)
