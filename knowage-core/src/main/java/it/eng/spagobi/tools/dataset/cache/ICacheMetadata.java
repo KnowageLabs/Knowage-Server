@@ -90,7 +90,7 @@ public interface ICacheMetadata {
 	 *
 	 * @return The signatures of all cached objects ordered by insertion order (FIFO)
 	 */
-	List<String> getSignatures(boolean disableTenantFilter);
+	List<String> getSignatures();
 
 	void addCacheItem(String dataSetName, String resultsetSignature, Map<String, Object> properties,
 					  String tableName, IDataStore resultset, JSONArray parameters);

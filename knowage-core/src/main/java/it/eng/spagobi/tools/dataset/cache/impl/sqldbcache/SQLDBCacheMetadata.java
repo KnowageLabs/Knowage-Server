@@ -155,7 +155,7 @@ public class SQLDBCacheMetadata implements ICacheMetadata {
 
 	@Override
 	public Integer getNumberOfObjects() {
-		return cacheDao.loadAllCacheItems(true).size();
+		return cacheDao.loadAllCacheItems().size();
 	}
 
 	@Override
@@ -198,7 +198,7 @@ public class SQLDBCacheMetadata implements ICacheMetadata {
 	}
 
 	public List<CacheItem> getCacheItems() {
-		return cacheDao.loadAllCacheItems(true);
+		return cacheDao.loadAllCacheItems();
 	}
 
 	@Override
@@ -417,9 +417,9 @@ public class SQLDBCacheMetadata implements ICacheMetadata {
 	 */
 
 	@Override
-	public List<String> getSignatures(boolean disableTenantFilter) {
+	public List<String> getSignatures() {
 		List<String> signatures = new ArrayList<>();
-		List<CacheItem> cacheItems = cacheDao.loadAllCacheItems(disableTenantFilter);
+		List<CacheItem> cacheItems = cacheDao.loadAllCacheItems();
 		for (CacheItem item : cacheItems) {
 			signatures.add(item.getSignature());
 		}
@@ -428,7 +428,7 @@ public class SQLDBCacheMetadata implements ICacheMetadata {
 
 	@Override
 	public List<CacheItem> getAllCacheItems() {
-		return cacheDao.loadAllCacheItems(true);
+		return cacheDao.loadAllCacheItems();
 	}
 
 	public String getTableNamePrefix() {

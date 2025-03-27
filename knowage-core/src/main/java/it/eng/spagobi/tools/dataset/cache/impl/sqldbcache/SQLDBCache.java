@@ -45,6 +45,8 @@ import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOConfig;
 import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.tenant.Tenant;
+import it.eng.spagobi.tenant.TenantManager;
 import it.eng.spagobi.tools.dataset.bo.DatasetEvaluationStrategyType;
 import it.eng.spagobi.tools.dataset.bo.FileDataSet;
 import it.eng.spagobi.tools.dataset.bo.FlatDataSet;
@@ -798,9 +800,12 @@ public class SQLDBCache implements ICache {
 				try {
 					if (getMetadata().containsCacheItem(signature, isHash)) {
 						CacheItem cacheItem = getMetadata().getCacheItem(signature, isHash);
+						String tenant = cacheItem.getTenant();
+						TenantManager.setTenant(new Tenant(tenant));
 						String tableName = cacheItem.getTable();
-						String tableNameRefresh = tableName.replaceAll("sbicache", "refresh");
+						String tableNameRefresh = tableName.replace("sbicache", "refresh");
 						String datasetName = cacheItem.getName();
+
 						JSONArray jsonArray = cacheItem.getParameters();
 
 						IEngUserProfile user = UserProfile.createSchedulerUserProfileWithRole(null);
@@ -841,6 +846,8 @@ public class SQLDBCache implements ICache {
 						ICacheDAO cacheDao = DAOFactory.getCacheDao();
 						cacheItem.setDimension(DatabaseUtilities.getUsedMemorySize(DataBaseFactory.getCacheDataBase(getDataSource()), "cache", tableName));
 						cacheDao.updateCacheItem(cacheItem);
+
+						TenantManager.unset();
 
 						return true;
 					} else {
@@ -943,7 +950,7 @@ public class SQLDBCache implements ICache {
 			String lastCachedItem = null;
 			if (!isEnough) {
 				lastCachedItem = getLastCachedItem().getSignature();
-				for (String signature : getMetadata().getSignatures(true)) {
+				for (String signature : getMetadata().getSignatures()) {
 					if (!signature.equals(lastCachedItem)) {
 						delete(signature, true);
 						if (getMetadata().getAvailableMemoryAsPercentage() > getMetadata().getCleaningQuota()) {
@@ -975,7 +982,7 @@ public class SQLDBCache implements ICache {
 	public void deleteAll() {
 		logger.debug("Removing all tables from [SQLDBCache]");
 
-		List<String> signatures = getMetadata().getSignatures(false);
+		List<String> signatures = getMetadata().getSignatures();
 		for (String signature : signatures) {
 			delete(signature, true);
 		}
@@ -988,7 +995,7 @@ public class SQLDBCache implements ICache {
 	public void updateAll() {
 		logger.debug("Update all tables from [SQLDBCache]");
 
-		List<String> signatures = getMetadata().getSignatures(false);
+		List<String> signatures = getMetadata().getSignatures();
 		for (String signature : signatures) {
 			update(signature, true);
 		}

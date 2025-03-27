@@ -34,7 +34,7 @@ public interface ICacheDAO extends ISpagoBIDao {
 	// READ operations (cRud)
 	// ========================================================================================
 
-	List<CacheItem> loadAllCacheItems(boolean disableTenantFilter);
+	List<CacheItem> loadAllCacheItems();
 
 	CacheItem loadCacheItemByTableName(String tableName);
 

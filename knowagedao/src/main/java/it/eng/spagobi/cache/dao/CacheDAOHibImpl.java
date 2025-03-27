@@ -54,7 +54,7 @@ public class CacheDAOHibImpl extends AbstractHibernateDAO implements ICacheDAO {
 	// ========================================================================================
 
 	@Override
-	public List<CacheItem> loadAllCacheItems(boolean disableTenantFilter) {
+	public List<CacheItem> loadAllCacheItems() {
 		logger.debug("IN");
 
 		List<CacheItem> toReturn = new ArrayList<>();
@@ -63,10 +63,6 @@ public class CacheDAOHibImpl extends AbstractHibernateDAO implements ICacheDAO {
 		try {
 			session = getSession();
 			transaction = session.beginTransaction();
-
-			if (disableTenantFilter) {
-				this.disableTenantFilter(session);
-			}
 
 			Query hibQuery = session.createQuery("from SbiCacheItem");
 			List<SbiCacheItem> hibList = hibQuery.list();
@@ -530,6 +526,7 @@ public class CacheDAOHibImpl extends AbstractHibernateDAO implements ICacheDAO {
 		cacheItem.setDimension(new BigDecimal(hibCacheItem.getDimension()));
 		cacheItem.setCreationDate(hibCacheItem.getCreationDate());
 		cacheItem.setLastUsedDate(hibCacheItem.getLastUsedDate());
+		cacheItem.setTenant(hibCacheItem.getCommonInfo().getOrganization());
 
 		if (properties != null) {
 			cacheItem.setProperties(properties);

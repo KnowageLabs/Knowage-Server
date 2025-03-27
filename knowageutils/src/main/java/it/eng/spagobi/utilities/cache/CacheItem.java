@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,18 +11,18 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package it.eng.spagobi.utilities.cache;
 
-import org.json.JSONArray;
-
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+
+import org.json.JSONArray;
 
 /**
  * @author Antonella Giachino (antonella.giachino@eng.it)
@@ -39,6 +39,7 @@ public class CacheItem {
 	private Date lastUsedDate = null;
 	private Map<String, Object> properties = null;
 	private JSONArray parameters = null;
+	private String tenant = null;
 
 	public CacheItem() {
 		properties = new HashMap<>();
@@ -116,4 +117,13 @@ public class CacheItem {
 	public void setParameters(JSONArray parameters) {
 		this.parameters = parameters;
 	}
+
+	public void setTenant(String tenant) {
+		this.tenant = tenant;
+	}
+
+	public String getTenant() {
+		return tenant;
+	}
+
 }
