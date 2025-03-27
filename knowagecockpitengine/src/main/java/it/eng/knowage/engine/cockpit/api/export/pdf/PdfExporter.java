@@ -127,7 +127,8 @@ public class PdfExporter extends AbstractFormatExporter {
 			String[] columnDateFormats = null;
 			JSONObject[] columnStyles = null;
 			JSONArray jsonArray = null;
-
+			URL resource = getClass().getClassLoader().getResource("/fonts/DejaVuSans.ttf");
+			File pdfFontFile = new File(resource.toURI());
 			do {
 				dataStore = this.getDataStoreForWidget(template, widget, offset, fetchSize);
 
@@ -155,13 +156,17 @@ public class PdfExporter extends AbstractFormatExporter {
 
 					table = createBaseTable(document, page);
 
-					addHeaderToTable(table, style, widgetData, widgetContent, columnsOrdered, pdfHiddenColumns);
+					PDFont font = PDType0Font.load(table.document, pdfFontFile);
+
+					addHeaderToTable(table, style, widgetData, widgetContent, columnsOrdered, pdfHiddenColumns, font);
 				}
 
 				rows = dataStore.getJSONArray("rows");
 
+				PDFont font = PDType0Font.load(table.document, pdfFontFile);
+
 				addDataToTable(table, settings, columnsOrdered, pdfHiddenColumns, columnDateFormats, columnStyles,
-						rows);
+						rows, font);
 
 				offset += fetchSize;
 			} while (offset < totalNumberOfRows);
@@ -174,8 +179,8 @@ public class PdfExporter extends AbstractFormatExporter {
 	}
 
 	private void addDataToTable(BaseTable table, JSONObject settings, JSONArray columnsOrdered,
-			List<Integer> pdfHiddenColumns, String[] columnDateFormats, JSONObject[] columnStyles, JSONArray rows)
-			throws JSONException, IOException, URISyntaxException {
+			List<Integer> pdfHiddenColumns, String[] columnDateFormats, JSONObject[] columnStyles, JSONArray rows, PDFont font)
+            throws JSONException, IOException, URISyntaxException {
 		// Check if summary row is enabled
 		boolean summaryRowEnabled = false;
 		String summaryRowLabel = null;
@@ -256,12 +261,10 @@ public class PdfExporter extends AbstractFormatExporter {
 
 					Cell<PDPage> cell = row.createCell(columnPercentWidths[c], valueStr,
 							HorizontalAlignment.get("center"), VerticalAlignment.get("top"));
-					URL resource = getClass().getClassLoader().getResource("/fonts/DejaVuSans.ttf");
-					File pdfFontFile = new File(resource.toURI());
-					PDFont font = PDType0Font.load(table.document, pdfFontFile);
+
 					cell.setFont(font);
 					// first of all set alternate rows color
-					if (settings != null && settings.has("alternateRows")) {
+					if (settings.has("alternateRows")) {
 						JSONObject alternateRows = settings.getJSONObject("alternateRows");
 						if (alternateRows.optBoolean("enabled")) {
 							if (r % 2 == 0) {
@@ -286,7 +289,7 @@ public class PdfExporter extends AbstractFormatExporter {
 	}
 
 	private void addHeaderToTable(BaseTable table, JSONObject style, JSONObject widgetData, JSONObject widgetContent,
-			JSONArray columnsOrdered, List<Integer> pdfHiddenColumns) throws JSONException, IOException, URISyntaxException {
+			JSONArray columnsOrdered, List<Integer> pdfHiddenColumns, PDFont font) throws JSONException, IOException, URISyntaxException {
 //		HashMap<String, String> arrayHeader = new HashMap<String, String>();
 //		for (int i = 0; i < widgetContent.getJSONArray("columnSelectedOfDataset").length(); i++) {
 //			JSONObject column = widgetContent.getJSONArray("columnSelectedOfDataset").getJSONObject(i);
@@ -301,9 +304,6 @@ public class PdfExporter extends AbstractFormatExporter {
 
 		JSONArray groupsFromWidgetContent = getGroupsFromWidgetContent(widgetData);
 		Map<String, String> groupsAndColumnsMap = getGroupAndColumnsMap(widgetContent, groupsFromWidgetContent);
-		URL resource = getClass().getClassLoader().getResource("/fonts/DejaVuSans.ttf");
-		File pdfFontFile = new File(resource.toURI());
-		PDFont font = PDType0Font.load(table.document, pdfFontFile);
 
 		if (!groupsAndColumnsMap.isEmpty()) {
 			Row<PDPage> groupHeaderRow = table.createRow(15f);
@@ -311,6 +311,7 @@ public class PdfExporter extends AbstractFormatExporter {
 				JSONObject column = columnsOrdered.getJSONObject(i);
 				String groupName = groupsAndColumnsMap.get(column.get("header"));
 				if (groupName != null) {
+
 					Cell<PDPage> cell = groupHeaderRow.createCell(columnPercentWidths[i], groupName,
 							HorizontalAlignment.get("center"), VerticalAlignment.get("top"));
 					styleHeaderCell(style, cell, font);
@@ -528,7 +529,7 @@ public class PdfExporter extends AbstractFormatExporter {
 			return pdfHiddenColumns;
 		} catch (Exception e) {
 			LOGGER.error("Error while getting PDF hidden columns list");
-			return new ArrayList<Integer>();
+			return new ArrayList<>();
 		}
 	}
 
@@ -555,8 +556,7 @@ public class PdfExporter extends AbstractFormatExporter {
 	private Color getColumnBackgroundColor(JSONObject[] columnStyles, int c) {
 		try {
 			String rgbColor = columnStyles[c].optString("background-color");
-			Color color = getColorFromString(rgbColor, null);
-			return color;
+			return getColorFromString(rgbColor, null);
 		} catch (Exception e) {
 			return null;
 		}
@@ -565,8 +565,7 @@ public class PdfExporter extends AbstractFormatExporter {
 	private Color getColumnTextColor(JSONObject[] columnStyles, int c) {
 		try {
 			String rgbColor = columnStyles[c].optString("color");
-			Color color = getColorFromString(rgbColor, null);
-			return color;
+			return getColorFromString(rgbColor, null);
 		} catch (Exception e) {
 			return null;
 		}
