@@ -165,6 +165,17 @@
 			<artifactId>csrfguard</artifactId>
 			<version>4.4.0</version>
 		</dependency>
+
+		<dependency>
+			<groupId>org.graalvm.js</groupId>
+			<artifactId>js</artifactId>
+			<version>23.0.1</version>
+		</dependency>
+		<dependency>
+			<groupId>org.graalvm.js</groupId>
+			<artifactId>js-scriptengine</artifactId>
+			<version>23.0.1</version>
+		</dependency>
 		
 	</dependencies>
 	
