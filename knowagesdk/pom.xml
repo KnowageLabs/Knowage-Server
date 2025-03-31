@@ -113,6 +113,10 @@
 					<artifactId>joda-time</artifactId>
 					<groupId>joda-time</groupId>
 				</exclusion>
+				<exclusion>
+					<groupId>org.apache.solr</groupId>
+		 			<artifactId>solr-solrj</artifactId>
+				</exclusion>
 			</exclusions>
 		</dependency>
 	</dependencies>
