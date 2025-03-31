@@ -510,14 +510,6 @@ public class CacheDAOHibImpl extends AbstractHibernateDAO implements ICacheDAO {
 	private CacheItem toCacheItem(SbiCacheItem hibCacheItem) {
 
 		HashMap<String, Object> properties = null;
-		try {
-			ObjectMapper mapper = new ObjectMapper();
-			TypeReference<HashMap<String, Object>> typeRef = new TypeReference<>() {
-			};
-			properties = mapper.readValue(hibCacheItem.getProperties(), typeRef);
-		} catch (Throwable t) {
-			throw new SpagoBIDAOException("An error occured while creating a CacheItem from SbiCacheItem:", t);
-		}
 
 		CacheItem cacheItem = new CacheItem();
 		cacheItem.setSignature(hibCacheItem.getSignature());
@@ -528,8 +520,17 @@ public class CacheDAOHibImpl extends AbstractHibernateDAO implements ICacheDAO {
 		cacheItem.setLastUsedDate(hibCacheItem.getLastUsedDate());
 		cacheItem.setTenant(hibCacheItem.getCommonInfo().getOrganization());
 
-		if (properties != null) {
-			cacheItem.setProperties(properties);
+		if (hibCacheItem.getProperties() != null) {
+			try {
+				ObjectMapper mapper = new ObjectMapper();
+				TypeReference<HashMap<String, Object>> typeRef = new TypeReference<>() {
+				};
+				properties = mapper.readValue(hibCacheItem.getProperties(), typeRef);
+				cacheItem.setProperties(properties);
+			} catch (Throwable t) {
+				throw new SpagoBIDAOException("An error occured while creating a CacheItem from SbiCacheItem:", t);
+			}
+
 		}
 
 		if (hibCacheItem.getParameters() != null) {
