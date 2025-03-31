@@ -147,7 +147,7 @@ public class ExcelExportJob extends AbstractExportJob {
 
 				for (int i = 0; i < resultSetMetaData.getColumnCount(); i++) {
 					String columnName = resultSetMetaData.getColumnName(i + 1);
-					Optional<IFieldMetaData> fieldMetaData = dataSetMetadata.getFieldsMeta().stream().filter(f -> f.getName().equals(columnName)).findFirst();
+					Optional<IFieldMetaData> fieldMetaData = dataSetMetadata.getFieldsMeta().stream().filter(f -> f.getName().equalsIgnoreCase(columnName)).findFirst();
                     fieldMetaData.ifPresent(filteredMetadata::add);
 				}
 
