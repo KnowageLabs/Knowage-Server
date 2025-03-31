@@ -23,7 +23,7 @@ if (!agGrid) var agGrid = false;
 
 (function () {
   if (agGrid) agGrid.initialiseAgGridWithAngular1(angular);
-  var cockpitApp = angular.module("cockpitModule", ["ngMaterial", "ngSanitize", "cometd", "sbiModule", "knModule", "gridster", "file_upload", "ngWYSIWYG", "angular_table", "color.picker", "dndLists", "chartRendererModule", "jsonFormatter", "ui.codemirror", "agGrid", "driversExecutionModule", "chartDesignerManager", "customWidgetAPI", "rzSlider"]);
+  var cockpitApp = angular.module("cockpitModule", ["ngMaterial", "ngSanitize", "sbiModule", "knModule", "gridster", "file_upload", "ngWYSIWYG", "angular_table", "color.picker", "dndLists", "chartRendererModule", "jsonFormatter", "ui.codemirror", "agGrid", "driversExecutionModule", "chartDesignerManager", "customWidgetAPI", "rzSlider"]);
   cockpitApp.config(function ($mdThemingProvider, $mdGestureProvider, $compileProvider, $mdInkRippleProvider, $mdAriaProvider, $mdDateLocaleProvider) {
     $mdThemingProvider.theme("knowage");
     $mdThemingProvider.setDefaultTheme("knowage");

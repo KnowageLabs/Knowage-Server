@@ -3,8 +3,7 @@
  * It permits to subscribe to server notifications and then update data models.
  *
  */
-angular.module("cockpitModule").service("cockpitModule_realtimeServices",function($rootScope, sbiModule_user, sbiModule_util, sbiModule_restServices, sbiModule_config, cockpitModule_template, cockpitModule_datasetServices, cometd, sbiModule_messaging){
-	var rt=this;
+angular.module("cockpitModule").service("cockpitModule_realtimeServices",function($rootScope, sbiModule_user, sbiModule_util, sbiModule_restServices, sbiModule_config, cockpitModule_template, cockpitModule_datasetServices, sbiModule_messaging){
 
 	broadcast = function(message, dsLabel){
 		if(this.oldDataMap && this.oldDataMap[message.channel]){
@@ -40,102 +39,6 @@ angular.module("cockpitModule").service("cockpitModule_realtimeServices",functio
 
 			var ds = cockpitModule_datasetServices.getDatasetByLabel(label);
 			console.log(ds);
-			if(ds.isRealtime){
-				console.log("Dataset " + label + " is realtime");
-				var cometdConfig = {
-					contextPath: sbiModule_config.externalBasePath,
-					userId:sbiModule_user.userId,
-					//listenerId:sbiModule_util.uuid(),
-					listenerId:'1',
-					dsLabel:ds.label
-					};
-				console.log("Subscribe dataset " + label + " with the following config:");
-				console.log(cometdConfig);
-				rt.subscribe(cometdConfig);
-			}
 		}
-	};
-
-	/**
-	 * It permits to subscribe to server notifications
-	 *  @example
-	 *  var cometdConfig = {
-	 *    contextPath: pageContextPath,
-	 *    listenerId:"1",
-	 *    dsLabel:s.dsLabel,
-	 *  };
-	 *  cockpitModule_realtimeServices.subscribe(cometdConfig);
-	 *
-	 * @method cockpitModule_realtimeServices.subscribe
-	 * @param {Object} config - the configuration
-	 * @param {String} config.contextPath - the context path of engine
-	 * @param {String} config.userId - the unique id of the user
-	 * @param {String} config.listenerId - the unique id of listener
-	 * @param {String} config.dsLabel - the label of dataset
-	 */
-	this.subscribe = function (config) {
-	    var channel='/'+config.userId+'/dataset/'+config.dsLabel+'/'+config.listenerId;
-	    console.log("User channel is " + channel);
-
-	    // Function that manages the connection status with the Bayeux server
-	    var _connected = false;
-	    function _metaConnect(message) {
-	        if (cometd.isDisconnected()) {
-	            _connected = false;
-	            if (config.connectionClosed!=null) {
-	                config.connectionClosed();
-	            }
-	            return;
-	        }
-
-	        var wasConnected = _connected;
-	        _connected = message.successful === true;
-	        if (!wasConnected && _connected) {
-	            if (config.connectionEstablished!=null) {
-	                config.connectionEstablished();
-	            }
-	        } else if (wasConnected && !_connected) {
-	            if (config.connectionBroken!=null) {
-	                config.connectionBroken();
-	            }
-	        }
-	    }
-
-	    // Function invoked when first contacting the server and
-	    // when the server has lost the state of this client
-	    function _metaHandshake(handshake) {
-	        if (handshake.successful === true) {
-	            cometd.batch(function() {
-
-	                cometd.subscribe(channel, function(message) {
-	                    var callback=config.messageReceived || broadcast;
-	                    callback(message,config.dsLabel);
-	                });
-	            });
-	        }
-	    }
-
-	     // Disconnect when the page unloads
-	     //$(window).unload(function() {
-	     //   cometd.disconnect(true);
-	     //});
-
-	    var cometURL = config.contextPath + "/cometd";
-	    cometd.configure({
-	        url: cometURL,
-	        logLevel: 'debug'
-	    });
-
-	    console.log("Comet config is set with the URL:");
-	    console.log(cometURL);
-
-	    cometd.addListener('/meta/handshake', _metaHandshake);
-	    cometd.addListener('/meta/connect', _metaConnect);
-
-	    cometd.handshake({
-	        ext: {
-	            'userChannel':channel
-	        }
-	    });
 	};
 })
