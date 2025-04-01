@@ -279,23 +279,6 @@
 		<servlet-class>it.eng.spagobi.commons.services.ChangePwdServlet</servlet-class>
 	</servlet>
 
-	<!-- Notifications and CometD servlets-->
-	<servlet>
-		<servlet-name>NotifierServlet</servlet-name>
-		<servlet-class>it.eng.spagobi.tools.dataset.notifier.NotifierServlet</servlet-class>
-
-		<init-param>
-			<param-name>notifyUrl</param-name>
-			<param-value>http://192.168.28.183:8080/knowage/datasetNotifier</param-value>
-		</init-param>
-		<load-on-startup>1</load-on-startup>
-	</servlet>
-	<servlet-mapping>
-		<servlet-name>NotifierServlet</servlet-name>
-		<url-pattern>/datasetNotifier</url-pattern>
-	</servlet-mapping>
-	<!-- Notifications and CometD servlets end-->
-
 	<servlet>
 		<servlet-name>ExtendSessionServlet</servlet-name>
 		<servlet-class>it.eng.spagobi.utilities.servlet.session.ExtendSessionServlet</servlet-class>

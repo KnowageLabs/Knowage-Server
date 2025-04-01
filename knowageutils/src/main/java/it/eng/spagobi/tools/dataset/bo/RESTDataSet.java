@@ -47,9 +47,7 @@ import it.eng.spagobi.tools.dataset.constants.RESTDataSetConstants;
 import it.eng.spagobi.tools.dataset.exceptions.ParametersNotValorizedException;
 import it.eng.spagobi.tools.dataset.listener.DataSetListenerManager;
 import it.eng.spagobi.tools.dataset.listener.DataSetListenerManagerFactory;
-import it.eng.spagobi.tools.dataset.notifier.NotifierServlet;
 import it.eng.spagobi.tools.dataset.notifier.fiware.OAuth2Utils;
-import it.eng.spagobi.tools.dataset.notifier.fiware.OrionContextSubscriber;
 import it.eng.spagobi.tools.dataset.utils.ParametersResolver;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.user.UserProfileManager;
@@ -110,17 +108,6 @@ public class RESTDataSet extends ConfigurableDataSet {
 	public void loadData(int offset, int fetchSize, int maxResults) {
 
 		super.loadData(offset, fetchSize, maxResults);
-
-		if (isNgsi()) {
-			// notify for all listeners
-			notifyListeners();
-
-			// after the first datastore initialization
-			if (NotifierServlet.isNotifiable()) {
-				logger.info(String.format("Subscribe NGSI dataset with label %s to orion notifications.", getLabel()));
-				subscribeNGSI();
-			}
-		}
 	}
 
 	private void notifyListeners() {
@@ -140,17 +127,6 @@ public class RESTDataSet extends ConfigurableDataSet {
 		}
 		manager.changedDataSet(uuid, label, this);
 		logger.debug("OUT");
-	}
-
-	public void subscribeNGSI() {
-		try {
-			OrionContextSubscriber subscriber = new OrionContextSubscriber(this, getCurrentUserProfile());
-			subscriber.subscribeNGSI();
-			notifiable = true;
-		} catch (Exception e) {
-			logger.error("Errror in Orion subscription", e);
-			notifiable = false;
-		}
 	}
 
 	public boolean isNotifiable() {

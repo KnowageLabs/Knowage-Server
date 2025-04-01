@@ -65,14 +65,12 @@ class CachedEvaluationStrategy extends AbstractEvaluationStrategy {
 		IDataStore dataStore;
 		try {
 			dataStore = cache.get(profile, dataSet, projections, filter, groups, sortings, summaryRowProjections, offset, fetchSize, maxRowCount, indexes);
-			if (dataSet.isRealtime())
+			if (dataSet.isRealtime()) {
 				unsetNgsiConsumer();
+			}
 
 			if (dataStore == null) {
 				dataStore = manageDatasetNotInCache(projections, filter, groups, sortings, summaryRowProjections, offset, fetchSize, maxRowCount, indexes);
-			} else {
-				if (dataSet.isRealtime())
-					subscribeNGSI();
 			}
 
 			dataStore.adjustMetadata(dataSet.getMetadata());
@@ -126,11 +124,6 @@ class CachedEvaluationStrategy extends AbstractEvaluationStrategy {
 	private void unsetNgsiConsumer() {
 		RESTDataSet restDataSet = dataSet.getImplementation(RESTDataSet.class);
 		restDataSet.setRealtimeNgsiConsumer(false);
-	}
-
-	private void subscribeNGSI() {
-		RESTDataSet restDataSet = dataSet.getImplementation(RESTDataSet.class);
-		restDataSet.subscribeNGSI();
 	}
 
 	protected DatasetEvaluationStrategyType getEvaluationStrategy() {
