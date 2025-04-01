@@ -138,7 +138,6 @@ public class RESTDataSet extends ConfigurableDataSet {
 			logger.debug("Label is null, returning null");
 			return;
 		}
-		manager.addCometListenerIfInitializedAndAbsent(uuid, label, "1");
 		manager.changedDataSet(uuid, label, this);
 		logger.debug("OUT");
 	}
@@ -590,8 +589,9 @@ public class RESTDataSet extends ConfigurableDataSet {
 						String newValuesFromArray = "";
 						for (int i = 0; i < valuesArray.length; i++) {
 							String temp = valuesArray[i];
-							if (!delim.isEmpty() && temp.startsWith(delim) && temp.endsWith(delim))
+							if (!delim.isEmpty() && temp.startsWith(delim) && temp.endsWith(delim)) {
 								temp = temp.substring(1, temp.length() - 1);
+							}
 							temp = temp.replaceAll("'", "''");
 							if (i == 0) {
 								if (!delim.isEmpty() && temp.startsWith(delim) && temp.endsWith(delim)) {
@@ -763,11 +763,12 @@ public class RESTDataSet extends ConfigurableDataSet {
 		while (changePars) {
 			// int profileAttributeStartIndex = statement.indexOf("$P{");
 			int profileAttributeStartIndex = statement.indexOf("$P{");
-			if (profileAttributeStartIndex != -1)
+			if (profileAttributeStartIndex != -1) {
 				statement = substituteDatasetParametersInString(statement, dataset, parType, profileAttributeStartIndex,
 						surroundWithQuotes);
-			else
+			} else {
 				changePars = false;
+			}
 
 		}
 		logger.debug("OUT");
@@ -791,10 +792,12 @@ public class RESTDataSet extends ConfigurableDataSet {
 		logger.debug("IN");
 		Map valuesMap = dataset.getParamsMap();
 		int profileAttributeEndIndex = statement.indexOf("}", profileAttributeStartIndex);
-		if (profileAttributeEndIndex == -1)
+		if (profileAttributeEndIndex == -1) {
 			throw new Exception("Not closed profile attribute: '}' expected.");
-		if (profileAttributeEndIndex < profileAttributeEndIndex)
+		}
+		if (profileAttributeEndIndex < profileAttributeEndIndex) {
 			throw new Exception("Not opened profile attribute: '$P{' expected.");
+		}
 		String attribute = statement.substring(profileAttributeStartIndex + 3, profileAttributeEndIndex).trim();
 
 		String dequotePrefix = "_dequoted";
@@ -813,18 +816,21 @@ public class RESTDataSet extends ConfigurableDataSet {
 			// the parameter is expected to be multivalue
 			attributeExcpetedToBeMultiValue = true;
 			int endConfigIndex = attribute.length() - 1;
-			if (attribute.charAt(endConfigIndex) != ')')
+			if (attribute.charAt(endConfigIndex) != ')') {
 				throw new Exception("Sintax error: \")\" missing. The expected sintax for "
 						+ "parameter is  $P{parameters} for singlevalue parameters. ");
+			}
 			String configuration = attribute.substring(startConfigIndex + 1, endConfigIndex);
 			// check the configuration content and add empty prefix/suffix as default if they are null
-			if (configuration.equals(";,;"))
+			if (configuration.equals(";,;")) {
 				configuration = " ;,; ";
+			}
 			String[] configSplitted = configuration.split(";");
-			if (configSplitted == null || configSplitted.length != 3)
+			if (configSplitted == null || configSplitted.length != 3) {
 				throw new Exception("Sintax error. The expected sintax for parameters"
 						+ "or $P{parameter} for singlevalue parameter. 'parameterName' must not contain '(' characters. "
 						+ "The (prefix;split;suffix) is not properly configured");
+			}
 			prefix = configSplitted[0];
 			split = configSplitted[1];
 			suffix = configSplitted[2];
@@ -844,10 +850,12 @@ public class RESTDataSet extends ConfigurableDataSet {
 			value = "null";
 		}
 
-		if (value.startsWith("' {"))
+		if (value.startsWith("' {")) {
 			value = value.substring(1);
-		if (value.endsWith("}'"))
+		}
+		if (value.endsWith("}'")) {
 			value = value.substring(0, value.indexOf("}'") + 1);
+		}
 		value = value.trim();
 		logger.debug("Parameter value found: " + value);
 		String replacement = null;
@@ -858,8 +866,9 @@ public class RESTDataSet extends ConfigurableDataSet {
 		if (parTypeMap != null) {
 			parType = (String) parTypeMap.get(attributeName);
 		}
-		if (parType == null)
+		if (parType == null) {
 			parType = new String("");
+		}
 
 		if (attributeExcpetedToBeMultiValue) {
 			if (value.startsWith("{")) {
@@ -927,15 +936,18 @@ public class RESTDataSet extends ConfigurableDataSet {
 		replacement = ((newListOfValues.startsWith(prefix)) ? "" : prefix) + newListOfValues
 				+ ((newListOfValues.endsWith(suffix)) ? "" : suffix);
 
-		if (!attributeExcpetedToBeMultiValue)
+		if (!attributeExcpetedToBeMultiValue) {
 			replacement = checkParType(replacement, parType, attribute);
+		}
 
 		if (surroundWithQuotes || parType.equalsIgnoreCase("DATE")) {
 			if (!isNullValue) {
-				if (!replacement.startsWith("'"))
+				if (!replacement.startsWith("'")) {
 					replacement = "'" + replacement;
-				if (!replacement.endsWith("'"))
+				}
+				if (!replacement.endsWith("'")) {
 					replacement = replacement + "'";
+				}
 			}
 		}
 
@@ -991,12 +1003,15 @@ public class RESTDataSet extends ConfigurableDataSet {
 		if (type.length() > 0) {
 			attributeValue = attributeValue.substring(0, previousLastBrace + 1) + "}";
 		}
-		if (attributeValue.length() < 6)
+		if (attributeValue.length() < 6) {
 			throw new Exception(sintaxErrorMsg);
-		if (!attributeValue.endsWith("}}"))
+		}
+		if (!attributeValue.endsWith("}}")) {
 			throw new Exception(sintaxErrorMsg);
-		if (attributeValue.charAt(2) != '{')
+		}
+		if (attributeValue.charAt(2) != '{') {
 			throw new Exception(sintaxErrorMsg);
+		}
 		char splitter = attributeValue.charAt(1);
 		String valuesList = attributeValue.substring(3, attributeValue.length() - 2);
 		String[] values = valuesList.split(String.valueOf(splitter));
@@ -1017,8 +1032,9 @@ public class RESTDataSet extends ConfigurableDataSet {
 	public static String quote(String s) {
 		logger.debug("IN");
 		int slashEIndex = s.indexOf("\\E");
-		if (slashEIndex == -1)
+		if (slashEIndex == -1) {
 			return "\\Q" + s + "\\E";
+		}
 
 		StringBuilder sb = new StringBuilder(s.length() * 2);
 		sb.append("\\Q");

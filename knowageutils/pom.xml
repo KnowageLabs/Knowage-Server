@@ -272,16 +272,6 @@
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
-			<groupId>org.cometd.java</groupId>
-			<artifactId>cometd-java-server</artifactId>
-			<exclusions>
-				<exclusion>
-					<artifactId>jetty-util</artifactId>
-					<groupId>org.eclipse.jetty</groupId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<dependency>
 			<groupId>org.quartz-scheduler</groupId>
 			<artifactId>quartz</artifactId>
 		</dependency>

@@ -19,12 +19,6 @@
 			<artifactId>knowage-utils</artifactId>
 			<version>${project.version}</version>
 			<scope>compile</scope>
-			<exclusions>
-				<exclusion>
-					<artifactId>cometd-java-server</artifactId>
-					<groupId>org.cometd.java</groupId>
-				</exclusion>
-			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.eclipse.birt.runtime</groupId>

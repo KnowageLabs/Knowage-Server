@@ -22,10 +22,6 @@
 			<scope>compile</scope>
 			<exclusions>
 				<exclusion>
-					<artifactId>cometd-java-server</artifactId>
-					<groupId>org.cometd.java</groupId>
-				</exclusion>
-				<exclusion>
 					<groupId>org.apache.solr</groupId>
 		 			<artifactId>solr-solrj</artifactId>
 				</exclusion>
