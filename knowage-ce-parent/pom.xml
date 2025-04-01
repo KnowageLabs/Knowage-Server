@@ -27,7 +27,6 @@
 		<module>../knowage</module>
 		<module>../knowagecockpitengine</module>
 		<module>../knowagekpiengine</module>
-		<module>../knowagesdk</module>
 		<module>../knowagemeta</module>
 		<module>../knowageqbeengine</module>
 		<module>../knowagetalendengine</module>
