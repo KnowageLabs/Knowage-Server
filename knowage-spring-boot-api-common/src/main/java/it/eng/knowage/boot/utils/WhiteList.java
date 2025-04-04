@@ -29,10 +29,10 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import javax.naming.Context;
+import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
 import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import com.thoughtworks.xstream.XStream;
 
@@ -45,9 +45,6 @@ public class WhiteList implements IWhiteList {
 
 	private static final WhiteList INSTANCE = new WhiteList();
 
-	@Autowired
-	private Context context;
-	
 	public static WhiteList getInstance() {
 		return INSTANCE;
 	}
@@ -131,7 +128,8 @@ public class WhiteList implements IWhiteList {
 		// baseURL dei servizi knowage
 		String serviceUrl ="/";
 		try {
-			serviceUrl = (String) context.lookup("java:comp/env/service_url");
+			Context ctx = new InitialContext();
+			serviceUrl = (String) ctx.lookup("java:comp/env/service_url");
 		} catch (NamingException e1) {
 			LOGGER.error("Cannot read service_url from jndiContext", e1);
 		}
