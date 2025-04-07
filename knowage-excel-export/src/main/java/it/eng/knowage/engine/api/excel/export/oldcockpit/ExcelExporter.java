@@ -16,7 +16,6 @@ package it.eng.knowage.engine.api.excel.export.oldcockpit;
 
 import com.google.gson.Gson;
 import it.eng.knowage.commons.multitenant.OrganizationImageManager;
-import it.eng.knowage.commons.security.PathTraversalChecker;
 import it.eng.knowage.engine.api.excel.export.ExporterClient;
 import it.eng.knowage.engine.api.excel.export.IWidgetExporter;
 import it.eng.knowage.engine.api.excel.export.oldcockpit.exporters.WidgetExporterFactory;
@@ -30,7 +29,6 @@ import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.tenant.TenantManager;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
-import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -43,20 +41,14 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import javax.ws.rs.core.UriBuilder;
-import java.io.*;
-import java.net.URI;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import static java.nio.charset.StandardCharsets.UTF_8;
 
 /**
  * @author Francesco Lucchi (francesco.lucchi@eng.it)
@@ -108,87 +100,6 @@ public class ExcelExporter extends AbstractFormatExporter {
 
     public String getMimeType() {
         return "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
-    }
-
-    // used only for scheduled exports
-    // leverages on an external script that uses chromium to open the cockpit and click on the export button
-    public byte[] getBinaryData(String documentLabel) throws IOException, InterruptedException {
-        try {
-            final Path outputDir = Files.createTempDirectory("knowage-xls-exporter-");
-
-            String encodedUserId = Base64.encodeBase64String(userUniqueIdentifier.getBytes(UTF_8));
-
-            // Script
-            String cockpitExportScriptPath = SingletonConfig.getInstance()
-                    .getConfigValue(CONFIG_NAME_FOR_EXPORT_SCRIPT_PATH);
-            Path exportScriptFullPath = Paths.get(cockpitExportScriptPath, SCRIPT_NAME);
-
-            if (!Files.isRegularFile(exportScriptFullPath)) {
-                String msg = String.format(
-                        "Cannot find export script at \"%s\": did you set the correct value for %s configuration?",
-                        exportScriptFullPath, CONFIG_NAME_FOR_EXPORT_SCRIPT_PATH);
-                IllegalStateException ex = new IllegalStateException(msg);
-                LOGGER.error(msg, ex);
-                throw ex;
-            }
-
-            URI url = UriBuilder.fromUri(requestURL).replaceQueryParam("outputType_description", "HTML")
-                    .replaceQueryParam("outputType", "HTML").build();
-
-            // avoid sonar security hotspot issue
-            String cockpitExportExternalProcessName = SingletonConfig.getInstance()
-                    .getConfigValue("KNOWAGE.DASHBOARD.EXTERNAL_PROCESS_NAME");
-            LOGGER.info("CONFIG label=\"KNOWAGE.DASHBOARD.EXTERNAL_PROCESS_NAME\": " + cockpitExportExternalProcessName);
-
-            ProcessBuilder processBuilder = new ProcessBuilder(cockpitExportExternalProcessName, exportScriptFullPath.toString(),
-                    encodedUserId, outputDir.toString(), url.toString());
-
-            setWorkingDirectory(cockpitExportScriptPath, processBuilder);
-
-            LOGGER.info("Node complete command line: {}", processBuilder.command());
-
-            LOGGER.info("Starting export script");
-            Process exec = processBuilder.start();
-
-            logOutputToCoreLog(exec);
-
-            LOGGER.info("Waiting...");
-            exec.waitFor();
-            LOGGER.warn("Exit value: {}", exec.exitValue());
-
-            // the script creates the resulting xls and saves it to outputFile
-            Path outputFile = PathTraversalChecker.get(outputDir.toString(), documentLabel + ".xlsx").toPath();
-            return getByteArrayFromFile(outputFile, outputDir);
-        } catch (Exception e) {
-            LOGGER.error("Error during scheduled export execution", e);
-            throw e;
-        }
-    }
-
-    private byte[] getByteArrayFromFile(Path excelFile, Path outputDir) {
-        String fileName = excelFile.toString();
-
-        try (FileInputStream fis = new FileInputStream(fileName);
-             ByteArrayOutputStream bos = new ByteArrayOutputStream()) {
-            byte[] buf = new byte[1024];
-            for (int readNum; (readNum = fis.read(buf)) != -1; ) {
-                // Writes len bytes from the specified byte array starting at offset off to this byte array output stream
-                bos.write(buf, 0, readNum); // no doubt here is 0
-            }
-            return bos.toByteArray();
-        } catch (Exception e) {
-            LOGGER.error("Cannot serialize excel file", e);
-            throw new SpagoBIRuntimeException("Cannot serialize excel file", e);
-        } finally {
-            try {
-                if (Files.isRegularFile(excelFile)) {
-                    Files.delete(excelFile);
-                }
-                Files.delete(outputDir);
-            } catch (Exception e) {
-                LOGGER.error("Cannot delete temp file", e);
-            }
-        }
     }
 
     public byte[] getBinaryData(Integer documentId, String documentLabel, String documentName, String templateString, String options)
@@ -1533,22 +1444,5 @@ public class ExcelExporter extends AbstractFormatExporter {
         // if pagination is disabled offset = 0, fetchSize = -1
         return getDatastore(datasetLabel, map, selections, 0, -1);
     }
-
-    private void logOutputToCoreLog(Process exec) throws IOException {
-        InputStreamReader isr = new InputStreamReader(exec.getInputStream());
-        BufferedReader b = new BufferedReader(isr);
-        String line = null;
-        LOGGER.warn("Process output");
-        while ((line = b.readLine()) != null) {
-            LOGGER.warn(line);
-        }
-    }
-
-    private void setWorkingDirectory(String cockpitExportScriptPath, ProcessBuilder processBuilder) {
-        // Required by puppeteer v19
-        processBuilder.directory(new File(cockpitExportScriptPath));
-
-    }
-
 }
 

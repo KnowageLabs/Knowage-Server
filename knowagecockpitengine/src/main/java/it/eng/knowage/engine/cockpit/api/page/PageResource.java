@@ -20,7 +20,6 @@ package it.eng.knowage.engine.cockpit.api.page;
 import com.google.common.collect.Iterables;
 import it.eng.knowage.engine.api.excel.export.dashboard.DashboardExcelExporter;
 import it.eng.knowage.engine.api.excel.export.dashboard.DatastoreUtils;
-import it.eng.knowage.engine.api.excel.export.oldcockpit.ExcelExporter;
 import it.eng.knowage.engine.cockpit.CockpitEngine;
 import it.eng.knowage.engine.cockpit.CockpitEngineInstance;
 import it.eng.knowage.engine.cockpit.api.AbstractCockpitEngineResource;
@@ -28,7 +27,9 @@ import it.eng.knowage.engine.cockpit.api.export.pdf.nodejs.PdfExporterV2;
 import it.eng.knowage.engine.cockpit.api.export.png.PngExporter;
 import it.eng.knowage.export.wrapper.beans.RenderOptions;
 import it.eng.knowage.export.wrapper.beans.ViewportDimensions;
+import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.error.EMFUserError;
+import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
 import it.eng.spagobi.commons.SingletonConfig;
@@ -359,18 +360,34 @@ public class PageResource extends AbstractCockpitEngineResource {
 
 	private Response openPageSpreadsheetInternal(String pageName)
 			throws IOException, InterruptedException, JSONException {
-		String requestURL = getRequestUrlForExcelExport(request);
 
 		request.setAttribute("template", getIOManager().getTemplateAsString());
+		String requestURL = getRequestUrlForExcelExport(request);
+
+		IEngUserProfile profile = (IEngUserProfile) request.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+		Collection<String> roles;
+		try {
+			roles = profile.getRoles();
+		} catch (EMFInternalError emfE) {
+			LOGGER.error("Error retrieving user roles", emfE);
+			throw new SpagoBIRuntimeException("Error retrieving user roles", emfE);
+		}
+
+		if (roles.size() != 1) {
+			LOGGER.error("User has more than one role, cannot export to excel");
+			throw new SpagoBIRuntimeException("User has more than one role, cannot export to excel");
+		}
+
+		String role = Iterables.get(roles, 0);
+
+		String organization = getUserProfile().getOrganization();
 
 		String userId = request.getParameter("user_id");
-		Map<String, String[]> parameterMap = request.getParameterMap();
-
 		String documentLabel = request.getParameter("DOCUMENT_LABEL");
 
-		ExcelExporter excelExporter = new ExcelExporter(userId, parameterMap, requestURL);
+		DashboardExcelExporter excelExporter = new DashboardExcelExporter(new DatastoreUtils(userId), getIOManager().getTemplateAsJSONObject(), role, userId, requestURL, organization);
 		String mimeType = excelExporter.getMimeType();
-		byte[] data = excelExporter.getBinaryData(documentLabel);
+		byte[] data = excelExporter.getScheduledBinaryData(documentLabel);
 
 		return Response.ok(data, mimeType).header("Content-length", Integer.toString(data.length))
 				.header("Content-Disposition", "attachment; fileName=" + documentLabel + ".xlsx").build();

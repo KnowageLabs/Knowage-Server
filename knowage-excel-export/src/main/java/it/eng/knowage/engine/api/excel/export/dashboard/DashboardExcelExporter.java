@@ -1,6 +1,7 @@
 package it.eng.knowage.engine.api.excel.export.dashboard;
 
 import it.eng.knowage.commons.multitenant.OrganizationImageManager;
+import it.eng.knowage.commons.security.PathTraversalChecker;
 import it.eng.knowage.engine.api.excel.export.IWidgetExporter;
 import it.eng.knowage.engine.api.excel.export.dashboard.exporters.DashboardWidgetExporterFactory;
 import it.eng.spagobi.commons.SingletonConfig;
@@ -12,6 +13,7 @@ import it.eng.spagobi.i18n.dao.I18NMessagesDAO;
 import it.eng.spagobi.tenant.TenantManager;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import lombok.Getter;
+import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -30,13 +32,18 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
+import javax.ws.rs.core.UriBuilder;
+import java.io.*;
+import java.net.URI;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
 import static it.eng.knowage.engine.api.excel.export.dashboard.StaticLiterals.EXCEL_ERROR;
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.apache.poi.ss.usermodel.DataConsolidateFunction.*;
 
 public class DashboardExcelExporter extends Common {
@@ -50,6 +57,15 @@ public class DashboardExcelExporter extends Common {
     private final StyleProvider styleProvider;
     private final JSONObjectUtils jsonObjectUtils;
     private final DatastoreUtils datastoreUtils;
+
+    // SCHEDULER
+    private static final String CONFIG_NAME_FOR_EXPORT_SCRIPT_PATH = "internal.nodejs.chromium.export.path";
+    private static final String SCRIPT_NAME = "cockpit-export-xls.js";
+    private String role;
+    private String userUniqueIdentifier = "";
+    private String requestURL = "";
+    private String organization = "";
+
 
     private String imageB64 = "";
     private static final String DOCUMENT_NAME = "";
@@ -67,7 +83,19 @@ public class DashboardExcelExporter extends Common {
         locale = getLocaleFromBody(body);
         jsonObjectUtils = new JSONObjectUtils();
         styleProvider = new StyleProvider(jsonObjectUtils);
+    }
 
+    public DashboardExcelExporter(DatastoreUtils datastoreUtils, JSONObject body, String role, String userId, String requestUrl, String organization) {
+        this.datastoreUtils = datastoreUtils;
+        this.isSingleWidgetExport = body.optBoolean("exportWidget");
+        this.body = body;
+        locale = getLocaleFromBody(body);
+        jsonObjectUtils = new JSONObjectUtils();
+        styleProvider = new StyleProvider(jsonObjectUtils);
+        this.role = role;
+        this.userUniqueIdentifier = userId;
+        this.requestURL = requestUrl;
+        this.organization = organization;
     }
 
     private Locale getLocaleFromBody(JSONObject body) {
@@ -81,7 +109,105 @@ public class DashboardExcelExporter extends Common {
         }
 
     }
+    public byte[] getScheduledBinaryData(String documentLabel) throws IOException, InterruptedException {
+        try {
+            final Path outputDir = Files.createTempDirectory("knowage-xls-exporter-");
 
+            String encodedUserId = Base64.encodeBase64String(userUniqueIdentifier.getBytes(UTF_8));
+            // Script
+            String cockpitExportScriptPath = SingletonConfig.getInstance()
+                    .getConfigValue(CONFIG_NAME_FOR_EXPORT_SCRIPT_PATH);
+            Path exportScriptFullPath = Paths.get(cockpitExportScriptPath, SCRIPT_NAME);
+
+            if (!Files.isRegularFile(exportScriptFullPath)) {
+                String msg = String.format(
+                        "Cannot find export script at \"%s\": did you set the correct value for %s configuration?",
+                        exportScriptFullPath, CONFIG_NAME_FOR_EXPORT_SCRIPT_PATH);
+                IllegalStateException ex = new IllegalStateException(msg);
+                LOGGER.error(msg, ex);
+                throw ex;
+            }
+
+            URI url = UriBuilder.fromUri(requestURL)
+                        .replaceQueryParam("outputType_description", "HTML")
+                        .replaceQueryParam("outputType", "HTML")
+                        .replaceQueryParam("role", role)
+                        .replaceQueryParam("organization", organization)
+                        .build();
+
+            // avoid sonar security hotspot issue
+            String cockpitExportExternalProcessName = SingletonConfig.getInstance()
+                    .getConfigValue("KNOWAGE.DASHBOARD.EXTERNAL_PROCESS_NAME");
+            LOGGER.info("CONFIG label=\"KNOWAGE.DASHBOARD.EXTERNAL_PROCESS_NAME\": " + cockpitExportExternalProcessName);
+
+            String stringifiedRequestUrl = url.toString();
+            // replace localhost:8080 with 127.0.0.1:3000
+//            stringifiedRequestUrl = stringifiedRequestUrl.replace("localhost:8080", "127.0.0.1:3000");
+
+            ProcessBuilder processBuilder = new ProcessBuilder(cockpitExportExternalProcessName, exportScriptFullPath.toString(),
+                    encodedUserId, outputDir.toString(), stringifiedRequestUrl);
+
+            setWorkingDirectory(cockpitExportScriptPath, processBuilder);
+
+            LOGGER.info("Node complete command line: {}", processBuilder.command());
+
+            LOGGER.info("Starting export script");
+            Process exec = processBuilder.start();
+
+            logOutputToCoreLog(exec);
+
+            LOGGER.info("Waiting...");
+            exec.waitFor();
+            LOGGER.warn("Exit value: {}", exec.exitValue());
+
+            // the script creates the resulting xls and saves it to outputFile
+            Path outputFile = PathTraversalChecker.get(outputDir.toString(), documentLabel + ".xlsx").toPath();
+            return getByteArrayFromFile(outputFile, outputDir);
+        } catch (Exception e) {
+            LOGGER.error("Error during scheduled export execution", e);
+            throw e;
+        }
+    }
+    private byte[] getByteArrayFromFile(Path excelFile, Path outputDir) {
+        String fileName = excelFile.toString();
+
+        try (FileInputStream fis = new FileInputStream(fileName);
+             ByteArrayOutputStream bos = new ByteArrayOutputStream()) {
+            byte[] buf = new byte[1024];
+            for (int readNum; (readNum = fis.read(buf)) != -1; ) {
+                // Writes len bytes from the specified byte array starting at offset off to this byte array output stream
+                bos.write(buf, 0, readNum); // no doubt here is 0
+            }
+            return bos.toByteArray();
+        } catch (Exception e) {
+            LOGGER.error("Cannot serialize excel file", e);
+            throw new SpagoBIRuntimeException("Cannot serialize excel file", e);
+        } finally {
+            try {
+                if (Files.isRegularFile(excelFile)) {
+                    Files.delete(excelFile);
+                }
+                Files.delete(outputDir);
+            } catch (Exception e) {
+                LOGGER.error("Cannot delete temp file", e);
+            }
+        }
+    }
+    private void logOutputToCoreLog(Process exec) throws IOException {
+        InputStreamReader isr = new InputStreamReader(exec.getInputStream());
+        BufferedReader b = new BufferedReader(isr);
+        String line = null;
+        LOGGER.warn("Process output");
+        while ((line = b.readLine()) != null) {
+            LOGGER.warn(line);
+        }
+    }
+
+    private void setWorkingDirectory(String cockpitExportScriptPath, ProcessBuilder processBuilder) {
+        // Required by puppeteer v19
+        processBuilder.directory(new File(cockpitExportScriptPath));
+
+    }
     public byte[] getDashboardBinaryData(JSONObject body, boolean isDashboardSingleWidgetExport) {
 
         if (body == null) {
