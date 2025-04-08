@@ -29,15 +29,7 @@ import java.security.NoSuchAlgorithmException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 import java.util.regex.Matcher;
 
 import org.apache.log4j.Logger;
@@ -399,24 +391,40 @@ public class StringUtilities {
 			logger.debug("Expected single-value parameter name: '" + attributeName + "'");
 		}
 
-		String value = (String) valuesMap.get(attributeName);
-		if (value == null) {
+		StringBuilder value = new StringBuilder((String) valuesMap.get(attributeName));
+		if (value.toString().isEmpty()) {
+			logger.error(attributeName + " not found in the map");
 			throw new Exception("Parameter '" + attributeName + "' not set.");
-
 		} else {
+			List<String> singleValues = new ArrayList<>();
+			// get all comma separated values
+			StringTokenizer st = new StringTokenizer(value.toString(), ",");
+			value = new StringBuilder();
 
-			if (value.startsWith("' {"))
-				value = value.substring(1);
-			if (value.endsWith("}'"))
-				value = value.substring(0, value.indexOf("}'") + 1);
-			value = value.trim();
+			while (st.hasMoreTokens()) {
+				singleValues.add(st.nextToken());
+			}
+			for (String singleValue : singleValues) {
+				String escapedValue = escapeInternalQuotes(singleValue);
+				if (value.length() == 0) {
+					value = new StringBuilder(escapedValue);
+				} else {
+					value.append(",").append(escapedValue);
+				}
+			}
+
+			if (value.toString().startsWith("' {"))
+				value = new StringBuilder(value.substring(1));
+			if (value.toString().endsWith("}'"))
+				value = new StringBuilder(value.substring(0, value.indexOf("}'") + 1));
+			value = new StringBuilder(value.toString().trim());
 			logger.debug("Parameter value found: " + value);
 			String replacement = null;
 			String newListOfValues = null;
 			if (attributeExcpetedToBeMultiValue) {
-				if (value.startsWith("{")) {
+				if (value.toString().startsWith("{")) {
 					// the parameter is multi-value
-					String[] values = findAttributeValues(value);
+					String[] values = findAttributeValues(value.toString());
 					logger.debug("N. " + values.length + " parameter values found: '" + values + "'");
 					newListOfValues = values[0];
 					for (int i = 1; i < values.length; i++) {
@@ -424,26 +432,26 @@ public class StringUtilities {
 					}
 				} else {
 					logger.warn("The attribute value has not the sintax of a multi value parameter; considering it as a single value.");
-					newListOfValues = value;
+					newListOfValues = value.toString();
 				}
 			} else {
-				if (value.startsWith("{")) {
+				if (value.toString().startsWith("{")) {
 					// the profile attribute is multi-value
 					logger.warn(
 							"The attribute value seems to be a multi value parameter; trying considering it as a multi value using its own splitter and no prefix and suffix.");
 					try {
 						// checks the sintax
-						String[] values = findAttributeValues(value);
+						String[] values = findAttributeValues(value.toString());
 						newListOfValues = values[0];
 						for (int i = 1; i < values.length; i++) {
 							newListOfValues = newListOfValues + value.charAt(1) + values[i];
 						}
 					} catch (Exception e) {
 						logger.error("The attribute value does not respect the sintax of a multi value attribute; considering it as a single value.", e);
-						newListOfValues = value;
+						newListOfValues = value.toString();
 					}
 				} else {
-					newListOfValues = value;
+					newListOfValues = value.toString();
 				}
 			}
 
