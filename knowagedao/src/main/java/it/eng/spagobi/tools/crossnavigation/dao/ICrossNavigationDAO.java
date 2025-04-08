@@ -32,41 +32,43 @@ import it.eng.spagobi.tools.crossnavigation.metadata.SbiCrossNavigationPar;
 
 public interface ICrossNavigationDAO extends ISpagoBIDao {
 
-	public List<SimpleNavigation> listNavigation();
+	List<SimpleNavigation> listNavigation();
 
-	public NavigationDetail loadNavigation(Integer id);
+	List<SimpleNavigation> listNavigationLight();
 
-	public void update(NavigationDetail nd);
+	NavigationDetail loadNavigation(Integer id);
 
-	public void insert(NavigationDetail nd);
+	void update(NavigationDetail nd);
 
-	public void delete(Integer id);
+	void insert(NavigationDetail nd);
 
-	public JSONArray loadNavigationByDocument(String label);
+	void delete(Integer id);
 
-	public boolean documentIsCrossable(String docLabel);
+	JSONArray loadNavigationByDocument(String label);
 
-	public List<SbiCrossNavigation> listNavigationsByDocumentAndParameters(Integer documentId, List<Integer> inputParameters, List<Integer> outputParameters,
+	boolean documentIsCrossable(String docLabel);
+
+	List<SbiCrossNavigation> listNavigationsByDocumentAndParameters(Integer documentId, List<Integer> inputParameters, List<Integer> outputParameters,
 			Session session);
 
-	public List<SbiCrossNavigationPar> listNavigationsByInputParameters(Integer paramId);
+	List<SbiCrossNavigationPar> listNavigationsByInputParameters(Integer paramId);
 
-	public List<SbiCrossNavigationPar> listNavigationsByInputParameters(Integer paramId, Session session);
+	List<SbiCrossNavigationPar> listNavigationsByInputParameters(Integer paramId, Session session);
 
-	public List<SbiCrossNavigationPar> listNavigationsByOutputParameters(Integer paramId);
+	List<SbiCrossNavigationPar> listNavigationsByOutputParameters(Integer paramId);
 
-	public List<SbiCrossNavigationPar> listNavigationsByOutputParameters(Integer paramId, Session session);
+	List<SbiCrossNavigationPar> listNavigationsByOutputParameters(Integer paramId, Session session);
 
-	public List<SbiCrossNavigationPar> listNavigationsByCrossNavParId(Integer crossNavId, Session session);
+	List<SbiCrossNavigationPar> listNavigationsByCrossNavParId(Integer crossNavId, Session session);
 
-	public void deleteByBIObjectParameter(BIObjectParameter biObjectParameter, Session session);
+	void deleteByBIObjectParameter(BIObjectParameter biObjectParameter, Session session);
 
-	public void deleteByDocument(BIObject document, Session session);
+	void deleteByDocument(BIObject document, Session session);
 
-	public SbiCrossNavigation loadSbiCrossNavigationById(Integer id, Session session);
+	SbiCrossNavigation loadSbiCrossNavigationById(Integer id, Session session);
 
-	public List listNavigationsByAnalyticalDriverID(Integer analyticalDriverId);
+	List listNavigationsByAnalyticalDriverID(Integer analyticalDriverId);
 
-	public List listNavigationsByAnalyticalDriverID(Integer analyticalDriverId, Session session);
+	List listNavigationsByAnalyticalDriverID(Integer analyticalDriverId, Session session);
 
 }

@@ -68,6 +68,40 @@ public class CrossNavigationDAOImpl extends AbstractHibernateDAO implements ICro
 	public static final int TYPE_OUTPUT = 0;
 
 	@Override
+	public List<SimpleNavigation> listNavigationLight() {
+		final List<SimpleNavigation> lst = new ArrayList<>();
+		executeOnTransaction(new IExecuteOnTransaction<Boolean>() {
+			@Override
+			public Boolean execute(Session session) throws JSONException {
+				Criteria c = session.createCriteria(SbiCrossNavigation.class);
+
+				for (Object o : c.list()) {
+					SbiCrossNavigation cn = (SbiCrossNavigation) o;
+					SimpleNavigation sn = new SimpleNavigation();
+					sn.setId(cn.getId());
+					sn.setName(cn.getName());
+					sn.setDescription(cn.getDescription());
+					sn.setBreadcrumb(cn.getBreadcrumb());
+					sn.setType(cn.getType());
+					sn.setFromDocId(cn.getFromDocId());
+					sn.setToDocId(cn.getToDocId());
+
+					SbiObjects objFromDoc = (SbiObjects) session.load(SbiObjects.class, cn.getFromDocId());
+					sn.setFromDoc(objFromDoc.getLabel());
+
+					SbiObjects objToDoc = (SbiObjects) session.load(SbiObjects.class, cn.getToDocId());
+					sn.setToDoc(objToDoc.getLabel());
+
+					lst.add(sn);
+				}
+				return Boolean.TRUE;
+			}
+		});
+
+		return lst;
+	}
+
+	@Override
 	public List<SimpleNavigation> listNavigation() {
 		final List<SimpleNavigation> lst = new ArrayList<>();
 		executeOnTransaction(new IExecuteOnTransaction<Boolean>() {
@@ -515,8 +549,9 @@ public class CrossNavigationDAOImpl extends AbstractHibernateDAO implements ICro
 		// Delete FROM CROSS_NAVIFATION_PAR
 		for (SbiCrossNavigationPar cn : cnParToRemove) {
 			session.delete(cn);
-			if (!crossNavigation.contains(cn.getSbiCrossNavigation().getId()))
+			if (!crossNavigation.contains(cn.getSbiCrossNavigation().getId())) {
 				crossNavigation.add(cn.getSbiCrossNavigation().getId());
+			}
 		}
 		// Delete FROM CROSS_NAVIGATION
 		for (Integer scnId : crossNavigation) {
@@ -591,6 +626,7 @@ public class CrossNavigationDAOImpl extends AbstractHibernateDAO implements ICro
 		return (SbiCrossNavigation) session.createCriteria(SbiCrossNavigation.class).add(Restrictions.eq("id", id))
 				.uniqueResult();
 	}
+
 }
 
 class CrossNavigationParameters {
