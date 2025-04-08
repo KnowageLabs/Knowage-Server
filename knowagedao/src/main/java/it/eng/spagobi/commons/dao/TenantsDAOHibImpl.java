@@ -777,7 +777,7 @@ public class TenantsDAOHibImpl extends AbstractHibernateDAO implements ITenantsD
 			aTenant.getSbiOrganizationThemes().stream().filter(y -> y.getId().getUuid() == null).forEach(x -> {
 
 				SbiOrganizationTheme newSbiOrganizationTheme = x;
-				SbiOrganizationThemeId sbiOrganizationThemeId = new SbiOrganizationThemeId(uuidForLambda);
+				SbiOrganizationThemeId sbiOrganizationThemeId = new SbiOrganizationThemeId(uuidForLambda, aTenant.getId());
 				newSbiOrganizationTheme.setId(sbiOrganizationThemeId);
 				newSbiOrganizationTheme.setCommonInfo(sbiCommoInfo);
 				updateSbiCommonInfo4Insert(newSbiOrganizationTheme);
