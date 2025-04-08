@@ -52,6 +52,11 @@ public class SbiOrganizationThemeId implements java.io.Serializable {
 		this.uuid = uuid;
 	}
 
+	public SbiOrganizationThemeId(String uuid, int organizationId) {
+		this.uuid = uuid;
+		this.organizationId = organizationId;
+	}
+
 	@Column(columnDefinition = "UUID", updatable = false)
 	public String getUuid() {
 		return uuid;
