@@ -470,8 +470,6 @@ public class StringUtilities {
 					replacement = "'" + replacement;
 				if (!replacement.endsWith("'"))
 					replacement = replacement + "'";
-
-				replacement = escapeInternalQuotes(replacement);
 			}
 
 			attribute = quote(attribute);
