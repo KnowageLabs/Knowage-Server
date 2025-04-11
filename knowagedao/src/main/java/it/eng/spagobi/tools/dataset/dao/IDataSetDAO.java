@@ -95,6 +95,8 @@ public interface IDataSetDAO extends ISpagoBIDao {
 
 	List<DataSetBasicInfo> loadDatasetsBasicInfoForLov();
 
+	List<DataSetBasicInfo> loadDatasetsBasicInfoForAI(List<Integer> idsObject);
+
 	List<IDataSet> loadDataSets(String owner, Boolean includeOwned, Boolean includePublic, String scope, String type,
 			Set<Domain> categoryList, String implementation, Boolean showDerivedDatasets);
 

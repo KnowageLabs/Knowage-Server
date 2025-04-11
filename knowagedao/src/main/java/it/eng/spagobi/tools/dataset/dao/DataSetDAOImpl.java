@@ -1281,6 +1281,32 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 		return toReturn;
 	}
 
+	@Override
+	public List<DataSetBasicInfo> loadDatasetsBasicInfoForAI(List<Integer> idsObject) {
+		logger.debug("IN");
+		List<DataSetBasicInfo> toReturn = new ArrayList<>();
+		Session session = null;
+		System.err.println("start loadDatasetsBasicInfoForAI: " + idsObject);
+		try {
+			session = getSession();
+			toReturn = session
+					.createQuery("select new it.eng.spagobi.tools.dataset.bo.DataSetBasicInfo(ds.label, ds.name, ds.description, ds.dsMetadata,ds.type) "
+							+ " from SbiDataSet ds, SbiObjDataSet ds1 where ds.id.dsId = ds1.dsId and  ds.active = ? and ds1.sbiObject.id IN (:listObject)")
+					.setBoolean(0, true).setParameterList("listObject", idsObject).list();
+			System.err.println("end loadDatasetsBasicInfoForAI: " + idsObject);
+		} catch (Exception e) {
+			throw new SpagoBIDAOException("An unexpected error occured while loading datasets basic info for LOV", e);
+		} finally {
+			if (session != null && session.isOpen()) {
+				session.close();
+			}
+
+			logger.debug("OUT");
+		}
+
+		return toReturn;
+	}
+
 	/**
 	 * @deprecated See {@link ISbiDataSetDAO} TODO : Delete DONE
 	 */
@@ -3173,14 +3199,14 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 		}
 		return toReturn;
 	}
-	
+
 	private void deleteFileAssociatedToDataset(SbiDataSet sbiDataSet) {
 		try {
 			JSONObject config = new JSONObject(sbiDataSet.getConfiguration());
 			String fileName = config.getString("fileName");
 			String fileDir = SpagoBIUtilities.getFileDatasetResourcePath();
 			File toDelete = new File(fileDir + File.separatorChar + fileName);
-			toDelete.delete();					
+			toDelete.delete();
 		} catch (Exception e) {
 			logger.error("Cannot delete file associated to dataset: " + sbiDataSet.getLabel(), e);
 		}
