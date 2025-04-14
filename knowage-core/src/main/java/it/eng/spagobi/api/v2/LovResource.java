@@ -301,7 +301,7 @@ public class LovResource extends AbstractSpagoBIResource {
 			IEngUserProfile profile = getUserProfile();
 			String unsafe = RestUtilities.readBodyXSSUnsafe(req);
 			JSONObject dependenciesObj = new JSONObject(unsafe);
-			pagination = dependenciesObj.getJSONObject("pagination");
+			pagination = this.getPaginationLov(dependenciesObj);
 			data = dependenciesObj.getJSONObject("data");
 			dependencies = dependenciesObj.optJSONArray("dependencies");
 			if (dependencies != null && dependencies.length() > 0) {
@@ -390,8 +390,12 @@ public class LovResource extends AbstractSpagoBIResource {
 					throw new SpagoBIRuntimeException("Cannot get values from dataset", e);
 				}
 			}
-			Integer start = pagination.getInt("paginationStart");
-			Integer limit = pagination.getInt("paginationLimit");
+			Integer start = null;
+			Integer limit = null;
+			if (pagination != null) {
+				start = pagination.getInt("paginationStart");
+				limit = pagination.getInt("paginationLimit");
+			}
 			lovExecutionResult.setValues(filterNulls(rowsSourceBean, colNames.size(), start, limit));
 			lovExecutionResult.setFields(GridMetadataContainer.buildHeaderMapForGrid(colNames));
 			List rows = rowsSourceBean.getAttributeAsList(DataRow.ROW_TAG);
@@ -404,114 +408,13 @@ public class LovResource extends AbstractSpagoBIResource {
 		return toReturn;
 	}
 
-	@POST
-	@Path("/previewNoPagination")
-	@Produces(MediaType.APPLICATION_JSON)
-	@UserConstraint(functionalities = { CommunityFunctionalityConstants.LOVS_MANAGEMENT })
-	public String previewNoPagination(@javax.ws.rs.core.Context HttpServletRequest req) {
-		logger.debug("IN");
-
-		JSONObject data;
-		JSONArray parameters = new JSONArray();
-		JSONArray profiles = new JSONArray();
-		GridMetadataContainer lovExecutionResult = new GridMetadataContainer();
-		SourceBean rowsSourceBean = null;
-		List<String> colNames = new ArrayList<>();
-		String result;
-		String toReturn = null;
-		String typeLov;
-		String lovProvider;
-
-		Map<String, String> paramFilled = new HashMap<>();
-
+	private JSONObject getPaginationLov(JSONObject dependenciesObj) {
 		try {
-			IEngUserProfile profile = getUserProfile();
-			String unsafe = RestUtilities.readBodyXSSUnsafe(req);
-			JSONObject dependenciesObj = new JSONObject(unsafe);
-			data = dependenciesObj.getJSONObject("data");
-			if (profiles.length() > 0) {
-                profile = insertIntoFakeUser(profiles);
-			}
-			if (parameters.length() > 0) {
-				for (int i = 0; i < parameters.length(); i++) {
-					String name = parameters.getJSONObject(i).getString("name");
-					String value = parameters.getJSONObject(i).getString("value");
-					paramFilled.put(name, value);
-				}
-			}
-
-			typeLov = data.getString("itypeCd");
-			lovProvider = data.getString("lovProvider");
-			lovProvider = StringEscapeUtils.unescapeXml(lovProvider);
-
-			if (typeLov != null && typeLov.equalsIgnoreCase("JAVA_CLASS")) {
-				JavaClassDetail javaClassDetail = JavaClassDetail.fromXML(lovProvider);
-				try {
-					String javaClassName = javaClassDetail.getJavaClassName();
-					IJavaClassLov javaClassLov = (IJavaClassLov) Class.forName(javaClassName).newInstance();
-					result = javaClassLov.getValues(profile);
-					rowsSourceBean = SourceBean.fromXMLString(result);
-					colNames = findFirstRowAttributes(rowsSourceBean);
-				} catch (Exception e) {
-					logger.error("Cannot get values from java class");
-					throw new SpagoBIRuntimeException("Cannot get values from java class", e);
-				}
-			} else if (typeLov != null && typeLov.equalsIgnoreCase("FIX_LOV")) {
-
-				FixedListDetail fixlistDet = FixedListDetail.fromXML(lovProvider);
-				try {
-					result = fixlistDet.getLovResult(profile, null, toMockedBIObjectParameters(paramFilled), null);
-					rowsSourceBean = SourceBean.fromXMLString(result);
-					colNames = findFirstRowAttributes(rowsSourceBean);
-				} catch (Exception e) {
-					logger.error("Cannot get values from fixed lov");
-					throw new SpagoBIRuntimeException("Cannot get values from fixed lov", e);
-				}
-			} else if (typeLov != null && typeLov.equalsIgnoreCase("QUERY")) {
-
-				QueryDetail qd = QueryDetail.fromXML(lovProvider);
-				try {
-					result = qd.getLovResult(profile, null, toMockedBIObjectParameters(paramFilled), null, true);
-					rowsSourceBean = SourceBean.fromXMLString(result);
-					colNames = findFirstRowAttributes(rowsSourceBean);
-				} catch (Exception e) {
-					logger.error("Cannot get values from query");
-					throw new SpagoBIRuntimeException("Cannot get values from query", e);
-				}
-
-			} else if (typeLov != null && typeLov.equalsIgnoreCase("SCRIPT")) {
-
-				ScriptDetail scriptDetail = ScriptDetail.fromXML(lovProvider);
-				try {
-					result = scriptDetail.getLovResult(profile, null, toMockedBIObjectParameters(paramFilled), null);
-					rowsSourceBean = SourceBean.fromXMLString(result);
-					colNames = findFirstRowAttributes(rowsSourceBean);
-				} catch (Exception e) {
-					logger.error("Cannot get values from script");
-					throw new SpagoBIRuntimeException("Cannot get values from script", e);
-				}
-			} else if (typeLov != null && typeLov.equalsIgnoreCase("DATASET")) {
-				DatasetDetail datasetClassDetail = DatasetDetail.fromXML(lovProvider);
-				try {
-					result = datasetClassDetail.getLovResult(profile, null, toMockedBIObjectParameters(paramFilled),
-							null);
-					rowsSourceBean = SourceBean.fromXMLString(result);
-					colNames = findFirstRowAttributes(rowsSourceBean);
-				} catch (Exception e) {
-					logger.error("Cannot get values from dataset");
-					throw new SpagoBIRuntimeException("Cannot get values from dataset", e);
-				}
-			}
-			lovExecutionResult.setValues(filterNulls(rowsSourceBean, colNames.size(), null, null));
-			lovExecutionResult.setFields(GridMetadataContainer.buildHeaderMapForGrid(colNames));
-			List rows = rowsSourceBean.getAttributeAsList(DataRow.ROW_TAG);
-			lovExecutionResult.setResults(rows.size());
-			toReturn = lovExecutionResult.toJSONString();
-
+			return dependenciesObj.getJSONObject("pagination");
 		} catch (Exception e) {
-			logger.error("Error reading body", e);
+			logger.warn("No pagination preview lov");
+			return null;
 		}
-		return toReturn;
 	}
 
 	@POST
@@ -530,8 +433,9 @@ public class LovResource extends AbstractSpagoBIResource {
 			ModalitiesValue modVal = toModality(requestBodyJSON);
 
 			Integer lovId = null;
-			if (requestBodyJSON.has("id"))
+			if (requestBodyJSON.has("id")) {
 				lovId = requestBodyJSON.getInt("id");
+			}
 
 			if (labelControl(lovId, modVal.getLabel())) {
 				logger.error("LOV with same label already exists");
@@ -610,8 +514,9 @@ public class LovResource extends AbstractSpagoBIResource {
 			modVal.setLovProvider(provider);
 
 			Integer lovId = null;
-			if (requestBodyJSON.has("id"))
+			if (requestBodyJSON.has("id")) {
 				lovId = requestBodyJSON.getInt("id");
+			}
 
 			if (labelControl(lovId, modVal.getLabel())) {
 				logger.error("LOV with same label already exists");

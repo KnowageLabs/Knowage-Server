@@ -73,7 +73,7 @@ public class CrossNavigationDAOImpl extends AbstractHibernateDAO implements ICro
 		executeOnTransaction(new IExecuteOnTransaction<Boolean>() {
 			@Override
 			public Boolean execute(Session session) throws JSONException {
-				Criteria c = session.createCriteria(SbiCrossNavigation.class);
+				Criteria c = session.createCriteria(SbiCrossNavigation.class).add(Restrictions.isNotNull("fromDocId")).add(Restrictions.isNotNull("toDocId"));
 
 				for (Object o : c.list()) {
 					SbiCrossNavigation cn = (SbiCrossNavigation) o;
