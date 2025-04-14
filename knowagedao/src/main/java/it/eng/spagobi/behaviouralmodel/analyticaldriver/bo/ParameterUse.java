@@ -32,6 +32,7 @@ public class ParameterUse implements Serializable {
 	Integer useID;
 	Integer id; // in realtà questo è par_id nella tabella
 	Integer idLov;
+	String descLov;
 	Integer idLovForDefault;
 	Integer idLovForMax;
 	String name = "";
@@ -178,6 +179,7 @@ public class ParameterUse implements Serializable {
 	public Integer getUseID() {
 		return useID;
 	}
+
 
 	/**
 	 * Sets the use id.
@@ -346,6 +348,14 @@ public class ParameterUse implements Serializable {
 
 	public void setDefaultFormula(String defaultFormula) {
 		this.defaultFormula = defaultFormula;
+	}
+
+	public void setDescLov(String descLov) {
+		this.descLov = descLov;
+	}
+
+	public String getDescLov() {
+		return descLov;
 	}
 
 }
