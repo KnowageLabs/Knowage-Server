@@ -527,10 +527,12 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 			hibBIObject.setLabel(biObject.getLabel());
 			hibBIObject.setName(biObject.getName());
 
-			if (biObject.getEncrypt() != null)
+			if (biObject.getEncrypt() != null) {
 				hibBIObject.setEncrypt(biObject.getEncrypt().shortValue());
-			if (biObject.getVisible() != null)
+			}
+			if (biObject.getVisible() != null) {
 				hibBIObject.setVisible(biObject.getVisible().shortValue());
+			}
 
 			hibBIObject.setProfiledVisibility(biObject.getProfiledVisibility());
 			hibBIObject.setRelName(biObject.getRelName());
@@ -699,10 +701,12 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 			hibBIObject.setLabel(biObject.getLabel());
 			hibBIObject.setName(biObject.getName());
 
-			if (biObject.getEncrypt() != null)
+			if (biObject.getEncrypt() != null) {
 				hibBIObject.setEncrypt(biObject.getEncrypt().shortValue());
-			if (biObject.getVisible() != null)
+			}
+			if (biObject.getVisible() != null) {
 				hibBIObject.setVisible(biObject.getVisible().shortValue());
+			}
 
 			hibBIObject.setProfiledVisibility(biObject.getProfiledVisibility());
 			hibBIObject.setRelName(biObject.getRelName());
@@ -848,10 +852,12 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 			hibBIObject.setLabel(biObject.getLabel());
 			hibBIObject.setName(biObject.getName());
 
-			if (biObject.getEncrypt() != null)
+			if (biObject.getEncrypt() != null) {
 				hibBIObject.setEncrypt(biObject.getEncrypt().shortValue());
-			if (biObject.getVisible() != null)
+			}
+			if (biObject.getVisible() != null) {
 				hibBIObject.setVisible(biObject.getVisible().shortValue());
+			}
 
 			hibBIObject.setProfiledVisibility(biObject.getProfiledVisibility());
 			hibBIObject.setRelName(biObject.getRelName());
@@ -1063,8 +1069,9 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 
 			hibBIObject.setLockedByUser(obj.getLockedByUser());
 			Integer refreshSeconds = obj.getRefreshSeconds();
-			if (refreshSeconds == null)
+			if (refreshSeconds == null) {
 				refreshSeconds = 0;
+			}
 			hibBIObject.setRefreshSeconds(refreshSeconds);
 
 			// parameters region
@@ -1547,20 +1554,23 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 		}
 		// set description
 		String descr = hibBIObject.getDescr();
-		if (descr == null)
+		if (descr == null) {
 			descr = "";
+		}
 		aBIObject.setDescription(descr);
 		// set encrypt flag
 		if (hibBIObject.getEncrypt() != null) {
 			aBIObject.setEncrypt(hibBIObject.getEncrypt().intValue());
-		} else
+		} else {
 			aBIObject.setEncrypt(0);
+		}
 
 		// set visible flag
 		if (hibBIObject.getVisible() != null) {
 			aBIObject.setVisible(hibBIObject.getVisible().intValue());
-		} else
+		} else {
 			aBIObject.setVisible(0);
+		}
 
 		// set profiled visibility information
 		aBIObject.setProfiledVisibility(hibBIObject.getProfiledVisibility());
@@ -1713,6 +1723,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 		Parameter parameter = new Parameter();
 		parameter.setId(hiObjPar.getSbiParameter().getParId());
 		parameter.setType(hiObjPar.getSbiParameter().getParameterTypeCode());
+		parameter.setLabel(hiObjPar.getSbiParameter().getLabel());
 		aBIObjectParameter.setParameter(parameter);
 		return aBIObjectParameter;
 	}
@@ -2102,8 +2113,9 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 			aSession = getSession();
 			tx = aSession.beginTransaction();
 			// gets document composition configuration
-			if (template == null)
+			if (template == null) {
 				return;
+			}
 			byte[] contentBytes = template.getContent();
 			String contentStr = new String(contentBytes);
 			SourceBean content = SourceBean.fromXMLString(contentStr);
@@ -2119,13 +2131,13 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 				for (int i = 0; i < lstDocParameters.size(); i++) {
 					BIObjectParameter docParam = lstDocParameters.get(i);
 					SbiObjects aSbiObject = new SbiObjects(biObject.getId());
-					
+
 
 					SbiParameters aSbiParameter = new SbiParameters(docParam.getParameter().getId());
-					
+
 
 					SbiObjPar hibObjPar = new SbiObjPar(docParam.getId());
-					
+
 					hibObjPar.setLabel(docParam.getLabel());
 
 					hibObjPar.setSbiObject(aSbiObject);
@@ -2155,17 +2167,18 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 						if (!totalParameters.contains(objPar.getLabel())) {
 							SbiObjects aSbiObject = new SbiObjects();
 							Integer objId = biObject.getId();
-							if (objId == null || objId.compareTo(new Integer("0")) == 0)
+							if (objId == null || objId.compareTo(new Integer("0")) == 0) {
 								objId = biObject.getId();
+							}
 							aSbiObject = new SbiObjects(objId);
-							
+
 
 							SbiParameters aSbiParameter = new SbiParameters(objPar.getParID());
-							
+
 							SbiObjPar sbiObjPar = new SbiObjPar(new Integer("-1"));
 							sbiObjPar.setSbiObject(aSbiObject);
 							sbiObjPar.setSbiParameter(aSbiParameter);
-							
+
 							sbiObjPar.setLabel(objPar.getLabel());
 							sbiObjPar.setParurlNm(objPar.getParameterUrlName());
 							sbiObjPar.setReqFl(objPar.getRequired().shortValue());
@@ -2217,8 +2230,9 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 			aSession = getSession();
 			tx = aSession.beginTransaction();
 			LOGGER.debug("Template document composition in insert: {}", template);
-			if (template == null)
+			if (template == null) {
 				return;
+			}
 			byte[] contentBytes = template.getContent();
 			String contentStr = new String(contentBytes);
 			SourceBean content = SourceBean.fromXMLString(contentStr);
@@ -2245,17 +2259,18 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 						if (!totalParameters.contains(objPar.getLabel())) {
 							SbiObjects aSbiObject = new SbiObjects();
 							Integer objId = biobjectId;
-							if (objId == null || objId.compareTo(new Integer("0")) == 0)
+							if (objId == null || objId.compareTo(new Integer("0")) == 0) {
 								objId = biobjectId;
+							}
 							aSbiObject = new SbiObjects(objId);
-							
+
 
 							SbiParameters aSbiParameter = new SbiParameters(objPar.getParID());
-							
+
 							SbiObjPar sbiObjPar = new SbiObjPar(new Integer("-1"));
 							sbiObjPar.setSbiObject(aSbiObject);
 							sbiObjPar.setSbiParameter(aSbiParameter);
-							
+
 							sbiObjPar.setLabel(objPar.getLabel());
 							sbiObjPar.setParurlNm(objPar.getParameterUrlName());
 							sbiObjPar.setReqFl(objPar.getRequired().shortValue());
@@ -2375,8 +2390,9 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 			if (!isPersonalFolder) {
 
 				try {
-					if (profile != null)
+					if (profile != null) {
 						roles = ((UserProfile) profile).getRolesForUse();
+					}
 				} catch (Exception e) {
 					LOGGER.error("Error while recovering user profile", e);
 				}
@@ -2840,8 +2856,9 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 
 			hibernateQuery = aSession.createQuery("from SbiObjects order by label");
 			hibernateQuery.setFirstResult(offset);
-			if (fetchSize > 0)
+			if (fetchSize > 0) {
 				hibernateQuery.setMaxResults(fetchSize);
+			}
 
 			toTransform = hibernateQuery.list();
 
@@ -2874,14 +2891,16 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 			criteria.add(labelCriterrion);
 
 			SbiObjects hibObject = (SbiObjects) criteria.uniqueResult();
-			if (hibObject == null)
+			if (hibObject == null) {
 				return null;
+			}
 
 			String currentUser = (String) ((UserProfile) getUserProfile()).getUserId();
 
 			boolean isLocked = false;
-			if (hibObject.getLockedByUser() != null && !hibObject.getLockedByUser().equals(""))
+			if (hibObject.getLockedByUser() != null && !hibObject.getLockedByUser().equals("")) {
 				isLocked = true;
+			}
 
 			if (isLocked && hibObject.getLockedByUser().equals(currentUser)) {
 				hibObject.setLockedByUser(null);

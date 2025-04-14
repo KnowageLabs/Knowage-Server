@@ -1284,16 +1284,19 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 	@Override
 	public List<DataSetBasicInfo> loadDatasetsBasicInfoForAI(List<Integer> idsObject) {
 		logger.debug("IN");
+
+		if (idsObject.isEmpty()) {
+			return Collections.emptyList();
+		}
+
 		List<DataSetBasicInfo> toReturn = new ArrayList<>();
 		Session session = null;
-		System.err.println("start loadDatasetsBasicInfoForAI: " + idsObject);
 		try {
 			session = getSession();
 			toReturn = session
 					.createQuery("select new it.eng.spagobi.tools.dataset.bo.DataSetBasicInfo(ds.label, ds.name, ds.description, ds.dsMetadata,ds.type) "
 							+ " from SbiDataSet ds, SbiObjDataSet ds1 where ds.id.dsId = ds1.dsId and  ds.active = ? and ds1.sbiObject.id IN (:listObject)")
 					.setBoolean(0, true).setParameterList("listObject", idsObject).list();
-			System.err.println("end loadDatasetsBasicInfoForAI: " + idsObject);
 		} catch (Exception e) {
 			throw new SpagoBIDAOException("An unexpected error occured while loading datasets basic info for LOV", e);
 		} finally {

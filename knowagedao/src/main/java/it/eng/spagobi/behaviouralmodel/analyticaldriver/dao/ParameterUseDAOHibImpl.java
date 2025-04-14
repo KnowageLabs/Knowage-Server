@@ -643,6 +643,7 @@ public class ParameterUseDAOHibImpl extends AbstractHibernateDAO implements IPar
 			aParameterUse.setIdLov(null);
 		} else {
 			aParameterUse.setIdLov(hibParUse.getSbiLov().getLovId());
+			aParameterUse.setDescLov(hibParUse.getSbiLov().getLabel());
 		}
 		aParameterUse.setManualInput(hibParUse.getManualInput());
 		aParameterUse.setMaximizerEnabled(hibParUse.getMaximizerEnabled());
