@@ -132,6 +132,8 @@ public class PdfExporter extends AbstractFormatExporter {
 			do {
 				dataStore = this.getDataStoreForWidget(template, widget, offset, fetchSize);
 
+				table = createBaseTable(document, page);
+
 				if (offset == 0) {
 					metadata = dataStore.getJSONObject("metaData");
 					columns = metadata.getJSONArray("fields");
@@ -154,8 +156,6 @@ public class PdfExporter extends AbstractFormatExporter {
 
 					totalNumberOfRows = dataStore.getInt("results");
 
-					table = createBaseTable(document, page);
-
 					PDFont font = PDType0Font.load(table.document, pdfFontFile);
 
 					addHeaderToTable(table, style, widgetData, widgetContent, columnsOrdered, pdfHiddenColumns, font);
@@ -169,9 +169,11 @@ public class PdfExporter extends AbstractFormatExporter {
 						rows, font);
 
 				offset += fetchSize;
+
+				table.draw();
+
 			} while (offset < totalNumberOfRows);
 
-			table.draw();
 
 		} catch (Exception e) {
 			throw new SpagoBIRuntimeException("Unable to export generic widget: " + widgetId, e);
