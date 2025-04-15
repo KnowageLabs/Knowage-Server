@@ -83,10 +83,12 @@ public class DataSetMetadataJSONSerializer implements Serializer {
 						String name = (String) row.getAttribute("name");
 						String type = (String) row.getAttribute("TYPE");
 						String fieldType = (String) row.getAttribute("fieldType");
+						String description = (String) row.getAttribute("description");
 						JSONObject jsonMeta = new JSONObject();
 						jsonMeta.put("name", name);
 						jsonMeta.put("type", type);
 						jsonMeta.put("fieldType", fieldType);
+						jsonMeta.put("description", description);
 
 						boolean personal = "true".equalsIgnoreCase((String) row.getAttribute("personal"));
 						jsonMeta.put("personal", personal);
@@ -104,9 +106,11 @@ public class DataSetMetadataJSONSerializer implements Serializer {
 						SourceBean row = rows.get(i);
 						String name = (String) row.getAttribute("NAME");
 						String type = (String) row.getAttribute("TYPE");
+						String description = (String) row.getAttribute("description");
 						JSONObject jsonMeta = new JSONObject();
 						jsonMeta.put("name", name);
 						jsonMeta.put("type", type);
+						jsonMeta.put("description", description);
 
 						boolean personal = "true".equalsIgnoreCase((String) row.getAttribute("personal"));
 						jsonMeta.put("personal", personal);
@@ -199,6 +203,13 @@ public class DataSetMetadataJSONSerializer implements Serializer {
 							boolean subjectId = "true".equalsIgnoreCase((String) row.getAttribute("subjectId"));
 							JSONObject subjectIdJSONObject = createPropertyObject(columnName, "subjectId", subjectId);
 							columnsJSONArray.put(subjectIdJSONObject);
+
+							String description = (String) row.getAttribute("description");
+							JSONObject fieldDescriptionJSONObject = new JSONObject();
+							fieldDescriptionJSONObject.put("column", columnName);
+							fieldDescriptionJSONObject.put("pname", "description");
+							fieldDescriptionJSONObject.put("pvalue", description);
+							columnsJSONArray.put(fieldDescriptionJSONObject);
 
 							List<SourceBean> properties = row.getAttributeAsList("PROPERTY");
 							for (int j = 0; j < properties.size(); j++) {

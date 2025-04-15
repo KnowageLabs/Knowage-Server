@@ -59,6 +59,7 @@ public class SyncMetaDataDataStoreTransformer implements IDataStoreTransformer {
 					e.setDecrypt(currField.isDecrypt());
 					e.setPersonal(currField.isPersonal());
 					e.setSubjectId(currField.isSubjectId());
+					e.setDescription(currField.getDescription());
 				}
 			});
 		// @formatter:on

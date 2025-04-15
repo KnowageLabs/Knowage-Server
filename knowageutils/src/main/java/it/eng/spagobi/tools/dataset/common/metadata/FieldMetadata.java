@@ -37,6 +37,8 @@ public class FieldMetadata implements IFieldMetaData, Cloneable {
 	private boolean decrypt;
 	private boolean subjectId;
 
+	private String description;
+
 	public FieldMetadata() {
 		this.properties = new HashMap();
 		fieldType = FieldType.ATTRIBUTE;
@@ -142,16 +144,20 @@ public class FieldMetadata implements IFieldMetaData, Cloneable {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
+		if (this == obj) {
 			return true;
-		if (obj == null)
+		}
+		if (obj == null) {
 			return false;
-		if (getClass() != obj.getClass())
+		}
+		if (getClass() != obj.getClass()) {
 			return false;
+		}
 		FieldMetadata other = (FieldMetadata) obj;
 		if (getId() == null) {
-			if (other.getId() != null)
+			if (other.getId() != null) {
 				return false;
+			}
 		} else if (!getId().equals(other.getId())) {
 			return false;
 		}
@@ -268,6 +274,16 @@ public class FieldMetadata implements IFieldMetaData, Cloneable {
 	@Override
 	public void setSubjectId(boolean subjectId) {
 		this.subjectId = subjectId;
+	}
+
+	@Override
+	public String getDescription() {
+		return description;
+	}
+
+	@Override
+	public void setDescription(String description) {
+		this.description = description;
 	}
 
 }

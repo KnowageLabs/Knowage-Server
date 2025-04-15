@@ -518,6 +518,7 @@ public class ManageDataSetsForREST {
 //			newMeta.setMasked(metaObj.optBoolean("masked"));
 			newMeta.setDecrypt(metaObj.optBoolean("decrypt"));
 			newMeta.setSubjectId(metaObj.optBoolean("subjectId"));
+			newMeta.setDescription(metaObj.optString("description"));
 			toReturn.addFiedMeta(newMeta);
 		}
 		return toReturn;
@@ -828,6 +829,7 @@ public class ManageDataSetsForREST {
 //							ifmd.setMasked(metadataJSONObject.optBoolean("masked"));
 							ifmd.setDecrypt(metadataJSONObject.optBoolean("decrypt"));
 							ifmd.setSubjectId(metadataJSONObject.optBoolean("subjectId"));
+							ifmd.setDescription(metadataJSONObject.getString("description"));
 							break;
 						}
 					}
@@ -1445,6 +1447,9 @@ public class ManageDataSetsForREST {
 			case "subjectId":
 				m.get(column).setSubjectId(currMetaType.getBoolean("pvalue"));
 				break;
+			case "description":
+				m.get(column).setDescription(currMetaType.getString("description"));
+				break;
 
 			default:
 				break;
@@ -1489,6 +1494,7 @@ public class ManageDataSetsForREST {
 			boolean decrypt = currMetaType.optBoolean("decrypt");
 			boolean personal = currMetaType.optBoolean("personal");
 			boolean subjectId = currMetaType.optBoolean("subjectId");
+			String description = currMetaType.getString("description");
 
 			FieldType fieldTypeFromColumn = getFieldTypeFromColumn(fieldType);
 			Class<?> classTypeFromColumn = getClassTypeFromColumn(type);
@@ -1506,6 +1512,7 @@ public class ManageDataSetsForREST {
 			fieldMetaData.setScale(0);
 			fieldMetaData.setSubjectId(subjectId);
 			fieldMetaData.setType(classTypeFromColumn);
+			fieldMetaData.setDescription(description);
 
 			fieldsMeta.add(fieldMetaData);
 		}

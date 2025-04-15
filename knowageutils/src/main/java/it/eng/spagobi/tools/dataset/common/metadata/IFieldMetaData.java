@@ -93,4 +93,8 @@ public interface IFieldMetaData {
 
 	void setSubjectId(boolean subjectId);
 
+	String getDescription();
+
+	void setDescription(String description);
+
 }

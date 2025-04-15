@@ -20,6 +20,7 @@ package it.eng.spagobi.tools.dataset.utils;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.apache.log4j.Logger;
 
@@ -67,6 +68,7 @@ public class DatasetMetadataParser {
 	public static final String MASKED = "masked";
 	public static final String DECRYPT = "decrypt";
 	public static final String SUBJECT_ID = "subjectId";
+	public static final String DESCRIPTION = "description";
 
 	// XML VALUES FOR PROPERTIES TAG
 
@@ -110,10 +112,12 @@ public class DatasetMetadataParser {
 				sbMeta.setAttribute(attT);
 				sbMeta.setAttribute(attM);
 
-				if (attA != null)
+				if (attA != null) {
 					sbMeta.setAttribute(attA);
-				if (attF != null)
+				}
+				if (attF != null) {
 					sbMeta.setAttribute(attF);
+				}
 				sb.setAttribute(sbMeta);
 
 				// insert properties
@@ -170,10 +174,12 @@ public class DatasetMetadataParser {
 				SourceBeanAttribute attM = new SourceBeanAttribute(MULTIVALUE, multiValue);
 				SourceBeanAttribute attF = fieldType != null ? new SourceBeanAttribute(FIELD_TYPE, fieldType.toString()) : null;
 				SourceBeanAttribute attA = alias != null ? new SourceBeanAttribute(ALIAS, alias) : null;
-				if (attF != null)
+				if (attF != null) {
 					sbMeta.setAttribute(attF);
-				if (attA != null)
+				}
+				if (attA != null) {
 					sbMeta.setAttribute(attA);
+				}
 
 				sbMeta.setAttribute(attN);
 				sbMeta.setAttribute(attT);
@@ -187,7 +193,9 @@ public class DatasetMetadataParser {
 				sbMeta.setAttribute(attDecrypt);
 				SourceBeanAttribute attSubjectId = new SourceBeanAttribute(SUBJECT_ID, fieldMetaData.isSubjectId());
 				sbMeta.setAttribute(attSubjectId);
-
+				SourceBeanAttribute attDescription = new SourceBeanAttribute(DESCRIPTION,
+						Optional.ofNullable(fieldMetaData.getDescription()).map(x -> x).orElse(""));
+				sbMeta.setAttribute(attDescription);
 				sbColumns.setAttribute(sbMeta);
 
 				// insert properties
@@ -340,14 +348,15 @@ public class DatasetMetadataParser {
 					fieldMeta.setMultiValue(isMultivalue);
 
 					fieldMeta.setAlias(alias);
-					if (fieldType != null && fieldType.equalsIgnoreCase(FieldType.ATTRIBUTE.toString()))
+					if (fieldType != null && fieldType.equalsIgnoreCase(FieldType.ATTRIBUTE.toString())) {
 						fieldMeta.setFieldType(FieldType.ATTRIBUTE);
-					else if (fieldType != null && fieldType.equalsIgnoreCase(FieldType.MEASURE.toString()))
+					} else if (fieldType != null && fieldType.equalsIgnoreCase(FieldType.MEASURE.toString())) {
 						fieldMeta.setFieldType(FieldType.MEASURE);
-					else if (fieldType != null && fieldType.equalsIgnoreCase(FieldType.SPATIAL_ATTRIBUTE.toString()))
+					} else if (fieldType != null && fieldType.equalsIgnoreCase(FieldType.SPATIAL_ATTRIBUTE.toString())) {
 						fieldMeta.setFieldType(FieldType.SPATIAL_ATTRIBUTE);
-					else
+					} else {
 						fieldMeta.setFieldType(FieldType.ATTRIBUTE);
+					}
 
 					boolean personal = sbRow.getAttribute(PERSONAL) != null ? Boolean.parseBoolean((String) sbRow.getAttribute(PERSONAL)) : false;
 					fieldMeta.setPersonal(personal);
@@ -357,6 +366,8 @@ public class DatasetMetadataParser {
 					fieldMeta.setDecrypt(decrypt);
 					boolean subjectId = sbRow.getAttribute(SUBJECT_ID) != null ? Boolean.parseBoolean((String) sbRow.getAttribute(SUBJECT_ID)) : false;
 					fieldMeta.setSubjectId(subjectId);
+					String description = sbRow.getAttribute(DESCRIPTION) != null ? sbRow.getAttribute(DESCRIPTION).toString() : null;
+					fieldMeta.setDescription(description);
 
 					List properties = sbRow.getAttributeAsList(DatasetMetadataParser.PROPERTY);
 
