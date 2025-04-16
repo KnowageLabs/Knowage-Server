@@ -340,6 +340,10 @@ public class PageResource extends AbstractCockpitEngineResource {
 	private Response openPagePdfInternal(String pageName)
 			throws EMFUserError, IOException, InterruptedException, JSONException {
 		String requestURL = getRequestUrlForPdfExport(request);
+
+		String role = getProfileRole();
+		String organization = getUserProfile().getOrganization();
+
 		RenderOptions renderOptions = getRenderOptionsForPdfExporter(request);
 
 		int documentId = Integer.parseInt(request.getParameter("document"));
@@ -349,7 +353,7 @@ public class PageResource extends AbstractCockpitEngineResource {
 		boolean pdfBackPage = Boolean.parseBoolean(request.getParameter(PDF_BACK_PAGE));
 
 		PdfExporterV2 pdfExporter = new PdfExporterV2(documentId, userId, requestURL, renderOptions, pdfPageOrientation,
-				pdfFrontPage, pdfBackPage);
+				pdfFrontPage, pdfBackPage, role, organization);
 		byte[] data = pdfExporter.getBinaryData();
 
 		return Response.ok(data, "application/pdf").header("Content-Length", Integer.toString(data.length))
@@ -358,12 +362,7 @@ public class PageResource extends AbstractCockpitEngineResource {
 				.build();
 	}
 
-	private Response openPageSpreadsheetInternal(String pageName)
-			throws IOException, InterruptedException, JSONException {
-
-		request.setAttribute("template", getIOManager().getTemplateAsString());
-		String requestURL = getRequestUrlForExcelExport(request);
-
+	private String getProfileRole() {
 		IEngUserProfile profile = (IEngUserProfile) request.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 		Collection<String> roles;
 		try {
@@ -378,7 +377,16 @@ public class PageResource extends AbstractCockpitEngineResource {
 			throw new SpagoBIRuntimeException("User has more than one role, cannot export to excel");
 		}
 
-		String role = Iterables.get(roles, 0);
+        return Iterables.get(roles, 0);
+	}
+
+	private Response openPageSpreadsheetInternal(String pageName)
+			throws IOException, InterruptedException, JSONException {
+
+		request.setAttribute("template", getIOManager().getTemplateAsString());
+		String requestURL = getRequestUrlForExcelExport(request);
+
+		String role = getProfileRole();
 
 		String organization = getUserProfile().getOrganization();
 
@@ -414,8 +422,12 @@ public class PageResource extends AbstractCockpitEngineResource {
 		boolean pdfBackPage = request.getParameter(PDF_BACK_PAGE) != null
 				&& Boolean.parseBoolean(request.getParameter(PDF_BACK_PAGE));
 
+		String role = getProfileRole();
+
+		String organization = getUserProfile().getOrganization();
+
 		PngExporter pngExporter = new PngExporter(documentId, userId, requestURL, renderOptions, pdfPageOrientation,
-				pdfFrontPage, pdfBackPage);
+				pdfFrontPage, pdfBackPage, role, organization);
 		byte[] data = pngExporter.getBinaryData();
 
 		boolean isZipped = false;

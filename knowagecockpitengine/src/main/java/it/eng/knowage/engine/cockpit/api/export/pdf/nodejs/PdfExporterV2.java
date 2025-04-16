@@ -40,8 +40,8 @@ public class PdfExporterV2 extends AbstractNodeJSBasedExporter {
 	private static final Logger LOGGER = Logger.getLogger(PdfExporterV2.class);
 
 	public PdfExporterV2(int documentId, String userId, String requestUrl, RenderOptions renderOptions,
-			String pageOrientation, boolean pdfFrontPage, boolean pdfBackPage) throws EMFUserError, JSONException {
-		super(documentId, userId, requestUrl, renderOptions, pageOrientation, pdfFrontPage, pdfBackPage);
+			String pageOrientation, boolean pdfFrontPage, boolean pdfBackPage, String role, String organization) throws EMFUserError, JSONException {
+		super(documentId, userId, requestUrl, renderOptions, pageOrientation, pdfFrontPage, pdfBackPage, role, organization);
 	}
 
 	@Override

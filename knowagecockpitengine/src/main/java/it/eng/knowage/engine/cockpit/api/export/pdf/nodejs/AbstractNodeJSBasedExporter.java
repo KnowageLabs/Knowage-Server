@@ -125,9 +125,11 @@ public abstract class AbstractNodeJSBasedExporter {
 	private final BIObject document;
 	private final String engineLabel;
 	private final JSONObject template;
+	private final String role;
+	private final String organization;
 
 	protected AbstractNodeJSBasedExporter(int documentId, String userId, String requestUrl, RenderOptions renderOptions,
-			String pdfPageOrientation, boolean pdfFrontPage, boolean pdfBackPage) throws EMFUserError, JSONException {
+			String pdfPageOrientation, boolean pdfFrontPage, boolean pdfBackPage, String role, String organization) throws EMFUserError, JSONException {
 		this.documentId = documentId;
 		this.userId = userId;
 		this.requestUrl = requestUrl;
@@ -135,6 +137,8 @@ public abstract class AbstractNodeJSBasedExporter {
 		this.pageOrientation = pdfPageOrientation;
 		this.pdfFrontPage = pdfFrontPage;
 		this.pdfBackPage = pdfBackPage;
+		this.role = role;
+		this.organization = organization;
 
 		document = DAOFactory.getBIObjectDAO().loadBIObjectById(documentId);
 		engineLabel = document.getEngineLabel();
@@ -220,6 +224,8 @@ public abstract class AbstractNodeJSBasedExporter {
 				.replaceQueryParam("outputType", "HTML")
 				// Strange way to delete a query param but that's it
 				.replaceQueryParam("export")
+				.replaceQueryParam("role", role)
+				.replaceQueryParam("organization", organization)
 				.build();
 		// @formatter:on
 		LOGGER.debug("URL: " + url);

@@ -39,8 +39,8 @@ public class PngExporter extends AbstractNodeJSBasedExporter {
 	private static final Logger LOGGER = Logger.getLogger(PngExporter.class);
 
 	public PngExporter(int documentId, String userId, String requestUrl, RenderOptions renderOptions,
-			String pdfPageOrientation, boolean pdfFrontPage, boolean pdfBackPage) throws EMFUserError, JSONException {
-		super(documentId, userId, requestUrl, renderOptions, pdfPageOrientation, pdfFrontPage, pdfBackPage);
+			String pdfPageOrientation, boolean pdfFrontPage, boolean pdfBackPage, String role, String organization) throws EMFUserError, JSONException {
+		super(documentId, userId, requestUrl, renderOptions, pdfPageOrientation, pdfFrontPage, pdfBackPage, role, organization);
 	}
 
 	@Override
