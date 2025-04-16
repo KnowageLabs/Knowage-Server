@@ -68,40 +68,6 @@ public class CrossNavigationDAOImpl extends AbstractHibernateDAO implements ICro
 	public static final int TYPE_OUTPUT = 0;
 
 	@Override
-	public List<SimpleNavigation> listNavigationLight() {
-		final List<SimpleNavigation> lst = new ArrayList<>();
-		executeOnTransaction(new IExecuteOnTransaction<Boolean>() {
-			@Override
-			public Boolean execute(Session session) throws JSONException {
-				Criteria c = session.createCriteria(SbiCrossNavigation.class).add(Restrictions.isNotNull("fromDocId")).add(Restrictions.isNotNull("toDocId"));
-
-				for (Object o : c.list()) {
-					SbiCrossNavigation cn = (SbiCrossNavigation) o;
-					SimpleNavigation sn = new SimpleNavigation();
-					sn.setId(cn.getId());
-					sn.setName(cn.getName());
-					sn.setDescription(cn.getDescription());
-					sn.setBreadcrumb(cn.getBreadcrumb());
-					sn.setType(cn.getType());
-					sn.setFromDocId(cn.getFromDocId());
-					sn.setToDocId(cn.getToDocId());
-
-					SbiObjects objFromDoc = (SbiObjects) session.load(SbiObjects.class, cn.getFromDocId());
-					sn.setFromDoc(objFromDoc.getLabel());
-
-					SbiObjects objToDoc = (SbiObjects) session.load(SbiObjects.class, cn.getToDocId());
-					sn.setToDoc(objToDoc.getLabel());
-
-					lst.add(sn);
-				}
-				return Boolean.TRUE;
-			}
-		});
-
-		return lst;
-	}
-
-	@Override
 	public List<SimpleNavigation> listNavigation() {
 		final List<SimpleNavigation> lst = new ArrayList<>();
 		executeOnTransaction(new IExecuteOnTransaction<Boolean>() {

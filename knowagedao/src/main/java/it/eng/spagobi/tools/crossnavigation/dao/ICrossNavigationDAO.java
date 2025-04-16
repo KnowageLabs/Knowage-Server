@@ -34,8 +34,6 @@ public interface ICrossNavigationDAO extends ISpagoBIDao {
 
 	List<SimpleNavigation> listNavigation();
 
-	List<SimpleNavigation> listNavigationLight();
-
 	NavigationDetail loadNavigation(Integer id);
 
 	void update(NavigationDetail nd);
