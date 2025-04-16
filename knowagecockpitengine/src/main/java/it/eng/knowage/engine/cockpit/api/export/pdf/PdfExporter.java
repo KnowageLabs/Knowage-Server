@@ -109,29 +109,29 @@ public class PdfExporter extends AbstractFormatExporter {
 			JSONObject settings = widget.optJSONObject("settings");
 			JSONObject style = widget.optJSONObject("style");
 
-			PDPage page = createPage(settings, widget);
-			document.addPage(page);
 
-			JSONObject dataStore = null;
+			JSONObject dataStore;
 			int totalNumberOfRows = 0;
 			int offset = 0;
 			int fetchSize = Integer
 					.parseInt(SingletonConfig.getInstance().getConfigValue("SPAGOBI.API.DATASET.MAX_ROWS_NUMBER"));
-			BaseTable table = null;
-			JSONObject metadata = null;
-			JSONArray columns = null;
-			JSONArray rows = null;
+			BaseTable table;
+			JSONObject metadata;
+			JSONArray columns;
+			JSONArray rows;
 			JSONArray columnsOrdered = null;
 			List<Integer> pdfHiddenColumns = null;
 			String[] columnDateFormats = null;
 			JSONObject[] columnStyles = null;
-			JSONArray jsonArray = null;
+			JSONArray jsonArray;
 			URL resource = getClass().getClassLoader().getResource("/fonts/DejaVuSans.ttf");
 			File pdfFontFile = new File(resource.toURI());
 			do {
 				dataStore = this.getDataStoreForWidget(template, widget, offset, fetchSize);
 
-				table = createBaseTable(document, page);
+				PDPage newPage = createPage(settings, widget);
+				document.addPage(newPage);
+				table = createBaseTable(document, newPage);
 
 				JSONObject widgetData = dataStore.getJSONObject("widgetData");
 				JSONObject widgetContent = widgetData.getJSONObject("content");
