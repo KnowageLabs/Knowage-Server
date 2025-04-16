@@ -134,13 +134,13 @@ public class PdfExporter extends AbstractFormatExporter {
 
 				table = createBaseTable(document, page);
 
+				JSONObject widgetData = dataStore.getJSONObject("widgetData");
+				JSONObject widgetContent = widgetData.getJSONObject("content");
+
 				if (offset == 0) {
 					metadata = dataStore.getJSONObject("metaData");
 					columns = metadata.getJSONArray("fields");
 					columns = filterDataStoreColumns(columns);
-
-					JSONObject widgetData = dataStore.getJSONObject("widgetData");
-					JSONObject widgetContent = widgetData.getJSONObject("content");
 
 					jsonArray = widgetContent.getJSONArray("columnSelectedOfDataset");
 					hiddenColumns = getHiddenColumnsList(jsonArray);
@@ -155,10 +155,6 @@ public class PdfExporter extends AbstractFormatExporter {
 					initColumnWidths(columnStyles, columnsOrdered.length(), pdfHiddenColumns);
 
 					totalNumberOfRows = dataStore.getInt("results");
-
-					PDFont font = PDType0Font.load(table.document, pdfFontFile);
-
-					addHeaderToTable(table, style, widgetData, widgetContent, columnsOrdered, pdfHiddenColumns, font);
 				}
 
 				rows = dataStore.getJSONArray("rows");
@@ -166,7 +162,7 @@ public class PdfExporter extends AbstractFormatExporter {
 				PDFont font = PDType0Font.load(table.document, pdfFontFile);
 
 				addDataToTable(table, settings, columnsOrdered, pdfHiddenColumns, columnDateFormats, columnStyles,
-						rows, font);
+						rows, font, style, widgetData, widgetContent);
 
 				offset += fetchSize;
 
@@ -181,8 +177,11 @@ public class PdfExporter extends AbstractFormatExporter {
 	}
 
 	private void addDataToTable(BaseTable table, JSONObject settings, JSONArray columnsOrdered,
-			List<Integer> pdfHiddenColumns, String[] columnDateFormats, JSONObject[] columnStyles, JSONArray rows, PDFont font)
-            throws JSONException, IOException, URISyntaxException {
+								List<Integer> pdfHiddenColumns, String[] columnDateFormats, JSONObject[] columnStyles, JSONArray rows, PDFont font, JSONObject style, JSONObject widgetData, JSONObject widgetContent)
+			throws JSONException, IOException, URISyntaxException {
+
+		addHeaderToTable(table, style, widgetData, widgetContent, columnsOrdered, pdfHiddenColumns, font);
+
 		// Check if summary row is enabled
 		boolean summaryRowEnabled = false;
 		String summaryRowLabel = null;
