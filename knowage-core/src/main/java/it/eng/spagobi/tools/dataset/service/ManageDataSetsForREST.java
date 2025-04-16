@@ -1448,7 +1448,11 @@ public class ManageDataSetsForREST {
 				m.get(column).setSubjectId(currMetaType.getBoolean("pvalue"));
 				break;
 			case "description":
-				m.get(column).setDescription(currMetaType.getString("description"));
+				try {
+					m.get(column).setDescription(currMetaType.getString("description"));
+				} catch (JSONException e) {
+					m.get(column).setDescription("");
+				}
 				break;
 
 			default:

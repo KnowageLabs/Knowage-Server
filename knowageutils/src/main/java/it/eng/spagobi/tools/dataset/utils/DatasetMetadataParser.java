@@ -20,7 +20,6 @@ package it.eng.spagobi.tools.dataset.utils;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 import org.apache.log4j.Logger;
 
@@ -193,8 +192,13 @@ public class DatasetMetadataParser {
 				sbMeta.setAttribute(attDecrypt);
 				SourceBeanAttribute attSubjectId = new SourceBeanAttribute(SUBJECT_ID, fieldMetaData.isSubjectId());
 				sbMeta.setAttribute(attSubjectId);
-				SourceBeanAttribute attDescription = new SourceBeanAttribute(DESCRIPTION,
-						Optional.ofNullable(fieldMetaData.getDescription()).map(x -> x).orElse(""));
+				SourceBeanAttribute attDescription = null;
+				if (fieldMetaData.getDescription() != null && !fieldMetaData.getDescription().trim().equals("null")) {
+					attDescription = new SourceBeanAttribute(DESCRIPTION, fieldMetaData.getDescription());
+				} else {
+					attDescription = new SourceBeanAttribute(DESCRIPTION, "");
+				}
+
 				sbMeta.setAttribute(attDescription);
 				sbColumns.setAttribute(sbMeta);
 
