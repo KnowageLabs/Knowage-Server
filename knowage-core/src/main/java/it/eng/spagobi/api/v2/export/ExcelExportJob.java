@@ -20,11 +20,16 @@ package it.eng.spagobi.api.v2.export;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.math.BigDecimal;
+import java.sql.ResultSetMetaData;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+import java.util.Optional;
 
+import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
 import org.apache.log4j.LogMF;
 import org.apache.log4j.Logger;
 import org.apache.poi.ss.SpreadsheetVersion;
@@ -86,52 +91,29 @@ public class ExcelExportJob extends AbstractExportJob {
 
 				// STYLE CELL
 				CellStyle borderStyleHeader = wb.createCellStyle();
-//				borderStyleHeader.setBorderBottom(BorderStyle.THIN);
-//				borderStyleHeader.setBorderLeft(BorderStyle.THIN);
-//				borderStyleHeader.setBorderRight(BorderStyle.THIN);
-//				borderStyleHeader.setBorderTop(BorderStyle.THIN);
 				borderStyleHeader.setAlignment(HorizontalAlignment.CENTER);
 
 				CellStyle borderStyleRow = wb.createCellStyle();
-//				borderStyleRow.setBorderBottom(BorderStyle.THIN);
-//				borderStyleRow.setBorderLeft(BorderStyle.THIN);
-//				borderStyleRow.setBorderRight(BorderStyle.THIN);
-//				borderStyleRow.setBorderTop(BorderStyle.THIN);
 				borderStyleRow.setAlignment(HorizontalAlignment.RIGHT);
 
 				CellStyle tsCellStyle = wb.createCellStyle();
 				tsCellStyle.setDataFormat(createHelper.createDataFormat().getFormat(TIMESTAMP_FORMAT));
-//				tsCellStyle.setBorderBottom(BorderStyle.THIN);
-//				tsCellStyle.setBorderLeft(BorderStyle.THIN);
-//				tsCellStyle.setBorderRight(BorderStyle.THIN);
-//				tsCellStyle.setBorderTop(BorderStyle.THIN);
 				tsCellStyle.setAlignment(HorizontalAlignment.RIGHT);
 
 				CellStyle dateCellStyle = wb.createCellStyle();
 				dateCellStyle.setDataFormat(createHelper.createDataFormat().getFormat(DATE_FORMAT));
-//				dateCellStyle.setBorderBottom(BorderStyle.THIN);
-//				dateCellStyle.setBorderLeft(BorderStyle.THIN);
-//				dateCellStyle.setBorderRight(BorderStyle.THIN);
-//				dateCellStyle.setBorderTop(BorderStyle.THIN);
 				dateCellStyle.setAlignment(HorizontalAlignment.RIGHT);
 
 				CellStyle intCellStyle = wb.createCellStyle();
 				intCellStyle.setDataFormat(createHelper.createDataFormat().getFormat("0"));
-//				intCellStyle.setBorderBottom(BorderStyle.THIN);
-//				intCellStyle.setBorderLeft(BorderStyle.THIN);
-//				intCellStyle.setBorderRight(BorderStyle.THIN);
-//				intCellStyle.setBorderTop(BorderStyle.THIN);
 				intCellStyle.setAlignment(HorizontalAlignment.RIGHT);
 
 				CellStyle decimalCellStyle = wb.createCellStyle();
 				decimalCellStyle.setDataFormat(createHelper.createDataFormat().getFormat("#,##0.00"));
-//				decimalCellStyle.setBorderBottom(BorderStyle.THIN);
-//				decimalCellStyle.setBorderLeft(BorderStyle.THIN);
-//				decimalCellStyle.setBorderRight(BorderStyle.THIN);
-//				decimalCellStyle.setBorderTop(BorderStyle.THIN);
 				decimalCellStyle.setAlignment(HorizontalAlignment.RIGHT);
 
 				IMetaData dataSetMetadata = dataSet.getMetadata();
+				DataIterator iterator = dataSet.iterator();
 
 				// CREATE BRANDED HEADER SHEET
 				this.imageB64 = OrganizationImageManager.getOrganizationB64ImageWide(TenantManager.getTenant().getName());
@@ -159,12 +141,21 @@ public class ExcelExportJob extends AbstractExportJob {
 						dataspan,
 						this.documentName,
 						sheet.getSheetName());
-				
+				ResultSetMetaData resultSetMetaData = ((it.eng.spagobi.tools.dataset.common.iterator.ResultSetIterator) iterator).getRs().getMetaData();
+
+				List<IFieldMetaData> filteredMetadata = new ArrayList<>();
+
+				for (int i = 0; i < resultSetMetaData.getColumnCount(); i++) {
+					String columnName = resultSetMetaData.getColumnName(i + 1);
+					Optional<IFieldMetaData> fieldMetaData = dataSetMetadata.getFieldsMeta().stream().filter(f -> f.getName().equalsIgnoreCase(columnName)).findFirst();
+                    fieldMetaData.ifPresent(filteredMetadata::add);
+				}
+
 				header = sheet.createRow((short) headerIndex+1); // first row
-				if (dataSetMetadata != null && dataSetMetadata.getFieldCount() > 0) {
-					for (int i = 0; i <= dataSetMetadata.getFieldCount() - 1; i++) {
+				if (!filteredMetadata.isEmpty()) {
+					for (int i = 0; i <= filteredMetadata.size() - 1; i++) {
 						Cell cell = header.createCell(i);
-						cell.setCellValue(dataSetMetadata.getFieldAlias(i));
+						cell.setCellValue(filteredMetadata.get(i).getAlias());
 						cell.setCellStyle(borderStyleHeader);
 						// set cell style
 						CellStyle headerCellStyle = buildCellStyle(sheet, true, HorizontalAlignment.LEFT, VerticalAlignment.CENTER, (short) 11);
@@ -176,9 +167,8 @@ public class ExcelExportJob extends AbstractExportJob {
 				adjustColumnWidth(sheet, this.imageB64);
 
 				// FILL CELL RECORD
-				try (DataIterator iterator = dataSet.iterator()) {
-
-					int i = headerIndex + 1;
+				try {
+					int i = headerIndex+1;
 					final int recordLimit = SpreadsheetVersion.EXCEL2007.getLastRowIndex();
 					while (iterator.hasNext() && i < recordLimit) {
 
@@ -188,7 +178,7 @@ public class ExcelExportJob extends AbstractExportJob {
 							Row row = sheet.createRow(i + 1); // starting from 2nd row
 
 							for (int k = 0; k <= dataSetRecord.getFields().size() - 1; k++) {
-								Class<?> clazz = dataSetMetadata.getFieldType(k);
+								Class<?> clazz = filteredMetadata.get(k).getType();
 								Object value = dataSetRecord.getFieldAt(k).getValue();
 								Cell cell = row.createCell(k);
 
@@ -241,6 +231,10 @@ public class ExcelExportJob extends AbstractExportJob {
 
 						i++;
 					}
+				} catch (RuntimeException rte) {
+					String msg = "Error generating Excel file";
+					logger.error(msg, rte);
+					throw new IllegalStateException(msg, rte);
 				}
 
 				// adjusts the column width to fit the contents
