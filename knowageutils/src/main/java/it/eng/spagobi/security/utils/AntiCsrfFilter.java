@@ -71,15 +71,17 @@ public class AntiCsrfFilter implements Filter {
 	}
 
 	private boolean excludeCheck(String path) {
+
 		List<String> urlToExclude = new ArrayList<>();
 		urlToExclude.add("/signup/prepare");
 		urlToExclude.add("/1.0/images/getImage");
 		urlToExclude.add("/publish");
 		urlToExclude.add("/2.0/datasets/preview");
 
-        return urlToExclude.contains(path);
-
+        return urlToExclude.contains(path) || path.startsWith("/1.0/ai/");
 	}
+
+
 
 	@Override
 	public void destroy() {
