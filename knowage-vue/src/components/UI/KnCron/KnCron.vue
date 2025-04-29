@@ -296,12 +296,16 @@ export default defineComponent({
             this.startTime = new Date(this.currentFrequency.startDate)
             this.startDate.setHours(0)
             this.startDate.setMinutes(0)
+            this.startDate.setSeconds(0)
+            this.startTime.setMilliseconds(0)
 
             if (this.currentFrequency.endDate) {
                 this.endDate = new Date(this.currentFrequency.endDate)
                 this.endTime = new Date(this.currentFrequency.endDate)
                 this.endDate.setHours(0)
                 this.endDate.setMinutes(0)
+                this.startDate.setSeconds(0)
+                this.startTime.setMilliseconds(0)
             } else {
                 this.endDate = null
                 this.endTime = null
@@ -418,6 +422,8 @@ export default defineComponent({
             }
         },
         setDate(type: string) {
+            this.startDate?.setSeconds(0)
+            this.startDate?.setMilliseconds(0)
             const date = type === 'startDate' ? this.startDate?.valueOf() : this.endDate?.valueOf()
             const tempTime = type === 'startDate' ? this.startTime : this.endTime
 
