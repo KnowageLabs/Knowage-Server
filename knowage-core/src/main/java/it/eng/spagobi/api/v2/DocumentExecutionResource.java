@@ -936,7 +936,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 		resultAsMap.put("filterStatus", parametersArrayList);
 
 		if (runDocumentExecution == null || runDocumentExecution.equalsIgnoreCase("true")) {
-			resultAsMap.put("isReadyForExecution", isReadyForExecution(parameters));
+			resultAsMap.put("isReadyForExecution", isReadyForExecution(parameters, resultAsMap));
 		} else if (runDocumentExecution.equalsIgnoreCase("false")) {
 			resultAsMap.put("isReadyForExecution", false);
 		} else {
@@ -1137,17 +1137,40 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 		return sessionParametersMap;
 	}
 
-	private boolean isReadyForExecution(List<DocumentDriverRuntime> parameters) {
+	private boolean isReadyForExecution(List<DocumentDriverRuntime> parameters, Map<String, Object> resultAsMap) {
 		for (DocumentDriverRuntime parameter : parameters) {
 			List values = parameter.getDriver().getParameterValues();
 			// if parameter is mandatory and has no value, execution cannot start automatically
-			if (parameter.isMandatory() && (values == null || values.isEmpty())) {
+			if (parameter.isMandatory() && (values == null || values.isEmpty() || parameterIsNotAdmissible(resultAsMap))) {
 				LOGGER.debug("Parameter [" + parameter.getId()
 						+ "] is mandatory but has no values. Execution cannot start automatically");
 				return false;
 			}
 		}
 		return true;
+	}
+
+	private boolean parameterIsNotAdmissible(Map<String, Object> resultAsMap) {
+		try {
+			List filterStatus = (List) resultAsMap.get("filterStatus");
+
+			if (filterStatus == null) {
+				return false;
+			}
+
+			for (Object filter : filterStatus) {
+				Map<String, Object> filterMap = (Map<String, Object>) filter;
+				List parameterDescription = (List) filterMap.get("parameterDescription");
+				if (parameterDescription != null && !parameterDescription.isEmpty()) {
+					if (parameterDescription.contains("NOT ADMISSIBLE")) {
+						return true;
+					}
+				}
+			}
+		} catch (Exception e) {
+			LOGGER.error("Error while checking admissibility of parameters", e);
+		}
+		return false;
 	}
 
 	private void applyRequestParameters(BIObject biObject, JSONObject crossNavigationParametesMap,
