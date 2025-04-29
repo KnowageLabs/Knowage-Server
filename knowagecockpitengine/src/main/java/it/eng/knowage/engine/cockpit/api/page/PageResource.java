@@ -92,7 +92,6 @@ public class PageResource extends AbstractCockpitEngineResource {
 	private static final String PDF_DEVICE_SCALE_FACTOR = "pdfDeviceScaleFactor";
 	private static final String PDF_WAIT_TIME = "pdfWaitTime";
 	private static final String IS_MULTI_SHEET = "isMultiSheet";
-	private static final String TOKEN_HEADER = "x-kn-authorization";
 
 	private static Map<String, JSONObject> pages;
 
@@ -168,47 +167,11 @@ public class PageResource extends AbstractCockpitEngineResource {
 
 	@POST
 	@Path("/{pagename}/spreadsheet")
-	public void openPagePostSpreadsheet(@PathParam("pagename") String pagename, @Context HttpServletRequest req) {
-		logger.debug("IN");
-		response.setCharacterEncoding(UTF_8.name());
-		try {
-			JSONObject body = RestUtilities.readBodyAsJSONObject(req);
-			String token = request.getHeader(TOKEN_HEADER);
-			String userId = token.substring(7);
-			DashboardExcelExporter excelExporter = new DashboardExcelExporter(new DatastoreUtils(userId), body);
-			String mimeType = excelExporter.getMimeType();
-			String optionalWidgetId = body.optString("id");
-			boolean isDashboardSingleWidgetExport = !optionalWidgetId.isEmpty();
-
-			if (!MimeUtils.isValidMimeType(mimeType))
-				throw new SpagoBIRuntimeException("Invalid mime type: " + mimeType);
-
-			if (mimeType != null) {
-				byte[] data;
-				data = excelExporter.getDashboardBinaryData(body, isDashboardSingleWidgetExport);
-				if (!isDashboardSingleWidgetExport) {
-					String documentLabel = body.getJSONObject("document").getString("label");
-					response.setHeader("Content-Disposition", "attachment; fileName=" + documentLabel + ".xlsx");
-				} else {
-					String widgetName = body.getJSONObject("settings").getJSONObject("style").getJSONObject("title")
-							.optString("text");
-					response.setHeader("Content-Disposition", "attachment; fileName=" + widgetName + "." + "xlsx");
-				}
-				response.setContentType(MediaType.APPLICATION_OCTET_STREAM);
-				response.setHeader("Content-length", Integer.toString(data.length));
-				response.setHeader("Content-Type", mimeType);
-
-				response.getOutputStream().write(data, 0, data.length);
-				response.getOutputStream().flush();
-				response.getOutputStream().close();
-			}
-		} catch (Exception e) {
-			logger.error("Cannot export to Excel", e);
-			throw SpagoBIEngineServiceExceptionHandler.getInstance().getWrappedException("", getEngineInstance(), e);
-		} finally {
-			logger.debug("OUT");
-		}
+	public Response openPagePostSpreadsheet(@PathParam("pagename") String pageName)
+			throws IOException, InterruptedException, JSONException {
+		return openPageSpreadsheetInternal(pageName);
 	}
+
 
 	@GET
 	@Path("/{pagename}/png")
