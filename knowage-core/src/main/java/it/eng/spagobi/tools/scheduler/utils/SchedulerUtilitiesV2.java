@@ -304,6 +304,7 @@ public class SchedulerUtilitiesV2 {
 			SaveAsDocumentOptionsToJson(dispatchContext, obj);
 			SaveAsMailOptionsToJson(dispatchContext, obj);
 			SaveAsDistributionListOptionsToJson(dispatchContext, obj);
+			SaveAsOutputTypeToJson(dispatchContext, obj);
 
 			ja.put(obj);
 		}
@@ -1124,6 +1125,12 @@ public class SchedulerUtilitiesV2 {
 					&& !dispatchContext.getSnapshotHistoryLength().trim().equals("")) {
 				jo.put("snapshothistorylength", dispatchContext.getSnapshotHistoryLength());
 			}
+		}
+	}
+
+	private static void SaveAsOutputTypeToJson(DispatchContext dispatchContext, JSONObject jo) throws JSONException {
+		if (dispatchContext.getOutputTypeTrigger() != null) {
+			jo.put("outputType", dispatchContext.getOutputTypeTrigger());
 		}
 	}
 
