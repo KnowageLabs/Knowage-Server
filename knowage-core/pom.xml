@@ -260,6 +260,12 @@
 			<classifier>lgpl</classifier>
 			<scope>compile</scope>
 		</dependency>
+		<dependency>
+			<artifactId>knowage-excel-export</artifactId>
+			<groupId>it.eng.knowage</groupId>
+			<version>${project.version}</version>
+			<scope>compile</scope>
+		</dependency>
 		
 	</dependencies>
 	
