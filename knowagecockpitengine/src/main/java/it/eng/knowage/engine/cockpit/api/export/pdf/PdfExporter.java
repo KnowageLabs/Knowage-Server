@@ -680,6 +680,7 @@ public class PdfExporter extends AbstractFormatExporter {
 		valueStr = valueStr.replace('\u202F', ' ');
 		valueStr = valueStr.replace('\n', ' ');
 		valueStr = valueStr.replace('\r', ' ');
+		valueStr = valueStr.replace('\t', ' ');
 		return valueStr;
 	}
 
