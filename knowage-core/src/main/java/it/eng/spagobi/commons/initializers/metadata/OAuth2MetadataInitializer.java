@@ -40,6 +40,7 @@ public class OAuth2MetadataInitializer extends MetadataInitializer {
 		metadataInitializers.add(new ConfigurationsInitializer());
 		metadataInitializers.add(new AlertListenerInitializer());
 		metadataInitializers.add(new AlertActionInitializer());
+		metadataInitializers.add(new DashboardThemesInitializer());
 		// metadataInitializers.add(new KpiPeriodicityInitializer());
 		// metadataInitializers.add(new UnitGrantInitializer());
 	}

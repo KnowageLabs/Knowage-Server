@@ -36,6 +36,7 @@ public class SbiDashboardTheme extends SbiHibernateModel {
 	private UUID id = UUID.randomUUID();
 	private String themeName;
 	private JSONObject config;
+	private Boolean isDefault;
 	private String userIn;
 	private String userUp;
 	private String userDe;
@@ -227,6 +228,14 @@ public class SbiDashboardTheme extends SbiHibernateModel {
 	 */
 	public void setUserUp(String userUp) {
 		this.userUp = userUp;
+	}
+
+	public Boolean getIsDefault() {
+		return isDefault;
+	}
+
+	public void setIsDefault(Boolean isDefault) {
+		this.isDefault = isDefault;
 	}
 
 }

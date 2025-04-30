@@ -55,6 +55,7 @@ public class MetadataInitializer extends SpagoBIInitializer {
 		metadataInitializers.add(new AlertListenerInitializer());
 		metadataInitializers.add(new AlertActionInitializer());
 		metadataInitializers.add(new WsEventCleanJobInitializer());
+		metadataInitializers.add(new DashboardThemesInitializer());
 
 	}
 

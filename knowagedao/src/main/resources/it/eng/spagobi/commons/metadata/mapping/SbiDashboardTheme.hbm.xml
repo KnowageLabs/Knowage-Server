@@ -18,6 +18,10 @@
 		<property name="config" type="it.eng.spagobi.hibernate.JSONObjectUserType">
 			<column name="CONFIG" not-null="false" />
 		</property>
+		
+		<property name="isDefault" type="java.lang.Boolean">
+            <column name="IS_DEFAULT" />
+        </property>
 		<component name="commonInfo" insert="true" update="true"
 			class="it.eng.spagobi.commons.metadata.SbiCommonInfo">
 			<property name="userIn" type="string">
