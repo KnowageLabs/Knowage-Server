@@ -77,6 +77,7 @@ public class AntiCsrfFilter implements Filter {
 		urlToExclude.add("/1.0/images/getImage");
 		urlToExclude.add("/publish");
 		urlToExclude.add("/2.0/datasets/preview");
+		urlToExclude.add("/credential");
 
         return urlToExclude.contains(path) || path.startsWith("/1.0/ai/");
 	}
