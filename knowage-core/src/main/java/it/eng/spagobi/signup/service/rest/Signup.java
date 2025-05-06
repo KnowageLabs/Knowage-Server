@@ -380,7 +380,7 @@ public class Signup {
 
 		String password = signupDTO.getPassword();
 		String confirmPassword = signupDTO.getConfirmPassword();
-		if (password == null || password.equals("") || confirmPassword == null || !password.equals(confirmPassword)) {
+		if (password == null || password.isEmpty() || !password.equals(confirmPassword)) {
 			LOGGER.error("Passwortd and confirm password are different");
 			JSONObject errObj = buildErrorMessage(msgBuilder, locale, "signup.check.pwdNotEqual");
 			return Response.ok(errObj.toString()).build();

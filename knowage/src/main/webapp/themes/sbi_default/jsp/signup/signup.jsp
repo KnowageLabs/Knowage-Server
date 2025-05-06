@@ -125,7 +125,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				  );
 				  return;
 			  }
-			  $http.post('<%=urlBuilder.getResourceLink(request, "restful-services/signup/create?SBI_EXECUTION_ID=-1")%>', $scope.newUser)
+			  var uniqueToken = localStorage.getItem('X-CSRF-TOKEN') || (Math.random() + 1).toString(36);
+              document.cookie = "X-CSRF-TOKEN=" + uniqueToken + "; path=/";
+			  $http.post('<%=urlBuilder.getResourceLink(request, "restful-services/signup/create?SBI_EXECUTION_ID=-1")%>', $scope.newUser,{
+			    headers: {
+			    'x-csrf-token': uniqueToken,
+			    }
+			  })
 			  .then(function(response) {
 				  debugger;
 				  if(response.data.errors){

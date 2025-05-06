@@ -48,9 +48,9 @@ public class PasswordChecker {
 		
 		Map<String, String> configChecks = new HashMap<>();
 		configChecks.put("changepwdmodule.len_min", "8");
-		configChecks.put("changepwdmodule.alphabetical", "abcdefghjklmnopqrstuwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ");
-		configChecks.put("changepwdmodule.lower_char", "abcdefghjklmnopqrstuwxyz");
-		configChecks.put("changepwdmodule.upper_char", "ABCDEFGJKLMNOPQRSTUVWXYZ");
+		configChecks.put("changepwdmodule.alphabetical", "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ");
+		configChecks.put("changepwdmodule.lower_char", "abcdefghijklmnopqrstuvwxyz");
+		configChecks.put("changepwdmodule.upper_char", "ABCDEFGHIJKLMNOPQRSTUVWXYZ");
 		configChecks.put("changepwdmodule.special_char", "_|-#$");
 		configChecks.put("changepwdmodule.number", "0123456789");
 
