@@ -350,6 +350,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					cockpitModule_properties.INITIALIZED_WIDGETS.push($scope.ngModel.id);
 				},500);
 			}
+
+			if($scope.selectedValues.length == 0) $scope.clearStartDate()
 		}
 
 		$scope.mobilecheck = function() {
