@@ -81,5 +81,8 @@
 		</div>
 		
 	</div>
+	<div ng-if="isSelectedColumnTemporal() && (selectedValues.length == 0 && selectedDate.startDate && (ngModel.settings.modalityValue !='multiValue' || selectedDate.endDate ) )" class="kn-warning" flex="75">	
+		{{translate.load('sbi.cockpit.widgets.table.nodata.default')}}	
+	</div>
 
 </div>
