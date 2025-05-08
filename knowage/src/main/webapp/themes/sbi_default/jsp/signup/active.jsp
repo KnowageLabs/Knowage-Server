@@ -34,6 +34,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
  IUrlBuilder urlBuilder = UrlBuilderFactory.getUrlBuilder("WEB");
  String baseUrl = urlBuilder.getResourceLink(request, "restful-services/signup/active");
  String getURL=request.getRequestURL().toString().substring(0, request.getRequestURL().toString().indexOf("knowage")) + "knowage/";
+ baseUrl = getURL + "restful-services/signup/active";
  String currTheme = ThemesManager.getDefaultTheme();
 %>
 	
@@ -112,7 +113,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   	</div>
     <script>
    var baseUrl = "<%= baseUrl %>";
-    
+
     angular.module('userActivation',[])
     	.config(['$locationProvider', function($locationProvider) { 
     		$locationProvider.html5Mode({ enabled: true, requireBase: false }); }]
@@ -150,14 +151,22 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     		$scope.translate = sbiModule_translate;
     		$scope.loading = true;
     		$scope.location = $location;
-    		debugger;
     		$scope.version = $location.search().version.match(/^[0-9]{1,2}\.[0-9]{1,2}$/) ? $location.search().version : "master";
     		var url = new URL(baseUrl);
     		url.searchParams.append('token', $location.search().token);
     		url.searchParams.append('locale', $location.search().locale);
     		url.searchParams.append('version', $scope.version);
-    		
-    		 $http.get(url.toString())
+
+    		var urlString = url.toString();
+    		urlString = urlString.substring(urlString.indexOf("/knowage"));
+
+            var uniqueToken = localStorage.getItem('X-CSRF-TOKEN') || (Math.random() + 1).toString(36);
+            document.cookie = "X-CSRF-TOKEN=" + uniqueToken + "; path=/";
+    		$http.get(urlString, {
+                headers: {
+                        'x-csrf-token': uniqueToken,
+                        }
+    		 })
 	    		 .then(function(response){
 	    			 $scope.loading = false;
 	    			 if(response.data.errors){
