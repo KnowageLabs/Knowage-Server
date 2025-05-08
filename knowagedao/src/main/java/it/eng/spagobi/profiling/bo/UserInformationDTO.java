@@ -18,6 +18,9 @@
 
 package it.eng.spagobi.profiling.bo;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Locale;
@@ -200,12 +203,24 @@ public class UserInformationDTO {
 
 	private boolean isEnterpriseEdition() {
 		try {
-			Class.forName("it.eng.knowage.tools.servermanager.utils.LicenseManager");
-			return true;
+			Class<?> clazz = Class.forName("it.eng.knowage.tools.servermanager.utils.LicenseManager");
+			Constructor<?> constructor = clazz.getDeclaredConstructor();
+			constructor.setAccessible(true);
+
+			Object instance = constructor.newInstance();
+
+			Method method = clazz.getDeclaredMethod("areLicensesValid");
+
+			return (Boolean) method.invoke(instance);
+
 		} catch (ClassNotFoundException e) {
 			return false;
 		}
-	}
+		catch (InvocationTargetException | InstantiationException | IllegalAccessException |
+				NoSuchMethodException e) {
+			throw new SpagoBIRuntimeException("Cannot create LicenseManager instance", e);
+		}
+    }
 
 	@Override
 	public String toString() {
