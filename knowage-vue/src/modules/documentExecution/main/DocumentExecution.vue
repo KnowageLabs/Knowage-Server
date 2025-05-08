@@ -258,7 +258,7 @@ export default defineComponent({
             if (!this.user || !this.document) return false
             return (
                 (this.document.engine?.toLowerCase() === 'knowagecockpitengine' || this.document.engine?.toLowerCase() === 'knowagedashboardengine') &&
-                (this.user.functionalities?.includes(UserFunctionalitiesConstants.DOCUMENT_ADMIN_MANAGEMENT) || this.document.creationUser === this.user.userId || (this.document.stateCode === 'DEV' && this.user.functionalities?.includes(UserFunctionalitiesConstants.DOCUMENT_DEV_MANAGEMENT)))
+                (this.user.functionalities?.includes('DocumentAdminManagement') || this.document.creationUser === this.user.userId || (this.document.stateCode === 'DEV' && this.user.functionalities?.includes('DocumentDevManagement')))
         )},
         sessionRole(): string | null {
             if (!this.user) return null
