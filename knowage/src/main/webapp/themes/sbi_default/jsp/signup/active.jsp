@@ -158,7 +158,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     		url.searchParams.append('version', $scope.version);
 
     		var urlString = url.toString();
-    		urlString = urlString.substring(urlString.indexOf("/knowage"));
 
             var uniqueToken = localStorage.getItem('X-CSRF-TOKEN') || (Math.random() + 1).toString(36);
             document.cookie = "X-CSRF-TOKEN=" + uniqueToken + "; path=/";
