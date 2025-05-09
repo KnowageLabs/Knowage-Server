@@ -16,7 +16,6 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 --%>
 
-
 <%@ page language="java"
          extends="it.eng.spago.dispatching.httpchannel.AbstractHttpJspPagePortlet"
          contentType="text/html; charset=UTF-8"
@@ -41,7 +40,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <html>
 <head>
 	    <title>Knowage - Activation</title>
-    	<link rel="shortcut icon" href="<%=urlBuilder.getResourceLinkByTheme(request, "img/favicon.ico",currTheme)%>" />
+        <script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "/js/lib/messageResource/messageResourceKnowageCustom.js")%>"></script>
+        <link rel="shortcut icon" href="<%=urlBuilder.getResourceLinkByTheme(request, "img/favicon.ico",currTheme)%>" />
+
 		   <!-- Bootstrap -->
 		<link rel="stylesheet" href="<%=urlBuilder.getResourceLink(request,"/js/lib/angular/angular-material_1.1.0/angular-material.min.css")%>">
     	<link rel="stylesheet" href="<%=urlBuilder.getResourceLink(request, "themes/commons/css/customStyle.css")%>">
@@ -52,23 +53,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   		<div class="logoKnowage">
   			<img align="center" alt="Image" border="0" src="https://www.knowage-suite.com/site/wp-content/uploads/2016/03/KNOWAGE_logo_color.png" title="Image" width="250">
   		</div>
-  		<div class="social">
-			<a href="https://www.facebook.com/knowagesuite/" target="_blank" rel="noopener noreferrer">
-				<img alt="Facebook" height="32" src="https://www.knowage-suite.com/landing/external_resources/activationMail/images/facebook@2x.png" style="text-decoration:none;height:auto;border:none;display:block" title="Facebook" width="32" />
-			</a>
-			<a href="http://twitter.com/knowage_suite" target="_blank" rel="noopener noreferrer">
-				<img alt="Twitter" height="32" src="https://www.knowage-suite.com/landing/external_resources/activationMail/images/twitter@2x.png" style="text-decoration:none;height:auto;border:none;display:block" title="Twitter" width="32" />
-			</a>
-			<a href="http://linkedin.com/company/knowage" target="_blank" rel="noopener noreferrer">
-				<img alt="LinkedIn" height="32" src="https://www.knowage-suite.com/landing/external_resources/activationMail/images/linkedin@2x.png" style="text-decoration:none;height:auto;border:none;display:block" title="LinkedIn" width="32" />
-			</a>
-			<a href="https://www.youtube.com/channel/UCikC4ug3psdnzpwNMDY9Q7g?sub_confirmation=1" target="_blank" rel="noopener noreferrer">
-				<img alt="YouTube" height="32" src="https://www.knowage-suite.com/landing/external_resources/activationMail/images/youtube@2x.png" style="text-decoration:none;height:auto;border:none;display:block" title="YouTube" width="32" />
-			</a>
-			<a href="mailto:https://www.knowage-suite.com/site/newsletter-subscription/" target="_blank" rel="noopener noreferrer">
-				<img alt="E-Mail" height="32" src="https://www.knowage-suite.com/landing/external_resources/activationMail/images/mail@2x.png" style="text-decoration:none;height:auto;border:none;display:block" title="E-Mail" width="32" />
-			</a>
-		</div>
   	</div>
   	<div class="center">
   		<div class="loading" ng-if="loading">
@@ -91,7 +75,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   				<img align="center" alt="Image" border="0" src="https://www.knowage-suite.com/site/wp-content/uploads/2019/10/book.png" style="text-decoration:none;height:auto;border:none;width:100%;max-width:58px;display:block" title="Image" width="58"/>
   			</a>
   			<p>
-  				{{translate.load('signup.active.documentation')}}
+  				Documentation
   			</p>
   		</div>
   		<div class="third flex-33 flex-xs-100">
@@ -99,7 +83,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   				<img align="center" alt="Image" border="0" src="https://www.knowage-suite.com/site/wp-content/uploads/2019/10/question-sign.png" style="text-decoration:none;height:auto;border:none;width:100%;max-width:58px;display:block" title="Image" width="58"/>
   			</a>
   			<p>
-  				{{translate.load('signup.active.qa')}}
+  				Q&A
   			</p>
   		</div>
   		<div class="third flex-33 flex-xs-100">
@@ -107,7 +91,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   				<img align="center" alt="Image" border="0" src="https://www.knowage-suite.com/site/wp-content/uploads/2019/10/data-graphic.png" style="text-decoration:none;height:auto;border:none;width:100%;max-width:58px;display:block" title="Image" width="58"/>
   			</a>
   			<p>
-  				{{translate.load('signup.active.github')}}
+  				Repository
   			</p>
   		</div>
   	</div>
@@ -122,12 +106,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			this.addMessageFile = function(file){
 				messageResource.load([file,"messages"], function(){});
 			};
-			
+
 			this.load = function(key,sourceFile) {
 				var sf= sourceFile == undefined? 'messages' : sourceFile;
 				return messageResource.get(key, sf);
 			};
-			
+
 			this.format = function() {
 			    // The string containing the format items (e.g. "{0}")
 			    // will and always has to be the first argument.
