@@ -100,8 +100,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     			stopOnFocus: true
     		}).showToast();
     	}
-    	
-    	
+
 	  $scope.newUser = {};
 	  $scope.emailFormat = /^[a-z]+[a-z0-9._]+@[a-z]+\.[a-z.]{2,5}$/;
 	  $scope.$watch("newUser.confirmPassword", function(newValue, oldValue) {
@@ -133,7 +132,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			    }
 			  })
 			  .then(function(response) {
-				  debugger;
 				  if(response.data.errors){
 					  var errorMsg = response.data.errors[0].message == null ? "Error" : response.data.errors[0].message;
 					  $scope.popup('error',errorMsg)

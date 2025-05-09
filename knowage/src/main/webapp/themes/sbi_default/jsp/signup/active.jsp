@@ -33,7 +33,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
  <%
  IUrlBuilder urlBuilder = UrlBuilderFactory.getUrlBuilder("WEB");
  String baseUrl = urlBuilder.getResourceLink(request, "restful-services/signup/active");
- String getURL=request.getRequestURL().toString().substring(0, request.getRequestURL().toString().indexOf("knowage")) + "knowage/";
+ String getURL=request.getRequestURL().toString().substring(0, request.getRequestURL().toString().indexOf("/knowage")) + "/knowage/";
  baseUrl = getURL + "restful-services/signup/active";
  String currTheme = ThemesManager.getDefaultTheme();
 %>
