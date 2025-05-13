@@ -218,7 +218,8 @@
                 this.$router.push('/schedulation-agenda/search-result')
             },
             formatDateTime(date: any) {
-                return formatDate(date, 'YYYY-MM-DDTHH:MM:SS')
+                date.setSeconds(0)
+                return formatDate(date, 'YYYY-MM-DDTHH:mm:ss')
             },
             removeSelectedPackage() {
                 this.selectedPackage = null

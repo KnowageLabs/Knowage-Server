@@ -77,5 +77,8 @@
         <md-datepicker name="endDate" ng-change="selectDate()" ng-model="selectedDate.endDate" md-min-date="startDate || ngModel.settings.defaultStartDate" md-max-date="ngModel.settings.defaultEndDate" md-open-on-focus ng-style="::gridWidth()"></md-datepicker>
       </md-input-container>
     </div>
+    <div ng-if="selectedValues.length == 0 && selectedDate.startDate && (ngModel.settings.modalityValue !='multiValue' || selectedDate.endDate ) " class="kn-warning">	
+      {{translate.load('sbi.cockpit.widgets.table.nodata.default')}}	
+    </div>
   </div>
 </div>

@@ -228,6 +228,8 @@
                 this.trigger.startTimeTiming = this.trigger.zonedStartTime ? new Date(this.trigger.zonedStartTime) : new Date()
                 this.trigger.startDateTiming.setHours(0)
                 this.trigger.startDateTiming.setMinutes(0)
+                this.trigger.startDateTiming.setSeconds(0)
+                this.trigger.startDateTiming.setMilliseconds(0)
 
                 if (!this.trigger.zonedStartTime) {
                     this.trigger.zonedStartTime = this.trigger.startTimeTiming
