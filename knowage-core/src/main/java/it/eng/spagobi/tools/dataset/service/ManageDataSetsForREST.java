@@ -1498,7 +1498,7 @@ public class ManageDataSetsForREST {
 			boolean decrypt = currMetaType.optBoolean("decrypt");
 			boolean personal = currMetaType.optBoolean("personal");
 			boolean subjectId = currMetaType.optBoolean("subjectId");
-			String description = currMetaType.getString("description");
+			String description = currMetaType.optString("description");
 
 			FieldType fieldTypeFromColumn = getFieldTypeFromColumn(fieldType);
 			Class<?> classTypeFromColumn = getClassTypeFromColumn(type);
