@@ -11,14 +11,6 @@
   
   <artifactId>knowage-password-tool</artifactId>
   <packaging>jar</packaging>
-  
-  <dependencies>
-	<dependency>
-			<groupId>it.eng.knowage</groupId>
-			<artifactId>knowage-utils</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-  </dependencies>
 		
 
 </project>
