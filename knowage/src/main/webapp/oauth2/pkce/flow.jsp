@@ -27,118 +27,120 @@ From https://github.com/curityio/pkce-javascript-example
     <title>OAuth2 PKCE flow</title>
   </head>
   <body>
-    <script>
-    
-    var oauth2Config = null;
-	
-    var xhrOAuth2C = new XMLHttpRequest();
+    <script>  
+    	start();
+        
+        async function start() {
+        	if (window.location.search) {
+                var args = new URLSearchParams(window.location.search);
+                var code = args.get("code");
+                var state = args.get("state");
+                if (code) {
+                	const oauth2Config = await fetchConfig();
+                	if (window.sessionStorage.getItem("state") !== state){
+                	    throw Error("Probable session hijacking attack!");
+                	}
+                	fetch(oauth2Config.accessTokenUrl, {
+                		  method: 'POST',
+                		  headers: {
+                		    'Content-Type': 'application/x-www-form-urlencoded'
+                		  },
+                		  body: new URLSearchParams({
+                		    client_id: oauth2Config.clientId,
+                		    code_verifier: window.sessionStorage.getItem("code_verifier"),
+                		    grant_type: "authorization_code",
+                		    redirect_uri: oauth2Config.redirectUrl,
+                		    code: code,
+                		    state: state
+                		  })
+                		})
+                		.then(response => response.json().then(data => ({ status: response.status, body: data })))
+                		.then(({ status, body }) => {
+                		  if (status === 200) {
+                		    // storing id_token for later usage (on logout)
+                		    window.sessionStorage.setItem("id_token", body.id_token);
 
-    xhrOAuth2C.onload = function() {
-        var response = xhrOAuth2C.response;
+                		    const lastRedirectUri = window.location.href.split('?')[0];
+                		    const args = new URLSearchParams({
+                		      PAGE: "LoginPage",
+                		      NEW_SESSION: "TRUE",
+                		      access_token: body.access_token
+                		    });
 
-        if (xhrOAuth2C.status == 200) {
-        	oauthConfig = response;
-        } else {
-            alert("Error: " + response.error_description + " (" + response.error + ")");
-        }
-    };
-    xhrOAuth2C.responseType = 'json';
-    xhrOAuth2C.open("GET", '/oauth2configservice', true);
-    //xhrOAuth2C.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-    xhrOAuth2C.send();
+                		    window.location = lastRedirectUri + "?" + args;
+                		  } else {
+                		    alert(`Error: ${body.error_description} (${body.error})`);
+                		  }
 
-    const authorizeEndpoint = oauth2Config.authorizeUrl;
-    const tokenEndpoint = oauth2Config.accessTokenUrl;
-    const clientId = oauth2Config.clientId;
-    const redirectUri = oauth2Config.redirectUrl;
+                		})
+                		.catch(error => {
+                		  console.error("Errore nella richiesta fetch:", error);
+                		});
 
-        if (window.location.search) {
-            var args = new URLSearchParams(window.location.search);
-            var code = args.get("code");
-            var state = args.get("state");
-            
-            if (code) {
-            	if (window.sessionStorage.getItem("state") !== state){
-            	    throw Error("Probable session hijacking attack!");
-            	}
-            	
-                var xhr = new XMLHttpRequest();
-
-                xhr.onload = function() {
-                    var response = xhr.response;
-
-                    if (xhr.status == 200) {
-                    	// storing id_token for later usage (on logout)
-                    	window.sessionStorage.setItem("id_token", response.id_token);
-                    	
-                    	var lastRedirectUri = window.location.href.split('?')[0];
-                    	var args = new URLSearchParams({
-                    		PAGE : "LoginPage",
-                    		NEW_SESSION : "TRUE",
-                            access_token: response.access_token
-                        });
-                        window.location = lastRedirectUri + "?" + args;
-                    } else {
-                        alert("Error: " + response.error_description + " (" + response.error + ")");
-                    }
-
-                    document.getElementById("result").innerHTML = message;
-                };
-                xhr.responseType = 'json';
-                xhr.open("POST", tokenEndpoint, true);
-                xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-                xhr.send(new URLSearchParams({
-                    client_id: clientId,
-                    code_verifier: window.sessionStorage.getItem("code_verifier"),
-                    grant_type: "authorization_code",
-                    redirect_uri: redirectUri,
-                    code: code,
-                    state: state
-                }));
-            } else {
-            	startOauth2Flow();
+                } else {
+                	startOauth2Flow();
+                }
             }
         }
-
-        function startOauth2Flow() {
-        	var state = generateRandomString(64);
-            var codeVerifier = generateRandomString(128);
-
-            generateCodeChallenge(codeVerifier).then(function(codeChallenge) {
-            	window.sessionStorage.setItem("state", state);
-                window.sessionStorage.setItem("code_verifier", codeVerifier);
-
-                var args = new URLSearchParams({
-                    response_type: "code",
-                    client_id: clientId,
-                    code_challenge_method: "S256",
-                    code_challenge: codeChallenge,
-                    state: state,
-                    redirect_uri: redirectUri,
-                    scope: "openid profile"
-                });
-                window.location = authorizeEndpoint + "?" + args;
+        
+        async function fetchConfig() {
+        	const response = await fetch('/knowage/restful-services/oauth2configservice', {
+    	        method: 'GET'
+    	    })
+        	
+        	if (!response.ok) {
+	               throw new Error("Errore nella chiamata oauth2configservice");
+	        }
+        	const config = await response.json();
+    	    return config;
+        }
+        
+        async function startOauth2Flow() {
+        	const oauth2Config = await fetchConfig();
+        	const state = generateRandomString(64);
+        	const verifier = generateRandomString(128);
+         	const challenge = await generateCodeChallenge(verifier);
+            sessionStorage.setItem("state", state);
+        	sessionStorage.setItem("code_verifier", verifier);
+        	var args = new URLSearchParams({
+                response_type: "code",
+                client_id: oauth2Config.clientId,
+                code_challenge_method: "S256",
+                code_challenge: challenge,
+                state: state,
+                redirect_uri: oauth2Config.redirectUrl,
+                scope: "openid profile"
             });
+            window.location = oauth2Config.authorizeUrl + "?" + args;
+            
         }
+        
 
-        async function generateCodeChallenge(codeVerifier) {
-            var digest = await crypto.subtle.digest("SHA-256",
-                new TextEncoder().encode(codeVerifier));
+     // Funzione per generare una stringa casuale (code_verifier)
+     function generateRandomString(length) {
+       const charset = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~';
+       let result = '';
+       const array = new Uint8Array(length);
+       window.crypto.getRandomValues(array);
+       for (let i = 0; i < array.length; i++) {
+         result += charset[array[i] % charset.length];
+       }
+       return result;
+     }
 
-            return btoa(String.fromCharCode(...new Uint8Array(digest)))
-                .replace(/=/g, '').replace(/\+/g, '-').replace(/\//g, '_')
-        }
 
-        function generateRandomString(length) {
-            var text = "";
-            var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+	  // Funzione per generare il code_challenge (SHA256 + base64url)
+	  async function generateCodeChallenge(codeVerifier) {
+	    const encoder = new TextEncoder();
+	    const data = encoder.encode(codeVerifier);
+	    const digest = await window.crypto.subtle.digest('SHA-256', data);
+	    const base64url = btoa(String.fromCharCode(...new Uint8Array(digest)))
+	      .replace(/\+/g, '-')
+	      .replace(/\//g, '_')
+	      .replace(/=+$/, '');
+	    return base64url;
+	  }
 
-            for (var i = 0; i < length; i++) {
-                text += possible.charAt(Math.floor(Math.random() * possible.length));
-            }
-
-            return text;
-        }
         
     </script>
   </body>
