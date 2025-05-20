@@ -19,11 +19,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <%--
 From https://github.com/curityio/pkce-javascript-example
 --%>
-
 <%@page import="it.eng.spagobi.security.OAuth2.OAuth2Config"%>
+<%@page import="org.apache.commons.lang.StringEscapeUtils"%>
 
 <%
 OAuth2Config oauth2Config = OAuth2Config.getInstance();
+String code = request.getParameter("code");
+
 %>
 
 <!DOCTYPE html>
@@ -34,98 +36,110 @@ OAuth2Config oauth2Config = OAuth2Config.getInstance();
   </head>
   <body>
     <script>
-    const authorizeEndpoint = "<%= oauth2Config.getAuthorizeUrl() %>";
-    const tokenEndpoint = "<%= oauth2Config.getAccessTokenUrl() %>";
-    const clientId = "<%= oauth2Config.getClientId() %>";
-    const redirectUri = "<%= oauth2Config.getRedirectUrl() %>";
+    const authorizeEndpoint = "<%= StringEscapeUtils.escapeJavaScript(oauth2Config.getAuthorizeUrl()) %>";
+    const tokenEndpoint = "<%= StringEscapeUtils.escapeJavaScript(oauth2Config.getAccessTokenUrl()) %>";
+    const clientId = "<%= StringEscapeUtils.escapeJavaScript(oauth2Config.getClientId()) %>";
+    const redirectUri = "<%= StringEscapeUtils.escapeJavaScript(oauth2Config.getRedirectUrl()) %>";
 
+	
+	
         if (window.location.search) {
             var args = new URLSearchParams(window.location.search);
             var code = args.get("code");
             var state = args.get("state");
-            
             if (code) {
             	if (window.sessionStorage.getItem("state") !== state){
             	    throw Error("Probable session hijacking attack!");
             	}
-            	
-                var xhr = new XMLHttpRequest();
+            	fetch(tokenEndpoint, {
+            		  method: 'POST',
+            		  headers: {
+            		    'Content-Type': 'application/x-www-form-urlencoded'
+            		  },
+            		  body: new URLSearchParams({
+            		    client_id: clientId,
+            		    code_verifier: window.sessionStorage.getItem("code_verifier"),
+            		    grant_type: "authorization_code",
+            		    redirect_uri: redirectUri,
+            		    code: code,
+            		    state: state
+            		  })
+            		})
+            		.then(response => response.json().then(data => ({ status: response.status, body: data })))
+            		.then(({ status, body }) => {
+            		  if (status === 200) {
+            		    // storing id_token for later usage (on logout)
+            		    window.sessionStorage.setItem("id_token", body.id_token);
 
-                xhr.onload = function() {
-                    var response = xhr.response;
+            		    const lastRedirectUri = window.location.href.split('?')[0];
+            		    const args = new URLSearchParams({
+            		      PAGE: "LoginPage",
+            		      NEW_SESSION: "TRUE",
+            		      access_token: body.access_token
+            		    });
 
-                    if (xhr.status == 200) {
-                    	// storing id_token for later usage (on logout)
-                    	window.sessionStorage.setItem("id_token", response.id_token);
-                    	
-                    	var lastRedirectUri = window.location.href.split('?')[0];
-                    	var args = new URLSearchParams({
-                    		PAGE : "LoginPage",
-                    		NEW_SESSION : "TRUE",
-                            access_token: response.access_token
-                        });
-                        window.location = lastRedirectUri + "?" + args;
-                    } else {
-                        alert("Error: " + response.error_description + " (" + response.error + ")");
-                    }
+            		    window.location = lastRedirectUri + "?" + args;
+            		  } else {
+            		    alert(`Error: ${body.error_description} (${body.error})`);
+            		  }
 
-                    document.getElementById("result").innerHTML = message;
-                };
-                xhr.responseType = 'json';
-                xhr.open("POST", tokenEndpoint, true);
-                xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-                xhr.send(new URLSearchParams({
-                    client_id: clientId,
-                    code_verifier: window.sessionStorage.getItem("code_verifier"),
-                    grant_type: "authorization_code",
-                    redirect_uri: redirectUri,
-                    code: code,
-                    state: state
-                }));
+            		})
+            		.catch(error => {
+            		  console.error("Errore nella richiesta fetch:", error);
+            		});
+
             } else {
             	startOauth2Flow();
             }
         }
 
-        function startOauth2Flow() {
-        	var state = generateRandomString(64);
-            var codeVerifier = generateRandomString(128);
-
-            generateCodeChallenge(codeVerifier).then(function(codeChallenge) {
-            	window.sessionStorage.setItem("state", state);
-                window.sessionStorage.setItem("code_verifier", codeVerifier);
-
-                var args = new URLSearchParams({
-                    response_type: "code",
-                    client_id: clientId,
-                    code_challenge_method: "S256",
-                    code_challenge: codeChallenge,
-                    state: state,
-                    redirect_uri: redirectUri,
-                    scope: "openid profile"
-                });
-                window.location = authorizeEndpoint + "?" + args;
+        async function startOauth2Flow() {
+        	const state = generateRandomString(64);
+        	const verifier = generateRandomString(128);
+         	const challenge = await generateCodeChallenge(verifier);
+         	
+            sessionStorage.setItem("state", state);
+        	sessionStorage.setItem("code_verifier", verifier);
+        	
+        	var args = new URLSearchParams({
+                response_type: "code",
+                client_id: clientId,
+                code_challenge_method: "S256",
+                code_challenge: challenge,
+                state: state,
+                redirect_uri: redirectUri,
+                scope: "openid profile"
             });
+            window.location = authorizeEndpoint + "?" + args;
+            
         }
+        
 
-        async function generateCodeChallenge(codeVerifier) {
-            var digest = await crypto.subtle.digest("SHA-256",
-                new TextEncoder().encode(codeVerifier));
+     // Funzione per generare una stringa casuale (code_verifier)
+     function generateRandomString(length) {
+       const charset = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~';
+       let result = '';
+       const array = new Uint8Array(length);
+       window.crypto.getRandomValues(array);
+       for (let i = 0; i < array.length; i++) {
+         result += charset[array[i] % charset.length];
+       }
+       return result;
+     }
 
-            return btoa(String.fromCharCode(...new Uint8Array(digest)))
-                .replace(/=/g, '').replace(/\+/g, '-').replace(/\//g, '_')
-        }
 
-        function generateRandomString(length) {
-            var text = "";
-            var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+	  // Funzione per generare il code_challenge (SHA256 + base64url)
+	  async function generateCodeChallenge(codeVerifier) {
+	    const encoder = new TextEncoder();
+	    const data = encoder.encode(codeVerifier);
+	    const digest = await window.crypto.subtle.digest('SHA-256', data);
+	    const base64url = btoa(String.fromCharCode(...new Uint8Array(digest)))
+	      .replace(/\+/g, '-')
+	      .replace(/\//g, '_')
+	      .replace(/=+$/, '');
+	    return base64url;
+	  }
 
-            for (var i = 0; i < length; i++) {
-                text += possible.charAt(Math.floor(Math.random() * possible.length));
-            }
-
-            return text;
-        }
         
     </script>
   </body>

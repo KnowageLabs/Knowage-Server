@@ -198,6 +198,8 @@ public class OAuth2Filter implements Filter {
 			flowManager = new ImplicitFlowManager();
 			break;
 		case PKCE:
+			flowManager = new ClassicFlowManager();
+			break;
 		case AUTHORIZATION_CODE:
 			flowManager = new ClassicFlowManager();
 			break;
