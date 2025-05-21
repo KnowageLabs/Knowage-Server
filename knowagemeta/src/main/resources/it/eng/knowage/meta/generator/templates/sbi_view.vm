@@ -19,10 +19,10 @@
 #foreach ($jpaColumn in $jpaView.getColumns($jpaTable))
 			{
 				name: '${jpaColumn.propertyName}'
-			} #if($velocityHasNext) , #end
+			} #if($foreach.hasNext) , #end
 #end
 			]
-		} #if($velocityHasNext) , #end
+		} #if($foreach.hasNext) , #end
 #end
 		]
 		, joins: [
@@ -36,9 +36,9 @@
 #foreach ($sourceColumn in $joinRelationship.sourceColumns)
 ## column name				
 #if ($sourceColumn.jpaTable.hasFakePrimaryKey()|| ( $sourceColumn.jpaTable.hasCompositeKey() && $sourceColumn.isIdentifier()))			
-				'${sourceColumn.jpaTable.compositeKeyPropertyName}.${sourceColumn.propertyName}'#if($velocityHasNext) , #end
+				'${sourceColumn.jpaTable.compositeKeyPropertyName}.${sourceColumn.propertyName}'#if($foreach.hasNext) , #end
 #else
-				'${sourceColumn.propertyName}'#if($velocityHasNext) , #end
+				'${sourceColumn.propertyName}'#if($foreach.hasNext) , #end
 #end
 ## column name	
 #end
@@ -51,14 +51,14 @@
 #foreach ($destinationColumn in $joinRelationship.destinationColumns)
 ## column name				
 #if ($destinationColumn.jpaTable.hasFakePrimaryKey()|| ( $destinationColumn.jpaTable.hasCompositeKey() && $destinationColumn.isIdentifier()))			
-				'${destinationColumn.jpaTable.compositeKeyPropertyName}.${destinationColumn.propertyName}'#if($velocityHasNext) , #end
+				'${destinationColumn.jpaTable.compositeKeyPropertyName}.${destinationColumn.propertyName}'#if($foreach.hasNext) , #end
 #else
-				'${destinationColumn.propertyName}'#if($velocityHasNext) , #end
+				'${destinationColumn.propertyName}'#if($foreach.hasNext) , #end
 #end
 ## column name	
 #end
 			]
-		} #if($velocityHasNext) , #end
+		} #if($foreach.hasNext) , #end
 #end
 		]
 		, outbound: [
@@ -77,14 +77,14 @@
 			, sourceColumns: [
 #foreach ($sourceColumn in $relationship.sourceColumns)
 ## column name				
-				'${sourceColumn}'#if($velocityHasNext) , #end
+				'${sourceColumn}'#if($foreach.hasNext) , #end
 ## column name	
 #end				
 			] 
 			, destinationColumns: [
 #foreach ($destinationColumn in $relationship.destinationColumns)
 ## column name				
-				'${destinationColumn}'#if($velocityHasNext) , #end
+				'${destinationColumn}'#if($foreach.hasNext) , #end
 ## column name				
 #end				
 			]			
@@ -109,14 +109,14 @@
 				, sourceColumns: [
 #foreach ($sourceColumn in $relationship.sourceColumns)
 ## column name				
-				'${sourceColumn}'#if($velocityHasNext) , #end
+				'${sourceColumn}'#if($foreach.hasNext) , #end
 ## column name	
 #end				
 				] 
 				, destinationColumns: [
 #foreach ($destinationColumn in $relationship.destinationColumns)
 ## column name				
-				'${destinationColumn}'#if($velocityHasNext) , #end
+				'${destinationColumn}'#if($foreach.hasNext) , #end
 ## column name				
 #end				
 				]
@@ -124,7 +124,7 @@
 #end
 #end							
 		]
-	}#if($velocityHasNext) , #end
+	}#if($foreach.hasNext) , #end
 ###################################################################################
 #####                           VIEWS
 ###################################################################################

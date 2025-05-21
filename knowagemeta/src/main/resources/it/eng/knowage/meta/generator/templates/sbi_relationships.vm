@@ -4,16 +4,16 @@
 	"relationships": [
 #foreach ($jpaTable in $jpaTables)
 		 //==================================================================
-		 // $velocityCount $jpaTable.name
+		 // $foreach.count $jpaTable.name
 		 //==================================================================
 		 
-		 #if($velocityCount > 1 && $jpaTable.getRelationships().size() > 0 && $isFirstItem == "false") , #end
+		 #if($foreach.count > 1 && $jpaTable.getRelationships().size() > 0 && $isFirstItem == "false") , #end
 		 
 #foreach ($jpaRelationship in $jpaTable.getRelationships())
-		#if($velocityCount > 1) , #end {
+		#if($foreach.count > 1) , #end {
 			#set( $isFirstItem = "false" )
 //---------------------------------------------------------------
-		 	// $velocityCount ${jpaRelationship.description}
+		 	// $foreach.count ${jpaRelationship.description}
 		 	//---------------------------------------------------------------
 		 	"name": '${jpaRelationship.propertyName}'
 			, "bidirectional": $jpaRelationship.isBidirectional()
@@ -29,9 +29,9 @@
 			, "sourceColumns": [
 			#foreach ($sourceColumn in $jpaRelationship.sourceColumns)
 		#if ($sourceColumn.jpaTable.hasFakePrimaryKey()|| ( $sourceColumn.jpaTable.hasCompositeKey() && $sourceColumn.isIdentifier()))			
-'${sourceColumn.jpaTable.compositeKeyPropertyName}.${sourceColumn.propertyName}'#if($velocityHasNext) , #end
+'${sourceColumn.jpaTable.compositeKeyPropertyName}.${sourceColumn.propertyName}'#if($foreach.hasNext) , #end
 		#else
-'${sourceColumn.propertyName}'#if($velocityHasNext) , #end
+'${sourceColumn.propertyName}'#if($foreach.hasNext) , #end
 		#end
 			#end			
 			]
@@ -45,9 +45,9 @@
 			, "destinationColumns": [
 			#foreach ($destinationColumn in $jpaRelationship.destinationColumns)
 		#if ($destinationColumn.jpaTable.hasFakePrimaryKey()|| ( $destinationColumn.jpaTable.hasCompositeKey() && $destinationColumn.isIdentifier()))			
-'${destinationColumn.jpaTable.compositeKeyPropertyName}.${destinationColumn.propertyName}'#if($velocityHasNext) , #end
+'${destinationColumn.jpaTable.compositeKeyPropertyName}.${destinationColumn.propertyName}'#if($foreach.hasNext) , #end
 		#else
-'${destinationColumn.propertyName}'#if($velocityHasNext) , #end
+'${destinationColumn.propertyName}'#if($foreach.hasNext) , #end
 		#end
 			#end
 			

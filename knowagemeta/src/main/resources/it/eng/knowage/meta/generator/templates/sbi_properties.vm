@@ -8,7 +8,7 @@
 
 ${jpaTable.uniqueName}.visible = $jpaTable.getAttribute("structural.visible")
 ${jpaTable.uniqueName}.type = $jpaTable.type
-${jpaTable.uniqueName}.position = $velocityCount
+${jpaTable.uniqueName}.position = $foreach.count
 ${jpaTable.uniqueName}.sqlFilter =  $jpaTable.getAttribute("structural.sqlFilter")
 
 #foreach ($jpaColumn in $jpaTable.getColumns())
@@ -40,7 +40,7 @@ ${jpaColumn.uniqueName}.format = $jpaColumn.getAttribute("structural.format")
 
 ${jpaColumn.uniqueName}.customFunction = $jpaColumn.getAttribute("structural.customFunction")
 ${jpaColumn.uniqueName}.excludedRoles = $jpaColumn.getAttribute("behavioural.notEnabledRoles")
-${jpaColumn.uniqueName}.position = $velocityCount
+${jpaColumn.uniqueName}.position = $foreach.count
 #end
 
 
@@ -68,7 +68,7 @@ ${jpaColumn.uniqueName}.attribute = $jpaColumn.getAttribute("structural.attribut
 ${jpaColumn.uniqueName}.datatype = $jpaColumn.getAttribute("structural.datatype")
 ${jpaColumn.uniqueName}.format = $jpaColumn.getAttribute("structural.format")
 ${jpaColumn.uniqueName}.excludedRoles = $jpaColumn.getAttribute("behavioural.notEnabledRoles")
-${jpaColumn.uniqueName}.position = $velocityCount
+${jpaColumn.uniqueName}.position = $foreach.count
 #end
 
 
