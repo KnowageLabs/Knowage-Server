@@ -141,6 +141,7 @@ public class Compiler {
 		if (!diagnostics.getDiagnostics().isEmpty()) {
 			logger.error("Found compilation errors during metamodel generation");
 			for (Diagnostic<? extends JavaFileObject> diagnostic : diagnostics.getDiagnostics()) {
+				if (diagnostic.getSource() != null) {
 				logger.error("Found error on " + diagnostic.getSource().toUri() + "- line " + diagnostic.getLineNumber()
 						+ "- Error: " + diagnostic.getMessage(null));
 				log.append(MessageFormat.format(
@@ -151,6 +152,11 @@ public class Compiler {
 					diagnostic.getSource().getCharContent(true);
 				} catch (IOException e) {
 					log.append("Error while reading java sources.\n");
+				}
+				}
+				else
+				{
+					it.eng.knowage.meta.generator.utils.Compiler.logger.warn(diagnostic.getMessage(null));
 				}
 			}
 		}
