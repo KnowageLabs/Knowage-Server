@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Base64;
 import java.util.Collection;
 import java.util.Collections;
@@ -178,14 +179,14 @@ public class AbstractDocumentExecutionWork extends DossierExecutionClient implem
 					LOGGER.debug("Generating URL for document {}", docId);
 					LOGGER.debug("Engine label is {}", engineLabel);
 					LOGGER.debug("Parameters are {}", paramMap);
-
+					UserProfile userScheduler = UserProfile.createSchedulerUserProfileWithRole(Arrays.asList(executionRole));
 					switch (engineLabel) {
 					case "knowagecockpitengine":
-						serviceUrl = getCockpitServiceUrl(biObject, userUniqueIdentifier, jsonArray, paramMap,
+						serviceUrl = getCockpitServiceUrl(biObject, (String) userScheduler.getUserUniqueIdentifier(), jsonArray, paramMap,
 								reportToUse, cockpitDocument, docId, role);
 						break;
 					case "knowagedashboardengine":
-						serviceUrl = getDashboardServiceUrl(biObject, userUniqueIdentifier, jsonArray, paramMap,
+						serviceUrl = getDashboardServiceUrl(biObject, (String) userScheduler.getUserUniqueIdentifier(), jsonArray, paramMap,
 								reportToUse, docId, role);
 						break;
 					default:
@@ -366,8 +367,9 @@ public class AbstractDocumentExecutionWork extends DossierExecutionClient implem
 					FileUtils.copyFile(f, to);
 					if (reportToUse.getImageName().contains(FilenameUtils.removeExtension(f.getName()))) {
 						imagesMap.put(reportToUse.getImageName(), to.getAbsolutePath());
-					} else
+					} else {
 						imagesMap.put(reportToUse.getImageName() + "_" + f.getName(), to.getAbsolutePath());
+					}
 
 					FileUtils.deleteQuietly(f);
 
