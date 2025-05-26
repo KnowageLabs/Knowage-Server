@@ -89,7 +89,8 @@ public class CotSecurityServiceSupplier implements ISecurityServiceSupplier {
 
 	@Override
 	public SpagoBIUserProfile checkAuthenticationToken(String token) {
-		throw new UnsupportedOperationException();
+		logger.debug("IN - token for createUserProfile " + token);
+		return this.createUserProfile(token);
 	}
 
 	@Override
