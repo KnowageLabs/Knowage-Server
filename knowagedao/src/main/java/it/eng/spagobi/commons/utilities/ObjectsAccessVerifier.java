@@ -207,7 +207,7 @@ public class ObjectsAccessVerifier {
 		// if it is the owner of the document or it is admin
 
 		String owner = (String) ((UserProfile) profile).getUserId();
-		return UserUtilities.isAdministrator(profile) || owner.equals(biObject.getCreationUser());
+		return   (  "DEV".equals(biObject.getStateCode()) && UserUtilities.hasDeveloperRole(profile)) || UserUtilities.isAdministrator(profile) || owner.equals(biObject.getCreationUser());
 	}
 
 	/**
