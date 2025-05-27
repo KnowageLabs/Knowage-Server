@@ -402,6 +402,10 @@ public class DataSetJSONSerializer implements Serializer {
 					manageSolrDataSet(jsonConf, result);
 				} else if (type.equalsIgnoreCase(DataSetConstants.SPARQL)) {
 					manageSPARQLDataSet(jsonConf, result);
+				} else if (type.equalsIgnoreCase(DataSetConstants.code2name.get(DataSetConstants.PREPARED_DATASET))) {
+					result.put(DataSetConstants.DATA_PREPARATION_INSTANCE_ID, jsonConf.optString(DataSetConstants.DATA_PREPARATION_INSTANCE_ID));
+					result.put(DataSetConstants.TABLE_NAME, jsonConf.optString(DataSetConstants.TABLE_NAME));
+					result.put(DATA_SOURCE, jsonConf.optString(DataSetConstants.DATA_SOURCE));
 				}
 			} catch (Exception e) {
 				String msg = "Error while defining dataset configuration.";
