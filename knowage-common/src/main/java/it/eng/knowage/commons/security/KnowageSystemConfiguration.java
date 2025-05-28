@@ -29,17 +29,11 @@ public class KnowageSystemConfiguration {
 	private static final String KNOWAGECOCKPITENGINE_DEFAULT_CONTEXT = "/knowagecockpitengine";
 	private static final String KNOWAGECOCKPITENGINE_CONTEXT = "knowagecockpitengine.context";
 
-	private static final String KNOWAGECOMMONJENGINE_DEFAULT_CONTEXT = "/knowagecommonjengine";
-	private static final String KNOWAGECOMMONJENGINE_CONTEXT = "knowagecommonjengine.context";
-
 	private static final String KNOWAGEDATAPREPARATION_DEFAULT_CONTEXT = "/knowage-data-preparation";
 	private static final String KNOWAGEDATAPREPARATION_CONTEXT = "knowage.data.preparation.context";
 
 	private static final String KNOWAGEDOSSIERENGINE_DEFAULT_CONTEXT = "/knowagedossierengine";
 	private static final String KNOWAGEDOSSIERENGINE_CONTEXT = "knowagedossierengine.context";
-
-	private static final String KNOWAGEGEOREPORTENGINE_DEFAULT_CONTEXT = "/knowagegeoreportengine";
-	private static final String KNOWAGEGEOREPORTENGINE_CONTEXT = "knowagegeoreportengine.context";
 
 	private static final String KNOWAGEJASPERREPORTENGINE_DEFAULT_CONTEXT = "/knowagejasperreportengine";
 	private static final String KNOWAGEJASPERREPORTENGINE_CONTEXT = "knowagejasperreportengine.context";
@@ -52,9 +46,6 @@ public class KnowageSystemConfiguration {
 
 	private static final String KNOWAGEQBEENGINE_DEFAULT_CONTEXT = "/knowageqbeengine";
 	private static final String KNOWAGEQBEENGINE_CONTEXT = "knowageqbeengine.context";
-
-	private static final String KNOWAGESVGVIEWERENGINE_DEFAULT_CONTEXT = "/knowagesvgviewerengine";
-	private static final String KNOWAGESVGVIEWERENGINE_CONTEXT = "knowagesvgviewerengine.context";
 
 	private static final String KNOWAGETALENDENGINE_DEFAULT_CONTEXT = "/knowagetalendengine";
 	private static final String KNOWAGETALENDENGINE_CONTEXT = "knowagetalendengine.context";
@@ -116,18 +107,6 @@ public class KnowageSystemConfiguration {
 		return path;
 	}
 
-	public static String getKnowageCommonjEngineContext() {
-		LOGGER.debug("Getting knowagecommonjengine context");
-		String path = "";
-		try {
-			path = getValue(KNOWAGECOMMONJENGINE_CONTEXT, KNOWAGECOMMONJENGINE_DEFAULT_CONTEXT);
-		} catch (Exception e) {
-			LOGGER.error("Error while recovering knowagecommonjengine context address", e);
-		}
-		LOGGER.debug("End getting knowagecommonjengine context: {}", path);
-		return path;
-	}
-
 	public static String getKnowageDataPreparationContext() {
 		LOGGER.debug("Getting knowagedatapreparation context");
 		String path = "";
@@ -149,18 +128,6 @@ public class KnowageSystemConfiguration {
 			LOGGER.error("Error while recovering knowagedossierengine context address", e);
 		}
 		LOGGER.debug("End getting knowagedossierengine context: {}", path);
-		return path;
-	}
-
-	public static String getKnowageGeoReportEngineContext() {
-		LOGGER.debug("Getting knowagegeoreportengine context");
-		String path = "";
-		try {
-			path = getValue(KNOWAGEGEOREPORTENGINE_CONTEXT, KNOWAGEGEOREPORTENGINE_DEFAULT_CONTEXT);
-		} catch (Exception e) {
-			LOGGER.error("Error while recovering knowagegeoreportengine context address", e);
-		}
-		LOGGER.debug("End getting knowagegeoreportengine context: {}", path);
 		return path;
 	}
 
@@ -209,18 +176,6 @@ public class KnowageSystemConfiguration {
 			LOGGER.error("Error while recovering knowageqbeengine context address", e);
 		}
 		LOGGER.debug("End getting knowageqbeengine context: {}", path);
-		return path;
-	}
-
-	public static String getKnowageSvgViewerEngineContext() {
-		LOGGER.debug("Getting knowagesvgviewerengine context");
-		String path = "";
-		try {
-			path = getValue(KNOWAGESVGVIEWERENGINE_CONTEXT, KNOWAGESVGVIEWERENGINE_DEFAULT_CONTEXT);
-		} catch (Exception e) {
-			LOGGER.error("Error while recovering knowagesvgviewerengine context address", e);
-		}
-		LOGGER.debug("End getting knowagesvgviewerengine context: {}", path);
 		return path;
 	}
 

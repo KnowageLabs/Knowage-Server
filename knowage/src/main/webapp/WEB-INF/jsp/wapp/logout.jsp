@@ -113,14 +113,11 @@ function invalidateAll() {
 	Promise.all([
 		invalidateNoError("<%=KnowageSystemConfiguration.getKnowageBirtReportEngineContext()%>/invalidateSession.jsp"),
 		invalidateNoError("<%=KnowageSystemConfiguration.getKnowageCockpitEngineContext()%>/invalidateSession.jsp"),
-		invalidateNoError("<%=KnowageSystemConfiguration.getKnowageCommonjEngineContext()%>/invalidateSession.jsp"),
 		invalidateNoError("<%=KnowageSystemConfiguration.getKnowageDossierEngineContext()%>/invalidateSession.jsp"),
-		invalidateNoError("<%=KnowageSystemConfiguration.getKnowageGeoReportEngineContext()%>/invalidateSession.jsp"),
 		invalidateNoError("<%=KnowageSystemConfiguration.getKnowageJasperReportEngineContext()%>/invalidateSession.jsp"),
 		invalidateNoError("<%=KnowageSystemConfiguration.getKnowageKpiEngineContext()%>/invalidateSession.jsp"),
 		invalidateNoError("<%=KnowageSystemConfiguration.getKnowageMetaContext()%>/invalidateSession.jsp"),
 		invalidateNoError("<%=KnowageSystemConfiguration.getKnowageQbeEngineContext()%>/invalidateSession.jsp"),
-		invalidateNoError("<%=KnowageSystemConfiguration.getKnowageSvgViewerEngineContext()%>/invalidateSession.jsp"),
 		invalidateNoError("<%=KnowageSystemConfiguration.getKnowageTalendEngineContext()%>/invalidateSession.jsp"),
 		invalidateNoError("<%=KnowageSystemConfiguration.getKnowageWhatifEngineContext()%>/invalidateSession.jsp")
 	]).then(() => { redirect(); })

@@ -77,8 +77,9 @@ public class WhiteList implements IWhiteList {
 			return services;
 		} finally {
 			try {
-				if (stream != null)
+				if (stream != null) {
 					stream.close();
+				}
 			} catch (IOException e) {
 				LOGGER.error("Can not close the stream resources ", e);
 			}
@@ -96,15 +97,12 @@ public class WhiteList implements IWhiteList {
 		ret.add(KnowageSystemConfiguration.getKnowageAPIContext());
 		ret.add(KnowageSystemConfiguration.getKnowageBirtReportEngineContext());
 		ret.add(KnowageSystemConfiguration.getKnowageCockpitEngineContext());
-		ret.add(KnowageSystemConfiguration.getKnowageCommonjEngineContext());
 		ret.add(KnowageSystemConfiguration.getKnowageDataPreparationContext());
 		ret.add(KnowageSystemConfiguration.getKnowageDossierEngineContext());
-		ret.add(KnowageSystemConfiguration.getKnowageGeoReportEngineContext());
 		ret.add(KnowageSystemConfiguration.getKnowageJasperReportEngineContext());
 		ret.add(KnowageSystemConfiguration.getKnowageKpiEngineContext());
 		ret.add(KnowageSystemConfiguration.getKnowageMetaContext());
 		ret.add(KnowageSystemConfiguration.getKnowageQbeEngineContext());
-		ret.add(KnowageSystemConfiguration.getKnowageSvgViewerEngineContext());
 		ret.add(KnowageSystemConfiguration.getKnowageTalendEngineContext());
 		ret.add(KnowageSystemConfiguration.getKnowageVueContext());
 		ret.add(KnowageSystemConfiguration.getKnowageWhatifEngineContext());
