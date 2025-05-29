@@ -139,11 +139,14 @@ public class JPAPersistenceManager implements IPersistenceManager {
 		CriteriaQuery<Number> cq = cb1.createQuery(Number.class);
 		@SuppressWarnings("unchecked")
 		Root root = cq.from(targetEntity.getBindableJavaType());
-		Number num = (Number) cq.select(cb1.max(root.<Number>get(keyColumn)));
+		//Number num = (Number) cq.select(cb1.max(root.<Number>get(keyColumn)));
 
 		//Query maxQuery = entityManager.createQuery("SELECT max(p." + keyColumn + ") as c FROM " + targetEntity.getName() + " p");
+		Query maxQuery = entityManager.createQuery(cq.select(cb1.max(root.<Number>get(keyColumn))));
+
 
 		//Object result = maxQuery.getSingleResult();
+		Number num = (Number) maxQuery.getSingleResult();
 
 		if (num != null) {
 			toReturn = num.intValue();
