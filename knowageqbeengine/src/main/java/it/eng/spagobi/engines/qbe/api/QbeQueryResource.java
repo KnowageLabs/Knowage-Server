@@ -1065,13 +1065,13 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 	private String getMultiValue(String value, String type) {
 		StringBuilder toReturn = new StringBuilder("");
 
-		String[] tempArrayValues = value.split(",");
+		String[] tempArrayValues = value.split(";");
 		for (int j = 0; j < tempArrayValues.length; j++) {
 			String tempValue = tempArrayValues[j];
 			if (j == 0) {
 				toReturn.append(getSingleValue(tempValue, type));
 			} else {
-				toReturn.append(toReturn + ", " + getSingleValue(tempValue, type));
+				toReturn.append(", ").append(getSingleValue(tempValue, type));
 			}
 		}
 
