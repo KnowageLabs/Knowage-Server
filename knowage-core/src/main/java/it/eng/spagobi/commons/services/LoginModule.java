@@ -182,6 +182,14 @@ public class LoginModule extends AbstractHttpModule {
 				if (activeSoo) {
 					logger.warn(
 							"SSO authentication failed: as a matter of fact no user profile object was found in session. The default login page will be displayed");
+					String loginPage = System.getProperty("JWT_SERVICE_LOGIN_URL", System.getenv("JWT_SERVICE_LOGIN_URL"));
+					logger.debug("loginPage " + loginPage);
+					if (loginPage != null) {
+						getHttpResponse().sendRedirect(loginPage);
+						logger.debug("OUT");
+						return;
+					}
+
 				}
 
 				// set publisher name
@@ -242,8 +250,9 @@ public class LoginModule extends AbstractHttpModule {
 				// Only if the configuration about this check returns true.
 				String strAdminPatter = SingletonConfig.getInstance().getConfigValue("SPAGOBI.SECURITY.ROLE-TYPE-PATTERNS.ADMIN-PATTERN");
 				int sbiUserId = -1;
-				if (user != null)
+				if (user != null) {
 					sbiUserId = user.getId();
+				}
 				List lstRoles = userDao.loadSbiUserRolesById(sbiUserId);
 
 				boolean isAdminUser = false;
@@ -390,8 +399,9 @@ public class LoginModule extends AbstractHttpModule {
 				throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 			} finally {
 				if (aSession != null) {
-					if (aSession.isOpen())
+					if (aSession.isOpen()) {
 						aSession.close();
+					}
 				}
 			}
 			// End writing log in the DB
@@ -492,8 +502,9 @@ public class LoginModule extends AbstractHttpModule {
 			currTheme = theme_name;
 		} else {
 			currTheme = ThemesManager.getCurrentTheme(reqCont);
-			if (currTheme == null)
+			if (currTheme == null) {
 				currTheme = ThemesManager.getDefaultTheme();
+			}
 		}
 		logger.debug("currTheme: " + currTheme);
 		return currTheme;
@@ -528,8 +539,9 @@ public class LoginModule extends AbstractHttpModule {
 	private boolean checkPwd(SbiUser user) throws Exception {
 		logger.debug("IN");
 		boolean toReturn = false;
-		if (user == null)
+		if (user == null) {
 			return toReturn;
+		}
 
 		if (encriptedBefore72(user)) {
 			logger.info("Old encrypting method. Change password required.");
