@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.apache.log4j.Logger;
 
@@ -16,19 +17,17 @@ import it.eng.spagobi.services.security.bo.SpagoBIUserProfile;
 import it.eng.spagobi.services.security.service.ISecurityServiceSupplier;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
-public class CotSecurityServiceSupplier implements ISecurityServiceSupplier {
+public class SusSecurityServiceSupplier implements ISecurityServiceSupplier {
 
-	private final Logger logger = Logger.getLogger(CotSecurityServiceSupplier.class);
+	private final Logger logger = Logger.getLogger(SusSecurityServiceSupplier.class);
 
 	private boolean isSuperAdmin = false;
 
-	public static final String NOME = "name";
-	public static final String COGNOME = "surname";
-	public static final String USERNAME = "username";
-	public static final String USER_ID = "user_id";
-	public static final String ORGANITATION = "organization_code";
-	public static final String SITE_COTE = "site_code";
-	public static final String ROLES = "role_code";
+	public static final String NOME = "given_name";
+	public static final String COGNOME = "family_name";
+	public static final String USERNAME = "preferred_username";
+	public static final String CODICI = "roles";
+	public static final String CURRENT_ROLE = "current-role";
 
 	@Override
 	public SpagoBIUserProfile createUserProfile(String jwtToken) {
@@ -38,7 +37,7 @@ public class CotSecurityServiceSupplier implements ISecurityServiceSupplier {
 
 		try {
 			profile.setRoles(getRoles(userClaims));
-			profile.setAttributes(getProfileAttributes(userClaims));
+			profile.setAttributes(getProfileAttributes(userClaims, profile.getRoles()));
 			profile.setUniqueIdentifier(jwtToken);
 			profile.setUserId(userClaims.get(USERNAME).asString());
 			profile.setUserName(userClaims.get(NOME).asString() + " " + userClaims.get(COGNOME).asString());
@@ -51,10 +50,16 @@ public class CotSecurityServiceSupplier implements ISecurityServiceSupplier {
 		return profile;
 	}
 
-	private Map<String, Object> getProfileAttributes(Map<String, Claim> userClaims) {
+	private Map<String, Object> getProfileAttributes(Map<String, Claim> userClaims, String[] roles) {
 		Map<String, Object> toReturn = new HashMap<>();
-		toReturn.put("azienda", userClaims.get(ORGANITATION).asString());
-		toReturn.put("cot", userClaims.get(SITE_COTE).asString());
+		if (roles != null && roles.length > 0) {
+			String role = roles[0];
+			List<String> codici = userClaims.get(CODICI).asList(String.class);
+
+			toReturn.put("roles",
+					String.join(",", codici.stream().filter(s -> s.contains(role)).map(x -> x.substring(x.lastIndexOf("_") + 1)).collect(Collectors.toList())));
+		}
+
 		return toReturn;
 	}
 
@@ -65,15 +70,18 @@ public class CotSecurityServiceSupplier implements ISecurityServiceSupplier {
 		try {
 
 			String roleAdmin = System.getProperty("JWT_ROLE_KNOWAGE_ADMIN", System.getenv("JWT_ROLE_KNOWAGE_ADMIN"));
-			String role = userClaims.get(ROLES).asString();
+			if (userClaims.get(CURRENT_ROLE) != null) {
+				String role = userClaims.get(CURRENT_ROLE).asString();
+				String roleParsed = role.substring(role.lastIndexOf("_") + 1);
 
-			if (role.equals(roleAdmin)) {
-				isSuperAdmin = true;
-			}
+				if (roleParsed.equals(roleAdmin)) {
+					isSuperAdmin = true;
+				}
 
-			if (roleDao.loadByName(role) != null) {
-				logger.debug("Adding role [" + role + "] to user profile");
-				toReturn.add(role);
+				if (roleDao.loadByName(roleParsed) != null) {
+					logger.debug("Adding role [" + roleParsed + "] to user profile");
+					toReturn.add(roleParsed);
+				}
 			}
 		} catch (Exception e) {
 			logger.error("User [" + userClaims.get(USERNAME).asString() + "] will have no roles because of an exception.", e);
