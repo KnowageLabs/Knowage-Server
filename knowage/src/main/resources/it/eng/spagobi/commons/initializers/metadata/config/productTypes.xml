@@ -26,7 +26,6 @@
 		<ENGINE label="knowagekpiengine" />
 	</PRODUCT_TYPE>
 	<PRODUCT_TYPE label="KnowagePA" active="true">
-		<ENGINE label="knowagewhatifengine" />
 		<ENGINE label="knowageolapengine" />
 	</PRODUCT_TYPE>
 </PRODUCT_TYPES>
