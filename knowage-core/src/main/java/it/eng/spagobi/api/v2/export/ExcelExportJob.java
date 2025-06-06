@@ -209,6 +209,10 @@ public class ExcelExportJob extends AbstractExportJob {
 									String msg = "Error parsing values";
 									LOGGER.error(msg, e);
 									throw new IllegalStateException(msg, e);
+								} catch (Exception e) {
+									String msg = "Error setting cell value for column " + filteredMetadata.get(k).getAlias();
+									logger.error(msg, e);
+									throw new IllegalStateException(msg, e);
 								}
 
 							}
