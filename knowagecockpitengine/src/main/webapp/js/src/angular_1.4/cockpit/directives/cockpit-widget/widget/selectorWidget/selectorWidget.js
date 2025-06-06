@@ -18,6 +18,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 (function() {
 	angular.module('cockpitModule')
+	.config(function($mdDateLocaleProvider) {
+		if(localStorage.getItem('locale') && localStorage.getItem('locale') == 'sk_SK'){
+			$mdDateLocaleProvider.shortDays = ["ne","po", "ut", "st", "št", "pi","so"];
+			$mdDateLocaleProvider.firstDayOfWeek = 1;
+		}
+	})
 	.directive('cockpitSelectorWidget',function(cockpitModule_widgetServices,$mdDialog,$rootScope){
 		return{
 			templateUrl: baseScriptPath+ '/directives/cockpit-widget/widget/selectorWidget/templates/selectorWidgetTemplate.html',

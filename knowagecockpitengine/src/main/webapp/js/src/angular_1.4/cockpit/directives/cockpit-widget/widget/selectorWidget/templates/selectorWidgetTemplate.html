@@ -69,6 +69,9 @@
         <label aria-label="Date" ng-if="ngModel.settings.modalityValue!='multiValue'">{{translate.load("sbi.cockpit.widgets.selector.singledate")}}</label>
         <md-datepicker name="startDate" ng-change="selectDate()" ng-model="selectedDate.startDate" md-min-date="ngModel.settings.defaultStartDate" md-max-date="ngModel.settings.defaultEndDate" md-open-on-focus ng-style="::gridWidth()"></md-datepicker>
       </md-input-container>
+      <div flex="100" ng-if="ngModel.settings.modalityValue !='multiValue' && selectedDate.startDate && ngModel.activeValues.length == 0 " class="kn-warning">	
+        {{translate.load('sbi.cockpit.widgets.table.nodata.default')}}	
+      </div>
     </div>
 
     <div layout="row" layout-align="start center" ng-show="ngModel.settings.modalityValue=='multiValue'">

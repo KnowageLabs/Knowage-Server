@@ -78,7 +78,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         
 		<script type="text/javascript" charset="utf-8">
 			//GLOBAL VARIABLES
-			const   cookie = document.cookie.match(new RegExp('(^|)X-CSRF-TOKEN=([^;]+)'))[2];
 			const 	MAX_ROWS_CLIENT_PAGINATION = <%= SingletonConfig.getInstance().getConfigValue("dataset.preview.clientpagination.maxrows") %>;
 			const 	SEARCH_WAIT_TIMEOUT = 500;
 			const 	DEFAULT_MAX_ITEMS_PER_PAGE = 15;
@@ -344,7 +343,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			
 		  	//Defining the service call to datastore
 		  	function getData(init){
-				var fetchParams = {method:"POST",body:{}, headers : {"X-CSRF-TOKEN": cookie}};
+				var fetchParams = {method:"POST",body:{}};
 				if(init){
 					if(!options.backEndPagination) {
 						fetchParams.body.start = 0;
@@ -404,7 +403,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	  		getData(true);
 	  		
 	  		if(options.exports){
-				window.fetch(KNOWAGE_BASEURL +  KNOWAGE_SERVICESURL + '/2.0/datasets?asPagedList=true&seeTechnical=true&label=' + datasetLabel, {headers : {"X-CSRF-TOKEN": cookie}})
+				window.fetch(KNOWAGE_BASEURL +  KNOWAGE_SERVICESURL + '/2.0/datasets?asPagedList=true&seeTechnical=true&label=' + datasetLabel)
 				.then(function(response) {return response.json()})
 				.then(function(data){
 					DATASET = data.item[0];
@@ -438,7 +437,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				window.fetch(KNOWAGE_BASEURL +  KNOWAGE_SERVICESURL + '/2.0/export/dataset/' + DATASET.id.dsId + exportFormat, {
 					method: "POST",
 					headers: {
-					    "X-CSRF-TOKEN": cookie,
 						"Content-Type": "application/json"
 					},
 					body: JSON.stringify(body)
