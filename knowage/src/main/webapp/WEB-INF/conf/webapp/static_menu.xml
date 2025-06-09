@@ -112,7 +112,7 @@
 				requiredFunctionality="NewsManagement"
 				to="/news-management" />
 			<ITEM id="5008" label="menu.modelCatalogResourceManagement"
-				to="/models-management" toBeLicensed="KnowagePA"/>
+				to="/models-management" toBeLicensed="KnowageSI"/>
 			<ITEM id="5009" label="menu.resourceManagement" requiredFunctionality="ResourceManagement,ResourceManagementDev"
 				to="/resource-management" toBeLicensed="KnowageSI"/>
 		</GROUP_ITEM>
@@ -202,7 +202,7 @@
 				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=importExportUsers" />
 			<ITEM id="10005" label="menu.ImpExpKpis"
 				requiredFunctionality="ImpExpKpis"
-				toBeLicensed="KnowagePM"
+				toBeLicensed="KnowageSI"
 				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=importExportKpis" />
 			<ITEM id="10006" label="menu.ImpExpCatalog"
 				requiredFunctionality="ImpExpCatalog"
