@@ -26,7 +26,9 @@ import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
 import it.eng.spagobi.services.rest.annotations.UserConstraint;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
+import it.eng.spagobi.utilities.rest.RestUtilities;
 import it.eng.spagobi.utilities.rest.client.ProxyClientUtilities;
 
 import java.io.File;
@@ -76,6 +78,9 @@ public class CkanHelper {
 			// }
 
 			String fileURL = request.getParameter("url");
+
+			RestUtilities.checkIfAddressIsInWhitelist(fileURL);
+
 			String fileName = request.getParameter("id");
 			String fileType = request.getParameter("format");
 			fileExtension = fileType;
@@ -95,7 +100,9 @@ public class CkanHelper {
 			// SpagoBIServiceException e = SpagoBIServiceExceptionHandler.getInstance().getWrappedException("REST service /ckan-management/download", t);
 			// return replayToClient(null, e);
 			throw new SpagoBIServiceException("REST service /ckan-management/download", t);
-		} finally {
+		}
+
+		finally {
 			logger.debug("OUT");
 		}
 	}

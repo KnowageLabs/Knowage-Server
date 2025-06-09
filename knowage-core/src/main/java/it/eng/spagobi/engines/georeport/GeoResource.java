@@ -39,6 +39,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 
+import it.eng.spagobi.utilities.rest.RestUtilities;
 import org.json.JSONException;
 
 /**
@@ -58,6 +59,8 @@ public class GeoResource {
 		String reqString = req.getQueryString();
 
 		String finalWMSUrl = layerUrl + "?" + reqString.replaceAll("layerURL[^&]*&", "");
+
+		RestUtilities.checkIfAddressIsInWhitelist(finalWMSUrl);
 
 		// Create a trust manager that does not validate certificate chains
 		TrustManager[] trustAllCerts = new TrustManager[] { new X509TrustManager() {
