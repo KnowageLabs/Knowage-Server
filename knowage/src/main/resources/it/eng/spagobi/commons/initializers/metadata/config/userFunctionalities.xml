@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <USER_FUNCTIONALITIES>
+	<USER_FUNCTIONALITY productType="KnowageSI" name="DatasetManagement" description="DatasetManagement" />
 	<USER_FUNCTIONALITY productType="KnowageSI" name="SelfServiceDatasetManagement" description="SelfServiceDatasetManagement" />
 	<USER_FUNCTIONALITY productType="KnowageSI" name="SelfServiceMetaModelManagement" description="SelfServiceMetaModelManagement" />
 	<USER_FUNCTIONALITY productType="KnowageSI" name="ReadEnginesManagement" description="ReadEnginesManagement" />
