@@ -116,7 +116,7 @@ public class GenericEhCacheImpl implements CacheInterface {
 		if (cache != null) {
 			try {
 				cache.removeAll();
-			} catch (IllegalStateException | IOException e) {
+			} catch (IllegalStateException e) {
 				logger.error("An error occurred while clearing cache", e);
 			}
 		}

@@ -73,6 +73,7 @@ public class MenuRolesDAOImpl extends AbstractHibernateDAO implements IMenuRoles
 
 			hqlQuery = aSession.createQuery(hql);
 			hqlQuery.setInteger(0, roleId.intValue());
+			hqlQuery.setCacheable(true);
 			List<Object[]> hibList = hqlQuery.list();
 
 			Iterator<Object[]> it = hibList.iterator();
