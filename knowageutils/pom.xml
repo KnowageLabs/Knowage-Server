@@ -35,9 +35,9 @@
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>org.dspace.xmlui.ehcache</groupId>
+			<groupId>net.sf.ehcache</groupId>
 			<artifactId>ehcache</artifactId>
-			<version>1.1</version>
+			<version>1.5.0</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>

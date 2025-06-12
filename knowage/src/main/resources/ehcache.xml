@@ -21,4 +21,23 @@
 		overflowToDisk="false" timeToLiveSeconds="60"
 		diskPersistent="false" diskExpiryThreadIntervalSeconds="120" />
 
+	<cache name="it.eng.spagobi.commons.metadata.SbiExtRoles"
+		   maxElementsInMemory="5000"
+		   eternal="false"
+		   timeToIdleSeconds="1800"
+		   overflowToDisk="true"/>
+
+	<cache name="it.eng.spagobi.wapp.metadata.SbiMenuRole"
+		   maxElementsInMemory="5000"
+		   eternal="false"
+		   timeToIdleSeconds="1800"
+		   overflowToDisk="true"/>
+
+	<cache name="it.eng.spagobi.wapp.metadata.SbiMenu"
+		   maxElementsInMemory="5000"
+		   eternal="false"
+		   timeToIdleSeconds="1800"
+		   overflowToDisk="true"/>
+
+
 </ehcache>

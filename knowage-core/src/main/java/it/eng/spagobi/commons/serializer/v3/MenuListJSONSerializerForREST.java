@@ -387,58 +387,52 @@ public class MenuListJSONSerializerForREST implements Serializer {
 	}
 
 	private JSONArray createItemsArray(Locale locale, MessageBuilder messageBuilder, List funcs, JSONArray technicalUserMenuJSONArray, List itemsSBList,
-			MenuType menuType) throws JSONException, EMFInternalError, EMFUserError {
+									   MenuType menuType) throws JSONException, EMFInternalError, EMFUserError {
 		JSONArray items = new JSONArray();
-		for (Object item : itemsSBList) {
+		for (Object obj : itemsSBList) {
 
-			SourceBean itemSB = (SourceBean) item;
+			SourceBean itemSB = (SourceBean) obj;
 
-			if (!isInTechnicalUserMenu(technicalUserMenuJSONArray, itemSB, messageBuilder, locale)) {
+			// Skip if already in technical user menu
+			if (isInTechnicalUserMenu(technicalUserMenuJSONArray, itemSB, messageBuilder, locale)) {
+				continue;
+			}
 
-				String condition = (String) itemSB.getAttribute(CONDITION);
+			String condition = (String) itemSB.getAttribute(CONDITION);
+			String requiredFunctionality = (String) itemSB.getAttribute(REQUIRED_FUNCTIONALITY);
 
-				boolean addElement = true;
+			boolean addElement = true;
 
-				String requiredFunctionality = (String) itemSB.getAttribute(REQUIRED_FUNCTIONALITY);
-
-				/* ALL_USERS or ALLOWED_USER_FUNCTIONALITIES */
-				if (condition != null && !condition.isEmpty()) {
-					addElement = menuConditionIsSatisfied(itemSB);
-				} else if (StringUtils.isNotBlank(requiredFunctionality)) {
-					addElement = false;
-
-					String[] reqFunc = requiredFunctionality.split(",", -1);
-					for (int i = 0; i < reqFunc.length; i++) {
-						if (isAbleTo(reqFunc[i], funcs)) {
-							addElement = isGroupItemToAdd(itemSB);
-						}
-						if (addElement)
-							break;
+			if (condition != null && !condition.isEmpty()) {
+				addElement = menuConditionIsSatisfied(itemSB);
+			} else if (StringUtils.isNotBlank(requiredFunctionality)) {
+				addElement = false;
+				String[] reqFunc = requiredFunctionality.split(",", -1);
+				for (String func : reqFunc) {
+					if (isAbleTo(func, funcs)) {
+						addElement = isGroupItemToAdd(itemSB);
+						if (addElement) break;
 					}
-				}
-
-				if (addElement)
-					addElement &= isUserMenuAuthorized(menuType, itemSB);
-
-				if (addElement)
-					addElement &= isUserMenuForNotAdmin(menuType, itemSB);
-
-				if (addElement)
-					addElement &= isMenuForKnowageCurrentType(menuType, itemSB);
-
-				if (addElement) {
-					JSONObject menu = createMenuNode(locale, messageBuilder, itemSB, menuType);
-					items.put(menu);
-					if (menuType == MenuType.TECHNICAL_USER_FUNCTIONALITIES)
-						technicalUserMenuIds.add(Integer.valueOf((String) itemSB.getAttribute(ID)));
 				}
 			}
 
-		}
+			if (addElement) addElement &= isUserMenuAuthorized(menuType, itemSB);
+			if (addElement) addElement &= isUserMenuForNotAdmin(menuType, itemSB);
+			if (addElement) addElement &= isMenuForKnowageCurrentType(menuType, itemSB);
 
+			if (addElement) {
+				JSONObject menu = createMenuNode(locale, messageBuilder, itemSB, menuType);
+				items.put(menu);
+				if (menuType == MenuType.TECHNICAL_USER_FUNCTIONALITIES) {
+					String idStr = (String) itemSB.getAttribute(ID);
+					if (idStr != null) {
+						technicalUserMenuIds.add(Integer.valueOf(idStr));
+					}
+				}
+			}
+		}
 		return items;
 	}
-
 	private boolean isUserMenuAuthorized(MenuType menuType, SourceBean itemSB) throws EMFUserError, EMFInternalError {
 
 		boolean isAuthorized = true;
