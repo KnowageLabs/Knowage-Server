@@ -1,12 +1,14 @@
 package it.eng.spagobi.rest.oauth2.dto;
 
 public class OAuth2ConfigDTO {
-	
+
     private String authorizeUrl;
 	private String accessTokenUrl;
 	private String clientId;
 	private String redirectUrl;
 	private String scopes;
+	private String clientSecret;
+
 	public String getAuthorizeUrl() {
 		return authorizeUrl;
 	}
@@ -38,5 +40,13 @@ public class OAuth2ConfigDTO {
 		this.scopes = scopes;
 	}
 
-	
+	public String getClientSecret() {
+		return clientSecret;
+	}
+
+	public void setClientSecret(String clientSecret) {
+		this.clientSecret = clientSecret;
+	}
+
+
 }

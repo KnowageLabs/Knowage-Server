@@ -25,6 +25,7 @@ public class OAuth2ConfigService extends AbstractSpagoBIResource {
 		String clientId = oauth2Config.getClientId();
 		String redirectUrl = oauth2Config.getRedirectUrl();
 		String scopes = oauth2Config.getScopes();
+		String secret = oauth2Config.getClientSecret();
 
 		OAuth2ConfigDTO dto = new OAuth2ConfigDTO();
 		dto.setAccessTokenUrl(accessTokenUrl);
@@ -32,6 +33,7 @@ public class OAuth2ConfigService extends AbstractSpagoBIResource {
 		dto.setClientId(clientId);
 		dto.setRedirectUrl(redirectUrl);
 		dto.setScopes(scopes);
+		dto.setClientSecret(secret);
 		return Response.ok(dto).build();
 	}
 
