@@ -106,6 +106,12 @@
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-ehcache</artifactId>
+			<version>3.6.2.Final</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
 			<groupId>org.jboss.resteasy</groupId>
 			<artifactId>resteasy-validator-provider-11</artifactId>
 			<version>${resteasy.version}</version>
