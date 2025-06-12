@@ -40,7 +40,7 @@ String code = request.getParameter("code");
     const tokenEndpoint = "<%= StringEscapeUtils.escapeJavaScript(oauth2Config.getAccessTokenUrl()) %>";
     const clientId = "<%= StringEscapeUtils.escapeJavaScript(oauth2Config.getClientId()) %>";
     const redirectUri = "<%= StringEscapeUtils.escapeJavaScript(oauth2Config.getRedirectUrl()) %>";
-
+    const clientSecret = "<%= StringEscapeUtils.escapeJavaScript(oauth2Config.getClientSecret()) %>";
 	
 	
         if (window.location.search) {
@@ -62,7 +62,7 @@ String code = request.getParameter("code");
             		    grant_type: "authorization_code",
             		    redirect_uri: redirectUri,
             		    code: code,
-            		    state: state
+            		    client_secret: clientSecret
             		  })
             		})
             		.then(response => response.json().then(data => ({ status: response.status, body: data })))
@@ -80,7 +80,7 @@ String code = request.getParameter("code");
 
             		    window.location = lastRedirectUri + "?" + args;
             		  } else {
-            		    alert(`Error: ${body.error_description} (${body.error})`);
+            			  alert(`Error: ${body.error_description} (${body.error})`);
             		  }
 
             		})
