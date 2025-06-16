@@ -737,9 +737,6 @@ public class UserUtilities {
 			if (virtualRole.getAbleToEnableDatasetPersistence()) {
 				roleFunctionalities.add(CommunityFunctionalityConstants.ENABLE_DATASET_PERSISTENCE);
 			}
-			if (virtualRole.getAbleToEnableFederatedDataset()) {
-				roleFunctionalities.add(CommunityFunctionalityConstants.ENABLE_FEDERATED_DATASET);
-			}
 			if (virtualRole.getAbleToEnableRate()) {
 				roleFunctionalities.add(CommunityFunctionalityConstants.ENABLE_TO_RATE);
 			}
