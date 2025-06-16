@@ -522,19 +522,28 @@ public class RestUtilities {
 		if (!whitelist.contains(value))
 			throw new SpagoBIRuntimeException("Header value " + value + " is not in the list of allowed headers.");
 	}
-	
+
 	public static void checkIfAddressIsInWhitelist(String address) {
-		String knowageBase = SpagoBIUtilities.readJndiResource(SingletonConfig.getInstance().getConfigValue(ConfigurationConstants.SPAGOBI_SPAGOBI_SERVICE_JNDI));
-		if(address.startsWith(knowageBase)) {
-		   return;	
-		}
-		
-		List<String> whitelist = WhiteList.getInstance().getExternalServices();
-		for(String baseUrl : whitelist) {
-			if(address.startsWith(baseUrl)) {
+		try {
+			URL url = new URL(address);
+			String hostname = url.getHost();
+			String protocol = url.getProtocol();
+			String baseUrl = protocol + "://" + hostname;
+
+			String knowageBase = SpagoBIUtilities.readJndiResource(SingletonConfig.getInstance().getConfigValue(ConfigurationConstants.SPAGOBI_SPAGOBI_SERVICE_JNDI));
+			if(knowageBase != null && knowageBase.equals(baseUrl)) {
 				return;
 			}
+
+			List<String> whitelist = WhiteList.getInstance().getExternalServices();
+			for(String allowedUrl : whitelist) {
+				URL allowedUrlObj = new URL(allowedUrl);
+				if(hostname.equals(allowedUrlObj.getHost())) {
+					return;
+				}
+			}
+			throw new SpagoBIRuntimeException("Address value " + address + " is not in the whitelist of allowed external services.");
+		} catch (MalformedURLException e) {
+			throw new SpagoBIRuntimeException("Invalid URL format: " + address, e);
 		}
-		throw new SpagoBIRuntimeException("Address value " + address + " is not in the whitelist of allowed external services.");
-	}
-}
+	}}

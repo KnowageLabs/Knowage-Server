@@ -58,6 +58,7 @@ public class UserInformationDTO {
 	private Collection roles = null;
 	private Collection functionalities;
 	private boolean enterprise;
+	private boolean enterpriseValid;
 
 	public UserInformationDTO(UserProfile user) {
 		try {
@@ -84,6 +85,7 @@ public class UserInformationDTO {
 			this.functionalities = user.getFunctionalities();
 
 			this.enterprise = isEnterpriseEdition();
+			this.enterpriseValid = isEnterpriseEditionValid();
 		} catch (EMFInternalError e) {
 			throw new SpagoBIRuntimeException("Cannot create UserInformationDTO from UserProfile object", e);
 		}
@@ -201,7 +203,15 @@ public class UserInformationDTO {
 		this.enterprise = enterprise;
 	}
 
-	private boolean isEnterpriseEdition() {
+	public void setEnterpriseValid(boolean enterpriseValid) {
+		this.enterpriseValid = enterpriseValid;
+	}
+
+	public boolean isEnterpriseValid() {
+		return enterpriseValid;
+	}
+
+	private boolean isEnterpriseEditionValid() {
 		try {
 			Class<?> clazz = Class.forName("it.eng.knowage.tools.servermanager.utils.LicenseManager");
 			Constructor<?> constructor = clazz.getDeclaredConstructor();
@@ -222,12 +232,21 @@ public class UserInformationDTO {
 		}
     }
 
+	private boolean isEnterpriseEdition() {
+		try {
+			Class.forName("it.eng.knowage.tools.servermanager.utils.LicenseManager");
+			return true;
+		} catch (ClassNotFoundException e) {
+			return false;
+		}
+	}
+
 	@Override
 	public String toString() {
 		return "UserInformationDTO [userId=" + userId + ", fullName=" + fullName + ", isSuperadmin=" + isSuperadmin + ", defaultRole=" + defaultRole
 				+ ", attributes=" + attributes + ", organization=" + organization + ", organizationImageb64=" + organizationImageb64 + ", uniqueIdentifier="
 				+ uniqueIdentifier + ", email=" + email + ", locale=" + locale + ", userUniqueIdentifier=" + userUniqueIdentifier + ", roles=" + roles
-				+ ", functionalities=" + functionalities + ", enterprise=" + enterprise + "]";
+				+ ", functionalities=" + functionalities + ", enterprise=" + enterprise + "enterpriseValid=" + enterpriseValid + "]";
 	}
 
 }

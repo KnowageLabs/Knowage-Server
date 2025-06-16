@@ -326,6 +326,11 @@ public class PageResource extends AbstractCockpitEngineResource {
 	}
 
 	private String getProfileRole() {
+
+		if (request.getParameter("SBI_EXECUTION_ROLE") != null) {
+			return request.getParameter("SBI_EXECUTION_ROLE");
+		}
+
 		IEngUserProfile profile = (IEngUserProfile) request.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 		Collection<String> roles;
 		try {

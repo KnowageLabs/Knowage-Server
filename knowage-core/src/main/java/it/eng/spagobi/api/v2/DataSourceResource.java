@@ -504,7 +504,7 @@ public class DataSourceResource extends AbstractSpagoBIResource {
 	}
 
 	private boolean isOwnedByTheUser(IDataSource dataSource) {
-		return getUserProfile().getUserName().toString().equals(dataSource.getOwner());
+		return getUserProfile().getUserId().toString().equals(dataSource.getOwner());
 	}
 
 }

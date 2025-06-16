@@ -811,6 +811,7 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 	 */
 
 	private String getLovResult(IEngUserProfile profile, String statement, boolean getAllColumns) throws Exception {
+		LOGGER.debug("IN, query= "+statement);
 		String resStr = null;
 		DataConnection dataConnection = null;
 		SQLCommand sqlCommand = null;
@@ -859,6 +860,7 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 			}
 		} finally {
 			Utils.releaseResources(dataConnection, sqlCommand, dataResult);
+			LOGGER.debug("OUT");
 		}
 		return resStr;
 	}

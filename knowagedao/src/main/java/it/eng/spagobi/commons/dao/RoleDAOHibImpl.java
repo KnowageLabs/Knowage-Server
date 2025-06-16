@@ -819,10 +819,8 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 		role.setIsPublic(hibRole.getIsPublic());
 
 		Set<SbiAuthorizationsRoles> authorizations = hibRole.getSbiAuthorizationsRoleses();
-		Iterator it = authorizations.iterator();
-		while (it.hasNext()) {
-			SbiAuthorizationsRoles fr = (SbiAuthorizationsRoles) it.next();
-			SbiAuthorizations f = fr.getSbiAuthorizations();
+		for (SbiAuthorizationsRoles sar : authorizations) {
+			SbiAuthorizations f = sar.getSbiAuthorizations();
 
 			String name = f.getName();
 			if (name.equals("EDIT_PYTHON_SCRIPTS")) {

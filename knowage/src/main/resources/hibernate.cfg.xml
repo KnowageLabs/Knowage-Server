@@ -20,8 +20,10 @@
 		<property name="hibernate.dialect">org.hibernate.dialect.DB2400Dialect</property>
 		-->
 
-		<property name="hibernate.cache.use_second_level_cache">false</property>
-		<property name="hibernate.cache.use_query_cache">false</property>
+		<property name="hibernate.cache.use_second_level_cache">true</property>
+		<property name="hibernate.cache.use_query_cache">true</property>
+		<property name="hibernate.cache.provider_class">org.hibernate.cache.EhCacheProvider</property>
+
 		<!-- <property name="hibernate.connection.zeroDateTimeBehavior">convertToNull</property>  -->
 
 		<property name="hibernate.show_sql">false</property>
@@ -29,7 +31,6 @@
 
 		<property name="hibernate.cache.use_minimal_puts">true</property>
 		<property name="hibernate.generate_statistics">true</property>
-		<property name="hibernate.cache.provider_class">org.hibernate.cache.EhCacheProvider</property>
 		<property name="hibernate.hbm2ddl.auto">create</property>
 		-->
 
@@ -249,6 +250,11 @@
 		<class-cache class="it.eng.spagobi.tools.datasource.metadata.SbiDataSource" usage="nonstrict-read-write"/>
 		<class-cache class="it.eng.spagobi.analiticalmodel.functionalitytree.metadata.SbiFuncRole" usage="nonstrict-read-write"/>
 
+		<class-cache class="it.eng.spagobi.commons.metadata.SbiExtRoles" usage="nonstrict-read-write"/>
+		<class-cache class="it.eng.spagobi.wapp.metadata.SbiMenuRole" usage="nonstrict-read-write"/>
+		<class-cache class="it.eng.spagobi.wapp.metadata.SbiMenu" usage="nonstrict-read-write"/>
+
+		<collection-cache collection="it.eng.spagobi.wapp.metadata.SbiMenu.sbiMenuRoles" usage="nonstrict-read-write"/>
 		<!-- <class-cache class="it.eng.spagobi.commons.metadata.SbiExtRoles" usage="read-only"/> -->
 		<!-- class-cache class="it.eng.spagobi.analiticalmodel.functionalitytree.metadata.SbiFunctions"
 			usage="nonstrict-read-write"/ -->

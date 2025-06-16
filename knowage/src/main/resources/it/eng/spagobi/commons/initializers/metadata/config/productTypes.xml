@@ -1,32 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <PRODUCT_TYPES>
-	<PRODUCT_TYPE label="KnowageBD" active="true">
-		<ENGINE label="knowageofficeengine" />
-		<ENGINE label="knowagecockpitengine" />
-		<ENGINE label="knowagedashboardengine" />
-		<ENGINE label="knowageqbeengine" />
-		<ENGINE label="knowagetalendengine" />
-	</PRODUCT_TYPE>
 	<PRODUCT_TYPE label="KnowageSI" active="true">
-		<ENGINE label="knowageofficeengine" />	
+		<ENGINE label="knowageofficeengine" />
 		<ENGINE label="knowageqbeengine" />
 		<ENGINE label="knowagetalendengine" />
 		<ENGINE label="knowagecockpitengine" />
-		<ENGINE label="knowagedashboardengine" />
 		<ENGINE label="knowageolapengine" />
 		<ENGINE label="knowagedossierengine" />
-	</PRODUCT_TYPE>
-	<PRODUCT_TYPE label="KnowageER" active="true">
-		<ENGINE label="knowageofficeengine" />
+		<ENGINE label="knowagedashboardengine" />
 		<ENGINE label="knowagebirtreporteng" />
 		<ENGINE label="knowagejasperreporte" />
-		<ENGINE label="knowagedossierengine" />
-	</PRODUCT_TYPE>
-	<PRODUCT_TYPE label="KnowagePM" active="true">
 		<ENGINE label="knowagekpiengine" />
-	</PRODUCT_TYPE>
-	<PRODUCT_TYPE label="KnowagePA" active="true">
-		<ENGINE label="knowagewhatifengine" />
-		<ENGINE label="knowageolapengine" />
 	</PRODUCT_TYPE>
 </PRODUCT_TYPES>
