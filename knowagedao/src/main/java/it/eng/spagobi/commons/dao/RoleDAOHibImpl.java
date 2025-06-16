@@ -635,21 +635,16 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 				|| (authI.getName().equals("VIEW_SOCIAL_ANALYSIS") && aRole.getAbleToViewSocialAnalysis())
 				|| (authI.getName().equals("HIERARCHIES_MANAGEMENT") && aRole.getAbleToHierarchiesManagement())
 				|| (authI.getName().equals("ENABLE_DATASET_PERSISTENCE") && aRole.getAbleToEnableDatasetPersistence())
-				|| (authI.getName().equals("ENABLE_FEDERATED_DATASET") && aRole.getAbleToEnableFederatedDataset())
 				|| (authI.getName().equals("ENABLE_TO_RATE") && aRole.getAbleToEnableRate())
 				|| (authI.getName().equals("ENABLE_TO_PRINT") && aRole.getAbleToEnablePrint())
 				|| (authI.getName().equals("ENABLE_TO_COPY_AND_EMBED") && aRole.getAbleToEnableCopyAndEmbed())
 				|| (authI.getName().equals("MANAGE_GLOSSARY_BUSINESS") && aRole.getAbleToManageGlossaryBusiness())
 				|| (authI.getName().equals("MANAGE_GLOSSARY_TECHNICAL") && aRole.getAbleToManageGlossaryTechnical())
-				|| (authI.getName().equals("MANAGE_KPI_VALUE") && aRole.getAbleToManageKpiValue())
 				|| (authI.getName().equals("MANAGE_CALENDAR") && aRole.getAbleToManageCalendar())
 				|| (authI.getName().equals("FUNCTIONS_CATALOG_USAGE") && aRole.getAbleToUseFunctionsCatalog())
 				|| (authI.getName().equals("MANAGE_INTERNATIONALIZATION")
 						&& aRole.getAbleToManageInternationalization())
 				|| (authI.getName().equals("CREATE_SELF_SERVICE_COCKPIT") && aRole.getAbleToCreateSelfServiceCockpit())
-				|| (authI.getName().equals("CREATE_SELF_SERVICE_KPI") && aRole.getAbleToCreateSelfServiceKpi())
-				|| (authI.getName().equals("CREATE_SELF_SERVICE_GEOREPORT")
-						&& aRole.getAbleToCreateSelfServiceGeoreport())
 				|| (authI.getName().equals("EDIT_PYTHON_SCRIPTS") && aRole.getAbleToEditPythonScripts())
 				|| (authI.getName().equals("CREATE_CUSTOM_CHART") && aRole.getAbleToCreateCustomChart())
 				|| (authI.getName().equals("SEE_HELP_ONLINE") && aRole.getAbleToSeeHelpOnline())
@@ -913,9 +908,6 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 			if (name.equals("ENABLE_DATASET_PERSISTENCE")) {
 				role.setAbleToEnableDatasetPersistence(true);
 			}
-			if (name.equals("ENABLE_FEDERATED_DATASET")) {
-				role.setAbleToEnableFederatedDataset(true);
-			}
 			if (name.equals("ENABLE_TO_RATE")) {
 				role.setAbleToEnableRate(true);
 			}
@@ -931,9 +923,6 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 			if (name.equals("MANAGE_GLOSSARY_TECHNICAL")) {
 				role.setAbleToManageGlossaryTechnical(true);
 			}
-			if (name.equals("MANAGE_KPI_VALUE")) {
-				role.setAbleToManageKpiValue(true);
-			}
 			if (name.equals("MANAGE_CALENDAR")) {
 				role.setAbleToManageCalendar(true);
 			}
@@ -945,12 +934,6 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 			}
 			if (name.equals("CREATE_SELF_SERVICE_COCKPIT")) {
 				role.setAbleToCreateSelfServiceCockpit(true);
-			}
-			if (name.equals("CREATE_SELF_SERVICE_GEOREPORT")) {
-				role.setAbleToCreateSelfServiceGeoreport(true);
-			}
-			if (name.equals("CREATE_SELF_SERVICE_KPI")) {
-				role.setAbleToCreateSelfServiceKpi(true);
 			}
 			if(name.equals("SEE_HELP_ONLINE")) {
 				role.setAbleToSeeHelpOnline(true);

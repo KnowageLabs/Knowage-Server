@@ -63,7 +63,7 @@ public class RestFederationDefinition extends AbstractSpagoBIResource {
 
 	@GET
 	@Path("/")
-	@UserConstraint(functionalities = { CommunityFunctionalityConstants.ENABLE_FEDERATED_DATASET })
+	@UserConstraint(functionalities = {  })
 	@Produces(MediaType.APPLICATION_JSON)
 	public List<FederationDefinition> get() {
 		try {
@@ -86,7 +86,7 @@ public class RestFederationDefinition extends AbstractSpagoBIResource {
 
 	@GET
 	@Path("/{id}")
-	@UserConstraint(functionalities = { CommunityFunctionalityConstants.ENABLE_FEDERATED_DATASET })
+	@UserConstraint(functionalities = {  })
 	@Produces(MediaType.APPLICATION_JSON)
 	public FederationDefinition getFederationByID(@PathParam("id") Integer id) {
 		try {

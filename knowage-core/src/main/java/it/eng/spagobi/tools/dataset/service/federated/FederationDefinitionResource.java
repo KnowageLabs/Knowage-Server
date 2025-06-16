@@ -56,7 +56,7 @@ public class FederationDefinitionResource {
 
 	@GET
 	@Path("/")
-	@UserConstraint(functionalities = { CommunityFunctionalityConstants.ENABLE_FEDERATED_DATASET })
+	@UserConstraint(functionalities = {  })
 	@Produces(MediaType.APPLICATION_JSON)
 	public List<FederationDefinition> get() {
 		try {
@@ -72,7 +72,7 @@ public class FederationDefinitionResource {
 
 	@GET
 	@Path("/{id}")
-	@UserConstraint(functionalities = { CommunityFunctionalityConstants.ENABLE_FEDERATED_DATASET })
+	@UserConstraint(functionalities = {  })
 	@Produces(MediaType.APPLICATION_JSON)
 	public FederationDefinition getFederationByID(@PathParam("id") Integer id) {
 		try {
@@ -107,7 +107,7 @@ public class FederationDefinitionResource {
 	@PUT
 	@Path("/{id}")
 	@Consumes(MediaType.APPLICATION_JSON)
-	@UserConstraint(functionalities = { CommunityFunctionalityConstants.ENABLE_FEDERATED_DATASET })
+	@UserConstraint(functionalities = { })
 	public Integer update(@PathParam("id") Integer id, FederationDefinition fds) {
 		logger.debug("IN");
 		try {
@@ -122,7 +122,7 @@ public class FederationDefinitionResource {
 
 	@DELETE
 	@Path("/{id}")
-	@UserConstraint(functionalities = { CommunityFunctionalityConstants.ENABLE_FEDERATED_DATASET })
+	@UserConstraint(functionalities = {  })
 	public Response remove(@PathParam("id") Integer id) {
 
 		try {

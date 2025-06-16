@@ -902,8 +902,7 @@ public class KpiService {
 
 	@POST
 	@Path("/editKpiValue")
-	@UserConstraint(functionalities = { CommunityFunctionalityConstants.KPI_MANAGEMENT,
-			CommunityFunctionalityConstants.MANAGE_KPI_VALUE })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.KPI_MANAGEMENT })
 	public void editKpiValue(@Context HttpServletRequest req) {
 		logger.debug("editKpiValue IN");
 		Response out;
