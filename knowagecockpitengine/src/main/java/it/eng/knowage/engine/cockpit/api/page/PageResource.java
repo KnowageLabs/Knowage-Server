@@ -17,7 +17,54 @@
  */
 package it.eng.knowage.engine.cockpit.api.page;
 
+import static it.eng.knowage.commons.security.KnowageSystemConfiguration.getKnowageVueContext;
+import static it.eng.spagobi.commons.constants.ConfigurationConstants.SPAGOBI_SPAGOBI_SERVICE_JNDI;
+import static java.nio.charset.StandardCharsets.UTF_8;
+
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Base64;
+import java.util.Base64.Encoder;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+
+import org.apache.commons.lang3.StringUtils;
+import org.apache.http.client.utils.URIBuilder;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.jboss.resteasy.plugins.providers.html.View;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import com.google.common.collect.Iterables;
+
 import it.eng.knowage.engine.api.excel.export.dashboard.DashboardExcelExporter;
 import it.eng.knowage.engine.api.excel.export.dashboard.DatastoreUtils;
 import it.eng.knowage.engine.cockpit.CockpitEngine;
@@ -42,37 +89,6 @@ import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.engines.EngineStartServletIOManager;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceExceptionHandler;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
-import it.eng.spagobi.utilities.mime.MimeUtils;
-import it.eng.spagobi.utilities.rest.RestUtilities;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.http.client.utils.URIBuilder;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.jboss.resteasy.plugins.providers.html.View;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.ws.rs.*;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.*;
-import java.util.Base64.Encoder;
-import java.util.Map.Entry;
-import java.util.stream.Collectors;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
-
-import static it.eng.knowage.commons.security.KnowageSystemConfiguration.getKnowageVueContext;
-import static it.eng.spagobi.commons.constants.ConfigurationConstants.SPAGOBI_SPAGOBI_SERVICE_JNDI;
-import static java.nio.charset.StandardCharsets.UTF_8;
 
 /**
  * @authors Andrea Gioia (andrea.gioia@eng.it)
@@ -375,7 +391,9 @@ public class PageResource extends AbstractCockpitEngineResource {
 		String documentLabel = request.getParameter("DOCUMENT_LABEL");
 		String viewName = request.getParameter("viewName");
 		String viewId = request.getParameter("viewId");
-		if (viewName != null && viewId != null) {
+		String noDashboard = request.getParameter("NO_DASHBOARD");
+		// if noDashboard has value, skip getRequestUrlWithViewHandling
+		if (viewName != null && viewId != null && noDashboard == null) {
 			requestURL = getRequestUrlWithViewHandling(documentLabel);
 		} else {
 			requestURL = getRequestUrlForPdfExport(request);
@@ -399,21 +417,21 @@ public class PageResource extends AbstractCockpitEngineResource {
 		byte[] data = pngExporter.getBinaryData();
 
 		boolean isZipped = false;
-		
-		// TODO non-regression-test 
+
+		// TODO non-regression-test
 		int thresholdEntries = 10000;
 		int thresholdSize = 1000000000;
 		double thresholdRatio = 10;
 		int totalSizeArchive = 0;
 		int totalEntryArchive = 0;
-		
+
 		ZipInputStream zippedInputStream = new ZipInputStream(new ByteArrayInputStream(data));
 		ZipEntry zipEntry = null;
-		
+
 		while((zipEntry = zippedInputStream.getNextEntry()) != null) {
-			
+
 			totalEntryArchive ++;
-			
+
 			int nBytes = -1;
 			byte[] buffer = new byte[2048];
 			int totalSizeEntry = 0;
@@ -429,8 +447,8 @@ public class PageResource extends AbstractCockpitEngineResource {
 			    	logger.error("Error while unzip file. Invalid archive file");
 					throw new SpagoBIRuntimeException("Error while unzip file. Invalid archive file");
 			      }
-			 } 
-			
+			 }
+
 			if(totalSizeArchive > thresholdSize) {
 				// the uncompressed data size is too much for the application resource capacity
 				logger.error("Error while unzip file. Invalid archive file");
@@ -442,8 +460,8 @@ public class PageResource extends AbstractCockpitEngineResource {
 				logger.error("Error while unzip file. Invalid archive file");
 				throw new SpagoBIRuntimeException("Error while unzip file. Invalid archive file");
 			}
-			
-			isZipped = new ZipInputStream(new ByteArrayInputStream(data)).getNextEntry() != null;			  
+
+			isZipped = new ZipInputStream(new ByteArrayInputStream(data)).getNextEntry() != null;
 		}
 
 		String mimeType = null;
