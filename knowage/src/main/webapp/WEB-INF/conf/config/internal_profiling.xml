@@ -76,14 +76,12 @@
 		<AUTHORIZATION productType="KnowageSI" authorizationName="SEE_MY_DATA" organization="DEFAULT_TENANT"/>
 		<AUTHORIZATION productType="KnowageSI" authorizationName="SEE_MY_WORKSPACE" organization="DEFAULT_TENANT"/>
 		<AUTHORIZATION productType="KnowageSI" authorizationName="BUILD_QBE_QUERY" organization="DEFAULT_TENANT"/>
-		<AUTHORIZATION productType="KnowageSI" authorizationName="ENABLE_FEDERATED_DATASET" organization="DEFAULT_TENANT"/>
 		<AUTHORIZATION productType="KnowageSI" authorizationName="MANAGE_INTERNATIONALIZATION" organization="DEFAULT_TENANT" />
 		<AUTHORIZATION productType="KnowageSI" authorizationName="ENABLE_TO_RATE" organization="DEFAULT_TENANT" />
 		<AUTHORIZATION productType="KnowageSI" authorizationName="ENABLE_TO_PRINT" organization="DEFAULT_TENANT" />
 		<AUTHORIZATION productType="KnowageSI" authorizationName="ENABLE_TO_COPY_AND_EMBED" organization="DEFAULT_TENANT" />
 		<AUTHORIZATION productType="KnowageSI" authorizationName="CREATE_SELF_SERVICE_COCKPIT" organization="DEFAULT_TENANT" />
-		<AUTHORIZATION productType="KnowageSI" authorizationName="CREATE_SELF_SERVICE_GEOREPORT" organization="DEFAULT_TENANT" />
-		<AUTHORIZATION productType="KnowageSI" authorizationName="SEE_NEWS" organization="DEFAULT_TENANT" />
+        <AUTHORIZATION productType="KnowageSI" authorizationName="SEE_NEWS" organization="DEFAULT_TENANT" />
 		<AUTHORIZATION productType="KnowageSI" authorizationName="EDIT_PYTHON_SCRIPTS" organization="DEFAULT_TENANT" />
 		<AUTHORIZATION productType="KnowageSI" authorizationName="CREATE_CUSTOM_CHART" organization="DEFAULT_TENANT" />
 		<AUTHORIZATION productType="KnowageSI" authorizationName="GLOSSARY" organization="DEFAULT_TENANT"/>
@@ -91,9 +89,7 @@
 		<AUTHORIZATION productType="KnowageSI" authorizationName="ENABLE_DOSSIER" organization="DEFAULT_TENANT" />
 		<AUTHORIZATION productType="KnowageSI" authorizationName="ENABLE_DATA_PREPARATION" organization="DEFAULT_TENANT" />
 		<AUTHORIZATION productType="KnowageSI" authorizationName="ENABLE_DASHBOARD_THEME_MANAGEMENT" organization="DEFAULT_TENANT" />
-		<AUTHORIZATION productType="KnowageSI" authorizationName="MANAGE_KPI_VALUE" organization="DEFAULT_TENANT"/>
-		<AUTHORIZATION productType="KnowageSI" authorizationName="CREATE_SELF_SERVICE_KPI" organization="DEFAULT_TENANT" />
-		<AUTHORIZATION productType="KnowageSI" authorizationName="MANAGE_CALENDAR" organization="DEFAULT_TENANT" />
+	    <AUTHORIZATION productType="KnowageSI" authorizationName="MANAGE_CALENDAR" organization="DEFAULT_TENANT" />
 		<AUTHORIZATION productType="KnowageSI" authorizationName="FUNCTIONS_CATALOG_USAGE" organization="DEFAULT_TENANT" />
 	</DEFAULT_AUTHORIZATIONS>
 

@@ -737,9 +737,6 @@ public class UserUtilities {
 			if (virtualRole.getAbleToEnableDatasetPersistence()) {
 				roleFunctionalities.add(CommunityFunctionalityConstants.ENABLE_DATASET_PERSISTENCE);
 			}
-			if (virtualRole.getAbleToEnableFederatedDataset()) {
-				roleFunctionalities.add(CommunityFunctionalityConstants.ENABLE_FEDERATED_DATASET);
-			}
 			if (virtualRole.getAbleToEnableRate()) {
 				roleFunctionalities.add(CommunityFunctionalityConstants.ENABLE_TO_RATE);
 			}
@@ -755,9 +752,6 @@ public class UserUtilities {
 			if (virtualRole.getAbleToManageGlossaryTechnical()) {
 				roleFunctionalities.add(CommunityFunctionalityConstants.MANAGE_GLOSSARY_TECHNICAL);
 			}
-			if (virtualRole.getAbleToManageKpiValue()) {
-				roleFunctionalities.add(CommunityFunctionalityConstants.MANAGE_KPI_VALUE);
-			}
 			if (virtualRole.getAbleToManageCalendar()) {
 				roleFunctionalities.add(CommunityFunctionalityConstants.MANAGE_CALENDAR);
 			}
@@ -771,15 +765,6 @@ public class UserUtilities {
 			if (virtualRole.getAbleToCreateSelfServiceCockpit()) {
 				roleFunctionalities.add(CommunityFunctionalityConstants.CREATE_SELF_SERVICE_COCKPIT);
 			}
-
-			if (virtualRole.getAbleToCreateSelfServiceGeoreport()) {
-				roleFunctionalities.add(CommunityFunctionalityConstants.CREATE_SELF_SERVICE_GEOREPORT);
-			}
-
-			if (virtualRole.getAbleToCreateSelfServiceKpi()) {
-				roleFunctionalities.add(CommunityFunctionalityConstants.CREATE_SELF_SERVICE_KPI);
-			}
-
 			if (virtualRole.getAbleToEditPythonScripts()) {
 				roleFunctionalities.add(CommunityFunctionalityConstants.EDIT_PYTHON_SCRIPTS);
 			}

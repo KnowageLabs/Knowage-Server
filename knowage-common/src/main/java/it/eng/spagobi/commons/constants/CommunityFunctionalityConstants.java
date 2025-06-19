@@ -40,8 +40,6 @@ public class CommunityFunctionalityConstants {
 	public static final String CREATE_DATASETS_AS_FINAL_USER = "CreateDatasetsAsFinalUser";
 	public static final String CREATE_DOCUMENT = "CreateDocument";
 	public static final String CREATE_SELF_SERVICE_COCKPIT = "CreateSelfSelviceCockpit";
-	public static final String CREATE_SELF_SERVICE_GEOREPORT = "CreateSelfSelviceGeoreport";
-	public static final String CREATE_SELF_SERVICE_KPI = "CreateSelfSelviceKpi";
 	public static final String CREATE_SOCIAL_ANALYSIS = "CreateSocialAnalysis";
 	public static final String DATA_PREPARATION = "DataPreparation";
 	public static final String HELP_ON_LINE = "HelpOnLine";
@@ -74,7 +72,6 @@ public class CommunityFunctionalityConstants {
 	public static final String DOMAIN_WRITE = "DomainWrite";
 	public static final String EDIT_PYTHON_SCRIPTS = "EditPythonScripts";
 	public static final String ENABLE_DATASET_PERSISTENCE = "EnableDatasetPersistence";
-	public static final String ENABLE_FEDERATED_DATASET = "EnableFederatedDataset";
 	public static final String ENABLE_TO_COPY_AND_EMBED = "EnableToCopyAndEmbed";
 	public static final String ENABLE_TO_PRINT = "EnableToPrint";
 	public static final String ENABLE_TO_RATE = "EnableToRate";
@@ -125,7 +122,6 @@ public class CommunityFunctionalityConstants {
 	public static final String MANAGE_GLOSSARY_BUSINESS = "ManageGlossaryBusiness";
 	public static final String MANAGE_GLOSSARY_TECHNICAL = "ManageGlossaryTechnical";
 	public static final String MANAGE_INTERNATIONALIZATION = "ManageInternationalization";
-	public static final String MANAGE_KPI_VALUE = "ManageKpiValue";
 	public static final String MANAGE_MULTISHEET_COCKPIT = "MultisheetCockpit";
 	public static final String MANAGE_STATIC_WIDGET = "StaticWidget";
 	public static final String MAP_FEATURES_MANAGEMENT = "MapFeaturesManagement";

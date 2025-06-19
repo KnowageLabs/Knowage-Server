@@ -142,8 +142,14 @@ public class AvroExportJob extends AbstractExportJob {
 		try {
 			Class<?> type = dsMeta.getFieldType(i);
 			if (isDate(type)) {
-				//value = dateFormatter.parse(value.toString()).getTime();
-				value = Date.from((LocalDate.parse(value.toString(), dateFormatter_v2)).atStartOfDay(ZoneId.systemDefault()).toInstant());
+				if (value instanceof java.util.Date utilDate) {
+					LocalDate localDate = utilDate.toInstant()
+							.atZone(ZoneId.systemDefault())
+							.toLocalDate();
+					value = dateFormatter_v2.format(localDate);
+				} else {
+					value = value.toString();
+				}
 			} else if (isTimestamp(type)) {
 				value = DatabaseUtils.timestampFormatter(value);
 			} else if (BigDecimal.class.isAssignableFrom(type)) {
@@ -242,8 +248,10 @@ public class AvroExportJob extends AbstractExportJob {
 			ret = Schema.create(Schema.Type.LONG);
 		} else if (Double.class.isAssignableFrom(fieldType)) {
 			ret = Schema.create(Schema.Type.DOUBLE);
-		} else if (isTimestamp(fieldType) || isDate(fieldType)) {
+		} else if (isTimestamp(fieldType)) {
 			ret = Schema.create(Schema.Type.LONG);
+		} else if (isDate(fieldType)) {
+			ret = Schema.create(Schema.Type.STRING);
 		} else {
 			ret = Schema.create(Schema.Type.STRING);
 		}

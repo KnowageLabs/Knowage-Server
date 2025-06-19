@@ -102,15 +102,27 @@ public class PersistedTableHelper {
 					Timestamp timestamp = Timestamp.valueOf((LocalDateTime) fieldValue);
 					insertStatement.setTimestamp(fieldIndex + 1, timestamp);
 				} else {
-					java.util.Date date = new java.util.Date(fieldValue.toString());
-					// JDK 8 version
-					/*
-					 * Instant instant = date.toInstant(); ZonedDateTime zdt = ZonedDateTime.ofInstant(instant, ZoneId.systemDefault()); LocalDate localDate =
-					 * zdt.toLocalDate();
-					 */
-					DateTime dateTime = new DateTime(date, DateTimeZone.getDefault());
-					java.sql.Date sqlDate = new java.sql.Date(dateTime.getMillis());
-					insertStatement.setDate(fieldIndex + 1, sqlDate);
+					try {
+						java.util.Date date = new java.util.Date(fieldValue.toString());
+						DateTime dateTime = new DateTime(date, DateTimeZone.getDefault());
+						java.sql.Date sqlDate = new java.sql.Date(dateTime.getMillis());
+						insertStatement.setDate(fieldIndex + 1, sqlDate);
+					} catch (IllegalArgumentException e) {
+						try {
+							String strValue = fieldValue.toString();
+							long timestamp = Long.parseLong(strValue);
+							if (timestamp < 10000000000L) {
+								timestamp = timestamp * 1000;
+							}
+							java.util.Date date = new java.util.Date(timestamp);
+							DateTime dateTime = new DateTime(date, DateTimeZone.getDefault());
+							java.sql.Date sqlDate = new java.sql.Date(dateTime.getMillis());
+							insertStatement.setDate(fieldIndex + 1, sqlDate);
+						} catch (Exception e2) {
+							LOGGER.error("Failed to parse date from value: " + fieldValue, e2);
+							throw new RuntimeException("Cannot convert value [" + fieldValue + "] to Date", e2);
+						}
+					}
 				}
 			} else if (fieldMetaTypeName.toLowerCase().contains("timestamp")) {
 				Timestamp timestamp = Timestamp.valueOf(fieldValue.toString());

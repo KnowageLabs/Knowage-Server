@@ -4,7 +4,6 @@
 <!-- Generated 9-apr-2008 12.18.26 by Hibernate Tools 3.1.0 beta3 -->
 <hibernate-mapping>
     <class name="it.eng.spagobi.wapp.metadata.SbiMenu" table="SBI_MENU">
-        <cache usage="nonstrict-read-write"/>
         <id name="menuId" type="integer">
             <column name="menu_id" />
    <generator class="org.hibernate.id.enhanced.TableGenerator">
@@ -101,7 +100,6 @@
 			<column name="CUST_ICON" />
 		</property>
         <set name="sbiMenuRoles" inverse="true">
-            <cache usage="nonstrict-read-write"/>
             <key>
                 <column name="menu_id" not-null="true" />
             </key>

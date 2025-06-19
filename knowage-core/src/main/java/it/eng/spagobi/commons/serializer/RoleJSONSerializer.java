@@ -69,15 +69,12 @@ public class RoleJSONSerializer implements Serializer {
 	private static final String VIEW_SOCIAL_ANALYSIS = "viewSocialAnalysis";
 	private static final String HIERARCHIES_MANAGEMENT = "hierarchiesManagement";
 	private static final String ENABLE_DATASET_PERSISTENCE = "enableDatasetPersistence";
-	private static final String ENABLE_FEDERATED_DATASET = "enableFederatedDataset";
 	private static final String ENABLE_TO_RATE = "enableToRate";
 	private static final String ENABLE_TO_PRINT = "enableToPrint";
 	private static final String ENABLE_TO_COPY_AND_EMBED = "enableToCopyAndEmbed";
 
 	public static final String MANAGE_GLOSSARY_BUSINESS = "manageGlossaryBusiness";
 	public static final String MANAGE_GLOSSARY_TECHNICAL = "manageGlossaryTechnical";
-
-	public static final String MANAGE_KPI_VALUE = "manageKpiValue";
 
 	public static final String MANAGE_CALENDAR = "manageCalendar";
 	public static final String FUNCTIONS_CATALOG_USAGE = "functionsCatalogUsage";
@@ -131,11 +128,9 @@ public class RoleJSONSerializer implements Serializer {
 			result.put(HIERARCHIES_MANAGEMENT, role.getAbleToHierarchiesManagement());
 			result.put(MANAGE_GLOSSARY_BUSINESS, role.getAbleToManageGlossaryBusiness());
 			result.put(MANAGE_GLOSSARY_TECHNICAL, role.getAbleToManageGlossaryTechnical());
-			result.put(MANAGE_KPI_VALUE, role.getAbleToManageKpiValue());
 			result.put(MANAGE_CALENDAR, role.getAbleToManageCalendar());
 			result.put(FUNCTIONS_CATALOG_USAGE, role.getAbleToUseFunctionsCatalog());
 			result.put(ENABLE_DATASET_PERSISTENCE, role.getAbleToEnableDatasetPersistence());
-			result.put(ENABLE_FEDERATED_DATASET, role.getAbleToEnableFederatedDataset());
 			result.put(ENABLE_TO_RATE, role.getAbleToEnableRate());
 			result.put(ENABLE_TO_PRINT, role.getAbleToEnablePrint());
 			result.put(ENABLE_TO_COPY_AND_EMBED, role.getAbleToEnableCopyAndEmbed());
