@@ -422,7 +422,9 @@ public class JPAPersistenceManager implements IPersistenceManager {
 		// @formatter:off
 		Map<String, Object> allSubEntityProperties =
 				columns.stream()
-				.filter(column -> subEntity.equals(column.getSubEntity())) // we get all columns belonging to same sub-entity
+				.filter(column -> subEntity.equals(column.getSubEntity()))
+				.filter(column -> column.isVisible())
+				.filter(column -> column.isEditable())// we get all columns belonging to same sub-entity
 				.collect(Collectors.toMap(Column::getField, column -> aRecord.opt(column.getField()))); // we create a map (column field -> incoming value)
 		// @formatter:on
 		return allSubEntityProperties;
