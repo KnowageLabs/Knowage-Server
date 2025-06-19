@@ -213,22 +213,24 @@ public class MenuUtilities {
 	public static List getMenuItems(IEngUserProfile profile) throws EMFUserError {
 		try {
 			List lstFinalMenu = new ArrayList();
+			boolean technicalMenuLoaded = false;
 
 			Collection lstRolesForUser = ((UserProfile) profile).getRolesForUse();
 			logger.debug("** Roles for user: " + lstRolesForUser.size());
 
 			Object[] arrRoles = lstRolesForUser.toArray();
-            for (Object arrRole : arrRoles) {
-                logger.debug("*** arrRoles[i]): " + arrRole);
-                Role role = DAOFactory.getRoleDAO().loadByName((String) arrRole);
-                if (role != null) {
+			Integer levelItem = 1;
+			for (int i = 0; i < arrRoles.length; i++) {
+				logger.debug("*** arrRoles[i]): " + arrRoles[i]);
+				Role role = DAOFactory.getRoleDAO().loadByName((String) arrRoles[i]);
+				if (role != null) {
 
-                    List menuItemsForARole = DAOFactory.getMenuRolesDAO().loadMenuByRoleId(role.getId());
-                    if (menuItemsForARole != null) {
-                        mergeMenuItems(lstFinalMenu, menuItemsForARole);
-                    } else {
-                        logger.debug("Not found menu items for user role " + (String) arrRole);
-                    }
+					List menuItemsForARole = DAOFactory.getMenuRolesDAO().loadMenuByRoleId(role.getId());
+					if (menuItemsForARole != null) {
+						mergeMenuItems(lstFinalMenu, menuItemsForARole);
+					} else {
+						logger.debug("Not found menu items for user role " + (String) arrRoles[i]);
+					}
 
 //					if (!technicalMenuLoaded && UserUtilities.isTechnicalUser(profile)) {
 //						// list technical user menu
@@ -244,9 +246,9 @@ public class MenuUtilities {
 //							}
 //						}
 //					}
-                } else
-                    logger.debug("Role " + (String) arrRole + " not found on db");
-            }
+				} else
+					logger.debug("Role " + (String) arrRoles[i] + " not found on db");
+			}
 
 			logger.debug("List Menu Size " + lstFinalMenu.size());
 			return lstFinalMenu;
