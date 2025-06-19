@@ -391,9 +391,7 @@ public class PageResource extends AbstractCockpitEngineResource {
 		String documentLabel = request.getParameter("DOCUMENT_LABEL");
 		String viewName = request.getParameter("viewName");
 		String viewId = request.getParameter("viewId");
-		String noDashboard = request.getParameter("NO_DASHBOARD");
-		// if noDashboard has value, skip getRequestUrlWithViewHandling
-		if (viewName != null && viewId != null && noDashboard == null) {
+		if (viewName != null && viewId != null) {
 			requestURL = getRequestUrlWithViewHandling(documentLabel);
 		} else {
 			requestURL = getRequestUrlForPdfExport(request);

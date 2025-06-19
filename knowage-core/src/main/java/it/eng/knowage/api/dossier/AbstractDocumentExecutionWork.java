@@ -532,7 +532,6 @@ public class AbstractDocumentExecutionWork extends DossierExecutionClient implem
 		serviceUrlBuilder.setParameter("SBI_LANGUAGE", locale.getLanguage());
 		serviceUrlBuilder.setParameter("SBI_COUNTRY", locale.getCountry());
 		serviceUrlBuilder.setParameter("SBI_SCRIPT", locale.getScript());
-		serviceUrlBuilder.setParameter("NO_DASHBOARD", "Y");
 
 		addParametersToServiceUrlForCockpit(biObject, jsonArray, paramMap, reportToUse, serviceUrlBuilder);
 		addRenderOptionsToServiceUrl(biObject, reportToUse, serviceUrlBuilder);
