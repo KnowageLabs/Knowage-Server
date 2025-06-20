@@ -18,6 +18,7 @@
 package it.eng.spagobi.wapp.dao;
 
 import it.eng.spago.error.EMFUserError;
+import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.dao.ISpagoBIDao;
 import it.eng.spagobi.wapp.bo.MenuRoles;
 
@@ -40,5 +41,8 @@ public interface IMenuRolesDAO extends ISpagoBIDao{
 	 * 
 	 * @throws EMFUserError If an Exception occurred
 	 */
-	public List loadMenuByRoleId(Integer roleId) throws EMFUserError;		
+	public List loadMenuByRoleId(Integer roleId) throws EMFUserError;
+
+	public List loadMenuByRoleId(Integer roleId, IEngUserProfile userProfile) throws EMFUserError;
+
 }
