@@ -25,7 +25,9 @@ import it.eng.spagobi.analiticalmodel.document.bo.ObjTemplate;
 import it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
 import it.eng.spagobi.commons.SingletonConfig;
+import it.eng.spagobi.commons.bo.Config;
 import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.dao.IConfigDAO;
 import it.eng.spagobi.tenant.TenantManager;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
@@ -61,7 +63,9 @@ public class ExcelExporter extends AbstractFormatExporter {
     private static final String[] WIDGETS_TO_IGNORE = {"image", "text", "selector", "selection", "html"};
     private static final String SCRIPT_NAME = "cockpit-export-xls.js";
     private static final String CONFIG_NAME_FOR_EXPORT_SCRIPT_PATH = "internal.nodejs.chromium.export.path";
+    private static final String CONFIG_NAME_FOR_DRIVERS_SHEET_EXPORT = "COCKPIT.EXPORT.SHOW_FILTER";
     private static final int SHEET_NAME_MAX_LEN = 31;
+    private static final int EXCEL_CELL_MAX_LEN = 32767;
 
     public static final String UNIQUE_ALIAS_PLACEHOLDER = "_$_";
 
@@ -155,16 +159,21 @@ public class ExcelExporter extends AbstractFormatExporter {
                     exportedSheets++;
                 }
 
-                Map<String, Map<String, Object>> driversMap = new HashMap<>();
-                try {
-                    driversMap = createDriversMap();
-                } catch (JSONException e) {
-                    throw new SpagoBIRuntimeException("Unable to get driver map: ", e);
-                }
-                if (!driversMap.isEmpty()) {
-                    Sheet driversSheet = createUniqueSafeSheetForDrivers(wb, "Filters");
-                    fillDriversSheetWithData(driversMap, wb, driversSheet, "Filters");
-                    exportedSheets++;
+                IConfigDAO configsDao = DAOFactory.getSbiConfigDAO();
+                Optional<Config> cfg = configsDao.loadConfigParametersByLabelIfExist(CONFIG_NAME_FOR_DRIVERS_SHEET_EXPORT);
+
+                if (cfg.isPresent() && cfg.get().isActive() && Boolean.parseBoolean(cfg.get().getValueCheck())) {
+                    Map<String, Map<String, Object>> driversMap;
+                    try {
+                        driversMap = createDriversMap();
+                    } catch (JSONException e) {
+                        throw new SpagoBIRuntimeException("Unable to get driver map: ", e);
+                    }
+                    if (!driversMap.isEmpty()) {
+                        Sheet driversSheet = createUniqueSafeSheetForDrivers(wb, "Filters");
+                        fillDriversSheetWithData(driversMap, wb, driversSheet, "Filters");
+                        exportedSheets++;
+                    }
                 }
             } else {
                 // export whole cockpit
@@ -388,16 +397,26 @@ public class ExcelExporter extends AbstractFormatExporter {
             exportedSheets++;
         }
 
-        Map<String, Map<String, Object>> driversMap = new HashMap<>();
         try {
-            driversMap = createDriversMap();
-        } catch (JSONException e) {
-            throw new SpagoBIRuntimeException("Unable to get driver map: ", e);
-        }
-        if (!driversMap.isEmpty()) {
-            Sheet driversSheet = createUniqueSafeSheetForSelections(wb, "Filters");
-            fillDriversSheetWithData(driversMap, wb, driversSheet, "Filters");
-            exportedSheets++;
+            IConfigDAO configsDao = DAOFactory.getSbiConfigDAO();
+            Optional<Config> cfg = configsDao.loadConfigParametersByLabelIfExist(CONFIG_NAME_FOR_DRIVERS_SHEET_EXPORT);
+
+            if (cfg.isPresent() && cfg.get().isActive() && Boolean.parseBoolean(cfg.get().getValueCheck())) {
+
+                Map<String, Map<String, Object>> driversMap = new HashMap<>();
+                try {
+                    driversMap = createDriversMap();
+                } catch (JSONException e) {
+                    throw new SpagoBIRuntimeException("Unable to get driver map: ", e);
+                }
+                if (!driversMap.isEmpty()) {
+                    Sheet driversSheet = createUniqueSafeSheetForSelections(wb, "Filters");
+                    fillDriversSheetWithData(driversMap, wb, driversSheet, "Filters");
+                    exportedSheets++;
+                }
+            }
+        }catch (Exception e) {
+            throw new RuntimeException(e);
         }
         return exportedSheets;
     }
@@ -631,13 +650,20 @@ public class ExcelExporter extends AbstractFormatExporter {
             Row row = sheet.createRow(j++);
 
             Cell cellData0 = row.createCell(0);
-            cellData0.setCellValue(getDriverLabelByParameterUrlName(drivers, key));
+            String driverLabel = getDriverLabelByParameterUrlName(drivers, key) == null ? "" : getDriverLabelByParameterUrlName(drivers, key);
+            cellData0.setCellValue(driverLabel.length() > EXCEL_CELL_MAX_LEN ?
+                    "the content is too big" : driverLabel);
 
             Cell cellData1 = row.createCell(1);
             if (driversMap.get(key).keySet().contains("description")) {
-                cellData1.setCellValue(extractSelectionValues("" + driversMap.get(key).get("description")));
+                extractSelectionValues("" + driversMap.get(key).get("description"));
+                String selectionValues = extractSelectionValues("" + driversMap.get(key).get("description"));
+                cellData1.setCellValue(selectionValues.length() > EXCEL_CELL_MAX_LEN ?
+                        "the content is too big" : selectionValues);
             } else {
-                cellData1.setCellValue(extractSelectionValues("" + driversMap.get(key).get("value")));
+                String selectionValues = extractSelectionValues("" + driversMap.get(key).get("value"));
+                cellData1.setCellValue(selectionValues.length() > EXCEL_CELL_MAX_LEN ?
+                        "the content is too big" : selectionValues);
             }
         }
 
