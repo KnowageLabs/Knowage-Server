@@ -169,7 +169,7 @@ public class LoginModule extends AbstractHttpModule {
 				// user is authenticated, nothing to do
 				logger.debug("User is authenticated");
 				// fill response
-				List lstMenu = MenuUtilities.getMenuItems(profile);
+				List lstMenu = MenuUtilities.getMenuItems(profile, false);
 				servletRequest.getSession().setAttribute(LIST_MENU, lstMenu);
 				redirectToKnowageVue();
 				return;

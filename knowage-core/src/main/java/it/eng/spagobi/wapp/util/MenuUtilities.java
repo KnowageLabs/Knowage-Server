@@ -139,14 +139,24 @@ public class MenuUtilities {
 		return filteredMenuList;
 	}
 
-	/**
-	 * Gets the elements of menu relative by the user logged. It reaches the role from the request and asks to the DB all detail menu information, by calling
-	 * the method <code>loadMenuByRoleId</code>.
-	 *
-	 * @param request  The request Source Bean
-	 * @param response The response Source Bean
-	 * @throws EMFUserError If an exception occurs
-	 */
+	public static void filterListForUserClickableElements(List menuList, IEngUserProfile userProfile) {
+        for (Object o : menuList) {
+            Menu menu = (Menu) o;
+            // call recursively for menu to set clickable also for children
+            checkAndSetNotClickableMenus(menu, userProfile);
+        }
+	}
+
+
+
+		/**
+         * Gets the elements of menu relative by the user logged. It reaches the role from the request and asks to the DB all detail menu information, by calling
+         * the method <code>loadMenuByRoleId</code>.
+         *
+         * @param request  The request Source Bean
+         * @param response The response Source Bean
+         * @throws EMFUserError If an exception occurs
+         */
 	public static void getMenuItems(SourceBean request, SourceBean response, IEngUserProfile profile) throws EMFUserError {
 		try {
 			List lstFinalMenu = new ArrayList();
@@ -210,7 +220,7 @@ public class MenuUtilities {
 	 * @param response The response Source Bean
 	 * @throws EMFUserError If an exception occurs
 	 */
-	public static List getMenuItems(IEngUserProfile profile) throws EMFUserError {
+	public static List getMenuItems(IEngUserProfile profile, boolean menuRolesDaoRequiresProfile) throws EMFUserError {
 		try {
 			List lstFinalMenu = new ArrayList();
 			boolean technicalMenuLoaded = false;
@@ -220,17 +230,22 @@ public class MenuUtilities {
 
 			Object[] arrRoles = lstRolesForUser.toArray();
 			Integer levelItem = 1;
-			for (int i = 0; i < arrRoles.length; i++) {
-				logger.debug("*** arrRoles[i]): " + arrRoles[i]);
-				Role role = DAOFactory.getRoleDAO().loadByName((String) arrRoles[i]);
-				if (role != null) {
+            for (Object arrRole : arrRoles) {
+                logger.debug("*** arrRoles[i]): " + arrRole);
+                Role role = DAOFactory.getRoleDAO().loadByName((String) arrRole);
+                if (role != null) {
 
-					List menuItemsForARole = DAOFactory.getMenuRolesDAO().loadMenuByRoleId(role.getId());
-					if (menuItemsForARole != null) {
-						mergeMenuItems(lstFinalMenu, menuItemsForARole);
-					} else {
-						logger.debug("Not found menu items for user role " + (String) arrRoles[i]);
-					}
+                    List menuItemsForARole = null;
+                    if (menuRolesDaoRequiresProfile) {
+                        menuItemsForARole = DAOFactory.getMenuRolesDAO().loadMenuByRoleId(role.getId(), profile);
+                    } else {
+                        menuItemsForARole = DAOFactory.getMenuRolesDAO().loadMenuByRoleId(role.getId());
+                    }
+                    if (menuItemsForARole != null) {
+                        mergeMenuItems(lstFinalMenu, menuItemsForARole);
+                    } else {
+                        logger.debug("Not found menu items for user role " + (String) arrRole);
+                    }
 
 //					if (!technicalMenuLoaded && UserUtilities.isTechnicalUser(profile)) {
 //						// list technical user menu
@@ -246,9 +261,9 @@ public class MenuUtilities {
 //							}
 //						}
 //					}
-				} else
-					logger.debug("Role " + (String) arrRoles[i] + " not found on db");
-			}
+                } else
+                    logger.debug("Role " + (String) arrRole + " not found on db");
+            }
 
 			logger.debug("List Menu Size " + lstFinalMenu.size());
 			return lstFinalMenu;
