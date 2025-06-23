@@ -49,11 +49,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     	<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "js/lib/angular/angular_1.4/angular.js")%>"></script> 
 </head>
   <body class="kn-activation" ng-app="userActivation" ng-controller="userActivationController" ng-cloak> 
-  	<div class="top layout-row layout-xs-column">
-  		<div class="logoKnowage">
-  			<img align="center" alt="Image" border="0" src="https://www.knowage-suite.com/site/wp-content/uploads/2016/03/KNOWAGE_logo_color.png" title="Image" width="250">
-  		</div>
-  	</div>
+     <div class="top layout-row layout-xs-column layout-align-center-center" style="display: flex; justify-content: center; align-items: center;">
+       <div class="logoKnowage" style="display: flex; justify-content: center; align-items: center;">
+         <img align="center" alt="Image" border="0" src="https://www.knowage-suite.com/site/wp-content/uploads/2016/03/KNOWAGE_logo_color.png" title="Knowage" width="250">
+       </div>
+     </div>
   	<div class="center">
   		<div class="loading" ng-if="loading">
   			<p>{{translate.load('sbi.general.loading')}}</p>
@@ -64,15 +64,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   		</div>
   		<div class="error" ng-if="error">
   			<p>{{error}}</p>
-  			<!-- <button class="md-button md-raised md-primary md-knowage-theme" ng-if="!expired">{{translate.load('sbi.generic.back')}}</button>
-  			<button class="md-button md-raised md-primary md-knowage-theme" ng-if="expired">{{translate.load('signup.active.resend')}}</button> -->
   		</div>
   		<div class="colorOverlay" ng-class="{'warning':error, 'success': !error}"></div>
   	</div>
   	<div class="bottom layout-row layout-xs-column">
   		<div class="third flex-33 flex-xs-100">
   			<a href="https://knowage-suite.readthedocs.io/en/{{version}}/" target="_blank" rel="noopener noreferrer"> 
-  				<img align="center" alt="Image" border="0" src="https://www.knowage-suite.com/site/wp-content/uploads/2019/10/book.png" style="text-decoration:none;height:auto;border:none;width:100%;max-width:58px;display:block" title="Image" width="58"/>
+  				<img align="center" alt="Documentation" border="0" src="https://www.knowage-suite.com/site/wp-content/uploads/2019/10/book.png" style="text-decoration:none;height:auto;border:none;width:100%;max-width:58px;display:block" title="Documentation" width="58"/>
   			</a>
   			<p>
   				Documentation
@@ -80,7 +78,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   		</div>
   		<div class="third flex-33 flex-xs-100">
   			<a href="https://www.knowage-suite.com/qa/" target="_blank" rel="noopener noreferrer"> 
-  				<img align="center" alt="Image" border="0" src="https://www.knowage-suite.com/site/wp-content/uploads/2019/10/question-sign.png" style="text-decoration:none;height:auto;border:none;width:100%;max-width:58px;display:block" title="Image" width="58"/>
+  				<img align="center" alt="QA" border="0" src="https://www.knowage-suite.com/site/wp-content/uploads/2019/10/question-sign.png" style="text-decoration:none;height:auto;border:none;width:100%;max-width:58px;display:block" title="QA" width="58"/>
   			</a>
   			<p>
   				Q&A
@@ -88,7 +86,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   		</div>
   		<div class="third flex-33 flex-xs-100">
   			<a href="https://github.com/KnowageLabs/Knowage-Server" target="_blank" rel="noopener noreferrer"> 
-  				<img align="center" alt="Image" border="0" src="https://www.knowage-suite.com/site/wp-content/uploads/2019/10/data-graphic.png" style="text-decoration:none;height:auto;border:none;width:100%;max-width:58px;display:block" title="Image" width="58"/>
+  				<img align="center" alt="Github" border="0" src="https://www.knowage-suite.com/site/wp-content/uploads/2019/10/data-graphic.png" style="text-decoration:none;height:auto;border:none;width:100%;max-width:58px;display:block" title="Github" width="58"/>
   			</a>
   			<p>
   				Repository
