@@ -24,7 +24,11 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
-import org.hibernate.*;
+import org.hibernate.Criteria;
+import org.hibernate.HibernateException;
+import org.hibernate.Query;
+import org.hibernate.Session;
+import org.hibernate.Transaction;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Expression;
 import org.hibernate.criterion.Restrictions;
@@ -203,7 +207,6 @@ public class MenuDAOImpl extends AbstractHibernateDAO implements IMenuDAO {
 
 			Criterion domainCdCriterrion = Expression.eq("menuId", menuID);
 			Criteria criteria = tmpSession.createCriteria(SbiMenu.class);
-			criteria.setCacheable(true);
 			criteria.add(domainCdCriterrion);
 			SbiMenu hibMenu = (SbiMenu) criteria.uniqueResult();
 			if (hibMenu == null)
@@ -962,17 +965,17 @@ public class MenuDAOImpl extends AbstractHibernateDAO implements IMenuDAO {
 		menu.setProg(hibMenu.getProg());
 
 		if (hibMenu.getViewIcons() != null) {
-			menu.setViewIcons(hibMenu.getViewIcons());
+			menu.setViewIcons(hibMenu.getViewIcons().booleanValue());
 		} else
 			menu.setViewIcons(false);
 
 		if (hibMenu.getHideToolbar() != null) {
-			menu.setHideToolbar(hibMenu.getHideToolbar());
+			menu.setHideToolbar(hibMenu.getHideToolbar().booleanValue());
 		} else
 			menu.setHideToolbar(false);
 
 		if (hibMenu.getHideSliders() != null) {
-			menu.setHideSliders(hibMenu.getHideSliders());
+			menu.setHideSliders(hibMenu.getHideSliders().booleanValue());
 		} else
 			menu.setHideSliders(false);
 
@@ -980,7 +983,7 @@ public class MenuDAOImpl extends AbstractHibernateDAO implements IMenuDAO {
 		menu.setExternalApplicationUrl(hibMenu.getExternalApplicationUrl());
 
 		MenuIcon icon = null;
-		if (hibMenu.getIcon() != null && !hibMenu.getIcon().isEmpty()) {
+		if (hibMenu.getIcon() != null && !hibMenu.getIcon().equals("")) {
 			MenuIcon menuIcon = new MenuIcon();
 			try {
 				JSONObject jsonObject = new JSONObject(hibMenu.getIcon());
@@ -1001,7 +1004,7 @@ public class MenuDAOImpl extends AbstractHibernateDAO implements IMenuDAO {
 		menu.setIcon(icon);
 
 		MenuIcon custIcon = null;
-		if (hibMenu.getCustIcon() != null && !hibMenu.getCustIcon().isEmpty()) {
+		if (hibMenu.getCustIcon() != null && !hibMenu.getCustIcon().equals("")) {
 			MenuIcon menuIcon = new MenuIcon();
 			try {
 				JSONObject jsonObject = new JSONObject(new String(hibMenu.getCustIcon()));
@@ -1021,28 +1024,37 @@ public class MenuDAOImpl extends AbstractHibernateDAO implements IMenuDAO {
 		}
 		menu.setCustIcon(custIcon);
 
+		// set the dephts
+		/*
+		 * if(menu.getParentId()!=null){ Menu parent=loadMenuByID(menu.getParentId()); if(parent!=null){ Integer depth=parent.getDepth(); menu.setDepth(new
+		 * Integer(depth.intValue()+1)); } } else{ menu.setDepth(new Integer(0)); }
+		 */
+
 		List rolesList = new ArrayList();
-		Set roles = hibMenu.getSbiMenuRoles();
-		Role[] rolesD = new Role[roles.size()];
-		// roles of menu in database
-        for (Object o : roles) { // for each role retrieved in database
-            SbiMenuRole hibMenuRole = (SbiMenuRole) o;
+		Set roles = hibMenu.getSbiMenuRoles(); // roles of menu in database
+		Iterator iterRoles = roles.iterator();
+		while (iterRoles.hasNext()) { // for each role retrieved in database
+			SbiMenuRole hibMenuRole = (SbiMenuRole) iterRoles.next();
 
-            SbiExtRoles hibRole = hibMenuRole.getSbiExtRoles();
+			SbiExtRoles hibRole = hibMenuRole.getSbiExtRoles();
 
-            RoleDAOHibImpl roleDAO = new RoleDAOHibImpl();
-            Role role = roleDAO.toRole(hibRole);
+			RoleDAOHibImpl roleDAO = new RoleDAOHibImpl();
+			Role role = roleDAO.toRole(hibRole);
 
 			rolesList.add(role);
-			rolesD[rolesList.size() - 1] = role; // add the role to the list of roles
-        }
+		}
+
+		Role[] rolesD = new Role[rolesList.size()];
+
+		for (int i = 0; i < rolesList.size(); i++)
+			rolesD[i] = (Role) rolesList.get(i);
 
 		menu.setRoles(rolesD);
 
 		// set children
 		try {
 			List tmpLstChildren = (DAOFactory.getMenuDAO().getChildrenMenu(menu.getMenuId(), roleId));
-			boolean hasCHildren = !tmpLstChildren.isEmpty();
+			boolean hasCHildren = (tmpLstChildren.size() == 0) ? false : true;
 			menu.setLstChildren(tmpLstChildren);
 			menu.setHasChildren(hasCHildren);
 		} catch (Exception ex) {
