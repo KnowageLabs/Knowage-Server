@@ -127,9 +127,9 @@ public class MenuRolesDAOImpl extends AbstractHibernateDAO implements IMenuRoles
 	 */
 	@Override
 	public List loadMenuByRoleId(Integer roleId, IEngUserProfile userProfile) throws EMFUserError {
-		LOGGER.debug("IN");
+		logger.debug("IN");
 		if (roleId != null)
-			LOGGER.debug("roleId=" + roleId.toString());
+			logger.debug("roleId=" + roleId.toString());
 		Session aSession = null;
 		Transaction tx = null;
 		List<Menu> realResult = new ArrayList<>();
@@ -155,7 +155,7 @@ public class MenuRolesDAOImpl extends AbstractHibernateDAO implements IMenuRoles
 				Integer menuId = (Integer) tmpLst[0];
 				tmpMenu = menuDAO.loadMenuByIDV2(menuId, roleId);
 				if (tmpMenu != null) {
-					LOGGER.debug("Add Menu:" + tmpMenu.getName());
+					logger.debug("Add Menu:" + tmpMenu.getName());
 					hql = " select distinct ser.name from SbiExtRoles as ser, SbiMenuRole smr " + " where ser.extRoleId = smr.id.extRoleId " + " and smr.id.menuId = ? ";
 					hqlQuery = aSession.createQuery(hql);
 					hqlQuery.setInteger(0, tmpMenu.getMenuId().intValue());
@@ -167,7 +167,7 @@ public class MenuRolesDAOImpl extends AbstractHibernateDAO implements IMenuRoles
 			}
 			tx.commit();
 		} catch (HibernateException he) {
-			LOGGER.error("HibernateException", he);
+			logger.error("HibernateException", he);
 
 			if (tx != null)
 				tx.rollback();
@@ -180,7 +180,7 @@ public class MenuRolesDAOImpl extends AbstractHibernateDAO implements IMenuRoles
 					aSession.close();
 			}
 		}
-		LOGGER.debug("OUT");
+		logger.debug("OUT");
 		return realResult;
 	}
 	public static boolean userCanSeeTheMenu(Menu menu, IEngUserProfile userProfile, List<String> roles) {
@@ -193,7 +193,7 @@ public class MenuRolesDAOImpl extends AbstractHibernateDAO implements IMenuRoles
 	}
 
 	public static boolean canViewV2(Menu menu, IEngUserProfile profile, List<String> menuRoles) {
-		LOGGER.debug("IN");
+		logger.debug("IN");
 		Collection profileRoles = null;
 
 		try {
@@ -214,7 +214,7 @@ public class MenuRolesDAOImpl extends AbstractHibernateDAO implements IMenuRoles
 			}
 
 		}
-		LOGGER.debug("OUT");
+		logger.debug("OUT");
 
 		return found;
 
