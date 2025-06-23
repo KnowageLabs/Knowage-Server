@@ -24,7 +24,6 @@ import it.eng.spagobi.commons.dao.ISpagoBIDao;
 import it.eng.spagobi.commons.metadata.SbiExtRoles;
 import it.eng.spagobi.wapp.bo.Menu;
 import it.eng.spagobi.wapp.metadata.SbiMenu;
-import org.hibernate.Session;
 
 /**
  * @author Antonella Giachino (antonella.giachino@eng.it)
@@ -67,19 +66,6 @@ public interface IMenuDAO extends ISpagoBIDao {
 	 * @throws EMFUserError If an Exception occurred
 	 */
 	public Menu loadMenuByID(Integer menuID, Integer roleID) throws EMFUserError;
-
-	/**
-	 * Loads all detail information for a menu identified by its <code>menuID</code>. All these information, archived by a query to the DB, are stored into an
-	 * <code>menu</code> object, which is returned.
-	 *
-	 * @param menuID The id for the menu to load
-	 *
-	 * @return An <code>menu</code> object containing all loaded information
-	 *
-	 * @throws EMFUserError If an Exception occurred
-	 */
-	public Menu loadMenuByIDV2(Integer menuID, Integer roleID) throws EMFUserError;
-
 
 	/**
 	 * Loads all detail information for a menu whose name is equal to <code>name</code>.
@@ -164,19 +150,6 @@ public interface IMenuDAO extends ISpagoBIDao {
 	 * @throws EMFUserError If any exception occurred
 	 */
 	public List getChildrenMenu(Integer menuId, Integer roleID) throws EMFUserError;
-
-
-
-	/**
-	 * Tells if a menu has children element. It is useful for define the type of menu
-	 *
-	 * @param menuId The menu identifier
-	 *
-	 * @return True if the menu is used by one or more objects, else false
-	 *
-	 * @throws EMFUserError If any exception occurred
-	 */
-	public List getChildrenMenuV2(Integer menuId, Integer roleID, Session session) throws EMFUserError;
 
 	/**
 	 * Substitution between the current node and his father
