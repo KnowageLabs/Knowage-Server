@@ -1243,7 +1243,7 @@ public class MenuDAOImpl extends AbstractHibernateDAO implements IMenuDAO {
 				menuIcon.setUnicode(null);
 				menuIcon.setVisible(jsonObject.getBoolean("visible"));
 			} catch (JSONException e) {
-				logger.error(e);
+				LOGGER.error(e);
 			}
 
 			icon = menuIcon;
@@ -1264,7 +1264,7 @@ public class MenuDAOImpl extends AbstractHibernateDAO implements IMenuDAO {
 				menuIcon.setUnicode(null);
 				menuIcon.setVisible(jsonObject.getBoolean("visible"));
 			} catch (JSONException e) {
-				logger.error(e);
+				LOGGER.error(e);
 			}
 			custIcon = menuIcon;
 		}

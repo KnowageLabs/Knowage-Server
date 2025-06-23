@@ -195,7 +195,7 @@ public class ChangeLanguage extends AbstractHttpAction {
 		}
 
 //		MenuUtilities.getMenuItems(serviceRequest, serviceResponse, profile);
-		List lstMenu = MenuUtilities.getMenuItems(profile, false);
+		List lstMenu = MenuUtilities.getMenuItems(profile);
 
 		serviceResponse.setAttribute("MENU_MODE", "ALL_TOP");
 		Collection functionalities = profile.getFunctionalities();
