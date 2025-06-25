@@ -427,6 +427,14 @@ public class JPAPersistenceManager implements IPersistenceManager {
 				.filter(column -> column.isEditable())// we get all columns belonging to same sub-entity
 				.collect(Collectors.toMap(Column::getField, column -> aRecord.opt(column.getField()))); // we create a map (column field -> incoming value)
 		// @formatter:on
+		for (Column column : columns) {
+			if (subEntity.equals(column.getSubEntity()) && column.isVisible() && column.isEditable()) {
+				String dep = column.getDependences();
+				if (dep != null && !allSubEntityProperties.containsKey(dep)) {
+	                allSubEntityProperties.put(dep, aRecord.opt(dep));
+	            }
+			}
+		}
 		return allSubEntityProperties;
 	}
 
