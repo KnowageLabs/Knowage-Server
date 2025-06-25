@@ -74,7 +74,7 @@ public class MenuResource extends AbstractSpagoBIResource {
 		Locale currentLocale = Locale.forLanguageTag(req.getParameter("locale"));
 		List lstMenu = null;
 		try {
-			lstMenu = MenuUtilities.getMenuItems(profile);
+			lstMenu = MenuUtilities.getMenuItems(profile, true);
 		} catch (EMFUserError e1) {
 			String message = "An error occured while retrieving menu";
 			throw new SpagoBIRuntimeException(message, e1);
@@ -85,11 +85,11 @@ public class MenuResource extends AbstractSpagoBIResource {
 
 		HttpSession session = req.getSession();
 		// Locale locale = MessageBuilder.getBrowserLocaleFromSpago();
-		List filteredMenuList = MenuUtilities.filterListForUser(lstMenu, userProfile);
+		MenuUtilities.filterListForUserClickableElements(lstMenu, userProfile);
 		MenuListJSONSerializerForREST serializer = new MenuListJSONSerializerForREST(userProfile, session, currentTheme);
 		JSONObject jsonMenuList = new JSONObject();
 		try {
-			jsonMenuList = (JSONObject) serializer.serialize(filteredMenuList, currentLocale);
+			jsonMenuList = (JSONObject) serializer.serialize(lstMenu, currentLocale);
 		} catch (SerializationException e) {
 			String message = "An error occured while serialiazing menu";
 			throw new SpagoBIRuntimeException(message, e);

@@ -81,7 +81,7 @@ public class MenuResource extends AbstractSpagoBIResource {
 			String language = req.getParameter("curr_language");
 
 			Locale currentLocale = new Locale(language, country, "");
-			List lstMenu = MenuUtilities.getMenuItems(profile);
+			List lstMenu = MenuUtilities.getMenuItems(profile, false);
 
 			HttpSession session = req.getSession();
 			// Locale locale = MessageBuilder.getBrowserLocaleFromSpago();

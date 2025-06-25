@@ -232,6 +232,57 @@ public class MenuDAOImpl extends AbstractHibernateDAO implements IMenuDAO {
 		}
 		return toReturn;
 	}
+	/**
+	 * Load menu by id v2.
+	 *
+	 * @param menuID the menu id
+	 * @param roleID the user's role id
+	 *
+	 * @return the menu
+	 *
+	 * @throws EMFUserError the EMF user error
+	 *
+	 * @see it.eng.spagobi.wapp.dao.IMenuDAO#loadMenuByIDV2(integer, integer)
+	 */
+	@Override
+	public Menu loadMenuByIDV2(Integer menuID, Integer roleID) throws EMFUserError {
+		Menu toReturn = null;
+		Session tmpSession = null;
+		Transaction tx = null;
+
+		try {
+			tmpSession = getSession();
+			tx = tmpSession.beginTransaction();
+
+			Criterion domainCdCriterrion = Restrictions.eq("menuId", menuID);
+			Criteria criteria = tmpSession.createCriteria(SbiMenu.class);
+			criteria.add(domainCdCriterrion);
+			SbiMenu hibMenu = (SbiMenu) criteria.uniqueResult();
+			if (hibMenu == null)
+				return null;
+
+			// SbiMenu hibMenu = (SbiMenu)tmpSession.load(SbiMenu.class,
+			// menuID);
+			toReturn = toMenuV2(hibMenu, roleID, tmpSession);
+
+		} catch (HibernateException he) {
+			logException(he);
+
+			if (tx != null)
+				tx.rollback();
+
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+
+		} finally {
+			if (tmpSession != null) {
+				if (tmpSession.isOpen())
+					tmpSession.close();
+
+			}
+		}
+		return toReturn;
+	}
+
 
 	/**
 	 * Load menu by name.
@@ -941,6 +992,80 @@ public class MenuDAOImpl extends AbstractHibernateDAO implements IMenuDAO {
 	}
 
 	/**
+	 * Gets the children menu.
+	 *
+	 * @param menuId the menu id
+	 * @param roleId the user's role id
+	 *
+	 * @return the children menu
+	 *
+	 * @throws EMFUserError the EMF user error
+	 *
+	 * @see it.eng.spagobi.wapp.dao.IMenuDAO#getChildrenMenu(java.lang.Integer)
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Menu> getChildrenMenuV2(Integer menuId, Integer roleID, Session session) throws EMFUserError {
+		List<Menu> lstChildren = new ArrayList<>();
+		Transaction tx = null;
+		try {
+			if (session == null || !session.isOpen()) {
+				session = getSession();
+			}
+
+			tx = session.beginTransaction();
+
+			String hql = " from SbiMenu s where s.id.parentId = ? order by s.prog";
+
+			Query aQuery = session.createQuery(hql);
+			aQuery.setInteger(0, menuId.intValue());
+
+			List<SbiMenu> hibList = aQuery.list();
+			Iterator<SbiMenu> it = hibList.iterator();
+			while (it.hasNext()) {
+				SbiMenu hibMenu = it.next();
+				if (hibMenu != null) {
+					if (roleID != null) {
+						// check if the child can be visualized from the user
+						hql = " from SbiMenuRole as mf  where mf.id.menuId = ? and mf.id.extRoleId = ? ";
+						if (!session.isOpen()) {
+							session = getSession();
+						}
+						aQuery = session.createQuery(hql);
+						aQuery.setInteger(0, hibMenu.getMenuId());
+						aQuery.setInteger(1, roleID);
+
+						List<SbiMenuRole> hibListRoles = aQuery.list();
+						if (!hibListRoles.isEmpty()) {
+							Menu biMenu = toMenuV2(hibMenu, roleID, session);
+							lstChildren.add(biMenu);
+						}
+					}
+				} else {
+					Menu biMenu = toMenuV2(hibMenu, roleID, session);
+					lstChildren.add(biMenu);
+				}
+			}
+
+		} catch (HibernateException he) {
+			logException(he);
+
+			if (tx != null)
+				tx.rollback();
+
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+
+		} finally {
+			if (session != null) {
+				if (session.isOpen())
+					session.close();
+			}
+		}
+		return lstChildren;
+	}
+
+
+	/**
 	 * From the Hibernate Menu object at input, gives the corrispondent <code>Menu</code> object.
 	 *
 	 * @param hibMenu The Hibernate Menu object
@@ -1060,6 +1185,104 @@ public class MenuDAOImpl extends AbstractHibernateDAO implements IMenuDAO {
 
 		return menu;
 	}
+
+	/**
+	 * From the Hibernate Menu object at input, gives the corrispondent <code>Menu</code> object.
+	 *
+	 * @param hibMenu The Hibernate Menu object
+	 * @return the corrispondent output <code>Menu</code>
+	 */
+	private Menu toMenuV2(SbiMenu hibMenu, Integer roleId, Session session) throws EMFUserError {
+
+		Menu menu = new Menu();
+		menu.setMenuId(hibMenu.getMenuId());
+		menu.setName(hibMenu.getName());
+		menu.setDescr(hibMenu.getDescr());
+		menu.setParentId(hibMenu.getParentId());
+		menu.setObjId(hibMenu.getObjId());
+		menu.setObjParameters(hibMenu.getObjParameters());
+		menu.setSubObjName(hibMenu.getSubObjName());
+		menu.setSnapshotName(hibMenu.getSnapshotName());
+		menu.setSnapshotHistory(hibMenu.getSnapshotHistory());
+		menu.setFunctionality(hibMenu.getFunctionality());
+		menu.setInitialPath(hibMenu.getInitialPath());
+		menu.setLevel(getLevel(menu.getParentId(), menu.getObjId()));
+		menu.setProg(hibMenu.getProg());
+
+		if (hibMenu.getViewIcons() != null) {
+			menu.setViewIcons(hibMenu.getViewIcons().booleanValue());
+		} else
+			menu.setViewIcons(false);
+
+		if (hibMenu.getHideToolbar() != null) {
+			menu.setHideToolbar(hibMenu.getHideToolbar().booleanValue());
+		} else
+			menu.setHideToolbar(false);
+
+		if (hibMenu.getHideSliders() != null) {
+			menu.setHideSliders(hibMenu.getHideSliders().booleanValue());
+		} else
+			menu.setHideSliders(false);
+
+		menu.setStaticPage(hibMenu.getStaticPage());
+		menu.setExternalApplicationUrl(hibMenu.getExternalApplicationUrl());
+
+		MenuIcon icon = null;
+		if (hibMenu.getIcon() != null && !hibMenu.getIcon().equals("")) {
+			MenuIcon menuIcon = new MenuIcon();
+			try {
+				JSONObject jsonObject = new JSONObject(hibMenu.getIcon());
+				menuIcon.setId(jsonObject.getString("id"));
+				menuIcon.setCategory(jsonObject.getString("category"));
+				menuIcon.setLabel(jsonObject.getString("label"));
+				menuIcon.setClassName(jsonObject.getString("className"));
+				menuIcon.setSrc(null);
+				menuIcon.setUnicode(null);
+				menuIcon.setVisible(jsonObject.getBoolean("visible"));
+			} catch (JSONException e) {
+				LOGGER.error(e);
+			}
+
+			icon = menuIcon;
+		}
+		menu.setIcon(icon);
+
+		MenuIcon custIcon = null;
+		if (hibMenu.getCustIcon() != null && !hibMenu.getCustIcon().equals("")) {
+			MenuIcon menuIcon = new MenuIcon();
+			try {
+				JSONObject jsonObject = new JSONObject(hibMenu.getCustIcon());
+				menuIcon.setId(null);
+				menuIcon.setCategory(jsonObject.getString("category"));
+				menuIcon.setLabel(jsonObject.getString("label"));
+				menuIcon.setClassName(jsonObject.getString("className"));
+				menuIcon.setSrc(jsonObject.getString("src"));
+				// unicode value not used. Set to null because of problems to read
+				menuIcon.setUnicode(null);
+				menuIcon.setVisible(jsonObject.getBoolean("visible"));
+			} catch (JSONException e) {
+				LOGGER.error(e);
+			}
+			custIcon = menuIcon;
+		}
+		menu.setCustIcon(custIcon);
+
+		Role[] rolesD = new Role[0];
+		menu.setRoles(rolesD);
+
+		// set children
+		try {
+			List tmpLstChildren = (DAOFactory.getMenuDAO().getChildrenMenuV2(menu.getMenuId(), roleId, session));
+			boolean hasCHildren = (tmpLstChildren.isEmpty()) ? false : true;
+			menu.setLstChildren(tmpLstChildren);
+			menu.setHasChildren(hasCHildren);
+		} catch (Exception ex) {
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+		}
+
+		return menu;
+	}
+
 
 	/**
 	 * Return the level of menu element: 1 - first, 2 - second|third, 4 - last, 0 other
