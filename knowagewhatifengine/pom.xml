@@ -82,7 +82,7 @@
 		<dependency>
 			<groupId>org.apache.poi</groupId>
 			<artifactId>poi</artifactId>
-			<version>${apache.poi}</version>
+			<version>3.10-beta2</version>
 		</dependency>
 		<!-- Provides support for Graylog in log4j2 -->
 		<dependency>
@@ -92,7 +92,7 @@
 		<dependency>
 			<groupId>org.apache.poi</groupId>
 			<artifactId>poi-ooxml</artifactId>
-			<version>${apache.poi-ooxml}</version>
+			<version>3.10-beta2</version>
 		</dependency>
 		<dependency>
 			<groupId>de.jflex</groupId>
