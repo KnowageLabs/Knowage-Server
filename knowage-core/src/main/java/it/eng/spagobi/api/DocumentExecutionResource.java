@@ -57,7 +57,6 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
-import javax.ws.rs.core.Response.Status;
 
 import org.apache.clerezza.jaxrs.utils.form.FormFile;
 import org.apache.clerezza.jaxrs.utils.form.MultiPartBody;
@@ -210,8 +209,6 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 		JSONObject jsonParameters = requestVal.optJSONObject("parameters");
 
 		RequestContainer aRequestContainer = RequestContainerAccess.getRequestContainer(req);
-		if (aRequestContainer == null)
-			return Response.status(Status.UNAUTHORIZED).build();
 
 		HashMap<String, Object> resultAsMap = new HashMap<>();
 		List errorList = new ArrayList<>();
@@ -520,8 +517,9 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 					JSONObject jsonConfig = new JSONObject(dataset.getConfiguration());
 					businessModelName = (String) jsonConfig.get("qbeDatamarts");
 					parametersArrayList = getDatasetDriversByModelName(businessModelName, false);
-					if (parametersArrayList != null && !parametersArrayList.isEmpty())
+					if (parametersArrayList != null && !parametersArrayList.isEmpty()) {
 						break;
+					}
 				}
 
 			}
@@ -553,8 +551,9 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 		JSONObject requestVal = RestUtilities.readBodyAsJSONObject(req);
 		// decode requestVal parameters
 		JSONObject requestValParams = requestVal.getJSONObject("parameters");
-		if (requestValParams != null && requestValParams.length() > 0)
+		if (requestValParams != null && requestValParams.length() > 0) {
 			requestVal.put("parameters", decodeRequestParameters(requestValParams));
+		}
 		String label = requestVal.getString("label");
 		String role = requestVal.getString("role");
 		JSONObject jsonCrossParameters = requestVal.getJSONObject("parameters");
@@ -656,13 +655,15 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 									String[] valLst = val.split(sep);
 									for (int k2 = 0; k2 < valLst.length; k2++) {
 										String itemVal2 = valLst[k2];
-										if (itemVal2 != null && !"".equals(itemVal2))
+										if (itemVal2 != null && !"".equals(itemVal2)) {
 											paramValueLst.add(itemVal2);
+										}
 
 									}
 								} else {
-									if (itemVal != null && !"".equals(itemVal))
+									if (itemVal != null && !"".equals(itemVal)) {
 										paramValueLst.add(itemVal);
+									}
 									paramDescrLst.add(itemDescr);
 
 								}
@@ -796,8 +797,9 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 					DefaultValuesList valueList = null;
 					// check if the parameter is really valorized (for example if it isn't an empty list)
 					List lstValues = (List) parameterAsMap.get("parameterValue");
-					if (lstValues.isEmpty())
+					if (lstValues.isEmpty()) {
 						jsonCrossParameters.remove(objParameter.getId());
+					}
 
 					String parLab = objParameter.getDriver() != null && objParameter.getDriver().getParameter() != null
 							? objParameter.getDriver().getParameter().getLabel()
@@ -1676,12 +1678,14 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 								String[] valLst = val.split(sep);
 								for (int k2 = 0; k2 < valLst.length; k2++) {
 									String itemVal2 = valLst[k2];
-									if (itemVal2 != null && !"".equals(itemVal2))
+									if (itemVal2 != null && !"".equals(itemVal2)) {
 										paramValueLst.add(itemVal2);
+									}
 								}
 							} else {
-								if (itemVal != null && !"".equals(itemVal))
+								if (itemVal != null && !"".equals(itemVal)) {
 									paramValueLst.add(itemVal);
+								}
 								paramDescrLst.add(itemDescr);
 							}
 						} catch (EncodingException e) {
