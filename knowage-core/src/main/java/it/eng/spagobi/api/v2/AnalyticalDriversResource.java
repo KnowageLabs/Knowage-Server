@@ -392,15 +392,17 @@ public class AnalyticalDriversResource extends AbstractSpagoBIResource {
 		}
 		useMode.setAssociatedRoles(formatedRoles);
 		useMode.setAssociatedChecks(formatedChecks);
+		List documents = null;
 		try {
 			useModesDao = DAOFactory.getParameterUseDAO();
 			IObjParuseDAO objParuseDAO = DAOFactory.getObjParuseDAO();
 			useModesDao.setUserProfile(getUserProfile());
-			List documents = objParuseDAO.getDocumentLabelsListWithAssociatedDependencies(useMode.getId());
-			if (documents.size() > 0) {
+			ParameterUse useModeFromDao = useModesDao.loadByUseID(useMode.getUseID());
+			documents = objParuseDAO.getDocumentLabelsListWithAssociatedDependencies(useMode.getUseID());
+			if (!documents.isEmpty()) {
 				// there are some correlations
-				if (useMode.getManualInput().intValue() == 1
-						|| useMode.getIdLov().intValue() != useMode.getIdLov().intValue()) {
+				if (useMode.getManualInput() == 1
+						|| useMode.getIdLov().intValue() != useModeFromDao.getIdLov().intValue()) {
 					// the ParameterUse was changed to manual input or the lov id was changed
 					LOGGER.error("Cant modify use mode because it is used in some documents");
 					throw new SpagoBIRuntimeException("Cant modify use mode because it is used");
@@ -412,7 +414,7 @@ public class AnalyticalDriversResource extends AbstractSpagoBIResource {
 			return Response.created(new URI("2.0/analyticalDrivers/" + encodedUseMode)).entity(encodedUseMode).build();
 		} catch (Exception e) {
 			LOGGER.error("Error while modifying resource with id: {}", id, e);
-			throw new SpagoBIRestServiceException("Error while modifying resource with id: " + id,
+			throw new SpagoBIRestServiceException("Error while modifying use mode : " + useMode.getName() + ", check correlations inside documents with label " + (documents != null ? documents.toString() : ""),
 					buildLocaleFromSession(), e);
 		}
 	}
