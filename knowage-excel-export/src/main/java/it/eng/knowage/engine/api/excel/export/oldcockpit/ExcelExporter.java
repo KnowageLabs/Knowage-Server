@@ -147,7 +147,13 @@ public class ExcelExporter extends AbstractFormatExporter {
                 IWidgetExporter widgetExporter = WidgetExporterFactory.getExporter(this, widgetType, templateString,
                         widgetId, wb, optionsObj);
                 exportedSheets = widgetExporter.export();
-                Map<String, Map<String, Object>> selectionsMap = new HashMap<>();
+
+                IConfigDAO configsDao = DAOFactory.getSbiConfigDAO();
+                Optional<Config> cfg = configsDao.loadConfigParametersByLabelIfExist(CONFIG_NAME_FOR_DRIVERS_SHEET_EXPORT);
+
+                if (cfg.isPresent() && cfg.get().isActive() && Boolean.parseBoolean(cfg.get().getValueCheck())) {
+
+                    Map<String, Map<String, Object>> selectionsMap;
                 try {
                     selectionsMap = createSelectionsMap();
                 } catch (JSONException e) {
@@ -159,10 +165,6 @@ public class ExcelExporter extends AbstractFormatExporter {
                     exportedSheets++;
                 }
 
-                IConfigDAO configsDao = DAOFactory.getSbiConfigDAO();
-                Optional<Config> cfg = configsDao.loadConfigParametersByLabelIfExist(CONFIG_NAME_FOR_DRIVERS_SHEET_EXPORT);
-
-                if (cfg.isPresent() && cfg.get().isActive() && Boolean.parseBoolean(cfg.get().getValueCheck())) {
                     Map<String, Map<String, Object>> driversMap;
                     try {
                         driversMap = createDriversMap();
@@ -385,23 +387,24 @@ public class ExcelExporter extends AbstractFormatExporter {
                 LOGGER.error("Error while exporting widget {}", widgetId, e);
             }
         }
-        Map<String, Map<String, Object>> selectionsMap = new HashMap<>();
-        try {
-            selectionsMap = createSelectionsMap();
-        } catch (JSONException e) {
-            throw new SpagoBIRuntimeException("Unable to get selection map: ", e);
-        }
-        if (!selectionsMap.isEmpty()) {
-            Sheet selectionsSheet = createUniqueSafeSheetForSelections(wb, "Active Selections");
-            fillSelectionsSheetWithData(selectionsMap, wb, selectionsSheet, "Selections");
-            exportedSheets++;
-        }
 
         try {
             IConfigDAO configsDao = DAOFactory.getSbiConfigDAO();
             Optional<Config> cfg = configsDao.loadConfigParametersByLabelIfExist(CONFIG_NAME_FOR_DRIVERS_SHEET_EXPORT);
 
             if (cfg.isPresent() && cfg.get().isActive() && Boolean.parseBoolean(cfg.get().getValueCheck())) {
+                Map<String, Map<String, Object>> selectionsMap;
+                try {
+                    selectionsMap = createSelectionsMap();
+                } catch (JSONException e) {
+                    throw new SpagoBIRuntimeException("Unable to get selection map: ", e);
+                }
+                if (!selectionsMap.isEmpty()) {
+                    Sheet selectionsSheet = createUniqueSafeSheetForSelections(wb, "Active Selections");
+                    fillSelectionsSheetWithData(selectionsMap, wb, selectionsSheet, "Selections");
+                    exportedSheets++;
+                }
+
 
                 Map<String, Map<String, Object>> driversMap = new HashMap<>();
                 try {
@@ -415,7 +418,7 @@ public class ExcelExporter extends AbstractFormatExporter {
                     exportedSheets++;
                 }
             }
-        }catch (Exception e) {
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
         return exportedSheets;
@@ -587,13 +590,18 @@ public class ExcelExporter extends AbstractFormatExporter {
                 Row row = sheet.createRow(j++);
 
                 Cell cellData0 = row.createCell(0);
-                cellData0.setCellValue(key);
+                if (key != null)
+                    cellData0.setCellValue(key.length() > EXCEL_CELL_MAX_LEN ? "the content is too big" : key);
 
                 Cell cellData1 = row.createCell(1);
-                cellData1.setCellValue(selectionskey);
+                if (selectionskey != null)
+                    cellData1.setCellValue(selectionskey.length() > EXCEL_CELL_MAX_LEN ? "the content is too big" : selectionskey);
 
                 Cell cellData2 = row.createCell(2);
-                cellData2.setCellValue(extractSelectionValues("" + selectionsMap.get(key).get(selectionskey)));
+                if (selectionsMap.get(key) != null && selectionsMap.get(key).get(selectionskey) != null) {
+                    String selectionsValues = extractSelectionValues("" + selectionsMap.get(key).get(selectionskey));
+                    cellData2.setCellValue(selectionsValues.length() > EXCEL_CELL_MAX_LEN ? "the content is too big" : selectionsValues);
+                }
             }
 
         }
@@ -998,8 +1006,7 @@ public class ExcelExporter extends AbstractFormatExporter {
                                 cell.setCellValue(s);
                                 break;
                         }
-                    }
-                    else if (value != null) {
+                    } else if (value != null) {
                         String summaryRowLabel = summaryRowsLabels.get(r - (rows.length() - numberOfSummaryRows));
                         setSummaryRowValue(columnStyles, c, value, cell, summaryRowLabel, (JSONObject) columnSelectedOfDataset.get(c), summaryLabelOnlyForPinnedColumns);
                     }
