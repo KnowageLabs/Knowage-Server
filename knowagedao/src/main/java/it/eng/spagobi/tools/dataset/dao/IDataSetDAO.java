@@ -224,4 +224,6 @@ public interface IDataSetDAO extends ISpagoBIDao {
 	Integer countCategories(Integer catId);
 
 	List<IDataSet> loadDataSetByCategoryId(Integer catId);
+
+	List<String> loadPersistenceTableNames(Integer dsId);
 }

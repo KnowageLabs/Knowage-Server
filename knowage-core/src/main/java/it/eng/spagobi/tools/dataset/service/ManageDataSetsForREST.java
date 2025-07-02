@@ -1664,6 +1664,13 @@ public class ManageDataSetsForREST {
 		HashMap<String, String> logParam = new HashMap<>();
 
 		if (ds != null) {
+
+			List<String> persistenceTableNames = dsDao.loadPersistenceTableNames(ds.getId());
+
+			if (persistenceTableNames.stream().anyMatch(tableName -> tableName != null && !tableName.isBlank() && tableName.equalsIgnoreCase(ds.getPersistTableName()))) {
+				throw new SpagoBIRuntimeException("The persistence table with name <" + ds.getPersistTableName().toUpperCase(Locale.ROOT) + "> already exists");
+			}
+
 			String dsLabel = ds.getLabel();
 			String dsName = ds.getName();
 			logParam.put("NAME", dsName);

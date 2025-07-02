@@ -3203,6 +3203,50 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 		return toReturn;
 	}
 
+	@Override
+	public List<String> loadPersistenceTableNames(Integer dsId) {
+		List<String> toReturn;
+		Session session;
+		Transaction transaction;
+
+		logger.debug("IN");
+
+		session = null;
+		transaction = null;
+		try {
+
+			try {
+				session = getSession();
+				Assert.assertNotNull(session, "session cannot be null");
+				transaction = session.beginTransaction();
+				Assert.assertNotNull(transaction, "transaction cannot be null");
+			} catch (Exception e) {
+				throw new SpagoBIDAOException("An error occured while creating the new transaction", e);
+			}
+
+			Query hibQuery = session.createQuery("select distinct ds.persistTableName from SbiDataSet ds where ds.active = ? AND ds.id.dsId != ?");
+
+			hibQuery.setBoolean(0, true);
+			hibQuery.setInteger(1, dsId);
+			toReturn = (List) hibQuery.list();
+			transaction.commit();
+
+		} catch (Exception e) {
+			if (transaction != null && transaction.isActive()) {
+				transaction.rollback();
+			}
+			throw new SpagoBIDAOException(
+					"An unexpected error occured while loading persistence table names",
+					e);
+		} finally {
+			if (session != null && session.isOpen()) {
+				session.close();
+			}
+			logger.debug("OUT");
+		}
+		return toReturn;
+	}
+
 	private void deleteFileAssociatedToDataset(SbiDataSet sbiDataSet) {
 		try {
 			JSONObject config = new JSONObject(sbiDataSet.getConfiguration());
