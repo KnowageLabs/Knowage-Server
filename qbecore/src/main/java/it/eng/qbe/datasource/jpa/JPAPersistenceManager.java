@@ -582,6 +582,7 @@ public class JPAPersistenceManager implements IPersistenceManager {
 			logger.error(e);
 			throw new SpagoBIRuntimeException("Error deleting entity", e);
 		} finally {
+			entityManager.clear();
 			logger.debug("OUT");
 		}
 
