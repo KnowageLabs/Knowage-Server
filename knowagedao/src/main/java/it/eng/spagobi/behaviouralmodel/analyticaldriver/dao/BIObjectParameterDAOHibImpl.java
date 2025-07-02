@@ -216,13 +216,14 @@ public class BIObjectParameterDAOHibImpl extends AbstractHibernateDAO implements
 			SbiObjects aSbiObject = (SbiObjects) aSession.load(SbiObjects.class, aBIObjectParameter.getBiObjectID());
 			SbiParameters aSbiParameter = (SbiParameters) aSession.load(SbiParameters.class, aBIObjectParameter.getParameter().getId());
 
-			hibObjPar.setSbiObject(aSbiObject);
+            assert hibObjPar != null;
+            hibObjPar.setSbiObject(aSbiObject);
 			hibObjPar.setSbiParameter(aSbiParameter);
 			hibObjPar.setLabel(aBIObjectParameter.getLabel());
-			hibObjPar.setReqFl(new Short(aBIObjectParameter.getRequired().shortValue()));
-			hibObjPar.setModFl(new Short(aBIObjectParameter.getModifiable().shortValue()));
-			hibObjPar.setViewFl(new Short(aBIObjectParameter.getVisible().shortValue()));
-			hibObjPar.setMultFl(new Short(aBIObjectParameter.getMultivalue().shortValue()));
+			hibObjPar.setReqFl(aBIObjectParameter.getRequired().shortValue());
+			hibObjPar.setModFl(aBIObjectParameter.getModifiable().shortValue());
+			hibObjPar.setViewFl(aBIObjectParameter.getVisible().shortValue());
+			hibObjPar.setMultFl(aBIObjectParameter.getMultivalue().shortValue());
 			hibObjPar.setParurlNm(aBIObjectParameter.getParameterUrlName());
 
 			Integer colSpan = aBIObjectParameter.getColSpan();
@@ -231,8 +232,8 @@ public class BIObjectParameterDAOHibImpl extends AbstractHibernateDAO implements
 			Integer oldPriority = hibObjPar.getPriority();
 			Integer newPriority = aBIObjectParameter.getPriority();
 			if (!oldPriority.equals(newPriority)) {
-				Query query = null;
-				if (oldPriority.intValue() > newPriority.intValue()) {
+				Query query;
+				if (oldPriority > newPriority) {
 					String hqlUpdateShiftRight = "update SbiObjPar s set s.priority = (s.priority + 1) where s.priority >= :newPriority"
 							+ " and s.priority < :oldPriority and s.sbiObject.biobjId = :biobjId";
 					query = aSession.createQuery(hqlUpdateShiftRight);
@@ -247,9 +248,10 @@ public class BIObjectParameterDAOHibImpl extends AbstractHibernateDAO implements
 					query.setParameter("newPriority", newPriority);
 					query.setParameter("biobjId", aSbiObject.getBiobjId());
 				}
+				query.executeUpdate();
 			}
 			hibObjPar.setPriority(newPriority);
-			hibObjPar.setProg(new Integer(1));
+			hibObjPar.setProg(1);
 			hibObjPar.setColSpan(colSpan);
 			hibObjPar.setThickPerc(thickPerc);
 
