@@ -37,17 +37,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <title>Knowage - Signup</title>
     <link rel="shortcut icon" href="<%=urlBuilder.getResourceLinkByTheme(request, "img/favicon.ico",currTheme)%>" />
 		   <!-- Bootstrap -->
-		<link rel="stylesheet" href="<%=urlBuilder.getResourceLink(request, "js/lib/bootstrap/css/bootstrap.min.css")%>">
+		<link rel="stylesheet" href="<%=urlBuilder.getResourceLink(request, "/node_modules/bootstrap/dist/css/bootstrap.min.css")%>">
 		<link rel="stylesheet" type="text/css"  href="<%= urlBuilder.getResourceLink(request,"/node_modules/toastify-js/src/toastify.css")%>">
     	<link rel="stylesheet" href="<%=urlBuilder.getResourceLink(request, "themes/commons/css/customStyle.css")%>">
   </head>
 
   <body class="kn-login" ng-app="signUp" ng-controller="signUpCtrl" ng-cloak>
- 	<div class="container-fluid signUpContainer" style="height:100%;">
-  		<div class="col-sm-5 col-sm-offset-7" style="height:100%;background-color:white;display:flex;flex-direction:column;padding:20px;justify-content:center;align-items:center">
-  			<img id="profile-img" class="col-xs-10" src='<%=urlBuilder.getResourceLinkByTheme(request, "../commons/img/defaultTheme/logoCover.svg", currTheme)%>' />
+ 	<div class="container-fluid" style="height:100%;">
+  		<div class="col-12 col-lg-5 offset-lg-7" style="height:100%;background-color:white;display:flex;flex-direction:column;padding:20px;justify-content:center;align-items:center">
+  			
         	<h3><%=msgBuilder.getMessage("signup")%></h3>
-  			<div class="col-xs-8">
+  			<div class="col-8">
+<img id="profile-img"  src='<%=urlBuilder.getResourceLinkByTheme(request, "../commons/img/defaultTheme/logoCover.svg", currTheme)%>' />
       			<form name="signUpForm" class="form-signin">
 		        	<input type="text" id="name" name="name" class="form-control smallerInput" ng-model="newUser.name" placeholder="<%=msgBuilder.getMessage("signup.form.name")%>" required autofocus>
 		        	<input type="text" id="surname" name="surname" class="form-control smallerInput" ng-model="newUser.surname" placeholder="<%=msgBuilder.getMessage("signup.form.surname")%>" required>
@@ -63,10 +64,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           			<button class="btn btn-lg btn-primary btn-block btn-signup" ng-click="goToLogin()"><%=msgBuilder.getMessage("login")%></button>
           	</div>
          </div>
-     </div>
-  
-	<link rel="stylesheet" href="<%=urlBuilder.getResourceLink(request, "themes/sbi_default/fonts/font-awesome-4.4.0/css/font-awesome.min.css")%>">
-	
+     </div>	
 	<!-- angular reference-->
 	<!-- START-DEBUG -->
 	<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "js/lib/angular/angular_1.4/angular.js")%>"></script> 
