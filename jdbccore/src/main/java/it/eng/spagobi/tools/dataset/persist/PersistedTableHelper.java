@@ -119,8 +119,15 @@ public class PersistedTableHelper {
 							java.sql.Date sqlDate = new java.sql.Date(dateTime.getMillis());
 							insertStatement.setDate(fieldIndex + 1, sqlDate);
 						} catch (Exception e2) {
-							LOGGER.error("Failed to parse date from value: " + fieldValue, e2);
-							throw new RuntimeException("Cannot convert value [" + fieldValue + "] to Date", e2);
+							try {
+								String strValue = fieldValue.toString();
+								LocalDateTime localDateTime = LocalDateTime.parse(strValue);
+								java.sql.Date sqlDate = java.sql.Date.valueOf(localDateTime.toLocalDate());
+								insertStatement.setDate(fieldIndex + 1, sqlDate);
+							} catch (Exception e3) {
+								LOGGER.error("Failed to parse date from value: " + fieldValue, e2);
+								throw new RuntimeException("Cannot convert value [" + fieldValue + "] to Date", e2);
+							}
 						}
 					}
 				}
