@@ -177,6 +177,19 @@ public class QueryJSONDeserializer implements IQueryDeserializer {
 		try {
 
 			logger.debug("Query [" + query.getId() + "] have [" + fieldsJSON.length() + "] to deserialize");
+			boolean allGroupsFalseAndNone = true;
+
+			
+			for (int i = 0; i < fieldsJSON.length(); i++) {
+			    JSONObject fieldJSONcheck = fieldsJSON.getJSONObject(i);
+			    String fieldGroupCheck = fieldJSONcheck.optString(QuerySerializationConstants.FIELD_GROUP);
+			    String functCheck = fieldJSONcheck.optString(QuerySerializationConstants.FIELD_AGGREGATION_FUNCTION);
+
+			    if (Boolean.TRUE.toString().equals(fieldGroupCheck) || !AggregationFunctions.get(functCheck).equals(AggregationFunctions.NONE_FUNCTION)) {
+			        allGroupsFalseAndNone = false;
+			        break;
+			    }
+			}
 			for (int i = 0; i < fieldsJSON.length(); i++) {
 				try {
 					fieldJSON = fieldsJSON.getJSONObject(i);
@@ -219,7 +232,9 @@ public class QueryJSONDeserializer implements IQueryDeserializer {
 
 						if (AggregationFunctions.get(funct).equals(AggregationFunctions.NONE_FUNCTION)) {
 							pattern = null;// pattern = field.getPropertyAsString("format");
-							group = Boolean.TRUE.toString();
+							if (!allGroupsFalseAndNone) {
+			                    group = Boolean.TRUE.toString();
+			                }
 						} else {
 							pattern = null;
 						}
