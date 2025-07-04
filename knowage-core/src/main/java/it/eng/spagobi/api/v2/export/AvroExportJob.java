@@ -32,6 +32,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.TemporalAccessor;
 
 import org.apache.avro.Conversions;
 import org.apache.avro.LogicalTypes;
@@ -142,14 +143,7 @@ public class AvroExportJob extends AbstractExportJob {
 		try {
 			Class<?> type = dsMeta.getFieldType(i);
 			if (isDate(type)) {
-				if (value instanceof java.util.Date utilDate) {
-					LocalDate localDate = utilDate.toInstant()
-							.atZone(ZoneId.systemDefault())
-							.toLocalDate();
-					value = dateFormatter_v2.format(localDate);
-				} else {
-					value = value.toString();
-				}
+				value = Date.from((LocalDate.parse(value.toString(), dateFormatter_v2)).atStartOfDay(ZoneId.systemDefault()).toInstant());
 			} else if (isTimestamp(type)) {
 				value = DatabaseUtils.timestampFormatter(value);
 			} else if (BigDecimal.class.isAssignableFrom(type)) {
@@ -166,10 +160,23 @@ public class AvroExportJob extends AbstractExportJob {
 			} else if (String.class.isAssignableFrom(type)) {
 				value = String.valueOf(value);
 			} else {
-				if (value instanceof java.util.Date) {
-					value = dateFormatter_v2.format(LocalDateTime.ofInstant(((Date) value).toInstant(), ZoneId.systemDefault()));
-				}
-				value = value.toString();
+				if (value instanceof java.util.Date date) {
+                    LocalDateTime localDateTime = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
+					DateTimeFormatter outputFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
+					value = localDateTime.format(outputFormat);
+
+				} else {
+						// Try to parse as Date if it's a string
+						try {
+							java.util.Date date = new java.util.Date(value.toString());
+							LocalDateTime localDateTime = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
+							DateTimeFormatter outputFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
+							value = localDateTime.format(outputFormat);
+						} catch (Exception ex) {
+							// If parsing fails, keep as string
+							value = value.toString();
+						}
+					}
 			}
 		} catch (Exception e) {
 			LOGGER.error("Error getting Avro value {" + value + "}", e);
@@ -177,6 +184,7 @@ public class AvroExportJob extends AbstractExportJob {
 		}
 		return value;
 	}
+
 
 	private void clearStatusFiles() {
 		try {
