@@ -877,6 +877,9 @@ export default defineComponent({
                 }
             }
         }
+        label {
+            white-space: nowrap;
+        }
         .p-checkbox {
             width: 15px;
             height: 15px;
