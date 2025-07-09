@@ -8,24 +8,32 @@
 */
 package mondrian.rolap;
 
-import mondrian.olap.*;
-import mondrian.olap.Util.Functor1;
-import mondrian.server.Execution;
-import mondrian.server.Locus;
-import mondrian.server.monitor.*;
-import mondrian.server.monitor.SqlStatementEvent.Purpose;
-import mondrian.util.*;
-
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Proxy;
-
-import java.sql.*;
 import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.atomic.AtomicLong;
+
 import javax.sql.DataSource;
+
+import mondrian.olap.MondrianProperties;
+import mondrian.olap.Util;
+import mondrian.olap.Util.Functor1;
+import mondrian.server.Execution;
+import mondrian.server.Locus;
+import mondrian.server.monitor.SqlStatementEndEvent;
+import mondrian.server.monitor.SqlStatementEvent;
+import mondrian.server.monitor.SqlStatementEvent.Purpose;
+import mondrian.server.monitor.SqlStatementExecuteEvent;
+import mondrian.server.monitor.SqlStatementStartEvent;
+import mondrian.util.Counters;
+import mondrian.util.DelegatingInvocationHandler;
 
 /**
  * SqlStatement contains a SQL statement and associated resources throughout
@@ -79,10 +87,10 @@ public class SqlStatement {
     public int rowCount;
     private long startTimeNanos;
     private long startTimeMillis;
-    private final List<Accessor> accessors = new ArrayList<Accessor>();
+    private final List<Accessor> accessors = new ArrayList<>();
     private State state = State.FRESH;
     private final long id;
-    private Functor1<Void, Statement> callback;
+    private final Functor1<Void, Statement> callback;
 
     /**
      * Creates a SqlStatement.
@@ -241,7 +249,12 @@ public class SqlStatement {
             for (Type type : guessTypes()) {
                 accessors.add(createAccessor(accessors.size(), type));
             }
-        } catch (Throwable e) {
+		} catch (InterruptedException ie) {
+			Thread.currentThread().interrupt(); // Ripristina lo stato di interruzione
+			status = ", interrupted (" + ie + ")";
+			Util.close(null, statement, null);
+			throw handle(ie);
+		} catch (Throwable e) {
             status = ", failed (" + e + ")";
 
             // This statement was leaked to us. It is our responsibility
@@ -373,19 +386,22 @@ public class SqlStatement {
         switch (type) {
         case OBJECT:
             return new Accessor() {
-                public Object get() throws SQLException {
+                @Override
+				public Object get() throws SQLException {
                     return resultSet.getObject(columnPlusOne);
                 }
             };
         case STRING:
             return new Accessor() {
-                public Object get() throws SQLException {
+                @Override
+				public Object get() throws SQLException {
                     return resultSet.getString(columnPlusOne);
                 }
             };
         case INT:
             return new Accessor() {
-                public Object get() throws SQLException {
+                @Override
+				public Object get() throws SQLException {
                     final int val = resultSet.getInt(columnPlusOne);
                     if (val == 0 && resultSet.wasNull()) {
                         return null;
@@ -395,7 +411,8 @@ public class SqlStatement {
             };
         case LONG:
             return new Accessor() {
-                public Object get() throws SQLException {
+                @Override
+				public Object get() throws SQLException {
                     final long val = resultSet.getLong(columnPlusOne);
                     if (val == 0 && resultSet.wasNull()) {
                         return null;
@@ -405,7 +422,8 @@ public class SqlStatement {
             };
         case DOUBLE:
             return new Accessor() {
-                public Object get() throws SQLException {
+                @Override
+				public Object get() throws SQLException {
                     final double val = resultSet.getDouble(columnPlusOne);
                     if (val == 0 && resultSet.wasNull()) {
                         return null;
@@ -422,7 +440,7 @@ public class SqlStatement {
         final ResultSetMetaData metaData = resultSet.getMetaData();
         final int columnCount = metaData.getColumnCount();
         assert this.types == null || this.types.size() == columnCount;
-        List<Type> types = new ArrayList<Type>();
+        List<Type> types = new ArrayList<>();
 
         for (int i = 0; i < columnCount; i++) {
             final Type suggestedType =
@@ -465,7 +483,7 @@ public class SqlStatement {
         loader,
         new Class<?>[] { ResultSet.class },
         new MyDelegatingInvocationHandler(this));
-	}	
+	}
 
     private SqlStatementEvent.Purpose getPurpose() {
         if (locus instanceof StatementLocus) {
@@ -541,7 +559,8 @@ public class SqlStatement {
             this.sqlStatement = sqlStatement;
         }
 
-        protected Object getTarget() throws InvocationTargetException {
+        @Override
+		protected Object getTarget() throws InvocationTargetException {
             final ResultSet resultSet = sqlStatement.getResultSet();
             if (resultSet == null) {
                 throw new InvocationTargetException(

@@ -771,7 +771,7 @@ public class RESTDataSet extends ConfigurableDataSet {
 		if (profileAttributeEndIndex == -1) {
 			throw new Exception("Not closed profile attribute: '}' expected.");
 		}
-		if (profileAttributeEndIndex < profileAttributeEndIndex) {
+		if (profileAttributeEndIndex < profileAttributeStartIndex) {
 			throw new Exception("Not opened profile attribute: '$P{' expected.");
 		}
 		String attribute = statement.substring(profileAttributeStartIndex + 3, profileAttributeEndIndex).trim();
@@ -1057,7 +1057,7 @@ public class RESTDataSet extends ConfigurableDataSet {
 			String me = e.getMessage();
 			me += " - attribute " + attribute + " should be of number type";
 			NumberFormatException numberFormatException = new NumberFormatException(attribute);
-			
+
 			throw numberFormatException;
 		}
 
