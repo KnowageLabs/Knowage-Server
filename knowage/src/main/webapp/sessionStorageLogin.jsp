@@ -1,9 +1,11 @@
-<html>
+<!DOCTYPE html>
+<html lang="it">
 <%@page import="it.eng.knowage.commons.security.KnowageSystemConfiguration"%>
 <%
 if (session!=null) session.invalidate();
 %>
 <head>
+	<title>Knowage</title>
 </head>
 <body>
 <form name="myForm" action="/knowage/servlet/AdapterHTTP" method="post">

@@ -862,6 +862,7 @@ public class SQLDBCache implements ICache {
 			}
 		} catch (InterruptedException e) {
 			logger.debug("The current thread has failed to release the lock for dataset [" + hashedSignature + "] in time. Returning a null datastore.", e);
+			throw e;
 		}
 		logger.debug("OUT");
 		return false;
