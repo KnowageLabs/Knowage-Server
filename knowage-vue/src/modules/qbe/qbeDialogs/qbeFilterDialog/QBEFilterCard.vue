@@ -119,7 +119,6 @@ import { defineComponent, PropType } from "vue";
 import { AxiosResponse } from "axios";
 import { iFilter } from "../../QBE";
 import Calendar from "primevue/calendar";
-import CascadeSelect from "primevue/cascadeselect";
 import Chip from "primevue/chip";
 import Chips from "primevue/chips";
 import Dropdown from "primevue/dropdown";
@@ -129,7 +128,7 @@ import moment from "moment";
 
 export default defineComponent({
   name: "qbe-filter-card",
-  components: { Calendar, CascadeSelect, Chip, Chips, Dropdown, QBEFilterValuesTable },
+  components: { Calendar, Chip, Chips, Dropdown, QBEFilterValuesTable },
   props: { propFilter: { type: Object as PropType<iFilter> }, id: { type: String }, propEntities: { type: Array }, subqueries: { type: Array, required: true }, field: { type: Object, required: true }, propParameters: { type: Array } },
   emits: ["removeFilter"],
   data() {
