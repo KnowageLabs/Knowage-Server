@@ -225,6 +225,7 @@ export default defineComponent({
         this.selectedCustomMenu = item.items;
         // @ts-ignore
         this.$refs.menu.show(event);
+        this.$store.commit("toggleMenuOpened", true);
       }
     },
     hideItemMenu() {
@@ -319,6 +320,7 @@ export default defineComponent({
       isEnterprise: "isEnterprise",
       licenses: "licenses",
       configurations: "configurations",
+      menuOpened: "menuOpened",
     }),
   },
   watch: {
@@ -329,6 +331,12 @@ export default defineComponent({
     closeMenu(newProp) {
       //@ts-ignore
       if (newProp) this.$refs.menu.hide();
+    },
+    menuOpened(newProp) {
+      if (newProp === false) {
+        // @ts-ignore
+        this.$refs.menu.hide();
+      }
     },
   },
 });
