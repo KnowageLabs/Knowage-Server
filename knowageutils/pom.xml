@@ -6,7 +6,7 @@
 	<parent>
 		<groupId>it.eng.knowage</groupId>
 		<artifactId>knowage-ce-parent</artifactId>
-		<version>8.1.36</version>
+		<version>8.1.37</version>
 		<relativePath>../knowage-ce-parent/pom.xml</relativePath>
 	</parent>
 	
@@ -414,7 +414,7 @@
 		<dependency>
 			<groupId>com.license4j</groupId>
 			<artifactId>license4j-runtime-library</artifactId>
-			<version>4.6.1</version>
+			<version>4.7.3</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>

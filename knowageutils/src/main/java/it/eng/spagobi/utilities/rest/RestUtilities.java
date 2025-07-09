@@ -38,6 +38,8 @@ import java.util.Map.Entry;
 
 import javax.servlet.http.HttpServletRequest;
 
+import it.eng.spagobi.commons.constants.ConfigurationConstants;
+import it.eng.spagobi.utilities.whitelist.WhiteList;
 import org.apache.commons.httpclient.Credentials;
 import org.apache.commons.httpclient.Header;
 import org.apache.commons.httpclient.HttpClient;
@@ -234,7 +236,34 @@ public class RestUtilities {
 		return o;
 	}
 
-	public static enum HttpMethod {
+    public static void checkIfAddressIsInWhitelist(String address) {
+		try {
+			URL url = new URL(address);
+			String hostname = url.getHost();
+			String protocol = url.getProtocol();
+			String baseUrl = protocol + "://" + hostname;
+
+			String knowageBase = SpagoBIUtilities.readJndiResource(SingletonConfig.getInstance().getConfigValue(ConfigurationConstants.SPAGOBI_SPAGOBI_SERVICE_JNDI));
+			if(knowageBase != null && knowageBase.equals(baseUrl)) {
+				return;
+			}
+
+			List<String> whitelist = WhiteList.getInstance().getExternalServices();
+			for(String allowedUrl : whitelist) {
+				URL allowedUrlObj = new URL(allowedUrl);
+				if(hostname.equals(allowedUrlObj.getHost())) {
+					return;
+				}
+			}
+
+			throw new SpagoBIRuntimeException("Address value " + address + " is not in the whitelist of allowed external services.");
+		} catch (MalformedURLException e) {
+			throw new SpagoBIRuntimeException("Invalid URL format: " + address, e);
+		}
+	}
+
+
+    public static enum HttpMethod {
 		Get, Post, Put, Delete
 	}
 

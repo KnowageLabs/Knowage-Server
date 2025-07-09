@@ -216,7 +216,11 @@ public class ExcelExportJob extends AbstractExportJob {
 										cell.setCellStyle(borderStyleRow);
 									}
 								} catch (ParseException e) {
-									String msg = "Error parsing values";
+									String msg = "Error parsing values for column " + filteredMetadata.get(k).getAlias();
+									logger.error(msg, e);
+									throw new IllegalStateException(msg, e);
+								} catch (Exception e) {
+									String msg = "Error setting cell value for column " + filteredMetadata.get(k).getAlias();
 									logger.error(msg, e);
 									throw new IllegalStateException(msg, e);
 								}
