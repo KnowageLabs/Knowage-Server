@@ -24,15 +24,16 @@ import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 public class SbiTenant extends SbiHibernateModel {
-    
+
 	private Integer id;
 	@Pattern(regexp="^[a-zA-Z0-9_]*$")
 	@Size(max=50)
-	private String name; 
+	private String name;
 	private String theme;
 	private Set<SbiOrganizationDatasource> sbiOrganizationDatasources = new HashSet<>(0);
 	private Set<SbiOrganizationProductType> sbiOrganizationProductType = new HashSet<>(0);
 	private Set<SbiOrganizationTheme> sbiOrganizationThemes = new HashSet<>(0);
+	private Boolean isMfa;
 
 	/**
 	 * default constructor.
@@ -99,6 +100,15 @@ public class SbiTenant extends SbiHibernateModel {
 
 	public void changeId(Integer idTenant) {
 		this.setId(idTenant);
-		
+
 	}
+
+	public Boolean getIsMfa() {
+		return isMfa;
+	}
+
+	public void setIsMfa(Boolean isMfa) {
+		this.isMfa = isMfa;
+	}
+
 }

@@ -18,6 +18,9 @@
         <property name="theme" type="string">
             <column name="THEME" length="100" not-null="false" />
         </property>
+        <property name="isMfa" type="java.lang.Boolean">
+            <column name="IS_MFA" />
+        </property>
         <set name="sbiOrganizationDatasources" inverse="true">
             <key>
                 <column name="ORGANIZATION_ID" not-null="true" />

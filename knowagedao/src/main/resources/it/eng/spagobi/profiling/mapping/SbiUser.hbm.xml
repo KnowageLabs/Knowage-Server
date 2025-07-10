@@ -77,6 +77,9 @@
         <property name="defaultRoleId" type="java.lang.Integer">
             <column name="DEFAULT_ROLE_ID" />
         </property>
+        <property name="otpSecret" type="string">
+            <column name="OTP_SECRET" />
+        </property>
         
         <set name="sbiExtUserRoleses" inverse="false" lazy="true" table="SBI_EXT_USER_ROLES" cascade="all" >
             <key>

@@ -28,6 +28,7 @@ public class TenantJSONSerializer implements Serializer {
 	public static final String TENANT_ID = "TENANT_ID";
 	private static final String TENANT_NAME = "TENANT_NAME";
 	private static final String TENANT_THEME = "TENANT_THEME";
+	private static final String TENANT_MFA = "TENANT_MFA";
 
 	@Override
 	public Object serialize(Object o, Locale locale) throws SerializationException {
@@ -44,6 +45,7 @@ public class TenantJSONSerializer implements Serializer {
 			result.put(TENANT_ID, ds.getId());
 			result.put(TENANT_NAME, ds.getName());
 			result.put(TENANT_THEME, ds.getTheme());
+			result.put(TENANT_MFA, ds.getIsMfa());
 
 		} catch (Throwable t) {
 			throw new SerializationException("An error occurred while serializing object: " + o, t);

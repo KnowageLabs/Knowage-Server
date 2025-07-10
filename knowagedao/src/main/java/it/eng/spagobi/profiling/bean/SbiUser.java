@@ -48,6 +48,8 @@ public class SbiUser extends SbiHibernateModel {
 	private Set<SbiExtRoles> sbiExtUserRoleses = new HashSet<>(0);
 	private Set<SbiUserAttributes> sbiUserAttributeses = new HashSet<>(0);
 
+	private String otpSecret;
+
 	public SbiUser() {
 	}
 
@@ -176,6 +178,14 @@ public class SbiUser extends SbiHibernateModel {
 		this.defaultRoleId = defaultRoleId;
 	}
 
+	public String getOtpSecret() {
+		return otpSecret;
+	}
+
+	public void setOtpSecret(String otpSecret) {
+		this.otpSecret = otpSecret;
+	}
+
 	/*
 	 * (non-Javadoc)
 	 *
@@ -197,6 +207,7 @@ public class SbiUser extends SbiHibernateModel {
 		result = prime * result + ((sbiUserAttributeses == null) ? 0 : sbiUserAttributeses.hashCode());
 		result = prime * result + ((userId == null) ? 0 : userId.hashCode());
 		result = prime * result + ((defaultRoleId == null) ? 0 : defaultRoleId.hashCode());
+		result = prime * result + ((otpSecret == null) ? 0 : otpSecret.hashCode());
 		return result;
 	}
 
@@ -207,70 +218,103 @@ public class SbiUser extends SbiHibernateModel {
 	 */
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
+		if (this == obj) {
 			return true;
-		if (obj == null)
+		}
+		if (obj == null) {
 			return false;
-		if (getClass() != obj.getClass())
+		}
+		if (getClass() != obj.getClass()) {
 			return false;
+		}
 		SbiUser other = (SbiUser) obj;
 		if (dtLastAccess == null) {
-			if (other.dtLastAccess != null)
+			if (other.dtLastAccess != null) {
 				return false;
-		} else if (!dtLastAccess.equals(other.dtLastAccess))
+			}
+		} else if (!dtLastAccess.equals(other.dtLastAccess)) {
 			return false;
+		}
 		if (dtPwdBegin == null) {
-			if (other.dtPwdBegin != null)
+			if (other.dtPwdBegin != null) {
 				return false;
-		} else if (!dtPwdBegin.equals(other.dtPwdBegin))
+			}
+		} else if (!dtPwdBegin.equals(other.dtPwdBegin)) {
 			return false;
+		}
 		if (dtPwdEnd == null) {
-			if (other.dtPwdEnd != null)
+			if (other.dtPwdEnd != null) {
 				return false;
-		} else if (!dtPwdEnd.equals(other.dtPwdEnd))
+			}
+		} else if (!dtPwdEnd.equals(other.dtPwdEnd)) {
 			return false;
+		}
 		if (flgPwdBlocked == null) {
-			if (other.flgPwdBlocked != null)
+			if (other.flgPwdBlocked != null) {
 				return false;
-		} else if (!flgPwdBlocked.equals(other.flgPwdBlocked))
+			}
+		} else if (!flgPwdBlocked.equals(other.flgPwdBlocked)) {
 			return false;
+		}
 		if (fullName == null) {
-			if (other.fullName != null)
+			if (other.fullName != null) {
 				return false;
-		} else if (!fullName.equals(other.fullName))
+			}
+		} else if (!fullName.equals(other.fullName)) {
 			return false;
-		if (id != other.id)
+		}
+		if (id != other.id) {
 			return false;
+		}
 		if (isSuperadmin == null) {
-			if (other.isSuperadmin != null)
+			if (other.isSuperadmin != null) {
 				return false;
-		} else if (!isSuperadmin.equals(other.isSuperadmin))
+			}
+		} else if (!isSuperadmin.equals(other.isSuperadmin)) {
 			return false;
+		}
 		if (password == null) {
-			if (other.password != null)
+			if (other.password != null) {
 				return false;
-		} else if (!password.equals(other.password))
+			}
+		} else if (!password.equals(other.password)) {
 			return false;
+		}
 		if (sbiExtUserRoleses == null) {
-			if (other.sbiExtUserRoleses != null)
+			if (other.sbiExtUserRoleses != null) {
 				return false;
-		} else if (!sbiExtUserRoleses.equals(other.sbiExtUserRoleses))
+			}
+		} else if (!sbiExtUserRoleses.equals(other.sbiExtUserRoleses)) {
 			return false;
+		}
 		if (sbiUserAttributeses == null) {
-			if (other.sbiUserAttributeses != null)
+			if (other.sbiUserAttributeses != null) {
 				return false;
-		} else if (!sbiUserAttributeses.equals(other.sbiUserAttributeses))
+			}
+		} else if (!sbiUserAttributeses.equals(other.sbiUserAttributeses)) {
 			return false;
+		}
 		if (userId == null) {
-			if (other.userId != null)
+			if (other.userId != null) {
 				return false;
-		} else if (!userId.equals(other.userId))
+			}
+		} else if (!userId.equals(other.userId)) {
 			return false;
+		}
 		if (defaultRoleId == null) {
-			if (other.defaultRoleId != null)
+			if (other.defaultRoleId != null) {
 				return false;
-		} else if (!defaultRoleId.equals(other.defaultRoleId))
+			}
+		} else if (!defaultRoleId.equals(other.defaultRoleId)) {
 			return false;
+		}
+		if (otpSecret == null) {
+			if (other.otpSecret != null) {
+				return false;
+			}
+		} else if (!otpSecret.equals(other.otpSecret)) {
+			return false;
+		}
 		return true;
 	}
 

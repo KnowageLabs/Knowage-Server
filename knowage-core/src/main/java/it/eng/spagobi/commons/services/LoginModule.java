@@ -32,6 +32,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Locale.Builder;
 import java.util.Properties;
+import java.util.stream.IntStream;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -66,18 +67,22 @@ import it.eng.spagobi.commons.bo.UserProfileUtility;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.IConfigDAO;
+import it.eng.spagobi.commons.dao.ITenantsDAO;
 import it.eng.spagobi.commons.metadata.SbiExtRoles;
+import it.eng.spagobi.commons.metadata.SbiTenant;
 import it.eng.spagobi.commons.utilities.AuditLogUtilities;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.commons.utilities.HibernateSessionManager;
 import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
 import it.eng.spagobi.commons.utilities.StringUtilities;
+import it.eng.spagobi.commons.utilities.TOTPService;
 import it.eng.spagobi.commons.utilities.UserUtilities;
 import it.eng.spagobi.commons.utilities.messages.MessageBuilder;
 import it.eng.spagobi.profiling.bean.SbiUser;
 import it.eng.spagobi.profiling.dao.ISbiUserDAO;
 import it.eng.spagobi.security.InternalSecurityServiceSupplierImpl;
 import it.eng.spagobi.security.Password;
+import it.eng.spagobi.services.common.JWTSsoService;
 import it.eng.spagobi.services.security.bo.SpagoBIUserProfile;
 import it.eng.spagobi.services.security.exceptions.SecurityException;
 import it.eng.spagobi.services.security.service.ISecurityServiceSupplier;
@@ -230,6 +235,16 @@ public class LoginModule extends AbstractHttpModule {
 					}
 
 				}
+
+				if (!this.checkCodeMfa(request, userId, msgBuilder)) {
+					// Forward the request to the MFA JSP page
+					String mfaPageUrl = "/themes/" + currTheme + "/jsp/mfa.jsp";
+					getHttpRequest().setAttribute("password", pwd);
+					getHttpRequest().setAttribute("userID", userId);
+					getHttpRequest().getRequestDispatcher(mfaPageUrl).forward(getHttpRequest(), getHttpResponse());
+					return;
+				}
+
 				monitor.stop();
 
 			} catch (Exception e) {
@@ -379,7 +394,7 @@ public class LoginModule extends AbstractHttpModule {
 		}
 
 		// String username = (String) profile.getUserUniqueIdentifier();
-		String username = (String) ((UserProfile) profile).getUserId();
+		// String username = (String) ((UserProfile) profile).getUserId();
 
 		// putting tenant id on thread local
 		Tenant tenant = new Tenant(((UserProfile) profile).getOrganization());
@@ -434,6 +449,78 @@ public class LoginModule extends AbstractHttpModule {
 			URL newUrl = new URL(url.getProtocol(), url.getHost(), 3000, KnowageSystemConfiguration.getKnowageVueContext());
 
 			getHttpResponse().sendRedirect(newUrl.toString());
+		}
+	}
+
+	private boolean checkCodeMfa(SourceBean request, String userId, MessageBuilder msgBuilder) throws Exception {
+		// Load user data from the database
+		ISbiUserDAO userDao = DAOFactory.getSbiUserDAO();
+		SbiUser user = userDao.loadSbiUserByUserId(userId);
+
+		ITenantsDAO tenantsDAO = DAOFactory.getTenantsDAO();
+		SbiTenant sbiTenant = tenantsDAO.loadTenantByName(user.getCommonInfo().getOrganization());
+		Boolean isActiviMfa = sbiTenant.getIsMfa();
+
+		// If MFA is not required, allow access
+		if (isActiviMfa == null || Boolean.FALSE.equals(isActiviMfa)) {
+			return true;
+		}
+
+		String secretInput = (String) request.getAttribute("secret");
+		if (user.getOtpSecret() == null) {
+			user.setOtpSecret(secretInput);
+		}
+
+		// If the user does not yet have an OTP secret in DB or in request, generate and send QR code
+		if (user.getOtpSecret() == null) {
+			String secret = TOTPService.generateSecret();
+			this.sendQrCode(secret, userId);
+			return false; // MFA setup initiated, waiting for user to complete
+		}
+
+		// Retrieve the code entered by the user from the HTTP request
+		String code = (String) request.getAttribute("code");
+
+		// Verify the submitted code using the user's secret
+		if (TOTPService.verifyCode(user.getOtpSecret(), code)) {
+			saveSecretSbiUser(secretInput, user, userDao);
+			return true; // MFA successful
+		} else {
+			// if secret input is not null, QrCode is send on request
+			this.sendQrCode(secretInput, userId);
+			// Handle invalid code: set error messages and return false
+			handleInvalidCode(code, msgBuilder);
+			return false;
+		}
+	}
+
+
+	// Set error attributes in the HTTP request when the MFA code is invalid
+	private void handleInvalidCode(String code, MessageBuilder msgBuilder) {
+		if (code != null) {
+			getHttpRequest().setAttribute("codeError", msgBuilder.getMessage("mfa.form.codeError"));
+		}
+	}
+
+	private void saveSecretSbiUser(String secretInput, SbiUser user, ISbiUserDAO userDao) {
+		// if secretInput is null, secret is already saved
+		if (secretInput != null) {
+			// secret is saved in the first success verify code
+			userDao.updateSbiUser(user, user.getId());
+		}
+
+	}
+
+	private void sendQrCode(String secret, String userId) throws Exception {
+		if (secret != null) {
+			// Generate the QR Code URL for MFA setup
+			String qrCodeUrl = TOTPService.getQRBarcodeURL(userId, JWTSsoService.KNOWAGE_ISSUER, secret);
+
+			// Pass the QR Code and secret to the JSP page
+			getHttpRequest().setAttribute("qrCode", qrCodeUrl);
+			getHttpRequest().setAttribute("secret", secret);
+			getHttpRequest().setAttribute("secretFormat", IntStream.range(0, secret.length())
+					.mapToObj(i -> (i > 0 && i % 4 == 0) ? " " + secret.charAt(i) : String.valueOf(secret.charAt(i))).reduce("", String::concat));
 		}
 	}
 

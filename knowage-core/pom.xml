@@ -266,6 +266,12 @@
 			<version>${project.version}</version>
 			<scope>compile</scope>
 		</dependency>
+		<dependency>
+			<artifactId>totp</artifactId>
+			<groupId>dev.samstevens.totp</groupId>
+			<version>1.7.1</version>
+		</dependency>
+		
 		
 	</dependencies>
 	
