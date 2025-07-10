@@ -1278,7 +1278,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
         var category = $scope.ngModel.content.chartTemplate.CHART.VALUES.CATEGORY;
         var columnName = category.name;
-        if ($scope.ngModel.cliccable && $scope.ngModel.updateble && !$scope.ngModel.drillable && !event.point.drilldown && category.column != category.groupby) {
+        if ($scope.ngModel.cliccable && $scope.ngModel.updateble && !$scope.ngModel.drillable && !event.point.drilldown && category.column != category.groupby && category.groupby != "") {
           columnName = category.groupby;
         }
 
