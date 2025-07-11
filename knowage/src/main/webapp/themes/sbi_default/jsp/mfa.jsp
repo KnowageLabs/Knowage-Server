@@ -5,87 +5,89 @@
 <%@page import="it.eng.spagobi.commons.utilities.messages.MessageBuilder"%>
 <%@page import="it.eng.spagobi.commons.utilities.messages.MessageBuilderFactory"%>
 <%@page import="it.eng.spagobi.commons.utilities.ChannelUtilities"%>
+<%@page import="it.eng.spagobi.commons.utilities.urls.UrlBuilderFactory"%>
+<%@page import="it.eng.spagobi.commons.utilities.urls.IUrlBuilder"%>
+
+
 <%
     IMessageBuilder msgBuilder = MessageBuilderFactory.getMessageBuilder();
     String contextName = ChannelUtilities.getSpagoBIContextName(request);
+
+    String sbiMode = "WEB";
+	IUrlBuilder urlBuilder = null;
+	urlBuilder = UrlBuilderFactory.getUrlBuilder(sbiMode);
+
+
 %>
 <head>
     <meta charset="UTF-8">
     <title><%=msgBuilder.getMessage("mfa.form.title")%></title>
+    <link rel="shortcut icon" href="<%=urlBuilder.getResourceLink(request, "themes/sbi_default/img/favicon.ico")%>" />
+    <link rel="stylesheet" href="<%=urlBuilder.getResourceLink(request, "node_modules/bootstrap/dist/css/bootstrap.min.css")%>">
+    <link rel="stylesheet" href="<%=urlBuilder.getResourceLink(request, "node_modules/font-awesome/css/font-awesome.min.css")%>">
+    
+    <link rel='StyleSheet' href='<%=urlBuilder.getResourceLink(request, "themes/commons/css/customStyle.css")%>' type='text/css' />
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f6f8;
-            margin: 0;
-            padding: 20px;
-        }
-
-        form {
-            background-color: #ffffff;
-            padding: 20px;
-            border-radius: 8px;
-            max-width: 400px;
-            margin: auto;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
-        }
-
-        h1, p {
-            text-align: center;
-        }
-
-        label {
-            display: block;
-            margin-top: 15px;
-            font-weight: bold;
-        }
-
-        input[type="text"] {
-            width: 100%;
-            padding: 10px;
-            margin-top: 5px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-        }
-
-        input[type="submit"] {
-            margin-top: 20px;
-            width: 100%;
-            padding: 10px;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-
-        input[type="submit"]:hover {
-            background-color: #0056b3;
-        }
-
-        .error {
-            color: red;
-            margin-top: 10px;
-            text-align: center;
-        }
-
         .qr-section {
             text-align: center;
             margin-top: 20px;
-            font-size: 0.8em;
         }
-
-        ul {
-			list-style-position: outside; 
-    		padding-left: 14px;
-    		margin: 5px 0;
+        .qr-section ul{
+            list-style: none;
+            display: flex;
+            padding:0;
+            justify-content: space-evenly;
+            align-items: center;
+            font-size: .8rem;
         }
-
-        ul li {
-             margin-bottom: 2px;
-   			 line-height: 1.2;
-    		 text-indent: -4px;      
+        .qr-section ul li{
+            padding: 8px;
+            border: 1px solid #ccc;
+        }
+        .code-section {
+            margin-top: 20px;
+        }
+        .code-section label{
+            color: black;
+            text-shadow: none;
+        }
+         .code-section input{
+            margin-bottom:8px;
+        }
+        .secret {
+            padding: 8px;
+            background-color: #cccccc;
+            border: 1px solid #bbb;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .secret span {
+            font-weight: bold;
+            font-size: 1.2rem;
+            font-family: monospace;
+        }
+        .secret i{
+            cursor: pointer;
+        }
+        .error {
+            padding: 8px;
+            border: 1px solid red;
+            text-align: center;
+            font-size: .8rem;
+            background-color: #ffe2e2;
+        }
+        @media (max-width: 768px) {
+            .qr-section ul {
+                flex-direction: column;
+                align-items: center;
+            }
+            .qr-section ul li {
+                margin-bottom: 5px;
+            }
         }
     </style>
+    
     <script>
     function validateForm() {
         const code = document.forms["myForm"]["code"].value;
@@ -95,38 +97,57 @@
         }
         return true;
     }
+    function copyToClipboard() {
+        const secretElement = document.querySelector('.secret span');
+        const secretText = secretElement.textContent;
+        
+        navigator.clipboard.writeText(secretText)
+    }
     </script>
 </head>
-<body>
+<body class="kn-login">
+  		<div class="container-fluid" style="height:100%;">  
+        	<div class="col-12 col-lg-5 offset-lg-7" style="height:100%;display:flex;align-items:center;justify-content:center;background-color:white;padding:20px;">
+                <div class="col-8">
+            	    <img id="profile-img" src='<%=urlBuilder.getResourceLinkByTheme(request, "../commons/img/defaultTheme/logoCover.svg", "defaultTheme")%>' />
+            
 
-<form name="myForm" action="<%=contextName%>/servlet/AdapterHTTP?PAGE=LoginPage&NEW_SESSION=TRUE" method="post" onsubmit="return validateForm()">
-    <input type="hidden" name="userID" value="<%= request.getAttribute("userID") %>">
-    <input type="hidden" name="password" value="<%= request.getAttribute("password") %>">
+                    <form name="myForm" action="<%=contextName%>/servlet/AdapterHTTP?PAGE=LoginPage&NEW_SESSION=TRUE" method="post" onsubmit="return validateForm()">
+                        <input type="hidden" name="userID" value="<%= request.getAttribute("userID") %>">
+                        <input type="hidden" name="password" value="<%= request.getAttribute("password") %>">
 
-    <% if (request.getAttribute("qrCode") != null) { %>
-    	<input type="hidden" name="secret" value="<%= request.getAttribute("secret") %>">
-        <div class="qr-section">
-            <span><b><%=msgBuilder.getMessage("mfa.form.qrcode.msg.1")%></b></span>
-            <p><%=msgBuilder.getMessage("mfa.form.qrcode.msg.2")%></p>
-            <ul>
-                <li>FreeOTP</li>
-                <li>Microsoft Authenticator</li>
-                <li>Google Authenticator</li>
-            </ul>
-            <img src="<%= request.getAttribute("qrCode") %>" width="150" height="150" alt="QR Code" />
-            <p><%=msgBuilder.getMessage("mfa.form.qrcode.msg.3")%></p>
-            <div><%= request.getAttribute("secretFormat") %></div>
+                        <% if (request.getAttribute("qrCode") != null) { %>
+                            <input type="hidden" name="secret" value="<%= request.getAttribute("secret") %>">
+                            <div class="qr-section">
+                                <span><b><%=msgBuilder.getMessage("mfa.form.qrcode.msg.1")%></b></span>
+                                <p><%=msgBuilder.getMessage("mfa.form.qrcode.msg.2")%></p>
+                                <ul>
+                                    <li>FreeOTP</li>
+                                    <li>Microsoft Authenticator</li>
+                                    <li>Google Authenticator</li>
+                                </ul>
+                                <img src="<%= request.getAttribute("qrCode") %>" width="150" height="150" alt="QR Code" />
+                                <p><%=msgBuilder.getMessage("mfa.form.qrcode.msg.3")%></p>
+                                <div class="secret"><span><%= request.getAttribute("secretFormat") %></span><i class="fa fa-regular fa-clipboard" title="Copy to clipboard" onclick="copyToClipboard()"></i></div>
+                            </div>
+                        <% } %>
+
+                        
+                        <% if (request.getAttribute("codeError") != null) { %>
+                            <div class="error"><%= request.getAttribute("codeError") %></div>
+                        <% } %>
+                        
+
+                        <div class="code-section">
+                            <label for="code"><%=msgBuilder.getMessage("mfa.form.code")%>:</label>
+                            <input type="text" id="code" name="code" class="form-control" placeholder="<%=msgBuilder.getMessage("mfa.form.code.message")%>" required autofocus>
+                            <button class="btn btn-lg btn-primary btn-block btn-signin" type="submit"><%=msgBuilder.getMessage("mfa.form.submit")%></button>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
         </div>
-    <% } %>
-
-    <% if (request.getAttribute("codeError") != null) { %>
-        <div class="error"><%= request.getAttribute("codeError") %></div>
-    <% } %>
-
-    <label for="code"><%=msgBuilder.getMessage("mfa.form.code")%>:</label>
-    <input type="text" id="code" name="code" placeholder="<%=msgBuilder.getMessage("mfa.form.code.message")%>">
-    <input type="submit" name="Invio" value="<%=msgBuilder.getMessage("mfa.form.submit")%>">
-</form>
 
 </body>
 </html>
