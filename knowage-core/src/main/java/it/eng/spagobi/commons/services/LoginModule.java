@@ -31,6 +31,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Locale.Builder;
+import java.util.Optional;
 import java.util.Properties;
 import java.util.stream.IntStream;
 
@@ -82,6 +83,7 @@ import it.eng.spagobi.profiling.bean.SbiUser;
 import it.eng.spagobi.profiling.dao.ISbiUserDAO;
 import it.eng.spagobi.security.InternalSecurityServiceSupplierImpl;
 import it.eng.spagobi.security.Password;
+import it.eng.spagobi.security.utils.EncryptionPBEWithMD5AndDESManager;
 import it.eng.spagobi.services.common.JWTSsoService;
 import it.eng.spagobi.services.security.bo.SpagoBIUserProfile;
 import it.eng.spagobi.services.security.exceptions.SecurityException;
@@ -467,12 +469,9 @@ public class LoginModule extends AbstractHttpModule {
 		}
 
 		String secretInput = (String) request.getAttribute("secret");
-		if (user.getOtpSecret() == null) {
-			user.setOtpSecret(secretInput);
-		}
 
 		// If the user does not yet have an OTP secret in DB or in request, generate and send QR code
-		if (user.getOtpSecret() == null) {
+		if (secretInput == null && user.getOtpSecret() == null) {
 			String secret = TOTPService.generateSecret();
 			this.sendQrCode(secret, userId);
 			return false; // MFA setup initiated, waiting for user to complete
@@ -482,7 +481,7 @@ public class LoginModule extends AbstractHttpModule {
 		String code = (String) request.getAttribute("code");
 
 		// Verify the submitted code using the user's secret
-		if (TOTPService.verifyCode(user.getOtpSecret(), code)) {
+		if (TOTPService.verifyCode(Optional.ofNullable(secretInput).orElse(EncryptionPBEWithMD5AndDESManager.decrypt(user.getOtpSecret())), code)) {
 			saveSecretSbiUser(secretInput, user, userDao);
 			return true; // MFA successful
 		} else {
@@ -506,6 +505,7 @@ public class LoginModule extends AbstractHttpModule {
 		// if secretInput is null, secret is already saved
 		if (secretInput != null) {
 			// secret is saved in the first success verify code
+			user.setOtpSecret(EncryptionPBEWithMD5AndDESManager.encrypt(secretInput));
 			userDao.updateSbiUser(user, user.getId());
 		}
 

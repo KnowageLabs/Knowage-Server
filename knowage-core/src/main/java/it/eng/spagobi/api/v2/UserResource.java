@@ -376,6 +376,20 @@ public class UserResource extends AbstractSpagoBIResource {
 		}
 	}
 
+	@PUT
+	@Path("/{id}/resetOtp")
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.PROFILE_MANAGEMENT, CommunityFunctionalityConstants.FINAL_USERS_MANAGEMENT })
+	@Consumes(MediaType.APPLICATION_JSON)
+	public Response resetOtp(@PathParam("id") Integer id) {
+		try {
+			ISbiUserDAO usersDao = DAOFactory.getSbiUserDAO();
+			usersDao.resetOtpSecret(id);
+		} catch (Exception e) {
+			Response.serverError().build();
+		}
+		return Response.ok().build();
+	}
+
 	@DELETE
 	@Path("/{id}")
 	@UserConstraint(functionalities = { CommunityFunctionalityConstants.PROFILE_MANAGEMENT,

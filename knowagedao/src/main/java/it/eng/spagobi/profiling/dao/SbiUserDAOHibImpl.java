@@ -198,6 +198,38 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO
 	}
 
 	/**
+	 * Reset otp Secret.
+	 *
+	 */
+	@Override
+	public void resetOtpSecret(Integer userId) {
+		LOGGER.debug("IN");
+
+		Session aSession = null;
+		Transaction tx = null;
+		try {
+
+			aSession = getSession();
+			tx = aSession.beginTransaction();
+
+			SbiUser user = (SbiUser) aSession.load(SbiUser.class, userId);
+
+			user.setOtpSecret(null);
+
+			aSession.update(user);
+
+			tx.commit();
+
+		} catch (HibernateException he) {
+			rollbackIfActive(tx);
+			throw new SpagoBIDAOException("Error while reset Otp Secret for user " + userId, he);
+		} finally {
+			LOGGER.debug("OUT");
+			closeSessionIfOpen(aSession);
+		}
+	}
+
+	/**
 	 * Insert SbiUser
 	 *
 	 * @param user
@@ -431,8 +463,9 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO
 				newUser.setPassword(user.getPassword());
 				newUser.setDefaultRoleId(user.getDefaultRoleId());
 				newUser.getCommonInfo().setOrganization(user.getCommonInfo().getOrganization());
-				if (user.getCommonInfo().getUserIn() != null)
+				if (user.getCommonInfo().getUserIn() != null) {
 					newUser.getCommonInfo().setUserIn(user.getCommonInfo().getUserIn());
+				}
 				newUser.setFlgPwdBlocked(user.getFlgPwdBlocked());
 				updateSbiCommonInfo4Insert(newUser);
 				newUser.setIsSuperadmin(Boolean.FALSE);

@@ -86,4 +86,6 @@ public interface ISbiUserDAO extends ISpagoBIDao, EmittingEventDAO<UserEventsEme
 
 	void resetFailedLoginAttempts(String userId);
 
+	void resetOtpSecret(Integer userId);
+
 }
