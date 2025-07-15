@@ -155,6 +155,22 @@
 						</configuration>
 					</execution>
 					<execution>
+						<id>npm-clean</id>
+						<phase>compile</phase>
+						<goals>
+							<goal>exec</goal>
+						</goals>
+						<configuration>
+							<workingDirectory>${vue.build.dir}</workingDirectory>
+							<executable>npm</executable>
+							<arguments>
+								<argument>cache</argument>
+								<argument>clean</argument>
+								<argument>--force</argument>
+							</arguments>
+						</configuration>
+					</execution>
+					<execution>
 						<id>npm-install</id>
 						<phase>compile</phase>
 						<goals>
