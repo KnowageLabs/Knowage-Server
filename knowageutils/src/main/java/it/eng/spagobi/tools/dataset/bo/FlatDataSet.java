@@ -177,6 +177,11 @@ public class FlatDataSet extends ConfigurableDataSet {
 	}
 
 	@Override
+	public DataIterator iterator(IMetaData dsMetadata) {
+		return null;
+	}
+
+	@Override
 	public String getDsType() {
 		return DS_TYPE;
 	}

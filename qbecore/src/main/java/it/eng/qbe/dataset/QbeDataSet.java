@@ -27,6 +27,7 @@ import java.util.Map;
 import java.util.jar.JarEntry;
 import java.util.jar.JarInputStream;
 
+import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -497,13 +498,22 @@ public class QbeDataSet extends ConfigurableDataSet {
 	@Override
 	public DataIterator iterator() {
 		init();
-		return ds.iterator();
+		try {
+			return ds.iterator();
+		} catch (Exception e) {
+			return iterator(ds.getMetadata());
+		}
 	}
 
 	@Override
 	public boolean isIterable() {
 		// only underlying JPQLDataSet is iterable
 		return getQbeDataSource() instanceof JPADataSource;
+	}
+
+	@Override
+	public DataIterator iterator(IMetaData dsMetadata) {
+		return ds.iterator(dsMetadata);
 	}
 
 	public IStatement getStatement() {

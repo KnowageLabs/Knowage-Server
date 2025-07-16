@@ -19,6 +19,8 @@ package it.eng.spagobi.utilities;
 
 import it.eng.spagobi.tools.dataset.bo.AbstractDataSet;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
+import it.eng.spagobi.tools.dataset.common.iterator.DataIterator;
+import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 
 import java.util.Map;
@@ -96,6 +98,11 @@ public class MockDataSet extends AbstractDataSet {
 	@Override
 	public IDataSource getDataSource() {
 
+		return null;
+	}
+
+	@Override
+	public DataIterator iterator(IMetaData dsMetadata) {
 		return null;
 	}
 

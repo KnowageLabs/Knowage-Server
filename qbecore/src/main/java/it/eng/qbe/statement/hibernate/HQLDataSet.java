@@ -21,6 +21,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import it.eng.spagobi.tools.dataset.common.iterator.DataIterator;
+import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import org.apache.log4j.Logger;
 import org.hibernate.ScrollableResults;
 import org.hibernate.Session;
@@ -213,6 +215,11 @@ public class HQLDataSet extends AbstractQbeDataSet {
 	public void setDataSource(IDataSource dataSource) {
 		// TODO Auto-generated method stub
 
+	}
+
+	@Override
+	public DataIterator iterator(IMetaData dsMetadata) {
+		return null;
 	}
 
 }

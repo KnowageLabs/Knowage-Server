@@ -270,6 +270,11 @@ public class FileDataSet extends ConfigurableDataSet {
 		}
 	}
 
+	@Override
+	public DataIterator iterator(IMetaData dsMetadata) {
+		return null;
+	}
+
 	private int getExcelInitialRow() {
 		try {
 			JSONObject cfg = new JSONObject(this.getConfiguration());

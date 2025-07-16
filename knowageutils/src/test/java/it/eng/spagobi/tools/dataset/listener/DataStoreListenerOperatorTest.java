@@ -760,6 +760,11 @@ public class DataStoreListenerOperatorTest extends TestCase {
 
 		}
 
+		@Override
+		public DataIterator iterator(IMetaData dsMetadata) {
+			return null;
+		}
+
 	}
 
 }

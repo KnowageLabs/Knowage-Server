@@ -22,6 +22,8 @@ import it.eng.spagobi.services.dataset.bo.SpagoBiDataSet;
 import it.eng.spagobi.tools.dataset.common.dataproxy.IDataProxy;
 import it.eng.spagobi.tools.dataset.common.dataproxy.JavaClassDataProxy;
 import it.eng.spagobi.tools.dataset.common.datareader.XmlDataReader;
+import it.eng.spagobi.tools.dataset.common.iterator.DataIterator;
+import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import it.eng.spagobi.utilities.json.JSONUtils;
 
 import org.apache.log4j.Logger;
@@ -69,6 +71,11 @@ public class JavaClassDataSet extends ConfigurableDataSet {
 		 * logger.error("Error while defining dataset configuration.  Error: " + e.getMessage()); } //sbd.setJavaClassName( getClassName() );
 		 */
 		return sbd;
+	}
+
+	@Override
+	public DataIterator iterator(IMetaData dsMetadata) {
+		return null;
 	}
 
 	@Override

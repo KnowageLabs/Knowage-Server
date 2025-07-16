@@ -18,6 +18,7 @@
 
 package it.eng.qbe.statement.hive;
 
+import it.eng.spagobi.tools.dataset.common.iterator.DataIterator;
 import org.apache.log4j.Logger;
 
 import it.eng.qbe.datasource.dataset.DataSetDataSource;
@@ -82,6 +83,11 @@ public class HiveQLDataSet extends AbstractQbeDataSet {
 	public void setDataSource(IDataSource dataSource) {
 		// TODO Auto-generated method stub
 
+	}
+
+	@Override
+	public DataIterator iterator(IMetaData dsMetadata) {
+		return null;
 	}
 
 	@Override

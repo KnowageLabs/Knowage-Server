@@ -25,6 +25,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import it.eng.spagobi.tools.dataset.common.iterator.DataIterator;
+import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -241,6 +243,11 @@ public class PythonDataSet extends ConfigurableDataSet {
 
 	@Override
 	public IDataSource getDataSource() {
+		return null;
+	}
+
+	@Override
+	public DataIterator iterator(IMetaData dsMetadata) {
 		return null;
 	}
 

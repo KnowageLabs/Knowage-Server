@@ -306,4 +306,5 @@ public interface IDataSet extends Iterable<IRecord> {
 
 	void executeDataStoreTransformers(IDataStore dataStore);
 
+	DataIterator iterator(IMetaData dsMetadata);
 }

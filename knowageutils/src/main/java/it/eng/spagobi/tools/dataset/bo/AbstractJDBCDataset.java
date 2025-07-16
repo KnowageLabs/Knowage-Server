@@ -294,6 +294,33 @@ public abstract class AbstractJDBCDataset extends ConfigurableDataSet {
 	}
 
 	@Override
+	public DataIterator iterator(IMetaData currMetadata) {
+		LOGGER.debug("IN");
+		try {
+			QuerableBehaviour querableBehaviour = (QuerableBehaviour) getBehaviour(QuerableBehaviour.class.getName());
+			String statement = querableBehaviour.getStatement();
+			LOGGER.debug("Obtained statement [{}]", statement);
+			dataProxy.setStatement(statement);
+			JDBCDataProxy jdbcDataProxy = (JDBCDataProxy) dataProxy;
+			IDataSource dataSource = jdbcDataProxy.getDataSource();
+			Assert.assertNotNull(dataSource, "Invalid datasource");
+			Connection connection = dataSource.getConnection();
+			Statement stmt = connection.createStatement(ResultSet.TYPE_FORWARD_ONLY,
+					ResultSet.CONCUR_READ_ONLY);
+
+			connection.setAutoCommit(false); // PostgreSQL requires disabling auto-commit for setFetchSize to work
+			stmt.setFetchSize(5000);
+
+			ResultSet rs = (ResultSet) dataProxy.getData(dataReader, stmt);
+			return new ResultSetIterator(connection, stmt, rs, currMetadata);
+		} catch (ClassNotFoundException | SQLException | NamingException e) {
+			throw new SpagoBIRuntimeException(e);
+		} finally {
+			LOGGER.debug("OUT");
+		}
+	}
+
+	@Override
 	public boolean isIterable() {
 		return true;
 	}
