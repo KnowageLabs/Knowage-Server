@@ -100,7 +100,7 @@ public class JasperReportEngineStartAction extends AbstractEngineStartServlet {
 
 			engineInstance = JasperReportEngine.createInstance(template, servletIOManager.getEnv(), proxyDataset);
 			engineInstance.setId(servletIOManager.getParameterAsString("SBI_EXECUTION_ID"));
-			servletIOManager.getHttpSession().setAttribute(engineInstance.getId(), engineInstance);
+			// servletIOManager.getHttpSession().setAttribute(engineInstance.getId(), engineInstance);
 			engineInstance.setOutputType(outputType);
 
 			engineInstance.runReport(reportFile.toFile(), servletIOManager.getRequest());
@@ -109,7 +109,7 @@ public class JasperReportEngineStartAction extends AbstractEngineStartServlet {
 					JasperReportEngine.getConfig().getMIMEType(outputType));
 
 			// instant cleaning
-			Files.delete(reportOutputDir);
+			Files.delete(reportFile);
 
 			servletIOManager.auditServiceEndEvent();
 		} catch (Exception e) {

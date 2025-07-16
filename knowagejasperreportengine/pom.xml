@@ -100,6 +100,11 @@
 			<groupId>biz.paluch.logging</groupId>
 			<artifactId>logstash-gelf</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-beans</artifactId>
+			<version>6.2.3</version>
+		</dependency>
 		<!-- maybe they are runtime dependencies??? <dependency> <groupId>com.fdsapi</groupId> 
 			<artifactId>fdsapi</artifactId> <version>1.2</version> </dependency> <dependency> 
 			<groupId>xerces</groupId> <artifactId>xercesImpl</artifactId> <version>2.10.0</version> 

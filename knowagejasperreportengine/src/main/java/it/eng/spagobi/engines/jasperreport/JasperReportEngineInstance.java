@@ -17,8 +17,43 @@
 */
 package it.eng.spagobi.engines.jasperreport;
 
+import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
+
+import java.io.Closeable;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FilenameFilter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.nio.file.Files;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.Base64;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+import java.util.Locale.Builder;
+import java.util.Map;
+import java.util.ResourceBundle;
+import java.util.UUID;
+import java.util.jar.JarFile;
+import java.util.zip.ZipEntry;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.apache.commons.lang3.StringUtils;
+import org.apache.log4j.Logger;
+
 import com.jamonapi.Monitor;
 import com.jamonapi.MonitorFactory;
+
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.engines.jasperreport.datasource.JRSpagoBIDataStoreDataSource;
@@ -37,30 +72,30 @@ import it.eng.spagobi.utilities.ParametersDecoder;
 import it.eng.spagobi.utilities.ResourceClassLoader;
 import it.eng.spagobi.utilities.SpagoBIAccessUtils;
 import it.eng.spagobi.utilities.assertion.Assert;
-import it.eng.spagobi.utilities.engines.*;
+import it.eng.spagobi.utilities.engines.AbstractEngineInstance;
+import it.eng.spagobi.utilities.engines.AuditServiceProxy;
+import it.eng.spagobi.utilities.engines.EngineConstants;
+import it.eng.spagobi.utilities.engines.IEngineAnalysisState;
+import it.eng.spagobi.utilities.engines.SpagoBIEngineException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
-import net.sf.jasperreports.engine.*;
+import net.sf.jasperreports.engine.JRDataset;
+import net.sf.jasperreports.engine.JRParameter;
+import net.sf.jasperreports.engine.JRVirtualizer;
+import net.sf.jasperreports.engine.JasperCompileManager;
+import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.JasperReport;
 import net.sf.jasperreports.engine.design.JasperDesign;
 import net.sf.jasperreports.engine.export.HtmlExporter;
 import net.sf.jasperreports.engine.export.JRTextExporter;
 import net.sf.jasperreports.engine.xml.JRXmlLoader;
-import net.sf.jasperreports.export.*;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
-
-import javax.servlet.http.HttpServletRequest;
-import java.io.*;
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.nio.file.Files;
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.*;
-import java.util.Locale.Builder;
-import java.util.jar.JarFile;
-import java.util.zip.ZipEntry;
-
-import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
+import net.sf.jasperreports.export.Exporter;
+import net.sf.jasperreports.export.ExporterOutput;
+import net.sf.jasperreports.export.SimpleExporterInput;
+import net.sf.jasperreports.export.SimpleHtmlExporterConfiguration;
+import net.sf.jasperreports.export.SimpleHtmlExporterOutput;
+import net.sf.jasperreports.export.SimpleOutputStreamExporterOutput;
+import net.sf.jasperreports.export.SimpleTextExporterConfiguration;
 
 /**
  * @authors Andrea Gioia (andrea.gioia@eng.it) Davide Zerbetto (davide.zerbetto@eng.it)
@@ -227,14 +262,21 @@ public class JasperReportEngineInstance extends AbstractEngineInstance {
 //			exporter.setParameter(JRExporterParameter.OUTPUT_STREAM, out);
 
 			exporter.setExporterInput(new SimpleExporterInput(jasperPrint));
-			SimpleOutputStreamExporterOutput exporterOutput = null;
+
+			ExporterOutput exporterOutput = null;
 			try (OutputStream outputStream = out) {
-				exporterOutput = new SimpleOutputStreamExporterOutput(outputStream);
+				if (outputType.equalsIgnoreCase("html")) {
+					exporterOutput = new SimpleHtmlExporterOutput(outputStream);
+				} else {
+					exporterOutput = new SimpleOutputStreamExporterOutput(outputStream);
+				}
 				exporter.setExporterOutput(exporterOutput);
 				exporter.exportReport();
 			} finally {
 				if (exporterOutput != null) {
-					exporterOutput.close();
+					if (exporterOutput instanceof Closeable) {
+						((Closeable) exporterOutput).close();
+					}
 				}
 			}
 
@@ -333,7 +375,9 @@ public class JasperReportEngineInstance extends AbstractEngineInstance {
 			for (int i = 0; i < jarFiles.length; i++) {
 				String namefile = jarFiles[i];
 				if (!namefile.endsWith("jar"))
+				 {
 					continue; // the inclusion of txt files causes problems
+				}
 				fileToAppend = libDir + System.getProperty("file.separator") + jarFiles[i];
 				LOGGER.debug("Appending jar file [" + fileToAppend + "] to JasperReports classpath");
 				jasperReportClassPathStringBuffer.append(fileToAppend);
@@ -467,8 +511,9 @@ public class JasperReportEngineInstance extends AbstractEngineInstance {
 				Class aReportParameterClass = parameter.getValueClass();
 				Object newValue = ParameterConverter.convertParameter(aReportParameterClass, paramValueString,
 						dateformat);
-				if (newValue == null)
+				if (newValue == null) {
 					newValue = paramValueString;
+				}
 
 				if (!(newValue instanceof String)) {
 					LOGGER.debug("Updating parameter with name [" + parameter.getName() + "] to a "
@@ -773,8 +818,9 @@ public class JasperReportEngineInstance extends AbstractEngineInstance {
 			if (getDataSource().checkIsMultiSchema()) {
 				String attrname = getDataSource().getSchemaAttribute();
 				UserProfile userProfile = (UserProfile) getEnv().get(EngineConstants.ENV_USER_PROFILE);
-				if (attrname != null)
+				if (attrname != null) {
 					schema = (String) userProfile.getUserAttribute(attrname);
+				}
 			}
 		} catch (Exception e1) {
 			LOGGER.error("Impossible to manage properly multiSchema attribute", e1);
