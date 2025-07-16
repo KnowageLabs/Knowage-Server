@@ -52,6 +52,22 @@ public class CsvStreamingOutput implements StreamingOutput {
 				fieldMetaData.ifPresent(filteredMetadata::add);
 			}
 		} catch (Exception e) {
+			IMetaData metadati = iterator.getMetaData();
+			for (int i = 0; i < metadati.getFieldCount(); i++) {
+				filteredMetadata.add(metadati.getFieldMeta(i));
+			}
+			while (iterator.hasNext()) {
+				IRecord currRecord = iterator.next();
+				for (int j = 0; j < metadati.getFieldCount(); j++) {
+					IField field = currRecord.getFieldAt(j);
+					Object fieldValue = field.getValue();
+					if (fieldValue != null) {
+						filteredMetadata.add(metadati.getFieldMeta(j));
+					} else {
+					}
+				}
+			}
+
 		}
 
 

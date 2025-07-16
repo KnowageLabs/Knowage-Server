@@ -24,6 +24,7 @@ import it.eng.spagobi.tools.dataset.common.dataproxy.IDataProxy;
 import it.eng.spagobi.tools.dataset.common.dataproxy.MongoDataProxy;
 import it.eng.spagobi.tools.dataset.common.datareader.MongoDataReader;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
+import it.eng.spagobi.tools.dataset.common.iterator.DataIterator;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import it.eng.spagobi.tools.dataset.persist.IDataSetTableDescriptor;
 import it.eng.spagobi.tools.dataset.utils.DatasetMetadataParser;
@@ -132,6 +133,11 @@ public class MongoDataSet extends ConfigurableDataSet {
 	@Override
 	public IDataSource getDataSource() {
 		return getDataProxy().getDataSource();
+	}
+
+	@Override
+	public DataIterator iterator(IMetaData dsMetadata) {
+		return null;
 	}
 
 	@Override

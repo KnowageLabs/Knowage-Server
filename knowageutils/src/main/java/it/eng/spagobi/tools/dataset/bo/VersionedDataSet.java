@@ -737,4 +737,9 @@ public class VersionedDataSet implements IDataSet {
 		wrappedDataset.executeDataStoreTransformers(dataStore);
 	}
 
+	@Override
+	public DataIterator iterator(IMetaData dsMetadata) {
+		return null;
+	}
+
 }

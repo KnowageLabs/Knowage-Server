@@ -27,6 +27,8 @@ import java.util.Map;
 import java.util.Vector;
 import java.util.regex.Matcher;
 
+import it.eng.spagobi.tools.dataset.common.iterator.DataIterator;
+import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
@@ -447,6 +449,11 @@ public class RESTDataSet extends ConfigurableDataSet {
 	@Override
 	public boolean isRealtime() {
 		return isNgsi();
+	}
+
+	@Override
+	public DataIterator iterator(IMetaData dsMetadata) {
+		return null;
 	}
 
 	/*

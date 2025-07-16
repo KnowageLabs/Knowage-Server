@@ -358,6 +358,11 @@ public class JPQLDataSet extends AbstractQbeDataSet {
 		return true;
 	}
 
+	@Override
+	public DataIterator iterator(IMetaData dsMetadata) {
+		return null;
+	}
+
 	/*
 	 * (non-Javadoc)
 	 *

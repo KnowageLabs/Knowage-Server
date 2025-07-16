@@ -17,6 +17,8 @@
  */
 package it.eng.spagobi.tools.dataset.bo;
 
+import it.eng.spagobi.tools.dataset.common.iterator.DataIterator;
+import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import it.eng.spagobi.tools.dataset.constants.SPARQLDatasetConstants;
 import org.apache.log4j.Logger;
 import org.json.JSONObject;
@@ -130,6 +132,11 @@ public class SPARQLDataSet extends ConfigurableDataSet {
 	@Override
 	public IDataSource getDataSource() {
 		logger.debug("This data set doesn't have dataSource.");
+		return null;
+	}
+
+	@Override
+	public DataIterator iterator(IMetaData dsMetadata) {
 		return null;
 	}
 
