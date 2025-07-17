@@ -257,9 +257,12 @@ public class MenuDAOImpl extends AbstractHibernateDAO implements IMenuDAO {
 			if (hibMenu == null)
 				return null;
 
-			// SbiMenu hibMenu = (SbiMenu)tmpSession.load(SbiMenu.class,
-			// menuID);
-			toReturn = toMenuV2(hibMenu, roleID, tmpSession);
+			String roleHql = " from SbiMenuRole as mf where mf.id.menuId = ? ";
+			Query roleQuery = tmpSession.createQuery(roleHql);
+			roleQuery.setInteger(0, hibMenu.getMenuId());
+			List<SbiMenuRole> hibListRoles = roleQuery.list();
+
+			toReturn = toMenuV2(hibMenu, roleID, tmpSession, hibListRoles);
 
 		} catch (HibernateException he) {
 			logException(he);
@@ -1046,22 +1049,13 @@ public class MenuDAOImpl extends AbstractHibernateDAO implements IMenuDAO {
 
 			for (SbiMenu hibMenu : hibList) {
 				if (hibMenu != null) {
-					if (roleID != null) {
-						String roleHql = " from SbiMenuRole as mf where mf.id.menuId = ? and mf.id.extRoleId = ? ";
-						Query roleQuery = session.createQuery(roleHql);
-						roleQuery.setInteger(0, hibMenu.getMenuId());
-						roleQuery.setInteger(1, roleID);
-
-						List<SbiMenuRole> hibListRoles = roleQuery.list();
-						if (!hibListRoles.isEmpty()) {
-							Menu biMenu = toMenuV2(hibMenu, roleID, session);
-							lstChildren.add(biMenu);
-						}
-					} else {
-						Menu biMenu = toMenuV2(hibMenu, roleID, session);
-						lstChildren.add(biMenu);
-					}
-				}
+					String roleHql = " from SbiMenuRole as mf where mf.id.menuId = ? ";
+					Query roleQuery = session.createQuery(roleHql);
+					roleQuery.setInteger(0, hibMenu.getMenuId());
+					List<SbiMenuRole> hibListRoles = roleQuery.list();
+                    Menu biMenu = toMenuV2(hibMenu, roleID, session, hibListRoles);
+                    lstChildren.add(biMenu);
+                }
 			}
 
 			return lstChildren;
@@ -1200,10 +1194,11 @@ public class MenuDAOImpl extends AbstractHibernateDAO implements IMenuDAO {
 	/**
 	 * From the Hibernate Menu object at input, gives the corrispondent <code>Menu</code> object.
 	 *
-	 * @param hibMenu The Hibernate Menu object
+	 * @param hibMenu      The Hibernate Menu object
+	 * @param hibListRoles
 	 * @return the corrispondent output <code>Menu</code>
 	 */
-	private Menu toMenuV2(SbiMenu hibMenu, Integer roleId, Session session) throws EMFUserError {
+	private Menu toMenuV2(SbiMenu hibMenu, Integer roleId, Session session, List<SbiMenuRole> hibListRoles) throws EMFUserError {
 
 		Menu menu = new Menu();
 		menu.setMenuId(hibMenu.getMenuId());
@@ -1278,8 +1273,11 @@ public class MenuDAOImpl extends AbstractHibernateDAO implements IMenuDAO {
 		}
 		menu.setCustIcon(custIcon);
 
-		Role[] rolesD = new Role[0];
-		menu.setRoles(rolesD);
+		if (hibListRoles != null) {
+			hibListRoles.forEach(role -> {
+				menu.getRolesList().add(role.getSbiExtRoles().getName());
+			});
+		}
 
 		// set children
 		try {

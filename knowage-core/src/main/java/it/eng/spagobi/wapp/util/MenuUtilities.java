@@ -223,13 +223,11 @@ public class MenuUtilities {
 	public static List getMenuItems(IEngUserProfile profile, boolean menuRolesDaoRequiresProfile) throws EMFUserError {
 		try {
 			List lstFinalMenu = new ArrayList();
-			boolean technicalMenuLoaded = false;
 
 			Collection lstRolesForUser = ((UserProfile) profile).getRolesForUse();
 			logger.debug("** Roles for user: " + lstRolesForUser.size());
 
 			Object[] arrRoles = lstRolesForUser.toArray();
-			Integer levelItem = 1;
             for (Object arrRole : arrRoles) {
                 logger.debug("*** arrRoles[i]): " + arrRole);
                 Role role = DAOFactory.getRoleDAO().loadByName((String) arrRole);

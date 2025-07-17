@@ -18,6 +18,7 @@
 package it.eng.spagobi.wapp.bo;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 import it.eng.spagobi.commons.bo.Role;
@@ -48,6 +49,7 @@ public class Menu implements Serializable {
 	private boolean isClickable = true;
 	private List lstChildren;
 	private Role[] roles = null;
+	private List<String> rolesList = new ArrayList<>();
 	private boolean viewIcons = false;
 	private boolean hideToolbar = false;
 	private boolean hideSliders = false;
@@ -434,4 +436,12 @@ public class Menu implements Serializable {
 	public void setIcon(MenuIcon icon) {
 		this.icon = icon;
 	}
+
+    public List<String> getRolesList() {
+        return rolesList;
+    }
+
+    public void setRolesList(List<String> rolesList) {
+        this.rolesList = rolesList;
+    }
 }

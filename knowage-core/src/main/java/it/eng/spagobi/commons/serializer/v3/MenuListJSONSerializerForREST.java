@@ -248,7 +248,6 @@ public class MenuListJSONSerializerForREST implements Serializer {
 
 			for (int i = 0; i < filteredMenuList.size(); i++) {
 				Menu menuElem = (Menu) filteredMenuList.get(i);
-				String path = MenuUtilities.getMenuPath(filteredMenuList, menuElem, locale);
 
 				if (menuElem.getLevel().intValue() == 1) {
 
@@ -794,6 +793,7 @@ public class MenuListJSONSerializerForREST implements Serializer {
 			}
 
 			temp2.put(DESCR, descr);
+			temp2.put("roles", childElem.getRolesList().toArray());
 
 			if (childElem.getObjId() != null) {
 				setPropertiesForObjectMenu(childElem, temp2, path);
@@ -820,11 +820,6 @@ public class MenuListJSONSerializerForREST implements Serializer {
 			}
 		}
 
-		String[] roleNames = new String[childElem.getRoles().length];
-		for (int i = 0; i < childElem.getRoles().length; i++) {
-			roleNames[i] = childElem.getRoles()[i].getName();
-		}
-		temp2.put("roles", roleNames);
 		tempMenuList.put(temp2);
 
 		return tempMenuList;
