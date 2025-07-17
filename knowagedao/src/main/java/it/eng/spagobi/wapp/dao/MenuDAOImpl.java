@@ -17,11 +17,7 @@
  */
 package it.eng.spagobi.wapp.dao;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
@@ -605,6 +601,32 @@ public class MenuDAOImpl extends AbstractHibernateDAO implements IMenuDAO {
 	}
 
 	@Override
+	public Map<Integer, SbiMenu> loadSbiMenusByIds(ArrayList<Integer> integers) {
+
+		Session tmpSession = null;
+		Map<Integer, SbiMenu> result = new HashMap<>();
+		try {
+			tmpSession = getSession();
+
+			String hql = "from SbiMenu s where s.menuId in (:menuIds) ";
+			Query query = tmpSession.createQuery(hql);
+			query.setParameterList("menuIds", integers);
+			List<SbiMenu> hibMenus = query.list();
+            for (SbiMenu hibMenu : hibMenus) {
+                result.put(hibMenu.getMenuId(), hibMenu);
+            }
+		} catch (HibernateException he) {
+			logException(he);
+		} finally {
+			if (tmpSession != null) {
+				if (tmpSession.isOpen())
+					tmpSession.close();
+			}
+		}
+		return result;
+	}
+
+	@Override
 	public SbiMenu loadSbiMenubyName(String name) {
 		Session tmpSession = null;
 		Transaction tx = null;
@@ -1007,63 +1029,52 @@ public class MenuDAOImpl extends AbstractHibernateDAO implements IMenuDAO {
 	@Override
 	public List<Menu> getChildrenMenuV2(Integer menuId, Integer roleID, Session session) throws EMFUserError {
 		List<Menu> lstChildren = new ArrayList<>();
-		Transaction tx = null;
+		boolean localSession = false;
+
 		try {
+			// Only create a new session if one wasn't provided
 			if (session == null || !session.isOpen()) {
 				session = getSession();
+				localSession = true;  // Flag that we created this session locally
 			}
 
-			tx = session.beginTransaction();
-
-			String hql = " from SbiMenu s where s.id.parentId = ? order by s.prog";
-
+			String hql = " from SbiMenu s where s.parentId = ? order by s.prog";
 			Query aQuery = session.createQuery(hql);
 			aQuery.setInteger(0, menuId.intValue());
 
 			List<SbiMenu> hibList = aQuery.list();
-			Iterator<SbiMenu> it = hibList.iterator();
-			while (it.hasNext()) {
-				SbiMenu hibMenu = it.next();
+
+			for (SbiMenu hibMenu : hibList) {
 				if (hibMenu != null) {
 					if (roleID != null) {
-						// check if the child can be visualized from the user
-						hql = " from SbiMenuRole as mf  where mf.id.menuId = ? and mf.id.extRoleId = ? ";
-						if (!session.isOpen()) {
-							session = getSession();
-						}
-						aQuery = session.createQuery(hql);
-						aQuery.setInteger(0, hibMenu.getMenuId());
-						aQuery.setInteger(1, roleID);
+						String roleHql = " from SbiMenuRole as mf where mf.id.menuId = ? and mf.id.extRoleId = ? ";
+						Query roleQuery = session.createQuery(roleHql);
+						roleQuery.setInteger(0, hibMenu.getMenuId());
+						roleQuery.setInteger(1, roleID);
 
-						List<SbiMenuRole> hibListRoles = aQuery.list();
+						List<SbiMenuRole> hibListRoles = roleQuery.list();
 						if (!hibListRoles.isEmpty()) {
 							Menu biMenu = toMenuV2(hibMenu, roleID, session);
 							lstChildren.add(biMenu);
 						}
+					} else {
+						Menu biMenu = toMenuV2(hibMenu, roleID, session);
+						lstChildren.add(biMenu);
 					}
-				} else {
-					Menu biMenu = toMenuV2(hibMenu, roleID, session);
-					lstChildren.add(biMenu);
 				}
 			}
 
+			return lstChildren;
 		} catch (HibernateException he) {
 			logException(he);
-
-			if (tx != null)
-				tx.rollback();
-
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
-
 		} finally {
-			if (session != null) {
-				if (session.isOpen())
-					session.close();
+			// Only close the session if we created it in this method
+			if (localSession && session != null && session.isOpen()) {
+				session.close();
 			}
 		}
-		return lstChildren;
 	}
-
 
 	/**
 	 * From the Hibernate Menu object at input, gives the corrispondent <code>Menu</code> object.

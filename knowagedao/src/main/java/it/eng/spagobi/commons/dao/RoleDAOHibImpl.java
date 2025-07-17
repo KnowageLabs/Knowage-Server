@@ -17,13 +17,7 @@
  */
 package it.eng.spagobi.commons.dao;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import org.apache.log4j.Logger;
@@ -604,6 +598,34 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 			this.clearCache();
 		}
 
+	}
+
+	@Override
+	public Map<Integer, SbiExtRoles> loadSbiExtRolesByIds(List<Integer> roleIds) throws EMFUserError {
+
+		Map<Integer, SbiExtRoles> result = new HashMap<>();
+		Session aSession = null;
+		Transaction tx = null;
+		try {
+			aSession = getSession();
+			tx = aSession.beginTransaction();
+			Criteria aCriteria = aSession.createCriteria(SbiExtRoles.class);
+			aCriteria.add(Restrictions.in("id", roleIds));
+			List<SbiExtRoles> roles = aCriteria.list();
+            for (SbiExtRoles role : roles) {
+                result.put(role.getExtRoleId(), role);
+            }
+			tx.commit();
+		} catch (HibernateException he) {
+			logException(he);
+			rollbackIfActive(tx);
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+		} finally {
+			closeSessionIfOpen(aSession);
+			LOGGER.debug("The [loadSbiExtRolesByIds] occurs. Role cache will be cleaned.");
+			this.clearCache();
+		}
+		return result;
 	}
 
 	private boolean isAbleTo(Role aRole, SbiAuthorizations authI) {

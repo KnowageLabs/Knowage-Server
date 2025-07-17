@@ -19,6 +19,7 @@ package it.eng.spagobi.commons.dao;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 import org.hibernate.Session;
 import org.json.JSONException;
@@ -220,6 +221,18 @@ public interface IRoleDAO extends ISpagoBIDao, EmittingEventDAO<RoleEventsEmitti
 	 */
 	void modifyRole(Role aRole) throws EMFUserError;
 
-	// Utils
+
+	/**
+	 * Loads a map of roles identified by their IDs. The IDs provided in the input
+	 * list are used to retrieve the corresponding roles. The resulting map will
+	 * have the role IDs as keys and the corresponding {@code SbiExtRoles} objects
+	 * as values.
+	 *
+	 * @param roleIds A list of integers representing the IDs of the roles to load.
+	 * @return A map containing the role IDs as keys and the corresponding {@code SbiExtRoles} objects as values.
+	 */
+	Map<Integer, SbiExtRoles> loadSbiExtRolesByIds(List<Integer> roleIds) throws EMFUserError;
+
+    // Utils
 
 }

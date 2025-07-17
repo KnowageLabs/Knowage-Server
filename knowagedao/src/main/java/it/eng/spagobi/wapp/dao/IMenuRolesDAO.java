@@ -20,7 +20,10 @@ package it.eng.spagobi.wapp.dao;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.dao.ISpagoBIDao;
+import it.eng.spagobi.wapp.metadata.SbiMenu;
+
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author Antonella Giachino (antonella.giachino@eng.it)
@@ -43,4 +46,14 @@ public interface IMenuRolesDAO extends ISpagoBIDao{
 
 	public List loadMenuByRoleId(Integer roleId, IEngUserProfile userProfile) throws EMFUserError;
 
+	/**
+	 * Loads menus associated with the specified role IDs.
+	 * Retrieves a mapping of role IDs to corresponding lists of menu objects,
+	 * tailored to the provided user profile.
+	 *
+	 * @param roleIds     a list of role IDs for which to load the menus
+	 * @param userProfile the user profile providing additional context for menu retrieval
+	 * @return a map where each key is a role ID and the corresponding value is a list of menus associated with that role
+	 */
+	Map<Integer, List<SbiMenu>> loadMenusByRoleIds(List<Integer> roleIds, IEngUserProfile userProfile) throws EMFUserError;
 }

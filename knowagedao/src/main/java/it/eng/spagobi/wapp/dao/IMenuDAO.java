@@ -17,7 +17,9 @@
  */
 package it.eng.spagobi.wapp.dao;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.commons.dao.ISpagoBIDao;
@@ -211,4 +213,13 @@ public interface IMenuDAO extends ISpagoBIDao {
 
 	public void updateMenu(SbiMenu hibMenu) throws EMFUserError;
 
+	/**
+	 * Loads detailed information for multiple menus identified by their unique IDs.
+	 * The details for each menu are retrieved from the system and returned in a map,
+	 * where the key is the menu ID and the value is the corresponding SbiMenu object.
+	 *
+	 * @param integers A list of integers representing the menu IDs whose details need to be loaded.
+	 * @return A map where each key is a menu ID and the value is an SbiMenu object containing the details for that menu.
+	 */
+    Map<Integer, SbiMenu> loadSbiMenusByIds(ArrayList<Integer> integers);
 }

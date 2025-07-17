@@ -17,14 +17,12 @@
  */
 package it.eng.spagobi.wapp.dao;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.bo.UserProfile;
+import it.eng.spagobi.wapp.metadata.SbiMenu;
 import org.apache.log4j.Logger;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
@@ -183,6 +181,68 @@ public class MenuRolesDAOImpl extends AbstractHibernateDAO implements IMenuRoles
 		LOGGER.debug("OUT");
 		return realResult;
 	}
+
+	@Override
+	public Map<Integer, List<SbiMenu>> loadMenusByRoleIds(List<Integer> roleIds, IEngUserProfile userProfile) throws EMFUserError {
+
+		Map<Integer, List<SbiMenu>> result = new HashMap<>();
+
+		if (roleIds == null || roleIds.isEmpty()) {
+			return result;
+		}
+
+		Session session = null;
+		Transaction tx = null;
+
+		try {
+			session = getSession();
+			tx = session.beginTransaction();
+
+			// Single HQL query to get all menu-role associations
+			String hql = "SELECT mr.id.extRoleId, m " +
+					"FROM SbiMenuRole mr " +
+					"JOIN mr.sbiMenu m " +
+					"WHERE mr.id.extRoleId IN (:roleIds) " +
+					"ORDER BY mr.id.extRoleId, m.parentId, m.prog";
+
+			Query query = session.createQuery(hql);
+			query.setParameterList("roleIds", roleIds);
+
+			List<Object[]> results = query.list();
+
+			for (Object[] row : results) {
+				Integer roleId = (Integer) row[0];
+				SbiMenu sbiMenu = (SbiMenu) row[1];
+
+				// Apply user profile filtering if needed
+				result.computeIfAbsent(roleId, k -> new ArrayList<>()).add(sbiMenu);
+
+			}
+
+
+			// Ensure all requested role IDs are present in the result map
+			for (Integer roleId : roleIds) {
+				result.putIfAbsent(roleId, new ArrayList<>());
+				LOGGER.debug("Add roleId=" + roleId.toString());
+			}
+
+
+			tx.commit();
+
+		} catch (HibernateException he) {
+			if (tx != null) tx.rollback();
+			LOGGER.error("Error loading menus by role IDs", he);
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+		} finally {
+			if (session != null && session.isOpen()) {
+				session.close();
+			}
+		}
+
+		return result;
+
+	}
+
 	public static boolean userCanSeeTheMenu(Menu menu, IEngUserProfile userProfile, List<String> roles) {
 		boolean canView;
 		if (menu.getCode() == null)
