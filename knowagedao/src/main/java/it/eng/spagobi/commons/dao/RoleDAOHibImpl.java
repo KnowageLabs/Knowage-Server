@@ -74,6 +74,8 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 
 	public static final String DEFAULT_CACHE_SUFFIX = "_ROLE_CACHE";
 
+	private static final int MAX_IN_CLAUSE_SIZE = 1000;
+
 	public static CacheManager cacheManager = null;
 
 	private RoleEventsEmittingCommand eventEmittingCommand = new NoEventEmitting();
@@ -609,12 +611,16 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 		try {
 			aSession = getSession();
 			tx = aSession.beginTransaction();
-			Criteria aCriteria = aSession.createCriteria(SbiExtRoles.class);
-			aCriteria.add(Restrictions.in("id", roleIds));
-			List<SbiExtRoles> roles = aCriteria.list();
-            for (SbiExtRoles role : roles) {
-                result.put(role.getExtRoleId(), role);
-            }
+			List<List<Integer>> batches = createBatches(roleIds);
+			for (List<Integer> batch : batches) {
+				Criteria aCriteria = aSession.createCriteria(SbiExtRoles.class);
+				aCriteria.add(Restrictions.in("id", batch));
+				List<SbiExtRoles> roles = aCriteria.list();
+
+				for (SbiExtRoles role : roles) {
+					result.put(role.getExtRoleId(), role);
+				}
+			}
 			tx.commit();
 		} catch (HibernateException he) {
 			logException(he);
@@ -626,6 +632,18 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 			this.clearCache();
 		}
 		return result;
+	}
+
+	private List<List<Integer>> createBatches(List<Integer> items) {
+		List<List<Integer>> batches = new ArrayList<>();
+
+		for (int i = 0; i < items.size(); i += RoleDAOHibImpl.MAX_IN_CLAUSE_SIZE) {
+			int end = Math.min(i + RoleDAOHibImpl.MAX_IN_CLAUSE_SIZE, items.size());
+			batches.add(items.subList(i, end));
+		}
+
+		return batches;
+
 	}
 
 	private boolean isAbleTo(Role aRole, SbiAuthorizations authI) {
