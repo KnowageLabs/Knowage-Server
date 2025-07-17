@@ -200,21 +200,18 @@ export default defineComponent({
       return 0;
     },
     findHomePage(dynMenu) {
-      let toRet = undefined;
-      for (var idx in dynMenu) {
-        let menu = dynMenu[idx];
-        if (this.user.sessionRole) {
-          if (menu.roles.includes(this.user.sessionRole) && (menu.to || menu.url)) return menu;
-        } else {
-          for (var i = 0; i < this.user.roles.length; i++) {
-            let element = this.user.roles[i];
-            if (menu.roles.includes(element) && (menu.to || menu.url)) {
-              return menu;
-            }
-          }
+      for (const item of dynMenu) {
+        const hasAccess = item.roles?.some((role) => role === this.user.sessionRole || this.user.roles.includes(role))
+        const hasUrl = 'to' in item || 'url' in item
+
+        if (hasAccess && hasUrl) return item
+
+        if (item.items?.length) {
+            const found = this.findHomePage(item.items)
+            if (found) return found
         }
       }
-      return toRet;
+      return null
     },
     toggleMenu(event, item) {
       this.hideItemMenu();
@@ -271,8 +268,8 @@ export default defineComponent({
               if (!this.stateHomePage.label) {
                 this.$store.commit("setHomePage", homePage);
               }
-            }
-          }
+            }else this.$store.commit("setHomePage", {loading:false})
+          }else this.$store.commit("setHomePage", {loading:false})
           let responseCommonUserFunctionalities = response.data.commonUserFunctionalities;
           for (var index in responseCommonUserFunctionalities) {
             let item = responseCommonUserFunctionalities[index];

@@ -1,6 +1,6 @@
 <template>
     <iframe v-if="!homePage.loading && homePage.label && completeUrl" :src="`${completeUrl}`"></iframe>
-    <div v-if="!homePage.loading && !homePage.label" class="homeContainer">
+    <div v-if="!homePage.loading" class="homeContainer">
         <div class="upperSection p-d-flex">
             <div class="p-d-flex p-flex-column kn-flex">
                 <div class="logo">
