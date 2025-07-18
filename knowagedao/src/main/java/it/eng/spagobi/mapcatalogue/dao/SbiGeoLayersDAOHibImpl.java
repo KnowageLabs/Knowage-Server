@@ -454,7 +454,7 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 				return new ArrayList<>();
 			}
 			// load properties of file
-			if (aLayer.getType().equals(SbiLayersEnum.GEOJSON.key)) {
+			if (aLayer.getType().equals(SbiLayersEnum.GEOJSON.key) || aLayer.getType().equals(SbiLayersEnum.FILE.key)) {
 
 				URL path = this.getURL(aLayer);
 
@@ -616,7 +616,7 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 			hibLayer.setBaseLayer(aLayer.isBaseLayer());
 			hibLayer.setCategory_id(aLayer.getCategory_id());
 
-			if (hibLayer.getType().equals(SbiLayersEnum.GEOJSON.key) || hibLayer.getType().equals(SbiLayersEnum.TOPOJSON.key)) {
+			if (hibLayer.getType().equals(SbiLayersEnum.GEOJSON.key) || hibLayer.getType().equals(SbiLayersEnum.FILE.key) || hibLayer.getType().equals(SbiLayersEnum.TOPOJSON.key)) {
 				String resourcePath = SpagoBIUtilities.getResourcePath();
 				File doc = new File(resourcePath + File.separator + LAYER + File.separator + aLayer.getLabel());
 				if (doc.exists()) {

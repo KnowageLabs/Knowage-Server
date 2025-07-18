@@ -2,7 +2,7 @@ package it.eng.spagobi.mapcatalogue.dao;
 
 public enum SbiLayersEnum {
 
-	GEOJSON("File"), TOPOJSON("topojson"), WKT("wkt");
+	GEOJSON("geojson"), FILE("file"), TOPOJSON("topojson"), WKT("wkt");
 
 	public final String key;
 
