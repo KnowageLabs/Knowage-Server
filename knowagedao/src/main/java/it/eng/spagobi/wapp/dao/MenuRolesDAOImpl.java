@@ -41,6 +41,8 @@ import it.eng.spagobi.wapp.bo.Menu;
  */
 public class MenuRolesDAOImpl extends AbstractHibernateDAO implements IMenuRolesDAO {
 	private static final Logger LOGGER = Logger.getLogger(MenuRolesDAOImpl.class);
+	private static final int MAX_IN_CLAUSE_SIZE = 1000;
+
 
 	/**
 	 * Load menu by role id.
@@ -198,34 +200,16 @@ public class MenuRolesDAOImpl extends AbstractHibernateDAO implements IMenuRoles
 			session = getSession();
 			tx = session.beginTransaction();
 
-			// Single HQL query to get all menu-role associations
-			String hql = "SELECT mr.id.extRoleId, m " +
-					"FROM SbiMenuRole mr " +
-					"JOIN mr.sbiMenu m " +
-					"WHERE mr.id.extRoleId IN (:roleIds) " +
-					"ORDER BY mr.id.extRoleId, m.parentId, m.prog";
+			List<List<Integer>> batches = createBatches(roleIds);
 
-			Query query = session.createQuery(hql);
-			query.setParameterList("roleIds", roleIds);
-
-			List<Object[]> results = query.list();
-
-			for (Object[] row : results) {
-				Integer roleId = (Integer) row[0];
-				SbiMenu sbiMenu = (SbiMenu) row[1];
-
-				// Apply user profile filtering if needed
-				result.computeIfAbsent(roleId, k -> new ArrayList<>()).add(sbiMenu);
-
+			for (List<Integer> batch : batches) {
+				processBatchQuery(session, batch, result);
 			}
 
-
-			// Ensure all requested role IDs are present in the result map
+			// Ensure all requested role IDs have entries in the result map
 			for (Integer roleId : roleIds) {
-				result.putIfAbsent(roleId, new ArrayList<>());
-				LOGGER.debug("Add roleId=" + roleId.toString());
+				result.computeIfAbsent(roleId, k -> new ArrayList<>());
 			}
-
 
 			tx.commit();
 
@@ -242,6 +226,40 @@ public class MenuRolesDAOImpl extends AbstractHibernateDAO implements IMenuRoles
 		return result;
 
 	}
+
+	private void processBatchQuery(Session session, List<Integer> roleIdBatch, Map<Integer, List<SbiMenu>> result) {
+		// Single HQL query to get all menu-role associations for this batch
+		String hql = "SELECT mr.id.extRoleId, m " +
+				"FROM SbiMenuRole mr " +
+				"JOIN mr.sbiMenu m " +
+				"WHERE mr.id.extRoleId IN (:roleIds) " +
+				"ORDER BY mr.id.extRoleId, m.parentId, m.prog";
+
+		Query query = session.createQuery(hql);
+		query.setParameterList("roleIds", roleIdBatch);
+
+		List<Object[]> results = query.list();
+
+		for (Object[] row : results) {
+			Integer roleId = (Integer) row[0];
+			SbiMenu sbiMenu = (SbiMenu) row[1];
+
+			// Apply user profile filtering if needed
+			result.computeIfAbsent(roleId, k -> new ArrayList<>()).add(sbiMenu);
+		}
+	}
+
+	private List<List<Integer>> createBatches(List<Integer> items) {
+		List<List<Integer>> batches = new ArrayList<>();
+
+		for (int i = 0; i < items.size(); i += MAX_IN_CLAUSE_SIZE) {
+			int end = Math.min(i + MAX_IN_CLAUSE_SIZE, items.size());
+			batches.add(items.subList(i, end));
+		}
+
+		return batches;
+	}
+
 
 	public static boolean userCanSeeTheMenu(Menu menu, IEngUserProfile userProfile, List<String> roles) {
 		boolean canView;
