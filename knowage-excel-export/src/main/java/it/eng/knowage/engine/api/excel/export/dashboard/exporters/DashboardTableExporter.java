@@ -17,8 +17,8 @@ import java.util.Map;
 public class DashboardTableExporter extends GenericDashboardWidgetExporter implements IWidgetExporter {
     public static Logger logger = Logger.getLogger(DashboardTableExporter.class);
 
-    public DashboardTableExporter(DashboardExcelExporter excelExporter, Workbook wb, JSONObject widget, String documentName, Map<String, Map<String, JSONArray>> selections, JSONObject drivers, DatastoreUtils datastoreUtils, StyleProvider styleProvider) {
-        super(excelExporter, wb, widget, documentName, selections, drivers, datastoreUtils, styleProvider);
+    public DashboardTableExporter(DashboardExcelExporter excelExporter, Workbook wb, JSONObject widget, String documentName, Map<String, Map<String, JSONArray>> selections, JSONObject drivers, DatastoreUtils datastoreUtils, StyleProvider styleProvider, JSONObject parameters) {
+        super(excelExporter, wb, widget, documentName, selections, drivers, datastoreUtils, styleProvider, parameters);
     }
 
     @Override
@@ -31,13 +31,13 @@ public class DashboardTableExporter extends GenericDashboardWidgetExporter imple
             Sheet sheet = excelExporter.createUniqueSafeSheet(wb, widgetName, dashboardSheetName);
             int offset = 0;
             int fetchSize = Integer.parseInt(SingletonConfig.getInstance().getConfigValue("SPAGOBI.API.DATASET.MAX_ROWS_NUMBER"));
-            JSONObject dataStore = datastoreUtils.getDataStoreForDashboardWidget(widget, offset, fetchSize, selections, drivers);
+            JSONObject dataStore = datastoreUtils.getDataStoreForDashboardWidget(widget, offset, fetchSize, selections, drivers, parameters);
             if (dataStore != null) {
                 int totalNumberOfRows = dataStore.getInt("results");
                 while (offset < totalNumberOfRows) {
                     excelExporter.fillTableSheetWithData(dataStore, wb, sheet, widgetName, offset, settings);
                     offset += fetchSize;
-                    dataStore = datastoreUtils.getDataStoreForDashboardWidget(widget, offset, fetchSize, selections, drivers);
+                    dataStore = datastoreUtils.getDataStoreForDashboardWidget(widget, offset, fetchSize, selections, drivers, parameters);
                 }
                 return 1;
             }

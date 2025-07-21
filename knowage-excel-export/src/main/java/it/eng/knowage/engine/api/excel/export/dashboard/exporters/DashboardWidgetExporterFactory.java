@@ -15,14 +15,14 @@ import java.util.Map;
 public class DashboardWidgetExporterFactory {
     public static Logger logger = Logger.getLogger(WidgetExporterFactory.class);
 
-    public static IWidgetExporter getExporter(DashboardExcelExporter exporter, Workbook wb, JSONObject widget, String documentName, Map<String, Map<String, JSONArray>> selections, JSONObject drivers, DatastoreUtils datastoreUtils, StyleProvider styleProvider) {
+    public static IWidgetExporter getExporter(DashboardExcelExporter exporter, Workbook wb, JSONObject widget, String documentName, Map<String, Map<String, JSONArray>> selections, JSONObject drivers, DatastoreUtils datastoreUtils, StyleProvider styleProvider, JSONObject parameters) {
         if (widget.optString("type").equalsIgnoreCase("table")) {
-            return new DashboardTableExporter(exporter, wb, widget, documentName, selections, drivers, datastoreUtils, styleProvider);
+            return new DashboardTableExporter(exporter, wb, widget, documentName, selections, drivers, datastoreUtils, styleProvider, parameters);
         } else if (widget.optString("type").equalsIgnoreCase("static-pivot-table")) {
-            return new DashboardPivotExporter(exporter, wb, widget, documentName, selections, drivers, datastoreUtils, styleProvider);
+            return new DashboardPivotExporter(exporter, wb, widget, documentName, selections, drivers, datastoreUtils, styleProvider, parameters);
         }
         else {
-            return new GenericDashboardWidgetExporter(exporter, wb, widget, documentName, selections, drivers, datastoreUtils, styleProvider);
+            return new GenericDashboardWidgetExporter(exporter, wb, widget, documentName, selections, drivers, datastoreUtils, styleProvider, parameters);
         }
     }
 }

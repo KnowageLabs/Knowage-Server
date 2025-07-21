@@ -38,10 +38,11 @@ class GenericDashboardWidgetExporter implements IWidgetExporter {
     String documentName;
     Map<String, Map<String, JSONArray>> selections;
     JSONObject drivers;
+    JSONObject parameters;
     DatastoreUtils datastoreUtils;
     StyleProvider styleProvider;
 
-    public GenericDashboardWidgetExporter(DashboardExcelExporter excelExporter, Workbook wb, JSONObject widget, String documentName, Map<String, Map<String, JSONArray>> selections, JSONObject drivers, DatastoreUtils datastoreUtils, StyleProvider styleProvider) {
+    public GenericDashboardWidgetExporter(DashboardExcelExporter excelExporter, Workbook wb, JSONObject widget, String documentName, Map<String, Map<String, JSONArray>> selections, JSONObject drivers, DatastoreUtils datastoreUtils, StyleProvider styleProvider, JSONObject parameters) {
         super();
         this.excelExporter = excelExporter;
         this.wb = wb;
@@ -51,6 +52,7 @@ class GenericDashboardWidgetExporter implements IWidgetExporter {
         this.drivers = drivers;
         this.datastoreUtils = datastoreUtils;
         this.styleProvider = styleProvider;
+        this.parameters = parameters;
     }
 
     @Override
@@ -58,7 +60,7 @@ class GenericDashboardWidgetExporter implements IWidgetExporter {
         String widgetId = widget.optString("id");
         try {
             JSONObject settings = widget.getJSONObject("settings");
-            JSONObject dataStore = datastoreUtils.getDataStoreforDashboardSingleWidget(widget, selections, drivers);
+            JSONObject dataStore = datastoreUtils.getDataStoreforDashboardSingleWidget(widget, selections, drivers, parameters);
             String widgetName = getDashboardWidgetName(widget);
             if (dataStore != null) {
                 String dashboardSheetName = documentName != null ? documentName : "Dashboard";

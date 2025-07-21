@@ -221,11 +221,13 @@ public class DashboardExcelExporter extends Common {
             int exportedSheets = 0;
             Map<String, Map<String, JSONArray>> selections = getSelections(body);
             JSONObject drivers = getDrivers(body);
+            JSONArray parameters = getParametersFromBody(body);
+
             if (isDashboardSingleWidgetExport) {
-                exportedSheets = exportWidget(body, wb, null, selections, drivers);
+                exportedSheets = exportWidget(body, wb, null, selections, drivers, parameters);
             } else {
                 JSONArray widgetsJson = getDashboardWidgetsJson(stringifiedBody);
-                exportedSheets += exportDashboard(widgetsJson, wb, getDocumentName(body), selections, drivers);
+                exportedSheets += exportDashboard(widgetsJson, wb, getDocumentName(body), selections, drivers, parameters);
             }
 
             if (!selections.isEmpty()) {
@@ -543,6 +545,52 @@ public class DashboardExcelExporter extends Common {
         }
     }
 
+    private JSONArray getParametersFromBody(JSONObject body) {
+        try {
+            JSONArray parametersToReturn = new JSONArray();
+                JSONArray datasets = body.getJSONObject("configuration").getJSONArray("datasets");
+                if (datasets.length() > 0) {
+                    for (int i = 0; i < datasets.length(); i++) {
+                        JSONObject dataset = datasets.getJSONObject(i);
+                        if (dataset.has("parameters")) {
+                            JSONArray parameters = dataset.getJSONArray("parameters");
+                            if (parameters.length() > 0) {
+                                for (int j = 0; j < parameters.length(); j++) {
+                                    JSONObject parameter = parameters.getJSONObject(j);
+                                    parameter.put("dataset", dataset.getInt("id"));
+                                    parametersToReturn.put(parameter);
+                                }
+                            }
+                    }
+                }
+            }
+            return parametersToReturn;
+        } catch (JSONException e) {
+                return getParametersFromSingleWidgetBody(body);
+        }
+    }
+
+    private JSONArray getParametersFromSingleWidgetBody(JSONObject body) {
+
+        try {
+            JSONArray parametersToReturn = new JSONArray();
+            if (body.has("parameters")) {
+                JSONArray parameters = body.getJSONArray("parameters");
+                if (parameters.length() > 0) {
+                    for (int i = 0; i < parameters.length(); i++) {
+                        JSONObject parameter = parameters.getJSONObject(i);
+                        parameter.put("dataset", body.getInt("dataset"));
+                        parametersToReturn.put(parameter);
+                    }
+                }
+            }
+            return parametersToReturn;
+        } catch (JSONException e) {
+            LOGGER.error("Cannot get parameters from body", e);
+            throw new SpagoBIRuntimeException("Cannot get parameters from body", e);
+        }
+    }
+
     private JSONArray getDriversFromBody(JSONObject body) throws JSONException {
         if (body.has("drivers")) {
             return body.getJSONArray("drivers");
@@ -588,12 +636,12 @@ public class DashboardExcelExporter extends Common {
         }
     }
 
-    private int exportDashboard(JSONArray widgetsArray, Workbook wb, String documentName, Map<String, Map<String, JSONArray>> selections, JSONObject drivers) {
+    private int exportDashboard(JSONArray widgetsArray, Workbook wb, String documentName, Map<String, Map<String, JSONArray>> selections, JSONObject drivers, JSONArray parameters) {
         int exportedSheets = 0;
         for (int i = 0; i < widgetsArray.length(); i++) {
             try {
                 JSONObject currWidget = widgetsArray.getJSONObject(i);
-                exportedSheets = exportWidget(currWidget, wb, documentName, selections, drivers);
+                exportedSheets = exportWidget(currWidget, wb, documentName, selections, drivers, parameters);
             } catch (Exception e) {
                 LOGGER.error("Error while exporting widget", e);
             }
@@ -669,16 +717,25 @@ public class DashboardExcelExporter extends Common {
         }
     }
 
-    public int exportWidget(JSONObject body, Workbook wb, String documentName, Map<String, Map<String, JSONArray>> selections, JSONObject drivers) {
+    public int exportWidget(JSONObject body, Workbook wb, String documentName, Map<String, Map<String, JSONArray>> selections, JSONObject drivers, JSONArray parameters) {
 
         int exportedSheets;
         try {
             String widgetType = body.getString("type");
+            JSONObject parametersToSend = new JSONObject();
+            if (parameters != null && parameters.length() > 0) {
+                for (int i = 0; i < parameters.length(); i++) {
+                    JSONObject parameter = parameters.getJSONObject(i);
+                    if (parameter.getInt("dataset") == body.getInt("dataset")) {
+                        parametersToSend.put(parameter.getString("name"), parameter.get("value"));
+                    }
+                }
+            }
             if (Arrays.asList(WIDGETS_TO_IGNORE).contains(widgetType.toLowerCase())) {
                 return 0;
             }
             IWidgetExporter widgetExporter = DashboardWidgetExporterFactory.getExporter(this,
-                    wb, body, documentName, selections, drivers, datastoreUtils, styleProvider);
+                    wb, body, documentName, selections, drivers, datastoreUtils, styleProvider, parametersToSend);
             exportedSheets = widgetExporter.export();
         } catch (Exception e) {
             LOGGER.error("Cannot export data to excel", e);

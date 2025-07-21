@@ -42,13 +42,13 @@ public class DatastoreUtils extends Common {
     }
 
 
-    public JSONObject getDataStoreforDashboardSingleWidget(JSONObject singleWidget, Map<String, Map<String, JSONArray>> selections, JSONObject drivers) {
+    public JSONObject getDataStoreforDashboardSingleWidget(JSONObject singleWidget, Map<String, Map<String, JSONArray>> selections, JSONObject drivers, JSONObject parameters) {
         DatastoreUtils datastoreUtils = new DatastoreUtils(userUniqueIdentifier);
-        return datastoreUtils.getDataStoreForDashboardWidget(singleWidget, 0, -1, selections, drivers);
+        return datastoreUtils.getDataStoreForDashboardWidget(singleWidget, 0, -1, selections, drivers, parameters);
     }
 
 
-    public JSONObject getDataStoreForDashboardWidget(JSONObject widget, int offset, int fetchSize, Map<String, Map<String, JSONArray>> selections, JSONObject drivers) {
+    public JSONObject getDataStoreForDashboardWidget(JSONObject widget, int offset, int fetchSize, Map<String, Map<String, JSONArray>> selections, JSONObject drivers, JSONObject parameters) {
         Map<String, Object> map = new HashMap<>();
         JSONObject datastore;
         try {
@@ -65,6 +65,7 @@ public class DatastoreUtils extends Common {
 
             dashboardSelections.put("selections", selections);
             dashboardSelections.put("parameters", drivers);
+            dashboardSelections.put("parameters", parameters);
 
             if (isSolrDataset(dataset) && !widget.getString("type").equalsIgnoreCase("discovery")) {
                 JSONObject jsOptions = new JSONObject();
