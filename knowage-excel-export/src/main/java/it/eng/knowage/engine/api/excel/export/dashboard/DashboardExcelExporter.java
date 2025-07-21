@@ -220,7 +220,8 @@ public class DashboardExcelExporter extends Common {
 
             int exportedSheets = 0;
             Map<String, Map<String, JSONArray>> selections = getSelections(body);
-            JSONObject drivers = getDrivers(body);
+            JSONArray driversFromBody = getDrivers(body);
+            JSONObject drivers = transformDriversForDatastore(driversFromBody);
             JSONArray parameters = getParametersFromBody(body);
 
             if (isDashboardSingleWidgetExport) {
@@ -236,9 +237,9 @@ public class DashboardExcelExporter extends Common {
                 exportedSheets++;
             }
 
-            if (drivers != null && drivers.length() > 0) {
+            if (driversFromBody != null && driversFromBody.length() > 0) {
                 Sheet driversSheet = createUniqueSafeSheetForSelections(wb, "Filters");
-                fillDashboardDriversSheetWithData(getDriversFromBody(body), driversSheet);
+                fillDashboardDriversSheetWithData(driversFromBody, driversSheet);
                 exportedSheets++;
             }
 
@@ -266,6 +267,30 @@ public class DashboardExcelExporter extends Common {
             throw new SpagoBIRuntimeException(EXCEL_ERROR, e);
         }
 
+    }
+
+    private JSONObject transformDriversForDatastore(JSONArray driversFromBody) {
+
+        JSONObject drivers = new JSONObject();
+
+        try {
+            if (driversFromBody != null && driversFromBody.length() > 0) {
+                for (int i = 0; i < driversFromBody.length(); i++) {
+                    JSONObject driver = driversFromBody.getJSONObject(i);
+                    String urlName = driver.getString("urlName");
+                    JSONArray values = new JSONArray();
+                    JSONObject value = new JSONObject();
+                    value.put("value", driver.getString("value"));
+                    value.put("description", driver.getString("description"));
+                    values.put(value);
+                    drivers.put(urlName, values);
+                }
+            }
+        } catch (JSONException e) {
+            throw new SpagoBIRuntimeException("Unable to transform drivers for datastore", e);
+        }
+
+        return drivers;
     }
 
     private void exportEmptyExcel(Workbook wb) {
@@ -527,23 +552,16 @@ public class DashboardExcelExporter extends Common {
 
     }
 
-    private JSONObject getDrivers(JSONObject body) {
+    private JSONArray getDrivers(JSONObject body) {
         try {
-            JSONObject driversToReturn = new JSONObject();
-            JSONArray drivers = getDriversFromBody(body);
-            if (drivers.length() > 0) {
-                int counter = 0;
-                for (int i = 0; i < drivers.length(); i++) {
-                    JSONObject driver = drivers.getJSONObject(i);
-                    driversToReturn.put("parameter" + (counter != 0 ? counter : ""), driver.getString("value"));
-                    counter++;
-                }
-            }
-            return driversToReturn;
+            return getDriversFromBody(body);
         } catch (JSONException e) {
-            return null;
+            LOGGER.error("Cannot get drivers from body", e);
+            throw new SpagoBIRuntimeException("Cannot get drivers from body", e);
         }
     }
+
+
 
     private JSONArray getParametersFromBody(JSONObject body) {
         try {
@@ -558,7 +576,7 @@ public class DashboardExcelExporter extends Common {
                                 for (int j = 0; j < parameters.length(); j++) {
                                     JSONObject parameter = parameters.getJSONObject(j);
                                     parameter.put("dataset", dataset.getInt("id"));
-                                    parametersToReturn.put(parameter);
+                                    getActualValueFromDriverPlaceholder(body, parametersToReturn, parameter);
                                 }
                             }
                     }
@@ -568,6 +586,31 @@ public class DashboardExcelExporter extends Common {
         } catch (JSONException e) {
                 return getParametersFromSingleWidgetBody(body);
         }
+    }
+
+    private void getActualValueFromDriverPlaceholder(JSONObject body, JSONArray parametersToReturn, JSONObject parameter) throws JSONException {
+        if (parameter.getString("value").contains("$P{")) {
+            String placeholderToReplace = parameter.getString("value").replace("$P{", "");
+            placeholderToReplace = placeholderToReplace.replace("}", "");
+            String actualValue = replaceParameterPlaceholderWithActualValue(placeholderToReplace, getDriversFromBody(body));
+            parameter.put("value", actualValue);
+        }
+        parametersToReturn.put(parameter);
+    }
+
+    private String replaceParameterPlaceholderWithActualValue(String placeholderToReplace, JSONArray driversFromBody) {
+        String actualValue = null;
+        try {
+            for (int i = 0; i < driversFromBody.length(); i++) {
+                JSONObject driver = driversFromBody.getJSONObject(i);
+                if (driver.getString("urlName").equals(placeholderToReplace)) {
+                    actualValue = driver.getString("value");
+                }
+            }
+        } catch (JSONException e) {
+            throw new RuntimeException(e);
+        }
+        return actualValue;
     }
 
     private JSONArray getParametersFromSingleWidgetBody(JSONObject body) {
@@ -580,7 +623,7 @@ public class DashboardExcelExporter extends Common {
                     for (int i = 0; i < parameters.length(); i++) {
                         JSONObject parameter = parameters.getJSONObject(i);
                         parameter.put("dataset", body.getInt("dataset"));
-                        parametersToReturn.put(parameter);
+                        getActualValueFromDriverPlaceholder(body, parametersToReturn, parameter);
                     }
                 }
             }

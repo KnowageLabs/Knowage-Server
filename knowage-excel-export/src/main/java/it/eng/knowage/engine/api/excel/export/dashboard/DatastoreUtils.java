@@ -64,8 +64,8 @@ public class DatastoreUtils extends Common {
             }
 
             dashboardSelections.put("selections", selections);
-            dashboardSelections.put("parameters", drivers);
             dashboardSelections.put("parameters", parameters);
+            dashboardSelections.put("drivers", drivers);
 
             if (isSolrDataset(dataset) && !widget.getString("type").equalsIgnoreCase("discovery")) {
                 JSONObject jsOptions = new JSONObject();
