@@ -357,14 +357,9 @@ public class StyleProvider extends Common {
         if (values.length > 3) {
             float alpha = Float.parseFloat(values[3].trim());
 
-            // If alpha is 0 (fully transparent), return null or handle as no color
-            if (alpha == 0.0f) {
-                return null; // or handle transparent case appropriately
-            }
-
             // For partial transparency, blend with white background
             // This simulates how transparent colors appear on a white Excel background
-            if (alpha < 1.0f) {
+            if (alpha <= 1.0f) {
                 red = (int) (red * alpha + 255 * (1 - alpha));
                 green = (int) (green * alpha + 255 * (1 - alpha));
                 blue = (int) (blue * alpha + 255 * (1 - alpha));
