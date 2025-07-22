@@ -837,7 +837,6 @@ public class DashboardExcelExporter extends Common {
 
         DateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT, getLocale());
 
-        SimpleDateFormat timeStampFormat = new SimpleDateFormat(TIMESTAMP_FORMAT, getLocale());
         switch (type) {
             case "int":
                 if (!stringifiedValue.trim().isEmpty()) {
