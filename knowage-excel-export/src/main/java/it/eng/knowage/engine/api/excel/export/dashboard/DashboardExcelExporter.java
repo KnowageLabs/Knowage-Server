@@ -862,17 +862,6 @@ public class DashboardExcelExporter extends Common {
                     cell.setCellValue(stringifiedValue);
                 }
                 break;
-            case "timestamp":
-                try {
-                    if (!stringifiedValue.trim().isEmpty()) {
-                        Date ts = timeStampFormat.parse(stringifiedValue);
-                        cell.setCellValue(ts);
-                    }
-                } catch (Exception e) {
-                    LOGGER.debug("Timestamp will be exported as string due to error: ", e);
-                    cell.setCellValue(stringifiedValue);
-                }
-                break;
             default:
                 cell.setCellValue(stringifiedValue);
                 break;
