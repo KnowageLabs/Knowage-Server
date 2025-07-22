@@ -1105,10 +1105,14 @@ public class ExcelExporter extends AbstractFormatExporter {
 
     private static void setSummaryRowValue(JSONObject[] columnStyles, int c, Object value, Cell cell, String summaryRowLabel, JSONObject column, boolean isOnlyPinned) {
         try {
-            int precision = (columnStyles[c] != null && columnStyles[c].has("precision") && columnStyles[c].optInt("precision") != 0) ? columnStyles[c].getInt("precision") : 2;
+            int precision = (columnStyles[c] != null && columnStyles[c].has("precision")) ? columnStyles[c].getInt("precision") : 2;
             String formattedValue;
             try {
-                formattedValue = new DecimalFormat("#,##0." + StringUtils.repeat("0", precision)).format(value);
+                if (precision == 0) {
+                    formattedValue = new DecimalFormat("#,##0").format(value);
+                } else {
+                    formattedValue = new DecimalFormat("#,##0." + StringUtils.repeat("0", precision)).format(value);
+                }
             } catch (Exception e) {
                 formattedValue = value.toString();
             }
