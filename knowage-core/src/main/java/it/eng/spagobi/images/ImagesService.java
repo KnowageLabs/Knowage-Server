@@ -192,10 +192,10 @@ public class ImagesService {
 		}
 	}
 
-	private String checkIfImageIsInUse(Integer imageId) {
+	private StringBuilder checkIfImageIsInUse(Integer imageId) {
 		LOGGER.debug("IN");
 
-		String toReturn = null;
+		StringBuilder toReturn = null;
 
 		try {
 			List<BIObject> biObjects = new ArrayList<>();
@@ -206,24 +206,42 @@ public class ImagesService {
 
 			biObjects.addAll(biObjectDAO.loadBIObjects(SpagoBIConstants.DASHBOARD_TYPE, null, null));
 
-			// check with string, is enough
-			for (Iterator<BIObject> iterator = biObjects.iterator(); iterator.hasNext();) {
-				BIObject object = iterator.next();
-				ObjTemplate template = object.getActiveTemplate();
-				if (template != null) {
-					byte[] templateContentBytes = template.getContent();
-					if (templateContentBytes != null) {
-						String templateContent = new String(templateContentBytes);
-						if (templateContent.indexOf("\"imgId\":" + imageId) != -1) {
-							if (toReturn == null) {
-								toReturn = object.getName();
-							} else {
-								toReturn += ", " + object.getName();
+            for (BIObject object : biObjects) {
+                ObjTemplate template = object.getActiveTemplate();
+                if (template != null) {
+                    byte[] templateContentBytes = template.getContent();
+                    if (templateContentBytes != null) {
+                        String templateContent = new String(templateContentBytes);
+						// CHECKING THE COCKPIT TEMPLATE (DOCUMENT_COMPOSITE)
+                        if (templateContent.contains("\"imgId\": " + imageId) || templateContent.contains("\"imgId\":" + imageId)) {
+                            if (toReturn == null) {
+                                toReturn = new StringBuilder(object.getName());
+                            } else {
+                                toReturn.append(", ").append(object.getName());
+                            }
+						// CHECKING THE DASHBOARD TEMPLATE
+                        } else {
+							JSONObject templateJson = new JSONObject(templateContent);
+							if (templateJson.has("widgets") && templateJson.getJSONArray("widgets").length() > 0) {
+								JSONArray widgets = templateJson.getJSONArray("widgets");
+								for (int i = 0; i < widgets.length(); i++) {
+									JSONObject widget = widgets.getJSONObject(i);
+									if (widget.has("settings") && widget.getJSONObject("settings").has("configuration") && widget.getJSONObject("settings").getJSONObject("configuration").has("image")) {
+										JSONObject image = widget.getJSONObject("settings").getJSONObject("configuration").getJSONObject("image");
+										if (image.getInt("id") == imageId) {
+											if (toReturn == null) {
+												toReturn = new StringBuilder(object.getName());
+											} else {
+												toReturn.append(", ").append(object.getName());
+											}
+										}
+									}
+								}
 							}
-						}
-					}
-				}
-			}
+                        }
+                    }
+                }
+            }
 
 		} catch (Exception e) {
 			LOGGER.error("Error in checking if image is used in other cockpits template", e);
@@ -244,14 +262,14 @@ public class ImagesService {
 		boolean success = true;
 		try {
 			Object idObj = req.getParameter("imageId");
-			Integer id = null;
+			Integer id;
 			if (idObj == null) {
 				msg = "sbi.cockpit.widgets.image.imageWidgetDesigner.emptyParameter";
 				success = false;
 			} else {
 				id = Integer.valueOf(idObj.toString());
 
-				String labelInUSe = checkIfImageIsInUse(id);
+				StringBuilder labelInUSe = checkIfImageIsInUse(id);
 				if (labelInUSe != null) {
 					LOGGER.error("Cannot delete image because it is in use in " + labelInUSe);
 					msg = "Cannot delete image because it is in use in documents " + labelInUSe;
