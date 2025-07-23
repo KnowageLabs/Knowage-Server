@@ -150,8 +150,8 @@ const store = createStore({
     setLoadingAvros(data) {
       this.dataPreparation.loadingAvros = data;
     },
-    toggleMenuOpened() {
-      this.menuOpened = !this.menuOpened;
+    toggleMenuOpened(state, menu) {
+      state.menuOpened = menu;
     },
   },
   getters: {
