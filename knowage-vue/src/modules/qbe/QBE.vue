@@ -394,7 +394,7 @@ export default defineComponent({
       }
     },
     closeMainMenu() {
-      if (this.$store?.state?.menuOpened) {
+      if ((this.$store as any).state.menuOpened) {
         this.$store.commit("toggleMenuOpened", false);
       }
     },
