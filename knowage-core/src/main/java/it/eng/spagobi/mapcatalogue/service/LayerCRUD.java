@@ -195,6 +195,19 @@ public class LayerCRUD {
 		}
 	}
 
+	@GET
+	@Path("/{label}/downloadByLabel/{typeWFS}")
+	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	public Response getDownloadByLabel(@PathParam("label") String label, @PathParam("typeWFS") String typeWFS) throws JSONException, EMFUserError {
+		ISbiGeoLayersDAO dao = DAOFactory.getSbiGeoLayerDao();
+		JSONObject content = dao.getContentforDownload(dao.loadLayerByLabel(label).getLayerId(), typeWFS);
+		if (content == null) {
+			return Response.status(404).build();
+		} else {
+			return Response.ok(content.toString()).build();
+		}
+	}
+
 	private String getData(int layerId, String typeWFS) {
 		ISbiGeoLayersDAO dao = DAOFactory.getSbiGeoLayerDao();
 		JSONObject content = dao.getContentforDownload(layerId, typeWFS);
