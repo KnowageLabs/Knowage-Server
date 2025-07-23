@@ -154,12 +154,9 @@ public class EngineResource extends AbstractCockpitEngineResource {
 		ret.add(Widget.builder().withName("Selector").withDescKey("sbi.cockpit.editor.newwidget.description.selector").withImg("9.png")
 				.withCssClass("fa fa-caret-square-o-down").withType("selector").withTag("selector").build());
 
-		if (functionalities.contains(CommunityFunctionalityConstants.EDIT_PYTHON_SCRIPTS) && isWidgetAllowedByProduct("Python/R")) {
+		if (functionalities.contains(CommunityFunctionalityConstants.EDIT_PYTHON_SCRIPTS) && isWidgetAllowedByProduct("Python")) {
 			ret.add(Widget.builder().withName("Python").withDescKey("sbi.cockpit.editor.newwidget.description.python").withImg("10.png")
 					.withCssClass("fab fa-python").withType("python").withTag("python").build());
-
-			ret.add(Widget.builder().withName("r").withDescKey("sbi.cockpit.editor.newwidget.description.R").withImg("11.png").withCssClass("fab fa-r-project")
-					.withType("r").withTag("r").build());
 		}
 
 		if (functionalities.contains(CommunityFunctionalityConstants.DISCOVERY_WIDGET_USE) && isWidgetAllowedByProduct("Discovery")) {
