@@ -13,7 +13,7 @@ export function createNewField(editQueryObj, field) {
         subjectId: field.attributes.subjectId,
         funct: getFunct(field),
         color: field.color,
-        group: getGroup(field),
+        group: field.isSpatial ? false : getGroup(field),
         order: 'NONE',
         include: true,
         // eslint-disable-next-line no-prototype-builtins
