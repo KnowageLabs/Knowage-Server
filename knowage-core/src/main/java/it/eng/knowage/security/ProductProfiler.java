@@ -147,6 +147,21 @@ public class ProductProfiler {
 		}
 	}
 
+	public static boolean canAddAUser(int numberOfUsers, boolean isAdmin) {
+		if (isCommunity) {
+			return true;
+		} else {
+			boolean toReturn = false;
+			try {
+				Method canAddAUser = productProfilerEE.getMethod("canAddAUser", int.class, boolean.class);
+				toReturn = (boolean) canAddAUser.invoke(productProfilerEE, numberOfUsers, isAdmin);
+			} catch (Exception e) {
+				logger.error("Error while adding a user: ", e);
+			}
+			return toReturn;
+		}
+	}
+
 	private ProductProfiler() {
 
 	}
