@@ -219,7 +219,7 @@
 	</TECHNICAL_USER_FUNCTIONALITIES>
 
 	<COMMON_USER_FUNCTIONALITIES>
-		<ITEM label="menu.home" iconCls="pi pi-fw pi-home" to="/" />
+		<ITEM label="menu.home" iconCls="fa-solid fa-house" to="/" />
 		<ITEM label="menu.Languages" iconCls="fab fa-font-awesome-flag"
 			command="languageSelection" />
 		<ITEM label="menu.RoleSelection" iconCls="fas fa-users-cog"

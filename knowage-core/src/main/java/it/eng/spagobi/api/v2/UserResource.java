@@ -18,13 +18,8 @@
 package it.eng.spagobi.api.v2;
 
 import java.net.URI;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Set;
 
 import javax.validation.Valid;
 import javax.ws.rs.Consumes;
@@ -39,6 +34,8 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import it.eng.knowage.security.ProductProfiler;
+import it.eng.spagobi.commons.dao.IRoleDAO;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.owasp.esapi.Encoder;
@@ -76,6 +73,8 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 public class UserResource extends AbstractSpagoBIResource {
 
 	private static final Logger LOGGER = LogManager.getLogger(UserResource.class);
+	private static final String[] ADMIN_ROLES = { "admin", "dev_role", "model_admin" };
+	private static final String[] USER_ROLES = { "user", "test_role" };
 	private static final String CHARSET = "; charset=UTF-8";
 
 	@GET
@@ -172,15 +171,20 @@ public class UserResource extends AbstractSpagoBIResource {
 		MessageBuilder msgBuilder = new MessageBuilder();
 		Locale locale = msgBuilder.getLocale(request);
 
-		ISbiUserDAO usersDao = null;
-
 		String userId = requestDTO.getUserId();
 		if (userId.startsWith(PublicProfile.PUBLIC_USER_PREFIX)) {
 			LOGGER.error("public is reserved prefix for user id");
 			throw new SpagoBIServiceException("SPAGOBI_SERVICE", "public_ is a reserved prefix for user name", null);
 		}
+		ISbiUserDAO usersDao = DAOFactory.getSbiUserDAO();
 
-		usersDao = DAOFactory.getSbiUserDAO();
+		boolean isAdmin = userRequestDtoIsAdmin(requestDTO);
+
+		if (!userCanBeAdded(requestDTO, usersDao, isAdmin)) {
+			LOGGER.error("The limit for creating {} users has been reached.", isAdmin ? "admin " : "end ");
+			throw new SpagoBIServiceException("Create user", "The limit for creating " + (isAdmin ? "admin " : "end ") + "users has been reached.");
+		}
+
 		usersDao.setUserProfile(getUserProfile());
 		SbiUser existingUser = usersDao.loadSbiUserByUserId(userId);
 		if (existingUser != null && userId.equals(existingUser.getUserId())) {
@@ -234,14 +238,12 @@ public class UserResource extends AbstractSpagoBIResource {
 			}
 		}
 
-		//if (password != null && password.length() > 0) {
 			try {
 				sbiUser.setPassword(Password.hashPassword(password));
 			} catch (Exception e) {
 				LOGGER.error("Impossible to encrypt Password", e);
 				throw new SpagoBIServiceException("SPAGOBI_SERVICE", "Impossible to encrypt Password", e);
 			}
-		//}
 
 		try {
 			Integer id = usersDao.fullSaveOrUpdateSbiUser(sbiUser);
@@ -252,6 +254,67 @@ public class UserResource extends AbstractSpagoBIResource {
 			LOGGER.error("Error while inserting resource", e);
 			throw new SpagoBIRestServiceException("Error while inserting resource", buildLocaleFromSession(), e);
 		}
+	}
+
+	private boolean userCanBeAdded(UserBO requestDTO, ISbiUserDAO usersDao, boolean isAdmin) {
+		List<SbiUser> dbUsers = usersDao.loadAllTenantsUsers();
+
+		List<SbiUser> usersToCheck = filterUsersToCheck(dbUsers, isAdmin);
+        return ProductProfiler.canAddAUser(usersToCheck.size(), isAdmin);
+	}
+
+	private List<SbiUser> filterUsersToCheck(List<SbiUser> sbiUsers, boolean isAdmin) {
+		ISbiUserDAO usersDao = DAOFactory.getSbiUserDAO();
+		usersDao.setUserProfile(getUserProfile());
+
+		return filterUsersWithRoles(sbiUsers, isAdmin, usersDao);
+	}
+
+	private List<SbiUser> filterUsersWithRoles(List<SbiUser> sbiUsers, boolean isAdmin, ISbiUserDAO usersDao) {
+		return sbiUsers.stream()
+				.filter(user -> hasApplicableRoles(user, isAdmin, usersDao))
+				.toList();
+	}
+
+	private boolean hasApplicableRoles(SbiUser user, boolean isAdmin, ISbiUserDAO usersDao) {
+		try {
+			ArrayList<SbiExtRoles> userRoles = usersDao.loadSbiUserRolesByIdAllTenants(user.getId());
+
+			return userRoles.stream()
+					.anyMatch(role -> role != null && isRoleApplicable(role, isAdmin));
+		} catch (Exception e) {
+			LOGGER.error("Error loading roles for user with id: {}", user.getId(), e);
+			return false;
+		}
+	}
+
+
+	private boolean userRequestDtoIsAdmin(@Valid UserBO requestDTO) {
+		List<Integer> sbiExtUserRoleses = requestDTO.getSbiExtUserRoleses();
+		IRoleDAO rolesDao = DAOFactory.getRoleDAO();
+		List<SbiExtRoles> adminRoles = new ArrayList<>();
+		if (sbiExtUserRoleses != null) {
+			for (Integer roleId : sbiExtUserRoleses) {
+				try {
+					SbiExtRoles role = rolesDao.loadSbiExtRoleById(roleId);
+					if (role != null && isRoleApplicable(role, true)) adminRoles.add(role);
+				} catch (Exception e) {
+					LOGGER.error("Error loading role with id: {}", roleId, e);
+					return false;
+				}
+			}
+		}
+		return !adminRoles.isEmpty();
+	}
+
+	private static boolean isThereAMatchInRoleArray(SbiExtRoles role, String... roles) {
+		return Arrays.stream(roles).anyMatch(role.getRoleTypeCode()::equalsIgnoreCase);
+	}
+
+	private static boolean isRoleApplicable(SbiExtRoles role, boolean checkAdmin) {
+		if (checkAdmin) return isThereAMatchInRoleArray(role, ADMIN_ROLES);
+
+		return isThereAMatchInRoleArray(role, USER_ROLES) && !isThereAMatchInRoleArray(role, ADMIN_ROLES);
 	}
 
 	@PUT
@@ -272,6 +335,14 @@ public class UserResource extends AbstractSpagoBIResource {
 		if (userId.startsWith(PublicProfile.PUBLIC_USER_PREFIX)) {
 			LOGGER.error("public is reserved prefix for user id");
 			throw new SpagoBIServiceException("SPAGOBI_SERVICE", "public_ is a reserved prefix for user name", null);
+		}
+
+		usersDao = DAOFactory.getSbiUserDAO();
+		boolean isAdmin = userRequestDtoIsAdmin(requestDTO);
+
+		if (!userCanBeAdded(requestDTO, usersDao, isAdmin)) {
+			LOGGER.error("The limit for creating {} users has been reached.", isAdmin ? "admin " : "end ");
+			throw new SpagoBIServiceException("Update user", "The limit for creating " + (isAdmin ? "admin " : "end ") + "users has been reached.");
 		}
 
 		SbiUser sbiUser = new SbiUser();
@@ -300,7 +371,6 @@ public class UserResource extends AbstractSpagoBIResource {
 		ISbiAttributeDAO objDao = null;
 
 		try {
-			usersDao = DAOFactory.getSbiUserDAO();
 			usersDao.setUserProfile(getUserProfile());
 			sbiUserOriginal = usersDao.loadSbiUserById(sbiUser.getId());
 			objDao = DAOFactory.getSbiAttributeDAO();
