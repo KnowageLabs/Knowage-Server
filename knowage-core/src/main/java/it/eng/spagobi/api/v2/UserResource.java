@@ -176,10 +176,14 @@ public class UserResource extends AbstractSpagoBIResource {
 			LOGGER.error("public is reserved prefix for user id");
 			throw new SpagoBIServiceException("SPAGOBI_SERVICE", "public_ is a reserved prefix for user name", null);
 		}
-		ISbiUserDAO usersDao = null;
+		ISbiUserDAO usersDao = DAOFactory.getSbiUserDAO();
 
-		usersDao = DAOFactory.getSbiUserDAO();
-		checkIfUserCanBeAdded(requestDTO, usersDao);
+		boolean isAdmin = userRequestDtoIsAdmin(requestDTO);
+
+		if (!userCanBeAdded(requestDTO, usersDao, isAdmin)) {
+			LOGGER.error("The limit for creating {} users has been reached.", isAdmin ? "admin " : "end ");
+			throw new SpagoBIServiceException("Create user", "The limit for creating " + (isAdmin ? "admin " : "end ") + "users has been reached.");
+		}
 
 		usersDao.setUserProfile(getUserProfile());
 		SbiUser existingUser = usersDao.loadSbiUserByUserId(userId);
@@ -252,43 +256,38 @@ public class UserResource extends AbstractSpagoBIResource {
 		}
 	}
 
-	private void checkIfUserCanBeAdded(UserBO requestDTO, ISbiUserDAO usersDao) {
-		List<UserBO> dbUsers = usersDao.loadUsers();
+	private boolean userCanBeAdded(UserBO requestDTO, ISbiUserDAO usersDao, boolean isAdmin) {
+		List<SbiUser> dbUsers = usersDao.loadAllTenantsUsers();
 
-		boolean isAdmin = userRequestDtoIsAdmin(requestDTO);
+		List<SbiUser> usersToCheck = filterUsersToCheck(dbUsers, isAdmin);
+        return ProductProfiler.canAddAUser(usersToCheck.size(), isAdmin);
+	}
 
-		List<UserBO> usersToCheck = filterUsersToCheck(dbUsers, isAdmin);
-		if (!ProductProfiler.canAddAUser(usersToCheck.size(), isAdmin)) {
-			LOGGER.error("Maximum number of {} users reached", isAdmin ? "admin" : "end");
-			throw new SpagoBIRestServiceException("Maximum number of " + (isAdmin ? "admin" : "end") + " users reached", buildLocaleFromSession(),
-					new Throwable());
+	private List<SbiUser> filterUsersToCheck(List<SbiUser> sbiUsers, boolean isAdmin) {
+		ISbiUserDAO usersDao = DAOFactory.getSbiUserDAO();
+		usersDao.setUserProfile(getUserProfile());
+
+		return filterUsersWithRoles(sbiUsers, isAdmin, usersDao);
+	}
+
+	private List<SbiUser> filterUsersWithRoles(List<SbiUser> sbiUsers, boolean isAdmin, ISbiUserDAO usersDao) {
+		return sbiUsers.stream()
+				.filter(user -> hasApplicableRoles(user, isAdmin, usersDao))
+				.toList();
+	}
+
+	private boolean hasApplicableRoles(SbiUser user, boolean isAdmin, ISbiUserDAO usersDao) {
+		try {
+			ArrayList<SbiExtRoles> userRoles = usersDao.loadSbiUserRolesByIdAllTenants(user.getId());
+
+			return userRoles.stream()
+					.anyMatch(role -> role != null && isRoleApplicable(role, isAdmin));
+		} catch (Exception e) {
+			LOGGER.error("Error loading roles for user with id: {}", user.getId(), e);
+			return false;
 		}
 	}
 
-	private List<UserBO> filterUsersToCheck(List<UserBO> sbiUsers, boolean isAdmin) {
-        return sbiUsers.stream()
-                .filter(user -> {
-                    try {
-                        IRoleDAO rolesDao = DAOFactory.getRoleDAO();
-                        rolesDao.setUserProfile(getUserProfile());
-                        return user.getSbiExtUserRoleses().stream()
-                                .anyMatch(roleId -> {
-                                    try {
-                                        SbiExtRoles role = rolesDao.loadSbiExtRoleById((Integer) roleId);
-                                        return role != null &&
-                                                isRoleApplicable(role, isAdmin);
-                                    } catch (Exception e) {
-										LOGGER.error("Error loading role with id: {}", roleId, e);
-                                        return false;
-                                    }
-                                });
-                    } catch (Exception e) {
-                        LOGGER.error("Error accessing roles DAO", e);
-                        return false;
-                    }
-                })
-                .toList();
-	}
 
 	private boolean userRequestDtoIsAdmin(@Valid UserBO requestDTO) {
 		List<Integer> sbiExtUserRoleses = requestDTO.getSbiExtUserRoleses();
@@ -339,8 +338,12 @@ public class UserResource extends AbstractSpagoBIResource {
 		}
 
 		usersDao = DAOFactory.getSbiUserDAO();
+		boolean isAdmin = userRequestDtoIsAdmin(requestDTO);
 
-		checkIfUserCanBeAdded(requestDTO, usersDao);
+		if (!userCanBeAdded(requestDTO, usersDao, isAdmin)) {
+			LOGGER.error("The limit for creating {} users has been reached.", isAdmin ? "admin " : "end ");
+			throw new SpagoBIServiceException("Update user", "The limit for creating " + (isAdmin ? "admin " : "end ") + "users has been reached.");
+		}
 
 		SbiUser sbiUser = new SbiUser();
 		sbiUser.changeId(id);

@@ -229,6 +229,31 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO
 		}
 	}
 
+	@Override
+	public ArrayList<SbiExtRoles> loadSbiUserRolesByIdAllTenants(int id) {
+		LOGGER.debug("IN");
+
+		Session aSession = null;
+		Transaction tx = null;
+		try {
+			aSession = getSession();
+			disableTenantFilter(aSession);
+			tx = aSession.beginTransaction();
+			String q = "select us.sbiExtUserRoleses from SbiUser us where us.id = :id";
+			Query query = aSession.createQuery(q);
+			query.setInteger("id", id);
+
+			ArrayList<SbiExtRoles> result = (ArrayList<SbiExtRoles>) query.list();
+			return result;
+		} catch (HibernateException he) {
+			rollbackIfActive(tx);
+			throw new SpagoBIDAOException("Error while loading user role with id " + id, he);
+		} finally {
+			LOGGER.debug("OUT");
+			closeSessionIfOpen(aSession);
+		}
+	}
+
 	/**
 	 * Insert SbiUser
 	 *
@@ -420,6 +445,30 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO
 		} finally {
 			LOGGER.debug("OUT");
 			closeSessionIfOpen(aSession);
+		}
+	}
+
+	@Override
+	public ArrayList<SbiUser> loadAllTenantsUsers() {
+			LOGGER.debug("IN");
+
+			Session aSession = null;
+			Transaction tx = null;
+			try {
+				aSession = getSession();
+				this.disableTenantFilter(aSession);
+				tx = aSession.beginTransaction();
+				String q = "from SbiUser ";
+				Query query = aSession.createQuery(q);
+
+				ArrayList<SbiUser> result = (ArrayList<SbiUser>) query.list();
+				return result;
+			} catch (HibernateException he) {
+				rollbackIfActive(tx);
+				throw new SpagoBIDAOException("Error while loading users", he);
+			} finally {
+				LOGGER.debug("OUT");
+				closeSessionIfOpen(aSession);
 		}
 	}
 

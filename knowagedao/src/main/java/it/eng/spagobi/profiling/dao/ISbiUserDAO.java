@@ -50,6 +50,8 @@ public interface ISbiUserDAO extends ISpagoBIDao, EmittingEventDAO<UserEventsEme
 
 	ArrayList<SbiUser> loadSbiUsers();
 
+	ArrayList<SbiUser> loadAllTenantsUsers();
+
 	ArrayList<UserBO> loadUsers();
 
 	List<UserBO> loadUsers(QueryFilters filters);
@@ -88,4 +90,5 @@ public interface ISbiUserDAO extends ISpagoBIDao, EmittingEventDAO<UserEventsEme
 
 	void resetOtpSecret(Integer userId);
 
+	ArrayList<SbiExtRoles> loadSbiUserRolesByIdAllTenants(int id);
 }
