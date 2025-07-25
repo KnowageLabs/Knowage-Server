@@ -220,12 +220,17 @@ public class DashboardExcelExporter extends Common {
 
             int exportedSheets = 0;
             Map<String, Map<String, JSONArray>> selections = getSelections(body);
+
             JSONArray driversFromBody = getDrivers(body);
             JSONObject drivers = transformDriversForDatastore(driversFromBody);
             JSONArray parameters = getParametersFromBody(body);
 
             if (isDashboardSingleWidgetExport) {
-                exportedSheets = exportWidget(body, wb, null, selections, drivers, parameters);
+                if (body.has("datasetDrivers") && body.getJSONArray("datasetDrivers") != null && body.getJSONArray("datasetDrivers").length() > 0) {
+                    exportedSheets = exportWidget(body, wb, null, selections, transformDriversForDatastore(body.getJSONArray("datasetDrivers")), parameters);
+                } else {
+                    exportedSheets = exportWidget(body, wb, null, selections, drivers, parameters);
+                }
             } else {
                 JSONArray widgetsJson = getDashboardWidgetsJson(stringifiedBody);
                 exportedSheets += exportDashboard(widgetsJson, wb, getDocumentName(body), selections, drivers, parameters);
@@ -236,6 +241,8 @@ public class DashboardExcelExporter extends Common {
                 fillDashboardSelectionsSheetWithData(selections, selectionsSheet);
                 exportedSheets++;
             }
+
+            transformDatasetDriversForExcelSheet(body, driversFromBody, parameters);
 
             if (driversFromBody != null && driversFromBody.length() > 0) {
                 Sheet driversSheet = createUniqueSafeSheetForSelections(wb, "Filters");
@@ -269,28 +276,117 @@ public class DashboardExcelExporter extends Common {
 
     }
 
+    private void transformDatasetDriversForExcelSheet(JSONObject body, JSONArray driversFromBody, JSONArray parameters) {
+        try {
+            if (body.has("datasetDrivers") && body.getJSONArray("datasetDrivers") != null && body.getJSONArray("datasetDrivers").length() > 0) {
+                for (int i = 0; i < body.getJSONArray("datasetDrivers").length(); i++) {
+                    JSONObject datasetDriver = body.getJSONArray("datasetDrivers").getJSONObject(i);
+                    getParameterValuesFromDatasetDriver(driversFromBody, datasetDriver);
+                }
+
+            } else if (body.has("configuration") && body.getJSONObject("configuration") != null && body.getJSONObject("configuration").has("datasets") && body.getJSONObject("configuration").getJSONArray("datasets") != null && body.getJSONObject("configuration").getJSONArray("datasets").length() > 0) {
+                for (int i = 0; i < body.getJSONObject("configuration").getJSONArray("datasets").length(); i++) {
+                    JSONObject dataset = body.getJSONObject("configuration").getJSONArray("datasets").getJSONObject(i);
+                    if (dataset.has("drivers") && dataset.getJSONArray("drivers") != null && dataset.getJSONArray("drivers").length() > 0) {
+                        for (int j = 0; j < dataset.getJSONArray("drivers").length(); j++) {
+                            JSONObject datasetDriver = dataset.getJSONArray("drivers").getJSONObject(j);
+                            getParameterValuesFromDatasetDriver(driversFromBody, datasetDriver);
+                        }
+                    }
+                }
+            }
+
+            transformParametersForExcelSheet(parameters, driversFromBody);
+        } catch (JSONException jsonException) {
+            LOGGER.error("Unable to transform driver", jsonException);
+            throw new SpagoBIRuntimeException("Unable to transform driver", jsonException);
+        }
+    }
+
+    private void transformParametersForExcelSheet(JSONArray parameters, JSONArray driversFromBody) {
+        if (parameters != null && parameters.length() > 0) {
+            for (int i = 0; i < parameters.length(); i++) {
+                try {
+                    JSONObject parameter = parameters.getJSONObject(i);
+                    try {
+                        parameter.put("value", parameter.getString("value"));
+                    } catch (JSONException e) {
+                        parameter.put("value", parameter.getJSONArray("value").toString());
+                    }
+                    parameter.put("description", "NOT APPLICABLE");
+                    parameter.put("driverLabel", "NOT APPLICABLE");
+                    parameter.put("type", "NOT APPLICABLE");
+                    parameter.put("urlName", "NOT APPLICABLE");
+                    driversFromBody.put(parameter);
+
+                } catch (JSONException e) {
+                    LOGGER.error("Unable to transform parameter", e);
+                }
+            }
+        }
+    }
+
+    private void getParameterValuesFromDatasetDriver(JSONArray driversFromBody, JSONObject datasetDriver) throws JSONException {
+        JSONArray parameterValues = datasetDriver.getJSONArray("parameterValue");
+        if (parameterValues != null && parameterValues.length() > 0) {
+            for (int k = 0; k < parameterValues.length(); k++) {
+                JSONObject parameterValue = parameterValues.getJSONObject(k);
+                if (!datasetDriver.has("value")) {
+                    datasetDriver.put("value", parameterValue.getString("value"));
+                } else {
+                    datasetDriver.put("value","," + parameterValue.getString("value"));
+                }
+            }
+        }
+        datasetDriver.put("name", datasetDriver.getString("driverLabel"));
+        driversFromBody.put(datasetDriver);
+    }
+
     private JSONObject transformDriversForDatastore(JSONArray driversFromBody) {
 
         JSONObject drivers = new JSONObject();
 
-        try {
             if (driversFromBody != null && driversFromBody.length() > 0) {
                 for (int i = 0; i < driversFromBody.length(); i++) {
-                    JSONObject driver = driversFromBody.getJSONObject(i);
-                    String urlName = driver.getString("urlName");
-                    JSONArray values = new JSONArray();
-                    JSONObject value = new JSONObject();
-                    value.put("value", driver.getString("value"));
-                    value.put("description", driver.getString("description"));
-                    values.put(value);
-                    drivers.put(urlName, values);
+                    try {
+                        JSONObject driver = driversFromBody.getJSONObject(i);
+                        String urlName = driver.getString("urlName");
+                        JSONArray values = new JSONArray();
+                        JSONObject value = new JSONObject();
+                        value.put("value", driver.getString("value"));
+                        value.put("description", driver.getString("description"));
+                        values.put(value);
+                        drivers.put(urlName, values);
+                    }
+                    catch (JSONException e) {
+                        try {
+                            getDatasetDrivers(driversFromBody, i, drivers);
+                        } catch (JSONException e1) {
+                            LOGGER.error("Unable to transform driver", e1);
+                            throw new SpagoBIRuntimeException("Unable to transform driver", e1);
+                        }
+                    }
                 }
             }
-        } catch (JSONException e) {
-            throw new SpagoBIRuntimeException("Unable to transform drivers for datastore", e);
-        }
 
         return drivers;
+    }
+
+    private static void getDatasetDrivers(JSONArray driversFromBody, int i, JSONObject drivers) throws JSONException {
+        JSONObject driver = driversFromBody.getJSONObject(i);
+        String urlName = driver.getString("urlName");
+        JSONArray values = new JSONArray();
+        JSONArray parameterValues = driver.getJSONArray("parameterValue");
+        if (parameterValues != null && parameterValues.length() > 0) {
+            for (int j = 0; j < parameterValues.length(); j++) {
+                JSONObject parameterValue = parameterValues.getJSONObject(j);
+                JSONObject value = new JSONObject();
+                value.put("value", parameterValue.getString("value"));
+                value.put("description", parameterValue.getString("description"));
+                values.put(value);
+            }
+        }
+        drivers.put(urlName, values);
     }
 
     private void exportEmptyExcel(Workbook wb) {
@@ -530,6 +626,10 @@ public class DashboardExcelExporter extends Common {
             cell6.setCellValue("Driver label");
             cell6.setCellStyle(headerCellStyle);
 
+            Cell cell7 = newheader.createCell(6);
+            cell7.setCellValue("Driver type");
+            cell7.setCellStyle(headerCellStyle);
+
             int j = headerIndex + 2;
 
             for (int i = 0; i < drivers.length(); i++) {
@@ -541,6 +641,7 @@ public class DashboardExcelExporter extends Common {
                 newRow.createCell(3).setCellValue(driver.getString("value"));
                 newRow.createCell(4).setCellValue(driver.getString("urlName"));
                 newRow.createCell(5).setCellValue(driver.getString("driverLabel"));
+                newRow.createCell(6).setCellValue(setDriverType(driver));
 
                 j++;
             }
@@ -550,6 +651,22 @@ public class DashboardExcelExporter extends Common {
             throw new SpagoBIRuntimeException("Cannot fill drivers sheet", e);
         }
 
+    }
+
+    private String setDriverType(JSONObject driver) {
+        if (driver.has("parameterValue")) {
+            return "DATASET DRIVER";
+        } else {
+            try {
+                if (driver.getString("description").equals("NOT APPLICABLE")) {
+                    return "DATASET PARAMETER";
+                } else {
+                    return "DOCUMENT DRIVER";
+                }
+            } catch (JSONException e) {
+                throw new RuntimeException(e);
+            }
+        }
     }
 
     private JSONArray getDrivers(JSONObject body) {
@@ -588,6 +705,27 @@ public class DashboardExcelExporter extends Common {
         }
     }
 
+    private JSONArray getParametersFromSingleWidgetBody(JSONObject body) {
+        try {
+            JSONArray parametersToReturn = new JSONArray();
+            if (body.has("parameters")) {
+                JSONArray parameters = body.getJSONArray("parameters");
+                if (parameters.length() > 0) {
+                    for (int i = 0; i < parameters.length(); i++) {
+                        JSONObject parameter = parameters.getJSONObject(i);
+                        parameter.put("dataset", body.getInt("dataset"));
+                        getActualValueFromDriverPlaceholder(body, parametersToReturn, parameter);
+                    }
+                }
+            }
+            return parametersToReturn;
+        } catch (JSONException e) {
+            LOGGER.error("Cannot get parameters from body", e);
+            throw new SpagoBIRuntimeException("Cannot get parameters from body", e);
+        }
+    }
+
+
     private void getActualValueFromDriverPlaceholder(JSONObject body, JSONArray parametersToReturn, JSONObject parameter) throws JSONException {
         if (parameter.getString("value").contains("$P{")) {
             String placeholderToReplace = parameter.getString("value").replace("$P{", "");
@@ -611,27 +749,6 @@ public class DashboardExcelExporter extends Common {
             throw new RuntimeException(e);
         }
         return actualValue;
-    }
-
-    private JSONArray getParametersFromSingleWidgetBody(JSONObject body) {
-
-        try {
-            JSONArray parametersToReturn = new JSONArray();
-            if (body.has("parameters")) {
-                JSONArray parameters = body.getJSONArray("parameters");
-                if (parameters.length() > 0) {
-                    for (int i = 0; i < parameters.length(); i++) {
-                        JSONObject parameter = parameters.getJSONObject(i);
-                        parameter.put("dataset", body.getInt("dataset"));
-                        getActualValueFromDriverPlaceholder(body, parametersToReturn, parameter);
-                    }
-                }
-            }
-            return parametersToReturn;
-        } catch (JSONException e) {
-            LOGGER.error("Cannot get parameters from body", e);
-            throw new SpagoBIRuntimeException("Cannot get parameters from body", e);
-        }
     }
 
     private JSONArray getDriversFromBody(JSONObject body) throws JSONException {
@@ -684,12 +801,40 @@ public class DashboardExcelExporter extends Common {
         for (int i = 0; i < widgetsArray.length(); i++) {
             try {
                 JSONObject currWidget = widgetsArray.getJSONObject(i);
-                exportedSheets = exportWidget(currWidget, wb, documentName, selections, drivers, parameters);
+                drivers = setDatasetDriversIfPresent(body, currWidget, drivers);
+                if (currWidget.has("datasetDrivers") && currWidget.getJSONArray("datasetDrivers") != null && currWidget.getJSONArray("datasetDrivers").length() > 0) {
+                    exportedSheets = exportWidget(currWidget, wb, documentName, selections, transformDriversForDatastore(currWidget.getJSONArray("datasetDrivers")), parameters);
+                } else {
+                    exportedSheets = exportWidget(currWidget, wb, documentName, selections, drivers, parameters);
+                }
             } catch (Exception e) {
                 LOGGER.error("Error while exporting widget", e);
             }
         }
         return exportedSheets;
+    }
+
+    private JSONObject setDatasetDriversIfPresent(JSONObject body, JSONObject currWidget, JSONObject drivers) {
+        try {
+            if (body.has("configuration") && body.getJSONObject("configuration").has("datasets") && body.getJSONObject("configuration").getJSONArray("datasets").length() > 0) {
+                for (int i = 0; i < body.getJSONObject("configuration").getJSONArray("datasets").length(); i++) {
+                    JSONObject dataset = body.getJSONObject("configuration").getJSONArray("datasets").getJSONObject(i);
+                    if (currWidget.has("dataset") && currWidget.getInt("dataset") == dataset.getInt("id")) {
+                        if (dataset.has("drivers") && dataset.getJSONArray("drivers").length() > 0) {
+                            JSONObject datasetDrivers = transformDriversForDatastore(dataset.getJSONArray("drivers"));
+                            for (int j = 0; j < datasetDrivers.names().length(); j++) {
+                                drivers.put(datasetDrivers.names().getString(j), datasetDrivers.get(datasetDrivers.names().getString(j)));
+                            }
+                        }
+                    }
+                }
+            }
+
+            return drivers;
+        } catch (JSONException jsonException) {
+            LOGGER.error("Cannot set dataset drivers if present", jsonException);
+            throw new SpagoBIRuntimeException("Cannot set dataset drivers if present", jsonException);
+        }
     }
 
     private void fillDashboardSelectionsSheetWithData(Map<String, Map<String, JSONArray>> selections, Sheet selectionsSheet) {
