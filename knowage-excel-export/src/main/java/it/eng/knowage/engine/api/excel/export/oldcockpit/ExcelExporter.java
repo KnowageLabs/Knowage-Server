@@ -47,6 +47,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.regex.Matcher;
@@ -1037,14 +1038,15 @@ public class ExcelExporter extends AbstractFormatExporter {
 
     private static void setSummaryRowValue(JSONObject[] columnStyles, int c, Object value, Cell cell, String summaryRowLabel, JSONObject column, boolean isOnlyPinned) {
         try {
+            CellStyle summaryStyle = cell.getSheet().getWorkbook().createCellStyle();
+            summaryStyle.setAlignment(HorizontalAlignment.RIGHT);
+
             int precision = (columnStyles[c] != null && columnStyles[c].has("precision")) ? columnStyles[c].getInt("precision") : 2;
             String formattedValue;
             try {
-                if (precision == 0) {
-                    formattedValue = new DecimalFormat("#,##0").format(value);
-                } else {
-                    formattedValue = new DecimalFormat("#,##0." + StringUtils.repeat("0", precision)).format(value);
-                }
+                DecimalFormat formatter = getDecimalFormat(precision);
+                formattedValue = formatter.format(value);
+
             } catch (Exception e) {
                 formattedValue = value.toString();
             }
@@ -1053,12 +1055,14 @@ public class ExcelExporter extends AbstractFormatExporter {
                 if (column.has("pinned") || value.equals("")) {
                     cell.setCellValue(formattedValue);
                 } else {
+                    cell.setCellStyle(summaryStyle);
                     cell.setCellValue(valueWithLabel);
                 }
             } else {
                 if (column.has("pinned")) {
                     cell.setCellValue(valueWithLabel);
                 } else {
+                    cell.setCellStyle(summaryStyle);
                     cell.setCellValue(formattedValue);
                 }
             }
@@ -1066,6 +1070,23 @@ public class ExcelExporter extends AbstractFormatExporter {
             LOGGER.debug("Error while exporting summary row: ", e);
             cell.setCellValue(value.toString());
         }
+    }
+
+    private static DecimalFormat getDecimalFormat(int precision) {
+        DecimalFormat formatter;
+        // Create custom DecimalFormatSymbols with dot as grouping separator and comma as decimal separator
+        DecimalFormatSymbols symbols = new DecimalFormatSymbols();
+        symbols.setGroupingSeparator('.');
+        symbols.setDecimalSeparator(',');
+
+        if (precision == 0) {
+            // Pattern should use standard # symbols, output will use custom separators
+            formatter = new DecimalFormat("#,##0", symbols);
+        } else {
+            // Pattern should use standard # symbols, output will use custom separators
+            formatter = new DecimalFormat("#,##0." + StringUtils.repeat("0", precision), symbols);
+        }
+        return formatter;
     }
 
     private int doCockpitSummaryRowsLogic(JSONObject widgetData, int numberOfSummaryRows, List<String> summaryRowsLabels) throws JSONException {
