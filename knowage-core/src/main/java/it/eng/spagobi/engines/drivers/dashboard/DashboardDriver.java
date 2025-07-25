@@ -21,6 +21,17 @@
  */
 package it.eng.spagobi.engines.drivers.dashboard;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+
+import org.apache.log4j.Logger;
+import org.json.JSONException;
+
+import com.jayway.jsonpath.Configuration;
+import com.jayway.jsonpath.JsonPath;
+import com.jayway.jsonpath.Option;
+
 import it.eng.spagobi.engines.drivers.cockpit.CockpitDriver;
 
 /**
@@ -29,5 +40,25 @@ import it.eng.spagobi.engines.drivers.cockpit.CockpitDriver;
  *         The purpose of this class is to inherit the behavior of the cockpit UNTIL the transition from the cockpit to the dashboard is completed
  */
 public class DashboardDriver extends CockpitDriver {
+
+	private static Logger logger = Logger.getLogger(DashboardDriver.class);
+
+	@Override
+	public ArrayList<String> getFunctionsAssociated(byte[] contentTemplate) throws JSONException {
+		logger.debug("IN");
+
+		ArrayList<String> functionUuids = new ArrayList<>();
+		if (contentTemplate == null) {
+			logger.error("Template content non returned. Impossible get associated functions. Check the template!");
+			return functionUuids;
+		}
+
+		Configuration conf = Configuration.builder().options(Option.DEFAULT_PATH_LEAF_TO_NULL).build();
+		List<String> catalogFunction = JsonPath.using(conf).parse(new String(contentTemplate)).read("$.widgets[*].columns[*].catalogFunctionId");
+		functionUuids.addAll(catalogFunction.stream().filter(Objects::nonNull).toList());
+
+		logger.debug("OUT");
+		return functionUuids;
+	}
 
 }
