@@ -11,9 +11,13 @@
             <key-property name="varName" type="string">
                 <column name="VAR_NAME" length="100" />
             </key-property>
+            <key-property name="organization" type="string">
+                <column name="ORGANIZATION" length="20" />
+            </key-property>
         </composite-id>
         <many-to-one name="sbiCatalogFunction" class="it.eng.spagobi.functions.metadata.SbiCatalogFunction" update="false" insert="false" fetch="select">
             <column name="FUNCTION_UUID" length="100" not-null="true" />
+            <column name="ORGANIZATION" length="20" not-null="true"/>
         </many-to-one>
         
         <property name="varType" type="string">
@@ -53,7 +57,7 @@
 		        <property name="sbiVersionDe" type="string">
 		            <column name="SBI_VERSION_DE" length="10" not-null="false" />
 		        </property>                 
-		        <property name="organization" type="string">
+		        <property name="organization" type="string" update="false" insert="false">
 		            <column name="ORGANIZATION" length="20" not-null="false" />
 		        </property>      
 		</component>

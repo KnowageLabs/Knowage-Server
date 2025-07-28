@@ -323,10 +323,10 @@ public class FunctionsCatalogResource extends AbstractSpagoBIResource {
 	private JSONObject sbiFunctionToJsonObject(SbiCatalogFunction sbiFunction) {
 
 		JSONObject ret = null;
-		boolean hasPermission = hasPermission(sbiFunction.getFunctionUuid());
+		boolean hasPermission = hasPermission(sbiFunction.getId().getFunctionUuid());
 		try {
 			ret = new JSONObject();
-			ret.put("id", sbiFunction.getFunctionUuid());
+			ret.put("id", sbiFunction.getId().getFunctionUuid());
 			ret.put("name", sbiFunction.getName());
 			ret.put("description", sbiFunction.getDescription());
 			ret.put("benchmarks", sbiFunction.getBenchmarks());
@@ -404,8 +404,9 @@ public class FunctionsCatalogResource extends AbstractSpagoBIResource {
 				String userId = (String) profile.getUserId();
 				if (function.getOwner().equals(userId)) {
 					return true;
-				} else
+				} else {
 					return false;
+				}
 			}
 		}
 	}

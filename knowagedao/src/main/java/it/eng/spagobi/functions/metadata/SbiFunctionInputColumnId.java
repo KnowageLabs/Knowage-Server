@@ -1,5 +1,7 @@
 package it.eng.spagobi.functions.metadata;
 
+import java.util.Objects;
+
 public class SbiFunctionInputColumnId implements java.io.Serializable {
 
 	/**
@@ -8,13 +10,15 @@ public class SbiFunctionInputColumnId implements java.io.Serializable {
 	private static final long serialVersionUID = -7037043321436197370L;
 	private String functionUuid;
 	private String colName;
+	private String organization;
 
 	public SbiFunctionInputColumnId() {
 	}
 
-	public SbiFunctionInputColumnId(String functionUuid, String colName) {
+	public SbiFunctionInputColumnId(String functionUuid, String colName, String organization) {
 		this.functionUuid = functionUuid;
 		this.colName = colName;
+		this.organization = organization;
 	}
 
 	public String getFunctionUuid() {
@@ -33,32 +37,31 @@ public class SbiFunctionInputColumnId implements java.io.Serializable {
 		this.colName = colName;
 	}
 
+	public String getOrganization() {
+		return organization;
+	}
+
+	public void setOrganization(String organization) {
+		this.organization = organization;
+	}
+
 	@Override
 	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((colName == null) ? 0 : colName.hashCode());
-		result = prime * result + ((functionUuid == null) ? 0 : functionUuid.hashCode());
-		return result;
+		return Objects.hash(colName, functionUuid, organization);
 	}
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
+		if (this == obj) {
 			return true;
-		if (!(obj instanceof SbiFunctionInputColumnId))
+		}
+		if (obj == null) {
 			return false;
+		}
+		if (getClass() != obj.getClass()) {
+			return false;
+		}
 		SbiFunctionInputColumnId other = (SbiFunctionInputColumnId) obj;
-		if (colName == null) {
-			if (other.colName != null)
-				return false;
-		} else if (!colName.equals(other.colName))
-			return false;
-		if (functionUuid == null) {
-			if (other.functionUuid != null)
-				return false;
-		} else if (!functionUuid.equals(other.functionUuid))
-			return false;
-		return true;
+		return Objects.equals(colName, other.colName) && Objects.equals(functionUuid, other.functionUuid) && Objects.equals(organization, other.organization);
 	}
 }

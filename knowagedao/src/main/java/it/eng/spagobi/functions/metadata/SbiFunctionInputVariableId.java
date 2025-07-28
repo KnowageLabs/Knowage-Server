@@ -1,5 +1,7 @@
 package it.eng.spagobi.functions.metadata;
 
+import java.util.Objects;
+
 // Generated 10-mag-2016 14.47.57 by Hibernate Tools 3.4.0.CR1
 
 /**
@@ -13,13 +15,15 @@ public class SbiFunctionInputVariableId implements java.io.Serializable {
 	private static final long serialVersionUID = 5802951016348664288L;
 	private String functionUuid;
 	private String varName;
+	private String organization;
 
 	public SbiFunctionInputVariableId() {
 	}
 
-	public SbiFunctionInputVariableId(String functionUuid, String varName) {
+	public SbiFunctionInputVariableId(String functionUuid, String varName, String organization) {
 		this.functionUuid = functionUuid;
 		this.varName = varName;
+		this.organization = organization;
 	}
 
 	public String getFunctionUuid() {
@@ -38,33 +42,32 @@ public class SbiFunctionInputVariableId implements java.io.Serializable {
 		this.varName = varName;
 	}
 
+	public String getOrganization() {
+		return organization;
+	}
+
+	public void setOrganization(String organization) {
+		this.organization = organization;
+	}
+
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
+		if (this == obj) {
 			return true;
-		if (!(obj instanceof SbiFunctionInputVariableId))
+		}
+		if (obj == null) {
 			return false;
+		}
+		if (getClass() != obj.getClass()) {
+			return false;
+		}
 		SbiFunctionInputVariableId other = (SbiFunctionInputVariableId) obj;
-		if (functionUuid == null) {
-			if (other.functionUuid != null)
-				return false;
-		} else if (!functionUuid.equals(other.functionUuid))
-			return false;
-		if (varName == null) {
-			if (other.varName != null)
-				return false;
-		} else if (!varName.equals(other.varName))
-			return false;
-		return true;
+		return Objects.equals(functionUuid, other.functionUuid) && Objects.equals(organization, other.organization) && Objects.equals(varName, other.varName);
 	}
 
 	@Override
 	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((functionUuid == null) ? 0 : functionUuid.hashCode());
-		result = prime * result + ((varName == null) ? 0 : varName.hashCode());
-		return result;
+		return Objects.hash(functionUuid, organization, varName);
 	}
 
 }

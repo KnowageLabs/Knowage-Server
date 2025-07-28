@@ -4,9 +4,14 @@
 <!-- Generated 10-mag-2016 14.47.58 by Hibernate Tools 3.4.0.CR1 -->
 <hibernate-mapping>
     <class name="it.eng.spagobi.functions.metadata.SbiCatalogFunction" table="SBI_CATALOG_FUNCTION">
-        <id name="functionUuid" type="string">
-            <column name="FUNCTION_UUID" length="100" not-null="true" />
-        </id>
+         <composite-id name="id" class="it.eng.spagobi.functions.metadata.SbiCatalogFunctionId">
+            <key-property name="functionUuid" type="string">
+                <column name="FUNCTION_UUID" length="100"/>
+            </key-property>
+            <key-property name="organization" type="string">
+                <column name="ORGANIZATION" length="20" />
+            </key-property>
+        </composite-id>
         <property name="name" type="string">
             <column name="NAME" length="100" not-null="true" />
         </property>
@@ -73,7 +78,7 @@
 		        <property name="sbiVersionDe" type="string">
 		            <column name="SBI_VERSION_DE" length="10" not-null="false" />
 		        </property>                 
-		        <property name="organization" type="string">
+		        <property name="organization" type="string" update="false" insert="false">
 		            <column name="ORGANIZATION" length="20" not-null="false" />
 		        </property>      
 		</component>
@@ -85,18 +90,21 @@
         <set name="sbiFunctionInputVariables"  cascade="all" table="SBI_FUNCTION_INPUT_VARIABLE" inverse="true" lazy="false" fetch="join">
             <key>
                 <column name="FUNCTION_UUID" not-null="true" />
+                <column name="ORGANIZATION" length="20" not-null="true"/>
             </key>
             <one-to-many class="it.eng.spagobi.functions.metadata.SbiFunctionInputVariable" />
         </set>
         <set name="sbiFunctionOutputColumns" cascade="all" table="SBI_FUNCTION_OUTPUT_COLUMN" inverse="true" lazy="false" fetch="join">
             <key>
                 <column name="FUNCTION_UUID" not-null="true" />
+                <column name="ORGANIZATION" length="20" not-null="true"/>
             </key>
             <one-to-many class="it.eng.spagobi.functions.metadata.SbiFunctionOutputColumn" />
         </set>
         <set name="sbiFunctionInputColumns" cascade="all" table="SBI_FUNCTION_INPUT_COLUMN" inverse="true" lazy="false" fetch="join">
             <key>
                 <column name="FUNCTION_UUID" not-null="true" />
+                <column name="ORGANIZATION" length="20" not-null="true"/>
             </key>
             <one-to-many class="it.eng.spagobi.functions.metadata.SbiFunctionInputColumn" />
         </set>

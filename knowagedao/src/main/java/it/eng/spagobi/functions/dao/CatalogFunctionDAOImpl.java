@@ -22,6 +22,7 @@ import it.eng.spagobi.commons.dao.SpagoBIDAOException;
 import it.eng.spagobi.functions.metadata.IInputVariable;
 import it.eng.spagobi.functions.metadata.IOutputColumn;
 import it.eng.spagobi.functions.metadata.SbiCatalogFunction;
+import it.eng.spagobi.functions.metadata.SbiCatalogFunctionId;
 import it.eng.spagobi.functions.metadata.SbiFunctionInputColumn;
 import it.eng.spagobi.functions.metadata.SbiFunctionInputColumnId;
 import it.eng.spagobi.functions.metadata.SbiFunctionInputVariable;
@@ -68,7 +69,7 @@ public class CatalogFunctionDAOImpl extends AbstractHibernateDAO implements ICat
 			StringBuilder query = new StringBuilder();
 			query.append("select sbf from SbiCatalogFunction sbf ");
 			query.append(", SbiObjFunction sof ");
-			query.append("where sbf.functionUuid=sof.functionUuid ");
+			query.append("where sbf.id.functionUuid=sof.functionUuid ");
 			query.append("and sof.sbiObject.biobjId = :biobjId");
 
 			Query hibQuery = session.createQuery(query.toString());
@@ -150,7 +151,7 @@ public class CatalogFunctionDAOImpl extends AbstractHibernateDAO implements ICat
 			String value = currValue.getValue();
 			String type = currValue.getType();
 			variable = new SbiFunctionInputVariable(
-					new SbiFunctionInputVariableId(sbiCatalogFunction.getFunctionUuid(), currKey), sbiCatalogFunction,
+					new SbiFunctionInputVariableId(sbiCatalogFunction.getId().getFunctionUuid(), currKey, this.getTenant()), sbiCatalogFunction,
 					type, value);
 			updateSbiCommonInfo4Insert(variable);
 			inputVarSet.add(variable);
@@ -169,7 +170,7 @@ public class CatalogFunctionDAOImpl extends AbstractHibernateDAO implements ICat
 			String currKey = currEntry.getKey();
 			String currValue = currEntry.getValue();
 			col = new SbiFunctionInputColumn(
-					new SbiFunctionInputColumnId(sbiCatalogFunction.getFunctionUuid(), currKey), sbiCatalogFunction,
+					new SbiFunctionInputColumnId(sbiCatalogFunction.getId().getFunctionUuid(), currKey, this.getTenant()), sbiCatalogFunction,
 					currValue);
 			updateSbiCommonInfo4Insert(col);
 			inputColSet.add(col);
@@ -190,7 +191,7 @@ public class CatalogFunctionDAOImpl extends AbstractHibernateDAO implements ICat
 			String fieldType = currValue.getFieldType();
 			String type = currEntry.getValue().getType();
 			col = new SbiFunctionOutputColumn(
-					new SbiFunctionOutputColumnId(sbiCatalogFunction.getFunctionUuid(), currKey), sbiCatalogFunction,
+					new SbiFunctionOutputColumnId(sbiCatalogFunction.getId().getFunctionUuid(), currKey, this.getTenant()), sbiCatalogFunction,
 					fieldType, type);
 			updateSbiCommonInfo4Insert(col);
 			outputColSet.add(col);
@@ -201,7 +202,12 @@ public class CatalogFunctionDAOImpl extends AbstractHibernateDAO implements ICat
 
 	private SbiCatalogFunction toSbiFunctionCatalog(CatalogFunction functionItem) {
 
-		SbiCatalogFunction hibFunctionCatalogItem = new SbiCatalogFunction(UUID.randomUUID());
+		SbiCatalogFunctionId id = new SbiCatalogFunctionId();
+		id.setFunctionUuid(UUID.randomUUID().toString());
+		id.setOrganization(this.getTenant());
+
+		SbiCatalogFunction hibFunctionCatalogItem = new SbiCatalogFunction();
+		hibFunctionCatalogItem.setId(id);
 		hibFunctionCatalogItem.setBenchmarks(functionItem.getBenchmarks());
 		hibFunctionCatalogItem.setFamily(functionItem.getFamily());
 		hibFunctionCatalogItem.setLanguage(functionItem.getLanguage());
@@ -313,7 +319,7 @@ public class CatalogFunctionDAOImpl extends AbstractHibernateDAO implements ICat
 		for (String colName : updatedCatalogFunction.getInputColumns().keySet()) {
 			String colType = updatedCatalogFunction.getInputColumns().get(colName);
 			SbiFunctionInputColumn col = new SbiFunctionInputColumn(
-					new SbiFunctionInputColumnId(hibCatFunction.getFunctionUuid(), colName), hibCatFunction, colType);
+					new SbiFunctionInputColumnId(hibCatFunction.getId().getFunctionUuid(), colName, this.getTenant()), hibCatFunction, colType);
 			updateSbiCommonInfo4Insert(col);
 			hibColsSet.add(col);
 		}
@@ -355,7 +361,7 @@ public class CatalogFunctionDAOImpl extends AbstractHibernateDAO implements ICat
 			String colFieldType = updatedCatalogFunction.getOutputColumns().get(colName).getFieldType();
 			String colType = updatedCatalogFunction.getOutputColumns().get(colName).getType();
 			SbiFunctionOutputColumn col = new SbiFunctionOutputColumn(
-					new SbiFunctionOutputColumnId(hibCatFunction.getFunctionUuid(), colName), hibCatFunction,
+					new SbiFunctionOutputColumnId(hibCatFunction.getId().getFunctionUuid(), colName, this.getTenant()), hibCatFunction,
 					colFieldType, colType);
 			updateSbiCommonInfo4Insert(col);
 			hibColsSet.add(col);
@@ -397,7 +403,7 @@ public class CatalogFunctionDAOImpl extends AbstractHibernateDAO implements ICat
 			String varType = updatedCatalogFunction.getInputVariables().get(varName).getType();
 			String varValue = updatedCatalogFunction.getInputVariables().get(varName).getValue();
 			SbiFunctionInputVariable variable = new SbiFunctionInputVariable(
-					new SbiFunctionInputVariableId(hibCatFunction.getFunctionUuid(), varName), hibCatFunction, varType,
+					new SbiFunctionInputVariableId(hibCatFunction.getId().getFunctionUuid(), varName, this.getTenant()), hibCatFunction, varType,
 					varValue);
 			updateSbiCommonInfo4Insert(variable);
 			hibVarsSet.add(variable);
@@ -512,7 +518,7 @@ public class CatalogFunctionDAOImpl extends AbstractHibernateDAO implements ICat
 			Assert.assertNotNull(session, "session cannot be null");
 			transaction = session.beginTransaction();
 			Query q = session.createQuery(
-					"select s.onlineScript from SbiCatalogFunction s where s.functionUuid = ? and organization = ?");
+					"select s.onlineScript from SbiCatalogFunction s where s.id.functionUuid = ? and organization = ?");
 			q.setString(0, uuid);
 			q.setString(1, organization);
 			scriptToReturn = (String) q.uniqueResult();
