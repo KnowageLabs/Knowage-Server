@@ -36,7 +36,9 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 
+import it.eng.spagobi.profiling.bo.UserBO;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
@@ -92,6 +94,10 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 public class UserUtilities {
 
 	private static final Logger LOGGER = Logger.getLogger(UserUtilities.class);
+
+	private static final String[] ADMIN_ROLES = { "admin", "dev_role", "model_admin" };
+	private static final String[] USER_ROLES = { "user", "test_role" };
+
 
 	public static String getSchema(String ente, IEngUserProfile userProfile) {
 		LOGGER.debug("Ente: " + ente);
@@ -1331,6 +1337,66 @@ public class UserUtilities {
 		}
 		return listRoles;
 	}
+
+
+	public static List<SbiUser> getAlreadyCreatedUsers(ISbiUserDAO usersDao, boolean isAdmin) {
+		List<SbiUser> dbUsers = usersDao.loadAllTenantsUsers();
+
+		return filterUsersToCheck(dbUsers, isAdmin);
+	}
+
+	public static List<SbiUser> filterUsersToCheck(List<SbiUser> sbiUsers, boolean isAdmin) {
+		ISbiUserDAO usersDao = DAOFactory.getSbiUserDAO();
+		return filterUsersWithRoles(sbiUsers, isAdmin, usersDao);
+	}
+
+
+	public static List<SbiUser> filterUsersWithRoles(List<SbiUser> sbiUsers, boolean isAdmin, ISbiUserDAO usersDao) {
+		return sbiUsers.stream()
+				.filter(user -> hasApplicableRoles(user, isAdmin, usersDao))
+				.toList();
+	}
+
+	public static boolean hasApplicableRoles(SbiUser user, boolean isAdmin, ISbiUserDAO usersDao) {
+		try {
+			ArrayList<SbiExtRoles> userRoles = usersDao.loadSbiUserRolesByIdAllTenants(user.getId());
+
+			return userRoles.stream()
+					.anyMatch(role -> role != null && isRoleApplicable(role, isAdmin));
+		} catch (Exception e) {
+			LOGGER.error("Error loading roles for user with id: " + user.getId(), e);
+			return false;
+		}
+	}
+
+	public static boolean userRequestDtoIsAdmin(@Valid UserBO requestDTO) {
+		List<Integer> sbiExtUserRoleses = requestDTO.getSbiExtUserRoleses();
+		IRoleDAO rolesDao = DAOFactory.getRoleDAO();
+		List<SbiExtRoles> adminRoles = new ArrayList<>();
+		if (sbiExtUserRoleses != null) {
+			for (Integer roleId : sbiExtUserRoleses) {
+				try {
+					SbiExtRoles role = rolesDao.loadSbiExtRoleById(roleId);
+					if (role != null && isRoleApplicable(role, true)) adminRoles.add(role);
+				} catch (Exception e) {
+					LOGGER.error("Error loading role with id: " + roleId, e);
+					return false;
+				}
+			}
+		}
+		return !adminRoles.isEmpty();
+	}
+
+	public static boolean isThereAMatchInRoleArray(SbiExtRoles role, String... roles) {
+		return Arrays.stream(roles).anyMatch(role.getRoleTypeCode()::equalsIgnoreCase);
+	}
+
+	public static boolean isRoleApplicable(SbiExtRoles role, boolean checkAdmin) {
+		if (checkAdmin) return isThereAMatchInRoleArray(role, ADMIN_ROLES);
+
+		return isThereAMatchInRoleArray(role, USER_ROLES) && !isThereAMatchInRoleArray(role, ADMIN_ROLES);
+	}
+
 
 	private UserUtilities() {
 	}

@@ -35,7 +35,6 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import it.eng.knowage.security.ProductProfiler;
-import it.eng.spagobi.commons.dao.IRoleDAO;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.owasp.esapi.Encoder;
@@ -178,9 +177,9 @@ public class UserResource extends AbstractSpagoBIResource {
 		}
 		ISbiUserDAO usersDao = DAOFactory.getSbiUserDAO();
 
-		boolean isAdmin = userRequestDtoIsAdmin(requestDTO);
+		boolean isAdmin = UserUtilities.userRequestDtoIsAdmin(requestDTO);
 
-		if (!userCanBeAdded(requestDTO, usersDao, isAdmin)) {
+		if (!userCanBeAdded(usersDao, isAdmin)) {
 			LOGGER.error("The limit for creating {} users has been reached.", isAdmin ? "admin " : "end ");
 			throw new SpagoBIServiceException("Create user", "The limit for creating " + (isAdmin ? "admin " : "end ") + "users has been reached.");
 		}
@@ -256,67 +255,6 @@ public class UserResource extends AbstractSpagoBIResource {
 		}
 	}
 
-	private boolean userCanBeAdded(UserBO requestDTO, ISbiUserDAO usersDao, boolean isAdmin) {
-		List<SbiUser> dbUsers = usersDao.loadAllTenantsUsers();
-
-		List<SbiUser> usersToCheck = filterUsersToCheck(dbUsers, isAdmin);
-        return ProductProfiler.canAddAUser(usersToCheck.size(), isAdmin);
-	}
-
-	private List<SbiUser> filterUsersToCheck(List<SbiUser> sbiUsers, boolean isAdmin) {
-		ISbiUserDAO usersDao = DAOFactory.getSbiUserDAO();
-		usersDao.setUserProfile(getUserProfile());
-
-		return filterUsersWithRoles(sbiUsers, isAdmin, usersDao);
-	}
-
-	private List<SbiUser> filterUsersWithRoles(List<SbiUser> sbiUsers, boolean isAdmin, ISbiUserDAO usersDao) {
-		return sbiUsers.stream()
-				.filter(user -> hasApplicableRoles(user, isAdmin, usersDao))
-				.toList();
-	}
-
-	private boolean hasApplicableRoles(SbiUser user, boolean isAdmin, ISbiUserDAO usersDao) {
-		try {
-			ArrayList<SbiExtRoles> userRoles = usersDao.loadSbiUserRolesByIdAllTenants(user.getId());
-
-			return userRoles.stream()
-					.anyMatch(role -> role != null && isRoleApplicable(role, isAdmin));
-		} catch (Exception e) {
-			LOGGER.error("Error loading roles for user with id: {}", user.getId(), e);
-			return false;
-		}
-	}
-
-
-	private boolean userRequestDtoIsAdmin(@Valid UserBO requestDTO) {
-		List<Integer> sbiExtUserRoleses = requestDTO.getSbiExtUserRoleses();
-		IRoleDAO rolesDao = DAOFactory.getRoleDAO();
-		List<SbiExtRoles> adminRoles = new ArrayList<>();
-		if (sbiExtUserRoleses != null) {
-			for (Integer roleId : sbiExtUserRoleses) {
-				try {
-					SbiExtRoles role = rolesDao.loadSbiExtRoleById(roleId);
-					if (role != null && isRoleApplicable(role, true)) adminRoles.add(role);
-				} catch (Exception e) {
-					LOGGER.error("Error loading role with id: {}", roleId, e);
-					return false;
-				}
-			}
-		}
-		return !adminRoles.isEmpty();
-	}
-
-	private static boolean isThereAMatchInRoleArray(SbiExtRoles role, String... roles) {
-		return Arrays.stream(roles).anyMatch(role.getRoleTypeCode()::equalsIgnoreCase);
-	}
-
-	private static boolean isRoleApplicable(SbiExtRoles role, boolean checkAdmin) {
-		if (checkAdmin) return isThereAMatchInRoleArray(role, ADMIN_ROLES);
-
-		return isThereAMatchInRoleArray(role, USER_ROLES) && !isThereAMatchInRoleArray(role, ADMIN_ROLES);
-	}
-
 	@PUT
 	@Path("/{id}")
 	@UserConstraint(functionalities = { CommunityFunctionalityConstants.PROFILE_MANAGEMENT,
@@ -338,9 +276,9 @@ public class UserResource extends AbstractSpagoBIResource {
 		}
 
 		usersDao = DAOFactory.getSbiUserDAO();
-		boolean isAdmin = userRequestDtoIsAdmin(requestDTO);
+		boolean isAdmin = UserUtilities.userRequestDtoIsAdmin(requestDTO);
 
-		if (!userCanBeAdded(requestDTO, usersDao, isAdmin)) {
+		if (!userCanBeAdded(usersDao, isAdmin)) {
 			LOGGER.error("The limit for creating {} users has been reached.", isAdmin ? "admin " : "end ");
 			throw new SpagoBIServiceException("Update user", "The limit for creating " + (isAdmin ? "admin " : "end ") + "users has been reached.");
 		}
@@ -445,6 +383,13 @@ public class UserResource extends AbstractSpagoBIResource {
 			throw new SpagoBIRestServiceException(e.getMessage(), buildLocaleFromSession(), e);
 		}
 	}
+
+
+	public boolean userCanBeAdded(ISbiUserDAO usersDao, boolean isAdmin) {
+		List<SbiUser> usersToCheck = UserUtilities.getAlreadyCreatedUsers(usersDao, isAdmin);
+		return ProductProfiler.canAddAUser(usersToCheck.size(), isAdmin);
+	}
+
 
 	@PUT
 	@Path("/{id}/resetOtp")
