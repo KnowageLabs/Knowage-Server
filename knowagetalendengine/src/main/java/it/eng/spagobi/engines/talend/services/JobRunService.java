@@ -29,7 +29,7 @@ public class JobRunService extends AbstractEngineStartServlet {
 	public static final String JS_FILE_ZIP = "JS_File";
 	public static final String JS_EXT_ZIP = ".zip";
 	
-	private static final String MSG_OK = "msgKO";
+	private static final String MSG_OK = "msgOK";
 
 	private static final long serialVersionUID = 1L;
 
