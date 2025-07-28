@@ -113,36 +113,33 @@ public class LayerCRUD {
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	@UserConstraint(functionalities = { CommunityFunctionalityConstants.GEO_LAYERS_MANAGEMENT })
 	public String getFilter(@Context HttpServletRequest req) throws JSONException {
-		Object id = null;
-		Integer layerId = null;
+		String layerLabel;
 
 		try {
-
-			id = req.getParameter("id");
-			if (id == null || id.equals("")) {
+			layerLabel = req.getParameter("label");
+			if (layerLabel == null || layerLabel.isEmpty()) {
 				throw new SpagoBIRuntimeException("The layer id passed in the request is null or empty");
 			}
-			layerId = new Integer(id.toString());
 		} catch (Exception e) {
 			logger.error("error loading filter", e);
 			throw new SpagoBIRuntimeException("error request", e);
 		}
 
 		ISbiGeoLayersDAO dao = DAOFactory.getSbiGeoLayerDao();
-		ArrayList<String> properties = null;
+		ArrayList<String> properties;
 		try {
-			properties = dao.getProperties(layerId);
+			properties = dao.getProperties(layerLabel);
 		} catch (Exception e2) {
-			logger.error("Error loading the properties for the layer with id " + id, e2);
-			throw new SpagoBIRuntimeException("Error loading the properties for the layer with id [" + id
+			logger.error("Error loading the properties for the layer with layer " + layerLabel, e2);
+			throw new SpagoBIRuntimeException("Error loading the properties for the layer with layer [" + layerLabel
 					+ "]. Please check the layer configuration or the file content.", e2);
 		}
 		ArrayList<JSONObject> prop = new ArrayList<>();
-		for (int i = 0; i < properties.size(); i++) {
-			JSONObject obj = new JSONObject();
-			obj.put("property", properties.get(i));
-			prop.add(obj);
-		}
+        for (String property : properties) {
+            JSONObject obj = new JSONObject();
+            obj.put("property", property);
+            prop.add(obj);
+        }
 
 		return prop.toString();
 	}

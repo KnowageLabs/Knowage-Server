@@ -47,7 +47,7 @@ public interface ISbiGeoLayersDAO extends ISpagoBIDao {
 
 	public Integer insertLayer(GeoLayer aLayer) throws EMFUserError, JSONException, UnsupportedEncodingException, IOException;
 
-	public ArrayList<String> getProperties(int layerId);
+	public ArrayList<String> getProperties(String layerLabel);
 
 	public void eraseLayer(Integer layerId) throws EMFUserError, JSONException;
 

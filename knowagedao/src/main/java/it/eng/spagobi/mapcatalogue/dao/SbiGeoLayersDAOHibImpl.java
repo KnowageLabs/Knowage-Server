@@ -442,13 +442,13 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 	}
 
 	@Override
-	public ArrayList<String> getProperties(int layerId) {
+	public ArrayList<String> getProperties(String layerLabel) {
 		Session tmpSession = null;
 		ArrayList<String> keys = new ArrayList<>();
 		try {
 			tmpSession = getSession();
 			tmpSession.beginTransaction();
-			GeoLayer aLayer = loadLayerByID(layerId);
+			GeoLayer aLayer = loadLayerByLabel(layerLabel);
 			JSONObject layerDef = new JSONObject(new String(aLayer.getLayerDef()));
 			if (aLayer.getType().equals("Google") || aLayer.getType().equals("TMS") || aLayer.getType().equals("OSM")) {
 				return new ArrayList<>();
@@ -469,16 +469,7 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 						if (c != null) {
 							JSONObject obj = new JSONObject(c);
 							content = obj.getJSONArray("features");
-							for (int j = 0; j < content.length(); j++) {
-								obj = content.getJSONObject(j).getJSONObject(PROPERTIES);
-								Iterator<String> it = obj.keys();
-								while (it.hasNext()) {
-									String key = it.next();
-									if (!keys.contains(key)) {
-										keys.add(key);
-									}
-								}
-							}
+							iterateFeatures(keys, content);
 						}
 
 					} while (c != null);
@@ -548,16 +539,7 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 							JSONObject itaAdm1 = objects.getJSONObject(childObjects[0]);
 							content = itaAdm1.getJSONArray("geometries");
 
-							for (int j = 0; j < content.length(); j++) {
-								obj = content.getJSONObject(j).getJSONObject(PROPERTIES);
-								Iterator<String> it = obj.keys();
-								while (it.hasNext()) {
-									String key = it.next();
-									if (!keys.contains(key)) {
-										keys.add(key);
-									}
-								}
-							}
+							iterateFeatures(keys, content);
 
 						}
 
@@ -572,6 +554,20 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 			closeSessionIfOpen(tmpSession);
 		}
 		return keys;
+	}
+
+	private void iterateFeatures(ArrayList<String> keys, JSONArray content) throws JSONException {
+		JSONObject obj;
+		for (int j = 0; j < content.length(); j++) {
+			obj = content.getJSONObject(j).getJSONObject(PROPERTIES);
+			Iterator<String> it = obj.keys();
+			while (it.hasNext()) {
+				String key = it.next();
+				if (!keys.contains(key)) {
+					keys.add(key);
+				}
+			}
+		}
 	}
 
 	private URL getURL(GeoLayer aLayer) throws Exception {
