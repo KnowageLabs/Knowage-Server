@@ -218,7 +218,7 @@ if(executionRoleNames.size() > 0 && canExecuteDocument) {
             of the document execution application (page). They will then be used for binding on this page, later on. 
             @author Danilo Ristovski (danristo, danilo.ristovski@mht.net) 
         -->
-        <script type="text/javascript">
+        <script type="text/javascript" nonce="<% request.getAttribute("cspNonce")%>">
             var executedFrom = '<%=executedFrom%>';
             var isAdmin = <%=isAdmin%>;
             var isSuperAdmin = <%=isSuperAdmin%>;
@@ -513,7 +513,7 @@ if(executionRoleNames.size() > 0 && canExecuteDocument) {
         
         
 
-        <script type="text/javascript">
+        <script type="text/javascript" nonce="<% request.getAttribute("cspNonce")%>">
         ///Module creation
         (function() {
             
@@ -714,7 +714,7 @@ if(executionRoleNames.size() > 0 && canExecuteDocument) {
         <%@include file="/WEB-INF/jsp/commons/angular/angularImport.jsp"%>
     </head>
     <body ng-app="cantExecuteDocumentModule" ng-controller="cantExecuteDocumentController">
-        <script>
+        <script type="text/javascript" nonce="<% request.getAttribute("cspNonce")%>">
         (function() {
             angular.module('cantExecuteDocumentModule', 
                     ['ngMaterial', 'sbiModule']);

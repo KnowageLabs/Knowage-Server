@@ -27,7 +27,7 @@ From https://github.com/curityio/pkce-javascript-example
     <title>OAuth2 PKCE flow</title>
   </head>
   <body>
-    <script>  
+    <script type="text/javascript" nonce="<% request.getAttribute("cspNonce")%>">  
     	start();
         
         async function start() {
@@ -118,27 +118,27 @@ From https://github.com/curityio/pkce-javascript-example
 
      // Funzione per generare una stringa casuale (code_verifier)
      function generateRandomString(length) {
-       const charset = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~';
-       let result = '';
-       const array = new Uint8Array(length);
-       window.crypto.getRandomValues(array);
-       for (let i = 0; i < array.length; i++) {
-         result += charset[array[i] % charset.length];
-       }
-       return result;
+      const charset = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~';
+      let result = '';
+      const array = new Uint8Array(length);
+      window.crypto.getRandomValues(array);
+      for (let i = 0; i < array.length; i++) {
+      result += charset[array[i] % charset.length];
+      }
+      return result;
      }
 
 
 	  // Funzione per generare il code_challenge (SHA256 + base64url)
 	  async function generateCodeChallenge(codeVerifier) {
-	    const encoder = new TextEncoder();
-	    const data = encoder.encode(codeVerifier);
-	    const digest = await window.crypto.subtle.digest('SHA-256', data);
-	    const base64url = btoa(String.fromCharCode(...new Uint8Array(digest)))
-	      .replace(/\+/g, '-')
-	      .replace(/\//g, '_')
-	      .replace(/=+$/, '');
-	    return base64url;
+	   const encoder = new TextEncoder();
+	   const data = encoder.encode(codeVerifier);
+	   const digest = await window.crypto.subtle.digest('SHA-256', data);
+	   const base64url = btoa(String.fromCharCode(...new Uint8Array(digest)))
+	   .replace(/\+/g, '-')
+	   .replace(/\//g, '_')
+	   .replace(/=+$/, '');
+	   return base64url;
 	  }
 
         

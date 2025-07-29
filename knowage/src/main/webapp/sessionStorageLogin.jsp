@@ -14,7 +14,7 @@ if (session!=null) session.invalidate();
   <input type="hidden" name="<%=System.getProperty("JWT_LABEL", System.getenv("JWT_LABEL")) %>" value="">
 </form>
 </body>
-<script>
+<script type="text/javascript" nonce="<% request.getAttribute("cspNonce")%>">
 
 function invalidateNoError(url) {
 	return new Promise(function(resolve, reject) {

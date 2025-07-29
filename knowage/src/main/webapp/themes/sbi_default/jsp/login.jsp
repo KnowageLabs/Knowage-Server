@@ -118,7 +118,7 @@
 	    
 	    <title>Knowage</title>
   
-		<script type="text/javascript">
+		<script type="text/javascript" nonce="<% request.getAttribute("cspNonce")%>">
 			function signup(){
 			 	var form = document.getElementById('formId');
 			 	var act = '<%=urlBuilder.getResourceLink(request, "restful-services/signup/prepare")%>';
@@ -145,38 +145,14 @@
 		<link rel='StyleSheet' href='<%=urlBuilder.getResourceLink(request, "themes/commons/css/customStyle.css")%>' type='text/css' />
 		
 		<% if (GoogleSignInConfig.isEnabled()) {%>
-		<%-- Resources for Google Sign-In authentication --%>
-		<script>
-			function onSignIn(googleUser) {
-			  var profile = googleUser.getBasicProfile();
-			  var id_token = googleUser.getAuthResponse().id_token;
-			  try{
-				const response = await fetch("/knowage/servlet/AdapterHTTP", {
-					method: "POST",
-					body: {
-				  		"ACTION_NAME": "LOGIN_ACTION_BY_TOKEN",
-				  		"NEW_SESSION" : true,
-				  		"token" : id_token
-			  		}
-				});
-				if (response.ok) {
-					// reload current page, in order to keep input GET parameters (such as required document and so on)
-					location.reload();
-				}
-			  }catch(e){
-				document.getElementById('kn-infoerror-message').style.display = 'block';
-				document.getElementsByClassName$("kn-infoerror")[0].innerHTML = "Authentication failed. Please check if you are to allowed to enter this application.";
-			  }
-				
-			}
-		</script>
+		<script src="<%=urlBuilder.getResourceLink(request, "js/lib/googleAuth/googleSignIn.js")%>"></script>
 		<script src="https://apis.google.com/js/platform.js" async defer></script>
 		<meta name="google-signin-client_id" content="<%= GoogleSignInConfig.getClientId() %>">
 		<% } %>
 		
 		<% if (AzureSignInConfig.isEnabled()) {%>
 		<%-- Resources for Azure Sign-In authentication --%>
-		<script>
+		<script type="text/javascript" nonce="<% request.getAttribute("cspNonce")%>">
 			var msalConfig = {
 				    auth: {
 				        clientId: "<%= AzureSignInConfig.getClientId() %>",

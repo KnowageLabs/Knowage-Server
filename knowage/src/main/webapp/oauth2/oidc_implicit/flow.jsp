@@ -33,7 +33,7 @@ OAuth2Config oauth2Config = OAuth2Config.getInstance();
     <title>OIDC implicit flow</title>
   </head>
   <body>
-    <script>
+    <script type="text/javascript" nonce="<% request.getAttribute("cspNonce")%>">
     
     const authorizeEndpoint = '<%= StringEscapeUtils.escapeJavaScript(oauth2Config.getAuthorizeUrl()) %>';
     const clientId = '<%= StringEscapeUtils.escapeJavaScript(oauth2Config.getClientId()) %>';

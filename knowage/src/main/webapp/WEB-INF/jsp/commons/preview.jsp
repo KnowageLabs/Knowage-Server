@@ -67,7 +67,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     	
         <div id="myGrid" class="ag-theme-balham kn-preview-table-theme"></div>
         
-		<script type="text/javascript" charset="utf-8">
+		<script type="text/javascript" nonce="<% request.getAttribute("cspNonce")%>" charset="utf-8">
 			//GLOBAL VARIABLES
 			const   cookie = document.cookie.match(new RegExp('(^|)X-CSRF-TOKEN=([^;]+)'))[2];
 			const 	MAX_ROWS_CLIENT_PAGINATION = <%= SingletonConfig.getInstance().getConfigValue("dataset.preview.clientpagination.maxrows") %>;

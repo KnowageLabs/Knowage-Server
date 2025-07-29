@@ -17,9 +17,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 --%>
 <%@page import="it.eng.knowage.wapp.Environment"%>
 <%@page import="it.eng.knowage.wapp.Version"%>
-<script>
-/*${disable.console.logging}*/
-</script>
 
 <!-- ---------------------------------------------------------------------------------------
 	urlBuilder - for dynamically getting the full URL path to the specific resource.
@@ -43,7 +40,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <!-- All internal/external cockpit specific libraries bundle -->
 <script type="text/javascript" src="<%=urlBuilder.getResourcePath(cockpitEngineContext, "/dist/knowagecockpit-lib-bundle.js")%>"></script>
 
-<script type="text/javascript">
+<script type="text/javascript" nonce="<% request.getAttribute("cspNonce")%>">
     if(/MSIE \d|Trident.*rv:/.test(navigator.userAgent))
         document.write('<script type="text/javascript" src="<%= KnowageSystemConfiguration.getKnowageContext() %>/js/lib/rgbcolor/rgbcolor.js"><\/script>');
 </script>

@@ -51,7 +51,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <script type="text/javascript"
 	src="<%=urlBuilder.getResourceLink(request,
 					"js/src/angular_1.4/tools/documentexecution/documentExecutionMaster.js")%>"></script>
-<script type="text/javascript">
+<script type="text/javascript" nonce="<% request.getAttribute("cspNonce")%>" >
 	angular.module('documentExecutionMasterModule').factory('sourceDocumentExecProperties', function() {
 		/*
 			EXEC_FROM added for the need of the Workspace Organizer as a starting point of the document execution.

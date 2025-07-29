@@ -43,7 +43,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <link rel="stylesheet" href="<%=urlBuilder.getResourceLink(request,"/dist/knowage-modules-styles-bundle.css")%>">
 <link rel="stylesheet" href="<%=urlBuilder.getResourceLink(request,"/node_modules/ng-wysiwyg/dist/editor.min.css")%>">
 
-<script>agGrid.initialiseAgGridWithAngular1(angular);</script>
+<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/lib/aggrid/initializer.js")%>"></script>
 
 <%@include file="/WEB-INF/jsp/commons/angular/sbiModule.jspf"%>
 

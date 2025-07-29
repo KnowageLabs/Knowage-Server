@@ -87,23 +87,7 @@
             }
         }
     </style>
-    
-    <script>
-    function validateForm() {
-        const code = document.forms["myForm"]["code"].value;
-        if (code.trim() === "") {
-            alert("Inserisci il codice one-time.");
-            return false;
-        }
-        return true;
-    }
-    function copyToClipboard() {
-        const secretElement = document.querySelector('.secret span');
-        const secretText = secretElement.textContent;
-        
-        navigator.clipboard.writeText(secretText)
-    }
-    </script>
+    <script src="<%=urlBuilder.getResourceLink(request, "js/lib/mfa/mfa.js")%>"></script>
 </head>
 <body class="kn-login">
   		<div class="container-fluid" style="height:100%;">  
