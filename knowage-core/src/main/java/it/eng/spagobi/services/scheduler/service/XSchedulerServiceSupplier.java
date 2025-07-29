@@ -17,10 +17,14 @@
  */
 package it.eng.spagobi.services.scheduler.service;
 
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.text.StringEscapeUtils;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -238,8 +242,10 @@ public class XSchedulerServiceSupplier implements ISchedulerServiceSupplier {
 		JSONObject resp = new JSONObject();
 		Trigger trigger = null;
 		try {
+			String sanitizedXmlRequest = sanitizeXmlWithEmbeddedHtml(xmlRequest);
+
 			Deserializer deserializer = DeserializerFactory.getDeserializer("application/xml");
-			trigger = (Trigger) deserializer.deserialize(xmlRequest, Trigger.class);
+			trigger = (Trigger) deserializer.deserialize(sanitizedXmlRequest, Trigger.class);
 
 			schedulerDAO.saveTrigger(trigger);
 
@@ -265,6 +271,52 @@ public class XSchedulerServiceSupplier implements ISchedulerServiceSupplier {
 		}
 		return resp;
 	}
+
+	private String sanitizeXmlWithEmbeddedHtml(String xmlContent) {
+		if (xmlContent == null || xmlContent.isEmpty()) {
+			return xmlContent;
+		}
+
+		try {
+			Pattern parameterPattern = Pattern.compile(
+					"(<PARAMETER[^>]*value=\")([^\"]*?)(\")([^>]*/>)",
+					Pattern.DOTALL
+			);
+
+			Matcher matcher = parameterPattern.matcher(xmlContent);
+			StringBuilder result = new StringBuilder();
+
+			while (matcher.find()) {
+				String prefix = matcher.group(1);
+				String value = matcher.group(2);
+				String quote = matcher.group(3);
+				String suffix = matcher.group(4);
+
+				if (containsHtmlTags(value)) {
+					String decodedValue = java.net.URLDecoder.decode(value, StandardCharsets.UTF_8);
+					String escapedValue = StringEscapeUtils.escapeXml11(decodedValue);
+					String finalValue = java.net.URLEncoder.encode(escapedValue, StandardCharsets.UTF_8);
+					matcher.appendReplacement(result, prefix + finalValue + quote + suffix);
+				} else {
+					matcher.appendReplacement(result, matcher.group(0));
+				}
+			}
+			matcher.appendTail(result);
+
+			return result.toString();
+
+		} catch (Exception e) {
+			LOGGER.warn("Error sanitizing XML content, returning original: " + e.getMessage());
+			return xmlContent;
+		}
+	}
+
+	private boolean containsHtmlTags(String value) {
+		// Simple check for HTML tags in the value
+		return value.contains("<") && value.contains(">");
+	}
+
+
 
 	@Override
 	public String existJobDefinition(String jobName, String jobGroupName) {
