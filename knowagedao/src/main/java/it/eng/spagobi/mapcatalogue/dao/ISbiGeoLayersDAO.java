@@ -49,7 +49,7 @@ public interface ISbiGeoLayersDAO extends ISpagoBIDao {
 
 	public ArrayList<String> getProperties(String layerLabel);
 
-	public void eraseLayer(Integer layerId) throws EMFUserError, JSONException;
+	public void eraseLayer(String layerLabel) throws EMFUserError, JSONException;
 
 	public void eraseRole(Integer roleId, Integer layerId) throws EMFUserError;
 

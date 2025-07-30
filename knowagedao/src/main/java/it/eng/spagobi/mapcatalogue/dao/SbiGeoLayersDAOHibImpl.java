@@ -594,7 +594,7 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 	 */
 
 	@Override
-	public void eraseLayer(Integer layerId) throws EMFUserError, JSONException {
+	public void eraseLayer(String label) throws EMFUserError, JSONException {
 
 		Session tmpSession = null;
 		Transaction tx = null;
@@ -602,7 +602,7 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 			tmpSession = getSession();
 			tx = tmpSession.beginTransaction();
 
-			GeoLayer aLayer = loadLayerByID(layerId);
+			GeoLayer aLayer = loadLayerByLabel(label);
 			SbiGeoLayers hibLayer = new SbiGeoLayers(aLayer.getLayerId());
 			hibLayer.setLabel(aLayer.getLabel());
 			hibLayer.setName(aLayer.getName());

@@ -332,15 +332,15 @@ public class LayerCRUD {
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	@UserConstraint(functionalities = { CommunityFunctionalityConstants.GEO_LAYERS_MANAGEMENT })
 	public String deleteLayer(@Context HttpServletRequest req) throws JSONException {
-		Object id = null;
-		Integer layerId = null;
+		Object label = null;
+		String layerLabel = null;
 
 		try {
-			id = req.getParameter("id");
-			if (id == null || id.equals("")) {
+			label = req.getParameter("label");
+			if (label == null || label.equals("")) {
 				throw new SpagoBIRuntimeException("The layer id passed in the request is null or empty");
 			}
-			layerId = new Integer(id.toString());
+			layerLabel = label.toString();
 		} catch (Exception e) {
 			logger.error("error loading the layer to delete from the request", e);
 			throw new SpagoBIRuntimeException("error loading the layer to delete from the request", e);
@@ -349,10 +349,10 @@ public class LayerCRUD {
 		logger.debug("Deleting the layer");
 		ISbiGeoLayersDAO dao = DAOFactory.getSbiGeoLayerDao();
 		try {
-			dao.eraseLayer(layerId);
+			dao.eraseLayer(layerLabel);
 		} catch (EMFUserError e) {
-			logger.error("Error delationg the ayer with id " + id, e);
-			throw new SpagoBIRuntimeException("Error delationg the layer with id " + id, e);
+			logger.error("Error delationg the ayer with id " + label, e);
+			throw new SpagoBIRuntimeException("Error delationg the layer with id " + label, e);
 		}
 		return "{}";
 	}
