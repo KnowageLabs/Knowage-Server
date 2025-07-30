@@ -106,7 +106,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request," /js/lib/angular/angular-material_1.1.0/angular-material.min.js ")%>"></script>
 	
 	<!-- Your application bootstrap  -->
-	<script type="text/javascript" nonce="<%= request.getAttribute("cspNonce")%>" >    
+	<script type="text/javascript" nonce="rAnd0m" >    
 
 	    angular.module('signUp', ['ngMaterial','sbiModule'])
 	    .controller('modifyCtrl', function($scope,$http,$window,$mdToast,$timeout,$mdDialog,sbiModule_messaging) {

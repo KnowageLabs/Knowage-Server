@@ -11,7 +11,7 @@
 
 
 <title>Error</title>
-<script type="text/javascript" nonce="<%= request.getAttribute("cspNonce")%>">
+<script type="text/javascript" nonce="rAnd0m">
 var app = angular.module('metaError', [ 'ngMaterial', 'sbiModule' ]);
 
 app.config([ '$mdThemingProvider', function($mdThemingProvider) {

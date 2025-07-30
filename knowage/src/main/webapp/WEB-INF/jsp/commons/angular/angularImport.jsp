@@ -17,9 +17,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 --%>
 <%@page import="it.eng.knowage.wapp.Environment"%>
 <%@page import="it.eng.knowage.wapp.Version"%>
-<script>
-/*${disable.console.logging}*/
-</script>
 
 <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no" />
 <meta name="viewport" content="width=device-width">

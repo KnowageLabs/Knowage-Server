@@ -9,7 +9,7 @@
 	<head>
 		<meta charset="UTF-8">
 		<title>OLAP</title>
-		<script>
+		<script type="text/javascript" nonce="rAnd0m">
 			var JSsbiExecutionID = '<%= sbiExecutionID %>'
 			var toolbarVisibleBtns = '<%= whatIfEngineInstance.getModelConfig().getToolbarVisibleButtons() %>'
 			var toolbarClickedBtns = '<%= whatIfEngineInstance.getModelConfig().getToolbarClickedButtons() %>'

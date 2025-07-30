@@ -374,6 +374,6 @@ commented by Davide Zerbetto on 12/10/2009: there are problems with MIF (Ext Man
 		href='<%=urlBuilder.getResourceLink(request, "js/lib/ext-2.0.1/overrides/resources/css/"+extTheme)%>'
 		type='text/css' />
 
-	<script>
+	<script type="text/javascript" nonce="rAnd0m">
 	document.onselectstart = function() { return true; }
 </script>

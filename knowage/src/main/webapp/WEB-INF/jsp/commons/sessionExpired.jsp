@@ -52,7 +52,7 @@ if (header != null && header.equals("Ext")) {
 	--%>
 	
 	
-<script>
+<script type="text/javascript" nonce="rAnd0m">
 	var sessionExpiredSpagoBIJSFound = false;
 	try {
 		var currentWindow = window;

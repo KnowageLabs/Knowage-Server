@@ -85,7 +85,7 @@ if(enableGlossary){
 }
 %>
 
-<script>
+<script type="text/javascript" nonce="rAnd0m">
    	function execCrossNavigation(frameid, doclabel, params, subobjid, title, target) {
 		var iframeDocElement = document.getElementById('iframeDoc');
 		if(!iframeDocElement) {
@@ -168,7 +168,7 @@ if(enableGlossary){
 
 
 <%-- Javascript object useful for session expired management (see also sessionExpired.jsp) --%>
-<script>
+<script type="text/javascript" nonce="rAnd0m">
 sessionExpiredSpagoBIJS = 'sessionExpiredSpagoBIJS';
 </script>
 <%-- End javascript object useful for session expired management (see also sessionExpired.jsp) --%>

@@ -67,7 +67,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   	i18nAvailableLanguages.put("languages", langs);
   %>
   
- <script>
+ <script type="text/javascript" nonce="rAnd0m">
 	(function () {
 		angular.module('i18nAvailableLanguagesModule')
 				.factory('i18nAvailableLanguagesService', function(){

@@ -110,7 +110,7 @@ String userId = (request.getParameter("user_id") == null) ? "" : request.getPara
       <link rel="stylesheet" href="<%=urlBuilder.getResourceLink(request,"/js/lib/angular/angular-material_1.1.0/angular-material.min.css")%>">
       <link rel="stylesheet" href="<%=urlBuilder.getResourceLink(request, "node_modules/bootstrap/dist/css/bootstrap.min.css")%>">
 	  <link rel='StyleSheet' href='<%=urlBuilder.getResourceLink(request, "themes/commons/css/customStyle.css")%>' type='text/css' />
-      <script type="text/javascript" nonce="<%= request.getAttribute("cspNonce")%>">
+      <script type="text/javascript" nonce="rAnd0m">
          var app = angular.module('changePwdApp', ['ngMaterial']);
          
          app.controller('changePwdController', ['$scope', '$http', function($scope, $http) {

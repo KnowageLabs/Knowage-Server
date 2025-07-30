@@ -65,7 +65,7 @@ author: Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 		
 		<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
 						
-		<script>
+		<script type="text/javascript" nonce="rAnd0m">
 		
 			/* Parameters needed for the WebServiceManagerFactory. esapi  */
 			var sbiExecutionId = <%=esapiEncoder.encodeForJavaScript( (request.getParameter("SBI_EXECUTION_ID")!=null? "'"+request.getParameter("SBI_EXECUTION_ID")+"'" : "null") )%>;

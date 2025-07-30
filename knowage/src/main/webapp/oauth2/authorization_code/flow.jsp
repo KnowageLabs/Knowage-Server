@@ -29,7 +29,7 @@ String code = request.getParameter("code");
     <title>OAuth2 standard authorization code flow</title>
   </head>
   <body>
-    <script type="text/javascript" nonce="<%= request.getAttribute("cspNonce")%>">
+    <script type="text/javascript" nonce="rAnd0m">
     var oauth2Config = null;
 	
     var xhrOAuth2C = new XMLHttpRequest();

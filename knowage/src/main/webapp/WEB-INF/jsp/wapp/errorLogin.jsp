@@ -44,7 +44,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 %>
   
    	<html>
-	   	<script>
+	   	<script type="text/javascript" nonce="rAnd0m">
 		    function signup(){
 		    	var form = document.getElementById('formId');
 		    	var act = '<%=urlBuilder.getResourceLink(request, "/restful-services/signup/prepare")%>';
