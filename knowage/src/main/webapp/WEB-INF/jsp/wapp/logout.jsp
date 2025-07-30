@@ -77,7 +77,7 @@ else if (active != null && active.equalsIgnoreCase("true")) {
 	redirectUrl = urlLogout;
 } %>
 
-<script type="text/javascript" nonce="<% request.getAttribute("cspNonce")%>">
+<script type="text/javascript" nonce="<%= request.getAttribute("cspNonce")%>">
 function invalidateNoError(url) {
 	return new Promise(function(resolve, reject) {
 		var xhr = new XMLHttpRequest();
@@ -130,7 +130,7 @@ function invalidateAll() {
 <%-- Resources for Google Sign-In authentication --%>
 <script src="https://apis.google.com/js/platform.js?onload=onLoad" async defer></script>
 <meta name="google-signin-client_id" content="<%= GoogleSignInConfig.getClientId() %>">
-<script type="text/javascript" nonce="<% request.getAttribute("cspNonce")%>">
+<script type="text/javascript" nonce="<%= request.getAttribute("cspNonce")%>">
 	function googleSignOut(callback, fail) {
 		var auth2 = gapi.auth2.getAuthInstance();
 		auth2.signOut().then(function() {

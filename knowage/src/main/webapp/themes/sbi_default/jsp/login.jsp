@@ -118,7 +118,7 @@
 	    
 	    <title>Knowage</title>
   
-		<script type="text/javascript" nonce="<% request.getAttribute("cspNonce")%>">
+		<script type="text/javascript" nonce="<%= request.getAttribute("cspNonce")%>">
 			function signup(){
 			 	var form = document.getElementById('formId');
 			 	var act = '<%=urlBuilder.getResourceLink(request, "restful-services/signup/prepare")%>';
@@ -152,7 +152,7 @@
 		
 		<% if (AzureSignInConfig.isEnabled()) {%>
 		<%-- Resources for Azure Sign-In authentication --%>
-		<script type="text/javascript" nonce="<% request.getAttribute("cspNonce")%>">
+		<script type="text/javascript" nonce="<%= request.getAttribute("cspNonce")%>">
 			var msalConfig = {
 				    auth: {
 				        clientId: "<%= AzureSignInConfig.getClientId() %>",

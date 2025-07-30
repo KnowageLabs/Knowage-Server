@@ -92,7 +92,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			<input type="hidden" id="targetDocumentParameters<%= uuid %>" name="<%= ObjectsTreeConstants.PARAMETERS %>" value="" />
 		</form>
 		
-		<script nonce="<% request.getAttribute("cspNonce")%>">
+		<script nonce="<%= request.getAttribute("cspNonce")%>">
 			function execCrossNavigation(windowName, label, parameters) {
 				var uuid = "<%=uuid%>";
 				document.getElementById('targetDocumentLabel' + uuid).value = label;
