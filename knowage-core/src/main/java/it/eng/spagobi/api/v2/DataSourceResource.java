@@ -418,7 +418,7 @@ public class DataSourceResource extends AbstractSpagoBIResource {
 					throw new SpagoBIRestServiceException("Driver not found: " + driver, buildLocaleFromSession(), e);
 				}
 
-				try (Connection connection = DriverManager.getConnection(url, user, pwd)) {
+				try (Connection connection = DriverManager.getConnection(url, user, pwd == null ? dataSource.getPwd() : pwd)) {
 					LOGGER.debug("Connection performed successfully");
 				} catch (SQLException sqlException) {
 					LOGGER.error("Connection failure", sqlException);

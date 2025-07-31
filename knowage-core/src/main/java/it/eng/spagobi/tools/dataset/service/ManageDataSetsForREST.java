@@ -466,7 +466,7 @@ public class ManageDataSetsForREST {
 					IDataSet existingDataSet = null;
 
 					try {
-						existingDataSet = DAOFactory.getDataSetDAO().loadDataSetById(new Integer(id));
+						existingDataSet = DAOFactory.getDataSetDAO().loadDataSetById(Integer.parseInt(id));
 					} catch (Exception e) {
 						LOGGER.error("Error while getting dataset metadataa", e);
 						throw e;
@@ -1665,12 +1665,6 @@ public class ManageDataSetsForREST {
 
 		if (ds != null) {
 
-			List<String> persistenceTableNames = dsDao.loadPersistenceTableNames(ds.getId());
-
-			if (persistenceTableNames.stream().anyMatch(tableName -> tableName != null && !tableName.isBlank() && tableName.equalsIgnoreCase(ds.getPersistTableName()))) {
-				throw new SpagoBIRuntimeException("The persistence table with name <" + ds.getPersistTableName().toUpperCase(Locale.ROOT) + "> already exists");
-			}
-
 			String dsLabel = ds.getLabel();
 			String dsName = ds.getName();
 			logParam.put("NAME", dsName);
@@ -1681,9 +1675,16 @@ public class ManageDataSetsForREST {
 				IDataSet existingByName = dsDao.loadDataSetByName(ds.getName());
 				IDataSet existingByLabel = dsDao.loadDataSetByLabel(ds.getLabel());
 
-				if (id != null && !id.equals("") && !id.equals("0")) {
+				if (id != null && !id.isEmpty() && !id.equals("0")) {
 					validateLabelAndName(id, dsName, dsLabel, existingByName, existingByLabel);
-					ds.setId(Integer.valueOf(id));
+					ds.setId(Integer.parseInt(id));
+
+					List<String> persistenceTableNames = dsDao.loadPersistenceTableNames(ds.getId());
+
+					if (persistenceTableNames.stream().anyMatch(tableName -> tableName != null && !tableName.isBlank() && tableName.equalsIgnoreCase(ds.getPersistTableName()))) {
+						throw new SpagoBIRuntimeException("The persistence table with name <" + ds.getPersistTableName().toUpperCase(Locale.ROOT) + "> already exists");
+					}
+
 					IDataSet existingDataset = dsDao.loadDataSetById(Integer.valueOf(id));
 					clearCacheForDataset(existingDataset);
 
