@@ -144,6 +144,7 @@ public class TriggerXMLSerializer implements Serializer {
 				Set<String> jobParametersName = jobParameters.keySet();
 				for (String jobParameterName : jobParametersName) {
 					String jobParameterValue = jobParameters.get(jobParameterName);
+					jobParameterValue = escapeXmlAttribute(jobParameterValue);
 					// already extracted and processed
 //					if(jobParameterName.equals("chronString")) {
 //						continue;
@@ -174,6 +175,16 @@ public class TriggerXMLSerializer implements Serializer {
 		}
 
 		return result.toString();
+	}
+
+	private String escapeXmlAttribute(String text) {
+		if (text == null) return null;
+		return text
+				.replace("&", "&amp;")   // DEVE essere il primo!
+				.replace("<", "&lt;")
+				.replace(">", "&gt;")
+				.replace("\"", "&quot;")
+				.replace("'", "&apos;");
 	}
 
 	public String serailizeTime(Date date) {

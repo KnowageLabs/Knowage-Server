@@ -547,7 +547,7 @@ public class SchedulerUtilitiesV2 {
 				saveOptString += "mailsubj=" + dispatchContext.getMailSubj() + "%26";
 			}
 			if ((dispatchContext.getMailTxt() != null) && !dispatchContext.getMailTxt().trim().equals("")) {
-				saveOptString += "mailtxt=" + dispatchContext.getMailTxt() + "%26";
+				saveOptString += "mailtxt=" + escapeXmlAttribute(dispatchContext.getMailTxt()) + "%26";
 			}
 
 			// Mail
@@ -572,6 +572,17 @@ public class SchedulerUtilitiesV2 {
 		}
 
 		return saveOptString;
+	}
+
+
+	private static String escapeXmlAttribute(String text) {
+		if (text == null) return null;
+		return text
+				.replace("&", "&amp;")
+				.replace("<", "&lt;")
+				.replace(">", "&gt;")
+				.replace("\"", "&quot;")
+				.replace("'", "&apos;");
 	}
 
 	private static String serializeSaveAsDistributionListOptions(DispatchContext dispatchContext,

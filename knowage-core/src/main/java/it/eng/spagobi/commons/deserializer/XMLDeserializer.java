@@ -80,6 +80,4 @@ public class XMLDeserializer implements Deserializer {
 		
 		return result;	
 	}
-
-
 }
