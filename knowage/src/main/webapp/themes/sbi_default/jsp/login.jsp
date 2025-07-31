@@ -117,8 +117,7 @@
 	    <link rel="manifest" href="<%=urlBuilder.getResourceLink(request, "manifest.json")%>" crossorigin="use-credentials"/>
 	    
 	    <title>Knowage</title>
-  
-		<script type="text/javascript" nonce="rAnd0m">
+  		<script type="text/javascript" nonce="<%= request.getAttribute("cspNonce") %>">
 			function signup(){
 			 	var form = document.getElementById('formId');
 			 	var act = '<%=urlBuilder.getResourceLink(request, "restful-services/signup/prepare")%>';
