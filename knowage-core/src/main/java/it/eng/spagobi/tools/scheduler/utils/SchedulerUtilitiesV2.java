@@ -973,7 +973,10 @@ public class SchedulerUtilitiesV2 {
 			SourceBean jobDetailSB = SchedulerUtilities.getSBFromWebServiceResponse(respStr_gj);
 			if (triggerDetailSB != null) {
 				if (jobDetailSB != null) {
-                    return getJobTriggerFromTriggerSourceBean(triggerDetailSB, jobDetailSB);
+					JobTrigger jt = getJobTriggerFromTriggerSourceBean(triggerDetailSB, jobDetailSB);
+					return jt;
+					// TriggerInfo tInfo = SchedulerUtilities.getTriggerInfoFromTriggerSourceBean(triggerDetailSB, jobDetailSB);
+					// return tInfo;
 				} else {
 					throw new Exception(
 							"Detail not recovered for job " + jobName + "associated to trigger " + triggerName);

@@ -26,11 +26,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
-import java.io.UnsupportedEncodingException;
 
-import org.apache.commons.text.StringEscapeUtils;
 import org.apache.log4j.Logger;
 import org.json.JSONObject;
 
@@ -364,155 +360,158 @@ public class SchedulerUtilities {
 	public static DispatchContext decodeDispatchContext(String encodedDispatchContext) {
 		DispatchContext dispatchContext = new DispatchContext();
 
-        // URL decode the entire string first to convert %3D to = and %26 to &
-        String decodedDispatchContext = URLDecoder.decode(encodedDispatchContext, StandardCharsets.UTF_8);
-        String fullyDecodedContext = StringEscapeUtils.unescapeHtml4(decodedDispatchContext);
+		String[] couples = encodedDispatchContext.split("%26");
+		for (int i = 0; i < couples.length; i++) {
+			String couple = couples[i];
+			if (couple.trim().equals("")) {
+				continue;
+			}
+			String[] couplevals = couple.split("=");
+			String name = couplevals[0];
+			String value = couplevals[1];
 
-        String[] couples = fullyDecodedContext.split("&"); // Now use & instead of %26
-        for (String couple : couples) {
-            if (couple.trim().isEmpty()) {
-                continue;
-            }
-            String[] couplevals = couple.split("=", 2); // Limit to 2 parts in case value contains =
-            if (couplevals.length < 2) {
-                continue;
-            }
-            String name = couplevals[0];
-            String value = couplevals[1];
+			if (name.equals("saveasfile")) {
+				dispatchContext.setFileSystemDisptachChannelEnabled(true);
+			}
+			if (name.equals("destinationfolder")) {
+				dispatchContext.setDestinationFolder(value);
+			}
+			if (name.equals("isprocessmonitoringenabled")) {
+				if ("true".equalsIgnoreCase(value)) {
+					dispatchContext.setProcessMonitoringEnabled(true);
+				} else {
+					dispatchContext.setProcessMonitoringEnabled(false);
+				}
 
-            if (name.equals("saveasfile")) {
-                dispatchContext.setFileSystemDisptachChannelEnabled(true);
-            }
-            if (name.equals("destinationfolder")) {
-                dispatchContext.setDestinationFolder(value);
-            }
-            if (name.equals("isprocessmonitoringenabled")) {
-                dispatchContext.setProcessMonitoringEnabled("true".equalsIgnoreCase(value));
+			}
+			if (name.equals("isrelativetoresourcefolder")) {
+				if ("true".equalsIgnoreCase(value)) {
+					dispatchContext.setDestinationFolderRelativeToResourceFolder(true);
+				} else {
+					dispatchContext.setDestinationFolderRelativeToResourceFolder(false);
+				}
 
-            }
-            if (name.equals("isrelativetoresourcefolder")) {
-                dispatchContext.setDestinationFolderRelativeToResourceFolder("true".equalsIgnoreCase(value));
+			}
+			if (name.equals("functionalitytreefolderlabel")) {
+				dispatchContext.setFunctionalityTreeFolderLabel(value);
+			}
+			if (name.equals("owner")) {
+				dispatchContext.setOwner(value);
+			}
+			if (name.equals("saveassnapshot")) {
+				dispatchContext.setSnapshootDispatchChannelEnabled(true);
+			}
+			if (name.equals("snapshotname")) {
+				dispatchContext.setSnapshotName(value);
+			}
+			if (name.equals("snapshotdescription")) {
+				dispatchContext.setSnapshotDescription(value);
+			}
+			if (name.equals("snapshothistorylength")) {
+				dispatchContext.setSnapshotHistoryLength(value);
+			}
+			if (name.equals("sendtojavaclass")) {
+				dispatchContext.setJavaClassDispatchChannelEnabled(true);
+			}
+			if (name.equals("javaclasspath")) {
+				dispatchContext.setJavaClassPath(value);
+			}
+			if (name.equals("saveasdocument")) {
+				dispatchContext.setFunctionalityTreeDispatchChannelEnabled(true);
+			}
+			if (name.equals("documentname")) {
+				dispatchContext.setDocumentName(value);
+			}
+			if (name.equals("documentdescription")) {
+				dispatchContext.setDocumentDescription(value);
+			}
+			if (name.equals("documenthistorylength")) {
+				dispatchContext.setDocumentHistoryLength(value);
+			}
+			if (name.equals("datasetFolderLabel")) {
+				dispatchContext.setUseFolderDataSet(true);
+				dispatchContext.setDataSetFolderLabel(value);
+			}
+			if (name.equals("datasetFolderParameterLabel")) {
+				dispatchContext.setDataSetFolderParameterLabel(value);
+			}
+			if (name.equals("functionalityids")) {
+				dispatchContext.setUseFixedFolder(true);
+				dispatchContext.setFunctionalityIds(value);
+			}
+			if (name.equals("sendmail")) {
+				dispatchContext.setMailDispatchChannelEnabled(true);
+			}
+			if (name.equals("mailtos")) {
+				dispatchContext.setUseFixedRecipients(true);
+				dispatchContext.setMailTos(value);
+			}
+			if (name.equals("datasetLabel")) {
+				dispatchContext.setUseDataSet(true);
+				dispatchContext.setDataSetLabel(value);
+			}
+			if (name.equals("datasetParameterLabel")) {
+				dispatchContext.setDataSetParameterLabel(value);
+			}
+			if (name.equals("expression")) {
+				dispatchContext.setUseExpression(true);
+				dispatchContext.setExpression(value);
+			}
+			if (name.equals("mailsubj")) {
+				dispatchContext.setMailSubj(value);
+			}
+			if (name.equals("mailtxt")) {
+				dispatchContext.setMailTxt(value);
+			}
+			if (name.equals("sendtodl")) {
+				dispatchContext.setDistributionListDispatchChannelEnabled(true);
+			}
+			if (name.equals("dlId")) {
 
-            }
-            if (name.equals("functionalitytreefolderlabel")) {
-                dispatchContext.setFunctionalityTreeFolderLabel(value);
-            }
-            if (name.equals("owner")) {
-                dispatchContext.setOwner(value);
-            }
-            if (name.equals("saveassnapshot")) {
-                dispatchContext.setSnapshootDispatchChannelEnabled(true);
-            }
-            if (name.equals("snapshotname")) {
-                dispatchContext.setSnapshotName(value);
-            }
-            if (name.equals("snapshotdescription")) {
-                dispatchContext.setSnapshotDescription(value);
-            }
-            if (name.equals("snapshothistorylength")) {
-                dispatchContext.setSnapshotHistoryLength(value);
-            }
-            if (name.equals("sendtojavaclass")) {
-                dispatchContext.setJavaClassDispatchChannelEnabled(true);
-            }
-            if (name.equals("javaclasspath")) {
-                dispatchContext.setJavaClassPath(value);
-            }
-            if (name.equals("saveasdocument")) {
-                dispatchContext.setFunctionalityTreeDispatchChannelEnabled(true);
-            }
-            if (name.equals("documentname")) {
-                dispatchContext.setDocumentName(value);
-            }
-            if (name.equals("documentdescription")) {
-                dispatchContext.setDocumentDescription(value);
-            }
-            if (name.equals("documenthistorylength")) {
-                dispatchContext.setDocumentHistoryLength(value);
-            }
-            if (name.equals("datasetFolderLabel")) {
-                dispatchContext.setUseFolderDataSet(true);
-                dispatchContext.setDataSetFolderLabel(value);
-            }
-            if (name.equals("datasetFolderParameterLabel")) {
-                dispatchContext.setDataSetFolderParameterLabel(value);
-            }
-            if (name.equals("functionalityids")) {
-                dispatchContext.setUseFixedFolder(true);
-                dispatchContext.setFunctionalityIds(value);
-            }
-            if (name.equals("sendmail")) {
-                dispatchContext.setMailDispatchChannelEnabled(true);
-            }
-            if (name.equals("mailtos")) {
-                dispatchContext.setUseFixedRecipients(true);
-                dispatchContext.setMailTos(value);
-            }
-            if (name.equals("datasetLabel")) {
-                dispatchContext.setUseDataSet(true);
-                dispatchContext.setDataSetLabel(value);
-            }
-            if (name.equals("datasetParameterLabel")) {
-                dispatchContext.setDataSetParameterLabel(value);
-            }
-            if (name.equals("expression")) {
-                dispatchContext.setUseExpression(true);
-                dispatchContext.setExpression(value);
-            }
-            if (name.equals("mailsubj")) {
-                dispatchContext.setMailSubj(value);
-            }
-            if (name.equals("mailtxt")) {
-                dispatchContext.setMailTxt(value);
-            }
-            if (name.equals("sendtodl")) {
-                dispatchContext.setDistributionListDispatchChannelEnabled(true);
-            }
-            if (name.equals("dlId")) {
+				String[] dlIds = value.split(",");
+				for (int j = 0; j < dlIds.length; j++) {
+					String dlId = dlIds[j];
+					dispatchContext.addDlId(new Integer(dlId));
+				}
 
-                String[] dlIds = value.split(",");
-                for (String dlId : dlIds) {
-                    dispatchContext.addDlId(Integer.valueOf(dlId));
-                }
+				dispatchContext.setDistributionListDispatchChannelEnabled(true);
+			}
 
-                dispatchContext.setDistributionListDispatchChannelEnabled(true);
-            }
+			// Mail
+			if (name.equals("zipMailDocument")) {
+				dispatchContext.setZipMailDocument(true);
+			}
+			if (name.equals("zipMailName")) {
+				dispatchContext.setZipMailName(value);
+			}
+			if (name.equals("containedFileName")) {
+				dispatchContext.setContainedFileName(value);
+			}
 
-            // Mail
-            if (name.equals("zipMailDocument")) {
-                dispatchContext.setZipMailDocument(true);
-            }
-            if (name.equals("zipMailName")) {
-                dispatchContext.setZipMailName(value);
-            }
-            if (name.equals("containedFileName")) {
-                dispatchContext.setContainedFileName(value);
-            }
+			if (name.equals("uniqueMail")) {
+				dispatchContext.setUniqueMail(true);
+			}
 
-            if (name.equals("uniqueMail")) {
-                dispatchContext.setUniqueMail(true);
-            }
+			if (name.equals("reportNameInSubject")) {
+				dispatchContext.setReportNameInSubject(true);
+			}
 
-            if (name.equals("reportNameInSubject")) {
-                dispatchContext.setReportNameInSubject(true);
-            }
+			// File
+			if (name.equals("zipFileDocument")) {
+				dispatchContext.setZipFileDocument(true);
+			}
+			if (name.equals("fileName")) {
+				dispatchContext.setFileName(value);
+			}
+			if (name.equals("zipFileName")) {
+				dispatchContext.setZipFileName(value);
+			}
+			if (name.equals("outputType")) {
+				dispatchContext.setOutputTypeTrigger(value);
+			}
 
-            // File
-            if (name.equals("zipFileDocument")) {
-                dispatchContext.setZipFileDocument(true);
-            }
-            if (name.equals("fileName")) {
-                dispatchContext.setFileName(value);
-            }
-            if (name.equals("zipFileName")) {
-                dispatchContext.setZipFileName(value);
-            }
-            if (name.equals("outputType")) {
-                dispatchContext.setOutputTypeTrigger(value);
-            }
-
-        }
-        return dispatchContext;
+		}
+		return dispatchContext;
 	}
 
 	public static void scheduleDataset(UserProfile profile, IDataSet dataset, JSONObject datasetJson) throws Exception {
