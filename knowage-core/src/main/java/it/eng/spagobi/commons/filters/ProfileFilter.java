@@ -21,14 +21,8 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Objects.isNull;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.Base64;
-import java.util.UUID;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -57,7 +51,6 @@ import it.eng.spagobi.commons.services.LoginActionWeb;
 import it.eng.spagobi.commons.services.LoginModule;
 import it.eng.spagobi.commons.utilities.ChannelUtilities;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
-import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
 import it.eng.spagobi.services.common.SsoServiceFactory;
 import it.eng.spagobi.services.common.SsoServiceInterface;
 import it.eng.spagobi.services.security.bo.SpagoBIUserProfile;
@@ -77,8 +70,6 @@ public class ProfileFilter implements Filter {
 
 	private static final Logger LOGGER = LogManager.getLogger(ProfileFilter.class);
 
-	private static final String FILE_CSP = "csp.txt";
-
 	@Override
 	public void destroy() {
 		// do nothing
@@ -92,8 +83,6 @@ public class ProfileFilter implements Filter {
 				HttpServletRequest httpRequest = (HttpServletRequest) request;
 				HttpServletResponse httpResponse = (HttpServletResponse) response;
 				HttpSession session = httpRequest.getSession();
-
-				this.setCspNonse(httpRequest, httpResponse);
 
 				// @formatter:off
 				// TODO ML				RequestContainer requestContainer = (RequestContainer) session
@@ -226,30 +215,6 @@ public class ProfileFilter implements Filter {
 			TenantManager.unset();
 			UserProfileManager.unset();
 		}
-	}
-
-	private void setCspNonse(HttpServletRequest httpRequest, HttpServletResponse httpResponse) throws IOException {
-
-		String cspFilePath = SpagoBIUtilities.getRootResourcePath() + File.separator + FILE_CSP;
-
-		File cspFile = new File(cspFilePath);
-		if (!cspFile.exists()) {
-			return;
-		}
-
-		String cspPolicy = new String(Files.readAllBytes(Paths.get(cspFilePath)), StandardCharsets.UTF_8);
-
-		// Generate a secure random nonce
-		String nonce = Base64.getEncoder().encodeToString(UUID.randomUUID().toString().getBytes());
-		// Store the nonce in the request so it can be used in JSP or templates
-		httpRequest.setAttribute("cspNonce", nonce);
-
-		// Replace the placeholder with the actual nonce
-		cspPolicy = cspPolicy.replace("rAnd0m", nonce);
-
-		// Set the updated CSP header in the response
-		httpResponse.setHeader("Content-Security-Policy", cspPolicy);
-
 	}
 
 	private boolean requestIsForHomePage(HttpServletRequest request) {
