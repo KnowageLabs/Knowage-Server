@@ -151,7 +151,7 @@
 		
 		<% if (AzureSignInConfig.isEnabled()) {%>
 		<%-- Resources for Azure Sign-In authentication --%>
-		<script type="text/javascript" nonce="rAnd0m">
+		<script type="text/javascript" nonce="<%= request.getAttribute("cspNonce") %>">
 			var msalConfig = {
 				    auth: {
 				        clientId: "<%= AzureSignInConfig.getClientId() %>",

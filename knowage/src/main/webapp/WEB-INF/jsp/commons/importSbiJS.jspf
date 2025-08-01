@@ -212,7 +212,7 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
 <script type="text/javascript"
 	src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/execution/ExporterUtils.js")%>'></script>
 
-<script type="text/javascript" nonce="rAnd0m">
+<script type="text/javascript" nonce="<%= request.getAttribute("cspNonce") %>">
 	// Session parameters manager must be initialized
 	document.onload = Sbi.execution.SessionParametersManager.init();
 </script>

@@ -27,7 +27,7 @@ From https://github.com/curityio/pkce-javascript-example
     <title>OAuth2 PKCE flow</title>
   </head>
   <body>
-    <script type="text/javascript" nonce="rAnd0m">  
+    <script type="text/javascript" nonce="<%= request.getAttribute("cspNonce") %>">  
     	start();
         
         async function start() {

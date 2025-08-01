@@ -20,7 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <%@page import="java.util.regex.Matcher"%>
 <%@page import="java.util.regex.Pattern"%>
 <%@page import="org.apache.commons.lang.StringEscapeUtils"%>
-<script type="text/javascript" nonce="rAnd0m">
+<script type="text/javascript" nonce="<%= request.getAttribute("cspNonce") %>">
 
 var sbiM=angular.module('sbiModule',["ngSanitize","ngCookies"]);
 var _CURRENTLANGUAGE = '<%= curr_language%>';

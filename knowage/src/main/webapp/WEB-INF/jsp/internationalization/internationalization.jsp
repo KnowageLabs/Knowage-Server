@@ -32,7 +32,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	boolean isTechnicalUser = UserUtilities.isTechnicalUser(userProfile);
   %>
    
-   <script type="text/javascript" nonce="rAnd0m">
+   <script type="text/javascript" nonce="<%= request.getAttribute("cspNonce") %>">
 		var isTechnicalUser = <%= isTechnicalUser %>
    </script>
         

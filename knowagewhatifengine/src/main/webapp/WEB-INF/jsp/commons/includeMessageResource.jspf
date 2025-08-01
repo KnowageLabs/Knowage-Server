@@ -20,7 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <%@page import="it.eng.knowage.commons.utilities.LocalePropertiesUtilities"%>
 
-<script type="text/javascript" nonce="rAnd0m">
+<script type="text/javascript" nonce="<%= request.getAttribute("cspNonce") %>">
 	//Function that gets the properties file's content in an synchronous way
 	getSynch=function(url, callback){
 		var xmlhttp;

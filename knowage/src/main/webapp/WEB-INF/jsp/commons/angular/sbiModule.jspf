@@ -7,7 +7,7 @@
 <%@page import="it.eng.spagobi.commons.constants.SpagoBIConstants"%>
 <%@page import="it.eng.knowage.commons.utilities.urls.UrlBuilder"%>
 
-<script type="text/javascript" nonce="rAnd0m">
+<script type="text/javascript" nonce="<%= request.getAttribute("cspNonce") %>">
 var sbiM=angular.module('sbiModule',["toastr","ngSanitize","ngCookies"]);
 
 // sbiM.config(function($mdThemingProvider) {

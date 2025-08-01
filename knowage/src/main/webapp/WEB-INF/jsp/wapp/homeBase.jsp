@@ -85,7 +85,7 @@ if(enableGlossary){
 }
 %>
 
-<script type="text/javascript" nonce="rAnd0m">
+<script type="text/javascript" nonce="<%= request.getAttribute("cspNonce") %>">
    	function execCrossNavigation(frameid, doclabel, params, subobjid, title, target) {
 		var iframeDocElement = document.getElementById('iframeDoc');
 		if(!iframeDocElement) {
@@ -168,7 +168,7 @@ if(enableGlossary){
 
 
 <%-- Javascript object useful for session expired management (see also sessionExpired.jsp) --%>
-<script type="text/javascript" nonce="rAnd0m">
+<script type="text/javascript" nonce="<%= request.getAttribute("cspNonce") %>">
 sessionExpiredSpagoBIJS = 'sessionExpiredSpagoBIJS';
 </script>
 <%-- End javascript object useful for session expired management (see also sessionExpired.jsp) --%>

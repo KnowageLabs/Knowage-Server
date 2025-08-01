@@ -93,7 +93,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   			</p>
   		</div>
   	</div>
-    <script type="text/javascript" nonce="rAnd0m">
+    <script type="text/javascript" nonce="<%= request.getAttribute("cspNonce") %>">
    var baseUrl = "<%= baseUrl %>";
 
     angular.module('userActivation',[])

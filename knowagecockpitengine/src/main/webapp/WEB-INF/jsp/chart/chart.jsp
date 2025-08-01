@@ -188,7 +188,7 @@ author:
 <%@include file="commons/includeExtJS5.jspf"%>
 <%@include file="commons/includeMessageResource.jspf"%>
 
-<script type="text/javascript" nonce="rAnd0m">
+<script type="text/javascript" nonce="<%= request.getAttribute("cspNonce") %>">
 	var sbiExecutionId = <%=esapiEncoder.encodeForJavaScript(request.getParameter("SBI_EXECUTION_ID")!=null? "'"+request.getParameter("SBI_EXECUTION_ID")+"'" : "null")%>;
 	//var sbiExecutionId = '<%=uuidO%>';
 	var userId = '<%=userId%>';

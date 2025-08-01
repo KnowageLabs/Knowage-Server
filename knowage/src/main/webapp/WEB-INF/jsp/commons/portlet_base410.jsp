@@ -243,7 +243,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	lang="<%=locale != null ? locale.getLanguage() : GeneralUtilities.getDefaultLocale().getLanguage()%>" style="overflow-x:hidden">
 <head>
 <title>Knowage</title>
-<script type="text/javascript" nonce="rAnd0m">
+<script type="text/javascript" nonce="<%= request.getAttribute("cspNonce") %>">
 	//SERVICE WORKER REGISTRATION
 	//if ('serviceWorker' in navigator) {
 	//	navigator.serviceWorker.register('../knowage-sw.js?version=' + "<%=it.eng.knowage.wapp.Version.getCompleteVersion()%>")
@@ -275,7 +275,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	    <![endif]-->
 <!--[if !IE]><!-->
 <body class="kn-main-body">
-	<script type="text/javascript" nonce="rAnd0m">  
+	<script type="text/javascript" nonce="<%= request.getAttribute("cspNonce") %>">  
 			if (/*@cc_on!@*/false) {  
 				document.documentElement.className+=' ie10';  
 			}  
@@ -286,7 +286,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
 
-	<script type="text/javascript" nonce="rAnd0m">
+	<script type="text/javascript" nonce="<%= request.getAttribute("cspNonce") %>">
 
     Sbi = new Object();
     Sbi.config = function () {
@@ -385,7 +385,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	%>
 
 
-<script type="text/javascript" nonce="rAnd0m">
+<script type="text/javascript" nonce="<%= request.getAttribute("cspNonce") %>">
 	document.onselectstart = function() { return true; }
 	
 	 var enableUIO = <%=enableUIO%>;
@@ -395,7 +395,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	
 </script>
 
-<script type="text/javascript" nonce="rAnd0m">
+<script type="text/javascript" nonce="<%= request.getAttribute("cspNonce") %>">
 	var PleaseRotateOptions = {
 	    message: "Please Rotate Your Device",
 	    subMessage: "For a better mobile experience",
