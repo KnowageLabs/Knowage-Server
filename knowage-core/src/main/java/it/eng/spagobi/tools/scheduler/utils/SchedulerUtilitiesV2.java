@@ -578,11 +578,8 @@ public class SchedulerUtilitiesV2 {
 	private static String escapeXmlAttribute(String text) {
 		if (text == null) return null;
 		return text
-				.replace("&", "&amp;")
 				.replace("<", "&lt;")
-				.replace(">", "&gt;")
-				.replace("\"", "&quot;")
-				.replace("'", "&apos;");
+				.replace(">", "&gt;");
 	}
 
 	private static String serializeSaveAsDistributionListOptions(DispatchContext dispatchContext,

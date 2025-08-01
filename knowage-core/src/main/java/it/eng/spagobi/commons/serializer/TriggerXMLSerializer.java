@@ -180,11 +180,8 @@ public class TriggerXMLSerializer implements Serializer {
 	private String escapeXmlAttribute(String text) {
 		if (text == null) return null;
 		return text
-				.replace("&", "&amp;")   // DEVE essere il primo!
 				.replace("<", "&lt;")
-				.replace(">", "&gt;")
-				.replace("\"", "&quot;")
-				.replace("'", "&apos;");
+				.replace(">", "&gt;");
 	}
 
 	public String serailizeTime(Date date) {
