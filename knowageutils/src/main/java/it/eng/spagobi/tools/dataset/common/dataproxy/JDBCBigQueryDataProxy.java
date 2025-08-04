@@ -125,8 +125,8 @@ public class JDBCBigQueryDataProxy extends JDBCDataProxy {
 					stmt.setMaxRows(getMaxResults());
 				}
 				sqlQuery = getStatement();
-				logger.info("Executing query " + sqlQuery + " ...");
 				resultSet = stmt.executeQuery(sqlQuery);
+				logger.info("Executed query " + sqlQuery + " ...");
 
 			} catch (Exception t) {
 				throw new SpagoBIRuntimeException("An error occurred while executing statement: " + sqlQuery, t);
