@@ -309,10 +309,11 @@ public class JDBCBigQueryDataProxy extends JDBCDataProxy {
 	public String getStatement() {
 
 		if (fetchSize == -1) {
-			if (!this.statement.isEmpty()) {
-				this.statement = removeLastSemicolon(this.statement);
-				return this.statement;
-			}
+			fetchSize = 1_000_000;
+		}
+
+		if (offset == -1) {
+			offset = 0;
 		}
 
 		StringBuilder newStatement = new StringBuilder();
@@ -321,14 +322,12 @@ public class JDBCBigQueryDataProxy extends JDBCDataProxy {
 
 			newStatement.append("SELECT * FROM (").append(this.statement).append(")");
 
-			// TODO : could fetchSize be an Integer?
 			if (fetchSize > 0) {
-				newStatement.append(" LIMIT " + fetchSize);
+				newStatement.append(" LIMIT ").append(fetchSize);
 			}
 
-			// TODO : could offset be an Integer?
 			if (fetchSize > 0) {
-				newStatement.append(" OFFSET " + offset);
+				newStatement.append(" OFFSET ").append(offset);
 			}
 		}
 
