@@ -52,7 +52,6 @@ public class DashboardExcelExporter extends Common {
     private static final String[] WIDGETS_TO_IGNORE = {"image", "text", "selector", "selection", "html"};
     private static final int SHEET_NAME_MAX_LEN = 31;
     protected static final String DATE_FORMAT = "dd/MM/yyyy";
-    public static final String TIMESTAMP_FORMAT = "dd/MM/yyyy HH:mm:ss.SSS";
 
     private final StyleProvider styleProvider;
     private final JSONObjectUtils jsonObjectUtils;
@@ -141,9 +140,6 @@ public class DashboardExcelExporter extends Common {
             LOGGER.info("CONFIG label=\"KNOWAGE.DASHBOARD.EXTERNAL_PROCESS_NAME\": " + cockpitExportExternalProcessName);
 
             String stringifiedRequestUrl = url.toString();
-            // replace localhost:8080 with 127.0.0.1:3000
-//            stringifiedRequestUrl = stringifiedRequestUrl.replace("localhost:8080", "127.0.0.1:3000");
-
             ProcessBuilder processBuilder = new ProcessBuilder(cockpitExportExternalProcessName, exportScriptFullPath.toString(),
                     encodedUserId, outputDir.toString(), stringifiedRequestUrl);
 
@@ -977,7 +973,7 @@ public class DashboardExcelExporter extends Common {
         }
     }
 
-    private void doTypeLogic(Workbook wb, int precision, String type, Cell cell, String stringifiedValue) {
+    private void setFormattedCellValue(Workbook wb, int precision, String type, Cell cell, String stringifiedValue) {
         CreationHelper creationHelper = wb.getCreationHelper();
 
         DateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT, getLocale());
@@ -1004,6 +1000,15 @@ public class DashboardExcelExporter extends Common {
                 } catch (Exception e) {
                     LOGGER.debug("Date will be exported as string due to error: ", e);
                     cell.setCellValue(stringifiedValue);
+                }
+            case "string":
+                if (!stringifiedValue.trim().isEmpty()) {
+                    try {
+                        cell.getCellStyle().setDataFormat(getFormat(precision, creationHelper));
+                        cell.setCellValue(Integer.parseInt(stringifiedValue));
+                    } catch (Exception e) {
+                        cell.setCellValue(stringifiedValue);
+                    }
                 }
                 break;
             default:
@@ -1058,7 +1063,7 @@ public class DashboardExcelExporter extends Common {
             JSONArray columnsOrdered;
             List<String> hiddenColumns;
             if (widgetData.has("columns") && widgetData.getJSONArray("columns").length() > 0) {
-                hiddenColumns = getDashboardHiddenColumnsList(settings);
+                hiddenColumns = getDashboardHiddenColumnsList(settings, "hide");
                 columnsOrdered = getDashboardTableOrderedColumns(columnSelectedOfDataset, hiddenColumns, columns);
             } else {
                 columnsOrdered = columns;
@@ -1265,7 +1270,7 @@ public class DashboardExcelExporter extends Common {
             String stringifiedValue = value != null ? value.toString() : "";
 
             String styleKey;
-            if (r >= rows.length() - numberOfSummaryRows) {
+            if (r >= rows.length() - numberOfSummaryRows && !styleProvider.styleIsEmpty(styleProvider.getStyleCustomObjFromProps(sheet, settings.getJSONObject("style").getJSONObject("summary"), ""))) {
                 CellStyle summaryCellStyle = styleProvider.buildPoiCellStyle(styleProvider.getStyleCustomObjFromProps(sheet, settings.getJSONObject("style").getJSONObject("summary"), ""), (XSSFFont) wb.createFont(), wb);
                 cell.setCellStyle(summaryCellStyle);
             } else {
@@ -1288,13 +1293,30 @@ public class DashboardExcelExporter extends Common {
                 }
                 cell.setCellStyle(cellStyle);
             }
-            doTypeLogic(wb, getPrecisionByColumn(settings, column), type, cell, stringifiedValue);
+            int precision = getPrecisionByColumn(settings, column);
 
-            if (r >= rows.length() - numberOfSummaryRows) {
-                cell.setCellValue(summaryRowsLabels.get(r - (rows.length() - numberOfSummaryRows)).concat(": ").concat(stringifiedValue));
+            if (r < rows.length() - numberOfSummaryRows) {
+                setFormattedCellValue(wb, precision, type, cell, stringifiedValue);
+            } else {
+                    if (isSummaryColumnVisible(getDashboardHiddenColumnsList(settings, "hideFromSummary"), column)) {
+                        String label = "";
+                        if (colIndex.equals("column_1")) {
+                            label = summaryRowsLabels.get(r - (rows.length() - numberOfSummaryRows)).concat(" ");
+                        }
+                        cell.setCellStyle(cellStyle);
+                        setFormattedCellValue(wb, precision, type, cell, label.concat(stringifiedValue));
+                     }
+                }
             }
+            return cellStyle;
+    }
+
+    private boolean isSummaryColumnVisible(List<String> columnsToHide, JSONObject column) {
+        try {
+            return !columnsToHide.contains(column.getString("id"));
+        } catch (JSONException e) {
+            throw new SpagoBIRuntimeException(e);
         }
-        return cellStyle;
     }
 
     private String getCellType(JSONObject column, String colName) {
@@ -1440,7 +1462,7 @@ public class DashboardExcelExporter extends Common {
         };
     }
 
-    protected List<String> getDashboardHiddenColumnsList(JSONObject settings) {
+    protected List<String> getDashboardHiddenColumnsList(JSONObject settings, String conditionToEvaluate) {
         try {
             List<String> hiddenColumns = new ArrayList<>();
             if (areVisibilityConditionsEnabled(settings)) {
@@ -1450,7 +1472,7 @@ public class DashboardExcelExporter extends Common {
 
                 for (int i = 0; i < conditions.length(); i++) {
                     JSONObject condition = conditions.getJSONObject(i);
-                    if (columnMustBeHidden(condition)) {
+                    if (columnMustBeHidden(condition, conditionToEvaluate)) {
                         JSONArray target;
                         try {
                             target = condition.getJSONArray("target");
@@ -1472,22 +1494,22 @@ public class DashboardExcelExporter extends Common {
         }
     }
 
-    private boolean columnMustBeHidden(JSONObject condition) {
+    private boolean columnMustBeHidden(JSONObject condition, String conditionToEvaluate) {
         try {
             JSONObject conditionDefinition = condition.getJSONObject("condition");
 
+
             return  (conditionDefinition.getString("type").equals("always") &&
-                    condition.getBoolean("hide"))
+                    condition.getBoolean(conditionToEvaluate))
                     ||
                     (conditionDefinition.getString("type").equals("variable") &&
-                            condition.getBoolean("hide") && conditionIsApplicable(conditionDefinition.getString("variableValue"), conditionDefinition.getString("operator"), conditionDefinition.getString("value")));
+                            condition.getBoolean(conditionToEvaluate) && conditionIsApplicable(conditionDefinition.getString("variableValue"), conditionDefinition.getString("operator"), conditionDefinition.getString("value")));
 
         } catch (JSONException jsonException) {
             LOGGER.error("Error while evaluating if column must be hidden according to variable.", jsonException);
             return false;
         }
     }
-
     private boolean areVisibilityConditionsEnabled(JSONObject settings) throws JSONException {
         JSONObject visualization = jsonObjectUtils.getVisualizationFromSettings(settings);
         return settings.has("visualization") &&

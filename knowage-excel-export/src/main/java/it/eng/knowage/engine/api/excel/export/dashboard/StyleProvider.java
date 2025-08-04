@@ -286,40 +286,40 @@ public class StyleProvider extends Common {
     public CellStyle buildPoiCellStyle(Style style, XSSFFont font, Workbook wb) {
         CellStyle cellStyle = wb.createCellStyle();
 
-        if (stringIsNotEmpty(style.getFontSize())) {
+        if (!stringIsEmpty(style.getFontSize())) {
             font.setFontHeightInPoints(Short.parseShort(getOnlyTheNumericValueFromString(style.getFontSize())));
         } else {
             font.setFontHeightInPoints(DEFAULT_FONT_SIZE);
         }
 
-        if (stringIsNotEmpty(style.getColor())) {
+        if (!stringIsEmpty(style.getColor())) {
             font.setColor(getXSSFColorFromRGBA(style.getColor()));
         }
 
-        if (stringIsNotEmpty(style.getBackgroundColor())) {
+        if (!stringIsEmpty(style.getBackgroundColor())) {
             cellStyle.setFillForegroundColor(getXSSFColorFromRGBA(style.getBackgroundColor()));
             cellStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
         }
 
-        if (stringIsNotEmpty(style.getFontFamily())) {
+        if (!stringIsEmpty(style.getFontFamily())) {
             font.setFontName(style.getFontFamily());
         } else {
             font.setFontName(DEFAULT_FONT_NAME);
         }
 
-        if (stringIsNotEmpty(style.getFontWeight())) {
+        if (!stringIsEmpty(style.getFontWeight())) {
             font.setBold(style.getFontWeight().equals("bold"));
         }
 
-        if (stringIsNotEmpty(style.getFontStyle())) {
+        if (!stringIsEmpty(style.getFontStyle())) {
             font.setItalic(style.getFontStyle().equals("italic"));
         }
 
-        if (stringIsNotEmpty(style.getAlignItems())) {
+        if (!stringIsEmpty(style.getAlignItems())) {
             cellStyle.setAlignment(getHorizontalAlignment(style.getAlignItems().toUpperCase()));
         }
 
-        if (stringIsNotEmpty(style.getJustifyContent())) {
+        if (!stringIsEmpty(style.getJustifyContent())) {
             cellStyle.setVerticalAlignment(getVerticalAlignment(style.getJustifyContent().toUpperCase()));
         }
 
@@ -374,7 +374,18 @@ public class StyleProvider extends Common {
         return new XSSFColor(new java.awt.Color(red, green, blue), new DefaultIndexedColorMap());
     }
 
-    protected boolean stringIsNotEmpty(String str) {
-        return str != null && !str.isEmpty();
+    protected boolean stringIsEmpty(String str) {
+        return str == null || str.isEmpty();
+    }
+
+    public boolean styleIsEmpty(Style style) {
+        return stringIsEmpty(style.getBackgroundColor()) &&
+               stringIsEmpty(style.getColor()) &&
+               stringIsEmpty(style.getFontSize()) &&
+               stringIsEmpty(style.getFontFamily()) &&
+               stringIsEmpty(style.getFontWeight()) &&
+               stringIsEmpty(style.getFontStyle()) &&
+               stringIsEmpty(style.getAlignItems()) &&
+               stringIsEmpty(style.getJustifyContent());
     }
 }
