@@ -10,11 +10,6 @@ export function createToolbarMenuItems(document: any, functions: any, exporters:
         })
     }
 
-    toolbarMenuItems.push({
-        label: $t('common.file'),
-        items: [{ icon: 'pi pi-print', label: $t('common.print'), command: () => functions.print() }]
-    })
-
     if (exporters && exporters.length !== 0) {
         toolbarMenuItems.push({
             label: $t('common.export'),

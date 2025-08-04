@@ -1,5 +1,5 @@
 <template>
-    <li role="menu" :style="[item.style, getVisibilityClass(item)]" :title="getInternationalizedValue()">
+    <li role="menu" :style="[item.style, getVisibilityClass(item)]" :label="item.label" :title="getInternationalizedValue()">
         <router-link v-if="item.to && !item.disabled" :to="cleanTo" custom v-slot="{ navigate, isActive }" exact>
             <a @click="onClick($event, navigate)" role="menuitem" :class="isActive && 'router-link-active'">
                 <Badge v-if="badge > 0" :value="badge" severity="danger"></Badge>

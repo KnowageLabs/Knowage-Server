@@ -434,16 +434,6 @@ export default defineComponent({
         },
         createMenuItems() {
             this.toolbarMenuItems = []
-            this.toolbarMenuItems.push({
-                label: this.$t('common.file'),
-                items: [
-                    {
-                        icon: 'pi pi-print',
-                        label: this.$t('common.print'),
-                        command: () => this.print()
-                    }
-                ]
-            })
 
             if (this.exporters && this.exporters.length !== 0) {
                 this.toolbarMenuItems.push({
@@ -583,9 +573,6 @@ export default defineComponent({
                     this.toolbarMenuItems.splice(i, 1)
                 }
             }
-        },
-        print() {
-            window.print()
         },
         export(type: string) {
             if (this.document.typeCode === 'OLAP') {

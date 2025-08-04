@@ -123,6 +123,10 @@ public class JDBCBigQueryDataProxy extends JDBCDataProxy {
 				// get max size
 				if (getMaxResults() > 0) {
 					stmt.setMaxRows(getMaxResults());
+				}else {
+					// add this for test only
+					logger.error("SET MAX ROWS to 500000");
+					stmt.setMaxRows(50000);
 				}
 				sqlQuery = getStatement();
 				logger.info("Executing query " + sqlQuery + " ...");
