@@ -130,13 +130,6 @@
         },
         {
             "category": "documentExecutionMenu",
-            "dbname": "ENABLE_TO_PRINT",
-            "fieldName": "ableToEnablePrint",
-            "label": "managers.rolesManagement.authorizations.printDocuments",
-            "visible": false
-        },
-        {
-            "category": "documentExecutionMenu",
             "dbname": "ENABLE_TO_COPY_AND_EMBED",
             "fieldName": "ableToEnableCopyAndEmbed",
             "label": "managers.rolesManagement.authorizations.copyAndEmbed",
