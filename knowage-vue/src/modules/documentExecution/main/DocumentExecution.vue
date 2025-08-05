@@ -395,7 +395,7 @@ export default defineComponent({
                         }
                     })
                     .catch(() => {})
-                if (event.data.directDownload) this.directDownloadDataset(this.datasetToPreview.id)
+                if (event.data.directDownload) this.directDownloadDataset(this.datasetToPreview)
                 else this.datasetPreviewShown = true
             } else if (event.data.type === 'cockpitExecuted') {
                 this.loading = false
