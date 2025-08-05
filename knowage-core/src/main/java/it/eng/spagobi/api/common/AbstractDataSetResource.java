@@ -807,9 +807,13 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 			} else {
 				Projection projection;
 				String alias = jsonObject.optString("alias");
-				if (orderColumn != null && !orderColumn.isEmpty() && !orderType.isEmpty()) {
-					projection = new Projection(function, dataSet, orderColumn);
-				} else {
+                if (orderColumn != null && !orderColumn.isEmpty() && !orderType.isEmpty()) {
+                    if (alias.isEmpty()) {
+                        projection = new Projection(function, dataSet, orderColumn);
+                    } else {
+                        projection = new Projection(function, dataSet, orderColumn, alias);
+                    }
+                } else {
 					String columnName = getColumnName(jsonObject, columnAliasToName);
 					projection = new Projection(function, dataSet, columnName, alias);
 				}
