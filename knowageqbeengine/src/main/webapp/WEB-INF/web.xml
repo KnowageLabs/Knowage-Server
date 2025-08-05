@@ -50,6 +50,7 @@
 		<url-pattern>/servlet/AdapterHTTPBackEnd</url-pattern>
 	</filter-mapping>
 
+
 	<filter>
 		<filter-name>EngineCheckSessionFilter</filter-name>
 		<filter-class>it.eng.spagobi.utilities.filters.EngineCheckSessionFilter</filter-class>
@@ -166,7 +167,20 @@
 		<dispatcher>REQUEST</dispatcher>
 		<dispatcher>FORWARD</dispatcher>
 	</filter-mapping>
-	
+
+	<!--  CSP FILTER  	-->
+	<filter>
+		<filter-name>CspFilter</filter-name>
+		<filter-class>it.eng.spagobi.security.utils.CspFilter</filter-class>
+	</filter>
+
+	<filter-mapping>
+		<filter-name>CspFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+		<dispatcher>REQUEST</dispatcher>
+		<dispatcher>FORWARD</dispatcher>
+	</filter-mapping>
+
 
 
 
