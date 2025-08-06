@@ -348,7 +348,7 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 	}
 
     public String getDataStoreAI(String label, String parameters, Map<String, Object> drivers, String selections,
-                               String likeSelections, int maxRowCount, String aggregations, String summaryRow, int offset, int fetchSize,
+                               String likeSelections, Integer maxRowCount, String aggregations, String summaryRow, int offset, int fetchSize,
                                Boolean isNearRealtime, String options, Set<String> indexes, String widgetName) {
         LOGGER.debug("IN");
         DatasetManagementAPI datasetManagementAPI = getDatasetManagementAPI();
@@ -358,7 +358,13 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 
             int maxResults = Integer
                     .parseInt(SingletonConfig.getInstance().getConfigValue("SPAGOBI.API.DATASET.MAX_ROWS_NUMBER"));
+
             LOGGER.debug("Offset {}, fetch size {}, max results {}", offset, fetchSize, maxResults);
+
+
+            if (maxRowCount == null) {
+                maxRowCount = maxResults;
+            }
 
             if (maxResults <= 0) {
                 throw new SpagoBIRuntimeException(
@@ -371,7 +377,7 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
             }
             if (maxRowCount > maxResults) {
                 throw new IllegalArgumentException(
-                        "The dataset requested is too big. Max row count is equals to [" + maxResults + "]");
+                        "The requested number of rows is too big [ " + maxRowCount + " ]. The limit is [ " + maxResults + " ]");
             }
 
             IDataSetDAO dataSetDao = DAOFactory.getDataSetDAO();
@@ -491,6 +497,8 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
             return gridDataFeed.toString();
         } catch (ValidationException v) {
             throw v;
+        } catch (IllegalArgumentException i) {
+            throw i;
         } catch (ParametersNotValorizedException p) {
             throw p;
         } catch (CatalogFunctionException c) {

@@ -50,6 +50,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.core.Response.Status;
 
+import it.eng.spagobi.commons.SingletonConfig;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.LogMF;
 import org.apache.log4j.Logger;
@@ -787,7 +788,7 @@ public class DataSetResource extends AbstractDataSetResource {
     @Produces(MediaType.APPLICATION_JSON)
     @UserConstraint(functionalities = { CommunityFunctionalityConstants.SELF_SERVICE_DATASET_MANAGEMENT })
     public String getAIDataStorePostWithJsonInBody(@PathParam("label") String label, String body,
-                                                   @QueryParam("widgetName") String widgetName) {
+                                                   @QueryParam("widgetName") String widgetName, @QueryParam("maxRows") Integer maxRows) {
         try {
             Monitor timing = MonitorFactory.start("Knowage.DataSetResource.getDataStorePostWithJsonInBody:parseInputs");
 
@@ -799,7 +800,7 @@ public class DataSetResource extends AbstractDataSetResource {
             String summaryRow = null;
             String options = null;
             JSONArray jsonIndexes = null;
-            int maxRowCount = 5000;
+            Integer maxRowCount = maxRows;
             int fetchSize = 5000;
             boolean isNearRealtime = true;
             int offset = 0;
@@ -858,7 +859,7 @@ public class DataSetResource extends AbstractDataSetResource {
             throw e;
         } catch (Exception e) {
             logger.error("Error loading dataset data from " + label, e);
-            throw new SpagoBIRestServiceException(buildLocaleFromSession(), e);
+            throw new SpagoBIRuntimeException(e.getMessage(), e);
         }
     }
 
