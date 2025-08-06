@@ -18,6 +18,7 @@
 package it.eng.spagobi.api.common;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.net.URL;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
@@ -41,6 +42,7 @@ import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.core.Response;
 
+import com.fasterxml.jackson.databind.node.DecimalNode;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
@@ -345,7 +347,227 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 		}
 	}
 
-	private String getCatalogFunctionUuid(List<AbstractSelectionField> projections) {
+    public String getDataStoreAI(String label, String parameters, Map<String, Object> drivers, String selections,
+                               String likeSelections, int maxRowCount, String aggregations, String summaryRow, int offset, int fetchSize,
+                               Boolean isNearRealtime, String options, Set<String> indexes, String widgetName) {
+        LOGGER.debug("IN");
+        DatasetManagementAPI datasetManagementAPI = getDatasetManagementAPI();
+        Monitor totalTiming = MonitorFactory.start("Knowage.AbstractDataSetResource.getDataStore");
+        try {
+            Monitor timing = MonitorFactory.start("Knowage.AbstractDataSetResource.getDataStore:validateParams");
+
+            int maxResults = Integer
+                    .parseInt(SingletonConfig.getInstance().getConfigValue("SPAGOBI.API.DATASET.MAX_ROWS_NUMBER"));
+            LOGGER.debug("Offset {}, fetch size {}, max results {}", offset, fetchSize, maxResults);
+
+            if (maxResults <= 0) {
+                throw new SpagoBIRuntimeException(
+                        "SPAGOBI.API.DATASET.MAX_ROWS_NUMBER value cannot be a non-positive integer");
+            }
+
+            if (fetchSize > maxResults) {
+                throw new IllegalArgumentException(
+                        "The page requested is too big. Max page size is equals to [" + maxResults + "]");
+            }
+            if (maxRowCount > maxResults) {
+                throw new IllegalArgumentException(
+                        "The dataset requested is too big. Max row count is equals to [" + maxResults + "]");
+            }
+
+            IDataSetDAO dataSetDao = DAOFactory.getDataSetDAO();
+            dataSetDao.setUserProfile(getUserProfile());
+            IDataSet dataSet = dataSetDao.loadDataSetByLabel(label);
+            if (isNearRealtime == null) {
+                isNearRealtime = isNearRealtimeSupported(dataSet);
+            }
+            Assert.assertNotNull(dataSet, "Unable to load dataset with label [" + label + "]");
+            dataSet.setUserProfile(getUserProfile());
+            dataSet.setDrivers(drivers);
+
+            timing.stop();
+            timing = MonitorFactory.start("Knowage.AbstractDataSetResource.getDataStore:getQueryDetails");
+
+            List<AbstractSelectionField> projections = new ArrayList<>(0);
+            List<AbstractSelectionField> groups = new ArrayList<>(0);
+            List<Sorting> sortings = new ArrayList<>(0);
+            Map<String, String> columnAliasToName = new HashMap<>();
+            if (aggregations != null && !aggregations.isEmpty()) {
+                JSONObject aggregationsObject = new JSONObject(aggregations);
+                JSONArray categoriesObject = aggregationsObject.getJSONArray("categories");
+                JSONArray measuresObject = aggregationsObject.getJSONArray("measures");
+
+                loadColumnAliasToName(categoriesObject, columnAliasToName);
+                loadColumnAliasToName(measuresObject, columnAliasToName);
+
+                Map<String, Object> optionMap;
+                if (options != null && !options.isEmpty()) {
+                    ObjectMapper objectMapper = new ObjectMapper();
+                    optionMap = new HashMap<>(objectMapper.readValue(options,
+                            new TypeReference<Map<String, Object>>() {
+                            }));
+                } else {
+                    optionMap = new HashMap<>();
+                }
+                applyOptions(dataSet, optionMap);
+
+                projections.addAll(getProjections(dataSet, categoriesObject, measuresObject, columnAliasToName));
+                groups.addAll(getGroups(dataSet, categoriesObject, measuresObject, columnAliasToName,
+                        hasSolrFacetPivotOption(dataSet, optionMap)));
+                sortings.addAll(getSortings(dataSet, categoriesObject, measuresObject, columnAliasToName));
+
+                if (isSolrDataset(dataSet)) {
+                    IDataSet dataSetCopy = null;
+                    if (dataSet instanceof VersionedDataSet) {
+                        dataSetCopy = ((VersionedDataSet) dataSet).getWrappedDataset();
+                    }
+                    SolrDataSet solrDS = (SolrDataSet) dataSetCopy;
+                    solrDS.setFacetsLimitOption(getSolrFacetLimitOption(optionMap));
+                    ((VersionedDataSet) dataSet).setWrappedDataset(solrDS);
+                }
+
+            }
+
+            List<Filter> filters = new ArrayList<>(0);
+            if (selections != null && !selections.isEmpty()) {
+                LOGGER.debug("Converting selections to filters for label {}, with selection {} and column2alias map {}",
+                        label, selections, columnAliasToName);
+                JSONObject selectionsObject = new JSONObject(selections);
+                if (selectionsObject.names() != null) {
+                    filters.addAll(getFilters(label, selectionsObject, columnAliasToName));
+                }
+            }
+
+            List<SimpleFilter> likeFilters = new ArrayList<>(0);
+            if (likeSelections != null && !likeSelections.equals("")) {
+                JSONObject likeSelectionsObject = new JSONObject(likeSelections);
+                if (likeSelectionsObject.names() != null) {
+                    likeFilters.addAll(getLikeFilters(label, likeSelectionsObject, columnAliasToName));
+                }
+            }
+
+            Monitor timingMinMax = MonitorFactory.start("Knowage.AbstractDataSetResource.getDataStore:calculateMinMax");
+            Map<String, String> parametersMap = DataSetUtilities.getParametersMap(parameters);
+            filters = datasetManagementAPI.calculateMinMaxFilters(dataSet, isNearRealtime, parametersMap, filters,
+                    likeFilters, indexes);
+            timingMinMax.stop();
+
+            Filter where = datasetManagementAPI.getWhereFilter(filters, likeFilters);
+
+            timing.stop();
+
+            List<List<AbstractSelectionField>> summaryRowArray = getSummaryRowArray(summaryRow, dataSet,
+                    columnAliasToName);
+
+            IDataStore dataStore = datasetManagementAPI.getDataStore(dataSet, isNearRealtime, parametersMap,
+                    projections, where, groups, sortings, summaryRowArray, offset, fetchSize, maxRowCount, indexes);
+
+            // if required apply function from catalog
+            String catalogFuncId = getCatalogFunctionUuid(projections);
+            if (catalogFuncId != null) {
+                CatalogFunctionRuntimeConfigDTO catalogFunctionConfig = getCatalogFunctionConfiguration(projections);
+                IDataStoreTransformer functionTransformer = new CatalogFunctionTransformer(getUserProfile(),
+                        catalogFuncId, catalogFunctionConfig);
+                functionTransformer.transform(dataStore);
+            }
+
+            IDataStoreTransformer transformer = new SyncMetaDataDataStoreTransformer(dataSet);
+            transformer.transform(dataStore);
+            transformer = new DecryptionDataStoreTransformer(dataStore);
+            transformer.transform(dataStore);
+            transformer = new PrivacyManagerDataStoreTransformer(dataSet);
+            transformer.transform(dataStore);
+            transformer = new DataStoreStatsTransformer();
+            transformer.transform(dataStore);
+
+            IDataWriter dataWriter = getDataStoreWriter();
+
+            timing = MonitorFactory.start("Knowage.AbstractDataSetResource.getDataStore:convertToJson");
+            Object gridDataFeed = dataWriter.write(dataStore);
+
+            transformForAI(gridDataFeed);
+
+            timing.stop();
+
+            return gridDataFeed.toString();
+        } catch (ValidationException v) {
+            throw v;
+        } catch (ParametersNotValorizedException p) {
+            throw p;
+        } catch (CatalogFunctionException c) {
+            throw c;
+        } catch (Throwable t) {
+            throw new SpagoBIServiceException(this.request.getPathInfo(),
+                    "An unexpected error occured while executing service", t);
+        } finally {
+            totalTiming.stop();
+            LOGGER.debug("OUT");
+        }
+    }
+
+    private void transformForAI(Object gridDataFeed) throws JSONException {
+        if (gridDataFeed instanceof JSONObject) {
+            JSONObject jsonObject = (JSONObject) gridDataFeed;
+            JSONArray originalRows = jsonObject.getJSONArray("rows");
+            JSONArray slicedRows = new JSONArray();
+
+            for (int i = 0; i < originalRows.length() && i < 100; i++) {
+                slicedRows.put(originalRows.get(i));
+            }
+
+            jsonObject.put("rows", slicedRows);
+
+            JSONObject stats = jsonObject.getJSONObject("stats");
+
+            Iterator<String> keys = stats.keys();
+
+            while (keys.hasNext()) {
+                String key = keys.next();
+                JSONObject statsItem = stats.getJSONObject(key);
+                JSONArray distinct = statsItem.getJSONArray("distinct");
+
+                if (distinct.length() == 0) {
+                    statsItem.put("average", JSONObject.NULL);
+                    continue;
+                }
+                Object first;
+                try {
+                    first = distinct.get(0);
+                } catch (Exception e) {
+                    first = distinct.getJSONNode(0);
+                }
+                double sum = 0.0;
+                int count = distinct.length();
+
+                try {
+                    if (first instanceof Number) {
+                        for (int j = 0; j < count; j++) {
+                            sum += ((Number) distinct.get(j)).doubleValue();
+                        }
+                    } else if (first instanceof String) {
+                        for (int j = 0; j < count; j++) {
+                            sum += Double.parseDouble((String) distinct.get(j));
+                        }
+                    } else if (first instanceof DecimalNode) {
+                        for (int j = 0; j < count; j++) {
+                            sum += distinct.getJSONNode(j).asDouble();
+                        }
+                    } else {
+                        statsItem.put("average", JSONObject.NULL);
+                        continue;
+                    }
+
+                    double average = sum / count;
+                    statsItem.put("average", average);
+                } catch (NumberFormatException e) {
+                    statsItem.put("average", JSONObject.NULL);
+                }
+            }
+
+        }
+    }
+
+
+    private String getCatalogFunctionUuid(List<AbstractSelectionField> projections) {
 		String uuid = null;
 		for (AbstractSelectionField p : projections) {
 			if (p instanceof DataStoreCatalogFunctionField) {

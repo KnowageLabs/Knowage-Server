@@ -24,10 +24,12 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.DecimalNode;
 import com.fasterxml.jackson.databind.node.NullNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
@@ -524,5 +526,9 @@ public class JSONArray extends AbstractJSONArray {
 		// return null;
 		return rootNode.toString();
 	}
+
+    public JsonNode getJSONNode(int index) {
+        return this.rootNode.get(index);
+    }
 
 }
