@@ -23,6 +23,12 @@ angular.module('file_upload', [ 'ngMaterial', 'sbiModule'])
 	    controllerAs: 'ctrl',
 	    link: function(scope, element, attrs, ctrl, transclude) {
 
+			var input = element.find('input')[0];
+			input.addEventListener('change', function () {
+				scope.ctrl.setFile(this);
+			});
+
+
 	    	scope.id = "fileUpload" + Math.floor(Math.random() * 1000);
 	    	if (attrs.id){
 	    		scope.id = attrs.id;
@@ -41,7 +47,8 @@ angular.module('file_upload', [ 'ngMaterial', 'sbiModule'])
 
 
 function FileUploadControllerFunction($scope,$timeout,$mdDialog,sbiModule_translate){
-	$scope.setFile = function (element){
+	var vm = this
+	vm.setFile = function (element){
 
 		var max = $scope.fileMaxSize != undefined ? $scope.fileMaxSize : defaultFileMaxSize;
 
