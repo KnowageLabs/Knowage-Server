@@ -29,7 +29,10 @@ export function createToolbarMenuItems(document: any, functions: any, exporters:
         items: []
     })
 
-    exporters?.forEach((exporter: any) => toolbarMenuItems[1].items.push({ icon: 'fa fa-file-excel', label: exporter.name, command: () => functions.export(exporter.name) }))
+    exporters?.forEach((exporter: any) => {
+        const exporterindex = toolbarMenuItems.findIndex((item: any) => item.label === $t('common.export'))
+        toolbarMenuItems[exporterindex].items.push({ icon: 'fa fa-file-excel', label: exporter.name, command: () => functions.export(exporter.name) })
+    })
 
     if (user.functionalities.includes('SendMailFunctionality') && document.typeCode === 'REPORT') {
         const index = toolbarMenuItems.findIndex((item: any) => item.label === $t('common.info.info'))

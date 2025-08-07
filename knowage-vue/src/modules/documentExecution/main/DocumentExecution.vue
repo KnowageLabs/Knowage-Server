@@ -395,7 +395,7 @@ export default defineComponent({
                         }
                     })
                     .catch(() => {})
-                if (event.data.directDownload) this.directDownloadDataset(this.datasetToPreview.id)
+                if (event.data.directDownload) this.directDownloadDataset(this.datasetToPreview)
                 else this.datasetPreviewShown = true
             } else if (event.data.type === 'cockpitExecuted') {
                 this.loading = false
@@ -469,13 +469,14 @@ export default defineComponent({
                 items: []
             })
 
-            this.exporters?.forEach((exporter: any) =>
-                this.toolbarMenuItems[1].items.push({
+            this.exporters?.forEach((exporter: any) => {
+                const exporterindex = this.toolbarMenuItems.findIndex((item: any) => item.label === this.$t('common.export'))
+                this.toolbarMenuItems[exporterindex].items.push({
                     icon: 'fa fa-file-excel',
                     label: exporter.name,
                     command: () => this.export(exporter.name)
                 })
-            )
+            })
 
             if (this.user.functionalities.includes('SendMailFunctionality') && this.document.typeCode === 'REPORT') {
                 const index = this.toolbarMenuItems.findIndex((item: any) => item.label === this.$t('common.info.info'))
