@@ -644,15 +644,15 @@ public class SaveDocumentResource extends AbstractSpagoBIResource {
 	}
 
 	private BIObject setDocumentState(BIObject document, UserProfile profile) throws EMFUserError {
-		boolean isOnlyDevRole = false;
+		boolean hasADevRole = false;
 		try {
 			if (profile != null)
-				isOnlyDevRole = isOnlyDevRole(profile);
+				hasADevRole = hasADevRole(profile);
 		} catch (EMFInternalError e) {
 			throw new SpagoBIServiceException("setDocumentState", "sbi.document.saveError");
 		}
 		Domain objState = null;
-		if (isOnlyDevRole) {
+		if (hasADevRole) {
 			objState = DAOFactory.getDomainDAO().loadDomainByCodeAndValue(SpagoBIConstants.DOC_STATE,
 					SpagoBIConstants.DOC_STATE_DEV);
 		} else
@@ -665,16 +665,15 @@ public class SaveDocumentResource extends AbstractSpagoBIResource {
 		return document;
 	}
 
-	private boolean isOnlyDevRole(UserProfile profile) throws EMFInternalError, EMFUserError {
-		boolean onlyDev = true;
+	private boolean hasADevRole(UserProfile profile) throws EMFInternalError, EMFUserError {
 		for (Object roleLabel : profile.getRoles()) {
 			Role role = DAOFactory.getRoleDAO().loadByName(roleLabel.toString());
-			if (!role.getRoleTypeCD().equals(SpagoBIConstants.ROLE_TYPE_DEV)) {
-				onlyDev = false;
+			if (role.getRoleTypeCD().equals(SpagoBIConstants.ROLE_TYPE_DEV)) {
+				return true;
 			}
 
 		}
-		return onlyDev;
+		return false;
 	}
 
 	private BIObject setFolders(BIObject document, List<Integer> functsList) {
