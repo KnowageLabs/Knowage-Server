@@ -134,6 +134,17 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		$scope.uploadImg = {};
 		$scope.user = sbiModule_user;
 
+		
+		$timeout(function() {
+			var input = document.querySelector('#imageWidgetFileUpload'); // usa l'id corretto
+			if (input) {
+				input.addEventListener('change', function(event) {
+				$scope.setFile(event.target);
+				});
+			}
+		}, 0);
+
+
 		$scope.saveConfiguration = function() {
 			if ($scope.model.content.imgId == undefined) {
 				$scope.showAction($scope.translate.load('sbi.cockpit.widget.image.missingimg'));
@@ -154,7 +165,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		};
 
 		$scope.setFile = function(element) {
-			var max = 10 * 1024 * 1024;;
+			var max = 10 * 1024 * 1024;
 			if (element.files && element.files[0] && element.files[0].size > max) {
 				$scope.showAction('File too large. Max file size is: ' + max / 1024 / 1024 + 'MB');
 				element.value = null;

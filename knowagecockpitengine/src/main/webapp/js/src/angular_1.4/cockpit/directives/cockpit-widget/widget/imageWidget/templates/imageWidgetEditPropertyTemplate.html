@@ -15,7 +15,7 @@
 							<!--  file-upload flex id="ImageUpload" ng-model="uploadImg"></file-upload-->
 							<md-content layout="row" layout-padding>
 								<!-- Simulate button and link the click event with the input type='file' -->
-								<input type="file" onchange='angular.element(this).scope().setFile(this)'/>
+								<input type="file" id="imageWidgetFileUpload" />
 							</md-content>
 							
 							<md-button ng-click="upload($event)" aria-label="upload Menu"
