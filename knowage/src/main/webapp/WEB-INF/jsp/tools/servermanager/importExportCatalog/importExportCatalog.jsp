@@ -153,7 +153,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 							    </md-radio-group>
 							
 							<span flex></span>							
-							<md-button class="md-raised" ng-click="associatedrole($event)" aria-label="upload Menu" >{{translate.load('sbi.generic.next');}}</md-button>
+							<md-button class="md-raised" ng-click="associatedrole($event)" aria-label="upload Menu" ng-disabled="!IEDConf.fileImport || !IEDConf.fileImport.file">{{translate.load('sbi.generic.next');}}</md-button>
 						</div>
 					
 						<div layout="column">
