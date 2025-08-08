@@ -1398,7 +1398,7 @@ public class UserUtilities {
 	}
 
 
-	private UserUtilities() {
+    private UserUtilities() {
 	}
 
 }

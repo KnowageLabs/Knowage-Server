@@ -35,6 +35,8 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import it.eng.knowage.security.ProductProfiler;
+import it.eng.spagobi.commons.dao.IRoleDAO;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.owasp.esapi.Encoder;
@@ -278,7 +280,7 @@ public class UserResource extends AbstractSpagoBIResource {
 		usersDao = DAOFactory.getSbiUserDAO();
 		boolean isAdmin = UserUtilities.userRequestDtoIsAdmin(requestDTO);
 
-		if (!userCanBeAdded(usersDao, isAdmin)) {
+		if (isChangingRoles(isAdmin, id) && !userCanBeAdded(usersDao, isAdmin)) {
 			LOGGER.error("The limit for creating {} users has been reached.", isAdmin ? "admin " : "end ");
 			throw new SpagoBIServiceException("Update user", "The limit for creating " + (isAdmin ? "admin " : "end ") + "users has been reached.");
 		}
@@ -384,8 +386,42 @@ public class UserResource extends AbstractSpagoBIResource {
 		}
 	}
 
+    private boolean isChangingRoles(boolean isAdmin, Integer userId) {
+        ISbiUserDAO userDAO = DAOFactory.getSbiUserDAO();
+        IRoleDAO rolesDAO = DAOFactory.getRoleDAO();
+        List<SbiExtRoles> roles = userDAO.loadSbiUserRolesById(userId);
 
-	public boolean userCanBeAdded(ISbiUserDAO usersDao, boolean isAdmin) {
+        if (isAdmin) {
+            try {
+                for (int i = 0; i < roles.size(); i++) {
+                    SbiExtRoles role = rolesDAO.loadSbiExtRoleById(roles.get(i).getExtRoleId());
+                    if (UserUtilities.isRoleApplicable(role, true)) {
+                        return false;
+                    }
+                }
+            } catch (EMFUserError ue) {
+                LOGGER.error("Impossible to get roles", ue);
+                throw new SpagoBIRuntimeException("Impossible to get roles", ue);
+            }
+            return true;
+        } else {
+            try {
+                for (int i = 0; i < roles.size(); i++) {
+                    SbiExtRoles role = rolesDAO.loadSbiExtRoleById(roles.get(i).getExtRoleId());
+                    if (UserUtilities.isRoleApplicable(role, true)) {
+                        return true;
+                    }
+                }
+            } catch (EMFUserError ue) {
+                LOGGER.error("Impossible to get roles", ue);
+                throw new SpagoBIRuntimeException("Impossible to get roles", ue);
+            }
+            return false;
+        }
+    }
+
+
+    public boolean userCanBeAdded(ISbiUserDAO usersDao, boolean isAdmin) {
 		List<SbiUser> usersToCheck = UserUtilities.getAlreadyCreatedUsers(usersDao, isAdmin);
 		return ProductProfiler.canAddAUser(usersToCheck.size(), isAdmin);
 	}
