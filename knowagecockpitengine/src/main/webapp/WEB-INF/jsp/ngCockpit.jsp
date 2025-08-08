@@ -31,7 +31,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <%@include file="/WEB-INF/jsp/chart/execution/chartRenderImport.jsp"%>
 <base href="/" />
 
-<script type="text/javascript">
+<script type="text/javascript" nonce="<%= request.getAttribute("cspNonce") %>">
 
 angular.module("cockpitModule").factory("cockpitModule_properties",function(){
 	return {
