@@ -17,7 +17,7 @@
  */
 --%>
  
- <script type="text/javascript">
+ <script type="text/javascript" nonce="<%= request.getAttribute("cspNonce") %>">
 	angular.module('chartDesignerManager').config(function($provide){
 		$provide.constant("chartDesignerBasePath","<%=urlBuilder.getResourcePath(cockpitEngineContext, "/js/src/angular_1.4/chart/designer")%>")
 	})
