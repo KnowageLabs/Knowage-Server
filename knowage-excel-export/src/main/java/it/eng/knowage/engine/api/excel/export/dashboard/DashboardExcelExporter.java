@@ -723,9 +723,11 @@ public class DashboardExcelExporter extends Common {
 
 
     private void getActualValueFromDriverPlaceholder(JSONObject body, JSONArray parametersToReturn, JSONObject parameter) throws JSONException {
-        if (parameter.getString("value").contains("$P{")) {
-            String placeholderToReplace = parameter.getString("value").replace("$P{", "");
-            placeholderToReplace = placeholderToReplace.replace("}", "");
+        if (parameter.getString("value").contains("$P{") || parameter.getString("value").contains("${")) {
+            String placeholderToReplace = parameter.getString("value")
+                    .replace("$P{", "")
+                    .replace("${", "")
+                    .replace("}", "");
             String actualValue = replaceParameterPlaceholderWithActualValue(placeholderToReplace, getDriversFromBody(body));
             parameter.put("value", actualValue);
         }
@@ -1094,7 +1096,6 @@ public class DashboardExcelExporter extends Common {
 
             replaceWithThemeSettingsIfPresent(settings);
 
-
             buildRowsAndCols(wb, sheet, offset, settings, rows, isGroup, startRow, rowspan, columnsOrdered, numberOfSummaryRows, summaryRowsLabels);
         } catch (Exception e) {
             throw new SpagoBIRuntimeException(EXCEL_ERROR, e);
@@ -1178,6 +1179,8 @@ public class DashboardExcelExporter extends Common {
                 // renaming table columns names of the excel export
                 columnName = getInternationalizedHeader(columnName);
 
+                columnName = replaceWithCustomHeaderIfPresent(settings, columnName, column);
+
                 Cell cell = header.createCell(i);
                 cell.setCellValue(columnName);
 
@@ -1188,6 +1191,33 @@ public class DashboardExcelExporter extends Common {
             // adjusts the column width to fit the contents
             styleProvider.adjustColumnWidth(sheet, this.imageB64);
         }
+    }
+
+    private String replaceWithCustomHeaderIfPresent(JSONObject settings, String columnName, JSONObject column) throws JSONException {
+        if (settings.has("configuration") && settings.getJSONObject("configuration").has("headers")) {
+            JSONObject customHeader = settings.getJSONObject("configuration").getJSONObject("headers").getJSONObject("custom");
+            if (customHeader.getBoolean("enabled")) {
+                JSONArray rules = customHeader.getJSONArray("rules");
+                for (int i = 0; i < rules.length(); i++) {
+                    JSONObject rule = rules.getJSONObject(i);
+                    JSONArray target = rule.getJSONArray("target");
+                    if (target.length() > 0) {
+                        for (int j = 0; j < target.length(); j++) {
+                            if (target.getString(j).equals(column.getString("id"))) {
+                                if (rule.getString("action").equals("setLabel")) {
+                                    columnName = rule.getString("value");
+                                    break;
+                                } else if (rule.getString("action").equals("hide")) {
+                                    columnName = "";
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return columnName;
     }
 
     protected String getInternationalizedHeader(String columnName) {
