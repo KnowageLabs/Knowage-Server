@@ -349,36 +349,14 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 
     public String getDataStoreAI(String label, String parameters, Map<String, Object> drivers, String selections,
                                String likeSelections, Integer maxRowCount, String aggregations, String summaryRow, int offset, int fetchSize,
-                               Boolean isNearRealtime, String options, Set<String> indexes, String widgetName) {
+                               Boolean isNearRealtime, String options, Set<String> indexes) {
         LOGGER.debug("IN");
         DatasetManagementAPI datasetManagementAPI = getDatasetManagementAPI();
         Monitor totalTiming = MonitorFactory.start("Knowage.AbstractDataSetResource.getDataStore");
         try {
             Monitor timing = MonitorFactory.start("Knowage.AbstractDataSetResource.getDataStore:validateParams");
 
-            int maxResults = Integer
-                    .parseInt(SingletonConfig.getInstance().getConfigValue("SPAGOBI.API.DATASET.MAX_ROWS_NUMBER"));
-
-            LOGGER.debug("Offset {}, fetch size {}, max results {}", offset, fetchSize, maxResults);
-
-
-            if (maxRowCount == null) {
-                maxRowCount = maxResults;
-            }
-
-            if (maxResults <= 0) {
-                throw new SpagoBIRuntimeException(
-                        "SPAGOBI.API.DATASET.MAX_ROWS_NUMBER value cannot be a non-positive integer");
-            }
-
-            if (fetchSize > maxResults) {
-                throw new IllegalArgumentException(
-                        "The page requested is too big. Max page size is equals to [" + maxResults + "]");
-            }
-            if (maxRowCount > maxResults) {
-                throw new IllegalArgumentException(
-                        "The requested number of rows is too big [ " + maxRowCount + " ]. The limit is [ " + maxResults + " ]");
-            }
+            LOGGER.debug("Offset {}, fetch size {}, max results {}", offset, fetchSize, maxRowCount);
 
             IDataSetDAO dataSetDao = DAOFactory.getDataSetDAO();
             dataSetDao.setUserProfile(getUserProfile());
