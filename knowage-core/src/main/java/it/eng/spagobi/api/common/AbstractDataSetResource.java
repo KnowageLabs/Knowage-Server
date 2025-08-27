@@ -348,7 +348,7 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 	}
 
     public String getDataStoreAI(String label, String parameters, Map<String, Object> drivers, String selections,
-                               String likeSelections, Integer maxRowCount, String aggregations, String summaryRow, int offset, int fetchSize,
+                               String likeSelections, Integer maxRowCount, String aggregations, String summaryRow, int offset, int fetchSize, Integer maxRows,
                                Boolean isNearRealtime, String options, Set<String> indexes) {
         LOGGER.debug("IN");
         DatasetManagementAPI datasetManagementAPI = getDatasetManagementAPI();
@@ -468,7 +468,7 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
             timing = MonitorFactory.start("Knowage.AbstractDataSetResource.getDataStore:convertToJson");
             Object gridDataFeed = dataWriter.write(dataStore);
 
-            transformForAI(gridDataFeed);
+            transformForAI(gridDataFeed, maxRows != null ? maxRows : 100);
 
             timing.stop();
 
@@ -490,13 +490,13 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
         }
     }
 
-    private void transformForAI(Object gridDataFeed) throws JSONException {
+    private void transformForAI(Object gridDataFeed, int maxRows) throws JSONException {
         if (gridDataFeed instanceof JSONObject) {
             JSONObject jsonObject = (JSONObject) gridDataFeed;
             JSONArray originalRows = jsonObject.getJSONArray("rows");
             JSONArray slicedRows = new JSONArray();
 
-            for (int i = 0; i < originalRows.length() && i < 100; i++) {
+            for (int i = 0; i < originalRows.length() && i < maxRows; i++) {
                 slicedRows.put(originalRows.get(i));
             }
 
