@@ -48,6 +48,8 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.List;
 
@@ -66,13 +68,14 @@ public class PdfExporter extends AbstractFormatExporter {
 		super(userUniqueIdentifier, body);
 	}
 
-	public byte[] getBinaryData(Integer documentId, String documentLabel, String templateString) throws JSONException {
-		if (templateString == null) {
+	public byte[] getBinaryData(Integer documentId, String documentLabel, String templateString, JSONObject selections) throws JSONException {
+
 			ObjTemplate template = null;
 			String message = "Unable to get template for document with id [" + documentId + "] and label ["
 					+ documentLabel + "]";
+            String creationUser;
 			try {
-				if (documentId != null && documentId.intValue() != 0)
+				if (documentId != null && documentId != 0)
 					template = DAOFactory.getObjTemplateDAO().getBIObjectActiveTemplate(documentId);
 				else if (documentLabel != null && !documentLabel.isEmpty())
 					template = DAOFactory.getObjTemplateDAO().getBIObjectActiveTemplateByLabel(documentLabel);
@@ -80,16 +83,18 @@ public class PdfExporter extends AbstractFormatExporter {
 				if (template == null)
 					throw new SpagoBIRuntimeException(message);
 
-				templateString = new String(template.getContent());
+                if (templateString == null) {
+                    templateString = new String(template.getContent());
+                }
+                creationUser = template.getCreationUser();
 			} catch (EMFAbstractError e) {
 				throw new SpagoBIRuntimeException(message, e);
 			}
-		}
 
 		try (PDDocument document = new PDDocument(MemoryUsageSetting.setupTempFileOnly())) {
 			long widgetId = body.getLong("widget");
 
-			exportTableWidget(document, templateString, widgetId);
+			exportTableWidget(document, templateString, widgetId, creationUser, selections);
 
 			ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
 			document.save(byteArrayOutputStream);
@@ -102,13 +107,12 @@ public class PdfExporter extends AbstractFormatExporter {
 
 	}
 
-	private void exportTableWidget(PDDocument document, String templateString, long widgetId) {
+	private void exportTableWidget(PDDocument document, String templateString, long widgetId, String creationUser, JSONObject selections) {
 		try {
 			JSONObject template = new JSONObject(templateString);
 			JSONObject widget = getWidgetById(template, widgetId);
 			JSONObject settings = widget.optJSONObject("settings");
 			JSONObject style = widget.optJSONObject("style");
-
 
 			JSONObject dataStore;
 			int totalNumberOfRows = 0;
@@ -163,7 +167,7 @@ public class PdfExporter extends AbstractFormatExporter {
 				PDFont font = PDType0Font.load(table.document, pdfFontFile);
 
 				addDataToTable(table, settings, columnsOrdered, pdfHiddenColumns, columnDateFormats, columnStyles,
-						rows, font, style, widgetData, widgetContent);
+						rows, font, style, widgetData, widgetContent, creationUser, selections);
 
 				offset += fetchSize;
 
@@ -179,10 +183,10 @@ public class PdfExporter extends AbstractFormatExporter {
 	}
 
 	private void addDataToTable(BaseTable table, JSONObject settings, JSONArray columnsOrdered,
-			List<Integer> pdfHiddenColumns, String[] columnDateFormats, JSONObject[] columnStyles, JSONArray rows, PDFont font, JSONObject style, JSONObject widgetData, JSONObject widgetContent)
+			List<Integer> pdfHiddenColumns, String[] columnDateFormats, JSONObject[] columnStyles, JSONArray rows, PDFont font, JSONObject style, JSONObject widgetData, JSONObject widgetContent, String creationUser, JSONObject selections)
             throws JSONException, IOException, URISyntaxException {
 
-		addHeaderToTable(table, style, widgetData, widgetContent, columnsOrdered, pdfHiddenColumns, font);
+		addHeaderToTable(table, style, widgetData, widgetContent, columnsOrdered, pdfHiddenColumns, font, creationUser, selections);
 
 		// Check if summary row is enabled
 		boolean summaryRowEnabled = false;
@@ -292,23 +296,15 @@ public class PdfExporter extends AbstractFormatExporter {
 	}
 
 	private void addHeaderToTable(BaseTable table, JSONObject style, JSONObject widgetData, JSONObject widgetContent,
-			JSONArray columnsOrdered, List<Integer> pdfHiddenColumns, PDFont font) throws JSONException, IOException, URISyntaxException {
-//		HashMap<String, String> arrayHeader = new HashMap<String, String>();
-//		for (int i = 0; i < widgetContent.getJSONArray("columnSelectedOfDataset").length(); i++) {
-//			JSONObject column = widgetContent.getJSONArray("columnSelectedOfDataset").getJSONObject(i);
-//			String key;
-//			if (column.optBoolean("isCalculated") && !column.has("name")) {
-//				key = column.getString("alias");
-//			} else {
-//				key = column.getString("name");
-//			}
-//			arrayHeader.put(key, column.getString("aliasToShow"));
-//		}
-
-		JSONArray groupsFromWidgetContent = getGroupsFromWidgetContent(widgetData);
+			JSONArray columnsOrdered, List<Integer> pdfHiddenColumns, PDFont font, String creationUser, JSONObject selections) throws JSONException {
+        JSONArray groupsFromWidgetContent = getGroupsFromWidgetContent(widgetData);
 		Map<String, String> groupsAndColumnsMap = getGroupAndColumnsMap(widgetContent, groupsFromWidgetContent);
 
-		if (!groupsAndColumnsMap.isEmpty()) {
+        createDocumentInformationRow(table, font, creationUser);
+
+        createSelectionsRows(table, font, selections);
+
+        if (!groupsAndColumnsMap.isEmpty()) {
 			Row<PDPage> groupHeaderRow = table.createRow(15f);
 			for (int i = 0; i < columnsOrdered.length(); i++) {
 				JSONObject column = columnsOrdered.getJSONObject(i);
@@ -372,8 +368,76 @@ public class PdfExporter extends AbstractFormatExporter {
 
 		table.addHeaderRow(headerRow);
 	}
-	
-	private int getAdjacentEqualNamesAmount(Map<String, String> groupsAndColumnsMap, JSONArray columnsOrdered, int matchStartIndex, String groupNameToMatch) {
+
+    private static void createSelectionsRows(BaseTable table, PDFont font, JSONObject selections) {
+        try {
+            if (selections != null && selections.length() > 0) {
+                selections.keys().forEachRemaining(key -> {
+                    try {
+                        JSONObject selectionContent = selections.getJSONObject(key);
+                        selectionContent.keys().forEachRemaining(subKey -> {
+                          Row<PDPage> selectionRow = table.createRow(12f);
+                          Cell<PDPage> selectionDatasetNameCell = selectionRow.createCell(50, "Selections Dataset: " + key,
+                                HorizontalAlignment.get("right"), VerticalAlignment.get("middle"));
+                          selectionDatasetNameCell.setFont(font);
+                          selectionDatasetNameCell.setFillColor(Color.LIGHT_GRAY);
+                          selectionDatasetNameCell.setTextColor(Color.BLACK);
+                          selectionDatasetNameCell.setFontSize(10);
+                          StringBuilder stringBuilder = new StringBuilder();
+                            try {
+                                for (int i = 0; i < selectionContent.getJSONArray(subKey).length(); i++) {
+                                        if (i > 0) {
+                                            stringBuilder.append(", ");
+                                        }
+                                        try {
+                                            String selectionValue = selectionContent.getJSONArray(subKey).toString().replace("('", "").replace("')", "");
+                                            stringBuilder.append(selectionValue);
+                                        } catch (JSONException e) {
+                                            throw new RuntimeException(e);
+                                        }
+                                }
+                            } catch (JSONException e) {
+                                try {
+                                    String selectionValue = selectionContent.getJSONObject(subKey).getJSONArray("filterVals").toString().replace("('", "").replace("')", "");
+                                    stringBuilder.append(selectionValue);
+                                } catch (JSONException ex) {
+                                    throw new RuntimeException(ex);
+                                }
+                            }
+                            Cell<PDPage> subSelectionValueCell = selectionRow.createCell(50, "COLUMN ".concat(subKey).concat(": ").concat(stringBuilder.toString()), HorizontalAlignment.get("left"), VerticalAlignment.get("middle"));
+                            subSelectionValueCell.setFont(font);
+                            subSelectionValueCell.setFillColor(Color.LIGHT_GRAY);
+                            subSelectionValueCell.setTextColor(Color.BLACK);
+                            subSelectionValueCell.setFontSize(10);
+                       });
+                    } catch (JSONException e) {
+                        throw new RuntimeException(e);
+                    }
+                });
+            }
+        } catch (Exception e) {
+            throw new SpagoBIRuntimeException("Couldn't add selection information to the table", e);
+        }
+    }
+
+    private static void createDocumentInformationRow(BaseTable table, PDFont font, String creationUser) {
+        Row<PDPage> documentInformationRow = table.createRow(12f);
+        String executionDate = LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss"));
+        Cell<PDPage> executionDateCell = documentInformationRow.createCell(50, "Execution Date: " + executionDate,
+                HorizontalAlignment.get("center"), VerticalAlignment.get("middle"));
+        executionDateCell.setFont(font);
+        executionDateCell.setFillColor(Color.LIGHT_GRAY);
+        executionDateCell.setTextColor(Color.BLACK);
+        executionDateCell.setFontSize(10);
+        Cell<PDPage> creationUserCell = documentInformationRow.createCell(50, "Creation User: " + creationUser,
+                HorizontalAlignment.get("center"), VerticalAlignment.get("middle"));
+        creationUserCell.setFont(font);
+        creationUserCell.setFillColor(Color.LIGHT_GRAY);
+        creationUserCell.setTextColor(Color.BLACK);
+        creationUserCell.setFontSize(10);
+    }
+
+    private int getAdjacentEqualNamesAmount(Map<String, String> groupsAndColumnsMap, JSONArray columnsOrdered, int matchStartIndex, String groupNameToMatch) {
 		try {
 			int adjacents = 0;
 			for (int i = matchStartIndex; i < columnsOrdered.length(); i++) {
