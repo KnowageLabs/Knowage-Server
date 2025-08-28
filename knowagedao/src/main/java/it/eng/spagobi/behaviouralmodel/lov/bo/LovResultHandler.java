@@ -17,13 +17,13 @@
  */
 package it.eng.spagobi.behaviouralmodel.lov.bo;
 
-import it.eng.spago.base.SourceBean;
-import it.eng.spago.base.SourceBeanException;
-
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+
+import it.eng.spago.base.SourceBean;
+import it.eng.spago.base.SourceBeanException;
 
 /**
  * Defines method to manage lov result
@@ -115,10 +115,12 @@ public class LovResultHandler {
 	public boolean containsValue(String value, String valueColumnName) {
 		List values = getValues(valueColumnName);
 		for (int i = 0; i < values.size(); i++) {
-			if (value == null && values.get(i) == null)
+			if (value == null && values.get(i) == null) {
 				return true;
-			if (values.get(i) != null && values.get(i).toString().equalsIgnoreCase(value))
+			}
+			if (values.get(i) != null && values.get(i).toString().trim().equalsIgnoreCase(value)) {
 				return true;
+			}
 		}
 		return false;
 	}
@@ -160,10 +162,11 @@ public class LovResultHandler {
 			return null;
 		}
 		Object description = sb.getAttribute(descriptionColumnName);
-		if (description == null)
+		if (description == null) {
 			return null;
-		else
+		} else {
 			return description.toString();
+		}
 	}
 
 	/**
