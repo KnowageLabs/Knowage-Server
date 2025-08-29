@@ -546,6 +546,10 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 			String newPath = extractFolder;
 
 			new File(newPath).mkdir();
+
+      // Get canonical path for security validation
+      String extractDirCanonicalPath = extractDir.getCanonicalPath();
+
 			Enumeration<? extends ZipEntry> zipFileEntries = zip.entries();
 
 			// Process each entry
@@ -555,6 +559,14 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 				String currentEntry = entry.getName();
 
 				File destFile = new File(newPath, currentEntry);
+
+        // Security check: Prevent Zip Slip vulnerability
+            String destFileCanonicalPath = destFile.getCanonicalPath();
+            if (!destFileCanonicalPath.startsWith(extractDirCanonicalPath + File.separator) && 
+                !destFileCanonicalPath.equals(extractDirCanonicalPath)) {
+                throw new IOException("Entry is outside of the target dir: " + currentEntry);
+            }
+            
 				File destinationParent = destFile.getParentFile();
 
 				// create the parent directory structure if needed
