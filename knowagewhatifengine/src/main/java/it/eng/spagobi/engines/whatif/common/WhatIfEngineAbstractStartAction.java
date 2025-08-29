@@ -18,23 +18,6 @@
 
 package it.eng.spagobi.engines.whatif.common;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Locale;
-import java.util.Locale.Builder;
-import java.util.Map;
-import java.util.Set;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.ws.rs.core.Context;
-
-import org.apache.commons.lang.StringUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.jboss.resteasy.plugins.providers.html.View;
-
 import it.eng.spago.base.SourceBean;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.engines.whatif.WhatIfEngine;
@@ -48,135 +31,121 @@ import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineStartupException;
 import it.eng.spagobi.utilities.engines.rest.AbstractEngineStartRestService;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
+import org.apache.commons.lang.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.ws.rs.core.Context;
+import java.util.*;
+import java.util.Locale.Builder;
 
 public class WhatIfEngineAbstractStartAction extends AbstractEngineStartRestService {
 
-	private static final Logger LOGGER = LogManager.getLogger(WhatIfEngineAbstractStartAction.class);
-	private static final String SUCCESS_REQUEST_DISPATCHER_URL = "/WEB-INF/jsp/whatIf2.jsp";
-	private static final String FAILURE_REQUEST_DISPATCHER_URL = "/WEB-INF/jsp/errors/startupError.jsp";
+    private static final Logger LOGGER = LogManager.getLogger(WhatIfEngineAbstractStartAction.class);
 
-	// SESSION PARAMETRES
-	public static final String ENGINE_INSTANCE = EngineConstants.ENGINE_INSTANCE;
-	public static final String STARTUP_ERROR = EngineConstants.STARTUP_ERROR;
+    // SESSION PARAMETRES
+    public static final String ENGINE_INSTANCE = EngineConstants.ENGINE_INSTANCE;
+    public static final String STARTUP_ERROR = EngineConstants.STARTUP_ERROR;
 
-	// Defaults
-	public static final Locale DEFAULT_LOCALE = Locale.ENGLISH;
-	@Context
-	HttpServletRequest request;
-	@Context
-	HttpServletResponse response;
+    // Defaults
+    public static final Locale DEFAULT_LOCALE = Locale.ENGLISH;
+    @Context
+    HttpServletRequest request;
+    @Context
+    HttpServletResponse response;
 
-	@Override
-	public String getEngineName() {
-		return WhatIfConstants.ENGINE_NAME;
-	}
+    @Override
+    public String getEngineName() {
+        return WhatIfConstants.ENGINE_NAME;
+    }
 
-	@Override
-	public HttpServletRequest getServletRequest() {
-		return request;
-	}
+    @Override
+    public HttpServletRequest getServletRequest() {
+        return request;
+    }
 
-	public View startAction(boolean whatif) {
-		LOGGER.debug("IN");
+    public void startAction(boolean whatif) {
+        LOGGER.debug("IN");
 
-		try {
-			SourceBean templateBean = getTemplateAsSourceBean();
+        try {
+            SourceBean templateBean = getTemplateAsSourceBean();
 
-			LOGGER.debug("User Id: {}", getUserId());
-			LOGGER.debug("Audit Id: {}", getAuditId());
-			LOGGER.debug("Document Id: {}", getDocumentId());
-			LOGGER.debug("Template: {}", templateBean);
+            LOGGER.debug("User Id: {}", getUserId());
+            LOGGER.debug("Audit Id: {}", getAuditId());
+            LOGGER.debug("Document Id: {}", getDocumentId());
+            LOGGER.debug("Template: {}", templateBean);
 
-			if (getAuditServiceProxy() != null) {
-				LOGGER.debug("Audit enabled: [TRUE]");
-				getAuditServiceProxy().notifyServiceStartEvent();
-			} else {
-				LOGGER.debug("Audit enabled: [FALSE]");
-			}
+            if (getAuditServiceProxy() != null) {
+                LOGGER.debug("Audit enabled: [TRUE]");
+                getAuditServiceProxy().notifyServiceStartEvent();
+            } else {
+                LOGGER.debug("Audit enabled: [FALSE]");
+            }
 
-			Map<String, Object> env = getEnv();
+            Map<String, Object> env = getEnv();
 
-			WhatIfEngineAnalysisState analysisState = getAnalysisState();
-			if (analysisState != null) {
-				// in case there is a subobject (i.e. analyses state is not null), we must update env variable with drivers saved along with subobject
-				Map<String, Object> drivers = analysisState.getDriversValues();
-				env.putAll(drivers);
-			}
+            WhatIfEngineAnalysisState analysisState = getAnalysisState();
+            if (analysisState != null) {
+                // in case there is a subobject (i.e. analyses state is not null), we must update env variable with drivers saved along with subobject
+                Map<String, Object> drivers = analysisState.getDriversValues();
+                env.putAll(drivers);
+            }
 
-			WhatIfEngineInstance whatIfEngineInstance = null;
+            WhatIfEngineInstance whatIfEngineInstance = null;
 
-			LOGGER.debug("Creating engine instance ...");
+            LOGGER.debug("Creating engine instance ...");
 
-			try {
-				whatIfEngineInstance = WhatIfEngine.createInstance(templateBean, whatif, env);
-			} catch (WhatIfTemplateParseException e) {
-				SpagoBIEngineStartupException engineException = new SpagoBIEngineStartupException(getEngineName(),
-						"Template not valid", e);
-				engineException.setDescription(e.getCause().getMessage());
-				engineException.addHint("Check the document's template");
-				throw engineException;
-			} catch (SpagoBIEngineRuntimeException e) {
-				throw e;
-			} catch (Exception e) {
-				LOGGER.error("Error starting the What-If engine: error while generating the engine instance.", e);
-				throw new SpagoBIEngineRuntimeException(
-						"Error starting the What-If engine: error while generating the engine instance.", e);
-			}
-			LOGGER.debug("Engine instance succesfully created");
+            try {
+                whatIfEngineInstance = WhatIfEngine.createInstance(templateBean, whatif, env);
+            } catch (WhatIfTemplateParseException e) {
+                SpagoBIEngineStartupException engineException = new SpagoBIEngineStartupException(getEngineName(),
+                        "Template not valid", e);
+                engineException.setDescription(e.getCause().getMessage());
+                engineException.addHint("Check the document's template");
+                throw engineException;
+            } catch (SpagoBIEngineRuntimeException e) {
+                throw e;
+            } catch (Exception e) {
+                LOGGER.error("Error starting the What-If engine: error while generating the engine instance.", e);
+                throw new SpagoBIEngineRuntimeException(
+                        "Error starting the What-If engine: error while generating the engine instance.", e);
+            }
+            LOGGER.debug("Engine instance succesfully created");
 
-			// loads subobjects
-			whatIfEngineInstance.setAnalysisMetadata(getAnalysisMetadata());
-			if (analysisState != null) {
-				LOGGER.debug("Loading subobject [{}] ...", whatIfEngineInstance.getAnalysisMetadata().getName());
-				try {
-					whatIfEngineInstance.setAnalysisState(analysisState);
-				} catch (Exception e) {
-					LOGGER.error("Error loading the subobject", e);
-					throw new SpagoBIRestServiceException("sbi.olap.start.load.subobject.error", getLocale(),
-							"Error loading the subobject", e);
-				}
-				LOGGER.debug("Subobject [{}] succesfully loaded", whatIfEngineInstance.getAnalysisMetadata().getName());
-			}
+            // loads subobjects
+            whatIfEngineInstance.setAnalysisMetadata(getAnalysisMetadata());
+            if (analysisState != null) {
+                LOGGER.debug("Loading subobject [{}] ...", whatIfEngineInstance.getAnalysisMetadata().getName());
+                try {
+                    whatIfEngineInstance.setAnalysisState(analysisState);
+                } catch (Exception e) {
+                    LOGGER.error("Error loading the subobject", e);
+                    throw new SpagoBIRestServiceException("sbi.olap.start.load.subobject.error", getLocale(),
+                            "Error loading the subobject", e);
+                }
+                LOGGER.debug("Subobject [{}] succesfully loaded", whatIfEngineInstance.getAnalysisMetadata().getName());
+            }
 
-			getExecutionSession().setAttributeInSession(ENGINE_INSTANCE, whatIfEngineInstance);
+            getExecutionSession().setAttributeInSession(ENGINE_INSTANCE, whatIfEngineInstance);
 
-			try {
-				return new View(SUCCESS_REQUEST_DISPATCHER_URL);
-			} catch (Exception e) {
-				LOGGER.error("Error starting the What-If engine: error while forwarding the execution to the jsp {}",
-						SUCCESS_REQUEST_DISPATCHER_URL, e);
-				throw new SpagoBIEngineRuntimeException(
-						"Error starting the What-If engine: error while forwarding the execution to the jsp "
-								+ SUCCESS_REQUEST_DISPATCHER_URL,
-						e);
-			} finally {
-				if (getAuditServiceProxy() != null) {
-					getAuditServiceProxy().notifyServiceEndEvent();
-				}
-			}
-		} catch (Exception e) {
-			LOGGER.error("Error starting the What-If engine", e);
-			if (getAuditServiceProxy() != null) {
-				getAuditServiceProxy().notifyServiceErrorEvent(e.getMessage());
-			}
+            if (getAuditServiceProxy() != null) {
+                getAuditServiceProxy().notifyServiceEndEvent();
+            }
+        } catch (Exception e) {
+            LOGGER.error("Error starting the What-If engine", e);
+            if (getAuditServiceProxy() != null) {
+                getAuditServiceProxy().notifyServiceErrorEvent(e.getMessage());
+            }
 
-			SpagoBIEngineStartupException serviceException = this.getWrappedException(e);
+            SpagoBIEngineStartupException serviceException = this.getWrappedException(e);
 
-			getExecutionSession().setAttributeInSession(STARTUP_ERROR, serviceException);
-			try {
-				return new View(FAILURE_REQUEST_DISPATCHER_URL);
-			} catch (Exception ex) {
-				LOGGER.error("Error starting the What-If engine: error while forwarding the execution to the jsp {}",
-						FAILURE_REQUEST_DISPATCHER_URL, ex);
-				throw new SpagoBIEngineRuntimeException(
-						"Error starting the What-If engine: error while forwarding the execution to the jsp "
-								+ FAILURE_REQUEST_DISPATCHER_URL,
-						ex);
-			}
-		} finally {
-			LOGGER.debug("OUT");
-		}
-	}
+            getExecutionSession().setAttributeInSession(STARTUP_ERROR, serviceException);
+        } finally {
+            LOGGER.debug("OUT");
+        }
+    }
 
 	private WhatIfEngineAnalysisState getAnalysisState() {
 		WhatIfEngineAnalysisState toReturn = null;

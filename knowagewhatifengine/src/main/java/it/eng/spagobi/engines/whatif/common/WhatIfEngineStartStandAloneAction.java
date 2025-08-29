@@ -17,27 +17,24 @@
  */
 package it.eng.spagobi.engines.whatif.common;
 
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Locale.Builder;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletResponse;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.Context;
-
-import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
-import org.jboss.resteasy.plugins.providers.html.View;
-
 import it.eng.spago.base.SourceBean;
 import it.eng.spagobi.engines.whatif.WhatIfEngine;
 import it.eng.spagobi.engines.whatif.WhatIfEngineConfig;
 import it.eng.spagobi.engines.whatif.WhatIfEngineInstance;
 import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
+
+import javax.servlet.http.HttpServletResponse;
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Locale.Builder;
+import java.util.Map;
 
 @Path("/start-standalone")
 public class WhatIfEngineStartStandAloneAction extends AbstractWhatIfEngineService {
@@ -53,11 +50,9 @@ public class WhatIfEngineStartStandAloneAction extends AbstractWhatIfEngineServi
 	/** Logger component. */
 	public static transient Logger logger = Logger.getLogger(WhatIfEngineStartAction.class);
 
-	private static final String REQUEST_DISPATCHER_URL = "/WEB-INF/jsp/whatIf2.jsp";
-
 	@GET
 	@Produces("text/html")
-	public View startAction(@Context HttpServletResponse response) {
+	public void startAction(@Context HttpServletResponse response) {
 
 		logger.debug("IN");
 
@@ -78,8 +73,6 @@ public class WhatIfEngineStartStandAloneAction extends AbstractWhatIfEngineServi
 			logger.debug("Engine instance succesfully created");
 
 			getExecutionSession().setAttributeInSession(ENGINE_INSTANCE, whatIfEngineInstance);
-
-			return new View(REQUEST_DISPATCHER_URL);
 
 		} catch (Exception e) {
 			logger.error("Error starting the What-If engine", e);

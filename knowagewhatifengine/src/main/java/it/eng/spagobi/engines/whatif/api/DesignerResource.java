@@ -17,28 +17,6 @@
  */
 package it.eng.spagobi.engines.whatif.api;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-
-import org.apache.log4j.Logger;
-import org.jboss.resteasy.plugins.providers.html.View;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.engines.whatif.WhatIfEngineInstance;
 import it.eng.spagobi.engines.whatif.common.AbstractWhatIfEngineService;
@@ -50,6 +28,18 @@ import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineException;
 import it.eng.spagobi.writeback4j.mondrian.MondrianDriver;
 import it.eng.spagobi.writeback4j.mondrian.MondrianSchemaRetriver;
+import org.apache.log4j.Logger;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.ws.rs.*;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author spetrovic
@@ -63,7 +53,6 @@ public class DesignerResource extends AbstractWhatIfEngineService {
 	public static transient Logger logger = Logger.getLogger(DesignerResource.class);
 	private MondrianSchemaRetriver retriver = null;
 	private String reference;
-	private static final String SUCCESS_REQUEST_DISPATCHER_URL = "/WEB-INF/jsp/whatIf2.jsp";
 	@Context HttpServletRequest request;
 	@Context HttpServletResponse response;
 
@@ -157,14 +146,6 @@ public class DesignerResource extends AbstractWhatIfEngineService {
 		}
 		ei.updateWhatIfEngineInstance(template, false, ei.getEnv());
 		logger.debug("OUT");
-	}
-
-	@GET
-	@Path("/cubes/start")
-	@Produces("text/html")
-	public View redirect() throws SpagoBIEngineException, ServletException, IOException {
-		logger.debug("IN");
-		return new View(SUCCESS_REQUEST_DISPATCHER_URL);
 	}
 
 	@GET

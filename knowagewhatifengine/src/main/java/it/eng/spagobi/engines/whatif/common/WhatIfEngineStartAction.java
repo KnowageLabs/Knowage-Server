@@ -17,15 +17,13 @@
  */
 package it.eng.spagobi.engines.whatif.common;
 
+import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
+import org.apache.log4j.Logger;
+
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
-
-import org.apache.log4j.Logger;
-import org.jboss.resteasy.plugins.providers.html.View;
-
-import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
 
 @Path("/olap/startwhatif")
 @ManageAuthorization
@@ -38,29 +36,29 @@ public class WhatIfEngineStartAction extends WhatIfEngineAbstractStartAction {
 	// OUTPUT PARAMETERS
 
 	/** Logger component. */
-	public static transient Logger logger = Logger.getLogger(WhatIfEngineStartAction.class);
+	public static Logger logger = Logger.getLogger(WhatIfEngineStartAction.class);
 
 	@GET
 	@Path("/")
 	@Produces("text/html")
-	public View startWhatIfActionOlapGet() {
-		return startAction();
+	public void startWhatIfActionOlapGet() {
+        startAction();
 	}
 
 	@POST
 	@Path("/")
 	@Produces("text/html")
-	public View startWhatIfActionOlapPost() {
-		return startAction();
+	public void startWhatIfActionOlapPost() {
+        startAction();
 	}
 
 	/**
 	 * @return
 	 *
 	 */
-	private View startAction() {
+	private void startAction() {
 		logger.debug("Starting WHATIF");
-		return startAction(true);
+        startAction(true);
 	}
 
 }

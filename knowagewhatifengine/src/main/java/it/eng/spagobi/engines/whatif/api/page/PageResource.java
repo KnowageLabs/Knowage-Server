@@ -17,26 +17,18 @@
  */
 package it.eng.spagobi.engines.whatif.api.page;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.Context;
-
-import org.apache.log4j.Logger;
-import org.jboss.resteasy.plugins.providers.html.View;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceExceptionHandler;
 import it.eng.spagobi.utilities.engines.rest.AbstractRestService;
+import org.apache.log4j.Logger;
+import org.jboss.resteasy.plugins.providers.html.View;
+import org.json.JSONObject;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.ws.rs.*;
+import javax.ws.rs.core.Context;
+import java.util.Map;
 
 @Path("/pages")
 @ManageAuthorization
@@ -55,22 +47,6 @@ public class PageResource extends AbstractRestService {
 	 * TODO Tutte le pagine dell'engine
 	 *
 	 */
-	static {
-		pages = new HashMap<>();
-		urls = new HashMap<>();
-
-		try {
-			pages.put("execute", new JSONObject("{name: 'execute', description: 'the Olap execution page', parameters: []}"));
-			urls.put("execute", "/WEB-INF/jsp/whatIf2.jsp");
-
-			pages.put("edit", new JSONObject("{name: 'execute', description: 'the Whatif execution page', parameters: []}"));
-			urls.put("edit", "/WEB-INF/jsp/edit.jsp");
-
-		} catch (JSONException t) {
-			logger.error(t);
-		}
-	}
-
 	@GET
 	@Path("/{pagename}")
 	@Produces("text/html")
