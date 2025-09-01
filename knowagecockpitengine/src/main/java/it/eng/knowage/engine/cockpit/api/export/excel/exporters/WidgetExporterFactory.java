@@ -21,6 +21,8 @@ import org.json.JSONObject;
 
 import it.eng.knowage.engine.cockpit.api.export.excel.ExcelExporter;
 
+import java.util.Map;
+
 public class WidgetExporterFactory {
 
 	public static transient Logger logger = Logger.getLogger(WidgetExporterFactory.class);
@@ -31,18 +33,18 @@ public class WidgetExporterFactory {
 	 */
 
 	public static IWidgetExporter getExporter(ExcelExporter exporter, String widgetType, String templateString, long widgetId, Workbook wb,
-			JSONObject options) {
+                                              JSONObject options, Map<String, Map<String, Object>> driversMap) {
 		if (widgetType.equalsIgnoreCase("static-pivot-table") && options != null) {
 			// crosstab widget object must be retrieved BE side
-			return new CrossTabExporter(exporter, widgetType, templateString, widgetId, wb, options);
+            return new CrossTabExporter(exporter, widgetType, templateString, widgetId, wb, options, driversMap);
 		} else if (widgetType.equalsIgnoreCase("map")) {
 			// map widget supports multiple datasets
-			return new MapExporter(exporter, widgetType, templateString, widgetId, wb, options);
+            return new MapExporter(exporter, widgetType, templateString, widgetId, wb, options, driversMap);
 		} else if (widgetType.equalsIgnoreCase("table")) {
 			// table widget supports pagination
-			return new TableExporter(exporter, widgetType, templateString, widgetId, wb, options);
+            return new TableExporter(exporter, widgetType, templateString, widgetId, wb, options, driversMap);
 		} else {
-			return new GenericWidgetExporter(exporter, widgetType, templateString, widgetId, wb, options);
+            return new GenericWidgetExporter(exporter, widgetType, templateString, widgetId, wb, options, driversMap);
 		}
 	}
 

@@ -24,13 +24,15 @@ import it.eng.knowage.engine.cockpit.api.export.excel.ExcelExporter;
 import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
+import java.util.Map;
+
 public class TableExporter extends GenericWidgetExporter implements IWidgetExporter {
 
 	public static transient Logger logger = Logger.getLogger(TableExporter.class);
 
-	public TableExporter(ExcelExporter excelExporter, String widgetType, String templateString, long widgetId, Workbook wb, JSONObject options) {
-		super(excelExporter, widgetType, templateString, widgetId, wb, options);
-	}
+    public TableExporter(ExcelExporter excelExporter, String widgetType, String templateString, long widgetId, Workbook wb, JSONObject options, Map<String, Map<String, Object>> driversMap) {
+        super(excelExporter, widgetType, templateString, widgetId, wb, options, driversMap);
+    }
 
 	@Override
 	public int export() {
@@ -39,7 +41,8 @@ public class TableExporter extends GenericWidgetExporter implements IWidgetExpor
 			JSONObject widget = getWidgetById(template, widgetId);
 			JSONObject settings = widget.getJSONObject("settings");
 			String widgetName = getWidgetName(widget);
-			String cockpitSheetName = getCockpitSheetName(template, widgetId);
+            widgetName = replacePlaceholderIfPresent(widgetName);
+            String cockpitSheetName = getCockpitSheetName(template, widgetId);
 			Sheet sheet = excelExporter.createUniqueSafeSheet(wb, widgetName, cockpitSheetName);
 
 			int offset = 0;

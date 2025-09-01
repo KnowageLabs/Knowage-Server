@@ -120,7 +120,7 @@ public class CrossTabExporter extends GenericWidgetExporter implements IWidgetEx
 	private Map<String, List<Threshold>> thresholdColorsMap;
 	private JSONObject variables = new JSONObject();
 
-	protected Map<Integer, XSSFCellStyle> formatHash2CellStyle = new HashMap<>();
+    protected Map<Integer, XSSFCellStyle> formatHash2CellStyle = new HashMap<>();
 
 	public CrossTabExporter(Properties properties, JSONObject variables) {
 		super();
@@ -147,9 +147,10 @@ public class CrossTabExporter extends GenericWidgetExporter implements IWidgetEx
 		this.variables = variables;
 	}
 
-	public CrossTabExporter(ExcelExporter excelExporter, String widgetType, String templateString, long widgetId, Workbook wb, JSONObject options) {
-		super(excelExporter, widgetType, templateString, widgetId, wb, options);
-	}
+    public CrossTabExporter(ExcelExporter excelExporter, String widgetType, String templateString, long widgetId,
+                            Workbook wb, JSONObject options, Map<String, Map<String, Object>> driversMap) {
+        super(excelExporter, widgetType, templateString, widgetId, wb, options, driversMap);
+    }
 
 	public void setProperty(String propertyName, Object propertyValue) {
 		this.properties.put(propertyName, propertyValue);
@@ -767,8 +768,9 @@ public class CrossTabExporter extends GenericWidgetExporter implements IWidgetEx
 			JSONObject template = new JSONObject(templateString);
 			JSONObject widget = getWidgetById(template, widgetId);
 			String widgetName = getWidgetName(widget);
+            widgetName = replacePlaceholderIfPresent(widgetName);
 
-			JSONObject crosstabDefinition = optionsObj.getJSONObject("crosstabDefinition");
+            JSONObject crosstabDefinition = optionsObj.getJSONObject("crosstabDefinition");
 			CrossTab cs = buildCrossTab(crosstabDefinition);
 			initExporter(crosstabDefinition);
 
