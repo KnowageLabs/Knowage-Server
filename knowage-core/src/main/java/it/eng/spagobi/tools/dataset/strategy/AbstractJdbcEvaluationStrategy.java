@@ -50,7 +50,9 @@ abstract class AbstractJdbcEvaluationStrategy extends AbstractEvaluationStrategy
 		IDataStore pagedDataStore;
 
 		try {
-			SelectQuery selectQuery = new SelectQuery(dataSet).selectDistinct().select(projections).from(getTableName()).where(filter).groupBy(groups)
+            List<AbstractSelectionField> effectiveGroups = (groups != null && !groups.isEmpty()) ? groups : projections;
+
+            SelectQuery selectQuery = new SelectQuery(dataSet).select(projections).from(getTableName()).where(filter).groupBy(effectiveGroups)
 					.orderBy(sortings);
 			pagedDataStore = getDataSource().executeStatement(selectQuery, offset, fetchSize, maxRowCount, true);
 			pagedDataStore.setCacheDate(getDate());
