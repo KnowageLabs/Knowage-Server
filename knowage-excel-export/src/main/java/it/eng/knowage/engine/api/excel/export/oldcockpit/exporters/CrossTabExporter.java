@@ -83,7 +83,6 @@ public class CrossTabExporter extends GenericWidgetExporter implements IWidgetEx
 	private Properties properties;
 	private Map<String, List<Threshold>> thresholdColorsMap;
 	private JSONObject variables = new JSONObject();
-    Map<String, Map<String, Object>> driversMap;
 
 	protected Map<Integer, XSSFCellStyle> formatHash2CellStyle = new HashMap<>();
 
@@ -731,7 +730,7 @@ public class CrossTabExporter extends GenericWidgetExporter implements IWidgetEx
 			JSONObject template = new JSONObject(templateString);
 			JSONObject widget = getWidgetById(template, widgetId);
 			String widgetName = getWidgetName(widget);
-            widgetName = replacePlaceholderIfPresent(widgetName, driversMap);
+            widgetName = replacePlaceholderIfPresent(widgetName);
 
 			JSONObject crosstabDefinition = optionsObj.getJSONObject("crosstabDefinition");
 			CrossTab cs = buildCrossTab(crosstabDefinition);

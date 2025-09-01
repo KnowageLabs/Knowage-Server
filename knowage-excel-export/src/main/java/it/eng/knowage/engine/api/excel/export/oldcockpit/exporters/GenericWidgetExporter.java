@@ -62,7 +62,7 @@ class GenericWidgetExporter implements IWidgetExporter {
 			JSONObject template = new JSONObject(templateString);
 			JSONObject widget = getWidgetById(template, widgetId);
 			String widgetName = getWidgetName(widget);
-            widgetName = replacePlaceholderIfPresent(widgetName, driversMap);
+            widgetName = replacePlaceholderIfPresent(widgetName);
 
 			JSONObject dataStore = excelExporter.getDataStoreForWidget(template, widget);
 			if (dataStore != null) {
@@ -136,7 +136,7 @@ class GenericWidgetExporter implements IWidgetExporter {
 		throw new SpagoBIRuntimeException("Unable to find widget with id [" + widgetId + "] in template");
 	}
 
-    protected String replacePlaceholderIfPresent(String widgetName, Map<String, Map<String, Object>> driversMap) {
+    protected String replacePlaceholderIfPresent(String widgetName) {
         if (widgetName.contains("$P{")) {
             String placeholder = widgetName.substring(widgetName.indexOf("$P{") + 3, widgetName.indexOf("}"));
             if (driversMap.containsKey(placeholder)) {

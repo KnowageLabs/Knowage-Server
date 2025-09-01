@@ -40,7 +40,7 @@ public class MapExporter extends GenericWidgetExporter implements IWidgetExporte
 			JSONObject template = new JSONObject(templateString);
 			JSONObject widget = getWidgetById(template, widgetId);
 			String widgetName = getWidgetName(widget);
-            widgetName = replacePlaceholderIfPresent(widgetName, driversMap);
+            widgetName = replacePlaceholderIfPresent(widgetName);
 
 			JSONArray dataStoreArray = excelExporter.getMultiDataStoreForWidget(template, widget);
 			for (int i = 0; i < dataStoreArray.length(); i++) {

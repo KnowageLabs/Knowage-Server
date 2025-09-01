@@ -41,7 +41,7 @@ public class TableExporter extends GenericWidgetExporter implements IWidgetExpor
 			JSONObject widget = getWidgetById(template, widgetId);
 			JSONObject settings = widget.getJSONObject("settings");
 			String widgetName = getWidgetName(widget);
-            widgetName = replacePlaceholderIfPresent(widgetName, driversMap);
+            widgetName = replacePlaceholderIfPresent(widgetName);
 			String cockpitSheetName = getCockpitSheetName(template, widgetId);
 			Sheet sheet = excelExporter.createUniqueSafeSheet(wb, widgetName, cockpitSheetName);
 
