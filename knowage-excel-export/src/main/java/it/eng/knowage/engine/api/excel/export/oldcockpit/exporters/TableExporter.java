@@ -24,12 +24,14 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.json.JSONObject;
 
+import java.util.Map;
+
 public class TableExporter extends GenericWidgetExporter implements IWidgetExporter {
 
 	public static Logger logger = Logger.getLogger(TableExporter.class);
 
-	public TableExporter(ExcelExporter excelExporter, String widgetType, String templateString, long widgetId, Workbook wb, JSONObject options) {
-		super(excelExporter, widgetType, templateString, widgetId, wb, options);
+	public TableExporter(ExcelExporter excelExporter, String widgetType, String templateString, long widgetId, Workbook wb, JSONObject options, Map<String, Map<String, Object>> driversMap) {
+		super(excelExporter, widgetType, templateString, widgetId, wb, options, driversMap);
 	}
 
 	@Override
@@ -39,6 +41,7 @@ public class TableExporter extends GenericWidgetExporter implements IWidgetExpor
 			JSONObject widget = getWidgetById(template, widgetId);
 			JSONObject settings = widget.getJSONObject("settings");
 			String widgetName = getWidgetName(widget);
+            widgetName = replacePlaceholderIfPresent(widgetName, driversMap);
 			String cockpitSheetName = getCockpitSheetName(template, widgetId);
 			Sheet sheet = excelExporter.createUniqueSafeSheet(wb, widgetName, cockpitSheetName);
 

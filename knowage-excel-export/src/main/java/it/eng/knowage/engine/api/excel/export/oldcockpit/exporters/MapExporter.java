@@ -23,12 +23,14 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.util.Map;
+
 public class MapExporter extends GenericWidgetExporter implements IWidgetExporter {
 
 	public static Logger logger = Logger.getLogger(MapExporter.class);
 
-	public MapExporter(ExcelExporter excelExporter, String widgetType, String templateString, long widgetId, Workbook wb, JSONObject options) {
-		super(excelExporter, widgetType, templateString, widgetId, wb, options);
+	public MapExporter(ExcelExporter excelExporter, String widgetType, String templateString, long widgetId, Workbook wb, JSONObject options, Map<String, Map<String, Object>> driversMap) {
+		super(excelExporter, widgetType, templateString, widgetId, wb, options, driversMap);
 	}
 
 	@Override
@@ -38,6 +40,7 @@ public class MapExporter extends GenericWidgetExporter implements IWidgetExporte
 			JSONObject template = new JSONObject(templateString);
 			JSONObject widget = getWidgetById(template, widgetId);
 			String widgetName = getWidgetName(widget);
+            widgetName = replacePlaceholderIfPresent(widgetName, driversMap);
 
 			JSONArray dataStoreArray = excelExporter.getMultiDataStoreForWidget(template, widget);
 			for (int i = 0; i < dataStoreArray.length(); i++) {

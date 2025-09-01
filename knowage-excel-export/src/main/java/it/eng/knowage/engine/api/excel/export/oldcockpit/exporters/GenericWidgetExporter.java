@@ -27,6 +27,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.Map;
+
 class GenericWidgetExporter implements IWidgetExporter {
 
 	private static Logger logger = Logger.getLogger(GenericWidgetExporter.class);
@@ -37,12 +39,13 @@ class GenericWidgetExporter implements IWidgetExporter {
 	long widgetId;
 	Workbook wb;
 	JSONObject optionsObj;
+    Map<String, Map<String, Object>> driversMap;
 
 	public GenericWidgetExporter() {
 		super();
 	}
 
-	public GenericWidgetExporter(ExcelExporter excelExporter, String widgetType, String templateString, long widgetId, Workbook wb, JSONObject options) {
+	public GenericWidgetExporter(ExcelExporter excelExporter, String widgetType, String templateString, long widgetId, Workbook wb, JSONObject options, Map<String, Map<String, Object>> driversMap) {
 		super();
 		this.excelExporter = excelExporter;
 		this.widgetType = widgetType;
@@ -50,6 +53,7 @@ class GenericWidgetExporter implements IWidgetExporter {
 		this.widgetId = widgetId;
 		this.wb = wb;
 		this.optionsObj = options;
+        this.driversMap = driversMap;
 	}
 
 	@Override
@@ -58,6 +62,7 @@ class GenericWidgetExporter implements IWidgetExporter {
 			JSONObject template = new JSONObject(templateString);
 			JSONObject widget = getWidgetById(template, widgetId);
 			String widgetName = getWidgetName(widget);
+            widgetName = replacePlaceholderIfPresent(widgetName, driversMap);
 
 			JSONObject dataStore = excelExporter.getDataStoreForWidget(template, widget);
 			if (dataStore != null) {
@@ -131,4 +136,13 @@ class GenericWidgetExporter implements IWidgetExporter {
 		throw new SpagoBIRuntimeException("Unable to find widget with id [" + widgetId + "] in template");
 	}
 
+    protected String replacePlaceholderIfPresent(String widgetName, Map<String, Map<String, Object>> driversMap) {
+        if (widgetName.contains("$P{")) {
+            String placeholder = widgetName.substring(widgetName.indexOf("$P{") + 3, widgetName.indexOf("}"));
+            if (driversMap.containsKey(placeholder)) {
+                return widgetName.replace("$P{" + placeholder + "}", driversMap.get(placeholder).get("value").toString());
+            }
+        }
+        return widgetName;
+    }
 }

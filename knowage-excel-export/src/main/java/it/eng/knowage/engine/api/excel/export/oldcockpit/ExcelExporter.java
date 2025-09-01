@@ -138,6 +138,14 @@ public class ExcelExporter extends AbstractFormatExporter {
         try (Workbook wb = new SXSSFWorkbook(windowSize)) {
 
             int exportedSheets = 0;
+
+            Map<String, Map<String, Object>> driversMap;
+            try {
+                driversMap = createDriversMap();
+            } catch (JSONException e) {
+                throw new SpagoBIRuntimeException("Unable to get driver map: ", e);
+            }
+
             if (isSingleWidgetExport) {
                 long widgetId = body.getLong("widget");
                 String widgetType = getWidgetTypeFromCockpitTemplate(templateString, widgetId);
@@ -146,7 +154,7 @@ public class ExcelExporter extends AbstractFormatExporter {
                     optionsObj = new JSONObject(options);
                 }
                 IWidgetExporter widgetExporter = WidgetExporterFactory.getExporter(this, widgetType, templateString,
-                        widgetId, wb, optionsObj);
+                        widgetId, wb, optionsObj, driversMap);
                 exportedSheets = widgetExporter.export();
 
                 IConfigDAO configsDao = DAOFactory.getSbiConfigDAO();
@@ -166,12 +174,6 @@ public class ExcelExporter extends AbstractFormatExporter {
                     exportedSheets++;
                 }
 
-                    Map<String, Map<String, Object>> driversMap;
-                    try {
-                        driversMap = createDriversMap();
-                    } catch (JSONException e) {
-                        throw new SpagoBIRuntimeException("Unable to get driver map: ", e);
-                    }
                     if (!driversMap.isEmpty()) {
                         Sheet driversSheet = createUniqueSafeSheetForDrivers(wb, "Filters");
                         fillDriversSheetWithData(driversMap, wb, driversSheet, "Filters");
@@ -182,7 +184,7 @@ public class ExcelExporter extends AbstractFormatExporter {
                 // export whole cockpit
                 JSONArray widgetsJson = getWidgetsJson(templateString);
                 JSONObject optionsObj = buildOptionsForCrosstab(templateString);
-                exportedSheets = exportCockpit(templateString, widgetsJson, wb, optionsObj);
+                exportedSheets = exportCockpit(templateString, widgetsJson, wb, optionsObj, driversMap);
             }
 
             if (exportedSheets == 0) {
@@ -365,7 +367,7 @@ public class ExcelExporter extends AbstractFormatExporter {
     }
 
 
-    private int exportCockpit(String templateString, JSONArray widgetsJson, Workbook wb, JSONObject optionsObj) {
+    private int exportCockpit(String templateString, JSONArray widgetsJson, Workbook wb, JSONObject optionsObj, Map<String, Map<String, Object>> driversMap) {
         String widgetId = null;
         int exportedSheets = 0;
         for (int i = 0; i < widgetsJson.length(); i++) {
@@ -381,7 +383,7 @@ public class ExcelExporter extends AbstractFormatExporter {
                     currWidgetOptions = optionsObj.getJSONObject(widgetId);
                 }
                 IWidgetExporter widgetExporter = WidgetExporterFactory.getExporter(this, widgetType, templateString,
-                        Long.parseLong(widgetId), wb, currWidgetOptions);
+                        Long.parseLong(widgetId), wb, currWidgetOptions, driversMap);
                 exportedSheets += widgetExporter.export();
 
             } catch (Exception e) {
@@ -406,13 +408,6 @@ public class ExcelExporter extends AbstractFormatExporter {
                     exportedSheets++;
                 }
 
-
-                Map<String, Map<String, Object>> driversMap = new HashMap<>();
-                try {
-                    driversMap = createDriversMap();
-                } catch (JSONException e) {
-                    throw new SpagoBIRuntimeException("Unable to get driver map: ", e);
-                }
                 if (!driversMap.isEmpty()) {
                     Sheet driversSheet = createUniqueSafeSheetForSelections(wb, "Filters");
                     fillDriversSheetWithData(driversMap, wb, driversSheet, "Filters");
@@ -751,22 +746,8 @@ public class ExcelExporter extends AbstractFormatExporter {
             JSONObject widgetData = dataStore.getJSONObject("widgetData");
             JSONObject widgetContent = widgetData.getJSONObject("content");
             JSONArray columnSelectedOfDataset = getChildFromWidgetContent(widgetContent, "columnSelectedOfDataset");
-//			HashMap<String, String> arrayHeader = new HashMap<>();
             HashMap<String, String> chartAggregationsMap = new HashMap<>();
-            if (widgetData.getString("type").equalsIgnoreCase("table")) {
-//				ATTENTION: renaming table columns names of the excel export has been placed at the end
-//				for (int i = 0; i < columnSelectedOfDataset.length(); i++) {
-//					JSONObject column = columnSelectedOfDataset.getJSONObject(i);
-//					String key;
-//					if (column.optBoolean("isCalculated") && !column.has("name")) {
-//						key = column.getString("alias");
-//					} else {
-//						key = column.getString("name");
-//					}
-//					// arrayHeader is used to rename table columns names of the excel export
-//					arrayHeader.put(key, column.getString("aliasToShow"));
-//				}
-            } else if (widgetData.getString("type").equalsIgnoreCase("chart")) {
+             if (widgetData.getString("type").equalsIgnoreCase("chart")) {
                 for (int i = 0; i < columnSelectedOfDataset.length(); i++) {
                     JSONObject column = columnSelectedOfDataset.getJSONObject(i);
                     if (column.has("aggregationSelected") && column.has("alias")) {
@@ -826,18 +807,7 @@ public class ExcelExporter extends AbstractFormatExporter {
             int dataspan = 10;
 
             if (offset == 0) { // if pagination is active, headers must be created only once
-                Row header = null;
-
-//				ATTENTION: exporting single widget must not be different from exporting whole cockpit
-//				if (isSingleWidgetExport) { // export single widget
-//					header = createHeaderColumnNames(sheet, groupsAndColumnsMap, columnsOrdered, 0);
-//				} else { // export whole cockpit
-//					// First row is for Widget name in case exporting whole Cockpit document
-//					Row firstRow = sheet.createRow((short) 0);
-//					Cell firstCell = firstRow.createCell(0);
-//					firstCell.setCellValue(widgetName);
-//					header = createHeaderColumnNames(sheet, groupsAndColumnsMap, columnsOrdered, 1);
-//				}
+                Row header;
 
                 int headerIndex = createBrandedHeaderSheet(
                         sheet,
