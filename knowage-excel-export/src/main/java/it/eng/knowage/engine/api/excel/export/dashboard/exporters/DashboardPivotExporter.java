@@ -29,6 +29,7 @@ public class DashboardPivotExporter extends GenericDashboardWidgetExporter imple
             JSONObject settings = widget.getJSONObject("settings");
             String dashboardSheetName = documentName != null ? documentName : "Dashboard";
             String widgetName = getDashboardWidgetName(widget);
+            widgetName = replacePlaceholderIfPresent(widgetName);
             Sheet sheet = excelExporter.createUniqueSafeSheet(wb, widgetName, dashboardSheetName);
 
             int offset = 0;

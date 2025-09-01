@@ -18,6 +18,7 @@
 
 package it.eng.knowage.engine.api.excel.export.dashboard.exporters;
 
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import it.eng.knowage.engine.api.excel.export.IWidgetExporter;
 import it.eng.knowage.engine.api.excel.export.dashboard.DashboardExcelExporter;
 import it.eng.knowage.engine.api.excel.export.dashboard.DatastoreUtils;
@@ -26,8 +27,10 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 class GenericDashboardWidgetExporter implements IWidgetExporter {
@@ -62,6 +65,7 @@ class GenericDashboardWidgetExporter implements IWidgetExporter {
             JSONObject settings = widget.getJSONObject("settings");
             JSONObject dataStore = datastoreUtils.getDataStoreforDashboardSingleWidget(widget, selections, drivers, parameters);
             String widgetName = getDashboardWidgetName(widget);
+            widgetName = replacePlaceholderIfPresent(widgetName);
             if (dataStore != null) {
                 String dashboardSheetName = documentName != null ? documentName : "Dashboard";
                 Sheet sheet = excelExporter.createUniqueSafeSheet(wb, widgetName, dashboardSheetName);
@@ -91,5 +95,23 @@ class GenericDashboardWidgetExporter implements IWidgetExporter {
 
     private static String getWidgetGenericName(JSONObject widget) {
         return widget.optString("type").concat(" ").concat(widget.optString("id"));
+    }
+
+    protected String replacePlaceholderIfPresent(String widgetName) {
+        if (widgetName.contains("$P{")) {
+            String placeholder = widgetName.substring(widgetName.indexOf("$P{") + 3, widgetName.indexOf("}"));
+            if (drivers.has(placeholder)) {
+                try {
+                    JSONArray valuesArray =  drivers.getJSONArray(placeholder);
+                    if (valuesArray.length() > 0) {
+                        JSONObject value = valuesArray.getJSONObject(0);
+                        widgetName = widgetName.replace("$P{" + placeholder + "}", value.getString("value"));
+                    }
+                } catch (JSONException e) {
+                    throw new SpagoBIRuntimeException("Unable to replace placeholder in widget name", e);
+                }
+            }
+        }
+        return widgetName;
     }
 }

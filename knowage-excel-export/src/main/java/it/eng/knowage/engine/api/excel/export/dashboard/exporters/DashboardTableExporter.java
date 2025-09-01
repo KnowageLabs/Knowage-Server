@@ -28,6 +28,7 @@ public class DashboardTableExporter extends GenericDashboardWidgetExporter imple
             JSONObject settings = widget.getJSONObject("settings");
             String dashboardSheetName = documentName != null ? documentName : "Dashboard";
             String widgetName = getDashboardWidgetName(widget);
+            widgetName = replacePlaceholderIfPresent(widgetName);
             Sheet sheet = excelExporter.createUniqueSafeSheet(wb, widgetName, dashboardSheetName);
             int offset = 0;
             int fetchSize = Integer.parseInt(SingletonConfig.getInstance().getConfigValue("SPAGOBI.API.DATASET.MAX_ROWS_NUMBER"));
