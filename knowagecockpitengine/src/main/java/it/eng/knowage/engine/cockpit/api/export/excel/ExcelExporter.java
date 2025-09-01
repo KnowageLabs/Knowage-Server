@@ -229,6 +229,14 @@ public class ExcelExporter extends AbstractFormatExporter {
         try (Workbook wb = new SXSSFWorkbook(windowSize)) {
 
             int exportedSheets = 0;
+
+            Map<String, Map<String, Object>> driversMap;
+            try {
+                driversMap = createDriversMap();
+            } catch (JSONException e) {
+                throw new SpagoBIRuntimeException("Unable to get driver map: ", e);
+            }
+
             if (isSingleWidgetExport) {
                 long widgetId = body.getLong("widget");
                 String widgetType = getWidgetTypeFromCockpitTemplate(templateString, widgetId);
@@ -236,7 +244,8 @@ public class ExcelExporter extends AbstractFormatExporter {
                 if (options != null && !options.isEmpty()) {
                     optionsObj = new JSONObject(options);
                 }
-                IWidgetExporter widgetExporter = WidgetExporterFactory.getExporter(this, widgetType, templateString, widgetId, wb, optionsObj);
+                IWidgetExporter widgetExporter = WidgetExporterFactory.getExporter(this, widgetType, templateString,
+                        widgetId, wb, optionsObj, driversMap);
                 exportedSheets = widgetExporter.export();
 
                 IConfigDAO configsDao = DAOFactory.getSbiConfigDAO();
@@ -255,12 +264,6 @@ public class ExcelExporter extends AbstractFormatExporter {
                         exportedSheets++;
                     }
 
-                    Map<String, Map<String, Object>> driversMap;
-                    try {
-                        driversMap = createDriversMap();
-                    } catch (JSONException e) {
-                        throw new SpagoBIRuntimeException("Unable to get driver map: ", e);
-                    }
                     if (!driversMap.isEmpty()) {
                         Sheet driversSheet = createUniqueSafeSheetForDrivers(wb, "Filters");
                         fillDriversSheetWithData(driversMap, wb, driversSheet, "Filters");
@@ -271,7 +274,7 @@ public class ExcelExporter extends AbstractFormatExporter {
                 // export whole cockpit
                 JSONArray widgetsJson = getWidgetsJson(templateString);
                 JSONObject optionsObj = buildOptionsForCrosstab(templateString);
-                exportedSheets = exportCockpit(templateString, widgetsJson, wb, optionsObj);
+                exportedSheets = exportCockpit(templateString, widgetsJson, wb, optionsObj, driversMap);
             }
 
             if (exportedSheets == 0) {
@@ -450,7 +453,7 @@ public class ExcelExporter extends AbstractFormatExporter {
         }
     }
 
-    private int exportCockpit(String templateString, JSONArray widgetsJson, Workbook wb, JSONObject optionsObj) {
+    private int exportCockpit(String templateString, JSONArray widgetsJson, Workbook wb, JSONObject optionsObj, Map<String, Map<String, Object>> driversMap) {
         String widgetId = null;
         int exportedSheets = 0;
         for (int i = 0; i < widgetsJson.length(); i++) {
@@ -465,8 +468,8 @@ public class ExcelExporter extends AbstractFormatExporter {
                 if (optionsObj.has(widgetId)) {
                     currWidgetOptions = optionsObj.getJSONObject(widgetId);
                 }
-                IWidgetExporter widgetExporter = WidgetExporterFactory.getExporter(this, widgetType, templateString, Long.parseLong(widgetId), wb,
-                        currWidgetOptions);
+                IWidgetExporter widgetExporter = WidgetExporterFactory.getExporter(this, widgetType, templateString,
+                        Long.parseLong(widgetId), wb, currWidgetOptions, driversMap);
                 exportedSheets += widgetExporter.export();
 
             } catch (Exception e) {
@@ -492,13 +495,6 @@ public class ExcelExporter extends AbstractFormatExporter {
                     exportedSheets++;
                 }
 
-
-                Map<String, Map<String, Object>> driversMap;
-                try {
-                    driversMap = createDriversMap();
-                } catch (JSONException e) {
-                    throw new SpagoBIRuntimeException("Unable to get driver map: ", e);
-                }
                 if (!driversMap.isEmpty()) {
                     Sheet driversSheet = createUniqueSafeSheetForSelections(wb, "Filters");
                     fillDriversSheetWithData(driversMap, wb, driversSheet, "Filters");
