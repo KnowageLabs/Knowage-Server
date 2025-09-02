@@ -15,13 +15,10 @@ GNU Affero General Public License for more details.
 You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 --%>
-<%@page import="it.eng.knowage.security.OwaspDefaultEncoderFactory"%>
-<%@page import="org.owasp.esapi.Encoder"%>
 <%
-Encoder esapiEncoder = OwaspDefaultEncoderFactory.getInstance().getEncoder();
-String code = request.getParameter("code");
+String appo = (String)request.getAttribute("cspNonce");
+System.err.println("appo "+appo);
 %>
-
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -29,103 +26,94 @@ String code = request.getParameter("code");
     <title>OAuth2 standard authorization code flow</title>
   </head>
   <body>
-    <script type="text/javascript" nonce="<%= request.getAttribute("cspNonce") %>">
-    var oauth2Config = null;
-	
-    var xhrOAuth2C = new XMLHttpRequest();
+    <script type="text/javascript" nonce="<%= request.getAttribute("cspNonce")%>">
+    	
+    	start();
+        
+        async function start() {
+        	
+	        	if (window.location.search) {
+                    var args = new URLSearchParams(window.location.search);
+                    var state = args.get("state");
+                    var code = args.get("code");
+                    
+                    if (code) {
+                    	const oauth2Config = await fetchConfig();
+                    	if (window.sessionStorage.getItem("state") !== state){
+                    	    throw Error("Probable session hijacking attack!");
+                    	}
+                    	fetch(oauth2Config.accessTokenUrl, {
+                    		  method: 'POST',
+                    		  headers: {
+                    		    'Content-Type': 'application/x-www-form-urlencoded'
+                    		  },
+                    		  body: new URLSearchParams({
+                    		    client_id: oauth2Config.clientId,
+                    		    grant_type: "authorization_code",
+                    		    redirect_uri: oauth2Config.redirectUrl,
+                    		    code: code,
+                    		    state: state
+                    		  })
+                    		})
+                    		.then(response => response.json().then(data => ({ status: response.status, body: data })))
+                    		.then(({ status, body }) => {
+                    		  if (status === 200) {
+                    		    // storing id_token for later usage (on logout)
+                    		    window.sessionStorage.setItem("id_token", body.id_token);
 
-    xhrOAuth2C.onload = function() {
-        var response = xhrOAuth2C.response;
+                    		    const lastRedirectUri = window.location.href.split('?')[0];
+                    		    const args = new URLSearchParams({
+                    		      PAGE: "LoginPage",
+                    		      NEW_SESSION: "TRUE",
+                    		      access_token: body.access_token
+                    		    });
 
-        if (xhrOAuth2C.status == 200) {
-        	oauthConfig = response;
-        } else {
-            alert("Error: " + response.error_description + " (" + response.error + ")");
+                    		    window.location = lastRedirectUri + "?" + args;
+                    		  } else {
+                    		    alert(`Error: ${body.error_description} (${body.error})`);
+                    		  }
+
+                    		})
+                    		.catch(error => {
+                    		  console.error("Errore nella richiesta fetch:", error);
+                    		});
+
+                    } else {
+                    	saveExtraQueryParameters();
+                    	startOauth2Flow();
+                    }
+                }
+        	
         }
-    };
-    xhrOAuth2C.responseType = 'json';
-    xhrOAuth2C.open("GET", '/oauth2configservice', true);
-    xhrOAuth2C.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-    xhrOAuth2C.send();
-
-    const authorizeEndpoint = oauth2Config.authorizeUrl;
-    const tokenEndpoint = oauth2Config.accessTokenUrl;
-    const clientId = oauth2Config.clientId;
-    const redirectUri = oauth2Config.redirectUrl;
-    const scope = oauth2Config.scopes;
-    const code = <%= esapiEncoder.encodeForJavaScript(code)  %>;
-    const accessTokenResponse;
-    if(code == null){
-    	accessTokenResponse = null;
-    } else {
-        var xhrO2AT = new XMLHttpRequest();
-
-        xhrO2AT.onload = function() {
-            var response = xhrO2AT.response;
-
-            if (xhr.status == 200) {
-            	accessTokenResponse = response;
-            } else {
-                alert("Error: " + response.error_description + " (" + response.error + ")");
-            }
-        };
-        xhrO2AT.responseType = 'json';
-        xhrO2AT.open("GET", '/oauth2clientservice', true);
-        //xhrO2AT.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-        xhrO2AT.send(new URLSearchParams({code: code});   	
-    }
-
-        if (window.location.search) {
-            var args = new URLSearchParams(window.location.search);
-            var state = args.get("state");
-            
-            if (accessTokenResponse) {
-            	if (window.sessionStorage.getItem("state") !== state){
-            	    throw Error("Probable session hijacking attack!");
-            	}
-
-        		var access_token = accessTokenResponse.accessToken;
-        		var id_token = accessTokenResponse.idToken;
-        		if (id_token) {
-        			// storing id_token for later usage (on logout)
-                	window.sessionStorage.setItem("id_token", id_token);
-        		}
-        		
-        		var lastRedirectUri = window.location.href.split('?')[0];
-        		var extraParameters = getSavedExtraQueryParameters();
-        		
-            	var args = new URLSearchParams({
-            		PAGE : "LoginPage",
-            		NEW_SESSION : "TRUE",
-                    access_token: access_token
-                });
-            	
-            	var newRedirectUri = lastRedirectUri + "?" + args;
-            	if (extraParameters) {
-            		newRedirectUri += "&" + extraParameters;
-            	}
-            	
-                window.location = newRedirectUri;
-
-            } else {
-            	saveExtraQueryParameters();
-            	startOauth2Flow();
-            }
+		
+        
+        async function fetchConfig() {
+        	const response = await fetch('/knowage/restful-services/oauth2configservice', {
+    	        method: 'GET'
+    	    })
+        	
+        	if (!response.ok) {
+	               throw new Error("Errore nella chiamata oauth2configservice");
+	        }
+        	const config = await response.json();
+    	    return config;
         }
-
-        function startOauth2Flow() {
+        
+        async function startOauth2Flow() {
+        	const oauth2Config = await fetchConfig();
+        	
         	var state = generateRandomString(64);
 
            	window.sessionStorage.setItem("state", state);
 
             var args = new URLSearchParams({
                 response_type: "code",
-                client_id: clientId,
+                client_id: oauth2Config.clientId,
                 state: state,
-                redirect_uri: redirectUri,
-                scope: scope
+                redirect_uri: oauth2Config.redirectUrl,
+                scope: oauth2Config.scopes
             });
-            window.location = authorizeEndpoint + "?" + args;
+            window.location = oauth2Config.authorizeUrl + "?" + args;
         }
 
         function generateRandomString(length) {
