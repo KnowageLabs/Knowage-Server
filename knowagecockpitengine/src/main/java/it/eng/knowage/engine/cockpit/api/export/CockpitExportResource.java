@@ -113,7 +113,7 @@ public class CockpitExportResource extends AbstractCockpitEngineResource {
 			Integer documentId = body.optInt(DOCUMENT_ID);
 			String template = getIOManager().getTemplateAsString();
 			body.put("template", template);
-            JSONObject selections = body.optJSONObject("COCKPIT_SELECTIONS").optJSONObject("selections");
+            JSONObject selections = body.optJSONObject("COCKPIT_SELECTIONS").optJSONObject("userSelections");
 			byte[] data = pdfExporter.getBinaryData(documentId, documentLabel, template, selections);
 
 			response.setContentType(MediaType.APPLICATION_OCTET_STREAM);
