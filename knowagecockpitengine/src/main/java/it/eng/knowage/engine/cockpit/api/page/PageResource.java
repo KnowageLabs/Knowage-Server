@@ -330,9 +330,10 @@ public class PageResource extends AbstractCockpitEngineResource {
 		String pdfPageOrientation = request.getParameter(PDF_PAGE_ORIENTATION);
 		boolean pdfFrontPage = Boolean.parseBoolean(request.getParameter(PDF_FRONT_PAGE));
 		boolean pdfBackPage = Boolean.parseBoolean(request.getParameter(PDF_BACK_PAGE));
+        String params = request.getParameter("parameters");
 
 		PdfExporterV2 pdfExporter = new PdfExporterV2(documentId, userId, requestURL, renderOptions, pdfPageOrientation,
-				pdfFrontPage, pdfBackPage, role, organization);
+				pdfFrontPage, pdfBackPage, role, organization, params);
 		byte[] data = pdfExporter.getBinaryData();
 
 		return Response.ok(data, "application/pdf").header("Content-Length", Integer.toString(data.length))
@@ -405,13 +406,14 @@ public class PageResource extends AbstractCockpitEngineResource {
 				&& Boolean.parseBoolean(request.getParameter(PDF_FRONT_PAGE));
 		boolean pdfBackPage = request.getParameter(PDF_BACK_PAGE) != null
 				&& Boolean.parseBoolean(request.getParameter(PDF_BACK_PAGE));
+        String params = request.getParameter("parameters");
 
 		String role = getProfileRole();
 
 		String organization = getUserProfile().getOrganization();
 
 		PngExporter pngExporter = new PngExporter(documentId, userId, requestURL, renderOptions, pdfPageOrientation,
-				pdfFrontPage, pdfBackPage, role, organization);
+				pdfFrontPage, pdfBackPage, role, organization, params);
 		byte[] data = pngExporter.getBinaryData();
 
 		boolean isZipped = false;

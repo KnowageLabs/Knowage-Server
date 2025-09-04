@@ -127,9 +127,10 @@ public abstract class AbstractNodeJSBasedExporter {
 	private final JSONObject template;
 	private final String role;
 	private final String organization;
+    private final String params;
 
 	protected AbstractNodeJSBasedExporter(int documentId, String userId, String requestUrl, RenderOptions renderOptions,
-			String pdfPageOrientation, boolean pdfFrontPage, boolean pdfBackPage, String role, String organization) throws EMFUserError, JSONException {
+			String pdfPageOrientation, boolean pdfFrontPage, boolean pdfBackPage, String role, String organization, String params) throws EMFUserError, JSONException {
 		this.documentId = documentId;
 		this.userId = userId;
 		this.requestUrl = requestUrl;
@@ -139,6 +140,7 @@ public abstract class AbstractNodeJSBasedExporter {
 		this.pdfBackPage = pdfBackPage;
 		this.role = role;
 		this.organization = organization;
+        this.params = params;
 
 		document = DAOFactory.getBIObjectDAO().loadBIObjectById(documentId);
 		engineLabel = document.getEngineLabel();
@@ -218,6 +220,23 @@ public abstract class AbstractNodeJSBasedExporter {
 		String encodedUserId = Base64.encodeBase64String(userId.getBytes(UTF_8));
 		LOGGER.debug("Encoded User Id: " + encodedUserId);
 
+        String transformedParams;
+        try {
+            JSONArray params = new JSONArray(this.params);
+            for (int i = 0; i < params.length(); i++) {
+                params.getJSONObject(i).remove("type");
+                params.getJSONObject(i).remove("name");
+            }
+            transformedParams = params.toString();
+        } catch (JSONException e) {
+            throw new SpagoBIRuntimeException("Invalid params for document with id [" + documentId + "]", e);
+        }
+
+
+        String base64Params = "";
+        if (transformedParams != null && !transformedParams.isEmpty()) {
+            base64Params = Base64.encodeBase64String(transformedParams.getBytes(UTF_8));
+        }
 		// @formatter:off
 		URI url = UriBuilder.fromUri(requestUrl)
 				.replaceQueryParam("outputType_description", "HTML")
@@ -226,6 +245,7 @@ public abstract class AbstractNodeJSBasedExporter {
 				.replaceQueryParam("export")
 				.replaceQueryParam("role", role)
 				.replaceQueryParam("organization", organization)
+                .replaceQueryParam("params", base64Params)
 				.build();
 		// @formatter:on
 		LOGGER.debug("URL: " + url);
