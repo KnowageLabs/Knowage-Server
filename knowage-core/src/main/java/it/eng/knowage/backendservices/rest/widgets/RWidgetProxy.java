@@ -90,7 +90,7 @@ public class RWidgetProxy extends DataSetResource {
 		}
 		String rDataframe = null;
 		if (dsLabel != null) {
-			String knowageDs = getDataStore(dsLabel, parameters, drivers, selections, null, -1, aggregations, null, -1, -1, false, null, null);
+			String knowageDs = getDataStore(dsLabel, parameters, drivers, selections, null, -1, aggregations, null, -1, -1, false, null, null, false);
 			rDataframe = MLEngineUtils.dataStore2DataFrame(knowageDs);
 		}
 		it.eng.spagobi.utilities.rest.RestUtilities.Response rEngineResponse = null;
@@ -152,7 +152,7 @@ public class RWidgetProxy extends DataSetResource {
 		}
 		String rDataframe = null;
 		if (dsLabel != null) {
-			String knowageDs = getDataStore(dsLabel, parameters, drivers, selections, null, -1, aggregations, null, -1, -1, false, null, null);
+			String knowageDs = getDataStore(dsLabel, parameters, drivers, selections, null, -1, aggregations, null, -1, -1, false, null, null, false);
 			rDataframe = MLEngineUtils.dataStore2DataFrame(knowageDs);
 		}
 		it.eng.spagobi.utilities.rest.RestUtilities.Response rEngineResponse = null;

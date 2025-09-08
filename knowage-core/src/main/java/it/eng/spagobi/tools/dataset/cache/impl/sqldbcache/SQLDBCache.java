@@ -323,7 +323,7 @@ public class SQLDBCache implements ICache {
 
 						IDatasetEvaluationStrategy strategy = DatasetEvaluationStrategyFactory.get(DatasetEvaluationStrategyType.FLAT, flatDataSet, null);
 
-						toReturn = strategy.executeQuery(projections, filter, groups, sortings, summaryRowProjections, offset, fetchSize, maxRowCount, indexes);
+						toReturn = strategy.executeQuery(projections, filter, groups, sortings, summaryRowProjections, offset, fetchSize, maxRowCount, indexes, false);
 						toReturn.setCacheDate(cacheItem.getCreationDate());
 
 						/* CHECK IF INDEXES EXIST OR CREATE THEM */

@@ -712,7 +712,7 @@ public class DataSetResource extends AbstractDataSetResource {
 	public String getDataStorePostWithJsonInBody(@PathParam("label") String label, String body,
 			@DefaultValue("-1") @QueryParam("limit") int maxRowCount,
 			@DefaultValue("-1") @QueryParam("offset") int offset, @DefaultValue("-1") @QueryParam("size") int fetchSize,
-			@QueryParam("nearRealtime") boolean isNearRealtime, @QueryParam("widgetName") String widgetName) {
+			@QueryParam("nearRealtime") boolean isNearRealtime, @DefaultValue("false") @QueryParam("useGroupBy") boolean useGroupBy, @QueryParam("widgetName") String widgetName) {
 		try {
 			Monitor timing = MonitorFactory.start("Knowage.DataSetResource.getDataStorePostWithJsonInBody:parseInputs");
 
@@ -774,7 +774,7 @@ public class DataSetResource extends AbstractDataSetResource {
 			}
 			timing.stop();
 			return getDataStore(label, parameters, driversRuntimeMap, selections, likeSelections, maxRowCount,
-					aggregations, summaryRow, offset, fetchSize, isNearRealtime, options, columns, widgetName);
+					aggregations, summaryRow, offset, fetchSize, isNearRealtime, options, columns, widgetName, useGroupBy);
 		} catch (CatalogFunctionException e) {
 			throw e;
 		} catch (Exception e) {
@@ -887,7 +887,7 @@ public class DataSetResource extends AbstractDataSetResource {
 
 			timing.stop();
 			return getDataStore(label, parameters, driversRuntimeMap, null, likeSelections, -1, aggregations, null,
-					start, limit, columns, null);
+					start, limit, columns, null, false);
 		} catch (JSONException e) {
 			throw new SpagoBIRestServiceException(buildLocaleFromSession(), e);
 		} catch (Exception e) {

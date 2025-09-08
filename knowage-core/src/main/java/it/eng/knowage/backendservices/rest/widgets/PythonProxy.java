@@ -88,7 +88,7 @@ public class PythonProxy extends AbstractDataSetResource {
 			Map<String, Object> drivers = pythonWidgetDTO.getDrivers();
 			if (dsLabel != null) {
 				datastore = getDataStore(dsLabel, pythonWidgetDTO.getParameters(), drivers, pythonWidgetDTO.getSelections(), null, -1,
-						pythonWidgetDTO.getAggregations(), null, -1, -1, null, null);
+						pythonWidgetDTO.getAggregations(), null, -1, -1, null, null, false);
 			}
 			body = PythonUtils.createPythonEngineRequestBody(datastore, dsLabel, pythonWidgetDTO.getScript(), drivers, pythonWidgetDTO.getOutputVariable());
 			pythonAddress = PythonUtils.getPythonAddress(pythonWidgetDTO.getEnvironmentLabel());

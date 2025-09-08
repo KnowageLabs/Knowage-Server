@@ -44,16 +44,22 @@ abstract class AbstractJdbcEvaluationStrategy extends AbstractEvaluationStrategy
 
 	@Override
 	protected IDataStore execute(List<AbstractSelectionField> projections, Filter filter, List<AbstractSelectionField> groups, List<Sorting> sortings,
-			List<List<AbstractSelectionField>> summaryRowProjections, int offset, int fetchSize, int maxRowCount, Set<String> indexes) {
+			List<List<AbstractSelectionField>> summaryRowProjections, int offset, int fetchSize, int maxRowCount, Set<String> indexes, boolean useGroupBy) {
 		LOGGER.debug("IN");
 
 		IDataStore pagedDataStore;
 
 		try {
-            List<AbstractSelectionField> effectiveGroups = (groups != null && !groups.isEmpty()) ? groups : projections;
+            SelectQuery selectQuery;
+            if (useGroupBy) {
+                List<AbstractSelectionField> effectiveGroups = (groups != null && !groups.isEmpty()) ? groups : projections;
+                selectQuery = new SelectQuery(dataSet).select(projections).from(getTableName()).where(filter).groupBy(effectiveGroups)
+                        .orderBy(sortings);
+            } else {
+                selectQuery = new SelectQuery(dataSet).selectDistinct().select(projections).from(getTableName()).where(filter).groupBy(groups)
+                        .orderBy(sortings);
+            }
 
-            SelectQuery selectQuery = new SelectQuery(dataSet).select(projections).from(getTableName()).where(filter).groupBy(effectiveGroups)
-					.orderBy(sortings);
 			pagedDataStore = getDataSource().executeStatement(selectQuery, offset, fetchSize, maxRowCount, true);
 			pagedDataStore.setCacheDate(getDate());
 		} catch (DataBaseException e) {

@@ -174,21 +174,21 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 	@Deprecated
 	public String getDataStore(String label, String parameters, Map<String, Object> drivers, String selections,
 			String likeSelections, int maxRowCount, String aggregations, String summaryRow, int offset, int fetchSize,
-			Boolean isNearRealtime, Set<String> indexes, String widgetName) {
+			Boolean isNearRealtime, Set<String> indexes, String widgetName, boolean useGroupBy) {
 		return getDataStore(label, parameters, drivers, selections, likeSelections, maxRowCount, aggregations,
-				summaryRow, offset, fetchSize, isNearRealtime, null, indexes, widgetName);
+				summaryRow, offset, fetchSize, isNearRealtime, null, indexes, widgetName, useGroupBy);
 	}
 
 	public String getDataStore(String label, String parameters, Map<String, Object> drivers, String selections,
 			String likeSelections, int maxRowCount, String aggregations, String summaryRow, int offset, int fetchSize,
-			Set<String> indexes, String widgetName) {
+			Set<String> indexes, String widgetName, boolean useGroupBy) {
 		return getDataStore(label, parameters, drivers, selections, likeSelections, maxRowCount, aggregations,
-				summaryRow, offset, fetchSize, null, null, indexes, widgetName);
+				summaryRow, offset, fetchSize, null, null, indexes, widgetName, useGroupBy);
 	}
 
 	public String getDataStore(String label, String parameters, Map<String, Object> drivers, String selections,
 			String likeSelections, int maxRowCount, String aggregations, String summaryRow, int offset, int fetchSize,
-			Boolean isNearRealtime, String options, Set<String> indexes, String widgetName) {
+			Boolean isNearRealtime, String options, Set<String> indexes, String widgetName, boolean useGroupBy) {
 		LOGGER.debug("IN");
 		DatasetManagementAPI datasetManagementAPI = getDatasetManagementAPI();
 		Monitor totalTiming = MonitorFactory.start("Knowage.AbstractDataSetResource.getDataStore");
@@ -305,7 +305,7 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 					columnAliasToName);
 
 			IDataStore dataStore = datasetManagementAPI.getDataStore(dataSet, isNearRealtime, parametersMap,
-					projections, where, groups, sortings, summaryRowArray, offset, fetchSize, maxRowCount, indexes);
+					projections, where, groups, sortings, summaryRowArray, offset, fetchSize, maxRowCount, indexes, useGroupBy);
 
 			// if required apply function from catalog
 			String catalogFuncId = getCatalogFunctionUuid(projections);
@@ -443,7 +443,7 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
                     columnAliasToName);
 
             IDataStore dataStore = datasetManagementAPI.getDataStore(dataSet, isNearRealtime, parametersMap,
-                    projections, where, groups, sortings, summaryRowArray, offset, fetchSize, maxRowCount, indexes);
+                    projections, where, groups, sortings, summaryRowArray, offset, fetchSize, maxRowCount, indexes, false);
 
             // if required apply function from catalog
             String catalogFuncId = getCatalogFunctionUuid(projections);

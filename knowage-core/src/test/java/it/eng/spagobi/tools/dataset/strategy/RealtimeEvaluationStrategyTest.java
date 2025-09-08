@@ -140,7 +140,7 @@ public class RealtimeEvaluationStrategyTest {
 		RESTDataSet dataSet = new RESTDataSet();
 		dataSet.setRealtimeNgsiConsumer(true);
 		IDatasetEvaluationStrategy strategy = DatasetEvaluationStrategyFactory.get(DatasetEvaluationStrategyType.CACHED, dataSet, new UserProfile());
-		strategy.executeQuery(null, null, null, null, null, 0, 0, 0, null);
+		strategy.executeQuery(null, null, null, null, null, 0, 0, 0, null, false);
 		assertThat(dataSet.isRealtimeNgsiConsumer(), is(false));
 	}
 

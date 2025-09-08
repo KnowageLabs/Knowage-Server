@@ -30,7 +30,7 @@ import it.eng.spagobi.tools.dataset.metasql.query.item.Sorting;
 public interface IDatasetEvaluationStrategy {
 
 	IDataStore executeQuery(List<AbstractSelectionField> projections, Filter filter, List<AbstractSelectionField> groups, List<Sorting> sortings,
-			List<List<AbstractSelectionField>> summaryRowProjections, int offset, int fetchSize, int maxRowCount, Set<String> indexes);
+			List<List<AbstractSelectionField>> summaryRowProjections, int offset, int fetchSize, int maxRowCount, Set<String> indexes, boolean useGroupBy);
 
 	IDataStore executeSummaryRowQuery(List<AbstractSelectionField> minMaxProjections, Filter filter, int maxRowCount);
 

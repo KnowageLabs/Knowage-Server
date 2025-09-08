@@ -289,7 +289,7 @@ public class DatasetManagementAPI {
 	public IDataStore getDataStore(IDataSet dataSet, boolean isNearRealtime, Map<String, String> parametersValues,
 			List<AbstractSelectionField> projections, Filter filter, List<AbstractSelectionField> list,
 			List<Sorting> sortings, List<List<AbstractSelectionField>> summaryRowProjections, int offset, int fetchSize,
-			int maxRowCount, Set<String> indexes) throws JSONException {
+			int maxRowCount, Set<String> indexes, boolean useGroupBy) throws JSONException {
 
 		Monitor totalTiming = MonitorFactory.start("Knowage.DatasetManagementAPI.getDataStore");
 		try {
@@ -299,7 +299,7 @@ public class DatasetManagementAPI {
 			IDatasetEvaluationStrategy strategy = DatasetEvaluationStrategyFactory
 					.get(dataSet.getEvaluationStrategy(isNearRealtime), dataSet, userProfile);
 			return strategy.executeQuery(projections, filter, list, sortings, summaryRowProjections, offset, fetchSize,
-					maxRowCount, indexes);
+					maxRowCount, indexes, useGroupBy);
 
 		} finally {
 			totalTiming.stop();
@@ -910,7 +910,7 @@ public class DatasetManagementAPI {
 			IDataStore dataStore = null;
 			if (dataSet.getEvaluationStrategy(isNearRealtime).equals(DatasetEvaluationStrategyType.CACHED)) {
 				dataStore = getDataStore(dataSet, isNearRealtime, parametersValues, minMaxProjections, where, null,
-						null, null, -1, -1, -1, indexes);
+						null, null, -1, -1, -1, indexes, false);
 			} else {
 				// List<List<Projection>> listToPrj = new ArrayList<List<Projection>>();
 				// listToPrj.add(minMaxProjections);

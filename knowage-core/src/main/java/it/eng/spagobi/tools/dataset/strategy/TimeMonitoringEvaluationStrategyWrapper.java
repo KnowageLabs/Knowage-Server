@@ -22,9 +22,9 @@ final class TimeMonitoringEvaluationStrategyWrapper implements IDatasetEvaluatio
 
 	@Override
 	public IDataStore executeQuery(List<AbstractSelectionField> projections, Filter filter, List<AbstractSelectionField> groups, List<Sorting> sortings,
-			List<List<AbstractSelectionField>> summaryRowProjections, int offset, int fetchSize, int maxRowCount, Set<String> indexes) {
+			List<List<AbstractSelectionField>> summaryRowProjections, int offset, int fetchSize, int maxRowCount, Set<String> indexes, boolean useGroupBy) {
 		long start = System.currentTimeMillis();
-		IDataStore store = wrapped.executeQuery(projections, filter, groups, sortings, summaryRowProjections, offset, fetchSize, maxRowCount, indexes);
+		IDataStore store = wrapped.executeQuery(projections, filter, groups, sortings, summaryRowProjections, offset, fetchSize, maxRowCount, indexes, useGroupBy);
 		long stop = System.currentTimeMillis();
 		LOGGER.info("Executed Dataset [" + wrapped.dataSet.getLabel() + "] for Query in: [" + (stop - start) + "] ms");
 		return store;
