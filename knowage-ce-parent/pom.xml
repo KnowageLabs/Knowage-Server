@@ -41,7 +41,6 @@
 		<module>../knowage-common</module>
 		<module>../knowage-pm-dto</module>
         <module>../knowage-excel-export</module>
-        <module>../tomcat-password-encryption</module>
     </modules>
 	
 	<distributionManagement>
