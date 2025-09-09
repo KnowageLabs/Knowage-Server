@@ -165,7 +165,7 @@ public class DocumentCRUD extends AbstractSpagoBIResource {
             try {
                 dashboardEngine = ExecuteAdHocUtility.getDashboardEngine();
             } catch (SpagoBIRuntimeException r) {
-                // the geo engine is not found
+                // the dashboard engine is not found
                 logger.info("Engine not found. ", r);
             }
 
