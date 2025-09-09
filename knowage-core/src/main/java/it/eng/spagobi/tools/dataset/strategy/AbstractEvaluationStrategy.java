@@ -63,6 +63,7 @@ public abstract class AbstractEvaluationStrategy implements IDatasetEvaluationSt
 	public IDataStore executeQuery(List<AbstractSelectionField> projections, Filter filter, List<AbstractSelectionField> groups, List<Sorting> sortings,
 			List<List<AbstractSelectionField>> summaryRowProjections, int offset, int fetchSize, int maxRowCount, Set<String> indexes, boolean useGroupBy) {
 		IDataStore dataStore;
+
 		if (isUnsatisfiedFilter(filter)) {
 			/*
 			 * In this case we should check if there are aggregation alias and add them to right names for metadata fields.
