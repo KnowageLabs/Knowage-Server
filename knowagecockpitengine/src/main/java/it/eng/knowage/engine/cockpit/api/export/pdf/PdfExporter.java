@@ -19,7 +19,7 @@
 package it.eng.knowage.engine.cockpit.api.export.pdf;
 
 import be.quodlibet.boxable.*;
-import it.eng.knowage.engine.api.excel.export.oldcockpit.AbstractFormatExporter;
+import it.eng.knowage.engine.api.export.oldcockpit.AbstractFormatExporter;
 import it.eng.spago.error.EMFAbstractError;
 import it.eng.spagobi.analiticalmodel.document.bo.ObjTemplate;
 import it.eng.spagobi.commons.SingletonConfig;

@@ -65,8 +65,7 @@ import org.json.JSONObject;
 
 import com.google.common.collect.Iterables;
 
-import it.eng.knowage.engine.api.excel.export.dashboard.DashboardExcelExporter;
-import it.eng.knowage.engine.api.excel.export.dashboard.DatastoreUtils;
+import it.eng.knowage.engine.api.export.dashboard.DashboardExcelExporter;
 import it.eng.knowage.engine.cockpit.CockpitEngine;
 import it.eng.knowage.engine.cockpit.CockpitEngineInstance;
 import it.eng.knowage.engine.cockpit.api.AbstractCockpitEngineResource;
@@ -378,7 +377,7 @@ public class PageResource extends AbstractCockpitEngineResource {
 		String userId = request.getParameter("user_id");
 		String documentLabel = request.getParameter("DOCUMENT_LABEL");
 
-		DashboardExcelExporter excelExporter = new DashboardExcelExporter(new DatastoreUtils(userId), getIOManager().getTemplateAsJSONObject(), role, userId, requestURL, organization);
+		DashboardExcelExporter excelExporter = new DashboardExcelExporter(getIOManager().getTemplateAsJSONObject(), role, requestURL, organization, userId);
 		String mimeType = excelExporter.getMimeType();
 		byte[] data = excelExporter.getScheduledBinaryData(documentLabel);
 
