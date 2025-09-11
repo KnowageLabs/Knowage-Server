@@ -126,13 +126,7 @@
 	#set($showLegend = $chart.LEGEND.show)
 #end
 		showLegend: $showLegend ,
-
-#set($legendFloating = false)
-#if($chart.LEGEND.floating != '')
-	#set($legendFloating = $chart.LEGEND.floating)
-#end
-		legendFloating: $legendFloating ,
-		
+	
 #set($legendPosition = 'top')
 #if($chart.LEGEND.position != '')
 	#set($legendPosition = $chart.LEGEND.position)
