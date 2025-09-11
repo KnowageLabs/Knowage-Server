@@ -1,7 +1,7 @@
 package it.eng.knowage.dashboardexport;
 
-import it.eng.knowage.engine.api.excel.export.dashboard.DashboardExcelExporter;
-import it.eng.knowage.engine.api.excel.export.dashboard.DatastoreUtils;
+import it.eng.knowage.engine.api.export.dashboard.excel.DashboardExcelExporter;
+import it.eng.knowage.engine.api.export.dashboard.pdf.DashboardPdfExporter;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.mime.MimeUtils;
 import it.eng.spagobi.utilities.rest.RestUtilities;
@@ -31,14 +31,14 @@ public class DashboardExportResource {
 
     @POST
     @Path("/spreadsheet")
-    public void openPagePostSpreadsheet(@Context HttpServletRequest req) {
+    public void downloadExcel(@Context HttpServletRequest req) {
         logger.debug("IN");
         response.setCharacterEncoding(UTF_8.name());
         try {
             JSONObject body = RestUtilities.readBodyAsJSONObject(req);
             String token = request.getHeader(TOKEN_HEADER);
             String userId = token.substring(7);
-            DashboardExcelExporter excelExporter = new DashboardExcelExporter(new DatastoreUtils(userId), body);
+            DashboardExcelExporter excelExporter = new DashboardExcelExporter(userId, body);
             String mimeType = excelExporter.getMimeType();
             String optionalWidgetId = body.optString("id");
             boolean isDashboardSingleWidgetExport = !optionalWidgetId.isEmpty();
@@ -68,6 +68,43 @@ public class DashboardExportResource {
         } catch (Exception e) {
             logger.error("Cannot export to Excel", e);
             throw new SpagoBIRuntimeException("Cannot export to Excel", e);
+        } finally {
+            logger.debug("OUT");
+        }
+    }
+
+    @POST
+    @Path("/pdf")
+    public void downloadPdf(@Context HttpServletRequest req) {
+        logger.debug("IN");
+        response.setCharacterEncoding(UTF_8.name());
+        try {
+            JSONObject body = RestUtilities.readBodyAsJSONObject(req);
+            String token = request.getHeader(TOKEN_HEADER);
+            String userId = token.substring(7);
+            DashboardPdfExporter dashboardPdfExporter = new DashboardPdfExporter(userId, body);
+            String mimeType = dashboardPdfExporter.getMimeType();
+
+            if (!MimeUtils.isValidMimeType(mimeType))
+                throw new SpagoBIRuntimeException("Invalid mime type: " + mimeType);
+
+            if (mimeType != null) {
+                byte[] data;
+                data = dashboardPdfExporter.getBinaryData(body);
+                String widgetName = body.getJSONObject("settings").getJSONObject("style").getJSONObject("title")
+                        .optString("text");
+                response.setHeader("Content-Disposition", "attachment; fileName=" + widgetName + "." + "xlsx");
+                response.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+                response.setHeader("Content-length", Integer.toString(data.length));
+                response.setHeader("Content-Type", mimeType);
+
+                response.getOutputStream().write(data, 0, data.length);
+                response.getOutputStream().flush();
+                response.getOutputStream().close();
+            }
+        } catch (Exception e) {
+            logger.error("Cannot export to PDF", e);
+            throw new SpagoBIRuntimeException("Cannot export to PDF", e);
         } finally {
             logger.debug("OUT");
         }

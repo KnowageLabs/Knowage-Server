@@ -1,6 +1,6 @@
 package it.eng.knowage.engine.cockpit.api.export;
 
-import it.eng.knowage.engine.api.excel.export.oldcockpit.ExcelExporter;
+import it.eng.knowage.engine.api.export.oldcockpit.ExcelExporter;
 import it.eng.knowage.engine.cockpit.api.AbstractCockpitEngineResource;
 import it.eng.knowage.engine.cockpit.api.export.pdf.PdfExporter;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceExceptionHandler;

@@ -261,7 +261,7 @@
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
-			<artifactId>knowage-excel-export</artifactId>
+			<artifactId>knowage-export</artifactId>
 			<groupId>it.eng.knowage</groupId>
 			<version>${project.version}</version>
 			<scope>compile</scope>
