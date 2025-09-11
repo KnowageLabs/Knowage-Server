@@ -16,10 +16,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package it.eng.knowage.engine.api.export.dashboard.exporters;
+package it.eng.knowage.engine.api.export.dashboard.excel.exporters;
 
 import it.eng.knowage.engine.api.export.IWidgetExporter;
 import it.eng.knowage.engine.api.export.dashboard.*;
+import it.eng.knowage.engine.api.export.dashboard.excel.DashboardExcelExporter;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;

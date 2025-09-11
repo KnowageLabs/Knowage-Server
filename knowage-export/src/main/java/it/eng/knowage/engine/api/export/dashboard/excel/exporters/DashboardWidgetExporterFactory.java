@@ -1,8 +1,7 @@
-package it.eng.knowage.engine.api.export.dashboard.exporters;
+package it.eng.knowage.engine.api.export.dashboard.excel.exporters;
 
 import it.eng.knowage.engine.api.export.IWidgetExporter;
-import it.eng.knowage.engine.api.export.dashboard.DashboardExcelExporter;
-import it.eng.knowage.engine.api.export.dashboard.JSONObjectUtils;
+import it.eng.knowage.engine.api.export.dashboard.excel.DashboardExcelExporter;
 import it.eng.knowage.engine.api.export.oldcockpit.exporters.WidgetExporterFactory;
 import org.apache.log4j.Logger;
 import org.apache.poi.ss.usermodel.Workbook;

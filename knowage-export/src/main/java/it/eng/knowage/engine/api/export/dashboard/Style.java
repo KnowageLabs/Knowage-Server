@@ -1,4 +1,4 @@
-package it.eng.knowage.engine.api.export.dashboard.models;
+package it.eng.knowage.engine.api.export.dashboard;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;

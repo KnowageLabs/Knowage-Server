@@ -11,7 +11,7 @@ public class JSONObjectUtils {
     private static final Logger LOGGER = LogManager.getLogger(JSONObjectUtils.class);
 
 
-    protected JSONObject getVisualizationFromSettings(JSONObject settings) {
+    public JSONObject getVisualizationFromSettings(JSONObject settings) {
         try {
             return settings.getJSONObject("visualization");
         } catch (Exception e) {
@@ -20,7 +20,7 @@ public class JSONObjectUtils {
         }
     }
 
-    protected JSONObject getConfigurationFromSettings(JSONObject settings) throws JSONException {
+    public JSONObject getConfigurationFromSettings(JSONObject settings) throws JSONException {
         if (settings.has("configuration")) {
             return settings.getJSONObject("configuration");
         } else {
@@ -28,7 +28,7 @@ public class JSONObjectUtils {
         }
     }
 
-    protected JSONObject getStyleFromSettings(JSONObject settings) {
+    public JSONObject getStyleFromSettings(JSONObject settings) {
         try {
             return settings.getJSONObject("style");
         } catch (Exception e) {

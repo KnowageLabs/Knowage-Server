@@ -16,7 +16,7 @@
 	
 	<dependencies>
 		<dependency>
-			<artifactId>knowage-excel-export</artifactId>
+			<artifactId>knowage-export</artifactId>
 			<groupId>it.eng.knowage</groupId>
 			<version>9.0.0-SNAPSHOT</version>
 			<scope>compile</scope>

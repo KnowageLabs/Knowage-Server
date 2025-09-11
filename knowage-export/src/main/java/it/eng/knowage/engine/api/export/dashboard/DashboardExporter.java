@@ -1,7 +1,6 @@
 package it.eng.knowage.engine.api.export.dashboard;
 
 import it.eng.knowage.engine.api.export.ExporterClient;
-import it.eng.knowage.engine.api.export.dashboard.models.Style;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.IDashboardThemeDAO;
@@ -17,9 +16,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.streaming.SXSSFSheet;
-import org.apache.poi.xssf.usermodel.DefaultIndexedColorMap;
-import org.apache.poi.xssf.usermodel.XSSFColor;
-import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -27,8 +23,6 @@ import org.json.JSONObject;
 import java.util.*;
 
 import static it.eng.knowage.engine.api.export.dashboard.StaticLiterals.EXCEL_ERROR;
-import static it.eng.knowage.engine.api.export.oldcockpit.exporters.CrossTabExporter.DEFAULT_FONT_NAME;
-import static org.apache.poi.xssf.usermodel.XSSFFont.DEFAULT_FONT_SIZE;
 
 @Getter
 public class DashboardExporter {
@@ -449,7 +443,7 @@ public class DashboardExporter {
         return returnMap;
     }
 
-    void replaceWithThemeSettingsIfPresent(JSONObject settings) throws JSONException {
+    protected void replaceWithThemeSettingsIfPresent(JSONObject settings) throws JSONException {
         IDashboardThemeDAO dao = DAOFactory.getDashboardThemeDAO();
         Optional<SbiDashboardTheme> optionalTheme = dao.readByThemeName(settings.getJSONObject("style").optString("themeName"));
         if (optionalTheme.isPresent()) {
@@ -459,7 +453,7 @@ public class DashboardExporter {
         }
     }
 
-    int doSummaryRowsLogic(JSONObject settings, int numberOfSummaryRows, List<String> summaryRowsLabels) throws JSONException {
+    protected int doSummaryRowsLogic(JSONObject settings, int numberOfSummaryRows, List<String> summaryRowsLabels) throws JSONException {
         if (summaryRowsEnabled(settings)) {
             JSONArray list = settings.getJSONObject("configuration").getJSONObject("summaryRows").getJSONArray("list");
             numberOfSummaryRows = list.length();
@@ -498,7 +492,7 @@ public class DashboardExporter {
     }
 
 
-    String replaceWithCustomHeaderIfPresent(JSONObject settings, String columnName, JSONObject column) throws JSONException {
+    protected String replaceWithCustomHeaderIfPresent(JSONObject settings, String columnName, JSONObject column) throws JSONException {
         if (settings.has("configuration") && settings.getJSONObject("configuration").has("headers")) {
             JSONObject customHeader = settings.getJSONObject("configuration").getJSONObject("headers").getJSONObject("custom");
             if (customHeader.getBoolean("enabled")) {
@@ -545,6 +539,11 @@ public class DashboardExporter {
         }
     }
 
+    /**
+     * -------------------------------------------------------------------------------------------------------------------
+     * START OF STYLE METHODS
+     */
+
     public CellStyle buildCellStyle(Sheet sheet, boolean bold, HorizontalAlignment alignment, VerticalAlignment verticalAlignment, short headerFontSizeShort) {
 
         // CELL
@@ -565,7 +564,7 @@ public class DashboardExporter {
         return cellStyle;
     }
 
-    void applyWholeRowStyle(int c, List<Boolean> styleCanBeOverriddenByWholeRowStyle, Row row, CellStyle cellStyle) {
+    protected void applyWholeRowStyle(int c, List<Boolean> styleCanBeOverriddenByWholeRowStyle, Row row, CellStyle cellStyle) {
         for (int previousCell = c - 1; previousCell >= 0; previousCell--) {
             if (styleCanBeOverriddenByWholeRowStyle.get(previousCell).equals(Boolean.TRUE)) {
                 row.getCell(previousCell).setCellStyle(cellStyle);
@@ -573,7 +572,7 @@ public class DashboardExporter {
         }
     }
 
-    JSONObject getRowStyle(JSONObject settings) {
+    protected JSONObject getRowStyle(JSONObject settings) {
         JSONObject style = jsonObjectUtils.getStyleFromSettings(settings);
         if (style != null && style.has("rows")) {
             JSONObject rows = style.optJSONObject("rows");
@@ -582,7 +581,7 @@ public class DashboardExporter {
         return null;
     }
 
-    String getDefaultRowBackgroundColor(JSONObject altenatedRows, boolean rowIsEven) {
+    protected String getDefaultRowBackgroundColor(JSONObject altenatedRows, boolean rowIsEven) {
         try {
             if (altenatedRows != null && altenatedRows.getBoolean("enabled")) {
                 if (rowIsEven) {
@@ -597,31 +596,19 @@ public class DashboardExporter {
         return "";
     }
 
-    CellStyle getCellStyleByStyleKey(Workbook wb, Sheet sheet, String styleKey, Map<String, CellStyle> columnsCellStyles, JSONObject theRightStyle, String defaultRowBackgroundColor) {
-        CellStyle cellStyle;
-        if (columnAlreadyHasTheRightStyle(styleKey, columnsCellStyles)) {
-            cellStyle = columnsCellStyles.get(styleKey);
-        } else {
-            Style styleCustomObj = getStyleCustomObjFromProps(sheet, theRightStyle, defaultRowBackgroundColor);
-            cellStyle = buildPoiCellStyle(styleCustomObj, (XSSFFont) wb.createFont(), wb);
-            columnsCellStyles.put(styleKey, cellStyle);
-        }
-        return cellStyle;
-    }
-
-    private boolean columnAlreadyHasTheRightStyle(String styleKey, Map<String, CellStyle> stylesMap) {
+    protected boolean columnAlreadyHasTheRightStyle(String styleKey, Map<String, CellStyle> stylesMap) {
         return stylesMap.containsKey(styleKey);
     }
 
-    boolean styleCanBeOverridden(JSONObject theRightStyle) throws JSONException {
+    protected boolean styleCanBeOverridden(JSONObject theRightStyle) throws JSONException {
         return (theRightStyle.has("type") && theRightStyle.getString("type").equals(STATIC_CUSTOM_STYLE)) || !theRightStyle.has("type");
     }
 
-    String getStyleKey(JSONObject column, JSONObject theRightStyle, String rawCurrentNumberType) throws JSONException {
+    protected String getStyleKey(JSONObject column, JSONObject theRightStyle, String rawCurrentNumberType) throws JSONException {
         return column.optString("id").concat(theRightStyle.getString("type").concat(theRightStyle.getString("styleIndex").concat(rawCurrentNumberType)));
     }
 
-    Map<String, JSONArray> getStylesMap(JSONObject settings) {
+    protected Map<String, JSONArray> getStylesMap(JSONObject settings) {
         Map<String, JSONArray> stylesMap = new HashMap<>();
         try {
             JSONObject columns = jsonObjectUtils.getStyleFromSettings(settings).getJSONObject("columns");
@@ -686,7 +673,7 @@ public class DashboardExporter {
         return target;
     }
 
-    JSONObject getTheRightStyleByColumnIdAndValue(Map<String, JSONArray> styles, String stringifiedValue, String columnId) throws JSONException {
+    protected JSONObject getTheRightStyleByColumnIdAndValue(Map<String, JSONArray> styles, String stringifiedValue, String columnId) throws JSONException {
         JSONObject customStyle = getTheStyleByValueAndColumnId(styles, stringifiedValue, columnId);
 
         if (customStyle.has("properties") && customStyle.getJSONObject("properties").length() == 0) {
@@ -746,7 +733,7 @@ public class DashboardExporter {
         }
     }
 
-    Style getStyleCustomObjFromProps(Sheet sheet, JSONObject props, String defaultRowBackgroundColor) {
+    protected Style getStyleCustomObjFromProps(Sheet sheet, JSONObject props, String defaultRowBackgroundColor) {
         Style style = new Style();
         style.setSheet(sheet);
         props = props.optJSONObject("properties") == null ? props : props.optJSONObject("properties");
@@ -762,63 +749,7 @@ public class DashboardExporter {
         return style;
     }
 
-    void buildHeaderCellStyle(Workbook wb, Sheet sheet, JSONObject settings, XSSFFont font, Cell cell) throws JSONException {
-        CellStyle headerCellStyle;
-        JSONObject styleJSONObject = jsonObjectUtils.getStyleFromSettings(settings);
-        if (settings != null && settings.has("style") && styleJSONObject.has("headers")) {
-            Style style = getStyleCustomObjFromProps(sheet, styleJSONObject.getJSONObject("headers"), "");
-            headerCellStyle = buildPoiCellStyle(style, font, wb);
-        } else {
-            headerCellStyle = buildCellStyle(sheet, true, HorizontalAlignment.LEFT, VerticalAlignment.CENTER, (short) 11);
-        }
-        cell.setCellStyle(headerCellStyle);
-    }
-
-    public CellStyle buildPoiCellStyle(Style style, XSSFFont font, Workbook wb) {
-        CellStyle cellStyle = wb.createCellStyle();
-
-        if (!stringIsEmpty(style.getFontSize())) {
-            font.setFontHeightInPoints(Short.parseShort(getOnlyTheNumericValueFromString(style.getFontSize())));
-        } else {
-            font.setFontHeightInPoints(DEFAULT_FONT_SIZE);
-        }
-
-        if (!stringIsEmpty(style.getColor())) {
-            font.setColor(getXSSFColorFromRGBA(style.getColor()));
-        }
-
-        if (!stringIsEmpty(style.getBackgroundColor())) {
-            cellStyle.setFillForegroundColor(getXSSFColorFromRGBA(style.getBackgroundColor()));
-            cellStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-        }
-
-        if (!stringIsEmpty(style.getFontFamily())) {
-            font.setFontName(style.getFontFamily());
-        } else {
-            font.setFontName(DEFAULT_FONT_NAME);
-        }
-
-        if (!stringIsEmpty(style.getFontWeight())) {
-            font.setBold(style.getFontWeight().equals("bold"));
-        }
-
-        if (!stringIsEmpty(style.getFontStyle())) {
-            font.setItalic(style.getFontStyle().equals("italic"));
-        }
-
-        if (!stringIsEmpty(style.getAlignItems())) {
-            cellStyle.setAlignment(getHorizontalAlignment(style.getAlignItems().toUpperCase()));
-        }
-
-        if (!stringIsEmpty(style.getJustifyContent())) {
-            cellStyle.setVerticalAlignment(getVerticalAlignment(style.getJustifyContent().toUpperCase()));
-        }
-
-        cellStyle.setFont(font);
-        return cellStyle;
-    }
-
-    private HorizontalAlignment getHorizontalAlignment(String alignItem) {
+    protected HorizontalAlignment getHorizontalAlignment(String alignItem) {
         return switch (alignItem) {
             case "CENTER" -> HorizontalAlignment.CENTER;
             case "FLEX-END" -> HorizontalAlignment.RIGHT;
@@ -826,7 +757,7 @@ public class DashboardExporter {
         };
     }
 
-    private VerticalAlignment getVerticalAlignment(String justifyContent) {
+    protected VerticalAlignment getVerticalAlignment(String justifyContent) {
         return switch (justifyContent) {
             case "CENTER" -> VerticalAlignment.CENTER;
             case "FLEX-END" -> VerticalAlignment.BOTTOM;
@@ -834,35 +765,8 @@ public class DashboardExporter {
         };
     }
 
-    private String getOnlyTheNumericValueFromString(String string) {
+    protected String getOnlyTheNumericValueFromString(String string) {
         return string.replaceAll("[^0-9]", "");
-    }
-
-    private XSSFColor getXSSFColorFromRGBA(String colorStr) {
-        String[] values = colorStr.replace(colorStr.contains("rgba(") ? "rgba(" : "rgb(", "").replace(")", "").split(",");
-        int red = Integer.parseInt(values[0].trim());
-        int green = Integer.parseInt(values[1].trim());
-        int blue = Integer.parseInt(values[2].trim());
-
-        // Handle alpha transparency
-        if (values.length > 3) {
-            float alpha = Float.parseFloat(values[3].trim());
-
-            // For partial transparency, blend with white background
-            // This simulates how transparent colors appear on a white Excel background
-            if (alpha <= 1.0f) {
-                red = (int) (red * alpha + 255 * (1 - alpha));
-                green = (int) (green * alpha + 255 * (1 - alpha));
-                blue = (int) (blue * alpha + 255 * (1 - alpha));
-            }
-        }
-
-        // Ensure values are within valid range
-        red = Math.max(0, Math.min(255, red));
-        green = Math.max(0, Math.min(255, green));
-        blue = Math.max(0, Math.min(255, blue));
-
-        return new XSSFColor(new java.awt.Color(red, green, blue), new DefaultIndexedColorMap());
     }
 
     protected boolean stringIsEmpty(String str) {
@@ -879,6 +783,12 @@ public class DashboardExporter {
                 stringIsEmpty(style.getAlignItems()) &&
                 stringIsEmpty(style.getJustifyContent());
     }
+
+    /*
+     * END OF STYLE METHODS
+     * -------------------------------------------------------------------------------------------------------------------
+     * START OF DATASTORE METHODS
+     */
 
     protected JSONObject getDatastore(String datasetLabel, Map<String, Object> parameters, String selections, int offset,
                                       int fetchSize) {
@@ -1233,6 +1143,31 @@ public class DashboardExporter {
         }
         return true;
     }
+
+    /*
+     * END OF DATASTORE METHODS
+     * -------------------------------------------------------------------------------------------------------------------
+     */
+
+
+    protected int getAdjacentEqualNamesAmount(Map<String, String> groupsAndColumnsMap, JSONArray columnsOrdered, int matchStartIndex, String groupNameToMatch) {
+        try {
+            int adjacents = 0;
+            for (int i = matchStartIndex; i < columnsOrdered.length(); i++) {
+                JSONObject column = columnsOrdered.getJSONObject(i);
+                String groupName = groupsAndColumnsMap.get(column.get("header"));
+                if (groupName != null && groupName.equals(groupNameToMatch)) {
+                    adjacents++;
+                } else {
+                    return adjacents;
+                }
+            }
+            return adjacents;
+        } catch (Exception e) {
+            throw new SpagoBIRuntimeException("Couldn't compute adjacent equal names amount", e);
+        }
+    }
+
 
 
 

@@ -1,7 +1,7 @@
 package it.eng.knowage.dashboardexport;
 
-import it.eng.knowage.engine.api.export.dashboard.DashboardExcelExporter;
-import it.eng.knowage.engine.api.export.dashboard.DashboardPdfExporter;
+import it.eng.knowage.engine.api.export.dashboard.excel.DashboardExcelExporter;
+import it.eng.knowage.engine.api.export.dashboard.pdf.DashboardPdfExporter;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.mime.MimeUtils;
 import it.eng.spagobi.utilities.rest.RestUtilities;

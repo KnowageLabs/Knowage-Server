@@ -1,15 +1,12 @@
-package it.eng.knowage.engine.api.export.dashboard;
+package it.eng.knowage.engine.api.export.dashboard.excel;
 
 import it.eng.knowage.commons.multitenant.OrganizationImageManager;
 import it.eng.knowage.commons.security.PathTraversalChecker;
 import it.eng.knowage.engine.api.export.IWidgetExporter;
-import it.eng.knowage.engine.api.export.dashboard.exporters.DashboardWidgetExporterFactory;
+import it.eng.knowage.engine.api.export.dashboard.DashboardExporter;
+import it.eng.knowage.engine.api.export.dashboard.excel.exporters.DashboardWidgetExporterFactory;
+import it.eng.knowage.engine.api.export.dashboard.Style;
 import it.eng.spagobi.commons.SingletonConfig;
-import it.eng.spagobi.commons.constants.SpagoBIConstants;
-import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.commons.dao.IDashboardThemeDAO;
-import it.eng.spagobi.commons.metadata.SbiDashboardTheme;
-import it.eng.spagobi.i18n.dao.I18NMessagesDAO;
 import it.eng.spagobi.tenant.TenantManager;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import lombok.Getter;
@@ -25,9 +22,7 @@ import org.apache.poi.ss.util.WorkbookUtil;
 import org.apache.poi.util.Units;
 import org.apache.poi.xssf.streaming.SXSSFSheet;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
-import org.apache.poi.xssf.usermodel.XSSFFont;
-import org.apache.poi.xssf.usermodel.XSSFPivotTable;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.*;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -43,8 +38,10 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 import static it.eng.knowage.engine.api.export.dashboard.StaticLiterals.EXCEL_ERROR;
+import static it.eng.knowage.engine.api.export.oldcockpit.exporters.CrossTabExporter.DEFAULT_FONT_NAME;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.apache.poi.ss.usermodel.DataConsolidateFunction.*;
+import static org.apache.poi.xssf.usermodel.XSSFFont.DEFAULT_FONT_SIZE;
 
 public class DashboardExcelExporter extends DashboardExporter {
     private static final Logger LOGGER = LogManager.getLogger(DashboardExcelExporter.class);
@@ -169,7 +166,7 @@ public class DashboardExcelExporter extends DashboardExporter {
     private void logOutputToCoreLog(Process exec) throws IOException {
         InputStreamReader isr = new InputStreamReader(exec.getInputStream());
         BufferedReader b = new BufferedReader(isr);
-        String line = null;
+        String line;
         LOGGER.warn("Process output");
         while ((line = b.readLine()) != null) {
             LOGGER.warn(line);
@@ -609,7 +606,7 @@ public class DashboardExcelExporter extends DashboardExporter {
         for (int i = 0; i < widgetsArray.length(); i++) {
             try {
                 JSONObject currWidget = widgetsArray.getJSONObject(i);
-                drivers = setDatasetDriversIfPresent(body, currWidget, drivers);
+                setDatasetDriversIfPresent(body, currWidget, drivers);
                 if (currWidget.has("datasetDrivers") && currWidget.getJSONArray("datasetDrivers") != null && currWidget.getJSONArray("datasetDrivers").length() > 0) {
                     exportedSheets = exportWidget(currWidget, wb, documentName, selections, transformDriversForDatastore(currWidget.getJSONArray("datasetDrivers")), parameters);
                 } else {
@@ -622,7 +619,7 @@ public class DashboardExcelExporter extends DashboardExporter {
         return exportedSheets;
     }
 
-    private JSONObject setDatasetDriversIfPresent(JSONObject body, JSONObject currWidget, JSONObject drivers) {
+    private void setDatasetDriversIfPresent(JSONObject body, JSONObject currWidget, JSONObject drivers) {
         try {
             if (body.has("configuration") && body.getJSONObject("configuration").has("datasets") && body.getJSONObject("configuration").getJSONArray("datasets").length() > 0) {
                 for (int i = 0; i < body.getJSONObject("configuration").getJSONArray("datasets").length(); i++) {
@@ -638,7 +635,6 @@ public class DashboardExcelExporter extends DashboardExporter {
                 }
             }
 
-            return drivers;
         } catch (JSONException jsonException) {
             LOGGER.error("Cannot set dataset drivers if present", jsonException);
             throw new SpagoBIRuntimeException("Cannot set dataset drivers if present", jsonException);
@@ -955,6 +951,18 @@ public class DashboardExcelExporter extends DashboardExporter {
         }
     }
 
+    void buildHeaderCellStyle(Workbook wb, Sheet sheet, JSONObject settings, XSSFFont font, Cell cell) throws JSONException {
+        CellStyle headerCellStyle;
+        JSONObject styleJSONObject = getJsonObjectUtils().getStyleFromSettings(settings);
+        if (settings != null && settings.has("style") && styleJSONObject.has("headers")) {
+            Style style = getStyleCustomObjFromProps(sheet, styleJSONObject.getJSONObject("headers"), "");
+            headerCellStyle = buildPoiCellStyle(style, font, wb);
+        } else {
+            headerCellStyle = buildCellStyle(sheet, true, HorizontalAlignment.LEFT, VerticalAlignment.CENTER, (short) 11);
+        }
+        cell.setCellStyle(headerCellStyle);
+    }
+
     private Row createHeader(
             Sheet sheet,
             int startRow,
@@ -1115,23 +1123,6 @@ public class DashboardExcelExporter extends DashboardExporter {
             throw new SpagoBIRuntimeException("Couldn't create header column names", e);
         }
     }
-    private int getAdjacentEqualNamesAmount(Map<String, String> groupsAndColumnsMap, JSONArray columnsOrdered, int matchStartIndex, String groupNameToMatch) {
-        try {
-            int adjacents = 0;
-            for (int i = matchStartIndex; i < columnsOrdered.length(); i++) {
-                JSONObject column = columnsOrdered.getJSONObject(i);
-                String groupName = groupsAndColumnsMap.get(column.get("header"));
-                if (groupName != null && groupName.equals(groupNameToMatch)) {
-                    adjacents++;
-                } else {
-                    return adjacents;
-                }
-            }
-            return adjacents;
-        } catch (Exception e) {
-            throw new SpagoBIRuntimeException("Couldn't compute adjacent equal names amount", e);
-        }
-    }
 
     public void createPivotTable(Workbook workbook, Sheet sheet, JSONObject widget, String widgetName) {
 
@@ -1251,4 +1242,89 @@ public class DashboardExcelExporter extends DashboardExporter {
         }
         return -1;
     }
+
+    public CellStyle buildPoiCellStyle(Style style, XSSFFont font, Workbook wb) {
+        CellStyle cellStyle = wb.createCellStyle();
+
+        if (!stringIsEmpty(style.getFontSize())) {
+            font.setFontHeightInPoints(Short.parseShort(getOnlyTheNumericValueFromString(style.getFontSize())));
+        } else {
+            font.setFontHeightInPoints(DEFAULT_FONT_SIZE);
+        }
+
+        if (!stringIsEmpty(style.getColor())) {
+            font.setColor(getXSSFColorFromRGBA(style.getColor()));
+        }
+
+        if (!stringIsEmpty(style.getBackgroundColor())) {
+            cellStyle.setFillForegroundColor(getXSSFColorFromRGBA(style.getBackgroundColor()));
+            cellStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+        }
+
+        if (!stringIsEmpty(style.getFontFamily())) {
+            font.setFontName(style.getFontFamily());
+        } else {
+            font.setFontName(DEFAULT_FONT_NAME);
+        }
+
+        if (!stringIsEmpty(style.getFontWeight())) {
+            font.setBold(style.getFontWeight().equals("bold"));
+        }
+
+        if (!stringIsEmpty(style.getFontStyle())) {
+            font.setItalic(style.getFontStyle().equals("italic"));
+        }
+
+        if (!stringIsEmpty(style.getAlignItems())) {
+            cellStyle.setAlignment(getHorizontalAlignment(style.getAlignItems().toUpperCase()));
+        }
+
+        if (!stringIsEmpty(style.getJustifyContent())) {
+            cellStyle.setVerticalAlignment(getVerticalAlignment(style.getJustifyContent().toUpperCase()));
+        }
+
+        cellStyle.setFont(font);
+        return cellStyle;
+    }
+
+
+    private XSSFColor getXSSFColorFromRGBA(String colorStr) {
+        String[] values = colorStr.replace(colorStr.contains("rgba(") ? "rgba(" : "rgb(", "").replace(")", "").split(",");
+        int red = Integer.parseInt(values[0].trim());
+        int green = Integer.parseInt(values[1].trim());
+        int blue = Integer.parseInt(values[2].trim());
+
+        // Handle alpha transparency
+        if (values.length > 3) {
+            float alpha = Float.parseFloat(values[3].trim());
+
+            // For partial transparency, blend with white background
+            // This simulates how transparent colors appear on a white Excel background
+            if (alpha <= 1.0f) {
+                red = (int) (red * alpha + 255 * (1 - alpha));
+                green = (int) (green * alpha + 255 * (1 - alpha));
+                blue = (int) (blue * alpha + 255 * (1 - alpha));
+            }
+        }
+
+        // Ensure values are within valid range
+        red = Math.max(0, Math.min(255, red));
+        green = Math.max(0, Math.min(255, green));
+        blue = Math.max(0, Math.min(255, blue));
+
+        return new XSSFColor(new java.awt.Color(red, green, blue), new DefaultIndexedColorMap());
+    }
+
+    private CellStyle getCellStyleByStyleKey(Workbook wb, Sheet sheet, String styleKey, Map<String, CellStyle> columnsCellStyles, JSONObject theRightStyle, String defaultRowBackgroundColor) {
+        CellStyle cellStyle;
+        if (columnAlreadyHasTheRightStyle(styleKey, columnsCellStyles)) {
+            cellStyle = columnsCellStyles.get(styleKey);
+        } else {
+            Style styleCustomObj = getStyleCustomObjFromProps(sheet, theRightStyle, defaultRowBackgroundColor);
+            cellStyle = buildPoiCellStyle(styleCustomObj, (XSSFFont) wb.createFont(), wb);
+            columnsCellStyles.put(styleKey, cellStyle);
+        }
+        return cellStyle;
+    }
+
 }
