@@ -11,18 +11,17 @@ import it.eng.spagobi.tools.dataset.bo.SolrDataSet;
 import it.eng.spagobi.tools.dataset.bo.VersionedDataSet;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import lombok.Getter;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.poi.ss.usermodel.*;
-import org.apache.poi.xssf.streaming.SXSSFSheet;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.HorizontalAlignment;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.VerticalAlignment;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.*;
-
-import static it.eng.knowage.engine.api.export.dashboard.StaticLiterals.EXCEL_ERROR;
 
 @Getter
 public class DashboardExporter {
@@ -519,23 +518,11 @@ public class DashboardExporter {
         return columnName;
     }
 
-    public void adjustColumnWidth(Sheet sheet, String imageB64) {
+    protected boolean isSummaryColumnVisible(List<String> columnsToHide, JSONObject column) {
         try {
-            ((SXSSFSheet) sheet).trackAllColumnsForAutoSizing();
-            Row row = sheet.getRow(sheet.getLastRowNum());
-            if (row != null) {
-                for (int i = 0; i < row.getLastCellNum(); i++) {
-                    sheet.autoSizeColumn(i);
-                    if (StringUtils.isNotEmpty(imageB64) && (i == 0 || i == 1)) {
-                        // first or second column
-                        int colWidth = 25;
-                        if (sheet.getColumnWidthInPixels(i) < (colWidth * 256))
-                            sheet.setColumnWidth(i, colWidth * 256);
-                    }
-                }
-            }
-        } catch (Exception e) {
-            throw new SpagoBIRuntimeException(EXCEL_ERROR, e);
+            return !columnsToHide.contains(column.getString("id"));
+        } catch (JSONException e) {
+            throw new SpagoBIRuntimeException(e);
         }
     }
 
@@ -543,34 +530,6 @@ public class DashboardExporter {
      * -------------------------------------------------------------------------------------------------------------------
      * START OF STYLE METHODS
      */
-
-    public CellStyle buildCellStyle(Sheet sheet, boolean bold, HorizontalAlignment alignment, VerticalAlignment verticalAlignment, short headerFontSizeShort) {
-
-        // CELL
-        CellStyle cellStyle = sheet.getWorkbook().createCellStyle();
-
-        // alignment
-        cellStyle.setAlignment(alignment);
-        cellStyle.setVerticalAlignment(verticalAlignment);
-
-        // FONT
-        Font font = sheet.getWorkbook().createFont();
-
-        font.setFontHeightInPoints(headerFontSizeShort);
-
-        font.setBold(bold);
-
-        cellStyle.setFont(font);
-        return cellStyle;
-    }
-
-    protected void applyWholeRowStyle(int c, List<Boolean> styleCanBeOverriddenByWholeRowStyle, Row row, CellStyle cellStyle) {
-        for (int previousCell = c - 1; previousCell >= 0; previousCell--) {
-            if (styleCanBeOverriddenByWholeRowStyle.get(previousCell).equals(Boolean.TRUE)) {
-                row.getCell(previousCell).setCellStyle(cellStyle);
-            }
-        }
-    }
 
     protected JSONObject getRowStyle(JSONObject settings) {
         JSONObject style = jsonObjectUtils.getStyleFromSettings(settings);
@@ -673,16 +632,16 @@ public class DashboardExporter {
         return target;
     }
 
-    protected JSONObject getTheRightStyleByColumnIdAndValue(Map<String, JSONArray> styles, String stringifiedValue, String columnId) throws JSONException {
-        JSONObject customStyle = getTheStyleByValueAndColumnId(styles, stringifiedValue, columnId);
+    protected JSONObject getTheRightStyleByColumnIdAndValue(Map<String, JSONArray> styles, String stringifiedValue, String columnId, String currentAlternateRowColor) throws JSONException {
+        JSONObject customStyle = getTheStyleByValueAndColumnId(styles, stringifiedValue, columnId, currentAlternateRowColor);
 
         if (customStyle.has("properties") && customStyle.getJSONObject("properties").length() == 0) {
-            return getTheStyleByValueAndColumnId(styles, stringifiedValue, ALL_COLUMNS_STYLE);
+            return getTheStyleByValueAndColumnId(styles, stringifiedValue, ALL_COLUMNS_STYLE, currentAlternateRowColor);
         }
         return customStyle;
     }
 
-    private JSONObject getTheStyleByValueAndColumnId(Map<String, JSONArray> styles, String stringifiedValue, String columnId) {
+    private JSONObject getTheStyleByValueAndColumnId(Map<String, JSONArray> styles, String stringifiedValue, String columnId, String currentAlternateRowColor) throws JSONException {
         try {
             JSONObject nonConditionalProps = new JSONObject();
             if (styles != null) {
@@ -693,6 +652,12 @@ public class DashboardExporter {
                         return getStyleObject(nonConditionalProps, STATIC_CUSTOM_STYLE, 0, false);
                     } else {
                         columnStyles = styles.get(ALL_COLUMNS_STYLE);
+                        if (currentAlternateRowColor != null) {
+                            for (int i = 0; i < columnStyles.length(); i++) {
+                                JSONObject style = columnStyles.getJSONObject(i);
+                                style.optJSONObject("properties").put("background-color", currentAlternateRowColor);
+                            }
+                        }
                     }
                 }
 

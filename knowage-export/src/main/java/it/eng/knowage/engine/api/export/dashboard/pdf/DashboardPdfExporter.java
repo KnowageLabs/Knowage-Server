@@ -6,7 +6,6 @@ import it.eng.knowage.engine.api.export.dashboard.Style;
 import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.pdfbox.io.MemoryUsageSetting;
 import org.apache.pdfbox.pdmodel.PDDocument;
@@ -28,10 +27,8 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Date;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
 
 public class DashboardPdfExporter extends DashboardExporter {
 
@@ -161,7 +158,7 @@ public class DashboardPdfExporter extends DashboardExporter {
         columnPercentWidths = new float[columnsOrdered.length() + 10];
         for (int i = 0; i < columnsOrdered.length(); i++) {
             JSONObject column = columnsOrdered.getJSONObject(i);
-            JSONObject style = getTheRightStyleByColumnIdAndValue(columnStylesMap, "", column.getString("id"));
+            JSONObject style = getTheRightStyleByColumnIdAndValue(columnStylesMap, "", column.getString("id"), null);
             if (style != null && style.optJSONObject("properties") != null && style.getJSONObject("properties").has("width") && style.getJSONObject("properties").get("width") != null && style.getJSONObject("properties").get("width") instanceof Number) {
                 columnPercentWidths[i] = style.getJSONObject("properties").getInt("width") > 0 ? style.getJSONObject("properties").getInt("width") : DEFAULT_COLUMN_WIDTH;
             } else {
@@ -316,107 +313,138 @@ public class DashboardPdfExporter extends DashboardExporter {
     private void buildRowsAndCols(BaseTable table, JSONObject settings, JSONArray rows, JSONArray columnsOrdered, int numberOfSummaryRows, List<String> summaryRowsLabels, PDFont font, String[] columnDateFormats,  Map<String, JSONArray> styles) throws JSONException {
 
         // Check if summary row is enabled
-        boolean summaryRowEnabled = false;
-        String summaryRowLabel = null;
-        if (settings.getJSONObject("configuration").has("summaryRows") &&
-            settings.getJSONObject("configuration").getJSONObject("summaryRows").getBoolean("enabled")) {
-            JSONObject summary = settings.getJSONObject("configuration").getJSONObject("summaryRows");
-                summaryRowEnabled = true;
-                JSONArray list = summary.getJSONArray("list");
-                int listLenght = list.length();
-                if (listLenght > 0) {
-                    JSONObject jsonObject = list.getJSONObject(0);
-                    summaryRowLabel = "";
-                    if (jsonObject.has("label")) {
-                        summaryRowLabel = jsonObject.getString("label");
-                    }
-                }
-        }
+        boolean summaryRowEnabled = settings.getJSONObject("configuration").has("summaryRows") &&
+                settings.getJSONObject("configuration").getJSONObject("summaryRows").getBoolean("enabled");
         DateFormat inputDateFormat = new SimpleDateFormat(DATE_FORMAT, getLocale());
 
         for (int r = 0; r < rows.length(); r++) {
-
             JSONObject rowObject = rows.getJSONObject(r);
             Row<PDPage> row = table.createRow(10);
+            List<Boolean> styleCanBeOverriddenByWholeRowStyle = new ArrayList<>();
+            boolean styleAlreadyAppliedToPreviousCells = false;
+            String styleKeyToApplyToTheEntireRow = null;
+            Map<String, Style> columnsCellStyles = new HashMap<>();
+            String defaultRowBackgroundColor;
+            boolean rowIsEven = r % 2 == 0;
+            String currentRowType = rowIsEven ? "even" : "odd";
+            JSONObject alternatedRows = getRowStyle(settings);
+            defaultRowBackgroundColor = getDefaultRowBackgroundColor(alternatedRows, rowIsEven);
+            Style cellStyle = null;
 
-            for (int c = 0; c < columnsOrdered.length(); c++) {
+            buildColumns(settings, rows, columnsOrdered, numberOfSummaryRows, summaryRowsLabels, font, columnDateFormats, styles, rowObject, inputDateFormat, row, styleCanBeOverriddenByWholeRowStyle, currentRowType, styleAlreadyAppliedToPreviousCells, cellStyle, columnsCellStyles, defaultRowBackgroundColor, styleKeyToApplyToTheEntireRow, r, summaryRowEnabled);
+        }
+    }
 
-                JSONObject column = columnsOrdered.getJSONObject(c);
-                String type = column.getString("type");
-                String colIndex = column.getString("name"); // column_1, column_2, column_3...
-                Object value = rowObject.get(colIndex);
-                if (value != null) {
-                    String valueStr = value.toString();
-                    if (value instanceof Number) {
-                        if (value instanceof Double) {
-                            valueStr = new BigDecimal(valueStr).toPlainString();
-                        } else {
-                            valueStr = value.toString();
-                        }
+    private void buildColumns(JSONObject settings, JSONArray rows, JSONArray columnsOrdered, int numberOfSummaryRows, List<String> summaryRowsLabels, PDFont font, String[] columnDateFormats, Map<String, JSONArray> styles, JSONObject rowObject, DateFormat inputDateFormat, Row<PDPage> row, List<Boolean> styleCanBeOverriddenByWholeRowStyle, String currentRowType, boolean styleAlreadyAppliedToPreviousCells, Style cellStyle, Map<String, Style> columnsCellStyles, String defaultRowBackgroundColor, String styleKeyToApplyToTheEntireRow, int r, boolean summaryRowEnabled) throws JSONException {
+        for (int c = 0; c < columnsOrdered.length(); c++) {
+
+            JSONObject column = columnsOrdered.getJSONObject(c);
+            String type = column.getString("type");
+            String colIndex = column.getString("name"); // column_1, column_2, column_3...
+            Object value = rowObject.get(colIndex);
+            if (value != null) {
+                String valueStr = value.toString();
+                if (value instanceof Number) {
+                    if (value instanceof Double) {
+                        valueStr = new BigDecimal(valueStr).toPlainString();
+                    } else {
+                        valueStr = value.toString();
                     }
-                    JSONObject style = getTheRightStyleByColumnIdAndValue(styles, valueStr, column.getString("id"));
-                    if (type.equalsIgnoreCase("float")) {
-                        int precision = style.optInt("precision");
-                        int pos = valueStr.indexOf(".");
-                        // offset = 0 se devo tagliare fuori anche la virgola ( in caso precision fosse 0 )
-                        int offset = (precision == 0 ? 0 : 1);
-                        if (pos != -1 && valueStr.length() >= pos + precision + offset) {
-                            try {
-                                valueStr = valueStr.substring(0, pos + precision + offset);
-                            } catch (Exception e) {
-                                // value stays as it is
-                                logger.error("Cannot format value according to precision", e);
-                            }
-                        } else {
-                            logger.warn("Cannot format value according to precision. Value: " + valueStr);
-                        }
-                    }
-                    if (type.equalsIgnoreCase("date")) {
+                }
+                JSONObject style = getTheRightStyleByColumnIdAndValue(styles, valueStr, column.getString("id"), defaultRowBackgroundColor);
+                if (type.equalsIgnoreCase("float")) {
+                    int precision = style.optInt("precision");
+                    int pos = valueStr.indexOf(".");
+                    // offset = 0 se devo tagliare fuori anche la virgola ( in caso precision fosse 0 )
+                    int offset = (precision == 0 ? 0 : 1);
+                    if (pos != -1 && valueStr.length() >= pos + precision + offset) {
                         try {
-                            DateFormat outputDateFormat = new SimpleDateFormat(columnDateFormats[c], getLocale());
-                            Date date = inputDateFormat.parse(valueStr);
-                            valueStr = outputDateFormat.format(date);
+                            valueStr = valueStr.substring(0, pos + precision + offset);
                         } catch (Exception e) {
                             // value stays as it is
-                            logger.warn("Cannot format date value. Value: " + valueStr, e);
+                            logger.error("Cannot format value according to precision", e);
                         }
+                    } else {
+                        logger.warn("Cannot format value according to precision. Value: " + valueStr);
                     }
-
-                    // If summary row is enabled, add the summary label to the value
-                    if (r == (rows.length() - 1) && summaryRowEnabled && !StringUtils.isEmpty(valueStr)) {
-                        valueStr = summaryRowLabel + " " + valueStr;
+                }
+                if (type.equalsIgnoreCase("date")) {
+                    try {
+                        DateFormat outputDateFormat = new SimpleDateFormat(columnDateFormats[c], getLocale());
+                        Date date = inputDateFormat.parse(valueStr);
+                        valueStr = outputDateFormat.format(date);
+                    } catch (Exception e) {
+                        // value stays as it is
+                        logger.warn("Cannot format date value. Value: " + valueStr, e);
                     }
+                }
+                valueStr = workaroundToRemoveCommonProblematicChars(valueStr);
 
-                    valueStr = workaroundToRemoveCommonProblematicChars(valueStr);
+                Cell<PDPage> cell = row.createCell(columnPercentWidths[c], valueStr,
+                        HorizontalAlignment.get("center"), VerticalAlignment.get("top"));
 
-                    Cell<PDPage> cell = row.createCell(columnPercentWidths[c], valueStr,
-                            HorizontalAlignment.get("center"), VerticalAlignment.get("top"));
+                cell.setFont(font);
+                // first of all set alternate rows color
+                String styleKey;
 
-                    cell.setFont(font);
-                    // first of all set alternate rows color
-                    JSONObject styleFromSettings = getJsonObjectUtils().getStyleFromSettings(settings);
-                    if (styleFromSettings.has("rows") &&
-                        styleFromSettings.getJSONObject("rows").has("alternatedRows") &&
-                        styleFromSettings.getJSONObject("rows").getJSONObject("alternatedRows").optBoolean("enabled")) {
-                        JSONObject alternatedRows = styleFromSettings.getJSONObject("rows").getJSONObject("alternatedRows");
-                            if (r % 2 == 0) {
-                                cell.setFillColor(
-                                        getJavaColorFromRGBA(alternatedRows.optString("evenBackgroundColor")));
-                            } else {
-                                cell.setFillColor(
-                                        getJavaColorFromRGBA(alternatedRows.optString("oddBackgroundColor")));
-                            }
+                styleCanBeOverriddenByWholeRowStyle.add(c, styleCanBeOverridden(style));
+                if (style.has("applyToWholeRow") && style.getBoolean("applyToWholeRow")) {
+                    styleKey = getStyleKey(column, style, currentRowType);
+                    if (!styleAlreadyAppliedToPreviousCells) {
+                        cellStyle = getCellStyleByStyleKey(styleKey, columnsCellStyles, style, defaultRowBackgroundColor);
+                        applyWholeRowStyle(c, styleCanBeOverriddenByWholeRowStyle, row, cellStyle);
+                        styleAlreadyAppliedToPreviousCells = true;
                     }
-                    // then override it with custom column color (if set)
-                    Style styleCustomObjFromProps = getStyleCustomObjFromProps(null, style, "");
-                    Color textColor = getJavaColorFromRGBA(styleCustomObjFromProps.getColor());
-                    Color backgroundColor = getJavaColorFromRGBA(styleCustomObjFromProps.getBackgroundColor());
-                    cell.setTextColor(textColor);
-                    cell.setFillColor(backgroundColor);
+                    styleKeyToApplyToTheEntireRow = styleKey;
+                } else if (styleKeyToApplyToTheEntireRow != null && styleCanBeOverridden(style)) {
+                    cellStyle = columnsCellStyles.get(styleKeyToApplyToTheEntireRow);
+                } else {
+                    styleKey = getStyleKey(column, style, currentRowType);
+                    cellStyle = getCellStyleByStyleKey(styleKey, columnsCellStyles, style, defaultRowBackgroundColor);
+                }
+
+                applyStyleToCell(cellStyle, cell);
+
+                // If summary row is enabled, add the summary label to the value
+                if (r == (rows.length() - 1) && summaryRowEnabled) {
+                    if (isSummaryColumnVisible(getDashboardHiddenColumnsList(settings, "hideFromSummary"), column)) {
+                        String label = "";
+                        if (colIndex.equals("column_1")) {
+                            label = summaryRowsLabels.get(r - (rows.length() - numberOfSummaryRows)).concat(" ");
+                        }
+                        cell.setText(label + valueStr);
+                    }
                 }
             }
         }
     }
+
+    private void applyWholeRowStyle(int c, List<Boolean> styleCanBeOverriddenByWholeRowStyle, Row<PDPage> row, Style cellStyle) {
+        for (int previousCell = c - 1; previousCell >= 0; previousCell--) {
+            if (styleCanBeOverriddenByWholeRowStyle.get(previousCell).equals(Boolean.TRUE)) {
+                Cell<PDPage> cell = row.getCells().get(previousCell);
+                applyStyleToCell(cellStyle, cell);
+            }
+        }
+    }
+    
+    private void applyStyleToCell(Style style, Cell<PDPage> cell) {
+        cell.setFillColor(getJavaColorFromRGBA(style.getBackgroundColor()));
+        cell.setTextColor(getJavaColorFromRGBA(style.getColor()));
+    }
+
+
+    private Style getCellStyleByStyleKey(String styleKey, Map<String, Style> columnsCellStyles, JSONObject theRightStyle, String defaultRowBackgroundColor) {
+        Style cellStyle;
+        if (columnsCellStyles.containsKey(styleKey)) {
+            cellStyle = columnsCellStyles.get(styleKey);
+        } else {
+            cellStyle = getStyleCustomObjFromProps(null, theRightStyle, defaultRowBackgroundColor);
+            columnsCellStyles.put(styleKey, cellStyle);
+        }
+        return cellStyle;
+    }
+
 
     private Color getJavaColorFromRGBA(String colorStr) {
         String[] values = colorStr.replace(colorStr.contains("rgba(") ? "rgba(" : "rgb(", "").replace(")", "").split(",");

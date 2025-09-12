@@ -4,8 +4,8 @@ import it.eng.knowage.commons.multitenant.OrganizationImageManager;
 import it.eng.knowage.commons.security.PathTraversalChecker;
 import it.eng.knowage.engine.api.export.IWidgetExporter;
 import it.eng.knowage.engine.api.export.dashboard.DashboardExporter;
-import it.eng.knowage.engine.api.export.dashboard.excel.exporters.DashboardWidgetExporterFactory;
 import it.eng.knowage.engine.api.export.dashboard.Style;
+import it.eng.knowage.engine.api.export.dashboard.excel.exporters.DashboardWidgetExporterFactory;
 import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.tenant.TenantManager;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
@@ -1034,7 +1034,7 @@ public class DashboardExcelExporter extends DashboardExporter {
                 CellStyle summaryCellStyle = buildPoiCellStyle(getStyleCustomObjFromProps(sheet, settings.getJSONObject("style").getJSONObject("summary"), ""), (XSSFFont) wb.createFont(), wb);
                 cell.setCellStyle(summaryCellStyle);
             } else {
-                JSONObject theRightStyle = getTheRightStyleByColumnIdAndValue(columnStylesMap, stringifiedValue, column.optString("id"));
+                JSONObject theRightStyle = getTheRightStyleByColumnIdAndValue(columnStylesMap, stringifiedValue, column.optString("id"), defaultRowBackgroundColor);
 
                 styleCanBeOverriddenByWholeRowStyle.add(c, styleCanBeOverridden(theRightStyle));
                 if (theRightStyle.has("applyToWholeRow") && theRightStyle.getBoolean("applyToWholeRow")) {
@@ -1069,14 +1069,6 @@ public class DashboardExcelExporter extends DashboardExporter {
                 }
             }
             return cellStyle;
-    }
-
-    private boolean isSummaryColumnVisible(List<String> columnsToHide, JSONObject column) {
-        try {
-            return !columnsToHide.contains(column.getString("id"));
-        } catch (JSONException e) {
-            throw new SpagoBIRuntimeException(e);
-        }
     }
 
     private String getCellType(JSONObject column, String colName) {
@@ -1277,10 +1269,14 @@ public class DashboardExcelExporter extends DashboardExporter {
 
         if (!stringIsEmpty(style.getAlignItems())) {
             cellStyle.setAlignment(getHorizontalAlignment(style.getAlignItems().toUpperCase()));
+        } else {
+            cellStyle.setAlignment(HorizontalAlignment.CENTER);
         }
 
         if (!stringIsEmpty(style.getJustifyContent())) {
             cellStyle.setVerticalAlignment(getVerticalAlignment(style.getJustifyContent().toUpperCase()));
+        } else {
+            cellStyle.setVerticalAlignment(VerticalAlignment.CENTER);
         }
 
         cellStyle.setFont(font);
@@ -1326,5 +1322,54 @@ public class DashboardExcelExporter extends DashboardExporter {
         }
         return cellStyle;
     }
+
+    protected void applyWholeRowStyle(int c, List<Boolean> styleCanBeOverriddenByWholeRowStyle, Row row, CellStyle cellStyle) {
+        for (int previousCell = c - 1; previousCell >= 0; previousCell--) {
+            if (styleCanBeOverriddenByWholeRowStyle.get(previousCell).equals(Boolean.TRUE)) {
+                row.getCell(previousCell).setCellStyle(cellStyle);
+            }
+        }
+    }
+
+    public void adjustColumnWidth(Sheet sheet, String imageB64) {
+        try {
+            ((SXSSFSheet) sheet).trackAllColumnsForAutoSizing();
+            Row row = sheet.getRow(sheet.getLastRowNum());
+            if (row != null) {
+                for (int i = 0; i < row.getLastCellNum(); i++) {
+                    sheet.autoSizeColumn(i);
+                    if (StringUtils.isNotEmpty(imageB64) && (i == 0 || i == 1)) {
+                        // first or second column
+                        int colWidth = 25;
+                        if (sheet.getColumnWidthInPixels(i) < (colWidth * 256))
+                            sheet.setColumnWidth(i, colWidth * 256);
+                    }
+                }
+            }
+        } catch (Exception e) {
+            throw new SpagoBIRuntimeException(EXCEL_ERROR, e);
+        }
+    }
+
+    public CellStyle buildCellStyle(Sheet sheet, boolean bold, HorizontalAlignment alignment, VerticalAlignment verticalAlignment, short headerFontSizeShort) {
+
+        // CELL
+        CellStyle cellStyle = sheet.getWorkbook().createCellStyle();
+
+        // alignment
+        cellStyle.setAlignment(alignment);
+        cellStyle.setVerticalAlignment(verticalAlignment);
+
+        // FONT
+        Font font = sheet.getWorkbook().createFont();
+
+        font.setFontHeightInPoints(headerFontSizeShort);
+
+        font.setBold(bold);
+
+        cellStyle.setFont(font);
+        return cellStyle;
+    }
+
 
 }
