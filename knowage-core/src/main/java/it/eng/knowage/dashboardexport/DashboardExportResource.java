@@ -93,7 +93,7 @@ public class DashboardExportResource {
                 data = dashboardPdfExporter.getBinaryData(body);
                 String widgetName = body.getJSONObject("settings").getJSONObject("style").getJSONObject("title")
                         .optString("text");
-                response.setHeader("Content-Disposition", "attachment; fileName=" + widgetName + "." + "xlsx");
+                response.setHeader("Content-Disposition", "attachment; fileName=" + widgetName + "." + "pdf");
                 response.setContentType(MediaType.APPLICATION_OCTET_STREAM);
                 response.setHeader("Content-length", Integer.toString(data.length));
                 response.setHeader("Content-Type", mimeType);
