@@ -1294,7 +1294,8 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 		try {
 			session = getSession();
 			toReturn = session
-					.createQuery("select new it.eng.spagobi.tools.dataset.bo.DataSetBasicInfo(ds.label, ds.name, ds.description, ds.dsMetadata,ds.type) "
+					.createQuery(
+							"select distinct new it.eng.spagobi.tools.dataset.bo.DataSetBasicInfo(ds.label, ds.name, ds.description, ds.dsMetadata,ds.type) "
 							+ " from SbiDataSet ds, SbiObjDataSet ds1 where ds.id.dsId = ds1.dsId and  ds.active = ? and ds1.sbiObject.id IN (:listObject)")
 					.setBoolean(0, true).setParameterList("listObject", idsObject).list();
 		} catch (Exception e) {
@@ -3228,7 +3229,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 
 			hibQuery.setBoolean(0, true);
 			hibQuery.setInteger(1, dsId);
-			toReturn = (List) hibQuery.list();
+			toReturn = hibQuery.list();
 			transaction.commit();
 
 		} catch (Exception e) {
