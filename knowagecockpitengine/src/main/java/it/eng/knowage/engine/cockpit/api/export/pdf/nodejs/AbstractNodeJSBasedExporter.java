@@ -221,6 +221,7 @@ public abstract class AbstractNodeJSBasedExporter {
 		LOGGER.debug("Encoded User Id: " + encodedUserId);
 
         String transformedParams;
+        String base64Params = "";
         try {
             JSONArray params = new JSONArray(this.params);
             for (int i = 0; i < params.length(); i++) {
@@ -228,15 +229,13 @@ public abstract class AbstractNodeJSBasedExporter {
                 params.getJSONObject(i).remove("name");
             }
             transformedParams = params.toString();
+            if (!transformedParams.isEmpty()) {
+                base64Params = Base64.encodeBase64String(transformedParams.getBytes(UTF_8));
+            }
         } catch (JSONException e) {
-            throw new SpagoBIRuntimeException("Invalid params for document with id [" + documentId + "]", e);
+            LOGGER.warn("Error parsing params", e);
         }
 
-
-        String base64Params = "";
-        if (transformedParams != null && !transformedParams.isEmpty()) {
-            base64Params = Base64.encodeBase64String(transformedParams.getBytes(UTF_8));
-        }
 		// @formatter:off
 		URI url = UriBuilder.fromUri(requestUrl)
 				.replaceQueryParam("outputType_description", "HTML")
@@ -245,8 +244,13 @@ public abstract class AbstractNodeJSBasedExporter {
 				.replaceQueryParam("export")
 				.replaceQueryParam("role", role)
 				.replaceQueryParam("organization", organization)
-                .replaceQueryParam("params", base64Params)
 				.build();
+
+        if (!base64Params.isEmpty()) {
+                url = UriBuilder.fromUri(url)
+                        .replaceQueryParam("params", base64Params)
+                        .build();
+        }
 		// @formatter:on
 		LOGGER.debug("URL: " + url);
 
