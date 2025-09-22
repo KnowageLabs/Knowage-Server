@@ -759,6 +759,8 @@ public class DataSetTransformer {
 		LOGGER.debug("Getting categories cardinality for rows {}, categories {} and {}", dataRows, categories,
 				dataColumnsMapper);
 
+		if(dataRows.isEmpty()) return new JSONArray();
+
 		final JSONArray categoriesCardinality = new JSONArray();
 		JSONObject jsonObject = new JSONObject();
 		if (categories instanceof ArrayList) {
@@ -861,10 +863,12 @@ public class DataSetTransformer {
 		Optional<String> mappedColumn = dataColumnsMapper.keySet().stream()
 				.filter(x -> completeName.equalsIgnoreCase(x)).findFirst();
 
-		if (mappedColumn.isPresent())
+		if (mappedColumn.isPresent()){
 			return dataColumnsMapper.get(mappedColumn.get());
+		}else {
+			return "";
+		}
 
-		throw new SpagoBIEngineRuntimeException("Impossible to find mapped column for chart");
 	}
 
 	/**
