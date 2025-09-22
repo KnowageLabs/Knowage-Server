@@ -143,6 +143,7 @@ sbiM.config(['$httpProvider',function ($httpProvider) {
 				'request': function(config) {
 					$cookies.put('X-CSRF-TOKEN', uniqueToken);
 					config.headers["X-CSRF-TOKEN"] = uniqueToken
+					if(localStorage.getItem('token')) config.headers["X-Kn-Authorization"] = "Bearer " + localStorage.getItem('token');
 					return config
     			},
 				responseError: function (response) {
