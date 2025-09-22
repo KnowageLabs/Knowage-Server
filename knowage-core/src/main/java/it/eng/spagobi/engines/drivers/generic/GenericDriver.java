@@ -270,7 +270,7 @@ public class GenericDriver extends AbstractEngineDriver implements IEngineDriver
 	 * @param pars  Map of the parameters for the execution call
 	 * @return Map The map of the execution call parameters
 	 */
-	private Map addOutputParameters(BIObject biobj, Map pars) {
+	protected Map addOutputParameters(BIObject biobj, Map pars) {
 		logger.debug("IN");
 
 		if (biobj == null) {

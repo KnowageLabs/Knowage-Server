@@ -685,9 +685,17 @@ public class PageResource extends AbstractCockpitEngineResource {
 			List<String> descriptions = Optional.ofNullable(parameterMap.get(urlName + "_description"))
 					.map(Arrays::asList).orElse(Collections.emptyList());
 
+            List<String> splitValues = new ArrayList<>();
+            if (biObject.getEngine().getLabel().equals("knowagedashboardengine")) {
+                List<String> finalSplitValues = splitValues;
+                values.forEach(v -> {
+                    finalSplitValues.addAll(Arrays.asList(v.split(";")));
+                });
+            }
+
 			if (OUTPUT_TYPE.equals(urlName)) {
 				LOGGER.debug("Forcing outputType to HTML");
-				values = Arrays.asList("HTML");
+				splitValues = Arrays.asList("HTML");
 				descriptions = Arrays.asList("HTML");
 			}
 
@@ -695,8 +703,8 @@ public class PageResource extends AbstractCockpitEngineResource {
 
 			JSONArray valuesAsJSONArray = new JSONArray();
 
-			for (int i = 0; i < Math.max(values.size(), descriptions.size()); i++) {
-				Object value = Iterables.get(values, i, "");
+			for (int i = 0; i < Math.max(splitValues.size(), descriptions.size()); i++) {
+				Object value = Iterables.get(splitValues, i, "");
 				Object description = Iterables.get(descriptions, i, "");
 
 				JSONObject currValue = new JSONObject();
