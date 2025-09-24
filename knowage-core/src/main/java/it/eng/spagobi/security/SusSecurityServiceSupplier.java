@@ -40,7 +40,11 @@ public class SusSecurityServiceSupplier implements ISecurityServiceSupplier {
 			profile.setAttributes(getProfileAttributes(userClaims, profile.getRoles()));
 			profile.setUniqueIdentifier(jwtToken);
 			profile.setUserId(userClaims.get(USERNAME).asString());
-			profile.setUserName(userClaims.get(NOME).asString() + " " + userClaims.get(COGNOME).asString());
+			if (userClaims.get(NOME) != null && userClaims.get(COGNOME) != null) {
+				profile.setUserName(userClaims.get(NOME).asString() + " " + userClaims.get(COGNOME).asString());
+			} else {
+				profile.setUserName(userClaims.get(USERNAME).asString());
+			}
 			profile.setOrganization(tenant);
 			profile.setIsSuperadmin(isSuperAdmin);
 		} catch (Exception e) {
