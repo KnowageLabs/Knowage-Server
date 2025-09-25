@@ -242,6 +242,12 @@ public class ZipUtils {
 				if (entry.isDirectory()) {
 
 					Path path = Paths.get(outFolder.getPath(), entry.getName());
+
+          // Security check: Prevent Zip Slip attack
+          if (!path.normalize().startsWith(outFolder.toPath().normalize())) {
+              throw new IOException("Entry is outside of the target dir: " + entry.getName());
+          }
+
 					Files.createDirectories(path);
 
 				} else {
@@ -252,8 +258,16 @@ public class ZipUtils {
 					Path path = Paths.get(outFolder.getPath(),
 							(prependZipFileName ? zipFileName + "_" : "") + entry.getName());
 
+          // Security check: Prevent Zip Slip attack
+          if (!path.normalize().startsWith(outFolder.toPath().normalize())) {
+              throw new IOException("Entry is outside of the target dir: " + entry.getName());
+          }
+
 					if (Files.exists(path))
 						throw new ZipException("File already exists: " + path);
+
+          // Ensure parent directories exist
+          Files.createDirectories(path.getParent());
 
 					// write the files to the disk
 					try (OutputStream os = Files.newOutputStream(path);
