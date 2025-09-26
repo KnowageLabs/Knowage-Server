@@ -933,7 +933,7 @@ public class DashboardExcelExporter extends DashboardExporter {
             Row header = createHeader(sheet, startRow, rowHeight, rowspan, startCol, colWidth, colspan, namespan, dataspan, widgetName, groupsAndColumnsMap, columnsOrdered);
             for (int i = 0; i < columnsOrdered.length(); i++) {
                 JSONObject column = columnsOrdered.getJSONObject(i);
-                String columnName = column.getString("header");
+                String columnName = column.getString("alias");
                 // renaming table columns names of the excel export
                 columnName = getInternationalizedHeader(columnName);
 

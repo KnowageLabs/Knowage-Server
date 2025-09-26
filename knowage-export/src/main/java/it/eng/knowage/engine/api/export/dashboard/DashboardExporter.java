@@ -370,8 +370,9 @@ public class DashboardExporter {
                 for (int j = 0; j < columnsOld.length(); j++) {
                     JSONObject columnOld = columnsOld.getJSONObject(j);
 
-                    if (columnOld.getString("header").equals(columnNew.getString("alias"))) {
+                    if (columnOld.getString("header").equals(columnNew.getString("columnName"))) {
                         columnOld.put("id", columnNew.getString("id"));
+                        columnOld.put("alias", columnNew.getString("alias"));
 
                         if (columnNew.has("ranges")) {
                             JSONArray ranges = columnNew.getJSONArray("ranges");

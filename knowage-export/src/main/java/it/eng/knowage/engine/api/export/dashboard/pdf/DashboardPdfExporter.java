@@ -216,7 +216,7 @@ public class DashboardPdfExporter extends DashboardExporter {
         for (int i = 0; i < columnsOrdered.length(); i++) {
 
             JSONObject column = columnsOrdered.getJSONObject(i);
-            String columnName = column.getString("header");
+            String columnName = column.getString("alias");
 
             Cell<PDPage> cell = headerRow.createCell(columnPercentWidths[i], columnName,
                     HorizontalAlignment.get("center"), VerticalAlignment.get("top"));
@@ -429,8 +429,12 @@ public class DashboardPdfExporter extends DashboardExporter {
     }
     
     private void applyStyleToCell(Style style, Cell<PDPage> cell) {
-        cell.setFillColor(getJavaColorFromRGBA(style.getBackgroundColor()));
-        cell.setTextColor(getJavaColorFromRGBA(style.getColor()));
+        if (!style.getBackgroundColor().isEmpty()) {
+            cell.setFillColor(getJavaColorFromRGBA(style.getBackgroundColor()));
+        }
+        if (!style.getColor().isEmpty()) {
+            cell.setTextColor(getJavaColorFromRGBA(style.getColor()));
+        }
     }
 
 
@@ -447,30 +451,30 @@ public class DashboardPdfExporter extends DashboardExporter {
 
 
     private Color getJavaColorFromRGBA(String colorStr) {
-        String[] values = colorStr.replace(colorStr.contains("rgba(") ? "rgba(" : "rgb(", "").replace(")", "").split(",");
-        int red = Integer.parseInt(values[0].trim());
-        int green = Integer.parseInt(values[1].trim());
-        int blue = Integer.parseInt(values[2].trim());
+            String[] values = colorStr.replace(colorStr.contains("rgba(") ? "rgba(" : "rgb(", "").replace(")", "").split(",");
+            int red = Integer.parseInt(values[0].trim());
+            int green = Integer.parseInt(values[1].trim());
+            int blue = Integer.parseInt(values[2].trim());
 
-        // Handle alpha transparency
-        if (values.length > 3) {
-            float alpha = Float.parseFloat(values[3].trim());
+            // Handle alpha transparency
+            if (values.length > 3) {
+                float alpha = Float.parseFloat(values[3].trim());
 
-            // For partial transparency, blend with white background
-            // This simulates how transparent colors appear on a white Excel background
-            if (alpha <= 1.0f) {
-                red = (int) (red * alpha + 255 * (1 - alpha));
-                green = (int) (green * alpha + 255 * (1 - alpha));
-                blue = (int) (blue * alpha + 255 * (1 - alpha));
+                // For partial transparency, blend with white background
+                // This simulates how transparent colors appear on a white Excel background
+                if (alpha <= 1.0f) {
+                    red = (int) (red * alpha + 255 * (1 - alpha));
+                    green = (int) (green * alpha + 255 * (1 - alpha));
+                    blue = (int) (blue * alpha + 255 * (1 - alpha));
+                }
             }
-        }
 
-        // Ensure values are within valid range
-        red = Math.max(0, Math.min(255, red));
-        green = Math.max(0, Math.min(255, green));
-        blue = Math.max(0, Math.min(255, blue));
+            // Ensure values are within valid range
+            red = Math.max(0, Math.min(255, red));
+            green = Math.max(0, Math.min(255, green));
+            blue = Math.max(0, Math.min(255, blue));
 
-        return new Color(red, green, blue);
+            return new Color(red, green, blue);
     }
 
 
@@ -496,7 +500,7 @@ public class DashboardPdfExporter extends DashboardExporter {
         try {
             JSONObject settings = widget.getJSONObject("settings");
             JSONObject exportPdf = getJsonObjectUtils().getConfigurationFromSettings(settings).optJSONObject("exports").optJSONObject("pdf");
-            int columnsLength = widget.getJSONObject("columns").length();
+            int columnsLength = widget.getJSONArray("columns").length();
             if (exportPdf == null || exportPdf.length() == 0) {
                 return new PDPage(calculateTableDimensions(columnsLength));
             } else if (exportPdf.optBoolean("a4portrait")) {
