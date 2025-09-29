@@ -27,6 +27,8 @@ import org.json.JSONObject;
 import it.eng.knowage.engine.cockpit.api.export.excel.ExcelExporter;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
+import java.util.Map;
+
 class GenericWidgetExporter implements IWidgetExporter {
 
 	static private Logger logger = Logger.getLogger(GenericWidgetExporter.class);
@@ -37,12 +39,13 @@ class GenericWidgetExporter implements IWidgetExporter {
 	long widgetId;
 	Workbook wb;
 	JSONObject optionsObj;
+    Map<String, Map<String, Object>> driversMap;
 
-	public GenericWidgetExporter() {
+    public GenericWidgetExporter() {
 		super();
 	}
 
-	public GenericWidgetExporter(ExcelExporter excelExporter, String widgetType, String templateString, long widgetId, Workbook wb, JSONObject options) {
+    public GenericWidgetExporter(ExcelExporter excelExporter, String widgetType, String templateString, long widgetId, Workbook wb, JSONObject options, Map<String, Map<String, Object>> driversMap) {
 		super();
 		this.excelExporter = excelExporter;
 		this.widgetType = widgetType;
@@ -50,7 +53,8 @@ class GenericWidgetExporter implements IWidgetExporter {
 		this.widgetId = widgetId;
 		this.wb = wb;
 		this.optionsObj = options;
-	}
+        this.driversMap = driversMap;
+    }
 
 	@Override
 	public int export() {
@@ -58,8 +62,9 @@ class GenericWidgetExporter implements IWidgetExporter {
 			JSONObject template = new JSONObject(templateString);
 			JSONObject widget = getWidgetById(template, widgetId);
 			String widgetName = getWidgetName(widget);
+            widgetName = replacePlaceholderIfPresent(widgetName);
 
-			JSONObject dataStore = excelExporter.getDataStoreForWidget(template, widget);
+            JSONObject dataStore = excelExporter.getDataStoreForWidget(template, widget);
 			if (dataStore != null) {
 				String cockpitSheetName = getCockpitSheetName(template, widgetId);
 				excelExporter.createAndFillExcelSheet(dataStore, wb, widgetName, cockpitSheetName);
@@ -130,5 +135,15 @@ class GenericWidgetExporter implements IWidgetExporter {
 		}
 		throw new SpagoBIRuntimeException("Unable to find widget with id [" + widgetId + "] in template");
 	}
+
+    protected String replacePlaceholderIfPresent(String widgetName) {
+        if (widgetName.contains("$P{")) {
+            String placeholder = widgetName.substring(widgetName.indexOf("$P{") + 3, widgetName.indexOf("}"));
+            if (driversMap.containsKey(placeholder)) {
+                return widgetName.replace("$P{" + placeholder + "}", driversMap.get(placeholder).get("value").toString());
+            }
+        }
+        return widgetName;
+    }
 
 }

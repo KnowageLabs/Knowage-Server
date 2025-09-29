@@ -23,13 +23,16 @@ import org.json.JSONObject;
 import it.eng.knowage.engine.cockpit.api.export.excel.ExcelExporter;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
+import java.util.Map;
+
 public class MapExporter extends GenericWidgetExporter implements IWidgetExporter {
 
 	public static transient Logger logger = Logger.getLogger(MapExporter.class);
 
-	public MapExporter(ExcelExporter excelExporter, String widgetType, String templateString, long widgetId, Workbook wb, JSONObject options) {
-		super(excelExporter, widgetType, templateString, widgetId, wb, options);
-	}
+    public MapExporter(ExcelExporter excelExporter, String widgetType, String templateString, long widgetId, Workbook wb, JSONObject options, Map<String, Map<String, Object>> driversMap) {
+        super(excelExporter, widgetType, templateString, widgetId, wb, options, driversMap);
+    }
+
 
 	@Override
 	public int export() {
@@ -38,6 +41,7 @@ public class MapExporter extends GenericWidgetExporter implements IWidgetExporte
 			JSONObject template = new JSONObject(templateString);
 			JSONObject widget = getWidgetById(template, widgetId);
 			String widgetName = getWidgetName(widget);
+            widgetName = replacePlaceholderIfPresent(widgetName);
 
 			JSONArray dataStoreArray = excelExporter.getMultiDataStoreForWidget(template, widget);
 			for (int i = 0; i < dataStoreArray.length(); i++) {
