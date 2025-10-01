@@ -150,7 +150,9 @@
 			<ITEM id="7004" label="menu.MetadataMan"
 				requiredFunctionality="ObjMetadataManagement"
 				to="/metadata-management" />
-			
+            <ITEM id="7005" label="menu.AiManagement"
+                  requiredFunctionality="EngGPTIntegration"
+                  to="/ai-management" />
 		</GROUP_ITEM>
 
 

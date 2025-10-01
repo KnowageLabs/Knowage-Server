@@ -75,7 +75,8 @@ public class CommunityFunctionalityConstants {
 	public static final String ENABLE_TO_COPY_AND_EMBED = "EnableToCopyAndEmbed";
 	public static final String ENABLE_TO_PRINT = "EnableToPrint";
 	public static final String ENABLE_TO_RATE = "EnableToRate";
-	public static final String EVENTS_MANAGEMENT = "EventsManagement";
+    public static final String ENG_GPT_INTEGRATION = "EngGPTIntegration";
+    public static final String EVENTS_MANAGEMENT = "EventsManagement";
 	public static final String EXECUTE_CROSS_NAVIGATION = "ExecuteCrossNavigation";
 	public static final String EXPORTERS_CATALOGUE = "ExportersCatalogue";
 	/**

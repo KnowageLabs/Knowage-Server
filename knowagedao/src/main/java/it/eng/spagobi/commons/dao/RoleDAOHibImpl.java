@@ -690,7 +690,8 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 				|| (authI.getName().equals("SEE_HELP_ONLINE") && aRole.getAbleToSeeHelpOnline())
 				|| (authI.getName().equals("ENABLE_DATA_PREPARATION") && aRole.getAbleToUseDataPreparation())
 				|| (authI.getName().equals("ENABLE_DOSSIER") && aRole.getAbleToUseDossier())
-				|| (authI.getName().equals("ENABLE_DASHBOARD_THEME_MANAGEMENT") && aRole.getAbleToUseDashboardThemeManagement());
+				|| (authI.getName().equals("ENABLE_DASHBOARD_THEME_MANAGEMENT") && aRole.getAbleToUseDashboardThemeManagement())
+                || (authI.getName().equals("ENG_GPT_INTEGRATION") && aRole.getAbleToUseEngGPT());
 
 
 	}
@@ -989,6 +990,9 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 			if(name.equals("ENABLE_DASHBOARD_THEME_MANAGEMENT")){
 				role.setAbleToUseDashboardThemeManagement(true);
 			}
+            if (name.equals("ENG_GPT_INTEGRATION")) {
+                role.setAbleToUseEngGPT(true);
+            }
 
 
 		}

@@ -408,6 +408,7 @@ public class RolesResource extends AbstractSpagoBIResource {
 		role.setAbleToUseDataPreparation(bo.isAbleToUseDataPreparation());
 		role.setAbleToUseDossier(bo.isAbleToUseDossier());
 		role.setAbleToUseDashboardThemeManagement(bo.isAbleToUseDashboardThemeManagement());
+        role.setAbleToUseEngGPT(bo.isAbleToUseEngGPT());
 
 		return role;
 	}

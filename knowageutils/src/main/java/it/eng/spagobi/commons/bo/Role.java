@@ -100,6 +100,8 @@ public class Role implements Serializable {
 	private boolean isAbleToUseDossier;
 	private boolean isAbleToUseDashboardThemeManagement;
 
+    private boolean isAbleToUseEngGPT;
+
 	private boolean defaultRole;
 
 	private List<RoleMetaModelCategory> roleMetaModelCategories = new ArrayList<>();
@@ -853,6 +855,15 @@ public class Role implements Serializable {
 	public void setRoleAnaliticalDrivers(List<String> roleAnaliticalDrivers) {
 		this.roleAnaliticalDrivers = roleAnaliticalDrivers;
 	}
+
+
+    public boolean getAbleToUseEngGPT() {
+        return isAbleToUseEngGPT;
+    }
+
+    public void setAbleToUseEngGPT(boolean ableToUseEngGPT) {
+        isAbleToUseEngGPT = ableToUseEngGPT;
+    }
 
 	public List<String> getRoleNews() {
 		return roleNews;

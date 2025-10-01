@@ -100,7 +100,22 @@ public class ProductProfiler {
 		}
 	}
 
-	public static Set<String> filterAuthorizationsByProduct(List<String> authorizations) {
+        public static boolean canUseEngGPT() {
+            if (isCommunity) {
+                return false;
+            } else {
+                boolean toReturn = false;
+                try {
+                    Method canCreateDatasetMethod = productProfilerEE.getMethod("canUseEngGPT");
+                    toReturn = (boolean) canCreateDatasetMethod.invoke(productProfilerEE);
+                } catch (Exception e) {
+                    logger.error("Error while checking if user can access to Eng GPT: ", e);
+                }
+                return toReturn;
+            }
+        }
+
+        public static Set<String> filterAuthorizationsByProduct(List<String> authorizations) {
 		if (isCommunity) {
 			return new HashSet<>(authorizations);
 		} else {

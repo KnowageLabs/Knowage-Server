@@ -794,6 +794,10 @@ public class UserUtilities {
 				roleFunctionalities.add(CommunityFunctionalityConstants.DASHBOARD_THEMES_MANAGEMENT);
 			}
 
+            if (canUseEngGPT() && virtualRole.getAbleToUseEngGPT()) {
+                roleFunctionalities.add(CommunityFunctionalityConstants.ENG_GPT_INTEGRATION);
+            }
+
 			if (!roleFunctionalities.isEmpty()) {
 				List<String> roleTypeFunctionalities = Arrays.asList(functionalities);
 				roleFunctionalities.addAll(roleTypeFunctionalities);
@@ -823,7 +827,25 @@ public class UserUtilities {
 
 	}
 
-	public static List<String> readFunctionalityByLicense(SpagoBIUserProfile user) {
+    private static boolean canUseEngGPT() {
+        try {
+            Class<?> productProfilerEE = Class.forName("it.eng.knowage.enterprise.security.ProductProfiler");
+            boolean toReturn = false;
+            try {
+                Method canUseEngGPT = productProfilerEE.getMethod("canUseEngGPT");
+                toReturn = (boolean) canUseEngGPT.invoke(productProfilerEE);
+            } catch (Exception e) {
+                LOGGER.error("Error while checking if user can access to Eng GPT: ", e);
+            }
+            return toReturn;
+
+        } catch (ClassNotFoundException e) {
+            return false;
+        }
+    }
+
+
+    public static List<String> readFunctionalityByLicense(SpagoBIUserProfile user) {
 		LOGGER.debug("IN");
 		List<String> licenseFunctionalities = new ArrayList<>();
 		try {
@@ -1064,6 +1086,10 @@ public class UserUtilities {
 						LOGGER.debug("User has role " + roleName + " that is able to manage dashboard themes.");
 						virtualRole.setAbleToUseDashboardThemeManagement(true);
 					}
+                    if (anotherRole.getAbleToUseEngGPT()) {
+                        LOGGER.debug("User has role " + roleName + " that is able to use eng gpt.");
+                        virtualRole.setAbleToUseEngGPT(true);
+                    }
 				}
 			}
 		}

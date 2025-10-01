@@ -129,6 +129,8 @@ public class RoleBO implements Serializable {
 	private boolean isAbleToUseDossier;
 	private boolean isAbleToUseDashboardThemeManagement;
 
+    private boolean isAbleToUseEngGPT;
+
 	private boolean defaultRole;
 
 	private List<RoleMetaModelCategory> roleMetaModelCategories;
@@ -351,6 +353,14 @@ public class RoleBO implements Serializable {
 	public boolean isAbleToSaveIntoPersonalFolder() {
 		return ableToSaveIntoPersonalFolder;
 	}
+
+    public boolean isAbleToUseEngGPT() {
+        return isAbleToUseEngGPT;
+    }
+
+    public void setAbleToUseEngGPT(boolean isAbleToUseEngGPT) {
+        this.isAbleToUseEngGPT = isAbleToUseEngGPT;
+    }
 
 	public void setAbleToSaveIntoPersonalFolder(boolean ableToSaveIntoPersonalFolder) {
 		this.ableToSaveIntoPersonalFolder = ableToSaveIntoPersonalFolder;

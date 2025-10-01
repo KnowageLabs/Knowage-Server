@@ -27,6 +27,8 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import it.eng.knowage.security.ProductProfiler;
+import it.eng.spagobi.commons.metadata.SbiAuthorizations;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -51,13 +53,16 @@ public class AuthorizationsResource extends AbstractSpagoBIResource {
 	@Produces(MediaType.APPLICATION_JSON + charset)
 	public Response getAuthorizations() {
 		IRoleDAO rolesDao = null;
-		List fullList = null;
+		List<SbiAuthorizations> fullList = null;
 
 		try {
 
 			rolesDao = DAOFactory.getRoleDAO();
 			rolesDao.setUserProfile(getUserProfile());
 			fullList = rolesDao.loadAllAuthorizations();
+            if (!ProductProfiler.canUseEngGPT()) {
+                fullList.removeIf(auth -> auth.getName().equals("ENG_GPT_INTEGRATION"));
+            }
 			return Response.ok(fullList).build();
 		} catch (Exception e) {
 			LOGGER.error("Error with loading resource", e);
