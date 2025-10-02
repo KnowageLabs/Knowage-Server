@@ -30,7 +30,8 @@
 		<module>../knowagemeta</module>
 		<module>../knowageqbeengine</module>
 		<module>../knowagetalendengine</module>
-		<module>../knowagewhatifengine</module>
+<!--        commented because it relies on a mondrian dependency whose repo seems to respond with html-->
+<!--		<module>../knowagewhatifengine</module>-->
 		<module>../knowagejasperreportengine</module>
 		<module>../spagobi.birt.oda</module>
 		<module>../knowagebirtreportengine</module>
@@ -254,14 +255,20 @@
 			
 		</dependencies>
 	</dependencyManagement>
-	
-	<repositories>
+
+    <repositories>
 		<!-- We use SpagoBI repo on GitHub because we cannot find HBql library somewhere else -->
+        <repository>
+            <id>central</id>
+            <url>https://repo.maven.apache.org/maven2/</url>
+            <releases><enabled>true</enabled></releases>
+            <snapshots><enabled>false</enabled></snapshots>
+        </repository>
 		<repository>
 			<id>spagobi-releases</id>
 			<url>https://github.com/SpagoBILabs/SpagoBI/raw/mvn-repo/releases</url>
 		</repository>
-		<!-- We use www.license4j.com/maven because license4j is not available on Maven Central, it is available by its own repo -->
+<!--		&lt;!&ndash; We use www.license4j.com/maven because license4j is not available on Maven Central, it is available by its own repo &ndash;&gt;-->
 		<repository>
 			<releases>
 				<enabled>true</enabled>
@@ -278,44 +285,53 @@
 			<id>osgeo.org</id>
 			<url>https://repo.osgeo.org/repository/release/</url>
 		</repository>
-		<!-- We use Maven Geo-Solutions for hibernate-spatial-1.1.1.jar, needed by Qbe core; this library is not available on Maven Central -->
+<!--		&lt;!&ndash; We use Maven Geo-Solutions for hibernate-spatial-1.1.1.jar, needed by Qbe core; this library is not available on Maven Central &ndash;&gt;-->
 		<repository>
 			<id>geo-solutions</id>
 			<url>https://maven.geo-solutions.it/</url>
 		</repository>
-		<!-- We use Enonic Repository because it contains simplecaptcha 1.2.1 library, needed by knowage CE core; this library is not available on Maven Central -->
+<!--		&lt;!&ndash; We use Enonic Repository because it contains simplecaptcha 1.2.1 library, needed by knowage CE core; this library is not available on Maven Central &ndash;&gt;-->
 		<repository>
 			<id>enonic</id>
 			<url>https://repo.enonic.com/public/</url>
 		</repository>
-		<!-- We use Pentaho repository for mondrian, needed by knowagewhatifengine CE -->
-		<repository>
-			<id>pentaho</id>
-			<url>https://repo.orl.eng.hitachivantara.com/artifactory/pnt-mvn/</url>
-		</repository>
-		<!-- To get JasperReports dependencies such as jasperreports-functions in version 6.1.0 (only more recent version are available from Maven Central) -->
+<!--		&lt;!&ndash; We use Pentaho repository for mondrian, needed by knowagewhatifengine CE &ndash;&gt;-->
+<!--        THIS STUFF SEEMS TO RESPOND WITH HTML!!!-->
+<!--		<repository>-->
+<!--			<id>pentaho</id>-->
+<!--			<url>https://repo.orl.eng.hitachivantara.com/artifactory/pnt-mvn/</url>-->
+<!--		</repository>-->
+<!--		&lt;!&ndash; To get JasperReports dependencies such as jasperreports-functions in version 6.1.0 (only more recent version are available from Maven Central) &ndash;&gt;-->
 		<repository>
 			<id>jasperreports</id>
 			<url>https://jaspersoft.jfrog.io/artifactory/jr-ce-releases/</url>
 		</repository>
-		<!-- Required to get dependencies of JasperReports (it self download from Maven Central) such as specific itext version (2.1.7.js2, only 2.1.7 available on Maven Central) -->
+<!--		&lt;!&ndash; Required to get dependencies of JasperReports (it self download from Maven Central) such as specific itext version (2.1.7.js2, only 2.1.7 available on Maven Central) &ndash;&gt;-->
 		<repository>
 			<id>jasperreports-thrid-party</id>
 			<url>https://jaspersoft.jfrog.io/artifactory/third-party-ce-artifacts/</url>
 		</repository>
-		<!-- We use xss-html-filter repository for xss-html-filter, needed by knowage CE; this library is not available on Maven Central -->
-		<repository>
-			<id>xss-html-filter releases</id>
-			<url>https://xss-html-filter.sf.net/releases/</url>
-		</repository>
-		<!-- We use OW2 third party repository for com.jamon:fdsapi, needed by knowage CE; this library is not available on Maven Central -->
+<!--		&lt;!&ndash; We use xss-html-filter repository for xss-html-filter, needed by knowage CE; this library is not available on Maven Central &ndash;&gt;-->
+<!--        THIS STUFF DOES NOT SEEM TO EXIST ANYMORE!!!-->
+<!--		<repository>-->
+<!--			<id>xss-html-filter releases</id>-->
+<!--			<url>https://xss-html-filter.sf.net/releases/</url>-->
+<!--		</repository>-->
+<!--		&lt;!&ndash; We use OW2 third party repository for com.jamon:fdsapi, needed by knowage CE; this library is not available on Maven Central &ndash;&gt;-->
 		<repository>
 			<id>ow2-third-party</id>
 			<url>https://repository.ow2.org/nexus/content/repositories/3rd-party/</url>
 		</repository>
 	</repositories>
-	
-	<build>
+    <pluginRepositories>
+        <pluginRepository>
+            <id>central-plugins</id>
+            <url>https://repo.maven.apache.org/maven2/</url>
+        </pluginRepository>
+    </pluginRepositories>
+
+
+    <build>
 		<pluginManagement>
 			<plugins>
 				<plugin>
