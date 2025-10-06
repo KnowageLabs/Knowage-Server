@@ -75,6 +75,7 @@ public class RegistryConfigurationXMLParser {
 	public static final String ATTRIBUTE_COLUMN_TITLE = "title";
 	public static final String ATTRIBUTE_COLUMN_DEPENDENCES = "dependsFrom";
 	public static final String ATTRIBUTE_COLUMN_DEPENDENCES_ENTITY = "dependsFromEntity";
+	public static final String ATTRIBUTE_COLUMN_PRECISION = "precision";
 	public static final String ATTRIBUTE_SORTER = "sorter";
 	public static final String ATTRIBUTE_UNSIGNED = "unsigned";
 	public static final String ATTRIBUTE_DRIVER_NAME = "driverName";
@@ -236,8 +237,9 @@ public class RegistryConfigurationXMLParser {
 						// if is merge column set it is not editable and set
 						// default color if not specified to white
 						isEditable = false;
-						if (color == null)
+						if (color == null) {
 							color = "#FFFFFF";
+						}
 						sorter = "ASC";
 					}
 				}
@@ -247,12 +249,13 @@ public class RegistryConfigurationXMLParser {
 				// .getAttribute(ATTRIBUTE_EDITOR)) ? Column.EDITOR_TYPE_COMBO
 				// : Column.EDITOR_TYPE_TEXT;
 				String editorType = EDITOR_TYPE_TEXT;
-				if (EDITOR_TYPE_COMBO.equalsIgnoreCase((String) aColumn.getAttribute(ATTRIBUTE_EDITOR)))
+				if (EDITOR_TYPE_COMBO.equalsIgnoreCase((String) aColumn.getAttribute(ATTRIBUTE_EDITOR))) {
 					editorType = Column.EDITOR_TYPE_COMBO;
-				else if (EDITOR_TYPE_PICKER.equalsIgnoreCase((String) aColumn.getAttribute(ATTRIBUTE_EDITOR)))
+				} else if (EDITOR_TYPE_PICKER.equalsIgnoreCase((String) aColumn.getAttribute(ATTRIBUTE_EDITOR))) {
 					editorType = Column.EDITOR_TYPE_PICKER;
-				else if (EDITOR_TYPE_POPUP.equalsIgnoreCase((String) aColumn.getAttribute(ATTRIBUTE_EDITOR)))
+				} else if (EDITOR_TYPE_POPUP.equalsIgnoreCase((String) aColumn.getAttribute(ATTRIBUTE_EDITOR))) {
 					editorType = Column.EDITOR_TYPE_POPUP;
+				}
 
 				String dependences = (String) aColumn.getAttribute(ATTRIBUTE_COLUMN_DEPENDENCES);
 
@@ -263,6 +266,15 @@ public class RegistryConfigurationXMLParser {
 				Assert.assertTrue(field != null, "A column must contain at least attributes " + ATTRIBUTE_FIELD);
 				Assert.assertTrue(subEntity == null || foreignKey != null,
 						"If a " + ATTRIBUTE_SUBENTITY + " attribute is specified, the attribute " + ATTRIBUTE_FOREIGNKEY + " is also requested.");
+
+				String precision = (String) aColumn.getAttribute(ATTRIBUTE_COLUMN_PRECISION);
+				Integer intPrecision = null;
+				try {
+					intPrecision = Integer.parseInt(precision);
+				} catch (NumberFormatException e) {
+					logger.debug("Column precision not integer");
+				}
+
 				column.setField(field);
 				column.setSize(intSize);
 				column.setTitle(title);
@@ -281,6 +293,7 @@ public class RegistryConfigurationXMLParser {
 				column.setInfoColumn(infoColumn);
 				column.setDependences(dependences);
 				column.setDependencesEntity(dependencesEntity);
+				column.setPrecision(intPrecision);
 
 				String mandatoryColumn = (String) aColumn.getAttribute(ATTRIBUTE_MANDATORY_COLUMN);
 				if (mandatoryColumn != null) {

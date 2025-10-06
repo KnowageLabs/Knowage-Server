@@ -320,6 +320,8 @@ public class RegistryConfiguration {
 
 		private AuditColumnType auditColumnType = null;
 
+		private Integer precision = null;
+
 		public String getTitle() {
 			return title;
 		}
@@ -512,6 +514,14 @@ public class RegistryConfiguration {
 
 		public void setAuditColumnType(AuditColumnType auditColumnType) {
 			this.auditColumnType = auditColumnType;
+		}
+
+		public Integer getPrecision() {
+			return precision;
+		}
+
+		public void setPrecision(Integer precision) {
+			this.precision = precision;
 		}
 
 	}
