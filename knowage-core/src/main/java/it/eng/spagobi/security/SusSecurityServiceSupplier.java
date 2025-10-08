@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import org.apache.log4j.Logger;
 
@@ -59,9 +58,10 @@ public class SusSecurityServiceSupplier implements ISecurityServiceSupplier {
 		if (roles != null && roles.length > 0) {
 			String role = roles[0];
 			List<String> codici = userClaims.get(CODICI).asList(String.class);
-
-			toReturn.put("procedimenti",
-					String.join(",", codici.stream().filter(s -> s.contains(role)).map(x -> x.substring(x.lastIndexOf("_") + 1)).collect(Collectors.toList())));
+			codici.removeIf(s -> s.endsWith(role));
+			String procedimenti = String.join(",",
+					codici.stream().filter(s -> s.contains(role)).map(x -> "'" + x.substring(x.lastIndexOf("_") + 1) + "'").toList());
+			toReturn.put("procedimenti", procedimenti);
 		}
 
 		return toReturn;
