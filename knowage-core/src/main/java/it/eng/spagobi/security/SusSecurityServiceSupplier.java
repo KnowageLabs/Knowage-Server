@@ -55,9 +55,10 @@ public class SusSecurityServiceSupplier implements ISecurityServiceSupplier {
 		if (roles != null && roles.length > 0) {
 			String role = roles[0];
 			List<String> codici = userClaims.get(CODICI).asList(String.class);
-
-			toReturn.put("roles",
-					String.join(",", codici.stream().filter(s -> s.contains(role)).map(x -> x.substring(x.lastIndexOf("_") + 1)).collect(Collectors.toList())));
+			codici.removeIf(s -> s.endsWith(role));
+			String procedimenti = String.join(",",
+					codici.stream().filter(s -> s.contains(role)).map(x -> "'" + x.substring(x.lastIndexOf("_") + 1) + "'").collect(Collectors.toList()));
+			toReturn.put("procedimenti", procedimenti);
 		}
 
 		return (HashMap) toReturn;
