@@ -127,10 +127,12 @@ public class LoadRegistryAction extends ExecuteQueryAction {
 	public void service(SourceBean request, SourceBean response) {
 
 		try {
-			if (!request.containsAttribute(START))
+			if (!request.containsAttribute(START)) {
 				request.setAttribute(START, new Integer(0));
-			if (!request.containsAttribute(LIMIT))
+			}
+			if (!request.containsAttribute(LIMIT)) {
 				request.setAttribute(LIMIT, Integer.MAX_VALUE);
+			}
 		} catch (SourceBeanException e) {
 			throw new SpagoBIEngineServiceException(getActionName(), e);
 		}
@@ -352,6 +354,7 @@ public class LoadRegistryAction extends ExecuteQueryAction {
 		ArrayList<Integer> columnsIndexToAfter = new ArrayList<>();
 		HashMap<Integer, Object> columnsIndexToSum2Counter = new HashMap<>();
 
+
 		// collect columns to merge and columns to sum and colummsn to empty:
 		// -- columns to merge have merge attributes until a columns with summaryFunc is found
 		// then other columns that have merge attribute but no
@@ -374,8 +377,9 @@ public class LoadRegistryAction extends ExecuteQueryAction {
 				columnsIndexToSum2Counter.put(index, 0);
 				measureFound = true;
 			}
-			if (column.getSummaryFunction() != null && column.getSummaryFunction().equals("sum"))
+			if (column.getSummaryFunction() != null && column.getSummaryFunction().equals("sum")) {
 				summaryFuncFound = true;
+			}
 			index++;
 		}
 
@@ -385,7 +389,6 @@ public class LoadRegistryAction extends ExecuteQueryAction {
 			Integer columnIndex = (Integer) iterator.next();
 			previousMergeValues.put(columnIndex, null);
 		}
-
 		TreeMap<Integer, Record> recordsToAddMap = new TreeMap<>();
 
 		int sumCounter = 0; // add total row only if grouping has more than one member
@@ -418,13 +421,11 @@ public class LoadRegistryAction extends ExecuteQueryAction {
 					// TODO treat the case this is not a number, should keep it to null
 					if (value != null) {
 						// get previous value
-
 						Object result = operateWithNumbers(columnsIndexToSum2Counter.get(indexMeasure), value);
-
 						columnsIndexToSum2Counter.put(indexMeasure, result);
-					} else {
-						columnsIndexToSum2Counter.put(indexMeasure, null);
-					}
+					} /*
+						 * else { columnsIndexToSum2Counter.put(indexMeasure, null); }
+						 */
 
 				}
 			} else {
@@ -506,7 +507,7 @@ public class LoadRegistryAction extends ExecuteQueryAction {
 			setNewSummaryColorCell(dataStore, index, columnIndex);
 		}
 		// insert field for each column to after but do not color
-		for (Iterator iterator = columnsIndexToEmpty.iterator(); iterator.hasNext();) {
+		for (Iterator iterator = columnsIndexToAfter.iterator(); iterator.hasNext();) {
 			Integer columnIndex = (Integer) iterator.next();
 			Field field = new Field();
 			field.setValue("      ");
@@ -526,6 +527,7 @@ public class LoadRegistryAction extends ExecuteQueryAction {
 			setNewSummaryCell(dataStore, index, columnIndex);
 
 		}
+
 
 		if (currentIndexRow != null) {
 			// dataStore.insertRecord(currentIndex, recordNew);
@@ -609,8 +611,9 @@ public class LoadRegistryAction extends ExecuteQueryAction {
 		try {
 			JSONArray fieldsArray = gridDataFeed.getJSONObject("metaData").getJSONArray("fields");
 			for (int i = 0; i < fieldsArray.length(); i++) {
-				if (fieldsArray.get(i).equals("recNo"))
+				if (fieldsArray.get(i).equals("recNo")) {
 					continue;
+				}
 				JSONObject field = (JSONObject) fieldsArray.get(i);
 				fieldHeader = field.getString("header");
 				field.put("defaultValue", getDefaultValueForColumn(fieldHeader));
@@ -635,8 +638,9 @@ public class LoadRegistryAction extends ExecuteQueryAction {
 		try {
 			JSONArray fieldsArray = gridDataFeed.getJSONObject("metaData").getJSONArray("fields");
 			for (int i = 0; i < fieldsArray.length(); i++) {
-				if (fieldsArray.get(i).equals("recNo"))
+				if (fieldsArray.get(i).equals("recNo")) {
 					continue;
+				}
 				JSONObject field = (JSONObject) fieldsArray.get(i);
 				fieldHeader = field.getString("header");
 				field.put("keyColumn", fieldHeader.equals(keyColumn));
