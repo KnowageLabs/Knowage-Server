@@ -61,6 +61,9 @@ public class SusSecurityServiceSupplier implements ISecurityServiceSupplier {
 			codici.removeIf(s -> s.endsWith(role));
 			String procedimenti = String.join(",",
 					codici.stream().filter(s -> s.contains(role)).map(x -> "'" + x.substring(x.lastIndexOf("_") + 1) + "'").toList());
+			if (procedimenti == null || procedimenti.isEmpty()) {
+				procedimenti = "''";
+			}
 			toReturn.put("procedimenti", procedimenti);
 		}
 
