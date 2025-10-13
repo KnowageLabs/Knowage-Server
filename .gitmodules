@@ -1,5 +1,5 @@
 [submodule "knowage-vue/src/vue"]
 	path = knowage-vue/src/vue
 	url = https://github.com/KnowageLabs/Knowage-Server-Frontend.git
-	branch = master
+	branch = knowage-server-9.0
 	update = rebase
