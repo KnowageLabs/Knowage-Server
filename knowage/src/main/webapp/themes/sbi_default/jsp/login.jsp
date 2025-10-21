@@ -105,7 +105,6 @@
 
 <%@page import="it.eng.spagobi.commons.SingletonConfig"%>
 
-
 <!DOCTYPE html>
 <html>
 	<head>
@@ -118,6 +117,24 @@
 	    
 	    <title>Knowage</title>
   		<script type="text/javascript" nonce="<%= request.getAttribute("cspNonce") %>">
+	  		document.addEventListener("DOMContentLoaded", function () {
+	  	        var signupBtn = document.getElementById("signupBtn");
+	  	        if (signupBtn) {
+	  	            signupBtn.addEventListener("click", function (e) {
+	  	                e.preventDefault(); // evita comportamenti indesiderati
+	  	                signup();
+	  	            });
+	  	        }
+	  	    });
+	  		document.addEventListener("DOMContentLoaded", function () {
+	  	        var signupBtn = document.getElementById("signupBtn");
+	  	        if (signupBtn) {
+	  	            signupBtn.addEventListener("click", function (e) {
+	  	                e.preventDefault(); // evita comportamenti indesiderati
+	  	                signup();
+	  	            });
+	  	        }
+	  	    });
 			function signup(){
 			 	var form = document.getElementById('formId');
 			 	var act = '<%=urlBuilder.getResourceLink(request, "restful-services/signup/prepare")%>';
@@ -245,7 +262,7 @@
 	            		<button class="btn btn-lg btn-primary btn-block btn-signin" type="submit"><%=msgBuilder.getMessage("login")%></button>
 	            	</form>
 	            	<% if (activeSignup){ %>
-		               	<button class="btn btn-lg btn-primary btn-block btn-signup" onclick="signup();" ><%=msgBuilder.getMessage("signup")%></button>
+		               	<button class="btn btn-lg btn-primary btn-block btn-signup" id="signupBtn" ><%=msgBuilder.getMessage("signup")%></button>
 					<%} %> 
             	</div>
             	<!-- img class="col-xs-8 offset-sm-4 col-sm-4" src='<%=urlBuilder.getResourceLink(request, "themes/commons/img/defaultTheme/poweredBy.svg")%>' / -->
