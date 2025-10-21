@@ -13,8 +13,6 @@ import javax.servlet.http.HttpServletResponse;
 //import com.esotericsoftware.minlog.Log.Logger;
 import org.apache.log4j.Logger;
 
-
-
 import net.logicsquad.nanocaptcha.image.ImageCaptcha;
 import net.logicsquad.nanocaptcha.image.filter.FishEyeImageFilter;
 
@@ -48,7 +46,7 @@ public class KnowageCaptchaServlet extends HttpServlet {
 		ImageCaptcha imageCaptcha = new ImageCaptcha.Builder(width, height).addContent().addBackground().addFilter(new FishEyeImageFilter()).addBackground()
 				.build();
 		writeImage(httpservletresponse, imageCaptcha.getImage());
-		httpservletrequest.getSession().setAttribute("simpleCaptcha", imageCaptcha);
+		httpservletrequest.getSession().setAttribute("simpleCaptcha", imageCaptcha.getContent());
 	}
 
 	private void writeImage(HttpServletResponse httpservletresponse, BufferedImage bufferedimage) {

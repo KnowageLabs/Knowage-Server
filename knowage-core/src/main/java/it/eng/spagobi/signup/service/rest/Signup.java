@@ -79,7 +79,6 @@ import it.eng.spagobi.tenant.TenantManager;
 import it.eng.spagobi.user.UserProfileManager;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.themes.ThemesManager;
-import net.logicsquad.nanocaptcha.image.ImageCaptcha;
 
 @Path("/signup")
 public class Signup {
@@ -239,10 +238,10 @@ public class Signup {
 
 			int userId = user.getId();
 
-			if(!name.isEmpty() && !surname.isEmpty()) {				
+			if(!name.isEmpty() && !surname.isEmpty()) {
 				user.setFullName(name + " " + surname);
 			}
-			
+
 			if (password != null && !password.equals(DEFAULT_PASSWORD)) {
 				user.setPassword(Password.hashPassword(password));
 			}
@@ -268,8 +267,8 @@ public class Signup {
 			}
 
 			updAttribute(userDao, attrDao, email, user.getUserId(), userId, currEmail);
-			
-			if(!name.isEmpty() && !surname.isEmpty()) {				
+
+			if(!name.isEmpty() && !surname.isEmpty()) {
 				profile.setAttributeValue("name", name);
 				profile.setAttributeValue("surname", surname);
 			}
@@ -417,13 +416,13 @@ public class Signup {
 		boolean useCaptcha = Boolean.parseBoolean(strUseCaptcha);
 
 		try {
-			ImageCaptcha c = (ImageCaptcha) request.getSession().getAttribute("simpleCaptcha");
+			String contentCaptcha = (String) request.getSession().getAttribute("simpleCaptcha");
 
 			if (useCaptcha && captcha == null) {
 				LOGGER.error("empty captcha");
 				JSONObject errObj = buildErrorMessage(msgBuilder, locale, "signup.check.captchEmpty");
 				return Response.ok(errObj.toString()).build();
-			} else if (useCaptcha && !c.isCorrect(captcha)) {
+			} else if (useCaptcha && !contentCaptcha.equals(captcha)) {
 				LOGGER.error("Invalid captcha");
 				JSONObject errObj = buildErrorMessage(msgBuilder, locale, "signup.check.captchWrong");
 				return Response.ok(errObj.toString()).build();
