@@ -18,7 +18,20 @@
 
 package it.eng.spagobi.engines.drivers.dashboard;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Objects;
+
+import org.apache.log4j.Logger;
+import org.json.JSONException;
+
+import com.jayway.jsonpath.Configuration;
+import com.jayway.jsonpath.JsonPath;
+import com.jayway.jsonpath.Option;
 
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.configuration.ConfigSingleton;
@@ -35,14 +48,7 @@ import it.eng.spagobi.commons.utilities.PortletUtilities;
 import it.eng.spagobi.commons.utilities.UserUtilities;
 import it.eng.spagobi.commons.utilities.messages.MessageBuilder;
 import it.eng.spagobi.engines.drivers.cockpit.CockpitDriver;
-import it.eng.spagobi.engines.drivers.generic.GenericDriver;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
-import org.apache.log4j.Logger;
-import org.json.JSONException;
-
-import com.jayway.jsonpath.Configuration;
-import com.jayway.jsonpath.JsonPath;
-import com.jayway.jsonpath.Option;
 
 /**
  * @author albnale
@@ -68,7 +74,7 @@ public class DashboardDriver extends CockpitDriver {
 
 		Configuration conf = Configuration.builder().options(Option.DEFAULT_PATH_LEAF_TO_NULL).build();
 		List<String> catalogFunction = JsonPath.using(conf).parse(new String(contentTemplate)).read("$.widgets[*].columns[*].catalogFunctionId");
-		functionUuids.addAll(catalogFunction.stream().filter(Objects::nonNull).toList());
+		functionUuids.addAll(catalogFunction.stream().filter(Objects::nonNull).distinct().toList());
 
 		logger.debug("OUT");
 		return functionUuids;
