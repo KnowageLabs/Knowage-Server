@@ -56,9 +56,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		        	<input type="email" id="email" name="email" class="form-control smallerInput" ng-model="newUser.email" placeholder="<%=msgBuilder.getMessage("signup.form.email")%>" required>
 		        	<input type="password" id="password" name="password" class="form-control smallerInput" ng-model="newUser.password" placeholder="<%=msgBuilder.getMessage("signup.form.password")%>" required>
 		        	<input type="password" id="confirmPassword" name="confirmPassword" class="form-control smallerInput" ng-model="newUser.confirmPassword" placeholder="<%=msgBuilder.getMessage("signup.form.confirmpassword")%>" required>
-					<div id="sticky" class="captcha" style="background-image:url('<%=urlBuilder.getResourceLink(request, "stickyImg")%>');background-size: contain;"></div>
+					<div id="sticky" class="captcha" style="background-size: contain;"></div>
 					<input type="text" id="captcha" name="captcha" class="form-control smallerInput" ng-model="newUser.captcha" placeholder="<%=msgBuilder.getMessage("signup.form.captcha")%>" required>
-	
+					
+					<input type="hidden" id="content" name="content" ng-model="newUser.content">
+					
 	          		<button class="btn btn-lg btn-primary btn-block btn-signin" ng-click="register()" type="submit"><%=msgBuilder.getMessage("signup.form.register")%></button>
            		</form>
           			<button class="btn btn-lg btn-primary btn-block btn-signup" ng-click="goToLogin()"><%=msgBuilder.getMessage("login")%></button>
@@ -112,6 +114,24 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		  $window.location.href = '<%=urlBuilder.getResourceLink(request, "servlet/AdapterHTTP?PAGE=LoginPage&NEW_SESSION=TRUE")%>';
 		  
 	  }
+	  
+	  $scope.loadCaptcha = function() {
+		  fetch('captcha')
+			.then(response => response.json())
+			.then(data => {
+			  $scope.$apply(function() {
+				$scope.newUser.content = data.content;
+			  });
+			  
+			  document.getElementById('sticky').style.backgroundImage = "url('data:image/png;base64," + data.image + "')";
+			  document.getElementById('sticky').style.backgroundSize = "contain";
+
+			})
+			.catch(error => console.error('Errore nel recupero del captcha:', error));
+	 };
+	  
+	  $scope.loadCaptcha();
+	  
 	  $scope.register = function(){
 		  if($scope.signUpForm.$valid){
 			  if($scope.newUser.password != $scope.newUser.confirmPassword){
@@ -142,8 +162,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				  }
 				  
 				  // Reset the captcha
-				  angular.element(document.getElementById("sticky"))
-				  	.css("background-image", "url('<%= urlBuilder.getResourceLink(request, "stickyImg") %>?" + Math.random() + "')");
+				  $scope.loadCaptcha();
 				  $scope.newUser.captcha = "";
 				  
 			  });
