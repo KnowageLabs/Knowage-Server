@@ -4,5 +4,6 @@
 	<ResourceLink global="jdbc/ds_cache" name="jdbc/ds_cache" type="javax.sql.DataSource"/>
 	<ResourceLink global="hmacKey" name="hmacKey" type="java.lang.String"/>
 	<ResourceLink global="resource_path" name="resource_path" type="java.lang.String"/>
-	<ResourceLink global="service_url" name="service_url" type="java.lang.String"/> 
+	<ResourceLink global="logs_path" name="logs_path" type="java.lang.String"/>
+	<ResourceLink global="service_url" name="service_url" type="java.lang.String"/>
 </Context>
