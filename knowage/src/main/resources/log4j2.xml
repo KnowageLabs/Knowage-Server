@@ -4,7 +4,7 @@
              <RollingFile
                                 name="KNOWAGE_DATASET_AUDIT"
                                 append="true"
-                                filePattern="${sys:catalina.base}/logs/knowageDatasetAudit.%d{yyyy-MM-dd}.log"
+                                filePattern="${sys:catalina.base}/logs/$${ctx:tenant:-default}/knowageDatasetAudit.%d{yyyy-MM-dd}.log"
                                 ignoreExceptions="true"
                                 createOnDemand="true">
                         <PatternLayout>
@@ -32,7 +32,8 @@
                 <RollingFile
                                 name="KNOWAGE_CORE"
                                 append="true"
-                                filePattern="${sys:catalina.base}/logs/knowage.%d{yyyy-MM-dd}.log"
+                                fileName="${sys:catalina.base}/logs/$${ctx:tenant:-default}/knowage.log"
+                                filePattern="${sys:catalina.base}/logs/$${ctx:tenant:-default}/knowage.%d{yyyy-MM-dd}.log"
                                 ignoreExceptions="true"
                                 createOnDemand="true">
                         <PatternLayout>
