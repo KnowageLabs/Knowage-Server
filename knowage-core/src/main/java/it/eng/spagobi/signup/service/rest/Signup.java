@@ -17,14 +17,19 @@
  */
 package it.eng.spagobi.signup.service.rest;
 
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
+import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
@@ -79,6 +84,8 @@ import it.eng.spagobi.tenant.TenantManager;
 import it.eng.spagobi.user.UserProfileManager;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.themes.ThemesManager;
+import net.logicsquad.nanocaptcha.image.ImageCaptcha;
+import net.logicsquad.nanocaptcha.image.filter.FishEyeImageFilter;
 
 @Path("/signup")
 public class Signup {
@@ -414,15 +421,13 @@ public class Signup {
 
 		String strUseCaptcha = (signupDTO.getUseCaptcha() == null || signupDTO.getUseCaptcha().equals("")) ? "true" : signupDTO.getUseCaptcha();
 		boolean useCaptcha = Boolean.parseBoolean(strUseCaptcha);
-
 		try {
-			String contentCaptcha = (String) request.getSession().getAttribute("simpleCaptcha");
-
+			String contentCaptcha = signupDTO.getContent();
 			if (useCaptcha && captcha == null) {
 				LOGGER.error("empty captcha");
 				JSONObject errObj = buildErrorMessage(msgBuilder, locale, "signup.check.captchEmpty");
 				return Response.ok(errObj.toString()).build();
-			} else if (useCaptcha && !contentCaptcha.equals(captcha)) {
+			} else if (useCaptcha && !contentCaptcha.equals(Password.hashPassword(captcha))) {
 				LOGGER.error("Invalid captcha");
 				JSONObject errObj = buildErrorMessage(msgBuilder, locale, "signup.check.captchWrong");
 				return Response.ok(errObj.toString()).build();
@@ -612,6 +617,35 @@ public class Signup {
 		} catch (Exception e) {
 			throw new SpagoBIServiceException("An unexpected error occurred while executing the subscribe action", e);
 		}
+	}
+
+	@GET
+	@Produces(MediaType.APPLICATION_JSON)
+	@Path("/captcha")
+	@PublicService
+	public Response getCaptcha(@Context HttpServletRequest request) throws Exception {
+		int width = 200;
+		int height = 75;
+
+		ImageCaptcha imageCaptcha = new ImageCaptcha.Builder(width, height).addContent().addBackground().addFilter(new FishEyeImageFilter()).build();
+
+		BufferedImage image = imageCaptcha.getImage();
+		String content = imageCaptcha.getContent();
+
+		// Converti l'immagine in Base64
+		String base64Image;
+		try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
+			ImageIO.write(image, "png", baos);
+			base64Image = Base64.getEncoder().encodeToString(baos.toByteArray());
+		} catch (Exception e) {
+			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Errore nella generazione del captcha").build();
+		}
+
+		Map<String, String> response = new HashMap<>();
+		response.put("image", base64Image);
+		response.put("content", Password.hashPassword(content));
+
+		return Response.ok(response).build();
 	}
 
 	private void sendMail(String emailAddress, String subject, String emailContent) throws Exception {

@@ -33,16 +33,16 @@ public class SignupDTO {
 	@NoPunctation
 	@Xss
 	private String name;
-	
+
 	@NoPunctation
 	@Xss
 	private String surname;
-	
+
 	@PasswordValidation
 	@NotNull
 	@Xss
 	private String password;
-	
+
 	@EmailValidation
 	@Xss
 	private String email;
@@ -60,6 +60,7 @@ public class SignupDTO {
 	private String language;
 	private String useCaptcha;
 	private String captcha;
+	private String content;
 
 	@ExtendedAlphanumeric
 	@NotNull
@@ -178,6 +179,14 @@ public class SignupDTO {
 
 	public void setUseCaptcha(String useCaptcha) {
 		this.useCaptcha = useCaptcha;
+	}
+
+	public String getContent() {
+		return content;
+	}
+
+	public void setContent(String content) {
+		this.content = content;
 	}
 
 }

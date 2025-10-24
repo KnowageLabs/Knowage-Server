@@ -366,20 +366,6 @@
 	</servlet>
 	EXO -->
 
-	<servlet>
-		<servlet-name>StickyCaptcha</servlet-name>
-		<servlet-class>it.eng.spagobi.commons.services.KnowageCaptchaServlet</servlet-class>
-		<init-param>
-			<param-name>captcha-width</param-name>
-			<param-value>250</param-value>
-		</init-param>
-		<init-param>
-			<param-name>captcha-height</param-name>
-			<param-value>75</param-value>
-		</init-param>
-
-	</servlet>
-
 	<!-- START SERVLET MAPPINGS -->
 
 	<!-- START-LIFERAY
@@ -388,11 +374,6 @@
 		<url-pattern>/PortletWrapper</url-pattern>
 	</servlet-mapping>
 	END-LIFERAY -->
-
-	<servlet-mapping>
-		<servlet-name>StickyCaptcha</servlet-name>
-		<url-pattern>/stickyImg</url-pattern>
-	</servlet-mapping>
 
 	<servlet-mapping>
 		<servlet-name>ChangePwdServlet</servlet-name>
