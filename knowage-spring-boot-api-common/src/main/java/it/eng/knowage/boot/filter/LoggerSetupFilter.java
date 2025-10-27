@@ -35,6 +35,7 @@ public class LoggerSetupFilter implements Filter {
 
 	private static final String THREAD_CONTEXT_KEY_CORRELATION_ID = "correlationId";
 	private static final String THREAD_CONTEXT_KEY_ENVIRONMENT = "environment";
+    private static final String THREAD_CONTEXT_KEY_TENANT = "tenant";
 
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
@@ -74,7 +75,7 @@ public class LoggerSetupFilter implements Filter {
 			}
 
 			ThreadContext.put(THREAD_CONTEXT_KEY_ENVIRONMENT, header);
-
+            ThreadContext.put(THREAD_CONTEXT_KEY_TENANT, header);
 		}
 	}
 
@@ -114,11 +115,11 @@ public class LoggerSetupFilter implements Filter {
 
 	private void postDoFilterForTenant() {
 		ThreadContext.remove(THREAD_CONTEXT_KEY_ENVIRONMENT);
+        ThreadContext.remove(THREAD_CONTEXT_KEY_TENANT);
 	}
 
 	private void postDoFilterForCorrelationId() {
 		ThreadContext.remove(THREAD_CONTEXT_KEY_CORRELATION_ID);
 		// remove THREAD_CONTEXT_KEY_JSESSION_ID here before
 	}
-
 }
