@@ -10,6 +10,7 @@ import it.eng.knowage.resourcemanager.log.dto.LogFolderDTO;
 import it.eng.spagobi.services.security.SpagoBIUserProfile;
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
+import org.apache.logging.log4j.ThreadContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -33,6 +34,9 @@ public class LogManagerAPIImpl implements LogManagerAPI {
 
     private static final String LOG_FUNCTIONALITY_DEV = "LogManagementDev";
     private static final String LOG_FUNCTIONALITY = "LogManagement";
+    private static final String TREAD_CONTEXT_KEY_TENANT = "tenant";
+    private static final String DEFAULT_TENANT = "default";
+
 
     @Autowired
     HMACUtilities hmacUtilities;
@@ -81,12 +85,21 @@ public class LogManagerAPIImpl implements LogManagerAPI {
 
     public Path getWorkDirectory(SpagoBIUserProfile profile) throws IOException {
         String logPathBase = ContextPropertiesConfig.getLogPath();
-        Path totalPath = Paths.get(logPathBase);
+        String tenant = resolveTenant(profile);
+        Path totalPath = Paths.get(logPathBase, tenant);
         if (!Files.isDirectory(totalPath)) {
-            LOGGER.info("The log folder is missing. It will be created now.");
+            LOGGER.info("The log folder is missing for tenant [" + tenant + "]. It will be created now.");
             Files.createDirectories(totalPath);
         }
         return totalPath;
+    }
+
+    private String resolveTenant(SpagoBIUserProfile profile) {
+        String tenant = ThreadContext.get(TREAD_CONTEXT_KEY_TENANT);
+        if (tenant == null || tenant.trim().isEmpty()) {
+            tenant = DEFAULT_TENANT;
+        }
+        return tenant;
     }
 
     private LogFolderDTO createTree(LogFolderDTO parentFolder, SpagoBIUserProfile profile, String currentRelativePath) throws IOException {
@@ -95,17 +108,19 @@ public class LogManagerAPIImpl implements LogManagerAPI {
 
         if (nodeLog.isDirectory() && canSee(node, profile)) {
             String[] subNote = nodeLog.list();
-            for (String logName : subNote) {
-                Path path = node.resolve(logName);
-                if (Files.isDirectory(path)) {
-                    LogFolderDTO folder = new LogFolderDTO(path);
-                    folder.setKey(hmacUtilities.getKeyHashedValue(path.toString()));
+            if (subNote != null) {
+                for (String logName : subNote) {
+                    Path path = node.resolve(logName);
+                    if (Files.isDirectory(path)) {
+                        LogFolderDTO folder = new LogFolderDTO(path);
+                        folder.setKey(hmacUtilities.getKeyHashedValue(path.toString()));
 
-                    String relativePath = Paths.get(currentRelativePath).resolve(logName).toString();
-                    folder.setRelativePath(relativePath);
+                        String relativePath = Paths.get(currentRelativePath).resolve(logName).toString();
+                        folder.setRelativePath(relativePath);
 
-                    parentFolder.addChildren(folder);
-                    createTree(folder, profile, relativePath);
+                        parentFolder.addChildren(folder);
+                        createTree(folder, profile, relativePath);
+                    }
                 }
             }
         }
@@ -117,7 +132,9 @@ public class LogManagerAPIImpl implements LogManagerAPI {
         if (profile.isIsSuperadmin()) {
             return true;
         }
-        return hasAdministratorFunction(profile);
+        Path tenantRoot = getWorkDirectory(profile).normalize();
+        Path target = path.normalize();
+        return target.startsWith(tenantRoot) && hasAdministratorFunction(profile);
     }
 
     // Admin functionalities, EE and CE
@@ -131,16 +148,14 @@ public class LogManagerAPIImpl implements LogManagerAPI {
     }
 
     @Override
-    public Path getDownloadFolderPath(String key, String path, SpagoBIUserProfile profile)
-            throws ImpossibleToCreateFileException {
-        Path workingPath = null;
+    public Path getDownloadFolderPath(String key, String path, SpagoBIUserProfile profile) throws ImpossibleToCreateFileException {
         Path pathToReturn = null;
         try {
             Path workDirr = getFullRootByPath(path, profile);
             if (canSee(workDirr, profile)) {
-                Path workDir = getWorkDirectory(profile);
-                workingPath = workDir.resolve(path);
-                pathToReturn = createZipFile(workingPath);
+                pathToReturn = createZipFile(workDirr);
+            } else {
+                throw new ImpossibleToCreateFileException("Access denied to log folder " + path + " for download");
             }
         } catch (Exception e) {
             throw new ImpossibleToCreateFileException(e.getMessage(), e);
@@ -186,8 +201,7 @@ public class LogManagerAPIImpl implements LogManagerAPI {
         try {
             Path totalPath = getTotalPath(relativePath, profile);
             File folder = totalPath.toFile();
-            Path workDir = getWorkDirectory(profile);
-            if (canSee(workDir, profile)) {
+            if (canSee(totalPath, profile)) {
                 File[] listOfLogs = folder.listFiles();
                 if (listOfLogs != null) {
                     for (File l : listOfLogs) {
@@ -197,6 +211,8 @@ public class LogManagerAPIImpl implements LogManagerAPI {
                         }
                     }
                 }
+            } else {
+                throw new ImpossibleToReadFilesListException("Access denied to log folder " + relativePath);
             }
         } catch (Exception e) {
             throw new ImpossibleToReadFilesListException(e.getMessage(), e);
@@ -205,7 +221,12 @@ public class LogManagerAPIImpl implements LogManagerAPI {
     }
 
     public Path getTotalPath(String path, SpagoBIUserProfile profile) throws IOException {
-        return getWorkDirectory(profile).resolve(path);
+        Path workDir = getWorkDirectory(profile).normalize();
+        Path resolved = workDir.resolve(path == null || path.isEmpty() ? "" : path).normalize();
+        if (!resolved.startsWith(workDir)) {
+            throw new IOException("Access denied: resolved path is outside tenant root");
+        }
+        return resolved;
     }
 
     public Path createZipFile(Path fullPath) {
@@ -297,8 +318,7 @@ public class LogManagerAPIImpl implements LogManagerAPI {
     @Override
     public String getLogContent(String logName, SpagoBIUserProfile profile) throws ImpossibleToReadFilesListException {
         try {
-            Path logDir = getWorkDirectory(profile);
-            Path logFile = logDir.resolve(logName);
+            Path logFile = getTotalPath(logName, profile);
             if (!Files.isRegularFile(logFile)) {
                 throw new ImpossibleToReadFilesListException("The log file " + logName + " does not exist.");
             }
