@@ -5,6 +5,7 @@ import it.eng.knowage.boot.error.KnowageBusinessException;
 import it.eng.knowage.boot.error.KnowageRuntimeException;
 import it.eng.knowage.resourcemanager.log.dto.DownloadLogFilesDTO;
 import it.eng.knowage.resourcemanager.log.dto.LogFileDTO;
+import it.eng.knowage.resourcemanager.log.dto.LogFolderDTO;
 import it.eng.knowage.resourcemanager.log.service.LogManagerAPI;
 import it.eng.spagobi.services.security.SpagoBIUserProfile;
 import org.apache.log4j.Logger;
@@ -39,9 +40,33 @@ public class LogsResource {
     private static final Logger LOGGER = Logger.getLogger(LogsResource.class);
 
     @GET
-    @Path("/")
+    @Path("/folders")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<LogFileDTO> getLogs() throws KnowageBusinessException {
+    public LogFolderDTO getLogFolders() throws KnowageBusinessException {
+        SpagoBIUserProfile profile = businessContext.getUserProfile();
+        try {
+            return logManagerAPIservice.getFolders(profile);
+        } catch (Exception e) {
+            throw new KnowageRuntimeException(e);
+        }
+    }
+
+    @GET
+    @Path("/folders/{folder}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<LogFileDTO> getLogs(@PathParam("folder") String folder) throws KnowageBusinessException {
+        SpagoBIUserProfile profile = businessContext.getUserProfile();
+        try {
+            return logManagerAPIservice.getListOfLogs(folder, profile);
+        } catch (Exception e) {
+            throw new KnowageRuntimeException(e);
+        }
+    }
+
+    @GET
+    @Path("/root")
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<LogFileDTO> getRootLogs() throws KnowageBusinessException {
         SpagoBIUserProfile profile = businessContext.getUserProfile();
         try {
             return logManagerAPIservice.getListOfLogs("", profile);
