@@ -4,7 +4,8 @@
                 <RollingFile
                                 name="KNOWAGE_COCKPIT_ENGINE"
                                 append="true"
-                                filePattern="${sys:catalina.base}/logs/knowageCockpitEngine.%d{yyyy-MM-dd}.log"
+                                fileName="${sys:catalina.base}/logs/$${ctx:tenant:-default}/knowageCockpitEngine.log"
+                                filePattern="${sys:catalina.base}/logs/$${ctx:tenant:-default}/knowageCockpitEngine.%d{yyyy-MM-dd}.log"
                                 ignoreExceptions="true"
                                 createOnDemand="true">
                         <PatternLayout>

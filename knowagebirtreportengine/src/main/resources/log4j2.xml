@@ -4,7 +4,8 @@
 		        <RollingFile
                                 name="KNOWAGE_BIRT_REPORT_ENGINE"
                                 append="true"
-                                filePattern="${sys:catalina.base}/logs/knowageBirtReportEngine.%d{yyyy-MM-dd}.log"
+                                fileName="${sys:catalina.base}/logs/$${ctx:tenant:-default}/knowageBirtReportEngine.log"
+                                filePattern="${sys:catalina.base}/logs/$${ctx:tenant:-default}/knowageBirtReportEngine.%d{yyyy-MM-dd}.log"
                                 ignoreExceptions="true"
                                 createOnDemand="true">
                         <PatternLayout>
