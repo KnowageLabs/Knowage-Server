@@ -208,6 +208,7 @@ public class ExcelExportJob extends AbstractExportJob {
 											}
 
 										} else {
+											value = value.toString().trim();
 											cell.setCellValue(value.toString());
 											cell.setCellStyle(borderStyleRow);
 										}

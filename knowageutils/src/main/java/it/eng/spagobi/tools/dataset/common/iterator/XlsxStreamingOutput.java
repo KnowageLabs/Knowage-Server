@@ -293,6 +293,7 @@ public class XlsxStreamingOutput implements StreamingOutput {
 					} else if (String.class.isAssignableFrom(c)) {
 						logger.debug("Column [" + (fieldIndex + 1) + "] type is equal to [" + "STRING" + "]");
 						String val = (String) f.getValue();
+						val = val.trim();
 						cell.setCellValue(createHelper.createRichTextString(val));
 						cell.setCellType(this.getCellTypeString());
 					} else if (Boolean.class.isAssignableFrom(c)) {
