@@ -4,7 +4,8 @@
 	                <RollingFile
                                 name="KNOWAGE_META"
                                 append="true"
-                                filePattern="${sys:catalina.base}/logs/knowageMeta.%d{yyyy-MM-dd}.log"
+                                fileName="${sys:catalina.base}/logs/$${ctx:tenant:-default}/knowageMeta.log"
+                                filePattern="${sys:catalina.base}/logs/$${ctx:tenant:-default}/knowageMeta.%d{yyyy-MM-dd}.log"
                                 ignoreExceptions="true"
                                 createOnDemand="true">
                         <PatternLayout>

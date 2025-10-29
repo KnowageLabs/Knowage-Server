@@ -10,7 +10,8 @@
 		                <RollingFile
                                 name="KNOWAGE_WHAT_IF_ENGINE"
                                 append="true"
-                                filePattern="${sys:catalina.base}/logs/knowageWhatIfEngine.%d{yyyy-MM-dd}.log"
+                                fileName="${sys:catalina.base}/logs/$${ctx:tenant:-default}/knowageWhatIfEngine.log"
+                                filePattern="${sys:catalina.base}/logs/$${ctx:tenant:-default}/knowageWhatIfEngine.%d{yyyy-MM-dd}.log"
                                 ignoreExceptions="true"
                                 createOnDemand="true">
                         <PatternLayout>
@@ -24,7 +25,8 @@
 		                <RollingFile
                                 name="KNOWAGE_WHAT_IF_ENGINE_STACK_AUDIT"
                                 append="true"
-                                filePattern="${sys:catalina.base}/logs/knowageWhatIfEngineStackAudit.%d{yyyy-MM-dd}.log"
+                                fileName="${sys:catalina.base}/logs/$${ctx:tenant:-default}/knowageWhatIfEngineStackAudit.log"
+                                filePattern="${sys:catalina.base}/logs/$${ctx:tenant:-default}/knowageWhatIfEngineStackAudit.%d{yyyy-MM-dd}.log"
                                 ignoreExceptions="true"
                                 createOnDemand="true">
                         <PatternLayout>

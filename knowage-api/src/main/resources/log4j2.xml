@@ -4,7 +4,8 @@
 		        <RollingFile
                                 name="KNOWAGE_API"
                                 append="true"
-                                filePattern="${sys:catalina.base}/logs/knowageApi.%d{yyyy-MM-dd}.log"
+                                fileName="${sys:catalina.base}/logs/$${ctx:tenant:-default}/knowageApi.log"
+                                filePattern="${sys:catalina.base}/logs/$${ctx:tenant:-default}/knowageApi.%d{yyyy-MM-dd}.log"
                                 ignoreExceptions="true"
                                 createOnDemand="true">
                         <PatternLayout>

@@ -4,7 +4,8 @@
 		        <RollingFile
                                 name="KNOWAGE_QBE_ENGINE"
                                 append="true"
-                                filePattern="${sys:catalina.base}/logs/knowageQbeEngine.%d{yyyy-MM-dd}.log"
+                                fileName="${sys:catalina.base}/logs/$${ctx:tenant:-default}/knowageQbeEngine.log"
+                                filePattern="${sys:catalina.base}/logs/$${ctx:tenant:-default}/knowageQbeEngine.%d{yyyy-MM-dd}.log"
                                 ignoreExceptions="true"
                                 createOnDemand="true">
                         <PatternLayout>
@@ -18,7 +19,8 @@
 				<RollingFile
                                 name="KNOWAGE_QBE_ENGINE_AUDIT"
                                 append="true"
-                                filePattern="${sys:catalina.base}/logs/knowageQbeAudit.%d{yyyy-MM-dd}.log"
+                                fileName="${sys:catalina.base}/logs/$${ctx:tenant:-default}/knowageQbeAudit.log"
+                                filePattern="${sys:catalina.base}/logs/$${ctx:tenant:-default}/knowageQbeAudit.%d{yyyy-MM-dd}.log"
                                 ignoreExceptions="true"
                                 createOnDemand="true">
                         <PatternLayout>
