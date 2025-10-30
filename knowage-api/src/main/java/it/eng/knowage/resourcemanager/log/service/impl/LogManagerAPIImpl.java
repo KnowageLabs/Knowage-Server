@@ -181,8 +181,6 @@ public class LogManagerAPIImpl implements LogManagerAPI {
         return getTotalPath(rootElement, profile);
     }
 
-
-
     private LogFolderDTO findNode(LogFolderDTO node, String key) {
         LogFolderDTO toReturn = null;
         if (node.getKey().equals(key))
@@ -331,6 +329,33 @@ public class LogManagerAPIImpl implements LogManagerAPI {
             return new String(Files.readAllBytes(logFile));
         } catch (Exception e) {
             throw new ImpossibleToReadFilesListException(e.getMessage(), e);
+        }
+    }
+
+    @Override
+    public Optional<java.nio.file.Path> findFileRecursively(java.nio.file.Path root, String fileName) {
+        try (Stream<java.nio.file.Path> walk = Files.walk(root)) {
+            return walk.filter(Files::isRegularFile)
+                    .filter(p -> p.getFileName().toString().equals(fileName))
+                    .findFirst();
+        } catch (IOException e) {
+            LOGGER.debug("Error searching file recursively: " + fileName, e);
+            return Optional.empty();
+        }
+    }
+
+    @Override
+    public void addFileToZip(java.nio.file.Path source, String entryName, ZipOutputStream zos) throws IOException {
+        ZipEntry entry = new ZipEntry(entryName);
+        zos.putNextEntry(entry);
+        try (InputStream in = Files.newInputStream(source)) {
+            byte[] buf = new byte[8192];
+            int read;
+            while ((read = in.read(buf)) > 0) {
+                zos.write(buf, 0, read);
+            }
+        } finally {
+            zos.closeEntry();
         }
     }
 }
