@@ -9,6 +9,8 @@ import it.eng.spagobi.services.security.SpagoBIUserProfile;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Optional;
+import java.util.zip.ZipOutputStream;
 
 // per elencare, cercare e scaricare i file di log da Tomcat
 public interface LogManagerAPI {
@@ -44,4 +46,9 @@ public interface LogManagerAPI {
      * Ritorna il Path completo (workDir + relativePath) della root predefinita)
      */
     Path getDefaultFolderPath(SpagoBIUserProfile profile) throws ImpossibleToReadFolderListException;
+
+
+    Optional<Path> findFileRecursively(java.nio.file.Path root, String fileName);
+
+    void addFileToZip(java.nio.file.Path source, String entryName, ZipOutputStream zos) throws IOException;
 }
