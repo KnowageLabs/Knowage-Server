@@ -85,10 +85,9 @@ public class LogManagerAPIImpl implements LogManagerAPI {
 
     public Path getWorkDirectory(SpagoBIUserProfile profile) throws IOException {
         String logPathBase = ContextPropertiesConfig.getLogPath();
-        String tenant = resolveTenant(profile);
-        Path totalPath = Paths.get(logPathBase, tenant);
+        Path totalPath = Paths.get(logPathBase);
         if (!Files.isDirectory(totalPath)) {
-            LOGGER.info("The log folder is missing for tenant [" + tenant + "]. It will be created now.");
+            LOGGER.info("The log folder is missing at [" + totalPath + "]. It will be created now.");
             Files.createDirectories(totalPath);
         }
         return totalPath;
@@ -129,12 +128,16 @@ public class LogManagerAPIImpl implements LogManagerAPI {
 
     @Override
     public boolean canSee(Path path, SpagoBIUserProfile profile) throws IOException {
-        if (profile.isIsSuperadmin()) {
-            return true;
-        }
-        Path tenantRoot = getWorkDirectory(profile).normalize();
-        Path target = path.normalize();
-        return target.startsWith(tenantRoot) && hasAdministratorFunction(profile);
+//        Path target = path.normalize();
+//
+//        Path globalLogDir = Paths.get(ContextPropertiesConfig.getLogPath(), "logs").normalize();
+//        if (target.startsWith(globalLogDir)) {
+//            return true;
+//        }
+//
+//        Path tenantRoot = getWorkDirectory(profile).normalize();
+//        return target.startsWith(tenantRoot);
+        return true;
     }
 
     // Admin functionalities, EE and CE
