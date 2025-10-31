@@ -4,7 +4,7 @@
              <RollingFile
                                 name="KNOWAGE_DATASET_AUDIT"
                                 append="true"
-                                filePattern="${sys:catalina.base}/logs/$${ctx:tenant:-default}/knowageDatasetAudit.%d{yyyy-MM-dd}.log"
+                                filePattern="${sys:catalina.base}/logs/$${ctx:tenant:-global}/knowageDatasetAudit-$${ctx:tenant:-global}.%d{yyyy-MM-dd}.log"
                                 ignoreExceptions="true"
                                 createOnDemand="true">
                         <PatternLayout>
@@ -18,7 +18,7 @@
                 <RollingFile
                                 name="KNOWAGE_HIERARCHIES"
                                 append="true"
-                                filePattern="${sys:catalina.base}/logs/$${ctx:tenant:-default}/knowageHiearchies.%d{yyyy-MM-dd}.log"
+                                filePattern="${sys:catalina.base}/logs/$${ctx:tenant:-global}/knowageHiearchies-$${ctx:tenant:-global}.%d{yyyy-MM-dd}.log"
                                 ignoreExceptions="true"
                                 createOnDemand="true">
                         <PatternLayout>
@@ -32,7 +32,7 @@
                 <RollingFile
                                 name="KNOWAGE_CORE"
                                 append="true"
-                                filePattern="${sys:catalina.base}/logs/$${ctx:tenant:-default}/knowage.%d{yyyy-MM-dd}.log"
+                                filePattern="${sys:catalina.base}/logs/$${ctx:tenant:-global}/knowage-$${ctx:tenant:-global}.%d{yyyy-MM-dd}.log"
                                 ignoreExceptions="true"
                                 createOnDemand="true">
                         <PatternLayout>
@@ -46,7 +46,7 @@
                 <RollingFile
                                 name="KNOWAGE_RESOURCE_EXPORT_FOLDER_CLEANING_MANAGER"
                                 append="true"
-                                filePattern="${sys:catalina.base}/logs/$${ctx:tenant:-default}/knowageResourceExportFolderCleaningManager.%d{yyyy-MM-dd}.log"
+                                filePattern="${sys:catalina.base}/logs/$${ctx:tenant:-global}/knowageResourceExportFolderCleaningManager-$${ctx:tenant:-global}.%d{yyyy-MM-dd}.log"
                                 ignoreExceptions="true"
                                 createOnDemand="true">
                         <PatternLayout>
@@ -60,7 +60,7 @@
                 <RollingFile
                                 name="KNOWAGE_SERVER_MANAGER"
                                 append="true"
-                                filePattern="${sys:catalina.base}/logs/$${ctx:tenant:-default}/knowageServerManager.%d{yyyy-MM-dd}.log"
+                                filePattern="${sys:catalina.base}/logs/$${ctx:tenant:-global}/knowageServerManager-$${ctx:tenant:-global}.%d{yyyy-MM-dd}.log"
                                 ignoreExceptions="true"
                                 createOnDemand="true">
                         <PatternLayout>
@@ -74,7 +74,7 @@
                 <RollingFile
                                 name="KNOWAGE_QUARTZ"
                                 append="true"
-                                filePattern="${sys:catalina.base}/logs/$${ctx:tenant:-default}/knowageQuartz.%d{yyyy-MM-dd}.log"
+                                filePattern="${sys:catalina.base}/logs/$${ctx:tenant:-global}/knowageQuartz-$${ctx:tenant:-global}.%d{yyyy-MM-dd}.log"
                                 ignoreExceptions="true"
                                 createOnDemand="true">
                         <PatternLayout>
@@ -88,7 +88,7 @@
                 <RollingFile
                                 name="KNOWAGE_OPERATOR_TRACE"
                                 append="true"
-                                filePattern="${sys:catalina.base}/logs/$${ctx:tenant:-default}/knowage_OperatorTrace.%d{yyyy-MM-dd}.log"
+                                filePattern="${sys:catalina.base}/logs/$${ctx:tenant:-global}/knowage_OperatorTrace-$${ctx:tenant:-global}.%d{yyyy-MM-dd}.log"
                                 ignoreExceptions="true"
                                 createOnDemand="true">
                         <PatternLayout>

@@ -9,7 +9,7 @@
 		<RollingFile
 				name="KNOWAGE_TALEND_ENGINE"
                 append="true"
-				filePattern="${sys:catalina.base}/logs/$${ctx:tenant:-default}/knowageTalendEngine-%i.log"
+				filePattern="${sys:catalina.base}/logs/$${ctx:tenant:-global}/knowageTalendEngine-$${ctx:tenant:-global}-%i.log"
 				ignoreExceptions="false"
 				createOnDemand="true">
 			<PatternLayout>
