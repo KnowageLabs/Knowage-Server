@@ -4,7 +4,6 @@
              <RollingFile
                                 name="KNOWAGE_DATASET_AUDIT"
                                 append="true"
-                                fileName="${sys:catalina.base}/logs/$${ctx:tenant:-default}/knowageDatasetAudit.log"
                                 filePattern="${sys:catalina.base}/logs/$${ctx:tenant:-default}/knowageDatasetAudit.%d{yyyy-MM-dd}.log"
                                 ignoreExceptions="true"
                                 createOnDemand="true">
@@ -19,7 +18,6 @@
                 <RollingFile
                                 name="KNOWAGE_HIERARCHIES"
                                 append="true"
-                                fileName="${sys:catalina.base}/logs/$${ctx:tenant:-default}/knowageHiearchies.log"
                                 filePattern="${sys:catalina.base}/logs/$${ctx:tenant:-default}/knowageHiearchies.%d{yyyy-MM-dd}.log"
                                 ignoreExceptions="true"
                                 createOnDemand="true">
@@ -34,7 +32,6 @@
                 <RollingFile
                                 name="KNOWAGE_CORE"
                                 append="true"
-                                fileName="${sys:catalina.base}/logs/$${ctx:tenant:-default}/knowage.log"
                                 filePattern="${sys:catalina.base}/logs/$${ctx:tenant:-default}/knowage.%d{yyyy-MM-dd}.log"
                                 ignoreExceptions="true"
                                 createOnDemand="true">
@@ -49,7 +46,6 @@
                 <RollingFile
                                 name="KNOWAGE_RESOURCE_EXPORT_FOLDER_CLEANING_MANAGER"
                                 append="true"
-                                fileName="${sys:catalina.base}/logs/$${ctx:tenant:-default}/knowageResourceExportFolderCleaningManager.log"
                                 filePattern="${sys:catalina.base}/logs/$${ctx:tenant:-default}/knowageResourceExportFolderCleaningManager.%d{yyyy-MM-dd}.log"
                                 ignoreExceptions="true"
                                 createOnDemand="true">
@@ -64,7 +60,6 @@
                 <RollingFile
                                 name="KNOWAGE_SERVER_MANAGER"
                                 append="true"
-                                fileName="${sys:catalina.base}/logs/$${ctx:tenant:-default}/knowageServerManager.log"
                                 filePattern="${sys:catalina.base}/logs/$${ctx:tenant:-default}/knowageServerManager.%d{yyyy-MM-dd}.log"
                                 ignoreExceptions="true"
                                 createOnDemand="true">
@@ -79,7 +74,6 @@
                 <RollingFile
                                 name="KNOWAGE_QUARTZ"
                                 append="true"
-                                fileName="${sys:catalina.base}/logs/$${ctx:tenant:-default}/knowageQuartz.log"
                                 filePattern="${sys:catalina.base}/logs/$${ctx:tenant:-default}/knowageQuartz.%d{yyyy-MM-dd}.log"
                                 ignoreExceptions="true"
                                 createOnDemand="true">
@@ -94,7 +88,6 @@
                 <RollingFile
                                 name="KNOWAGE_OPERATOR_TRACE"
                                 append="true"
-                                fileName="${sys:catalina.base}/logs/$${ctx:tenant:-default}/knowage_OperatorTrace.log"
                                 filePattern="${sys:catalina.base}/logs/$${ctx:tenant:-default}/knowage_OperatorTrace.%d{yyyy-MM-dd}.log"
                                 ignoreExceptions="true"
                                 createOnDemand="true">
