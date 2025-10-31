@@ -9,7 +9,7 @@
 		<RollingFile
 				name="KNOWAGE_VUE"
                 append="true"
-				filePattern="${sys:catalina.base}/logs/$${ctx:tenant:-default}/knowageVue-%i.log"
+				filePattern="${sys:catalina.base}/logs/$${ctx:tenant:-global}/knowageVue-$${ctx:tenant:-global}-%i.log"
 				ignoreExceptions="false"
 				createOnDemand="true">
 			<PatternLayout>

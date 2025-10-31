@@ -4,7 +4,7 @@
                 <RollingFile
                                 name="KNOWAGE_KPI_ENGINE"
                                 append="true"
-                                filePattern="${sys:catalina.base}/logs/$${ctx:tenant:-default}/knowageKpiEngine.%d{yyyy-MM-dd}.log"
+                                filePattern="${sys:catalina.base}/logs/$${ctx:tenant:-global}/knowageKpiEngine-$${ctx:tenant:-global}.%d{yyyy-MM-dd}.log"
                                 ignoreExceptions="true"
                                 createOnDemand="true">
                         <PatternLayout>
