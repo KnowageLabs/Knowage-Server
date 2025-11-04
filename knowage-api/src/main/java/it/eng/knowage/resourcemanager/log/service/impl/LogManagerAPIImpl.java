@@ -19,6 +19,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
+import java.util.function.Predicate;
 import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -35,7 +36,7 @@ public class LogManagerAPIImpl implements LogManagerAPI {
     private static final String LOG_FUNCTIONALITY_DEV = "LogManagementDev";
     private static final String LOG_FUNCTIONALITY = "LogManagement";
     private static final String TREAD_CONTEXT_KEY_TENANT = "tenant";
-    private static final String DEFAULT_TENANT = "default";
+    private static final String DEFAULT_TENANT = "global";
 
 
     @Autowired
@@ -110,7 +111,7 @@ public class LogManagerAPIImpl implements LogManagerAPI {
             if (subNote != null) {
                 for (String logName : subNote) {
                     Path path = node.resolve(logName);
-                    if (Files.isDirectory(path)) {
+                    if (Files.isDirectory(path) && canSee(path, profile)) {
                         LogFolderDTO folder = new LogFolderDTO(path);
                         folder.setKey(hmacUtilities.getKeyHashedValue(path.toString()));
 
@@ -126,19 +127,99 @@ public class LogManagerAPIImpl implements LogManagerAPI {
         return parentFolder;
     }
 
+/// USE THIS COMMENTED METHOD TO TEST MANUALLY THE LOG MANAGER WITH ALL ROLES
+/// REMEMBER TO REVERT TO THE ORIGINAL METHOD BEFORE COMMITTING
+
+/// ADMIN canSee METHOD HAS List<String> adminTenants THAT NEED TO BE FILLED MANUALLY TO WORK PROPERLY
+
+    /// canSee always true to test manually all functionalities
     @Override
     public boolean canSee(Path path, SpagoBIUserProfile profile) throws IOException {
-//        Path target = path.normalize();
-//
-//        Path globalLogDir = Paths.get(ContextPropertiesConfig.getLogPath(), "logs").normalize();
-//        if (target.startsWith(globalLogDir)) {
-//            return true;
-//        }
-//
-//        Path tenantRoot = getWorkDirectory(profile).normalize();
-//        return target.startsWith(tenantRoot);
         return true;
     }
+
+    /// canSee to test manually superadmin functionalities
+//    @Override
+//    public boolean canSee(Path path, SpagoBIUserProfile profile) {
+//        Path baseLogPath = Paths.get(ContextPropertiesConfig.getLogPath()).normalize();
+//        Path rootLogs = baseLogPath.resolve("logs").normalize();
+//        Path target = path.normalize();
+//
+//        if (Files.exists(rootLogs) && Files.isDirectory(rootLogs)) {
+//            return target.startsWith(rootLogs);
+//        }
+//
+//        return target.startsWith(baseLogPath);
+//    }
+
+    /// canSee to test manually admin functionalities
+//    @Override
+//    public boolean canSee(Path path, SpagoBIUserProfile profile) throws IOException {
+//        List<String> adminTenants = new ArrayList<String>();
+//        // adminTenants popolati per test; in produzione dovrebbero venire da profilo/config
+//        adminTenants.add("OLD_LOGS");
+//
+//        Path baseLogPath = Paths.get(ContextPropertiesConfig.getLogPath()).normalize();
+//        Path logsRoot = baseLogPath.resolve("logs").normalize();
+//        Path target = path.normalize();
+//
+//        Predicate<Path> checkAgainstRoot = (root) -> {
+//            if (!target.startsWith(root)) {
+//                return false;
+//            }
+//            Path relative = root.relativize(target);
+//            int nameCount = relative.getNameCount();
+//
+//            // root itself
+//            if (nameCount == 0) {
+//                return true;
+//            }
+//
+//            // elemento direttamente sotto root (es. <root>/file.log o <root>/someDir)
+//            if (nameCount == 1) {
+//                // file direttamente sotto root: consentito (requisito 1)
+//                if (Files.isRegularFile(target)) {
+//                    return true;
+//                }
+//                // directory direttamente sotto root:
+//                String first = relative.getName(0).toString();
+//                // sottocartella che raggruppa file non classificabili: consentita (requisito 2)
+//                if (DEFAULT_TENANT.equals(first)) {
+//                    return true;
+//                }
+//                // sottocartelle il cui tenant è presente in adminTenants: consentite (requisito 4)
+//                if (adminTenants != null && adminTenants.contains(first)) {
+//                    return true;
+//                }
+//                return false;
+//            }
+//
+//            // percorsi più profondi: consentiti solo se il primo segmento è 'default' (requisito 3)
+//            // o è uno dei tenant in adminTenants (requisito 5)
+//            String first = relative.getName(0).toString();
+//            if (DEFAULT_TENANT.equals(first)) {
+//                return true;
+//            }
+//            return adminTenants != null && adminTenants.contains(first);
+//        };
+//
+//        if (Files.exists(logsRoot) && Files.isDirectory(logsRoot)) {
+//            if (target.equals(baseLogPath)) {
+//                return true;
+//            }
+//            // prima prova contro logsRoot
+//            if (checkAgainstRoot.test(logsRoot)) {
+//                return true;
+//            }
+//            // fallback: se non è sotto logsRoot, prova anche contro baseLogPath (consente file direttamente in baseLogPath)
+//            return checkAgainstRoot.test(baseLogPath);
+//        }
+//
+//        if (target.equals(baseLogPath)) {
+//            return true;
+//        }
+//        return checkAgainstRoot.test(baseLogPath);
+//    }
 
     // Admin functionalities, EE and CE
     public static boolean hasAdministratorFunction(SpagoBIUserProfile profile) {
@@ -259,16 +340,72 @@ public class LogManagerAPIImpl implements LogManagerAPI {
             Path tempDirectory = Files.createTempDirectory("knowage-zip");
             Path tempLog = Files.createTempFile("knowage-zip", ".zip");
 
-            File logDest = new File(tempDirectory.toString());
-            for (String path : fullPaths) {
-                Path workDir = getTotalPath(path, profile);
-                FileUtils.copyFileToDirectory(workDir.toFile(), logDest);
+            Path workDir = getWorkDirectory(profile).normalize();
+
+            File logDestRoot = new File(tempDirectory.toString());
+
+            for (String rawPath : fullPaths) {
+                if (rawPath == null || rawPath.trim().isEmpty()) {
+                    continue;
+                }
+                String requested = rawPath.trim();
+
+                try {
+                    Path source = null;
+
+                    // se contiene separatori viene considerato un percorso relativo (es. TENANT_1/app.log)
+                    if (requested.contains("/") || requested.contains("\\")) {
+                        source = getTotalPath(requested, profile);
+                        if (!Files.exists(source) || !Files.isRegularFile(source)) {
+                            LOGGER.debug("File not found: " + requested + " (skipping)");
+                            continue;
+                        }
+                    } else {
+                        // prima prova il file direttamente sotto workDir
+                        Path candidate = workDir.resolve(requested).normalize();
+                        if (Files.exists(candidate) && Files.isRegularFile(candidate)) {
+                            source = candidate;
+                        } else {
+                            // fallback: cerca ricorsivamente per nome file
+                            Optional<Path> found = findFileRecursively(workDir, requested);
+                            if (found.isPresent()) {
+                                source = found.get();
+                            } else {
+                                LOGGER.debug("File not found: " + requested + " (skipping)");
+                                continue;
+                            }
+                        }
+                    }
+
+                    // controllo di visibilità: se il profilo non può vedere il file, skip
+                    try {
+                        if (!canSee(source, profile)) {
+                            LOGGER.warn("Access denied to log file: " + requested);
+                            continue;
+                        }
+                    } catch (Exception e) {
+                        LOGGER.warn("Unable to check visibility for '" + requested + "': " + e.getMessage(), e);
+                        continue;
+                    }
+
+                    // crea la struttura di directory relativa dentro tempDirectory e copia il file lì
+                    Path relative = workDir.relativize(source);
+                    Path parentRelative = relative.getParent();
+                    Path targetDir = (parentRelative == null) ? tempDirectory : tempDirectory.resolve(parentRelative);
+                    FileUtils.forceMkdir(targetDir.toFile());
+                    FileUtils.copyFileToDirectory(source.toFile(), targetDir.toFile());
+
+                } catch (IOException e) {
+                    // logga e continua con gli altri file invece di abortire l'intero flusso
+                    LOGGER.warn("Unable to copy selected log '" + requested + "': " + e.getMessage(), e);
+                }
             }
+
             try (Stream<Path> walk = Files.walk(tempDirectory)) {
                 List<Path> logs = walk.collect(toList());
-
                 putEntries(tempDirectory, tempLog, logs);
             }
+
             cleanUpTempDirectory(tempDirectory);
 
             return tempLog;
@@ -332,6 +469,7 @@ public class LogManagerAPIImpl implements LogManagerAPI {
         }
     }
 
+    /// method used in POST request to download selected log files
     @Override
     public Optional<java.nio.file.Path> findFileRecursively(java.nio.file.Path root, String fileName) {
         try (Stream<java.nio.file.Path> walk = Files.walk(root)) {
@@ -344,6 +482,7 @@ public class LogManagerAPIImpl implements LogManagerAPI {
         }
     }
 
+    /// method used in POST request to download selected log files
     @Override
     public void addFileToZip(java.nio.file.Path source, String entryName, ZipOutputStream zos) throws IOException {
         ZipEntry entry = new ZipEntry(entryName);

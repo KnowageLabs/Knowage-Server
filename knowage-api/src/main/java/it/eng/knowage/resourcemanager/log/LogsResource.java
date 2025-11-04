@@ -166,64 +166,39 @@ public class LogsResource {
         }
 
         SpagoBIUserProfile profile = businessContext.getUserProfile();
-
-        // resolve logs root: prefer <logPath>/logs, fallback to logPath
-        java.nio.file.Path logsRoot = Paths.get(ContextPropertiesConfig.getLogPath(), "logs");
-        if (!Files.exists(logsRoot) || !Files.isDirectory(logsRoot)) {
-            logsRoot = Paths.get(ContextPropertiesConfig.getLogPath());
-        }
-
-        final java.nio.file.Path finalLogsRoot = logsRoot;
-
-        // create temporary zip file
-        final java.nio.file.Path tempZip;
+        java.nio.file.Path zipPath = null;
         try {
-            tempZip = Files.createTempFile("knowage-zip", ".zip");
-        } catch (IOException e) {
-            LOGGER.error("Unable to create temp zip file", e);
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Unable to create temp file").build();
+            zipPath = logManagerAPIservice.getDownloadLogFilePath(dto.getSelectedLogsNames(), profile);
+        } catch (ImpossibleToDownloadFileException e) {
+            LOGGER.error("Unable to create zip for selected logs", e);
+            Throwable cause = e.getCause();
+
+            boolean internalZipError = cause instanceof KnowageRuntimeException
+                    || (e.getMessage() != null && e.getMessage().contains("Error creating export ZIP archive"))
+                    || (cause != null && cause.getMessage() != null && cause.getMessage().contains("Error creating export ZIP archive"));
+
+            if (internalZipError) {
+                return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                        .entity("Unable to create zip: internal error while creating archive").build();
+            } else {
+                return Response.status(Response.Status.BAD_REQUEST)
+                        .entity("Unable to create zip: " + e.getMessage()).build();
+            }
+        } catch (Exception e) {
+            LOGGER.error("Unexpected error creating zip for selected logs", e);
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Impossible to create zip").build();
         }
 
-        // fill zip: for each requested name check root then subfolders
-        try (ZipOutputStream zos = new ZipOutputStream(Files.newOutputStream(tempZip))) {
-            for (String rawName : dto.getSelectedLogsNames()) {
-                if (rawName == null || rawName.trim().isEmpty()) {
-                    continue;
-                }
-                String requested = rawName.trim();
-
-                // 1) check directly in logs root
-                java.nio.file.Path candidate = finalLogsRoot.resolve(requested).normalize();
-                if (Files.exists(candidate) && Files.isRegularFile(candidate)) {
-                    String entryName = finalLogsRoot.relativize(candidate).toString().replace('\\', '/');
-                    logManagerAPIservice.addFileToZip(candidate, entryName, zos);
-                    continue;
-                }
-
-                // 2) search recursively in subfolders (first match)
-                Optional<java.nio.file.Path> found = logManagerAPIservice.findFileRecursively(finalLogsRoot, requested);
-                if (found.isPresent()) {
-                    java.nio.file.Path source = found.get();
-                    String entryName = finalLogsRoot.relativize(source).toString().replace('\\', '/');
-                    logManagerAPIservice.addFileToZip(source, entryName, zos);
-                } else {
-                    LOGGER.debug("File not found: " + requested + " (skipping)");
-                    // se non trovato passa al file successivo
-                }
-            }
-            zos.flush();
-        } catch (IOException e) {
-            LOGGER.error("Unable to create zip: " + e.getMessage(), e);
-            try {
-                Files.deleteIfExists(tempZip);
-            } catch (IOException ex) {
-                LOGGER.warn("Unable to delete temp zip " + tempZip, ex);
-            }
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Unable to create zip: " + e.getMessage()).build();
+        if (zipPath == null) {
+            LOGGER.error("Zip file creation returned null");
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Zip file not created").build();
+        }
+        if (!Files.exists(zipPath)) {
+            LOGGER.error("Zip file missing: " + zipPath);
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Zip file missing").build();
         }
 
-        // stream response and delete temp file after download
-        final java.nio.file.Path temp = tempZip;
+        final java.nio.file.Path temp = zipPath;
         StreamingOutput stream = output -> {
             try (InputStream in = Files.newInputStream(temp)) {
                 byte[] buffer = new byte[8192];
@@ -245,88 +220,19 @@ public class LogsResource {
         if (!fileName.toLowerCase().endsWith(".zip")) {
             fileName += ".zip";
         }
+        long contentLength = -1;
+        try {
+            contentLength = Files.size(temp);
+        } catch (IOException e) {
+            LOGGER.debug("Unable to determine zip size", e);
+        }
 
-        return Response.ok(stream, "application/zip")
-                .header("Content-Disposition", "attachment; filename=\"" + fileName + "\"")
-                .build();
+        Response.ResponseBuilder rb = Response.ok(stream, "application/zip")
+                .header("Content-Disposition", "attachment; filename=\"" + fileName + "\"");
+        if (contentLength >= 0) {
+            rb.header("Content-Length", Long.toString(contentLength));
+        }
+
+        return rb.build();
     }
-
-//    private Optional<java.nio.file.Path> findFileRecursively(java.nio.file.Path root, String fileName) {
-//        try (Stream<java.nio.file.Path> walk = Files.walk(root)) {
-//            return walk.filter(Files::isRegularFile)
-//                    .filter(p -> p.getFileName().toString().equals(fileName))
-//                    .findFirst();
-//        } catch (IOException e) {
-//            LOGGER.debug("Error searching file recursively: " + fileName, e);
-//            return Optional.empty();
-//        }
-//    }
-//
-//    private void addFileToZip(java.nio.file.Path source, String entryName, ZipOutputStream zos) throws IOException {
-//        ZipEntry entry = new ZipEntry(entryName);
-//        zos.putNextEntry(entry);
-//        try (InputStream in = Files.newInputStream(source)) {
-//            byte[] buf = new byte[8192];
-//            int read;
-//            while ((read = in.read(buf)) > 0) {
-//                zos.write(buf, 0, read);
-//            }
-//        } finally {
-//            zos.closeEntry();
-//        }
-//    }
-
-//    @POST
-//    @Path("/download")
-//    @Consumes(MediaType.APPLICATION_JSON)
-//    @Produces("application/zip")
-//    public Response downloadLogs(@Valid DownloadLogFilesDTO dto, @Context HttpServletRequest request) {
-//        if (dto == null || dto.getSelectedLogsNames() == null || dto.getSelectedLogsNames().isEmpty()) {
-//            return Response.status(Response.Status.BAD_REQUEST).entity("No files selected").build();
-//        }
-//
-//        SpagoBIUserProfile profile = businessContext.getUserProfile();
-//        java.nio.file.Path zipPath = null;
-//        try {
-//            zipPath = logManagerAPIservice.getDownloadLogFilePath(dto.getSelectedLogsNames(), profile);
-//        } catch (ImpossibleToDownloadFileException e) {
-//            LOGGER.error("Unable to create zip for selected logs: " + e.getMessage(), e);
-//            return Response.status(Response.Status.BAD_REQUEST).entity("Unable to create zip: " + e.getMessage()).build();
-//        } catch (Exception e) {
-//            LOGGER.error("Unexpected error creating zip for selected logs", e);
-//            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Impossible to create zip").build();
-//        }
-//
-//        if (zipPath == null || !Files.exists(zipPath)) {
-//            LOGGER.error("Zip file not created or missing: " + zipPath);
-//            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Zip file not created or missing").build();
-//        }
-//
-//        final java.nio.file.Path temp = zipPath;
-//        StreamingOutput stream = output -> {
-//            try (InputStream in = Files.newInputStream(temp)) {
-//                byte[] buffer = new byte[8192];
-//                int len;
-//                while ((len = in.read(buffer)) != -1) {
-//                    output.write(buffer, 0, len);
-//                }
-//                output.flush();
-//            } finally {
-//                try {
-//                    Files.deleteIfExists(temp);
-//                } catch (IOException ex) {
-//                    LOGGER.warn("Unable to delete temp zip " + temp, ex);
-//                }
-//            }
-//        };
-//
-//        String fileName = temp.getFileName().toString();
-//        if (!fileName.toLowerCase().endsWith(".zip")) {
-//            fileName += ".zip";
-//        }
-//
-//        return Response.ok(stream, "application/zip")
-//                .header("Content-Disposition", "attachment; filename=\"" + fileName + "\"")
-//                .build();
-//    }
 }
