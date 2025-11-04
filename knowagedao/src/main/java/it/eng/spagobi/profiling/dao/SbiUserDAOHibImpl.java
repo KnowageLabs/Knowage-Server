@@ -254,6 +254,32 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO
 		}
 	}
 
+	@Override
+	public ArrayList<SbiUser> loadSbiUserFromEmail(String email) {
+		LOGGER.debug("IN");
+
+		Session aSession = null;
+		Transaction tx = null;
+		try {
+			aSession = getSession();
+			disableTenantFilter(aSession);
+			tx = aSession.beginTransaction();
+			String q = "select sua.sbiUser from SbiUserAttributes sua, SbiAttribute su where su.attributeId=sua.sbiAttribute.attributeId and sua.attributeValue = :email and su.attributeName =:attributeName";
+			Query query = aSession.createQuery(q);
+			query.setString("email", email);
+			query.setString("attributeName", "email");
+
+			ArrayList<SbiUser> result = (ArrayList<SbiUser>) query.list();
+			return result;
+		} catch (HibernateException he) {
+			rollbackIfActive(tx);
+			throw new SpagoBIDAOException("Error while loading user with email " + email, he);
+		} finally {
+			LOGGER.debug("OUT");
+			closeSessionIfOpen(aSession);
+		}
+	}
+
 	/**
 	 * Insert SbiUser
 	 *
