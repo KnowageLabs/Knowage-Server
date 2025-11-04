@@ -17,6 +17,8 @@ public interface LogManagerAPI {
 
     public LogFolderDTO getFolders(SpagoBIUserProfile profile) throws ImpossibleToReadFolderListException;
 
+    public Path getWorkDirectory(SpagoBIUserProfile profile) throws IOException;
+
     /**
      * Elenca i file di log partendo dal relativo path della cartella
      */
@@ -48,7 +50,9 @@ public interface LogManagerAPI {
     Path getDefaultFolderPath(SpagoBIUserProfile profile) throws ImpossibleToReadFolderListException;
 
 
+    /// method used in POST request to download selected log files
     Optional<Path> findFileRecursively(java.nio.file.Path root, String fileName);
 
+    /// method used in POST request to download selected log files
     void addFileToZip(java.nio.file.Path source, String entryName, ZipOutputStream zos) throws IOException;
 }
