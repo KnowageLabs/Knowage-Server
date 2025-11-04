@@ -21,10 +21,15 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Base64;
+import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
@@ -55,16 +60,21 @@ import it.eng.knowage.mailsender.dto.MessageMailDto;
 import it.eng.knowage.mailsender.dto.ProfileNameMailEnum;
 import it.eng.knowage.mailsender.dto.TypeMailEnum;
 import it.eng.knowage.mailsender.factory.FactoryMailSender;
+import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.SingletonConfig;
+import it.eng.spagobi.commons.bo.Config;
 import it.eng.spagobi.commons.bo.Role;
 import it.eng.spagobi.commons.bo.UserProfile;
+import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.dao.IConfigDAO;
 import it.eng.spagobi.commons.dao.IRoleDAO;
 import it.eng.spagobi.commons.metadata.SbiCommonInfo;
 import it.eng.spagobi.commons.metadata.SbiExtRoles;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
+import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.commons.utilities.messages.IMessageBuilder;
 import it.eng.spagobi.commons.utilities.messages.MessageBuilder;
 import it.eng.spagobi.commons.utilities.messages.MessageBuilderFactory;
@@ -287,6 +297,186 @@ public class Signup {
 		}
 		LOGGER.debug("OUT");
 		return new JSONObject().toString();
+	}
+
+	@GET
+	@Path("/forgotPassword")
+	@PublicService
+	public View forgotPassword(@Context HttpServletRequest req) {
+
+		String currTheme = ThemesManager.getDefaultTheme();
+		LOGGER.debug("currTheme: " + currTheme);
+
+		String url = "/themes/" + currTheme + "/jsp/signup/forgotPassword.jsp";
+		LOGGER.debug("url for active: " + url);
+		req.setAttribute("currTheme", currTheme);
+		return new View(url);
+	}
+
+	@POST
+	@Path("/forgotPasswordMail")
+	@PublicService
+	public View forgotPasswordMail(@Context HttpServletRequest req) {
+
+		String mail = request.getParameter("mail");
+		MessageBuilder msgBuilder = new MessageBuilder();
+		Locale locale = msgBuilder.getLocale(request);
+
+
+		if (mail != null) {
+			ISbiUserDAO userDao = DAOFactory.getSbiUserDAO();
+			ArrayList<SbiUser> lstUser = userDao.loadSbiUserFromEmail(mail);
+
+			if (lstUser != null && lstUser.size() == 1) {
+				try {
+					SbiUser user = lstUser.get(0);
+
+					String host = request.getServerName();
+					int port = request.getServerPort();
+
+
+					String subject = msgBuilder.getMessage("signup.forgotPassword.mail.subject", locale);
+
+					String token = SignupJWTTokenManager.createJWTToken(user.getUserId());
+					String version = SbiCommonInfo.getVersion().substring(0, SbiCommonInfo.getVersion().lastIndexOf("."));
+
+					String urlString = request.getContextPath() + "/restful-services/signup/changePasswordMail?token=" + token + "&locale=" + locale
+							+ "&version="
+							+ version;
+					URL url = new URL(request.getScheme(), host, port, urlString);
+
+					String clickableLink = "<a href=\"" + url.toString() + "\">" + msgBuilder.getMessage("signup.forgotPassword.mail.text1", locale) + "</a>";
+
+					String mailText = msgBuilder.getMessage("signup.forgotPassword.mail.text2", locale);
+					mailText = mailText + "<br><br>" + clickableLink + "<br><br>" + msgBuilder.getMessage("signup.forgotPassword.mail.text3", locale)
+							+ "<br><br>";
+					mailText = mailText + msgBuilder.getMessage("signup.forgotPassword.mail.text4", locale);
+					sendMail(mail, subject, mailText);
+				} catch (Exception e) {
+					LOGGER.error("An unexpected error occurred while executing the forgotPasswordMail", e);
+					throw new SpagoBIServiceException("An unexpected error occurred while executing the forgotPasswordMail", e);
+				}
+
+			}
+
+		}
+
+		String currTheme = ThemesManager.getDefaultTheme();
+		LOGGER.debug("currTheme: " + currTheme);
+
+		String url = "/themes/" + currTheme + "/jsp/signup/forgotPassword.jsp";
+		req.setAttribute("currTheme", currTheme);
+		req.setAttribute("sendMail", "ok");
+		return new View(url);
+	}
+
+	@GET
+	@Path("/changePasswordMail")
+	@PublicService
+	public View changePasswordMail(@Context HttpServletRequest req) throws JSONException {
+
+		String token = request.getParameter("token");
+		MessageBuilder msgBuilder = new MessageBuilder();
+		Locale locale = msgBuilder.getLocale(request);
+		String messageError = null;
+		String userId = null;
+		try {
+			userId = SignupJWTTokenManager.verifyJWTToken(token);
+
+			ISbiUserDAO userDao = DAOFactory.getSbiUserDAO();
+			SbiUser user = userDao.loadSbiUserByUserId(userId);
+
+			if (user == null) {
+				messageError = msgBuilder.getMessage("signup.forgotPassword.unknownUser", locale);
+			}
+
+			LOGGER.debug("OUT");
+
+		} catch (TokenExpiredException te) {
+			LOGGER.error("Expired Token [" + token + "]", te);
+			messageError = msgBuilder.getMessage("signup.forgotPassword.TokenExpired", locale);
+		} catch (Exception e) {
+			LOGGER.error("Generic token validation error [" + token + "]", e);
+			messageError = msgBuilder.getMessage("signup.forgotPassword.TokenError", locale);
+		}
+
+		String currTheme = ThemesManager.getDefaultTheme();
+		LOGGER.debug("currTheme: " + currTheme);
+
+		String url = "/themes/" + currTheme + "/jsp/signup/changePassword.jsp";
+		req.setAttribute("currTheme", currTheme);
+		req.setAttribute("userId", token);
+		req.setAttribute("messageErrorToken", messageError);
+		return new View(url);
+	}
+
+	@POST
+	@Path("/changePassword")
+	@PublicService
+	public View changePassword(@Context HttpServletRequest req) throws Exception {
+
+		String currTheme = ThemesManager.getDefaultTheme();
+		LOGGER.debug("currTheme: " + currTheme);
+		String urlError = "/themes/" + currTheme + "/jsp/signup/changePassword.jsp";
+
+		MessageBuilder msgBuilder = new MessageBuilder();
+		Locale locale = msgBuilder.getLocale(request);
+
+		String password = request.getParameter("password");
+		String confirmPassword = request.getParameter("confirmPassword");
+		String userId = request.getParameter("userId");
+		if (password == null || password.isEmpty() || !password.equals(confirmPassword)) {
+			LOGGER.error("Passwortd and confirm password are different");
+			req.setAttribute("currTheme", currTheme);
+			req.setAttribute("userId", userId);
+			req.setAttribute("messageErrorChangePws", msgBuilder.getMessage("signup.check.pwdNotEqual", locale));
+			return new View(urlError);
+		}
+
+		try {
+			PasswordChecker.getInstance().isValid(password, password);
+		} catch (Exception e) {
+			LOGGER.error("Password is not valid", e);
+			req.setAttribute("currTheme", currTheme);
+			req.setAttribute("userId", userId);
+			req.setAttribute("messageErrorChangePws", msgBuilder.getMessage("signup.check.pwdInvalid", "messages", locale));
+			return new View(urlError);
+		}
+		String dateFormat = "yyyy-MM-dd";
+		ISbiUserDAO userDao = DAOFactory.getSbiUserDAO();
+		SbiUser tmpUser = userDao.loadSbiUserByUserId(SignupJWTTokenManager.verifyJWTToken(userId));
+		IConfigDAO configDao = DAOFactory.getSbiConfigDAO();
+		List<Config> lstConfigChecks = configDao.loadConfigParametersByProperties(SpagoBIConstants.CHANGEPWD_EXPIRED_TIME);
+		Date beginDate = new Date();
+		if (!lstConfigChecks.isEmpty()) {
+			Config check = lstConfigChecks.get(0);
+			if (check.isActive()) {
+				// define the new expired date
+				SimpleDateFormat sdf = new SimpleDateFormat(dateFormat);
+				Calendar cal = Calendar.getInstance();
+				cal.set(beginDate.getYear() + 1900, beginDate.getMonth(), beginDate.getDate());
+				// adds n days (getted from db)
+				cal.add(Calendar.DATE, Integer.parseInt(check.getValueCheck()));
+				try {
+					Date endDate = StringUtilities.stringToDate(sdf.format(cal.getTime()), dateFormat);
+					LOGGER.debug("End Date for expiration calculeted: " + endDate);
+					tmpUser.setDtPwdBegin(beginDate);
+					tmpUser.setDtPwdEnd(endDate);
+				} catch (Exception e) {
+					LOGGER.error("The control pwd goes on error: " + e);
+					throw new EMFUserError(EMFErrorSeverity.ERROR, 14008, Collections.emptyList(), Collections.emptyMap());
+				}
+			}
+		}
+		tmpUser.setDtLastAccess(beginDate); // reset last access date
+		tmpUser.setPassword(Password.hashPassword(password));// SHA encrypt
+		tmpUser.setFlgPwdBlocked(false); // reset blocking flag
+		userDao.updateSbiUser(tmpUser, tmpUser.getId());
+
+		String url = "/themes/" + currTheme + "/jsp/signup/changePasswordOk.jsp";
+		LOGGER.debug("url for active: " + url);
+		req.setAttribute("currTheme", currTheme);
+		return new View(url);
 	}
 
 	@GET

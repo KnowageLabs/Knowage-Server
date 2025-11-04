@@ -91,4 +91,6 @@ public interface ISbiUserDAO extends ISpagoBIDao, EmittingEventDAO<UserEventsEme
 	void resetOtpSecret(Integer userId);
 
 	ArrayList<SbiExtRoles> loadSbiUserRolesByIdAllTenants(int id);
+
+	ArrayList<SbiUser> loadSbiUserFromEmail(String email);
 }
