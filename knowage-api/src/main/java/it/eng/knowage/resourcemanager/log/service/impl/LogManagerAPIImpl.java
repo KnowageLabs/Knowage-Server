@@ -36,7 +36,7 @@ public class LogManagerAPIImpl implements LogManagerAPI {
     private static final String LOG_FUNCTIONALITY_DEV = "LogManagementDev";
     private static final String LOG_FUNCTIONALITY = "LogManagement";
     private static final String TREAD_CONTEXT_KEY_TENANT = "tenant";
-    private static final String DEFAULT_TENANT = "global";
+    private static final String GLOBAL = "global";
 
 
     @Autowired
@@ -97,7 +97,7 @@ public class LogManagerAPIImpl implements LogManagerAPI {
     private String resolveTenant(SpagoBIUserProfile profile) {
         String tenant = ThreadContext.get(TREAD_CONTEXT_KEY_TENANT);
         if (tenant == null || tenant.trim().isEmpty()) {
-            tenant = DEFAULT_TENANT;
+            tenant = GLOBAL;
         }
         return tenant;
     }
@@ -133,10 +133,10 @@ public class LogManagerAPIImpl implements LogManagerAPI {
 /// ADMIN canSee METHOD HAS List<String> adminTenants THAT NEED TO BE FILLED MANUALLY TO WORK PROPERLY
 
     /// canSee always true to test manually all functionalities
-    @Override
-    public boolean canSee(Path path, SpagoBIUserProfile profile) throws IOException {
-        return true;
-    }
+//    @Override
+//    public boolean canSee(Path path, SpagoBIUserProfile profile) throws IOException {
+//        return true;
+//    }
 
     /// canSee to test manually superadmin functionalities
 //    @Override
@@ -153,73 +153,73 @@ public class LogManagerAPIImpl implements LogManagerAPI {
 //    }
 
     /// canSee to test manually admin functionalities
-//    @Override
-//    public boolean canSee(Path path, SpagoBIUserProfile profile) throws IOException {
-//        List<String> adminTenants = new ArrayList<String>();
-//        // adminTenants popolati per test; in produzione dovrebbero venire da profilo/config
-//        adminTenants.add("OLD_LOGS");
-//
-//        Path baseLogPath = Paths.get(ContextPropertiesConfig.getLogPath()).normalize();
-//        Path logsRoot = baseLogPath.resolve("logs").normalize();
-//        Path target = path.normalize();
-//
-//        Predicate<Path> checkAgainstRoot = (root) -> {
-//            if (!target.startsWith(root)) {
-//                return false;
-//            }
-//            Path relative = root.relativize(target);
-//            int nameCount = relative.getNameCount();
-//
-//            // root itself
-//            if (nameCount == 0) {
-//                return true;
-//            }
-//
-//            // elemento direttamente sotto root (es. <root>/file.log o <root>/someDir)
-//            if (nameCount == 1) {
-//                // file direttamente sotto root: consentito (requisito 1)
-//                if (Files.isRegularFile(target)) {
-//                    return true;
-//                }
-//                // directory direttamente sotto root:
-//                String first = relative.getName(0).toString();
-//                // sottocartella che raggruppa file non classificabili: consentita (requisito 2)
-//                if (DEFAULT_TENANT.equals(first)) {
-//                    return true;
-//                }
-//                // sottocartelle il cui tenant è presente in adminTenants: consentite (requisito 4)
-//                if (adminTenants != null && adminTenants.contains(first)) {
-//                    return true;
-//                }
-//                return false;
-//            }
-//
-//            // percorsi più profondi: consentiti solo se il primo segmento è 'default' (requisito 3)
-//            // o è uno dei tenant in adminTenants (requisito 5)
-//            String first = relative.getName(0).toString();
-//            if (DEFAULT_TENANT.equals(first)) {
-//                return true;
-//            }
-//            return adminTenants != null && adminTenants.contains(first);
-//        };
-//
-//        if (Files.exists(logsRoot) && Files.isDirectory(logsRoot)) {
-//            if (target.equals(baseLogPath)) {
-//                return true;
-//            }
-//            // prima prova contro logsRoot
-//            if (checkAgainstRoot.test(logsRoot)) {
-//                return true;
-//            }
-//            // fallback: se non è sotto logsRoot, prova anche contro baseLogPath (consente file direttamente in baseLogPath)
-//            return checkAgainstRoot.test(baseLogPath);
-//        }
-//
-//        if (target.equals(baseLogPath)) {
-//            return true;
-//        }
-//        return checkAgainstRoot.test(baseLogPath);
-//    }
+    @Override
+    public boolean canSee(Path path, SpagoBIUserProfile profile) throws IOException {
+        List<String> adminTenants = new ArrayList<String>();
+        // adminTenants popolati per test; in produzione dovrebbero venire da profilo/config
+        adminTenants.add("OLD_LOGS");
+
+        Path baseLogPath = Paths.get(ContextPropertiesConfig.getLogPath()).normalize();
+        Path logsRoot = baseLogPath.resolve("logs").normalize();
+        Path target = path.normalize();
+
+        Predicate<Path> checkAgainstRoot = (root) -> {
+            if (!target.startsWith(root)) {
+                return false;
+            }
+            Path relative = root.relativize(target);
+            int nameCount = relative.getNameCount();
+
+            // root itself
+            if (nameCount == 0) {
+                return true;
+            }
+
+            // elemento direttamente sotto root (es. <root>/file.log o <root>/someDir)
+            if (nameCount == 1) {
+                // file direttamente sotto root: consentito (requisito 1)
+                if (Files.isRegularFile(target)) {
+                    return true;
+                }
+                // directory direttamente sotto root:
+                String first = relative.getName(0).toString();
+                // sottocartella che raggruppa file non classificabili: consentita (requisito 2)
+                if (GLOBAL.equals(first)) {
+                    return true;
+                }
+                // sottocartelle il cui tenant è presente in adminTenants: consentite (requisito 4)
+                if (adminTenants != null && adminTenants.contains(first)) {
+                    return true;
+                }
+                return false;
+            }
+
+            // percorsi più profondi: consentiti solo se il primo segmento è 'default' (requisito 3)
+            // o è uno dei tenant in adminTenants (requisito 5)
+            String first = relative.getName(0).toString();
+            if (GLOBAL.equals(first)) {
+                return true;
+            }
+            return adminTenants != null && adminTenants.contains(first);
+        };
+
+        if (Files.exists(logsRoot) && Files.isDirectory(logsRoot)) {
+            if (target.equals(baseLogPath)) {
+                return true;
+            }
+            // prima prova contro logsRoot
+            if (checkAgainstRoot.test(logsRoot)) {
+                return true;
+            }
+            // fallback: se non è sotto logsRoot, prova anche contro baseLogPath (consente file direttamente in baseLogPath)
+            return checkAgainstRoot.test(baseLogPath);
+        }
+
+        if (target.equals(baseLogPath)) {
+            return true;
+        }
+        return checkAgainstRoot.test(baseLogPath);
+    }
 
     // Admin functionalities, EE and CE
     public static boolean hasAdministratorFunction(SpagoBIUserProfile profile) {
@@ -342,8 +342,6 @@ public class LogManagerAPIImpl implements LogManagerAPI {
 
             Path workDir = getWorkDirectory(profile).normalize();
 
-            File logDestRoot = new File(tempDirectory.toString());
-
             for (String rawPath : fullPaths) {
                 if (rawPath == null || rawPath.trim().isEmpty()) {
                     continue;
@@ -366,11 +364,23 @@ public class LogManagerAPIImpl implements LogManagerAPI {
                         if (Files.exists(candidate) && Files.isRegularFile(candidate)) {
                             source = candidate;
                         } else {
-                            // fallback: cerca ricorsivamente per nome file
+                            // fallback: cerca ricorsivamente per nome file (case-sensitive)
                             Optional<Path> found = findFileRecursively(workDir, requested);
                             if (found.isPresent()) {
                                 source = found.get();
                             } else {
+                                // fallback aggiuntivo: cerca dentro il tenant GLOBAL (es. 'global')
+                                try {
+                                    Path globalTenant = workDir.resolve(GLOBAL).resolve(requested).normalize();
+                                    if (Files.exists(globalTenant) && Files.isRegularFile(globalTenant)) {
+                                        source = globalTenant;
+                                    }
+                                } catch (Exception e) {
+                                    LOGGER.debug("Error while searching under tenant '" + GLOBAL + "': " + e.getMessage(), e);
+                                }
+                            }
+
+                            if (source == null) {
                                 LOGGER.debug("File not found: " + requested + " (skipping)");
                                 continue;
                             }
@@ -474,6 +484,7 @@ public class LogManagerAPIImpl implements LogManagerAPI {
     public Optional<java.nio.file.Path> findFileRecursively(java.nio.file.Path root, String fileName) {
         try (Stream<java.nio.file.Path> walk = Files.walk(root)) {
             return walk.filter(Files::isRegularFile)
+                    .peek(p -> LOGGER.trace("Visiting: " + p))
                     .filter(p -> p.getFileName().toString().equals(fileName))
                     .findFirst();
         } catch (IOException e) {
