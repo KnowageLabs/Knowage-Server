@@ -6,17 +6,27 @@ import it.eng.knowage.boot.validation.Xss;
 import javax.validation.constraints.NotNull;
 import java.io.File;
 
-// per rapprensentare un file di log
+/*
+* DTO representing a single log file.
+* - Holds name, size and last modified timestamp.
+* - Validation annotations ensure safe input when used as request/response payload.
+*/
 public class LogFileDTO{
 
     @NotNull
     @Xss
     @NotInvalidCharacters
 
+    // File name visible in UI and used by client.
     private String name;
+
+    // File size in bytes.
     private long size;
+
+    // Last modified epoch millis.
     private long lastModified;
 
+    // Construct from a java.io.File instance.
     public LogFileDTO(File file) {
         this.name = file.getName();
         this.size = file.length();
@@ -52,7 +62,7 @@ public class LogFileDTO{
         this.lastModified = lastModified;
     }
 
-//versione rivisitata e compattata dei metodi equals e hashCode contenuti in FileDTO.java
+    // Compact equals implementation comparing name, size and timestamp.
     @Override
     public boolean equals(Object obj) {
         if (this == obj) return true;
@@ -62,6 +72,7 @@ public class LogFileDTO{
                (name != null ? name.equals(other.name) : other.name == null);
     }
 
+    // Compact hashCode consistent with equals.
     @Override
     public int hashCode() {
         int result = name != null ? name.hashCode() : 0;

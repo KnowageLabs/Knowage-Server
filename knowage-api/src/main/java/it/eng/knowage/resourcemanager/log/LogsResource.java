@@ -3,7 +3,6 @@ package it.eng.knowage.resourcemanager.log;
 import it.eng.knowage.boot.context.BusinessRequestContext;
 import it.eng.knowage.boot.error.KnowageBusinessException;
 import it.eng.knowage.boot.error.KnowageRuntimeException;
-import it.eng.knowage.boot.utils.ContextPropertiesConfig;
 import it.eng.knowage.knowageapi.error.ImpossibleToDownloadFileException;
 import it.eng.knowage.resourcemanager.log.dto.DownloadLogFilesDTO;
 import it.eng.knowage.resourcemanager.log.dto.LogFileDTO;
@@ -27,20 +26,19 @@ import java.io.InputStream;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.Stream;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
 
 @Path("/2.0/resources/logs")
 @Component
 @Validated
 
-// per gestire le richieste REST
+/*
+* REST resource for log management.
+* - Exposes endpoints for listing folders, listing files, viewing single files and downloading selected files.
+* - Delegates actual FS access and permission checks to LogManagerAPI.
+* - Streaming endpoint returns a temporary ZIP created by the service and deletes it after streaming.
+*/
 public class LogsResource {
 
     @Autowired
@@ -51,6 +49,10 @@ public class LogsResource {
 
     private static final Logger LOGGER = Logger.getLogger(LogsResource.class);
 
+    /*
+    * Get the list of logs subfolders (children of work dir).
+    * - Returns JSON list of LogFolderDTO (UI tree nodes).
+    */
     @GET
     @Path("/folders")
     @Produces(MediaType.APPLICATION_JSON)
@@ -64,10 +66,16 @@ public class LogsResource {
                 return Collections.emptyList();
             }
         } catch (Exception e) {
+            // Wrap unexpected errors as runtime exceptions for upper layers
             throw new KnowageRuntimeException(e);
         }
     }
 
+    /*
+    * List files inside a given subfolder (relative path provided by client).
+    * - Decodes path, trims slashes and calls service to list files.
+    * - If empty result, attempts a fallback to "logs" folder.
+    */
     @GET
     @Path("/folders/{folder}")
     @Produces(MediaType.APPLICATION_JSON)
@@ -78,14 +86,12 @@ public class LogsResource {
             if (folder == null) {
                 folder = "";
             } else {
-                // decode e trim di slash iniziali/finali
                 folder = URLDecoder.decode(folder, StandardCharsets.UTF_8.name());
                 folder = folder.replaceAll("^/+", "").replaceAll("/+$", "");
             }
 
             List<LogFileDTO> result = logManagerAPIservice.getListOfLogs(folder, profile);
 
-            // se vuoto, prova un fallback su "logs" (utile se il client manda path diverso)
             if ((result == null || result.isEmpty()) && !"logs".equals(folder)) {
                 LOGGER.debug("Empty result for folder '" + folder + "', trying fallback 'logs'");
                 try {
@@ -101,6 +107,11 @@ public class LogsResource {
         }
     }
 
+    /*
+    * View raw content of a single log file inside a folder.
+    * - Builds combined relative path and delegates to service.
+    * - Service performs existence and permission checks.
+    */
     @GET
     @Path("/folders/{folder}/view/{logName}")
     @Produces(MediaType.TEXT_PLAIN)
@@ -132,6 +143,7 @@ public class LogsResource {
         }
     }
 
+    // List files in the root folder (workDir).
     @GET
     @Path("/root")
     @Produces(MediaType.APPLICATION_JSON)
@@ -144,6 +156,7 @@ public class LogsResource {
         }
     }
 
+    // View raw content of a single log file directly under root folder (workDir).
     @GET
     @Path("/view/{logName}")
     @Produces(MediaType.TEXT_PLAIN)
@@ -156,11 +169,18 @@ public class LogsResource {
         }
     }
 
+    /*
+    * Download selected log files as a ZIP.
+    * - Accepts validated DTO with a list of file names.
+    * - Delegates ZIP creation to LogManagerAPI which must validate per-file permissions.
+    * - Streams the created temp ZIP and deletes it after streaming.
+    */
     @POST
     @Path("/download")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces("application/zip")
     public Response downloadLogs(@Valid DownloadLogFilesDTO dto, @Context HttpServletRequest request) {
+        // Validate request payload.
         if (dto == null || dto.getSelectedLogsNames() == null || dto.getSelectedLogsNames().isEmpty()) {
             return Response.status(Response.Status.BAD_REQUEST).entity("No files selected").build();
         }
@@ -168,11 +188,13 @@ public class LogsResource {
         SpagoBIUserProfile profile = businessContext.getUserProfile();
         java.nio.file.Path zipPath = null;
         try {
+            // Service returns a path to a temp zip, service must ensure log files are permitted.
             zipPath = logManagerAPIservice.getDownloadLogFilePath(dto.getSelectedLogsNames(), profile);
         } catch (ImpossibleToDownloadFileException e) {
             LOGGER.error("Unable to create zip for selected logs", e);
             Throwable cause = e.getCause();
 
+            // Detect internal archive creation errors vs client errors.
             boolean internalZipError = cause instanceof KnowageRuntimeException
                     || (e.getMessage() != null && e.getMessage().contains("Error creating export ZIP archive"))
                     || (cause != null && cause.getMessage() != null && cause.getMessage().contains("Error creating export ZIP archive"));
@@ -189,6 +211,7 @@ public class LogsResource {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Impossible to create zip").build();
         }
 
+        // Basic checks on created temp file.
         if (zipPath == null) {
             LOGGER.error("Zip file creation returned null");
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Zip file not created").build();
@@ -199,6 +222,8 @@ public class LogsResource {
         }
 
         final java.nio.file.Path temp = zipPath;
+
+        // Streaming output that sends zip bytes and removes temp file afterwards.
         StreamingOutput stream = output -> {
             try (InputStream in = Files.newInputStream(temp)) {
                 byte[] buffer = new byte[8192];
@@ -211,11 +236,13 @@ public class LogsResource {
                 try {
                     Files.deleteIfExists(temp);
                 } catch (IOException ex) {
+                    // Log deletion failure, do not fail the response.
                     LOGGER.warn("Unable to delete temp zip " + temp, ex);
                 }
             }
         };
 
+        // Prepare response headers (filename and optional content-length).
         String fileName = temp.getFileName().toString();
         if (!fileName.toLowerCase().endsWith(".zip")) {
             fileName += ".zip";

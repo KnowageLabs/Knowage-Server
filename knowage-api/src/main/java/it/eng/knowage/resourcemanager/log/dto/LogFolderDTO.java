@@ -28,27 +28,45 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
+/*
+* DTO representing a folder node in the logs UI tree.
+* - label: visible name for UI.
+* - key: opaque identifier (client uses this to reference nodes).
+* - fullPath: internal absolute path (ignored in JSON).
+* - relativePath: path used by client to request lists/downloads.
+* - children: only serialized when non-empty to keep payload compact.
+*/
 public class LogFolderDTO {
 
 	@NotNull
 	@Xss
 	@NotInvalidCharacters
+    // Visible label for the UI tree node.
 	private String label;
 
+    // Opaque key (hashed) used by clients to reference this node.
 	private String key;
 
 	@JsonIgnore
+    // Internal absolute path, not exposed to clients.
 	private String fullPath;
 
+    // Relative path used by clients when requesting files or downloads.
 	private String relativePath;
 
 	@JsonInclude(Include.NON_EMPTY)
+    // Child folders (kept out of JSON when empty).
 	private List<LogFolderDTO> children;
 
 	public LogFolderDTO() {
 		super();
 	}
 
+    /*
+    * Construct from a Path.
+    * - label is the last element of the path.
+    * - fullPath stored for internal resolution.
+    */
 	public LogFolderDTO(Path fullPath) {
 		children = new ArrayList<>();
 		this.label = fullPath.getName(fullPath.getNameCount() - 1).toString();
@@ -100,6 +118,7 @@ public class LogFolderDTO {
 		this.relativePath = relativePath;
 	}
 
+    // Standard equals/hashCode to support tests and collection usage.
 	@Override
 	public int hashCode() {
 		final int prime = 31;
