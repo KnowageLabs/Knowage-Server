@@ -107,6 +107,11 @@ public class CsvStreamingOutput implements StreamingOutput {
 				}
 				IField field = currRecord.getFieldAt(j);
 				Object fieldValue = field.getValue();
+				if (fieldValue != null) {
+	                    if (fieldValue instanceof String) {
+	                        fieldValue = ((String) fieldValue).trim();
+	                    }
+	                }
 				writer.write("\"" + fieldValue + "\"");
 			}
 		}
@@ -142,6 +147,11 @@ public class CsvStreamingOutput implements StreamingOutput {
 					Integer realdFieldIndex = indexesOfVisibleFields.get(j);
 					IField field = currRecord.getFieldAt(realdFieldIndex);
 					Object fieldValue = field.getValue();
+	                if (fieldValue != null) {
+	                    if (fieldValue instanceof String) {
+	                        fieldValue = ((String) fieldValue).trim();
+	                    }
+	                }										
 					writer.write("\"" + fieldValue + "\"");
 				}
 			}
