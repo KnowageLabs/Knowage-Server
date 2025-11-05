@@ -32,7 +32,7 @@ comprehensive support to rich and multi-source data analysis.
 
 | Name                   | Description                                                                                                              |
  ---------------------- | ------------------------------------------------------------------------------------------------------------------------ |
-| On line Dashboarding    | The dashboard is an interactive tool designed for visualizing information retrieved from data sets |
+| On line Dashboard    | The dashboard is an interactive tool designed for visualizing information retrieved from data sets |
 | Reporting   | The advanced reporting capabilities, enabling users to create, customize, and distribute interactive reports based on diverse data sources.    |
 | OLAP  | This function allow users to explore multidimensional data interactively, enabling drill-down, slice-and-dice, and pivot operations for in-depth analysis   |
 | KPI | Knowage enables KPI management by defining, monitoring, and visualizing key performance indicators to track business objectives and performance trends   |
