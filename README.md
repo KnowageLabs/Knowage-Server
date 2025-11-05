@@ -7,17 +7,17 @@
 <br>
 [![Documentation badge](https://img.shields.io/readthedocs/knowage.svg)](https://knowage.rtfd.io/)
 
-KNOWAGE is the open source analytics and business intelligence suite that allows you to combine traditional data and big/cloud data sources into valuable and meaningful information. Its features, such as data
-federation, mash-up, data/text mining and advanced data visualization, give
-comprehensive support to rich and multi-source data analysis.
+KNOWAGE is an open-source analytics and business intelligence suite designed to integrate traditional and big/cloud data sources, transforming them into valuable insights.
+
+Its features, such as data federation, mash-up, data/text mining and advanced data visualization, give comprehensive support to rich and multi-source data analysis.
 
 
-|  :books: [Documentation](https://knowage-suite.rtfd.io/) | :page_facing_up: [Site](https://www.knowage-suite.com/site/home/) | :whale: [Docker Hub](https://hub.docker.com/r/knowagelabs/knowage-server-docker/) | :dart: [Roadmap](https://github.com/KnowageLabs/Knowage-Server/blob/master/ROADMAP.md) |
+|  :books: [Documentation](http://knowage-suite.readthedocs.io/) | :page_facing_up: [Site](https://www.knowage-suite.com/site/home/) | :whale: [Docker Hub](https://hub.docker.com/r/knowagelabs/knowage-server-docker/) | :dart: [Roadmap](https://github.com/KnowageLabs/Knowage-Server/blob/master/ROADMAP.md) |
 
 
 ## Contents
 
--   [Main functionlities](#main-functionlities)
+-   [Main functionalities](#main-functionalities)
 -   [Editions](#editions)
 -   [Install](#install)
 -   [Usage](#usage)
@@ -28,20 +28,20 @@ comprehensive support to rich and multi-source data analysis.
 -   [License](#license)
 
 
-## Main functionlities
+## Main functionalities
 
-| Name                   | Description                                                                                                              |
- ---------------------- | ------------------------------------------------------------------------------------------------------------------------ |
-| **Virtual Assistant**    | KNOWAGE provides a virtual assistant that, by integrating AI tools (EngGpt), supports users in performing analyses and navigating information |
-| **On line Dashboard**    | The dashboard is an interactive tool designed for visualizing information retrieved from data sets |
-| **Reporting**   | The advanced reporting capabilities, enabling users to create, customize, and distribute interactive reports based on diverse data sources.    |
-| **OLAP**  | This function allow users to explore multidimensional data interactively, enabling drill-down, slice-and-dice, and pivot operations for in-depth analysis   |
-| **KPI** | Knowage enables KPI management by defining, monitoring, and visualizing key performance indicators to track business objectives and performance trends   |
-| **Data Preparation**       | Knowage provides data preparation tools to clean, transform, and enrich raw data, ensuring quality and consistency for advanced analytics and reporting.    |
-| **Python integration**             | Knowage supports Python integration, allowing users to execute scripts, apply advanced analytics, and embed custom algorithms directly within the BI environment     |
-| **Dossier**             | Knowage allows users to create dossiers by combining multiple reports and documents into a single, organized and interactive view for comprehensive analysis     |
+| Name                   | Description                                                                                                              |EE only|
+ ---------------------- | ------------------------------------------------------------------------------------------------------------------------ |----|
+| **Virtual Assistant**    | KNOWAGE provides a virtual assistant that, by integrating AI tools (EngGpt), supports users in performing analyses and navigating information | ✅ |
+| **Online Dashboard**    | The dashboard is an interactive tool designed for visualizing information retrieved from data sets ||
+| **Reporting**   | The advanced reporting capabilities, enabling users to create, customize, and distribute interactive reports based on diverse data sources.    ||
+| **OLAP**  | This function allows users to explore multidimensional data interactively, enabling drill-down, slice-and-dice, and pivot operations for in-depth analysis   ||
+| **KPI** | Knowage enables KPI management by defining, monitoring, and visualizing key performance indicators to track business objectives and performance trends   ||
+| **Data Preparation**       | Knowage provides data preparation tools to clean, transform, and enrich raw data, ensuring quality and consistency for advanced analytics and reporting.    |✅|
+| **Python integration**             | Knowage supports Python integration, allowing users to execute scripts, apply advanced analytics, and embed custom algorithms directly within the BI environment     ||
+| **Dossier**             | Knowage allows users to create dossiers by combining multiple reports and documents into a single, organized and interactive view for comprehensive analysis     |✅|
 
-KNOWAGE supports a modern vision of the data analytics, providing new
+KNOWAGE supports a modern vision of data analytics, providing new
 self-service capabilities that give autonomy to the end-user, now able to build
 his own analysis and explore his own data space, also combining data that come
 from different sources.
@@ -50,9 +50,9 @@ from different sources.
 
 KNOWAGE is available on two versions:
 
--   the community edition, with the whole set of analytical capabilities, it is
+-   the community edition (CE), with the whole set of analytical capabilities, it is
     part of the software stack managed by [OW2](https://www.ow2.org/) as SpagoBI was;
--   the enterprise edition, provided and guaranteed directly from Engineering
+-   the enterprise edition (EE), provided and guaranteed directly from Engineering
     Group - the leading Italian software and services company - with a
     commercial offering and some facilities for the administrator.
 
@@ -60,7 +60,7 @@ This repository contains the source code of the Community Edition.
 
 ## Install
 
-Information about how to install KNOWAGEis available on official documentation on [Read the Docs](http://knowage-suite.readthedocs.io/) within Installation & Administration Manuals.
+Information about how to install KNOWAGE are available on official documentation on [Read the Docs](http://knowage-suite.readthedocs.io/) within Installation & Administration Manuals.
 
 A `Dockerfile` is also available for your use - further information can be found [here](https://github.com/KnowageLabs/Knowage-Server-Docker).
 
@@ -71,7 +71,7 @@ Information about how to use KNOWAGE is available on official documentation on [
 ## Contributions
 
 KNOWAGE is open to external contributions. You can submit your contributions into this repository through pull requests.
-Before starting, here there are a few things you must be aware of: 
+Before starting, there are a few things you should be aware of: 
 
 -   This project is released with a [Contributor Code of Conduct](./CODE_OF_CONDUCT.md). By participating in this
     project, you agree to abide by its terms.
@@ -100,9 +100,9 @@ To build KNOWAGE you need:
 
 N.B.: You need to add the paths containing your ``java``, ``node`` and ``npm`` commands to your ``PATH`` environment variable: see the official documentation of your operating system.
 
-The main project is ``knowage-ce-parent`` and from within that directory you need to launch:
+The main project is ``knowage-ce-parent`` and from within that directory you need to launch this command in the shell:
 
-```console
+```sh
 mvn package
 ```
 
@@ -119,7 +119,7 @@ At the end of the build you will find all the WAR files at the following paths:
  - ``knowagetalendengine/target/knowagetalendengine.war``
  - ``knowagewhatifengine/target/knowagewhatifengine.war``
 
-There is no need to do anything in order to build KNOWAGE-Python module: you can just take the source code and run it as a standalone program (refer to the official docs: https://knowage-suite.readthedocs.io/en/7.4/installation-guide/python-installation.html).
+There is no need to do anything in order to build KNOWAGE-Python module: you can just take the source code and run it as a standalone program (refer to the official docs: https://knowage-suite.readthedocs.io/en/master/installation-guide/python-installation.html).
 
 ## Testing
 
