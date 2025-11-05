@@ -35,9 +35,7 @@ import static java.util.stream.Collectors.toList;
 @Component
 public class LogManagerAPIImpl implements LogManagerAPI {
 
-    private static final String METADATA_JSON = "metadata.json";
     private static final Logger LOGGER = Logger.getLogger(LogManagerAPIImpl.class);
-    private final Map<String, HashMap<String, Object>> cachedNodesInfo = new HashMap<>();
 
     private static final String LOG_FUNCTIONALITY = "LogManagement";
     private static final String TREAD_CONTEXT_KEY_TENANT = "tenant";
@@ -67,31 +65,6 @@ public class LogManagerAPIImpl implements LogManagerAPI {
         } catch (IOException e) {
             LOGGER.error("[LogManagerAPIImpl], [getFolders], ", e);
             throw new KnowageRuntimeException(e);
-        }
-    }
-
-    // Return a sensible default relative path for UI.
-    @Override
-    public String getDefaultFolderRelativePath(SpagoBIUserProfile profile) throws ImpossibleToReadFolderListException {
-        LogFolderDTO root = getFolders(profile);
-
-        if (root != null && root.getRelativePath() != null) {
-                return root.getRelativePath();
-        }
-
-        String message = "No defaults log folder available";
-        LOGGER.debug(message);
-        throw new ImpossibleToReadFolderListException(message);
-    }
-
-    // Return absolute default folder path (resolves relative against workDir).
-    @Override
-    public Path getDefaultFolderPath(SpagoBIUserProfile profile) throws ImpossibleToReadFolderListException {
-        try {
-            String relativePath = getDefaultFolderRelativePath(profile);
-            return getTotalPath(relativePath, profile);
-        } catch (IOException e) {
-            throw new ImpossibleToReadFolderListException(e.getMessage(), e);
         }
     }
 
@@ -150,7 +123,6 @@ public class LogManagerAPIImpl implements LogManagerAPI {
     /*
     * USE THIS COMMENTED METHOD TO TEST MANUALLY THE LOG MANAGER WITH ALL ROLES.
     * REMEMBER TO REVERT TO THE ORIGINAL METHOD BEFORE COMMITTING.
-    * ADMIN canSee METHOD HAS List<String> adminTenants THAT NEED TO BE FILLED MANUALLY TO WORK PROPERLY.
     */
 
     // canSee always true to test manually all functionalities
@@ -158,80 +130,6 @@ public class LogManagerAPIImpl implements LogManagerAPI {
 //    @Override
 //    public boolean canSee(Path path, SpagoBIUserProfile profile) throws IOException {
 //        return true;
-//    }
-
-    // canSee to test manually superadmin functionalities
-
-//    @Override
-//    public boolean canSee(Path path, SpagoBIUserProfile profile) {
-//        Path baseLogPath = Paths.get(ContextPropertiesConfig.getLogPath()).normalize();
-//        Path rootLogs = baseLogPath.resolve("logs").normalize();
-//        Path target = path.normalize();
-//
-//        if (Files.exists(rootLogs) && Files.isDirectory(rootLogs)) {
-//            return target.startsWith(rootLogs);
-//        }
-//
-//        return target.startsWith(baseLogPath);
-//    }
-
-    // canSee to test manually admin functionalities
-
-//    @Override
-//    public boolean canSee(Path path, SpagoBIUserProfile profile) throws IOException {
-//        List<String> adminTenants = new ArrayList<String>();
-//        adminTenants.add("OLD_LOGS");
-//
-//        Path baseLogPath = Paths.get(ContextPropertiesConfig.getLogPath()).normalize();
-//        Path logsRoot = baseLogPath.resolve("logs").normalize();
-//        Path target = path.normalize();
-//
-//        Predicate<Path> checkAgainstRoot = (root) -> {
-//            if (!target.startsWith(root)) {
-//                return false;
-//            }
-//            Path relative = root.relativize(target);
-//            int nameCount = relative.getNameCount();
-//
-//            if (nameCount == 0) {
-//                return true;
-//            }
-//
-//            if (nameCount == 1) {
-//                if (Files.isRegularFile(target)) {
-//                    return true;
-//                }
-//                String first = relative.getName(0).toString();
-//                if (GLOBAL.equals(first)) {
-//                    return true;
-//                }
-//                if (adminTenants != null && adminTenants.contains(first)) {
-//                    return true;
-//                }
-//                return false;
-//            }
-//
-//            String first = relative.getName(0).toString();
-//            if (GLOBAL.equals(first)) {
-//                return true;
-//            }
-//            return adminTenants != null && adminTenants.contains(first);
-//        };
-//
-//        if (Files.exists(logsRoot) && Files.isDirectory(logsRoot)) {
-//            if (target.equals(baseLogPath)) {
-//                return true;
-//            }
-//            if (checkAgainstRoot.test(logsRoot)) {
-//                return true;
-//            }
-//            return checkAgainstRoot.test(baseLogPath);
-//        }
-//
-//        if (target.equals(baseLogPath)) {
-//            return true;
-//        }
-//        return checkAgainstRoot.test(baseLogPath);
 //    }
 
     // canSee to test manually non-admin, non-superadmin users functionalities
@@ -324,23 +222,6 @@ public class LogManagerAPIImpl implements LogManagerAPI {
         return profile.isIsSuperadmin();
     }
 
-    // Create zip for a folder identified by UI key/path after permission check.
-    @Override
-    public Path getDownloadFolderPath(String key, String path, SpagoBIUserProfile profile) throws ImpossibleToCreateFileException {
-        Path pathToReturn = null;
-        try {
-            Path workDirr = getFullRootByPath(path, profile);
-            if (canSee(workDirr, profile)) {
-                pathToReturn = createZipFile(workDirr);
-            } else {
-                throw new ImpossibleToCreateFileException("Access denied to log folder " + path + " for download");
-            }
-        } catch (Exception e) {
-            throw new ImpossibleToCreateFileException(e.getMessage(), e);
-        }
-        return pathToReturn;
-    }
-
     // Entry point used by REST download of individual files.
     @Override
     public Path getDownloadLogFilePath(List<String> path, SpagoBIUserProfile profile) throws ImpossibleToDownloadFileException {
@@ -349,29 +230,6 @@ public class LogManagerAPIImpl implements LogManagerAPI {
         } catch (Exception e) {
             throw new ImpossibleToDownloadFileException(e.getMessage(), e);
         }
-    }
-
-    // Resolve a root element (first segment) into an absolute path.
-    public Path getFullRootByPath(String path, SpagoBIUserProfile profile) throws IOException {
-        String separator = File.separator.equals("\\") ? "\\\\" : File.separator;
-        String rootElement = path.split(separator)[0];
-        return getTotalPath(rootElement, profile);
-    }
-
-    // Helper: find node in folder tree by key.
-    private LogFolderDTO findNode(LogFolderDTO node, String key) {
-        LogFolderDTO toReturn = null;
-        if (node.getKey().equals(key))
-            return node;
-
-        List<LogFolderDTO> children = node.getChildren();
-        for (int i = 0; i < children.size(); i++) {
-            toReturn = findNode(children.get(i), key);
-            if (toReturn != null)
-                break;
-        }
-
-        return toReturn;
     }
 
     // List files in a relative path after permission check.
@@ -408,31 +266,6 @@ public class LogManagerAPIImpl implements LogManagerAPI {
             throw new IOException("Access denied: resolved path is outside tenant root");
         }
         return resolved;
-    }
-
-
-    // Create a ZIP archive from a folder (recursively copy into temp dir then zip).
-    public Path createZipFile(Path fullPath) {
-
-        try {
-            Path tempDirectory = Files.createTempDirectory("knowage-zip");
-            Path tempLog = Files.createTempFile("knowage-zip", ".zip");
-
-            File logDest = tempDirectory.resolve(fullPath.getName(fullPath.getNameCount() - 1)).toFile();
-            FileUtils.copyDirectory(fullPath.toFile(), logDest);
-            try (Stream<Path> walk = Files.walk(tempDirectory)) {
-                List<Path> logs = walk.collect(toList());
-
-                putEntries(tempDirectory, tempLog, logs);
-            }
-
-            cleanUpTempDirectory(tempDirectory);
-
-            return tempLog;
-
-        } catch (IOException e) {
-            throw new KnowageRuntimeException("Error creating export ZIP archive", e);
-        }
     }
 
     // Create a ZIP from an explicit list of files (validates permission per file).
@@ -596,22 +429,6 @@ public class LogManagerAPIImpl implements LogManagerAPI {
         } catch (IOException e) {
             LOGGER.debug("Error searching file recursively: " + fileName, e);
             return Optional.empty();
-        }
-    }
-
-    // Add a single file entry into an existing ZipOutputStream.
-    @Override
-    public void addFileToZip(java.nio.file.Path source, String entryName, ZipOutputStream zos) throws IOException {
-        ZipEntry entry = new ZipEntry(entryName);
-        zos.putNextEntry(entry);
-        try (InputStream in = Files.newInputStream(source)) {
-            byte[] buf = new byte[8192];
-            int read;
-            while ((read = in.read(buf)) > 0) {
-                zos.write(buf, 0, read);
-            }
-        } finally {
-            zos.closeEntry();
         }
     }
 }
