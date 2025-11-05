@@ -92,9 +92,9 @@ about the Enterprise Edition.
 ## Build
 
 To build KNOWAGE you need:
-- JDK 8
+- JDK 17
 - [Maven 3](https://maven.apache.org/)
-- [NodeJS 8 or greater](https://nodejs.org/)
+- [NodeJS 22 or greater](https://nodejs.org/)
 
 N.B.: You need to add the paths containing your ``java``, ``node`` and ``npm`` commands to your ``PATH`` environment variable: see the official documentation of your operating system.
 
@@ -110,15 +110,10 @@ At the end of the build you will find all the WAR files at the following paths:
  - ``knowage-vue/target/knowage-vue.war``
  - ``knowagebirtreportengine/target/knowagebirtreportengine.war``
  - ``knowagecockpitengine/target/knowagecockpitengine.war``
- - ``knowagecommonjengine/target/knowagecommonjengine.war``
- - ``knowagedataminingengine/target/knowagedataminingengine.war``
- - ``knowagegeoreportengine/target/knowagegeoreportengine.war``
  - ``knowagejasperreportengine/target/knowagejasperreportengine.war``
  - ``knowagekpiengine/target/knowagekpiengine.war``
  - ``knowagemeta/target/knowagemeta.war``
  - ``knowageqbeengine/target/knowageqbeengine.war``
- - ``knowagesdk/target/knowagesdk.war``
- - ``knowagesvgviewerengine/target/knowagesvgviewerengine.war``
  - ``knowagetalendengine/target/knowagetalendengine.war``
  - ``knowagewhatifengine/target/knowagewhatifengine.war``
 
