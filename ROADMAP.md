@@ -13,59 +13,32 @@ Knowage evolves to meet the latest analytical needs thanks to the innovation and
 
 ## Short term
 
-The following list of features is planned to be addressed in the short term, by Q1 2020 (release 7.2):
+The following list of features is planned to be addressed in the short term, by Q4 2025 (release 9.0):
 
-* new dataset type Python / R
+* new Dashboard than include:
+  	- new widget Map
+  	- new widget Pivot
+  	- new charts
+  	- Themes management
+  	- help
+  	- responsive
+  	- Cache on browser
 
-* AWS Redshift compatibility
-
-* cockpit enhancements:
-
-	- capability to use a Solr dataset within all widgets
-	
-	- custom variables for dynamic behaviours and calculated fields
-	
-	- calculated fields on map and chart widgets
-	
-	- new chart type Bubble
-	
-	- new custom chart, where developer can exploit JS libraries
-	
-	- new Python / R widget
- 
+* Wizard to create a new dossier
 
 
 ## Medium term
 
-The following list of features is planned to be addressed in the medium term, by Q2 2020 (release 7.3):
+The following list of features is planned to be addressed in the medium term, by Q1 2026 (release 9.1):
 
-* from data exploration tool (QbE) to cockpit designer in a seamless way
+* New Dashboard capabilities
+  - new slider selecotr
+  - multi value selecto
+  - change series on chart
 
 * NGSI-LD compatibility
 
-* cockpit enhancements:
 
-	- map widgets: getting more than one layer from catalogue
-	
-	- gallery for chart, HTML and Python widgets for an easy reuse
-	
-	- calculated fields on Solr dataset
-	
-	- styles management for an easy reuse
-
-
-
-## Long term
-
-In the following, Knowage will grow on other topics, such as:
-
-* revision of functions catalogue
-
-* Google Big Table compatibility
-
-* Azure Synapse compatibility
-
-* Elasticsearch dataset
 
 
 
