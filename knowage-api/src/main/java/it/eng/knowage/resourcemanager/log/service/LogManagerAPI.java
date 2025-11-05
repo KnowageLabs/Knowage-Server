@@ -12,47 +12,79 @@ import java.util.List;
 import java.util.Optional;
 import java.util.zip.ZipOutputStream;
 
-// per elencare, cercare e scaricare i file di log da Tomcat
+/*
+* Core interface for log file management.
+* - Lists folders and files under the application log directory.
+* - Provides methods to read single files and prepare ZIP downloads.
+* - Permission checks are performed against the provided SpagoBIUserProfile.
+* - Implementations must ensure path resolution never escapes tenant root.
+*/
 public interface LogManagerAPI {
 
-    public LogFolderDTO getFolders(SpagoBIUserProfile profile) throws ImpossibleToReadFolderListException;
+    /*
+    * Build and return the tree of available log folders for the caller.
+    * - Should apply visibility rules (canSee) while building the tree.
+    */
+    LogFolderDTO getFolders(SpagoBIUserProfile profile) throws ImpossibleToReadFolderListException;
 
-    public Path getWorkDirectory(SpagoBIUserProfile profile) throws IOException;
+    /*
+    * Return the base work directory (logs root) for the caller.
+    * - Implementations must create the directory if missing.
+    */
+    Path getWorkDirectory(SpagoBIUserProfile profile) throws IOException;
 
-    /**
-     * Elenca i file di log partendo dal relativo path della cartella
-     */
-    public List<LogFileDTO> getListOfLogs(String relativePath, SpagoBIUserProfile profile) throws ImpossibleToReadFilesListException, ImpossibleToReadFolderListException;
+    /*
+    * List log files inside a relative path.
+    * - Must validate that caller canSee() the requested folder.
+    */
+    List<LogFileDTO> getListOfLogs(String relativePath, SpagoBIUserProfile profile) throws ImpossibleToReadFilesListException, ImpossibleToReadFolderListException;
 
+    /*
+    * Create a temporary ZIP containing the requested paths and return its Path.
+    * - Caller must ensure DTO is validated.
+    * - Implementation must validate each file with canSee() before including it.
+    */
     java.nio.file.Path getDownloadLogFilePath(List<String> path, SpagoBIUserProfile profile) throws ImpossibleToDownloadFileException;
 
+    /*
+    * Check if the given absolute path is visible to the user profile.
+    * - Centralize tenant/role/superadmin rules here.
+    */
     boolean canSee(Path path, SpagoBIUserProfile profile) throws IOException;
 
+    /*
+    * Return the textual content of a log file.
+    * - Must validate file exists and caller canSee() it.
+    */
     String getLogContent(String logName, SpagoBIUserProfile profile) throws ImpossibleToReadFilesListException;
 
-    /**
-     * @param key
-     * @param path
-     * @param profile
-     * @return
-     * @throws ImpossibleToCreateFileException
-     */
+    /*
+    * Create a ZIP for a whole folder identified by a UI key/path.
+    * - Implementations should validate permission and return a temp zip Path.
+    */
     Path getDownloadFolderPath(String key, String path, SpagoBIUserProfile profile) throws ImpossibleToCreateFileException;
 
-    /**
-     * Ritorna il relativePath della root predefinita (prina root)
-     */
+    /*
+    * Return the default relative path that should be shown as root for the user.
+    * - Used by UI to open a sensible starting folder.
+    */
     String getDefaultFolderRelativePath(SpagoBIUserProfile profile) throws ImpossibleToReadFolderListException;
 
-    /**
-     * Ritorna il Path completo (workDir + relativePath) della root predefinita)
-     */
+    /*
+    * Return the absolute Path of the default root for the user (workDir + relative).
+    */
     Path getDefaultFolderPath(SpagoBIUserProfile profile) throws ImpossibleToReadFolderListException;
 
-
-    /// method used in POST request to download selected log files
+    /*
+    * Search a file by name recursively under a root.
+    * - Used by the download endpoint when client supplies only a filename.
+    * - Should be case-sensitive and return the first match.
+    */
     Optional<Path> findFileRecursively(java.nio.file.Path root, String fileName);
 
-    /// method used in POST request to download selected log files
+    /*
+    * Add a single file into an existing ZipOutputStream.
+    * - Entry name must be provided relative to the chosen root inside the archive.
+    */
     void addFileToZip(java.nio.file.Path source, String entryName, ZipOutputStream zos) throws IOException;
 }

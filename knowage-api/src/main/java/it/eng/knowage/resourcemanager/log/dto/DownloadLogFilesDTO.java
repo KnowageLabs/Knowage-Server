@@ -8,6 +8,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+/*
+* DTO used by the REST endpoint to request a ZIP download of selected log files.
+* - selectedLogsNames: list of filenames (strings) sent by the client.
+* - Uses custom FilesCheck validation to ensure each entry is acceptable.
+*/
 public class DownloadLogFilesDTO {
 
     @JsonDeserialize(as = ArrayList.class, contentAs = String.class)
