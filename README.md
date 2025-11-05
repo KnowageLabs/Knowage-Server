@@ -9,14 +9,8 @@
 
 KNOWAGE is the open source analytics and business intelligence suite that allows you to combine traditional data and big/cloud data sources into valuable and meaningful information. Its features, such as data
 federation, mash-up, data/text mining and advanced data visualization, give
-comprehensive support to rich and multi-source data analysis. The suite is
-composed of two main modules and four additional plugins that can be combined to ensure full coverage of user’ requirements.
+comprehensive support to rich and multi-source data analysis.
 
-
-KNOWAGE is now available on [FIWARE Marketplace](https://www.fiware.org/marketplace/) 
-as FIWARE-ready software enabler, being fully compliant with [FIWARE](https://www.fiware.org/) 
-architecture and GEs. For more information check the FIWARE Marketplace entry 
-for [KNOWAGE](https://www.fiware.org/marketplace/product-details/?category=ready&id=engineering-knowage).
 
 |  :books: [Documentation](https://knowage-suite.rtfd.io/) | :page_facing_up: [Site](https://www.knowage-suite.com/site/home/) | :whale: [Docker Hub](https://hub.docker.com/r/knowagelabs/knowage-server-docker/) | :dart: [Roadmap](https://github.com/KnowageLabs/Knowage-Server/blob/master/ROADMAP.md) |
 
@@ -34,16 +28,16 @@ for [KNOWAGE](https://www.fiware.org/marketplace/product-details/?category=ready
 -   [License](#license)
 
 
-## Modules and plugins available
+## Main functionlities
 
 |                                                   | Name                   | Description                                                                                                              |
 | ------------------------------------------------- | ---------------------- | ------------------------------------------------------------------------------------------------------------------------ |
-| ![SI](/images/modules/SI-40x40.jpg?raw=true "SI") | Smart Intelligence     | The usual business intelligence on structured data, but more oriented to self-service capabilities and agile prototyping |
-| ![ER](/images/modules/ER-40x40.jpg?raw=true "ER") | Enterprise Reporting   | To produce and distribute static reports                                                                                 |
-| ![LI](/images/plugins/LI-40x40.png?raw=true "LI") | Location Intelligence  | To relate business data with spatial or geographical information                                                         |
-| ![PM](/images/plugins/PM-40x40.png?raw=true "PM") | Performance Management | To manage KPIs and organize scorecards, to monitor your business in real-time                                            |
-| ![CA](/images/plugins/CA-40x40.png?raw=true "CA") | Custom Analytics       | To add what-if capabilities e take full advantage of R/python embedding possibilities                                    |
-| ![SD](/images/plugins/SD-40x40.png?raw=true "SD") | Smart Data             | To combine Solr index with other data sources and provide faceted views and full text search                             |
+| On line Dashboarding    | The usual business intelligence on structured data, but more oriented to self-service capabilities and agile prototyping |
+| Reporting   | To produce and distribute static reports    |
+| OLAP  | To create On Line Analitical Processing analisys    |
+| | KPI | To manage KPIs and organize scorecards, to monitor your business in real-time   |
+|  | Data Preparation       | To preparare Data Set before use it in the dashboard    |
+|  | Python integration             | To create advanced visualization inside dashboard     |
 
 KNOWAGE supports a modern vision of the data analytics, providing new
 self-service capabilities that give autonomy to the end-user, now able to build
@@ -65,8 +59,6 @@ This repository contains the source code of the Community Edition.
 ## Install
 
 Information about how to install KNOWAGEis available on official documentation on [Read the Docs](http://knowage-suite.readthedocs.io/) within Installation & Administration Manuals.
-
-An installer for Windows and Linux environments is available on [KNOWAGE website](https://www.knowage-suite.com) within the download area.
 
 A `Dockerfile` is also available for your use - further information can be found [here](https://github.com/KnowageLabs/Knowage-Server-Docker).
 
