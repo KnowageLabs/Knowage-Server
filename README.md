@@ -35,9 +35,9 @@ comprehensive support to rich and multi-source data analysis.
 | On line Dashboarding    | The usual business intelligence on structured data, but more oriented to self-service capabilities and agile prototyping |
 | Reporting   | To produce and distribute static reports    |
 | OLAP  | To create On Line Analitical Processing analisys    |
-| | KPI | To manage KPIs and organize scorecards, to monitor your business in real-time   |
-|  | Data Preparation       | To preparare Data Set before use it in the dashboard    |
-|  | Python integration             | To create advanced visualization inside dashboard     |
+| KPI | To manage KPIs and organize scorecards, to monitor your business in real-time   |
+| Data Preparation       | To preparare Data Set before use it in the dashboard    |
+| Python integration             | To create advanced visualization inside dashboard     |
 
 KNOWAGE supports a modern vision of the data analytics, providing new
 self-service capabilities that give autonomy to the end-user, now able to build
