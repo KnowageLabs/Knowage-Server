@@ -32,14 +32,14 @@ comprehensive support to rich and multi-source data analysis.
 
 | Name                   | Description                                                                                                              |
  ---------------------- | ------------------------------------------------------------------------------------------------------------------------ |
-| Virtual Assistant    | KNOWAGE provides a virtual assistant that, by integrating AI tools (EngGpt), supports users in performing analyses and navigating information |
-| On line Dashboard    | The dashboard is an interactive tool designed for visualizing information retrieved from data sets |
-| Reporting   | The advanced reporting capabilities, enabling users to create, customize, and distribute interactive reports based on diverse data sources.    |
-| OLAP  | This function allow users to explore multidimensional data interactively, enabling drill-down, slice-and-dice, and pivot operations for in-depth analysis   |
-| KPI | Knowage enables KPI management by defining, monitoring, and visualizing key performance indicators to track business objectives and performance trends   |
-| Data Preparation       | Knowage provides data preparation tools to clean, transform, and enrich raw data, ensuring quality and consistency for advanced analytics and reporting.    |
-| Python integration             | Knowage supports Python integration, allowing users to execute scripts, apply advanced analytics, and embed custom algorithms directly within the BI environment     |
-| Dossier             | Knowage allows users to create dossiers by combining multiple reports and documents into a single, organized and interactive view for comprehensive analysis     |
+| **Virtual Assistant**    | KNOWAGE provides a virtual assistant that, by integrating AI tools (EngGpt), supports users in performing analyses and navigating information |
+| **On line Dashboard**    | The dashboard is an interactive tool designed for visualizing information retrieved from data sets |
+| **Reporting**   | The advanced reporting capabilities, enabling users to create, customize, and distribute interactive reports based on diverse data sources.    |
+| **OLAP**  | This function allow users to explore multidimensional data interactively, enabling drill-down, slice-and-dice, and pivot operations for in-depth analysis   |
+| **KPI** | Knowage enables KPI management by defining, monitoring, and visualizing key performance indicators to track business objectives and performance trends   |
+| **Data Preparation**       | Knowage provides data preparation tools to clean, transform, and enrich raw data, ensuring quality and consistency for advanced analytics and reporting.    |
+| **Python integration**             | Knowage supports Python integration, allowing users to execute scripts, apply advanced analytics, and embed custom algorithms directly within the BI environment     |
+| **Dossier**             | Knowage allows users to create dossiers by combining multiple reports and documents into a single, organized and interactive view for comprehensive analysis     |
 
 KNOWAGE supports a modern vision of the data analytics, providing new
 self-service capabilities that give autonomy to the end-user, now able to build
