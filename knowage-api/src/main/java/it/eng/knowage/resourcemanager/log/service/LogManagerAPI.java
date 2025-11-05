@@ -10,7 +10,6 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Optional;
-import java.util.zip.ZipOutputStream;
 
 /*
 * Core interface for log file management.
@@ -59,32 +58,9 @@ public interface LogManagerAPI {
     String getLogContent(String logName, SpagoBIUserProfile profile) throws ImpossibleToReadFilesListException;
 
     /*
-    * Create a ZIP for a whole folder identified by a UI key/path.
-    * - Implementations should validate permission and return a temp zip Path.
-    */
-    Path getDownloadFolderPath(String key, String path, SpagoBIUserProfile profile) throws ImpossibleToCreateFileException;
-
-    /*
-    * Return the default relative path that should be shown as root for the user.
-    * - Used by UI to open a sensible starting folder.
-    */
-    String getDefaultFolderRelativePath(SpagoBIUserProfile profile) throws ImpossibleToReadFolderListException;
-
-    /*
-    * Return the absolute Path of the default root for the user (workDir + relative).
-    */
-    Path getDefaultFolderPath(SpagoBIUserProfile profile) throws ImpossibleToReadFolderListException;
-
-    /*
     * Search a file by name recursively under a root.
     * - Used by the download endpoint when client supplies only a filename.
     * - Should be case-sensitive and return the first match.
     */
     Optional<Path> findFileRecursively(java.nio.file.Path root, String fileName);
-
-    /*
-    * Add a single file into an existing ZipOutputStream.
-    * - Entry name must be provided relative to the chosen root inside the archive.
-    */
-    void addFileToZip(java.nio.file.Path source, String entryName, ZipOutputStream zos) throws IOException;
 }
