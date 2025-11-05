@@ -17,7 +17,7 @@ comprehensive support to rich and multi-source data analysis.
 
 ## Contents
 
--   [Modules and plugins available](#modules-and-plugins-available)
+-   [Main functionlities](#main-functionlities)
 -   [Editions](#editions)
 -   [Install](#install)
 -   [Usage](#usage)
