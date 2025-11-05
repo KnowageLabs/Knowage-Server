@@ -30,14 +30,14 @@ comprehensive support to rich and multi-source data analysis.
 
 ## Main functionlities
 
-|                                                   | Name                   | Description                                                                                                              |
-| ------------------------------------------------- | ---------------------- | ------------------------------------------------------------------------------------------------------------------------ |
-| On line Dashboarding    | The usual business intelligence on structured data, but more oriented to self-service capabilities and agile prototyping |
-| Reporting   | To produce and distribute static reports    |
-| OLAP  | To create On Line Analitical Processing analisys    |
-| KPI | To manage KPIs and organize scorecards, to monitor your business in real-time   |
-| Data Preparation       | To preparare Data Set before use it in the dashboard    |
-| Python integration             | To create advanced visualization inside dashboard     |
+| Name                   | Description                                                                                                              |
+ ---------------------- | ------------------------------------------------------------------------------------------------------------------------ |
+| On line Dashboarding    | The dashboard is an interactive tool designed for visualizing information retrieved from data sets |
+| Reporting   | The advanced reporting capabilities, enabling users to create, customize, and distribute interactive reports based on diverse data sources.    |
+| OLAP  | This function allow users to explore multidimensional data interactively, enabling drill-down, slice-and-dice, and pivot operations for in-depth analysis   |
+| KPI | Knowage enables KPI management by defining, monitoring, and visualizing key performance indicators to track business objectives and performance trends   |
+| Data Preparation       | Knowage provides data preparation tools to clean, transform, and enrich raw data, ensuring quality and consistency for advanced analytics and reporting.    |
+| Python integration             | Knowage supports Python integration, allowing users to execute scripts, apply advanced analytics, and embed custom algorithms directly within the BI environment     |
 
 KNOWAGE supports a modern vision of the data analytics, providing new
 self-service capabilities that give autonomy to the end-user, now able to build
