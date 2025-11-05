@@ -32,6 +32,7 @@ comprehensive support to rich and multi-source data analysis.
 
 | Name                   | Description                                                                                                              |
  ---------------------- | ------------------------------------------------------------------------------------------------------------------------ |
+| Virtual Assistant    | KNOWAGE provides a virtual assistant that, by integrating AI tools (EngGpt), supports users in performing analyses and navigating information |
 | On line Dashboard    | The dashboard is an interactive tool designed for visualizing information retrieved from data sets |
 | Reporting   | The advanced reporting capabilities, enabling users to create, customize, and distribute interactive reports based on diverse data sources.    |
 | OLAP  | This function allow users to explore multidimensional data interactively, enabling drill-down, slice-and-dice, and pivot operations for in-depth analysis   |
