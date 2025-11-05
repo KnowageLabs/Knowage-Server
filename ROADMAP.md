@@ -13,7 +13,7 @@ Knowage evolves to meet the latest analytical needs thanks to the innovation and
 
 ## Short term
 
-The following list of features is planned to be addressed in the short term, by Q4 2025 (release 9.0):
+The following list of features is planned to be addressed in the short term, by Q4 2025 (release **9.0**):
 
 Version **9.0** of KNOWAGE introduces the following new features compared to version 8.1:
 
@@ -43,7 +43,7 @@ Version **9.0** of KNOWAGE introduces the following new features compared to ver
 
 ## Medium term
 
-The following list of features is planned to be addressed in the medium term, by Q1 2026 (release 9.1):
+The following list of features is planned to be addressed in the medium term, by Q1 2026 (release **9.1**):
 
 
 * Several enhancements to the **Selector Widget**, including:
