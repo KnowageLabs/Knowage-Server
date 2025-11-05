@@ -38,6 +38,7 @@ comprehensive support to rich and multi-source data analysis.
 | KPI | Knowage enables KPI management by defining, monitoring, and visualizing key performance indicators to track business objectives and performance trends   |
 | Data Preparation       | Knowage provides data preparation tools to clean, transform, and enrich raw data, ensuring quality and consistency for advanced analytics and reporting.    |
 | Python integration             | Knowage supports Python integration, allowing users to execute scripts, apply advanced analytics, and embed custom algorithms directly within the BI environment     |
+| Dossier             | Knowage allows users to create dossiers by combining multiple reports and documents into a single, organized and interactive view for comprehensive analysis     |
 
 KNOWAGE supports a modern vision of the data analytics, providing new
 self-service capabilities that give autonomy to the end-user, now able to build
