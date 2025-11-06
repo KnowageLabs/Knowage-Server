@@ -1,4 +1,4 @@
-package it.eng.knowage.resourcemanager.log.dto;
+package it.eng.knowage.logmanager.resource.dto;
 
 import it.eng.knowage.boot.validation.NotInvalidCharacters;
 import it.eng.knowage.boot.validation.Xss;

@@ -1,13 +1,13 @@
-package it.eng.knowage.resourcemanager.log;
+package it.eng.knowage.logmanager.resource;
 
 import it.eng.knowage.boot.context.BusinessRequestContext;
 import it.eng.knowage.boot.error.KnowageBusinessException;
 import it.eng.knowage.boot.error.KnowageRuntimeException;
 import it.eng.knowage.knowageapi.error.ImpossibleToDownloadFileException;
-import it.eng.knowage.resourcemanager.log.dto.DownloadLogFilesDTO;
-import it.eng.knowage.resourcemanager.log.dto.LogFileDTO;
-import it.eng.knowage.resourcemanager.log.dto.LogFolderDTO;
-import it.eng.knowage.resourcemanager.log.service.LogManagerAPI;
+import it.eng.knowage.logmanager.resource.dto.DownloadLogFilesDTO;
+import it.eng.knowage.logmanager.resource.dto.LogFileDTO;
+import it.eng.knowage.logmanager.resource.dto.LogFolderDTO;
+import it.eng.knowage.logmanager.service.LogManagerAPI;
 import it.eng.spagobi.services.security.SpagoBIUserProfile;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -77,7 +77,7 @@ public class LogsResource {
     * - If empty result, attempts a fallback to "logs" folder.
     */
     @GET
-    @Path("/folders/{folder}")
+    @Path("/folders/{folder}/files")
     @Produces(MediaType.APPLICATION_JSON)
     public List<LogFileDTO> getLogs(@PathParam("folder") String folder) throws KnowageBusinessException {
         SpagoBIUserProfile profile = businessContext.getUserProfile();
@@ -113,13 +113,13 @@ public class LogsResource {
     * - Service performs existence and permission checks.
     */
     @GET
-    @Path("/folders/{folder}/view/{logName}")
+    @Path("/folders/{folder}/files/{fileName}")
     @Produces(MediaType.TEXT_PLAIN)
-    public String viewLog(@PathParam("folder") String folder, @PathParam("logName") String logName) throws KnowageBusinessException {
+    public String viewLog(@PathParam("folder") String folder, @PathParam("fileName") String fileName) throws KnowageBusinessException {
         SpagoBIUserProfile profile = businessContext.getUserProfile();
         String combined = "";
         try {
-            LOGGER.debug("viewLog raw folder: " + folder + ", raw log name: " + logName);
+            LOGGER.debug("viewLog raw folder: " + folder + ", raw log name: " + fileName);
 
             if (folder == null){
                 folder = "";
@@ -128,14 +128,14 @@ public class LogsResource {
                 folder = folder.replaceAll("^/+", "").replaceAll("/+$", "");
             }
 
-            if (logName == null) {
-                logName = "";
+            if (fileName == null) {
+                fileName = "";
             } else {
-                logName = URLDecoder.decode(logName, StandardCharsets.UTF_8.name());
-                logName = logName.replaceAll("^/+", "").replaceAll("/+$", "");
+                fileName = URLDecoder.decode(fileName, StandardCharsets.UTF_8.name());
+                fileName = fileName.replaceAll("^/+", "").replaceAll("/+$", "");
             }
 
-            combined = folder.isEmpty() ? logName : folder + "/" + logName;
+            combined = folder.isEmpty() ? fileName : folder + "/" + fileName;
             return logManagerAPIservice.getLogContent(combined, profile);
         } catch (Exception e) {
             LOGGER.error("Impossible to read log file: " + combined + " ", e);
@@ -158,12 +158,12 @@ public class LogsResource {
 
     // View raw content of a single log file directly under root folder (workDir).
     @GET
-    @Path("/view/{logName}")
+    @Path("/root/{fileName}")
     @Produces(MediaType.TEXT_PLAIN)
-    public String viewRootLog(@PathParam("logName") String logName) throws KnowageBusinessException {
+    public String viewRootLog(@PathParam("fileName") String fileName) throws KnowageBusinessException {
         SpagoBIUserProfile profile = businessContext.getUserProfile();
         try {
-            return logManagerAPIservice.getLogContent(logName, profile);
+            return logManagerAPIservice.getLogContent(fileName, profile);
         } catch (Exception e) {
             throw new KnowageBusinessException("Impossible to read log file", e);
         }

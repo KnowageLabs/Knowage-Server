@@ -1,4 +1,4 @@
-package it.eng.knowage.resourcemanager.log.dto;
+package it.eng.knowage.logmanager.resource.dto;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
