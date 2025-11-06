@@ -1,15 +1,14 @@
-package it.eng.knowage.resourcemanager.log.service;
+package it.eng.knowage.logmanager.service;
 
 
 import it.eng.knowage.knowageapi.error.*;
-import it.eng.knowage.resourcemanager.log.dto.LogFileDTO;
-import it.eng.knowage.resourcemanager.log.dto.LogFolderDTO;
+import it.eng.knowage.logmanager.resource.dto.LogFileDTO;
+import it.eng.knowage.logmanager.resource.dto.LogFolderDTO;
 import it.eng.spagobi.services.security.SpagoBIUserProfile;
 
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
-import java.util.Optional;
 
 /*
 * Core interface for log file management.
@@ -46,21 +45,8 @@ public interface LogManagerAPI {
     java.nio.file.Path getDownloadLogFilePath(List<String> path, SpagoBIUserProfile profile) throws ImpossibleToDownloadFileException;
 
     /*
-    * Check if the given absolute path is visible to the user profile.
-    * - Centralize tenant/role/superadmin rules here.
-    */
-    boolean canSee(Path path, SpagoBIUserProfile profile) throws IOException;
-
-    /*
     * Return the textual content of a log file.
     * - Must validate file exists and caller canSee() it.
     */
     String getLogContent(String logName, SpagoBIUserProfile profile) throws ImpossibleToReadFilesListException;
-
-    /*
-    * Search a file by name recursively under a root.
-    * - Used by the download endpoint when client supplies only a filename.
-    * - Should be case-sensitive and return the first match.
-    */
-    Optional<Path> findFileRecursively(java.nio.file.Path root, String fileName);
 }

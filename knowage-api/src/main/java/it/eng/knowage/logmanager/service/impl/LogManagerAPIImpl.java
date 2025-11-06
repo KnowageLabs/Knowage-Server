@@ -1,16 +1,15 @@
-package it.eng.knowage.resourcemanager.log.service.impl;
+package it.eng.knowage.logmanager.service.impl;
 
 import it.eng.knowage.boot.error.KnowageRuntimeException;
 import it.eng.knowage.boot.utils.ContextPropertiesConfig;
 import it.eng.knowage.boot.utils.HMACUtilities;
 import it.eng.knowage.knowageapi.error.*;
-import it.eng.knowage.resourcemanager.log.dto.LogFileDTO;
-import it.eng.knowage.resourcemanager.log.service.LogManagerAPI;
-import it.eng.knowage.resourcemanager.log.dto.LogFolderDTO;
+import it.eng.knowage.logmanager.resource.dto.LogFileDTO;
+import it.eng.knowage.logmanager.resource.dto.LogFolderDTO;
+import it.eng.knowage.logmanager.service.LogManagerAPI;
 import it.eng.spagobi.services.security.SpagoBIUserProfile;
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
-import org.apache.logging.log4j.ThreadContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -81,7 +80,7 @@ public class LogManagerAPIImpl implements LogManagerAPI {
         return totalPath;
     }
 
-    // Read tenant from ThreadContext, fallback to GLOBAL.
+    // Read profile tenant, fallback to GLOBAL.
     private String resolveTenant(SpagoBIUserProfile profile) {
         String tenant = profile.getOrganization();
         if (tenant == null || tenant.trim().isEmpty()) {
@@ -126,14 +125,12 @@ public class LogManagerAPIImpl implements LogManagerAPI {
 
     // canSee always true to test manually all functionalities
 
-//    @Override
 //    public boolean canSee(Path path, SpagoBIUserProfile profile) throws IOException {
 //        return true;
 //    }
 
     // canSee to test manually non-admin, non-superadmin users functionalities
 
-//    @Override
 //    public boolean canSee(Path path, SpagoBIUserProfile profile) throws IOException {
 //        return false;
 //    }
@@ -143,8 +140,7 @@ public class LogManagerAPIImpl implements LogManagerAPI {
     * Permission check: superadmins see everything, admins limited to tenant/global/root rules.
     * - Important: the logic must match how logs are generated/partitioned.
     */
-    @Override
-    public boolean canSee(Path path, SpagoBIUserProfile profile) throws IOException {
+    private boolean canSee(Path path, SpagoBIUserProfile profile) throws IOException {
         if (hasSuperadminFunctionality(profile)){
             return true;
         }
@@ -214,13 +210,11 @@ public class LogManagerAPIImpl implements LogManagerAPI {
     // Helper: check if profile has admin functionality.
     public static boolean hasAdminFunctionality(SpagoBIUserProfile profile) {
         return profile.getFunctions().contains(LOG_FUNCTIONALITY);
-//        return true;
     }
 
     // Helper: check if profile is superadmin.
     public static boolean hasSuperadminFunctionality(SpagoBIUserProfile profile) {
-//        return profile.isIsSuperadmin();
-        return false;
+        return profile.isIsSuperadmin();
     }
 
     // Entry point used by REST download of individual files.
@@ -420,8 +414,7 @@ public class LogManagerAPIImpl implements LogManagerAPI {
     }
 
     // Find first file matching filename under root (case-sensitive).
-    @Override
-    public Optional<java.nio.file.Path> findFileRecursively(java.nio.file.Path root, String fileName) {
+    private Optional<java.nio.file.Path> findFileRecursively(java.nio.file.Path root, String fileName) {
         try (Stream<java.nio.file.Path> walk = Files.walk(root)) {
             return walk.filter(Files::isRegularFile)
                     .peek(p -> LOGGER.trace("Visiting: " + p))
