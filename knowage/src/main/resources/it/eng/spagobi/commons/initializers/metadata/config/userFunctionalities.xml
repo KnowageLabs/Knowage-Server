@@ -78,5 +78,7 @@
 	<USER_FUNCTIONALITY productType="KnowageSI" name="DocumentAdministration" description="DocumentAdministration" />
 	<USER_FUNCTIONALITY productType="KnowageSI" name="FunctionsCatalogManagement" description="FunctionsCatalogManagement" />
 	<USER_FUNCTIONALITY productType="KnowageSI" name="SyncronizeRolesManagement" description="SyncronizeRolesManagement" />
+    <USER_FUNCTIONALITY productType="KnowageSI" name="LogManagement" description="LogManagement" />
+
 
 </USER_FUNCTIONALITIES>

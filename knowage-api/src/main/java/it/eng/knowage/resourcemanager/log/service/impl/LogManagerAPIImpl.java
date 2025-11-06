@@ -38,7 +38,6 @@ public class LogManagerAPIImpl implements LogManagerAPI {
     private static final Logger LOGGER = Logger.getLogger(LogManagerAPIImpl.class);
 
     private static final String LOG_FUNCTIONALITY = "LogManagement";
-    private static final String TREAD_CONTEXT_KEY_TENANT = "tenant";
     private static final String GLOBAL = "global";
 
 
@@ -84,7 +83,7 @@ public class LogManagerAPIImpl implements LogManagerAPI {
 
     // Read tenant from ThreadContext, fallback to GLOBAL.
     private String resolveTenant(SpagoBIUserProfile profile) {
-        String tenant = ThreadContext.get(TREAD_CONTEXT_KEY_TENANT);
+        String tenant = profile.getOrganization();
         if (tenant == null || tenant.trim().isEmpty()) {
             tenant = GLOBAL;
         }
@@ -215,11 +214,13 @@ public class LogManagerAPIImpl implements LogManagerAPI {
     // Helper: check if profile has admin functionality.
     public static boolean hasAdminFunctionality(SpagoBIUserProfile profile) {
         return profile.getFunctions().contains(LOG_FUNCTIONALITY);
+//        return true;
     }
 
     // Helper: check if profile is superadmin.
     public static boolean hasSuperadminFunctionality(SpagoBIUserProfile profile) {
-        return profile.isIsSuperadmin();
+//        return profile.isIsSuperadmin();
+        return false;
     }
 
     // Entry point used by REST download of individual files.
