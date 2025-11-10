@@ -460,7 +460,14 @@ public class DataSetUtilities {
                                         java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
                                 result = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
                             } catch (DateTimeParseException exc) {
-                                throw new SpagoBIRuntimeException(exc);
+                                // Caused by: it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException: java.time.format.DateTimeParseException: Text '1998-08-12 00:00:00.0' could not be parsed, unparsed text found at index 19
+                                try {
+                                    LocalDateTime localDateTime = LocalDateTime.parse(value,
+                                            java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.S"));
+                                    result = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
+                                } catch (DateTimeParseException excp) {
+                                    throw new SpagoBIRuntimeException(excp);
+                                }
                             }
                         }
                     }
