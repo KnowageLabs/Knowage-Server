@@ -24,16 +24,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <%@page import="it.eng.spagobi.commons.utilities.GeneralUtilities"%>
 <%@page import="it.eng.knowage.commons.security.KnowageSystemConfiguration"%>
-<%@page import="it.eng.spagobi.commons.utilities.PortletUtilities"%>
 <%@page import="it.eng.spago.base.*"%>
 
 
 
 <%
-	ResponseContainer responseContainer = ResponseContainerPortletAccess.getResponseContainer(request);
-	if (responseContainer == null) {
-		responseContainer = ResponseContainer.getResponseContainer();
-	}
+	ResponseContainer responseContainer = ResponseContainer.getResponseContainer()
 	SourceBean serviceResponse = responseContainer.getServiceResponse();
 	SourceBean sbResponse = (SourceBean) serviceResponse.getAttribute("ExecuteBIObjectModule");
 %>

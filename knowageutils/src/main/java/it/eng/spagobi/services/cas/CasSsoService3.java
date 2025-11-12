@@ -17,26 +17,24 @@
  */
 package it.eng.spagobi.services.cas;
 
+import java.io.IOException;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
+import org.apache.log4j.Logger;
+import org.jasig.cas.client.authentication.AttributePrincipal;
+import org.jasig.cas.client.util.AbstractCasFilter;
+import org.jasig.cas.client.validation.Assertion;
+import org.jasig.cas.client.validation.Cas20ProxyTicketValidator;
+import org.jasig.cas.client.validation.TicketValidationException;
+
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.configuration.ConfigSingleton;
 import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.services.common.EnginConf;
 import it.eng.spagobi.services.common.SsoServiceInterface;
 import it.eng.spagobi.services.security.exceptions.SecurityException;
-
-import java.io.IOException;
-
-import javax.portlet.PortletSession;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-
-import org.apache.log4j.Logger;
-
-import org.jasig.cas.client.authentication.AttributePrincipal;
-import org.jasig.cas.client.util.AbstractCasFilter;
-import org.jasig.cas.client.validation.Assertion;
-import org.jasig.cas.client.validation.Cas20ProxyTicketValidator;
-import org.jasig.cas.client.validation.TicketValidationException;
 
 
 
@@ -67,20 +65,6 @@ public class CasSsoService3 implements SsoServiceInterface {
 	return userInSession;
     }
     
-    /**
-     * Read user id.
-     * 
-     * @param session PortletSession
-     * 
-     * @return String
-     */
-    @Override
-	public String readUserIdentifier(PortletSession session){
-    Assertion assertion = (Assertion) session.getAttribute(AbstractCasFilter.CONST_CAS_ASSERTION);
-    String user=assertion.getPrincipal().getName();
-	logger.debug("CAS user in PortletSession:"+user);
-	return user;
-    }
     
     /**
      * Get a new ticket.

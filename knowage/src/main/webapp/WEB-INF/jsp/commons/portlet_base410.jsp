@@ -41,7 +41,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <%@page
 	import="it.eng.spagobi.commons.utilities.messages.IMessageBuilder"%>
 <%@page import="it.eng.spagobi.commons.utilities.urls.WebUrlBuilder"%>
-<%@page import="it.eng.spagobi.commons.utilities.urls.PortletUrlBuilder"%>
 <%@page
 	import="it.eng.spagobi.commons.utilities.messages.MessageBuilder"%>
 <%@page
@@ -60,7 +59,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <%@page import="java.util.Iterator"%>
 <%@page import="it.eng.spagobi.commons.utilities.GeneralUtilities"%>
 <%@page import="it.eng.knowage.commons.security.KnowageSystemConfiguration"%>
-<%@page import="it.eng.spagobi.commons.utilities.PortletUtilities"%>
 <%@page import="it.eng.spagobi.commons.utilities.UserUtilities"%>
 <%@page import="it.eng.spagobi.commons.bo.UserProfile"%>
 <%@page import="it.eng.spagobi.utilities.themes.ThemesManager"%>
@@ -165,11 +163,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		locale = tmpLocale.build();
 	}
 	else {	
-	if (sbiMode.equals("PORTLET")) {
-		locale = PortletUtilities.getLocaleForMessage();
-	} else {
 		locale = MessageBuilder.getBrowserLocaleFromSpago();
-	}
 	// updates locale information on permanent container for Spago messages mechanism
 	if (locale != null) {
 		permanentSession.setAttribute(Constants.USER_LANGUAGE, locale.getLanguage());

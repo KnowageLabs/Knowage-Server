@@ -20,7 +20,7 @@
 <%@page import="it.eng.spagobi.security.google.config.GoogleSignInConfig"%>
 <%@page import="it.eng.spagobi.security.azure.config.AzureSignInConfig"%>
 <%@ page language="java"
-         extends="it.eng.spago.dispatching.httpchannel.AbstractHttpJspPagePortlet"
+         extends="it.eng.spago.dispatching.httpchannel.AbstractHttpJspPage"
          contentType="text/html; charset=UTF-8"
          pageEncoding="UTF-8"
          session="true" 
