@@ -933,7 +933,12 @@ public class DashboardExcelExporter extends DashboardExporter {
             Row header = createHeader(sheet, startRow, rowHeight, rowspan, startCol, colWidth, colspan, namespan, dataspan, widgetName, groupsAndColumnsMap, columnsOrdered);
             for (int i = 0; i < columnsOrdered.length(); i++) {
                 JSONObject column = columnsOrdered.getJSONObject(i);
-                String columnName = column.getString("alias");
+                String columnName = "";
+                try {
+                    columnName = column.getString("alias");
+                } catch (JSONException e) {
+                    columnName = column.getString("name");
+                }
                 // renaming table columns names of the excel export
                 columnName = getInternationalizedHeader(columnName);
 
@@ -1200,14 +1205,11 @@ public class DashboardExcelExporter extends DashboardExporter {
     protected int getPrecisionByColumn(JSONObject settings, JSONObject column) {
         try {
             JSONObject visualization = getJsonObjectUtils().getVisualizationFromSettings(settings);
-            if (visualization == null)
+            
+            if (visualization == null || !visualization.has("visualizationTypes"))
                 return -1;
 
             JSONObject visualizationTypes = visualization.getJSONObject("visualizationTypes");
-
-            if (visualizationTypes == null) {
-                return -1;
-            }
 
             JSONArray types = visualizationTypes.getJSONArray("types");
 

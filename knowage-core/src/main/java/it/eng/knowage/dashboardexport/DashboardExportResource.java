@@ -40,14 +40,13 @@ public class DashboardExportResource {
             String userId = token.substring(7);
             DashboardExcelExporter excelExporter = new DashboardExcelExporter(userId, body);
             String mimeType = excelExporter.getMimeType();
-            String optionalWidgetId = body.optString("id");
-            boolean isDashboardSingleWidgetExport = !optionalWidgetId.isEmpty();
 
             if (!MimeUtils.isValidMimeType(mimeType))
                 throw new SpagoBIRuntimeException("Invalid mime type: " + mimeType);
 
             if (mimeType != null) {
                 byte[] data;
+                boolean isDashboardSingleWidgetExport = !body.has("widgets");
                 data = excelExporter.getDashboardBinaryData(body, isDashboardSingleWidgetExport);
                 if (!isDashboardSingleWidgetExport) {
                     String documentLabel = body.getJSONObject("document").getString("label");
