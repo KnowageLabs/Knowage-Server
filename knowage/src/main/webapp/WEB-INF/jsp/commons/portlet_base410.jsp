@@ -87,31 +87,22 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	IUrlBuilder urlBuilder = null;
 	IMessageBuilder msgBuilder = null;
 	
-	String sbiMode = null;
+	String sbiMode = "WEB";
 		
-	// case of portlet mode
-	aRequestContainer = RequestContainerPortletAccess.getRequestContainer(request);
-	aResponseContainer = ResponseContainerPortletAccess.getResponseContainer(request);
+	
+	aRequestContainer = RequestContainer.getRequestContainer();
+	aResponseContainer = ResponseContainer.getResponseContainer();
 	if (aRequestContainer == null) {
-		// case of web mode
-		//aRequestContainer = RequestContainerAccess.getRequestContainer(request);
-		aRequestContainer = RequestContainer.getRequestContainer();
 		if(aRequestContainer == null){
 			//case of REST 
 			aRequestContainer = RequestContainerAccess.getRequestContainer(request);
 		}
-		
-		//aResponseContainer = ResponseContainerAccess.getResponseContainer(request);
-		aResponseContainer = ResponseContainer.getResponseContainer();
 		if(aResponseContainer == null){
 			//case of REST
 			aResponseContainer = ResponseContainerAccess.getResponseContainer(request);
 		}
 	}
-	
-	String channelType = aRequestContainer.getChannelType();
-	if ("PORTLET".equalsIgnoreCase(channelType)) sbiMode = "PORTLET";
-	else sbiMode = "WEB";
+
 	
 	boolean forceIE8Compatibility = true;
 

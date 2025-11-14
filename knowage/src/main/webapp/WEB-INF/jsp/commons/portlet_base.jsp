@@ -82,22 +82,11 @@ commented by Davide Zerbetto on 12/10/2009: there are problems with MIF (Ext Man
 	IUrlBuilder urlBuilder = null;
 	IMessageBuilder msgBuilder = null;
 	
-	String sbiMode = null;
+	String sbiMode = "WEB";
 		
 	// case of portlet mode
-	aRequestContainer = RequestContainerPortletAccess.getRequestContainer(request);
-	aResponseContainer = ResponseContainerPortletAccess.getResponseContainer(request);
-	if (aRequestContainer == null) {
-		// case of web mode
-		//aRequestContainer = RequestContainerAccess.getRequestContainer(request);
-		aRequestContainer = RequestContainer.getRequestContainer();
-		//aResponseContainer = ResponseContainerAccess.getResponseContainer(request);
-		aResponseContainer = ResponseContainer.getResponseContainer();
-	}
-	
-	String channelType = aRequestContainer.getChannelType();
-	if ("PORTLET".equalsIgnoreCase(channelType)) sbiMode = "PORTLET";
-	else sbiMode = "WEB";
+	aRequestContainer =RequestContainer.getRequestContainer();
+	aResponseContainer = ResponseContainer.getResponseContainer();
 
     // = (String)sessionContainer.getAttribute(Constants.USER_LANGUAGE);
     //country = (String)sessionContainer.getAttribute(Constants.USER_COUNTRY);
