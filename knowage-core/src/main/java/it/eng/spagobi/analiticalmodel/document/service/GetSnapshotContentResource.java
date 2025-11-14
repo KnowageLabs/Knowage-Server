@@ -1,20 +1,3 @@
-/*
- * Knowage, Open Source Business Intelligence suite
- * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- *
- * Knowage is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * Knowage is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
 package it.eng.spagobi.analiticalmodel.document.service;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
@@ -24,23 +7,30 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 import org.apache.log4j.Logger;
 import org.apache.pdfbox.multipdf.PDFMergerUtility;
 
 import it.eng.spago.base.SourceBean;
-import it.eng.spago.dispatching.action.AbstractHttpAction;
 import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.analiticalmodel.document.bo.Snapshot;
 import it.eng.spagobi.analiticalmodel.document.dao.ISnapshotDAO;
+import it.eng.spagobi.api.AbstractSpagoBIResource;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.ObjectsTreeConstants;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
@@ -53,70 +43,60 @@ import it.eng.spagobi.tools.scheduler.to.JobInfo;
 import it.eng.spagobi.tools.scheduler.utils.SchedulerUtilities;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
-public class GetSnapshotContentAction extends AbstractHttpAction {
+@Path("/2.0/snapshotsContent")
+public class GetSnapshotContentResource extends AbstractSpagoBIResource {
 
-	public static int SUCCESS = 200;
+	private static final Logger LOGGER = Logger.getLogger(GetSnapshotContentResource.class);
 
-	private static final Logger LOGGER = Logger.getLogger(GetSnapshotContentAction.class);
-
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see it.eng.spago.dispatching.service.ServiceIFace#service(it.eng.spago.base.SourceBean, it.eng.spago.base.SourceBean)
-	 */
-	@Override
-	public void service(SourceBean request, SourceBean response) throws Exception {
+	@GET
+	@Path("/")
+	@Produces(MediaType.APPLICATION_OCTET_STREAM)
+	public Response getSnapshotContent(@Context HttpServletRequest req) {
 		LOGGER.debug("IN");
-		freezeHttpResponse();
-		HttpServletResponse httpResp = getHttpResponse();
-		Map<String, Object> contentMap;
 
-		String schedulationName = (String) request.getAttribute("schedulationName");
-		if (schedulationName != null) {
-			boolean collate = false;
-			List<Snapshot> snaps = DAOFactory.getSnapshotDAO().getLastSnapshotsBySchedulation(schedulationName, collate);
-			contentMap = mergeListSnap(snaps);
-		} else {
-			List<String> objectIdStr = request.getAttributeAsList("mergeitems");
-			if (objectIdStr == null || objectIdStr.isEmpty()) {
-				contentMap = getSnapshotForOneDocument(request);
+		String schedulationName = req.getParameter("schedulationName");
+		String objectId = req.getParameter(ObjectsTreeConstants.OBJECT_ID);
+		String snapshotId = req.getParameter(SpagoBIConstants.SNAPSHOT_ID);
+		String[] mergeItems = req.getParameterValues("mergeitems");
+
+		try {
+			Map<String, Object> contentMap;
+
+			if (schedulationName != null) {
+				List<Snapshot> snaps = DAOFactory.getSnapshotDAO().getLastSnapshotsBySchedulation(schedulationName, false);
+				contentMap = mergeListSnap(snaps);
+			} else if (mergeItems != null && mergeItems.length > 0) {
+				contentMap = merge(Arrays.asList(mergeItems));
+			} else if (objectId != null && snapshotId != null) {
+				contentMap = getSnapshotForOneDocument(objectId, snapshotId);
 			} else {
-				contentMap = merge(objectIdStr);
+				return Response.status(Response.Status.BAD_REQUEST).entity("Missing required parameters").build();
 			}
+
+			byte[] content = (byte[]) contentMap.get("content");
+			String contentType = (String) contentMap.get("contentType");
+			String exportType = "";
+			if (contentType.contains("excel")) {
+				exportType = ".xls";
+			} else if (contentType.contains("openxmlformats-officedocument")) {
+				exportType = ".xlsx";
+			} else if (contentType.contains("pdf")) {
+				exportType = ".pdf";
+			}
+
+			return Response.ok(content).type(contentType).header("Content-Disposition", "attachment; filename=\"export" + exportType + "\"").build();
+
+		} catch (Exception e) {
+			LOGGER.error("Error processing snapshot request", e);
+			throw new SpagoBIRuntimeException("Error processing snapshot request", e);
 		}
-
-		byte[] content = (byte[]) contentMap.get("content");
-		String contentType = (String) contentMap.get("contentType");
-		String exportType = "";
-
-		if (contentType.contains("excel")) {
-			exportType = ".xls";
-		} else if (contentType.contains("openxmlformats-officedocument")) {
-			exportType = ".xlsx";
-		} else if (contentType.contains("pdf")) {
-			exportType = ".pdf";
-		}
-
-		LOGGER.debug("Type of export" + exportType);
-		LOGGER.debug("Content-Disposition " + "filename=\"export" + exportType + "\";");
-		httpResp.setHeader("Content-Disposition", "filename=\"export" + exportType + "\";");
-		httpResp.setContentType(contentType);
-		httpResp.setContentLength(content.length);
-		httpResp.getOutputStream().write(content);
-		httpResp.setStatus(SUCCESS);
-
-		httpResp.getOutputStream().flush();
-		LOGGER.debug("OUT");
 	}
 
-	public Map<String, Object> getSnapshotForOneDocument(SourceBean request) throws Exception {
-		String objectIdStr = (String) request.getAttribute(ObjectsTreeConstants.OBJECT_ID);
-
-		Integer objectId = new Integer(objectIdStr);
-		String idSnapStr = (String) request.getAttribute(SpagoBIConstants.SNAPSHOT_ID);
-		Integer idSnap = new Integer(idSnapStr);
+	private Map<String, Object> getSnapshotForOneDocument(String objectIdStr, String idSnapStr) throws Exception {
+		Integer objectId = Integer.valueOf(objectIdStr);
+		Integer idSnap = Integer.valueOf(idSnapStr);
 		LOGGER.debug("Required snapshot with id = " + idSnap + " of document with id = " + objectId);
-		IEngUserProfile profile = (IEngUserProfile) this.getHttpRequest().getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+		IEngUserProfile profile = getUserProfile();
 		BIObject obj = DAOFactory.getBIObjectDAO().loadBIObjectById(objectId);
 		// check if the user is able to see the document
 		// TODO check if the user is able to execute the document (even if it does no make sense to be able to see the document but not to execute it...)
@@ -143,7 +123,7 @@ public class GetSnapshotContentAction extends AbstractHttpAction {
 		return toReturn;
 	}
 
-	public Map<String, Object> merge(List<String> snapshotIds) {
+	private Map<String, Object> merge(List<String> snapshotIds) {
 		LOGGER.debug("IN");
 		ISnapshotDAO snapDao = null;
 		List<Snapshot> snapList = new ArrayList<>();
