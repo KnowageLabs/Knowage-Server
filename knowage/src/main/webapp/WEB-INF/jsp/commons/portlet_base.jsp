@@ -29,6 +29,7 @@ The following directive catches exceptions thrown by jsps, must be commented in 
 <%@page errorPage="/WEB-INF/jsp/commons/genericError.jsp"%>
 
 <%@page import="it.eng.spagobi.commons.utilities.urls.WebUrlBuilder"%>
+<%@page import="it.eng.spagobi.commons.utilities.urls.PortletUrlBuilder"%>
 <%@page
 	import="it.eng.spagobi.commons.utilities.messages.MessageBuilder"%>
 <%@page
@@ -46,6 +47,7 @@ The following directive catches exceptions thrown by jsps, must be commented in 
 	import="it.eng.spagobi.container.strategy.LightNavigatorContextRetrieverStrategy"%>
 <%@page import="java.util.Iterator"%>
 <%@page import="it.eng.knowage.commons.security.KnowageSystemConfiguration"%>
+<%@page import="it.eng.spagobi.commons.utilities.PortletUtilities"%>
 <%@page import="it.eng.spagobi.commons.bo.UserProfile"%>
 <%@page import="it.eng.spagobi.utilities.themes.ThemesManager"%>
 <%@page import="org.apache.commons.lang.StringEscapeUtils"%>
@@ -148,7 +150,11 @@ commented by Davide Zerbetto on 12/10/2009: there are problems with MIF (Ext Man
 		locale = tmpLocale.build();
 	}
 	else {	
+	if (sbiMode.equals("PORTLET")) {
+		locale = PortletUtilities.getLocaleForMessage();
+	} else {
 		locale = MessageBuilder.getBrowserLocaleFromSpago();
+	}
 	// updates locale information on permanent container for Spago messages mechanism
 	if (locale != null) {
 		permanentSession.setAttribute(Constants.USER_LANGUAGE, locale.getLanguage());

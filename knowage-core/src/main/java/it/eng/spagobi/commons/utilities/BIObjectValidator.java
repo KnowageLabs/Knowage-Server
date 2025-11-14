@@ -17,16 +17,6 @@
  */
 package it.eng.spagobi.commons.utilities;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Vector;
-
-import org.apache.commons.validator.GenericValidator;
-import org.apache.commons.validator.UrlValidator;
-
 import it.eng.spago.base.Constants;
 import it.eng.spago.base.RequestContainer;
 import it.eng.spago.base.ResponseContainer;
@@ -40,6 +30,16 @@ import it.eng.spago.tracing.TracerSingleton;
 import it.eng.spago.util.ContextScooping;
 import it.eng.spago.validation.impl.ValidatorLocator;
 import it.eng.spagobi.commons.validation.SpagoURLValidator;
+
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Vector;
+
+import org.apache.commons.validator.GenericValidator;
+import org.apache.commons.validator.UrlValidator;
 
 /**
 * This class has been rewritten starting from the <code>it.eng.spago.validation.Validation</code>
@@ -104,15 +104,19 @@ public class BIObjectValidator {
 				ValidatorLocator.VALIDATION_CONFIG_HEADER,
 				ValidatorLocator.VALIDATION_SERVICE_NAME, _serviceName);
 		
-		if (objServices instanceof SourceBean) {
+		if (objServices instanceof SourceBean)
 			_serviceValidations = (SourceBean) objServices;
-		} else if (objServices instanceof List) {
+		
+		// (AZ): CHE COSA SERVE
+		// PERCHE CI PUï¿½ essere un servizio con lo stesso nome censito come page
+		
+		//
+		else if (objServices instanceof List) {
 			for (int i = 0; i < ((List) objServices).size(); i++) {
 				SourceBean tmp = (SourceBean) (((List) objServices).get(i));
 				if (((String) tmp.getAttribute("TYPE"))
-						.equalsIgnoreCase(_serviceType)) {
+						.equalsIgnoreCase(_serviceType))
 					_serviceValidations = tmp;
-				}
 				break;
 			}
 		}
@@ -205,9 +209,8 @@ public class BIObjectValidator {
 						.getScopedParameter(requestContainer,
 								responseContainer, parameterName,
 								parameterScope);
-				if (parameterValueObject != null) {
+				if (parameterValueObject != null)
 					inParameterValue = parameterValueObject.toString();
-				}
 				if (parameterValue.equalsIgnoreCase("AF_DEFINED")) {
 					if (inParameterValue == null) {
 						conditionVerified = false;
@@ -265,9 +268,8 @@ public class BIObjectValidator {
 	public boolean isBlocking() {
 		String isBlocking = (String) _validationStructure
 				.getAttribute("blocking");
-		if (isBlocking == null || !isBlocking.equalsIgnoreCase("FALSE")) {
+		if (isBlocking == null || !isBlocking.equalsIgnoreCase("FALSE"))
 			return true;
-		}
 		return false;
 	}
 
@@ -405,11 +407,13 @@ public class BIObjectValidator {
 				
 				//********************************************
 				String fieldLabel = (String) field.getAttribute("label");
-				if (fieldLabel == null || fieldLabel.trim().equals(""))
-				 {
-					fieldLabel = fieldName;
-					//********************************************
+				if (fieldLabel != null && fieldLabel.startsWith("#")) {
+					String key = fieldLabel.substring(1);
+					String fieldDescription = PortletUtilities.getMessage(key, "messages");
+					if (fieldDescription != null && !fieldDescription.trim().equals("")) fieldLabel = fieldDescription;
 				}
+				if (fieldLabel == null || fieldLabel.trim().equals("")) fieldLabel = fieldName;
+				//********************************************
 				
 				validators = field.getAttributeAsList("VALIDATOR");
 				
@@ -518,9 +522,8 @@ public class BIObjectValidator {
 
 							int pos = value.indexOf(decimalSeparator);
 							String decimalCharacters = "";
-							if (pos != -1) {
+							if (pos != -1)
 								decimalCharacters = value.substring(pos + 1);
-							}
 
 							if (decimalCharacters.length() > maxNumberOfDecimalDigit) {
 								// Generate errors

@@ -18,11 +18,18 @@
 package it.eng.spagobi.engines.chart.utils;
 
 
+import it.eng.spago.base.SourceBean;
+import it.eng.spago.navigation.LightNavigationManager;
+import it.eng.spagobi.engines.chart.bo.charttypes.barcharts.BarCharts;
+import it.eng.spagobi.engines.chart.bo.charttypes.barcharts.StackedBarGroup;
+import it.eng.spagobi.engines.chart.bo.charttypes.clusterchart.ClusterCharts;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
+import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.Vector;
@@ -33,11 +40,6 @@ import org.apache.log4j.Logger;
 import org.jfree.data.category.DefaultCategoryDataset;
 import org.jfree.data.general.Dataset;
 import org.jfree.data.xy.DefaultXYZDataset;
-
-import it.eng.spago.base.SourceBean;
-import it.eng.spagobi.engines.chart.bo.charttypes.barcharts.BarCharts;
-import it.eng.spagobi.engines.chart.bo.charttypes.barcharts.StackedBarGroup;
-import it.eng.spagobi.engines.chart.bo.charttypes.clusterchart.ClusterCharts;
 
 public class DatasetMap {
 
@@ -127,13 +129,9 @@ public class DatasetMap {
 			if(requestCont.getAttribute("n_visualization")!=null){
 				String nVis=(String)requestCont.getAttribute("n_visualization");
 				Integer catD=Integer.valueOf(nVis);
-				if(catD.equals(0)) {
-					catD=new Integer(catsnum);
-				}
+				if(catD.equals(0))catD=new Integer(catsnum);
 				sbi.setNumberCatVisualization(catD);
-				if(catD>=catsnum) {
-					notDisappearSlider=true;
-				}
+				if(catD>=catsnum)notDisappearSlider=true;
 			}
 
 
@@ -166,7 +164,7 @@ public class DatasetMap {
 			}
 			else{ //else set view from first category or fromlast if starFromEnd is tru
 				logger.debug("no particulary category specified by slider: startFromEnd option is "+sbi.isSliderStartFromEnd());
-				if(sbi.isSliderStartFromEnd()){
+				if(sbi.isSliderStartFromEnd()==true){
 					// Category current is: number categories - categories to visualize + 1
 					categoryCurrent=sbi.getCategoriesNumber()-(numberCatVisualization!=null ? numberCatVisualization.intValue() : 1) +1 ;
 				}
@@ -194,7 +192,7 @@ public class DatasetMap {
 			// CHECK IF THERE IS TO FILTER CAT_GROUPS
 			selectedCatGroups=new Vector();
 			logger.debug("check particular category groups");
-			if(sbi.isFilterCatGroups()){
+			if(sbi.isFilterCatGroups()==true){
 
 				if(requestCont.getParameter("cat_group")!=null){
 					// Check if particular cat_groups has been chosen
@@ -217,15 +215,14 @@ public class DatasetMap {
 					copyDataset=sbi.filterDatasetCatGroups(copyDataset,selectedCatGroups);	
 
 				}
-			} else {
-				selectedCatGroups.add("allgroups");
 			}
+			else selectedCatGroups.add("allgroups");
 
 
 			// CHECK IF THERE IS TO FILTER SERIES
 			logger.debug("check if has to filter series");
 			selectedSeries=new Vector();
-			if(sbi.isFilterSeries()){
+			if(sbi.isFilterSeries()==true){
 				// Check if particular series has been chosen
 
 				if(requestCont.getParameter("serie")!=null){
@@ -250,16 +247,15 @@ public class DatasetMap {
 					copyDataset=sbi.filterDatasetSeries(copyDataset,selectedSeries);	
 
 				}
-			} else {
-				selectedSeries.add("allseries");
 			}
+			else selectedSeries.add("allseries");
 
 			// consider if drawing the slider
-			if(sbi.isFilterCategories() && (catsnum.intValue())>numberCatVisualization.intValue()){
+			if(sbi.isFilterCategories()==true && (catsnum.intValue())>numberCatVisualization.intValue()){
 				logger.debug("slider is to be drawn");
 				makeSlider=true;	    	
 			}
-			else if(sbi.isFilterCategories() && notDisappearSlider){
+			else if(sbi.isFilterCategories()==true && notDisappearSlider==true){
 				logger.debug("slider is to be drawn");
 				makeSlider=true;	    	
 			}
@@ -375,13 +371,9 @@ public class DatasetMap {
 			if(responseCont.getAttribute("n_visualization")!=null){
 				String nVis=(String)responseCont.getAttribute("n_visualization");
 				Integer catD=Integer.valueOf(nVis);
-				if(catD.equals(0)) {
-					catD=new Integer(catsnum);
-				}
+				if(catD.equals(0))catD=new Integer(catsnum);
 				sbi.setNumberCatVisualization(catD);
-				if(catD>=catsnum) {
-					notDisappearSlider=true;
-				}
+				if(catD>=catsnum)notDisappearSlider=true;
 			}
 
 			numberCatVisualization=sbi.getNumberCatVisualization();
@@ -409,7 +401,7 @@ public class DatasetMap {
 			}
 			else{ //else set view from first category
 				logger.debug("no particulary category specified by slider: startFromEnd option is "+sbi.isSliderStartFromEnd());
-				if(sbi.isSliderStartFromEnd()){
+				if(sbi.isSliderStartFromEnd()==true){
 					// Category current is: number categories - categories to visualize + 1
 					categoryCurrent=sbi.getCategoriesNumber()-(numberCatVisualization!=null ? numberCatVisualization.intValue() : 1) +1 ;
 				}
@@ -460,7 +452,7 @@ public class DatasetMap {
 				logger.debug("slider is to be drawn");
 				makeSlider=true;	    	
 			}
-			else if(sbi.isFilterCategories() && notDisappearSlider){
+			else if(sbi.isFilterCategories()==true && notDisappearSlider==true){
 				logger.debug("slider is to be drawn");
 				makeSlider=true;	    	
 			}
@@ -623,9 +615,8 @@ public class DatasetMap {
 			}
 			else if (this.getNumberSerVisualization() == 0 ){
 				String serie = (String) iterator2.next();
-				if(!series.contains(serie)) {
+				if(!series.contains(serie))
 					series.add(serie);
-				}
 			}
 
 		}
@@ -644,13 +635,9 @@ public class DatasetMap {
 		if(responseCont.getAttribute("n_visualization")!=null){
 			String nVis=(String)responseCont.getAttribute("n_visualization");
 			Integer catD=Integer.valueOf(nVis);
-			if(catD.equals(0)) {
-				catD=new Integer(catsnum);
-			}
+			if(catD.equals(0))catD=new Integer(catsnum);
 			sbi.setNumberCatVisualization(catD);
-			if(catD>=catsnum) {
-				notDisappearSlider=true;
-			}
+			if(catD>=catsnum)notDisappearSlider=true;
 		}
 
 
@@ -685,7 +672,7 @@ public class DatasetMap {
 		}
 		else{ //else set view from first category
 			logger.debug("no particulary category specified by slider: startFromEnd option is "+sbi.isSliderStartFromEnd());
-			if(sbi.isSliderStartFromEnd()){
+			if(sbi.isSliderStartFromEnd()==true){
 				// Category current is: number categories - categories to visualize + 1
 				categoryCurrent=sbi.getCategoriesNumber()-(numberCatVisualization!=null ? numberCatVisualization.intValue() : 1) +1 ;
 			}
@@ -731,10 +718,10 @@ public class DatasetMap {
 
 		}
 		// consider if drawing the slider
-		if(sbi.isFilterCategories() && (catsnum.intValue())>numberCatVisualization.intValue()){
+		if(sbi.isFilterCategories()==true && (catsnum.intValue())>numberCatVisualization.intValue()){
 			makeSlider=true;	    	
 		}
-		else if(sbi.isFilterCategories() && notDisappearSlider){
+		else if(sbi.isFilterCategories()==true && notDisappearSlider==true){
 			logger.debug("slider is to be drawn");
 			makeSlider=true;	    	
 		}
@@ -765,6 +752,44 @@ public class DatasetMap {
 	public void setDatasets(HashMap datasets) {
 		this.datasets = datasets;
 	}
+
+
+	/**
+	 * Called by chart.jsp to build the url for series filter
+	 */
+
+	public String getSerieUlr(String refreshUrl, Map refreshUrlPars){
+		String toReturn=refreshUrl;
+		refreshUrl+="&"+LightNavigationManager.LIGHT_NAVIGATOR_DISABLED+"=true";
+		if(!refreshUrlPars.containsKey("category")){
+			refreshUrl+="&category="+getCategoryCurrent();
+		}
+		//if(isDynamicNVisualization()==true){
+		//}
+		// checked all cats
+		if(getCategoryCurrent()==0 && !refreshUrlPars.containsKey("cat_group")){
+			//refreshUrl+="&categoryAll=0";			
+		}
+		return refreshUrl;
+	}
+
+
+
+	public String getCategoriesGroupUrl(String refreshUrl, Map refreshUrlPars){
+		String toReturn=refreshUrl;
+		refreshUrl+="&"+LightNavigationManager.LIGHT_NAVIGATOR_DISABLED+"=true";
+
+		for(Iterator iterator = refreshUrlPars.keySet().iterator(); iterator.hasNext();)
+		{
+			String name = (String) iterator.next();
+			String value=(refreshUrlPars.get(name)).toString();
+			refreshUrl="&"+name+"="+value;
+		}
+		return refreshUrl;
+	}
+
+
+
 
 	public Set<String> getSeries() {
 		return series;
@@ -874,9 +899,7 @@ public class DatasetMap {
 	 * @return the numberSerVisualization
 	 */
 	public Integer getNumberSerVisualization() {
-		if (numberSerVisualization == null) {
-			numberSerVisualization = new Integer(0);
-		}
+		if (numberSerVisualization == null) numberSerVisualization = new Integer(0);
 		return numberSerVisualization;
 	}
 

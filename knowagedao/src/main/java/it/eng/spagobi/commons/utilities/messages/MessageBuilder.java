@@ -36,6 +36,7 @@ import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
+import it.eng.spagobi.commons.utilities.PortletUtilities;
 import it.eng.spagobi.i18n.dao.I18NMessagesDAO;
 import it.eng.spagobi.utilities.messages.IEngineMessageBuilder;
 
@@ -263,6 +264,8 @@ public class MessageBuilder implements IMessageBuilder, IEngineMessageBuilder {
 			} else {
 				locale = getBrowserLocale(request);
 			}
+		} else if (sbiMode.equalsIgnoreCase("PORTLET")) {
+			locale = PortletUtilities.getPortalLocale();
 		}
 		if (!isValidLocale(locale)) {
 			logger.warn((new StringBuilder("Request locale ")).append(locale).append(" not valid since it is not configured.").toString());
@@ -286,9 +289,8 @@ public class MessageBuilder implements IMessageBuilder, IEngineMessageBuilder {
 		String language;
 		String country;
 
-		if (locale == null) {
+		if (locale == null)
 			return false;
-		}
 
 		try {
 			language = locale.getLanguage();
@@ -349,9 +351,8 @@ public class MessageBuilder implements IMessageBuilder, IEngineMessageBuilder {
 	public String getI18nMessage(Locale locale, String code) {
 		logger.debug("IN");
 		String toreturn = null;
-		if (code == null) {
+		if (code == null)
 			return null;
-		}
 		if (locale != null) {
 			if (code.startsWith("i18n_") || code.startsWith("I18N_")) {
 				try {

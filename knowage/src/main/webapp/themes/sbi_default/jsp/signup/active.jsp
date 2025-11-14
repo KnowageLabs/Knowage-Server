@@ -17,7 +17,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 --%>
 
 <%@ page language="java"
-         extends="it.eng.spago.dispatching.httpchannel.AbstractHttpJspPage"
+         extends="it.eng.spago.dispatching.httpchannel.AbstractHttpJspPagePortlet"
          contentType="text/html; charset=UTF-8"
          pageEncoding="UTF-8"
          session="true" 

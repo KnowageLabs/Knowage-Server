@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 
@@ -32,6 +33,8 @@ import com.jayway.jsonpath.Configuration;
 import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.Option;
 
+import it.eng.spago.base.SourceBean;
+import it.eng.spago.configuration.ConfigSingleton;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
@@ -41,7 +44,9 @@ import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.Parameter;
 import it.eng.spagobi.behaviouralmodel.lov.bo.ModalitiesValue;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.utilities.PortletUtilities;
 import it.eng.spagobi.commons.utilities.UserUtilities;
+import it.eng.spagobi.commons.utilities.messages.MessageBuilder;
 import it.eng.spagobi.engines.drivers.cockpit.CockpitDriver;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
@@ -91,6 +96,7 @@ public class DashboardDriver extends CockpitDriver {
             map = getMap(biobj, profile);
             map.put(PARAM_NEW_SESSION, "TRUE");
             map = applySecurity(map, profile);
+            map = applyLocale(map);
         } catch (Exception e) {
             throw new SpagoBIRuntimeException(e);
         }
@@ -279,6 +285,44 @@ public class DashboardDriver extends CockpitDriver {
             }
             return valuesToReturn.substring(0, valuesToReturn.length() - 1);
         }
+    }
+
+
+    private Map applyLocale(Map map) {
+        logger.debug("IN");
+
+        ConfigSingleton config = ConfigSingleton.getInstance();
+        Locale portalLocale;
+        try {
+            portalLocale = PortletUtilities.getPortalLocale();
+            logger.debug("Portal locale: " + portalLocale);
+        } catch (Exception e) {
+            logger.warn("Error while getting portal locale.");
+            portalLocale = MessageBuilder.getBrowserLocaleFromSpago();
+            logger.debug("Spago locale: " + portalLocale);
+        }
+
+        SourceBean languageSB = null;
+        if (portalLocale != null) {
+            languageSB = (SourceBean) config.getFilteredSourceBeanAttribute("SPAGOBI.LANGUAGE_SUPPORTED.LANGUAGE", "language", portalLocale.getLanguage());
+        }
+
+        if (languageSB != null) {
+            map.put(COUNTRY, languageSB.getAttribute("country"));
+            map.put(LANGUAGE, languageSB.getAttribute("language"));
+            logger.debug("Added parameter: country/" + (String) languageSB.getAttribute("country"));
+            logger.debug("Added parameter: language/" + (String) languageSB.getAttribute("language"));
+        } else {
+            logger.warn("Language " + portalLocale.getLanguage() + " is not supported by SpagoBI");
+            logger.warn("Portal locale will be replaced with the default lacale (country: US; language: en).");
+            map.put(COUNTRY, "US");
+            map.put(LANGUAGE, "en");
+            logger.debug("Added parameter: country/US");
+            logger.debug("Added parameter: language/en");
+        }
+
+        logger.debug("OUT");
+        return map;
     }
 
 }

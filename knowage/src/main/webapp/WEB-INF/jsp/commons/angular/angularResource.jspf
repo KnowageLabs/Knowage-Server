@@ -13,6 +13,7 @@
 <%@page import="it.eng.spagobi.commons.utilities.urls.UrlBuilderFactory"%>
 <%@page import="java.util.Locale"%>
 <%@page import="it.eng.spagobi.commons.constants.SpagoBIConstants"%>
+<%@page import="it.eng.spagobi.commons.utilities.PortletUtilities"%>
 <%@page import="it.eng.spago.security.IEngUserProfile" %>
 <%@page import="it.eng.spagobi.commons.utilities.UserUtilities" %>
 <%@page import="it.eng.knowage.commons.security.KnowageSystemConfiguration"%>
@@ -32,24 +33,31 @@
 	SessionContainer aSessionContainer = null;
 	IUrlBuilder urlBuilder = null;
 	IMessageBuilder msgBuilder = null;
+	String sbiMode = null;
 		
-	
-	aRequestContainer = RequestContainer.getRequestContainer();
-	aResponseContainer = ResponseContainer.getResponseContainer();
+	// case of portlet mode
+	aRequestContainer = RequestContainerPortletAccess.getRequestContainer(request);
+	aResponseContainer = ResponseContainerPortletAccess.getResponseContainer(request);
 	if (aRequestContainer == null) {
+		// case of web mode
+		aRequestContainer = RequestContainer.getRequestContainer();
 		if(aRequestContainer == null){
 			//case of REST 
 			aRequestContainer = RequestContainerAccess.getRequestContainer(request);
 		}
-		
+		aResponseContainer = ResponseContainer.getResponseContainer();
 		if(aResponseContainer == null){
 			//case of REST
 			aResponseContainer = ResponseContainerAccess.getResponseContainer(request);
 		}
 	}
 	
+	String channelType = aRequestContainer.getChannelType();
+	if ("PORTLET".equalsIgnoreCase(channelType)) sbiMode = "PORTLET";
+	else sbiMode = "WEB";
+	
 	// create url builder 
-	urlBuilder = UrlBuilderFactory.getUrlBuilder("WEB");
+	urlBuilder = UrlBuilderFactory.getUrlBuilder(sbiMode);
 	
 	// create message builder
 	msgBuilder = MessageBuilderFactory.getMessageBuilder();
@@ -81,7 +89,11 @@
 
 		locale = tmpLocale.build();
 	} else {
-		locale = MessageBuilder.getBrowserLocaleFromSpago();
+		if (sbiMode.equals("PORTLET")) {
+			locale = PortletUtilities.getLocaleForMessage();
+		} else {
+			locale = MessageBuilder.getBrowserLocaleFromSpago();
+		}
 		// updates locale information on permanent container for Spago messages mechanism
 		if (locale != null) {
 			permanentSession.setAttribute(Constants.USER_LANGUAGE, locale.getLanguage());

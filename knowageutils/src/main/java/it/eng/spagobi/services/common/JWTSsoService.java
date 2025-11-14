@@ -27,6 +27,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
+import javax.portlet.PortletSession;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
@@ -85,6 +86,12 @@ public class JWTSsoService implements SsoServiceInterface {
 		} catch (JWTVerificationException e) {
 			throw new SpagoBIRuntimeException("Invalid JWT token!", e);
 		}
+	}
+
+	@Override
+	public String readUserIdentifier(PortletSession session) {
+		logger.debug("NOT Implemented");
+		return "";
 	}
 
 	@Override

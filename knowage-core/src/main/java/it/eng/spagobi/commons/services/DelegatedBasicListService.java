@@ -57,6 +57,7 @@ import it.eng.spago.util.QueryExecutor;
 import it.eng.spago.validation.EMFValidationError;
 import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.commons.utilities.PortletUtilities;
 import it.eng.spagobi.utilities.assertion.Assert;
 
 /**
@@ -65,9 +66,9 @@ import it.eng.spagobi.utilities.assertion.Assert;
  * @author sulis
  */
 public class DelegatedBasicListService {
-
+	
 	private static final Logger LOGGER = Logger.getLogger(DelegatedBasicListService.class);
-
+	
 	public static final String LIST_PAGE = "LIST_PAGE";
 	public static final String LIST_FIRST = "LIST_FIRST";
 	public static final String LIST_PREV = "LIST_PREV";
@@ -103,22 +104,19 @@ public class DelegatedBasicListService {
 				"KFDelegatedBasicListService::service: request", request);
 
 		String message = getMessage(request);
-		if ((message == null) || message.equalsIgnoreCase("BEGIN")) {
+		if ((message == null) || message.equalsIgnoreCase("BEGIN"))
 			message = LIST_FIRST;
-		}
 		String list_nocache = (String) request.getAttribute(LIST_NOCACHE);
-		if (list_nocache == null) {
+		if (list_nocache == null)
 			list_nocache = "FALSE";
-		}
 		IFaceBasicListService listService = (IFaceBasicListService) service;
 		if (message.equalsIgnoreCase(LIST_DELETE)) {
 			listService.delete(request, response);
 			message = LIST_PAGE;
 			list_nocache = "TRUE";
 		} // if (message.equalsIgnoreCase(LIST_DELETE))
-		if ((listService.getList() == null) || list_nocache.equalsIgnoreCase("TRUE")) {
+		if ((listService.getList() == null) || list_nocache.equalsIgnoreCase("TRUE"))
 			listService.setList(listService.getList(request, response));
-		}
 		if (listService.getList() == null) {
 			TracerSingleton.log(Constants.NOME_MODULO, TracerSingleton.WARNING,
 					"KFDelegatedBasicListService::service: _list nullo");
@@ -127,9 +125,8 @@ public class DelegatedBasicListService {
 		int pagedListNumber = 1;
 		if (message.equalsIgnoreCase(LIST_PAGE)) {
 			String list_page = (String) request.getAttribute(LIST_PAGE);
-			if (list_page == null) {
+			if (list_page == null)
 				list_page = "1";
-			}
 			try {
 				pagedListNumber = Integer.parseInt(list_page);
 			} // try
@@ -138,17 +135,16 @@ public class DelegatedBasicListService {
 						"KFDelegatedBasicListService::service: Integer.parseInt(list_page)", ex);
 			} // catch (Exception ex) try
 		} // if (message.equalsIgnoreCase(LIST_PAGE))
-		else if (message.equalsIgnoreCase(LIST_FIRST)) {
+		else if (message.equalsIgnoreCase(LIST_FIRST))
 			pagedListNumber = 1;
-		} else if (message.equalsIgnoreCase(LIST_PREV)) {
+		else if (message.equalsIgnoreCase(LIST_PREV))
 			pagedListNumber = listService.getList().getPrevPage();
-		} else if (message.equalsIgnoreCase(LIST_NEXT)) {
+		else if (message.equalsIgnoreCase(LIST_NEXT))
 			pagedListNumber = listService.getList().getNextPage();
-		} else if (message.equalsIgnoreCase(LIST_LAST)) {
+		else if (message.equalsIgnoreCase(LIST_LAST))
 			pagedListNumber = listService.getList().pages();
-		} else if (message.equalsIgnoreCase(LIST_CURRENT)) {
+		else if (message.equalsIgnoreCase(LIST_CURRENT))
 			pagedListNumber = listService.getList().getCurrentPage();
-		}
 		TracerSingleton.log(Constants.NOME_MODULO, TracerSingleton.DEBUG,
 				"KFDelegatedBasicListService::service: pagedListNumber [" + pagedListNumber + "]");
 		listService.getList().clearDynamicData();
@@ -209,18 +205,15 @@ public class DelegatedBasicListService {
 		}
 
 		List rowsVector = null;
-		if (rowsSourceBean != null) {
+		if (rowsSourceBean != null)
 			rowsVector = rowsSourceBean.getAttributeAsList(DataRow.ROW_TAG);
-		}
 		if ((rowsSourceBean == null)) {// || (rowsVector.size() == 0)) {
 			EMFErrorHandler engErrorHandler = serviceRequestContext.getErrorHandler();
 			engErrorHandler.addError(new EMFUserError(EMFErrorSeverity.INFORMATION, 10001));
 		} // if ((rowsSourceBean == null) || (rowsVector.size() == 0))
- else { // || (rowsVector.size() == 0)) {
-			for (int i = 0; i < rowsVector.size(); i++) {
+		else
+			for (int i = 0; i < rowsVector.size(); i++)
 				paginator.addRow(rowsVector.get(i));
-			}
-		}
 
 		// chiamo la funzione di ricerca nelle colonne (se non vi sono dati di ricerca la funzione
 		// non esegue nessuna operazione)
@@ -245,6 +238,95 @@ public class DelegatedBasicListService {
 
 		return list;
 	} // public static ListIFace getList(ServiceIFace service, SourceBean
+
+	/**
+	 * Filters the list with a list of filtering values.
+	 *
+	 * @param list            The list to be filtered
+	 * @param valuesfilter    The list of filtering values
+	 * @param valuetypefilter The type of the value of the filter (STRING/NUM/DATE)
+	 * @param columnfilter    The column to be filtered
+	 * @param typeFilter      The type of the filter
+	 * @param errorHandler    The EMFErrorHandler object, in which errors are stored if they occurs
+	 *
+	 * @return the filtered list
+	 */
+	public static ListIFace filterList(ListIFace list, List valuesfilter, String valuetypefilter, String columnfilter,
+			String typeFilter, EMFErrorHandler errorHandler) {
+		if ((valuesfilter == null) || (valuesfilter.size() == 0)) {
+			return list;
+		}
+		if ((columnfilter == null) || (columnfilter.trim().equals(""))) {
+			return list;
+		}
+		if ((typeFilter == null) || (typeFilter.trim().equals(""))) {
+			return list;
+		}
+		if ((valuetypefilter == null) || (valuetypefilter.trim().equals(""))) {
+			return list;
+		}
+		if (typeFilter.equalsIgnoreCase(SpagoBIConstants.LESS_FILTER)
+				|| typeFilter.equalsIgnoreCase(SpagoBIConstants.LESS_OR_EQUAL_FILTER)
+				|| typeFilter.equalsIgnoreCase(SpagoBIConstants.GREATER_FILTER)
+				|| typeFilter.equalsIgnoreCase(SpagoBIConstants.GREATER_OR_EQUAL_FILTER)) {
+			TracerSingleton.log(Constants.NOME_MODULO, TracerSingleton.WARNING,
+					"DelegatedBasicListService::filterList with a list of filtering values: the filter type "
+							+ typeFilter + " is not applicable for multi-values filtering.");
+			String labelTypeFilter = "";
+			if (typeFilter.equalsIgnoreCase(SpagoBIConstants.LESS_FILTER))
+				labelTypeFilter = PortletUtilities.getMessage("SBIListLookPage.isLessThan", "messages");
+			else if (typeFilter.equalsIgnoreCase(SpagoBIConstants.LESS_OR_EQUAL_FILTER))
+				labelTypeFilter = PortletUtilities.getMessage("SBIListLookPage.isLessOrEqualThan", "messages");
+			else if (typeFilter.equalsIgnoreCase(SpagoBIConstants.GREATER_FILTER))
+				labelTypeFilter = PortletUtilities.getMessage("SBIListLookPage.isGreaterThan", "messages");
+			else if (typeFilter.equalsIgnoreCase(SpagoBIConstants.GREATER_OR_EQUAL_FILTER))
+				labelTypeFilter = PortletUtilities.getMessage("SBIListLookPage.isGreaterOrEqualThan", "messages");
+			HashMap params = new HashMap();
+			params.put(Constants.NOME_MODULO, "DelegatedBasicListService::filterList with a list of filtering values");
+			Vector v = new Vector();
+			v.add(labelTypeFilter);
+			EMFValidationError error = new EMFValidationError(EMFErrorSeverity.WARNING, SpagoBIConstants.TYPE_FILTER,
+					"1069", v, params);
+			errorHandler.addError(error);
+			return list;
+		}
+
+		// controls the correctness of the filtering conditions
+		boolean filterConditionsAreCorrect = verifyFilterConditions(valuetypefilter, typeFilter, errorHandler);
+		if (!filterConditionsAreCorrect)
+			return list;
+
+		PaginatorIFace newPaginator = new GenericPaginator();
+		newPaginator.setPageSize(list.getPaginator().getPageSize());
+		SourceBean allrowsSB = list.getPaginator().getAll();
+		List rows = allrowsSB.getAttributeAsList("ROW");
+		Iterator iterRow = rows.iterator();
+		while (iterRow.hasNext()) {
+			SourceBean row = (SourceBean) iterRow.next();
+			boolean doesRowSatisfyCondition = false;
+			Iterator valuesfilterIt = valuesfilter.iterator();
+			while (valuesfilterIt.hasNext()) {
+				String valuefilter = (String) valuesfilterIt.next();
+				try {
+					if (valuefilter != null && !valuefilter.equals(""))
+						doesRowSatisfyCondition = doesRowSatisfyCondition(row, valuefilter, valuetypefilter,
+								columnfilter, typeFilter);
+					else
+						doesRowSatisfyCondition = true;
+				} catch (EMFValidationError error) {
+					errorHandler.addError(error);
+					return list;
+				}
+				if (doesRowSatisfyCondition)
+					break;
+			}
+			if (doesRowSatisfyCondition)
+				newPaginator.addRow(row);
+		}
+		ListIFace newList = new GenericList();
+		newList.setPaginator(newPaginator);
+		return newList;
+	}
 
 	/**
 	 * Filters the list with a unique value filter.
@@ -283,9 +365,8 @@ public class DelegatedBasicListService {
 		}
 		// controls the correctness of the filtering conditions
 		boolean filterConditionsAreCorrect = verifyFilterConditions(valuetypefilter, typeFilter, errorHandler);
-		if (!filterConditionsAreCorrect) {
+		if (!filterConditionsAreCorrect)
 			return allrowsSB;
-		}
 
 		PaginatorIFace newPaginator = new GenericPaginator();
 
@@ -303,9 +384,8 @@ public class DelegatedBasicListService {
 				}
 				return allrowsSB;
 			}
-			if (doesRowSatisfyCondition) {
+			if (doesRowSatisfyCondition)
 				newPaginator.addRow(row);
-			}
 		}
 		ListIFace newList = new GenericList();
 		newList.setPaginator(newPaginator);
@@ -349,9 +429,8 @@ public class DelegatedBasicListService {
 		}
 		// controls the correctness of the filtering conditions
 		boolean filterConditionsAreCorrect = verifyFilterConditions(valuetypefilter, typeFilter, errorHandler);
-		if (!filterConditionsAreCorrect) {
+		if (!filterConditionsAreCorrect)
 			return list;
-		}
 
 		PaginatorIFace newPaginator = new GenericPaginator();
 		newPaginator.setPageSize(list.getPaginator().getPageSize());
@@ -370,9 +449,8 @@ public class DelegatedBasicListService {
 				}
 				return list;
 			}
-			if (doesRowSatisfyCondition) {
+			if (doesRowSatisfyCondition)
 				newPaginator.addRow(row);
-			}
 		}
 		ListIFace newList = new GenericList();
 		newList.setPaginator(newPaginator);
@@ -389,7 +467,13 @@ public class DelegatedBasicListService {
 				TracerSingleton.log(Constants.NOME_MODULO, TracerSingleton.WARNING,
 						"DelegatedBasicListService::filterList: the filter type " + typeFilter
 								+ " is not applicable to numbers.");
-				String labelTypeFilter = "Error NUMBER_TYPE_FILTER";
+				String labelTypeFilter = "";
+				if (typeFilter.equalsIgnoreCase(SpagoBIConstants.START_FILTER))
+					labelTypeFilter = PortletUtilities.getMessage("SBIListLookPage.startWith", "messages");
+				else if (typeFilter.equalsIgnoreCase(SpagoBIConstants.END_FILTER))
+					labelTypeFilter = PortletUtilities.getMessage("SBIListLookPage.endWith", "messages");
+				else if (typeFilter.equalsIgnoreCase(SpagoBIConstants.CONTAIN_FILTER))
+					labelTypeFilter = PortletUtilities.getMessage("SBIListLookPage.contains", "messages");
 				HashMap params = new HashMap();
 				params.put(Constants.NOME_MODULO, "DelegatedBasicListService::filterList");
 				Vector v = new Vector();
@@ -398,9 +482,8 @@ public class DelegatedBasicListService {
 						SpagoBIConstants.TYPE_FILTER, "1050", v, params);
 				errorHandler.addError(error);
 				return false;
-			} else {
+			} else
 				return true;
-			}
 		}
 		// case of date filtering
 		if (valuetypefilter.equalsIgnoreCase(SpagoBIConstants.DATE_TYPE_FILTER)) {
@@ -410,7 +493,13 @@ public class DelegatedBasicListService {
 				TracerSingleton.log(Constants.NOME_MODULO, TracerSingleton.WARNING,
 						"DelegatedBasicListService::filterList: the filter type " + typeFilter
 								+ " is not applicable to date.");
-				String labelTypeFilter = "Error DATE_TYPE_FILTER";
+				String labelTypeFilter = "";
+				if (typeFilter.equalsIgnoreCase(SpagoBIConstants.START_FILTER))
+					labelTypeFilter = PortletUtilities.getMessage("SBIListLookPage.startWith", "messages");
+				else if (typeFilter.equalsIgnoreCase(SpagoBIConstants.END_FILTER))
+					labelTypeFilter = PortletUtilities.getMessage("SBIListLookPage.endWith", "messages");
+				else if (typeFilter.equalsIgnoreCase(SpagoBIConstants.CONTAIN_FILTER))
+					labelTypeFilter = PortletUtilities.getMessage("SBIListLookPage.contains", "messages");
 				HashMap params = new HashMap();
 				params.put(Constants.NOME_MODULO, "DelegatedBasicListService::filterList");
 				Vector v = new Vector();
@@ -419,12 +508,10 @@ public class DelegatedBasicListService {
 						SpagoBIConstants.TYPE_FILTER, "1053", v, params);
 				errorHandler.addError(error);
 				return false;
-			} else {
+			} else
 				return true;
-			}
-		} else {
+		} else
 			return true;
-		}
 	}
 
 	/**
@@ -479,23 +566,20 @@ public class DelegatedBasicListService {
 			for (int i = 0; i < valuesfilter.length; i++) {
 				String valuefilter = valuesfilter[i];
 				try {
-					if (valuefilter != null && !valuefilter.equals("")) {
+					if (valuefilter != null && !valuefilter.equals(""))
 						doesRowSatisfyCondition = doesRowSatisfyCondition(row, valuefilter, valuetypefilter,
 								columnfilter, typeFilter);
-					} else {
+					else
 						doesRowSatisfyCondition = true;
-					}
 				} catch (EMFValidationError error) {
 					LOGGER.warn("EMFValidationError", error);
 					return list;
 				}
-				if (doesRowSatisfyCondition) {
+				if (doesRowSatisfyCondition)
 					break;
-				}
 			}
-			if (doesRowSatisfyCondition) {
+			if (doesRowSatisfyCondition)
 				newList.add(row);
-			}
 		}
 
 		return newList;
@@ -535,9 +619,8 @@ public class DelegatedBasicListService {
 				LOGGER.warn("EMFValidationError", error);
 				return list;
 			}
-			if (doesRowSatisfyCondition) {
+			if (doesRowSatisfyCondition)
 				newList.add(row);
-			}
 		}
 
 		return newList;
@@ -546,13 +629,11 @@ public class DelegatedBasicListService {
 	private static boolean doesRowSatisfyCondition(SourceBean row, String valuefilter, String valuetypefilter,
 			String columnfilter, String typeFilter) throws EMFValidationError {
 		Object attribute = row.getAttribute(columnfilter);
-		if (attribute == null) {
+		if (attribute == null)
 			return false;
-		}
 		String value = attribute.toString();
-		if (value == null) {
+		if (value == null)
 			value = "";
-		}
 		// case of string filtering
 		if (valuetypefilter.equalsIgnoreCase(SpagoBIConstants.STRING_TYPE_FILTER)) {
 			valuefilter = valuefilter.toUpperCase();

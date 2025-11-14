@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- *
+ * 
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,7 +11,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- *
+ * 
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -26,10 +26,10 @@ import it.eng.spagobi.commons.constants.SpagoBIConstants;
 public class UrlBuilderFactory {
 
 	private static transient Logger logger = Logger.getLogger(UrlBuilderFactory.class);
-
+	
 	/**
 	 * Gets the url builder.
-	 *
+	 * 
 	 * @return the url builder
 	 */
 	public static IUrlBuilder getUrlBuilder() {
@@ -38,35 +38,39 @@ public class UrlBuilderFactory {
 		if(urlBuilder==null) {
 			SingletonConfig spagoconfig = SingletonConfig.getInstance();
 			// get mode of execution
-			String sbiMode = spagoconfig.getConfigValue("SPAGOBI.SPAGOBI-MODE.mode");
+			String sbiMode = spagoconfig.getConfigValue("SPAGOBI.SPAGOBI-MODE.mode");   
 			if (sbiMode==null) {
 				logger.error("SPAGOBI.SPAGOBI-MODE.mode IS NULL");
 				sbiMode="WEB";
 			}
 			// based on mode get spago object and url builder
 			if (sbiMode.equalsIgnoreCase("WEB")) {
-				urlBuilder = new WebUrlBuilder();
+				urlBuilder = new WebUrlBuilder();		
+			} else if  (sbiMode.equalsIgnoreCase("PORTLET")){
+				urlBuilder = new PortletUrlBuilder();
 			}
 			spagoContext.setAttribute(SpagoBIConstants.URL_BUILDER, urlBuilder);
-		}
+		}	
 		return urlBuilder;
 	}
-
+	
 	/**
 	 * Gets the url builder.
-	 *
+	 * 
 	 * @param channelType the channel type
-	 *
+	 * 
 	 * @return the url builder
 	 */
 	public static IUrlBuilder getUrlBuilder(String channelType) {
 		IUrlBuilder urlBuilder = null;
 		// based on mode get spago object and url builder
 		if (channelType.equalsIgnoreCase("WEB") || channelType.equalsIgnoreCase("HTTP")) {
-			urlBuilder = new WebUrlBuilder();
+			urlBuilder = new WebUrlBuilder();		
+		} else if  (channelType.equalsIgnoreCase("PORTLET")){
+			urlBuilder = new PortletUrlBuilder();
 		}
 		return urlBuilder;
-	}
-
-
+	}	
+		
+	
 }

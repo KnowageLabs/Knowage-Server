@@ -27,16 +27,23 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	IUrlBuilder urlBuilder = null;	
 	String sbiMode = null;
 		
-	
-	// case of web mode
-	aRequestContainer = RequestContainer.getRequestContainer();
-	if(aRequestContainer == null){
-		//case of REST 
-		aRequestContainer = RequestContainerAccess.getRequestContainer(request);
+	// case of portlet mode
+	aRequestContainer = RequestContainerPortletAccess.getRequestContainer(request);
+	if (aRequestContainer == null) {
+		// case of web mode
+		aRequestContainer = RequestContainer.getRequestContainer();
+		if(aRequestContainer == null){
+			//case of REST 
+			aRequestContainer = RequestContainerAccess.getRequestContainer(request);
+		}
 	}
 
+	String channelType = aRequestContainer.getChannelType();
+	if ("PORTLET".equalsIgnoreCase(channelType)) sbiMode = "PORTLET";
+	else sbiMode = "WEB";
+
 	// create url builder 
-	urlBuilder = UrlBuilderFactory.getUrlBuilder("WEB");
+	urlBuilder = UrlBuilderFactory.getUrlBuilder(sbiMode);
 %>
 <!DOCTYPE html>
     <head>

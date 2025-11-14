@@ -19,6 +19,7 @@ package it.eng.spagobi.services.common;
 
 import java.io.IOException;
 
+import javax.portlet.PortletSession;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
@@ -31,17 +32,17 @@ import it.eng.spagobi.services.security.exceptions.SecurityException;
  */
 public interface SsoServiceInterface {
 
-	String USER_ID = "user_id";
-	String EMAIL = "email";
-	String ROLES = "roles";
-	String USER_NAME_REQUEST_PARAMETER = "USERNAME";
-	String SECRETPHRASE_REQUEST_PARAMETER = "PASSWORD";
-	String SECRETPHRASE_MODE_REQUEST_PARAMETER = "PASSWORD_MODE";
-	String SECRETPHRASE_MODE_ENCRYPTED = "ENC";
-	String SILENT_LOGIN = "SILENT_LOGIN";
-	String PYTHON_SCRIPT = "script";
-	String DISTINGUISH_NAME = "DISTINGUISH_NAME";
-	String PASSWORD = "PASSWORD";
+	public static final String USER_ID = "user_id";
+	public static final String EMAIL = "email";
+	public static final String ROLES = "roles";
+	public static final String USER_NAME_REQUEST_PARAMETER = "USERNAME";
+	public static final String SECRETPHRASE_REQUEST_PARAMETER = "PASSWORD";
+	public static final String SECRETPHRASE_MODE_REQUEST_PARAMETER = "PASSWORD_MODE";
+	public static final String SECRETPHRASE_MODE_ENCRYPTED = "ENC";
+	public static final String SILENT_LOGIN = "SILENT_LOGIN";
+	public static final String PYTHON_SCRIPT = "script";
+	public static final String DISTINGUISH_NAME = "DISTINGUISH_NAME";
+	public static final String PASSWORD = "PASSWORD";
 
 	/**
 	 *
@@ -66,4 +67,10 @@ public interface SsoServiceInterface {
 	 */
 	String readUserIdentifier(HttpServletRequest request);
 
+	/**
+	 *
+	 * @param session Portlet Session
+	 * @return
+	 */
+	String readUserIdentifier(PortletSession session);
 }

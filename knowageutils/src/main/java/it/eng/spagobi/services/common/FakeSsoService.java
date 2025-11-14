@@ -19,6 +19,7 @@ package it.eng.spagobi.services.common;
 
 import java.io.IOException;
 
+import javax.portlet.PortletSession;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
@@ -47,6 +48,20 @@ public class FakeSsoService implements SsoServiceInterface {
 		String user = request.getParameter(SsoServiceInterface.USER_ID);
 		logger.debug("User in HttpRequest:" + user);
 		return user;
+	}
+
+	/**
+	 * Read user id.
+	 * 
+	 * @param session
+	 *            PortletSession
+	 * 
+	 * @return String
+	 */
+	@Override
+	public String readUserIdentifier(PortletSession session) {
+		logger.debug("NOT Implemented");
+		return "";
 	}
 
 	/**
