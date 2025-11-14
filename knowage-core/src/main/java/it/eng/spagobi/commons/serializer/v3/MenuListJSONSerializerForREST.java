@@ -258,9 +258,8 @@ public class MenuListJSONSerializerForREST implements Serializer {
 						// Create custom Menu elements (menu defined by the users)
 
 						menuUserList = createUserMenuElement(filteredMenuList, menuElem, locale, 1, menuUserList);
-						if (menuUserList.length() > 0) {
+						if (menuUserList.length() > 0)
 							tempFirstLevelMenuList.put(menuUserList.get(0));
-						}
 
 						if (menuElem.getHasChildren()) {
 							List lstChildrenLev2 = menuElem.getLstChildren();
@@ -274,9 +273,9 @@ public class MenuListJSONSerializerForREST implements Serializer {
 						temp.put(ICON_CLS, menuElem.getIconCls());
 
 						String text = "";
-						if (!menuElem.isAdminsMenu() || !menuElem.getName().startsWith("#")) {
+						if (!menuElem.isAdminsMenu() || !menuElem.getName().startsWith("#"))
 							text = menuElem.getName();
-						} else {
+						else {
 							if (menuElem.getName().startsWith("#")) {
 								String titleCode = menuElem.getName().substring(1);
 								text = msgBuild.getMessage(titleCode, locale);
@@ -411,30 +410,25 @@ public class MenuListJSONSerializerForREST implements Serializer {
 						if (isAbleTo(reqFunc[i], funcs)) {
 							addElement = isGroupItemToAdd(itemSB);
 						}
-						if (addElement) {
+						if (addElement)
 							break;
-						}
 					}
 				}
 
-				if (addElement) {
+				if (addElement)
 					addElement &= isUserMenuAuthorized(menuType, itemSB);
-				}
 
-				if (addElement) {
+				if (addElement)
 					addElement &= isUserMenuForNotAdmin(menuType, itemSB);
-				}
 
-				if (addElement) {
+				if (addElement)
 					addElement &= isMenuForKnowageCurrentType(menuType, itemSB);
-				}
 
 				if (addElement) {
 					JSONObject menu = createMenuNode(locale, messageBuilder, itemSB, menuType);
 					items.put(menu);
-					if (menuType == MenuType.TECHNICAL_USER_FUNCTIONALITIES) {
+					if (menuType == MenuType.TECHNICAL_USER_FUNCTIONALITIES)
 						technicalUserMenuIds.add(Integer.valueOf((String) itemSB.getAttribute(ID)));
-					}
 				}
 			}
 
@@ -472,13 +466,11 @@ public class MenuListJSONSerializerForREST implements Serializer {
 
 						isAuthorized = associatedAuthRoles.stream().anyMatch(x -> x.getSbiAuthorizations().getName().equals(lic));
 					}
-					if (isAuthorized) {
+					if (isAuthorized)
 						break;
-					}
 				}
-				if (isAuthorized) {
+				if (isAuthorized)
 					break;
-				}
 
 			}
 		}
@@ -538,16 +530,14 @@ public class MenuListJSONSerializerForREST implements Serializer {
 			if (menuType == MenuType.TECHNICAL_USER_FUNCTIONALITIES) {
 				if (technicalMenuCommunityOrEnterprise.containsKey(menuId)) {
 					isToAdd = !isEnterpriseEdition();
-					if (!isToAdd) {
+					if (!isToAdd)
 						return false;
-					}
 				}
 
 				if (technicalMenuCommunityOrEnterprise.containsValue(menuId)) {
 					isToAdd = isEnterpriseEdition();
-					if (!isToAdd) {
+					if (!isToAdd)
 						return false;
-					}
 				}
 			}
 		}
@@ -592,9 +582,8 @@ public class MenuListJSONSerializerForREST implements Serializer {
 						List<String> activeProducts = (List<String>) getActiveProductsMethod.invoke(productProfilerEE);
 						for (String lic : requiredLicenses) {
 							isLicensed = activeProducts.contains(lic);
-							if (isLicensed) {
+							if (isLicensed)
 								break;
-							}
 						}
 					} catch (Exception e) {
 						isLicensed = false;
@@ -690,9 +679,8 @@ public class MenuListJSONSerializerForREST implements Serializer {
 		for (Object objAttribute : containedAttributes) {
 			SourceBeanAttribute attribute = (SourceBeanAttribute) objAttribute;
 
-			if (isAttributeToIgnore(attribute)) {
+			if (isAttributeToIgnore(attribute))
 				continue;
-			}
 			String value = String.valueOf(attribute.getValue());
 			String key = attribute.getKey();
 			if (!key.equals(ITEM) && StringUtils.isNotBlank(value)) {
@@ -744,9 +732,9 @@ public class MenuListJSONSerializerForREST implements Serializer {
 		}
 
 		/* TEXT PROPERTY HANDLING */
-		if (!childElem.isAdminsMenu() || !childElem.getName().startsWith("#")) {
+		if (!childElem.isAdminsMenu() || !childElem.getName().startsWith("#"))
 			text = childElem.getName();
-		} else {
+		else {
 			if (childElem.getName().startsWith("#")) {
 				String titleCode = childElem.getName().substring(1);
 
@@ -784,9 +772,9 @@ public class MenuListJSONSerializerForREST implements Serializer {
 
 			/* DESCR PROPERTY HANDLING */
 			String descr = "";
-			if (!childElem.isAdminsMenu() || !childElem.getName().startsWith("#")) {
+			if (!childElem.isAdminsMenu() || !childElem.getName().startsWith("#"))
 				descr = childElem.getDescr();
-			} else if (childElem.getName().startsWith("#")) {
+			else if (childElem.getName().startsWith("#")) {
 //				String titleCode = childElem.getDescr().substring(1);
 //
 //				try {
@@ -901,7 +889,7 @@ public class MenuListJSONSerializerForREST implements Serializer {
 	}
 
 	private void setPropertiesForStaticMenu(Menu childElem, JSONObject temp2, String path) throws JSONException {
-		temp2.put(TO, "/html?id=" + childElem.getMenuId());
+		temp2.put(TO, contextName + "/servlet/AdapterHTTP?ACTION_NAME=READ_HTML_FILE&MENU_ID=" + childElem.getMenuId());
 	}
 
 	public IEngUserProfile getUserProfile() {

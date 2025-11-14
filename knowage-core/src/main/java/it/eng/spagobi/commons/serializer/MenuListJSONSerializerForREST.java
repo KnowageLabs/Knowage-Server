@@ -205,10 +205,11 @@ public class MenuListJSONSerializerForREST implements Serializer {
 							temp.put(ICON_CLS, menuElem.getIconCls());
 
 							String text = "";
-							if (!menuElem.isAdminsMenu() || !menuElem.getName().startsWith("#")) {
+							if (!menuElem.isAdminsMenu() || !menuElem.getName().startsWith("#"))
+
 								// text = msgBuild.getI18nMessage(locale, menuElem.getName());
 								text = menuElem.getName();
-							} else {
+							else {
 								if (menuElem.getName().startsWith("#")) {
 									String titleCode = menuElem.getName().substring(1);
 									text = msgBuild.getMessage(titleCode, locale);
@@ -718,10 +719,10 @@ public class MenuListJSONSerializerForREST implements Serializer {
 
 		MessageBuilder msgBuild = new MessageBuilder();
 		String text = "";
-		if (!childElem.isAdminsMenu() || !childElem.getName().startsWith("#")) {
+		if (!childElem.isAdminsMenu() || !childElem.getName().startsWith("#"))
 			// text = msgBuild.getI18nMessage(locale, childElem.getName());
 			text = childElem.getName();
-		} else {
+		else {
 			if (childElem.getName().startsWith("#")) {
 				String titleCode = childElem.getName().substring(1);
 
@@ -761,10 +762,10 @@ public class MenuListJSONSerializerForREST implements Serializer {
 			temp2.put(TEXT, text);
 
 			String descr = "";
-			if (!childElem.isAdminsMenu() || !childElem.getName().startsWith("#")) {
+			if (!childElem.isAdminsMenu() || !childElem.getName().startsWith("#"))
 				// text = msgBuild.getI18nMessage(locale, childElem.getName());
 				descr = childElem.getDescr();
-			} else {
+			else {
 				if (childElem.getName().startsWith("#")) {
 					String titleCode = childElem.getDescr().substring(1);
 
@@ -807,10 +808,10 @@ public class MenuListJSONSerializerForREST implements Serializer {
 			} else if (childElem.getStaticPage() != null && !childElem.getStaticPage().equals("")) {
 				temp2.put(HREF,
 						"javascript:execDirectUrl('" + contextName
-								+ "/restful-services/2.0/readHtmlFile?MENU_ID=" + childElem.getMenuId()
+								+ "/servlet/AdapterHTTP?ACTION_NAME=READ_HTML_FILE&MENU_ID=" + childElem.getMenuId()
 								+ "', '" + path + "' )");
 				temp2.put(LINK_TYPE, "execDirectUrl");
-				temp2.put(SRC, contextName + "/restful-services/2.0/readHtmlFile?MENU_ID="
+				temp2.put(SRC, contextName + "/servlet/AdapterHTTP?ACTION_NAME=READ_HTML_FILE&MENU_ID="
 						+ childElem.getMenuId());
 			} else if (StringUtils.isNotEmpty(childElem.getFunctionality())) {
 				String finalUrl = "javascript:execDirectUrl('"
