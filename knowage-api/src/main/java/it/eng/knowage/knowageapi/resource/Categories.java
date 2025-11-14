@@ -43,4 +43,14 @@ public class Categories {
 		return null;
 	}
 
+    @GET
+    @Path("/folders")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Map<String, String> folders() {
+
+
+
+        return null;
+    }
+
 }
