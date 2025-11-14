@@ -37,7 +37,7 @@ import it.eng.knowage.knowageapi.service.impl.FunctionCatalogAPIImpl;
 @Configuration
 @EnableAutoConfiguration(exclude = { DataSourceAutoConfiguration.class })
 @Profile("production")
-@ComponentScan({ "it.eng.knowage.knowageapi", "it.eng.knowage.resourcemanager" })
+@ComponentScan({ "it.eng.knowage.knowageapi", "it.eng.knowage.resourcemanager", "it.eng.knowage.logmanager" })
 public class KnowageApiConfiguration {
 
 	@Primary /* just to prevent Spring error */
