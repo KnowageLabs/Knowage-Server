@@ -804,6 +804,10 @@ public class DashboardExporter {
                 buildLikeSelections(dashboardSelections, widget);
             }
 
+            if (widget.getString("type").equalsIgnoreCase("static-pivot-table")) {
+                LOGGER.error(dashboardSelections.toString());
+            }
+
             datastore = getDatastore(datasetLabel, map, dashboardSelections.toString(), offset, fetchSize);
             datastore.put("widgetData", widget);
 
