@@ -84,12 +84,12 @@
 	<CONFIGURATOR path="/WEB-INF/conf/engines/kpi/custom_publishers.xml" /> 
 	-->	
 <!-- engines.officedocument -->
- 
+ <!--
 	<CONFIGURATOR path="/WEB-INF/conf/engines/officedocument/messages.xml" />
 	<CONFIGURATOR path="/WEB-INF/conf/engines/officedocument/publishers.xml" />
 	<CONFIGURATOR path="/WEB-INF/conf/engines/officedocument/actions.xml" />
 	<CONFIGURATOR path="/WEB-INF/conf/engines/officedocument/business_map.xml" /> 
- 
+ -->	
 <!-- engines.documentcomposition -->
 	<!--
 	<CONFIGURATOR path="/WEB-INF/conf/engines/documentcomposition/messages.xml" />

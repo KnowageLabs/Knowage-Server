@@ -16,6 +16,7 @@ import com.jamonapi.Monitor;
 import com.jamonapi.MonitorFactory;
 
 import it.eng.LightNavigationConstants;
+import it.eng.knowage.commons.security.KnowageSystemConfiguration;
 import it.eng.knowage.security.OwaspDefaultEncoderFactory;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
@@ -114,9 +115,11 @@ public class DocumentRuntime extends AbstractBIResourceRuntime<BIObjectParameter
 			addSystemParametersForExternalEngines(mapPars, this.getLocale(), obj, executionModality, role);
 			url = GeneralUtilities.getUrl(engine.getUrl(), mapPars);
 
-		}
+		} else if (engine.getLabel().equalsIgnoreCase("knowageofficeengine")) {
+			return KnowageSystemConfiguration.getKnowageContext() + "/restful-services/2.0/officeContent?documentId=" + obj.getId() + "&"
+					+ SpagoBIConstants.ROLE + "=" + role;
 		// IF THE ENGINE IS INTERNAL
-		else {
+		} else {
 			StringBuilder buffer = new StringBuilder();
 			buffer.append(GeneralUtilities
 					.getSpagoBIProfileBaseUrl(((UserProfile) this.getUserProfile()).getUserId().toString()));

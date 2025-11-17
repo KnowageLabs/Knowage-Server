@@ -91,6 +91,7 @@ public class AntiCsrfFilter implements Filter {
 		urlToExclude.add("/oauth2clientservice");
 		urlToExclude.add("/1.0/model/export/excel");
 		urlToExclude.add("/jwt/verify");
+		urlToExclude.add("/2.0/officeContent");
 
 		return urlToExclude.contains(path) || path.startsWith("/1.0/ai/") || path.startsWith("/dossier/activity/");
 	}
