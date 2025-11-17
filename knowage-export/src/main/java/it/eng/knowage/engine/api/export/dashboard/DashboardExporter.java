@@ -1028,8 +1028,8 @@ public class DashboardExporter {
     private JSONObject getCategory(JSONObject column, JSONObject sortingObj, JSONObject drillSortingObj) {
         try {
             JSONObject category = new JSONObject();
-            category.put("id", column.getString("columnName"));
-            category.put("alias", column.getString("columnName"));
+            category.put("id", column.has("id") ? column.getString("id") : column.getString("columnName"));
+            category.put("alias", column.has("alias") ? column.getString("alias") : column.getString("columnName"));
             category.put("columnName", column.getString("columnName"));
             category.put("funct", column.optString("aggregation").isEmpty() ? "NONE" : column.getString("aggregation"));
             String sorting = getSortingObj(sortingObj, drillSortingObj);
@@ -1045,8 +1045,8 @@ public class DashboardExporter {
         try {
             final String formula = "formula";
             JSONObject measure = new JSONObject();
-            measure.put("id", object.getString("columnName"));
-            measure.put("alias", object.getString("columnName"));
+            measure.put("id", object.has("id") ? object.getString("id") : object.getString("columnName"));
+            measure.put("alias", object.has("alias") ? object.getString("alias") : object.getString("columnName"));
             measure.put("columnName", object.getString("columnName"));
             measure.put("funct", object.getString("aggregation"));
             if (object.has(formula)) {
