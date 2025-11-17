@@ -1231,8 +1231,8 @@ public class DashboardExcelExporter extends DashboardExporter {
                     }
                 }
             }
-        } catch (Exception e) {
-            LOGGER.error("Error while getting precision by column", e);
+        } catch (Exception ignored) {
+            return -1;
         }
         return -1;
     }
