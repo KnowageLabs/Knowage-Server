@@ -15,7 +15,6 @@ public class JSONObjectUtils {
         try {
             return settings.getJSONObject("visualization");
         } catch (Exception e) {
-            LOGGER.error("Error while getting visualization from settings", e);
             return new JSONObject();
         }
     }
@@ -32,7 +31,6 @@ public class JSONObjectUtils {
         try {
             return settings.getJSONObject("style");
         } catch (Exception e) {
-            LOGGER.error("Error while getting style from settings", e);
             return new JSONObject();
         }
     }
