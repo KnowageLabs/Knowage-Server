@@ -714,7 +714,7 @@ public class DashboardExcelExporter extends DashboardExporter {
         try {
             String widgetType = body.getString("type");
             JSONObject parametersToSend = transformParametersForDatastore(body, parameters);
-            if (Arrays.asList(WIDGETS_TO_IGNORE).contains(widgetType.toLowerCase())) {
+            if (Arrays.asList(WIDGETS_TO_IGNORE).contains(widgetType.toLowerCase()) || !excelExportIsEnabled(body)) {
                 return 0;
             }
             IWidgetExporter widgetExporter = DashboardWidgetExporterFactory.getExporter(this,
@@ -726,6 +726,22 @@ public class DashboardExcelExporter extends DashboardExporter {
         }
         return exportedSheets;
     }
+
+    private boolean excelExportIsEnabled(JSONObject body) {
+        try {
+            JSONObject settings = body.getJSONObject("settings");
+            if (settings.has("configuration") && settings.getJSONObject("configuration").has("exports")) {
+                return settings.getJSONObject("configuration").getJSONObject("exports").getBoolean("showExcelExport");
+            } else {
+                return false;
+            }
+
+        } catch (Exception e) {
+            LOGGER.info("Cannot get widget settings, assuming excel export is not enabled", e);
+            return false;
+        }
+    }
+
     public Sheet createUniqueSafeSheet(Workbook wb, String widgetName, String dashboardSheetName) {
         Sheet sheet;
         String sheetName;
