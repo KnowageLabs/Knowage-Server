@@ -624,7 +624,7 @@ public class DashboardExcelExporter extends DashboardExporter {
             if (body.has("configuration") && body.getJSONObject("configuration").has("datasets") && body.getJSONObject("configuration").getJSONArray("datasets").length() > 0) {
                 for (int i = 0; i < body.getJSONObject("configuration").getJSONArray("datasets").length(); i++) {
                     JSONObject dataset = body.getJSONObject("configuration").getJSONArray("datasets").getJSONObject(i);
-                    if (currWidget.has("dataset") && currWidget.getInt("dataset") == dataset.getInt("id")) {
+                    if (currWidget.has("dataset") && currWidget.get("dataset") != null && currWidget.getInt("dataset") == dataset.getInt("id")) {
                         if (dataset.has("drivers") && dataset.getJSONArray("drivers").length() > 0) {
                             JSONObject datasetDrivers = transformDriversForDatastore(dataset.getJSONArray("drivers"));
                             for (int j = 0; j < datasetDrivers.names().length(); j++) {
@@ -636,8 +636,7 @@ public class DashboardExcelExporter extends DashboardExporter {
             }
 
         } catch (JSONException jsonException) {
-            LOGGER.error("Cannot set dataset drivers if present", jsonException);
-            throw new SpagoBIRuntimeException("Cannot set dataset drivers if present", jsonException);
+            throw new SpagoBIRuntimeException("Cannot set dataset drivers", jsonException);
         }
     }
 
