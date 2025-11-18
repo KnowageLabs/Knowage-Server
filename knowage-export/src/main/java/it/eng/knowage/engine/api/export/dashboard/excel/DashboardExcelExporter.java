@@ -936,7 +936,11 @@ public class DashboardExcelExporter extends DashboardExporter {
                 try {
                     columnName = column.getString("alias");
                 } catch (JSONException e) {
-                    columnName = column.getString("name");
+                    try {
+                        columnName = column.getString("header");
+                    } catch(JSONException e2) {
+                        columnName = column.getString("columnName");
+                    }
                 }
                 // renaming table columns names of the excel export
                 columnName = getInternationalizedHeader(columnName);
