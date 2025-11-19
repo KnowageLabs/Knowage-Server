@@ -560,7 +560,15 @@ public class DashboardExcelExporter extends DashboardExporter {
                 Row newRow = sheet.createRow(j);
                 newRow.createCell(0).setCellValue(driver.getString("name"));
                 newRow.createCell(1).setCellValue(driver.getString("type"));
-                newRow.createCell(2).setCellValue(driver.getBoolean("multivalue"));
+                try {
+                    newRow.createCell(2).setCellValue(driver.getBoolean("multivalue"));
+                } catch (JSONException e) {
+                    try {
+                        newRow.createCell(2).setCellValue(driver.getString("multivalue"));
+                    } catch (JSONException ex) {
+                        newRow.createCell(2).setCellValue(false);
+                    }
+                }
                 newRow.createCell(3).setCellValue(driver.getString("value"));
                 newRow.createCell(4).setCellValue(driver.getString("urlName"));
                 newRow.createCell(5).setCellValue(driver.getString("driverLabel"));
