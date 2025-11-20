@@ -17,6 +17,10 @@
  */
 package it.eng.knowage.engine.cockpit.api;
 
+import javax.servlet.http.HttpServletRequest;
+
+import org.apache.log4j.Logger;
+
 import it.eng.knowage.engine.cockpit.CockpitEngineInstance;
 import it.eng.knowage.engine.cockpit.CockpitEngineRuntimeException;
 import it.eng.spago.security.IEngUserProfile;
@@ -27,23 +31,12 @@ import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.engines.EngineStartServletIOManager;
 import it.eng.spagobi.utilities.engines.rest.AbstractRestService;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.ws.rs.core.Context;
-
-import org.apache.log4j.Logger;
-
 /**
  * 
  * @author Zerbetto Davide (davide.zerbetto@eng.it), Alberto Ghedin (alberto.ghedin@eng.it)
  * 
  */
 public class AbstractCockpitEngineResource extends AbstractRestService {
-
-	@Context
-	protected HttpServletRequest request;
-	@Context
-	protected HttpServletResponse response;
 
 	public static transient Logger logger = Logger.getLogger(AbstractCockpitEngineResource.class);
 

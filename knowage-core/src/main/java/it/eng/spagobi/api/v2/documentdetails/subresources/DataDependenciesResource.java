@@ -59,7 +59,7 @@ public class DataDependenciesResource extends AbstractSpagoBIResource {
 			dataDependencies = parameterUseDAO.loadObjParuses(driverId);
 		} catch (HibernateException e) {
 			logger.error("Data Dependencies can not be loaded", e);
-			throw new SpagoBIRestServiceException(e.getCause().getCause().getLocalizedMessage(), buildLocaleFromSession(), e);
+			throw new SpagoBIRestServiceException(e.getCause().getCause().getLocalizedMessage(), getLocale(), e);
 		}
 		logger.debug("OUT");
 		return dataDependencies;
@@ -79,10 +79,10 @@ public class DataDependenciesResource extends AbstractSpagoBIResource {
 			parameterUseObject.setId(parameterUseDAO.insertObjParuse(parameterUseObject));
 		} catch (HibernateException e) {
 			logger.error("Data Dependencies can not be created", e);
-			throw new SpagoBIRestServiceException(e.getCause().getCause().getLocalizedMessage() + " in Data Dependency", buildLocaleFromSession(), e);
+			throw new SpagoBIRestServiceException(e.getCause().getCause().getLocalizedMessage() + " in Data Dependency", getLocale(), e);
 		} catch (IllegalArgumentException ill) {
 			logger.error("Data Dependencies error", ill);
-			throw new SpagoBIRestServiceException(buildLocaleFromSession(), ill);
+			throw new SpagoBIRestServiceException(getLocale(), ill);
 		}
 		logger.debug("OUT");
 		return parameterUseObject;
@@ -99,7 +99,7 @@ public class DataDependenciesResource extends AbstractSpagoBIResource {
 			parameterUseDAO.eraseObjParuse(parameterUseObject);
 		} catch (HibernateException e) {
 			logger.error("Data Dependencies can not be deleted", e);
-			throw new SpagoBIRestServiceException(e.getCause().getCause().getLocalizedMessage(), buildLocaleFromSession(), e);
+			throw new SpagoBIRestServiceException(e.getCause().getCause().getLocalizedMessage(), getLocale(), e);
 		}
 		logger.debug("OUT");
 	}
@@ -118,10 +118,10 @@ public class DataDependenciesResource extends AbstractSpagoBIResource {
 			parameterUseDAO.modifyObjParuse(parameterUseObject);
 		} catch (HibernateException e) {
 			logger.error("Data Dependencies can not be modified", e);
-			throw new SpagoBIRestServiceException(e.getCause().getCause().getLocalizedMessage(), buildLocaleFromSession(), e);
+			throw new SpagoBIRestServiceException(e.getCause().getCause().getLocalizedMessage(), getLocale(), e);
 		} catch (IllegalArgumentException ill) {
 			logger.error("Data Dependencies error", ill);
-			throw new SpagoBIRestServiceException(buildLocaleFromSession(), ill);
+			throw new SpagoBIRestServiceException(getLocale(), ill);
 		}
 		logger.debug("OUT");
 		return parameterUseObject;
@@ -138,7 +138,7 @@ public class DataDependenciesResource extends AbstractSpagoBIResource {
 			parameterUseDAO.eraseObjParuse(parametarUseObject);
 		} catch (HibernateException e) {
 			logger.error("Data Dependencies can not be deleted", e);
-			throw new SpagoBIRestServiceException(e.getCause().getCause().getLocalizedMessage(), buildLocaleFromSession(), e);
+			throw new SpagoBIRestServiceException(e.getCause().getCause().getLocalizedMessage(), getLocale(), e);
 		}
 		logger.debug("OUT");
 	}

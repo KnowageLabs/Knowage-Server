@@ -27,16 +27,16 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import it.eng.knowage.security.ProductProfiler;
-import it.eng.spagobi.commons.metadata.SbiAuthorizations;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import it.eng.knowage.security.ProductProfiler;
 import it.eng.spagobi.api.AbstractSpagoBIResource;
 import it.eng.spagobi.commons.bo.RoleMetaModelCategory;
 import it.eng.spagobi.commons.constants.CommunityFunctionalityConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.IRoleDAO;
+import it.eng.spagobi.commons.metadata.SbiAuthorizations;
 import it.eng.spagobi.services.rest.annotations.UserConstraint;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
 
@@ -66,7 +66,7 @@ public class AuthorizationsResource extends AbstractSpagoBIResource {
 			return Response.ok(fullList).build();
 		} catch (Exception e) {
 			LOGGER.error("Error with loading resource", e);
-			throw new SpagoBIRestServiceException("Error with loading resource", buildLocaleFromSession(), e);
+			throw new SpagoBIRestServiceException("Error with loading resource", getLocale(), e);
 		}
 	}
 
@@ -86,7 +86,7 @@ public class AuthorizationsResource extends AbstractSpagoBIResource {
 			return Response.ok(categories).build();
 		} catch (Exception e) {
 			LOGGER.error("Error with loading resource", e);
-			throw new SpagoBIRestServiceException("Error with loading resource", buildLocaleFromSession(), e);
+			throw new SpagoBIRestServiceException("Error with loading resource", getLocale(), e);
 		}
 	}
 }

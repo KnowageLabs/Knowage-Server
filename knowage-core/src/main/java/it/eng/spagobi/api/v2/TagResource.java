@@ -59,7 +59,7 @@ public class TagResource extends AbstractSpagoBIResource {
 			return Response.ok(tags).build();
 		} catch (Exception e) {
 			logger.error("Error has occurred while loading Tags", e);
-			throw new SpagoBIRestServiceException("Cannot return Tags", buildLocaleFromSession(), e);
+			throw new SpagoBIRestServiceException("Cannot return Tags", getLocale(), e);
 		}
 	}
 
@@ -74,7 +74,7 @@ public class TagResource extends AbstractSpagoBIResource {
 			tagDao.deleteTag(tagId);
 		} catch (Exception e) {
 			logger.error("Error has occurred while deleting Tag [" + tagId + "]", e);
-			throw new SpagoBIRestServiceException("Cannot delete Tag", buildLocaleFromSession(), e);
+			throw new SpagoBIRestServiceException("Cannot delete Tag", getLocale(), e);
 		}
 		logger.debug("OUT");
 		return Response.ok().build();

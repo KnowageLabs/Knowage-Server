@@ -203,7 +203,7 @@ public class LovResource extends AbstractSpagoBIResource {
 			return Response.ok(fullList).build();
 		} catch (Exception e) {
 			logger.error("Error with loading resource", e);
-			throw new SpagoBIRestServiceException("Error with loading resource", buildLocaleFromSession(), e);
+			throw new SpagoBIRestServiceException("Error with loading resource", getLocale(), e);
 		}
 
 	}
@@ -226,7 +226,7 @@ public class LovResource extends AbstractSpagoBIResource {
 			return Response.ok(documents).build();
 		} catch (Exception e) {
 			logger.error("Error with loading resource", e);
-			throw new SpagoBIRestServiceException("Error with loading resource", buildLocaleFromSession(), e);
+			throw new SpagoBIRestServiceException("Error with loading resource", getLocale(), e);
 		}
 
 	}
@@ -487,7 +487,7 @@ public class LovResource extends AbstractSpagoBIResource {
 		} catch (Exception exception) {
 
 			logger.error("Error while deleting LOV", exception);
-			throw new SpagoBIRestServiceException(exception.getLocalizedMessage(), buildLocaleFromSession(), exception);
+			throw new SpagoBIRestServiceException(exception.getLocalizedMessage(), getLocale(), exception);
 
 		}
 	}
@@ -965,7 +965,7 @@ public class LovResource extends AbstractSpagoBIResource {
 			return driversToReturn;
 		} catch (Exception e) {
 			logger.error("Error with loading resource", e);
-			throw new SpagoBIRestServiceException("Error with loading resource", buildLocaleFromSession(), e);
+			throw new SpagoBIRestServiceException("Error with loading resource", getLocale(), e);
 		}
 
 	}

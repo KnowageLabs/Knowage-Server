@@ -67,7 +67,7 @@ public class DocumentsOrganizerResource extends AbstractSpagoBIResource {
 			return documents;
 		} catch (Exception exception) {
 			LOGGER.error("Error while loading documents from organizer.", exception);
-			throw new SpagoBIRestServiceException("sbi.workspace.organizer.error.load", buildLocaleFromSession(), exception);
+			throw new SpagoBIRestServiceException("sbi.workspace.organizer.error.load", getLocale(), exception);
 		} finally {
 			LOGGER.debug("OUT");
 		}
@@ -96,12 +96,12 @@ public class DocumentsOrganizerResource extends AbstractSpagoBIResource {
 		} catch (HibernateException he) {
 
 			LOGGER.error("Error while loading all documents from the Organizer.", he);
-			throw new SpagoBIRestServiceException("sbi.workspace.organizer.error.load", buildLocaleFromSession(), he);
+			throw new SpagoBIRestServiceException("sbi.workspace.organizer.error.load", getLocale(), he);
 
 		} catch (Exception exception) {
 
 			LOGGER.error("Error while loading all documents from the Organizer.", exception);
-			throw new SpagoBIRestServiceException("sbi.workspace.organizer.error.load", buildLocaleFromSession(), exception);
+			throw new SpagoBIRestServiceException("sbi.workspace.organizer.error.load", getLocale(), exception);
 
 		} finally {
 			LOGGER.debug("OUT");
@@ -129,7 +129,7 @@ public class DocumentsOrganizerResource extends AbstractSpagoBIResource {
 		 */
 		// catch (Exception exception) {
 		// logger.error("Error while saving document in organizer.", exception);
-		// throw new SpagoBIRestServiceException("sbi.workspace.organizer.error.post", buildLocaleFromSession(), exception);
+		// throw new SpagoBIRestServiceException("sbi.workspace.organizer.error.post", getLocale(), exception);
 		//
 		// }
 		catch (HibernateException he) {
@@ -166,7 +166,7 @@ public class DocumentsOrganizerResource extends AbstractSpagoBIResource {
 			return Response.ok().build();
 		} catch (Exception exception) {
 			LOGGER.error("Error while deleting a document in organizer.", exception);
-			throw new SpagoBIRestServiceException("sbi.workspace.organizer.error.delete", buildLocaleFromSession(), exception);
+			throw new SpagoBIRestServiceException("sbi.workspace.organizer.error.delete", getLocale(), exception);
 		} finally {
 			LOGGER.debug("OUT");
 		}

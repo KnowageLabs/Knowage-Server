@@ -70,7 +70,7 @@ public class ModalitiesDetailResource extends AbstractSpagoBIResource {
 			return Response.ok(fullList).build();
 		} catch (Exception e) {
 			LOGGER.error("Error with loading resource", e);
-			throw new SpagoBIRestServiceException("Error with loading resource", buildLocaleFromSession(), e);
+			throw new SpagoBIRestServiceException("Error with loading resource", getLocale(), e);
 		}
 
 	}
@@ -92,7 +92,7 @@ public class ModalitiesDetailResource extends AbstractSpagoBIResource {
 		} catch (Exception e) {
 			LOGGER.error("Check with selected id: " + id + " doesn't exists", e);
 			throw new SpagoBIRestServiceException("Item with selected id: " + id + " doesn't exists",
-					buildLocaleFromSession(), e);
+					getLocale(), e);
 		}
 
 	}
@@ -119,7 +119,7 @@ public class ModalitiesDetailResource extends AbstractSpagoBIResource {
 			return Response.created(new URI("2.0/customChecks/" + encodedCheck)).entity(encodedCheck).build();
 		} catch (Exception e) {
 			LOGGER.error("Error while inserting resource", e);
-			throw new SpagoBIRestServiceException("Error while inserting resource", buildLocaleFromSession(), e);
+			throw new SpagoBIRestServiceException("Error while inserting resource", getLocale(), e);
 		}
 	}
 
@@ -146,7 +146,7 @@ public class ModalitiesDetailResource extends AbstractSpagoBIResource {
 		} catch (Exception e) {
 			LOGGER.error("Error while modifying resource with id: " + id, e);
 			throw new SpagoBIRestServiceException("Error while modifying resource with id: " + id,
-					buildLocaleFromSession(), e);
+					getLocale(), e);
 		}
 	}
 
@@ -169,7 +169,7 @@ public class ModalitiesDetailResource extends AbstractSpagoBIResource {
 		} catch (Exception e) {
 			LOGGER.error("Error with deleting resource with id: " + id, e);
 			throw new SpagoBIRestServiceException("Error with deleting resource with id: " + id,
-					buildLocaleFromSession(), e);
+					getLocale(), e);
 		}
 	}
 }

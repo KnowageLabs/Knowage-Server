@@ -60,7 +60,7 @@ public class DomainCRUDForFinalUser extends DomainCRUD {
 			return translate(categories, getLocale(req)).toString();
 		} catch (Exception e) {
 			logger.error("Impossible to get role dataset categories for user [" + getUserProfile() + "]", e);
-			throw new SpagoBIRestServiceException("Impossible to get role dataset categories for user [" + getUserProfile() + "]", buildLocaleFromSession(), e);
+			throw new SpagoBIRestServiceException("Impossible to get role dataset categories for user [" + getUserProfile() + "]", getLocale(), e);
 		}
 	}
 
@@ -74,7 +74,7 @@ public class DomainCRUDForFinalUser extends DomainCRUD {
 			return translate(categories, getLocale(req)).toString();
 		} catch (Exception e) {
 			logger.error("Impossible to get role models categories for user [" + getUserProfile() + "]", e);
-			throw new SpagoBIRestServiceException("Impossible to get role models categories for user [" + getUserProfile() + "]", buildLocaleFromSession(), e);
+			throw new SpagoBIRestServiceException("Impossible to get role models categories for user [" + getUserProfile() + "]", getLocale(), e);
 		}
 	}
 }

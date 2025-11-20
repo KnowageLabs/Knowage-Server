@@ -100,7 +100,7 @@ public class MenuResource extends AbstractSpagoBIResource {
 		} catch (Exception e) {
 			String errorString = "sbi.menu.load.menus.error";
 			LOGGER.error(errorString, e);
-			throw new SpagoBIRestServiceException(errorString, buildLocaleFromSession(), e);
+			throw new SpagoBIRestServiceException(errorString, getLocale(), e);
 		} finally {
 			LOGGER.debug("OUT");
 		}
@@ -129,7 +129,7 @@ public class MenuResource extends AbstractSpagoBIResource {
 		} catch (Exception e) {
 			String errorString = "sbi.menu.load.menus.error";
 			LOGGER.error(errorString, e);
-			throw new SpagoBIRestServiceException(errorString, buildLocaleFromSession(), e);
+			throw new SpagoBIRestServiceException(errorString, getLocale(), e);
 		} finally {
 			LOGGER.debug("OUT");
 		}
@@ -195,12 +195,12 @@ public class MenuResource extends AbstractSpagoBIResource {
 
 		} catch (SpagoBIRuntimeException e) {
 			LOGGER.error(e.getMessage(), e);
-			throw new SpagoBIRestServiceException(e.getMessage(), buildLocaleFromSession(), e);
+			throw new SpagoBIRestServiceException(e.getMessage(), getLocale(), e);
 
 		} catch (Exception e) {
 			String errorString = "sbi.menu.load.htmls.error";
 			LOGGER.error(errorString, e);
-			throw new SpagoBIRestServiceException(errorString, buildLocaleFromSession(), e);
+			throw new SpagoBIRestServiceException(errorString, getLocale(), e);
 		} finally {
 			LOGGER.debug("OUT");
 		}
@@ -225,7 +225,7 @@ public class MenuResource extends AbstractSpagoBIResource {
 		} catch (Exception e) {
 			String errorString = "sbi.menu.load.menu.moveUp.error";
 			LOGGER.error(errorString, e);
-			throw new SpagoBIRestServiceException(errorString, buildLocaleFromSession(), e);
+			throw new SpagoBIRestServiceException(errorString, getLocale(), e);
 		}
 
 	}
@@ -249,7 +249,7 @@ public class MenuResource extends AbstractSpagoBIResource {
 		} catch (Exception e) {
 			String errorString = "sbi.menu.load.menu.moveDown.error";
 			LOGGER.error(errorString, e);
-			throw new SpagoBIRestServiceException(errorString, buildLocaleFromSession(), e);
+			throw new SpagoBIRestServiceException(errorString, getLocale(), e);
 		}
 
 	}
@@ -267,7 +267,7 @@ public class MenuResource extends AbstractSpagoBIResource {
 		} catch (Exception e) {
 			String errorString = "sbi.menu.load.menu.changeWithFather.error";
 			LOGGER.error(errorString, e);
-			throw new SpagoBIRestServiceException(errorString, buildLocaleFromSession(), e);
+			throw new SpagoBIRestServiceException(errorString, getLocale(), e);
 		}
 
 	}
@@ -364,7 +364,7 @@ public class MenuResource extends AbstractSpagoBIResource {
 		} catch (Exception e) {
 			String errorString = "sbi.menu.save.error";
 			LOGGER.error(errorString, e);
-			throw new SpagoBIRestServiceException(errorString, buildLocaleFromSession(), e);
+			throw new SpagoBIRestServiceException(errorString, getLocale(), e);
 		}
 
 	}
@@ -411,7 +411,7 @@ public class MenuResource extends AbstractSpagoBIResource {
 				menu.setExternalApplicationUrl(paramsObj.getString("externalApplicationUrl"));
 			}
 
-			if (paramsObj.has("functionality") == false || paramsObj.getString("functionality").equals("null")) {
+			if (!paramsObj.has("functionality") || paramsObj.getString("functionality").equals("null")) {
 				menu.setFunctionality(null);
 			} else {
 				menu.setFunctionality(paramsObj.getString("functionality"));
@@ -501,7 +501,7 @@ public class MenuResource extends AbstractSpagoBIResource {
 		} catch (Exception e) {
 			String errorString = "sbi.menu.modify.error";
 			LOGGER.error(errorString, e);
-			throw new SpagoBIRestServiceException(errorString, buildLocaleFromSession(), e);
+			throw new SpagoBIRestServiceException(errorString, getLocale(), e);
 		}
 	}
 
@@ -527,7 +527,7 @@ public class MenuResource extends AbstractSpagoBIResource {
 		} catch (Exception e) {
 			String errorString = "sbi.menu.delete.error";
 			LOGGER.error(errorString, e);
-			throw new SpagoBIRestServiceException(errorString, buildLocaleFromSession(), e);
+			throw new SpagoBIRestServiceException(errorString, getLocale(), e);
 		}
 	}
 
@@ -544,7 +544,7 @@ public class MenuResource extends AbstractSpagoBIResource {
 		} catch (Exception e) {
 			String errorString = "sbi.menu.load.parent.menu";
 			LOGGER.error(errorString, e);
-			throw new SpagoBIRestServiceException(errorString, buildLocaleFromSession(), e);
+			throw new SpagoBIRestServiceException(errorString, getLocale(), e);
 		}
 
 	}

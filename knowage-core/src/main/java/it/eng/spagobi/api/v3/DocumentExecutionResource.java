@@ -111,7 +111,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 			jsonTemplate = new JSONObject(new String(temp));
 		} catch (EMFUserError e) {
 			LOGGER.debug("Could not get content from template", e);
-			throw new SpagoBIRestServiceException("Could not get content from template", buildLocaleFromSession(), e);
+			throw new SpagoBIRestServiceException("Could not get content from template", getLocale(), e);
 		}
 		LOGGER.debug("OUT");
 		return jsonTemplate;

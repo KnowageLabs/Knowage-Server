@@ -18,8 +18,13 @@
 package it.eng.spagobi.api.v2;
 
 import java.net.URI;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Locale;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import javax.validation.Valid;
 import javax.ws.rs.Consumes;
@@ -34,20 +39,19 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import it.eng.knowage.security.ProductProfiler;
-import it.eng.spagobi.commons.dao.IRoleDAO;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.owasp.esapi.Encoder;
 
 import it.eng.knowage.security.OwaspDefaultEncoderFactory;
+import it.eng.knowage.security.ProductProfiler;
 import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.api.AbstractSpagoBIResource;
 import it.eng.spagobi.commons.constants.CommunityFunctionalityConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.dao.IRoleDAO;
 import it.eng.spagobi.commons.metadata.SbiExtRoles;
 import it.eng.spagobi.commons.utilities.UserUtilities;
 import it.eng.spagobi.commons.utilities.messages.MessageBuilder;
@@ -67,6 +71,7 @@ import it.eng.spagobi.security.Password;
 import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
 import it.eng.spagobi.services.rest.annotations.UserConstraint;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 
 @Path("/2.0/users")
@@ -123,7 +128,7 @@ public class UserResource extends AbstractSpagoBIResource {
 			return Response.ok(fullList).build();
 		} catch (Exception e) {
 			LOGGER.error("Error with loading resource", e);
-			throw new SpagoBIRestServiceException("Error with loading resource", buildLocaleFromSession(), e);
+			throw new SpagoBIRestServiceException("Error with loading resource", getLocale(), e);
 		}
 	}
 
@@ -158,7 +163,7 @@ public class UserResource extends AbstractSpagoBIResource {
 		} catch (Exception e) {
 			LOGGER.error("User with selected id: {} doesn't exists", id, e);
 			throw new SpagoBIRestServiceException("Item with selected id: " + id + " doesn't exists",
-					buildLocaleFromSession(), e);
+					getLocale(), e);
 		}
 	}
 
@@ -190,7 +195,7 @@ public class UserResource extends AbstractSpagoBIResource {
 		SbiUser existingUser = usersDao.loadSbiUserByUserId(userId);
 		if (existingUser != null && userId.equals(existingUser.getUserId())) {
 			LOGGER.error("User already exists. User_ID is unique");
-			throw new SpagoBIRestServiceException("User with provided ID already exists.", buildLocaleFromSession(),
+			throw new SpagoBIRestServiceException("User with provided ID already exists.", getLocale(),
 					new Throwable());
 		}
 
@@ -253,7 +258,7 @@ public class UserResource extends AbstractSpagoBIResource {
 			return Response.created(new URI("2.0/users/" + encodedUser)).entity(encodedUser).build();
 		} catch (Exception e) {
 			LOGGER.error("Error while inserting resource", e);
-			throw new SpagoBIRestServiceException("Error while inserting resource", buildLocaleFromSession(), e);
+			throw new SpagoBIRestServiceException("Error while inserting resource", getLocale(), e);
 		}
 	}
 
@@ -382,7 +387,7 @@ public class UserResource extends AbstractSpagoBIResource {
 			return Response.created(new URI("2.0/users/" + encodedUser)).entity(encodedUser).build();
 		} catch (Exception e) {
 			LOGGER.error(e.getMessage(), e);
-			throw new SpagoBIRestServiceException(e.getMessage(), buildLocaleFromSession(), e);
+			throw new SpagoBIRestServiceException(e.getMessage(), getLocale(), e);
 		}
 	}
 
@@ -459,7 +464,7 @@ public class UserResource extends AbstractSpagoBIResource {
 		} catch (Exception e) {
 			LOGGER.error("Error with deleting resource with id: {}", id, e);
 			throw new SpagoBIRestServiceException("Error with deleting resource with id: " + id,
-					buildLocaleFromSession(), e);
+					getLocale(), e);
 		}
 	}
 

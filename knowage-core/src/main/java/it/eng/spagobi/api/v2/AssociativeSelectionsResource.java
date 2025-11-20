@@ -334,7 +334,7 @@ public class AssociativeSelectionsResource extends AbstractDataSetResource {
 		} catch (Exception e) {
 			String errorMessage = "An error occurred while getting associative selections";
 			logger.error(errorMessage, e);
-			throw new SpagoBIRestServiceException(errorMessage, buildLocaleFromSession(), e);
+			throw new SpagoBIRestServiceException(errorMessage, getLocale(), e);
 		} finally {
 			start.stop();
 			logger.debug("OUT");

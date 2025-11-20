@@ -18,7 +18,6 @@
 package it.eng.spagobi.api.common;
 
 import java.io.IOException;
-import java.math.BigDecimal;
 import java.net.URL;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
@@ -42,7 +41,6 @@ import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.core.Response;
 
-import com.fasterxml.jackson.databind.node.DecimalNode;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
@@ -56,6 +54,7 @@ import org.json.JSONObject;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.DecimalNode;
 import com.jamonapi.Monitor;
 import com.jamonapi.MonitorFactory;
 
@@ -1157,7 +1156,7 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 
 	protected IDataWriter getDataStoreWriter() throws JSONException {
 		JSONDataWriter dataWriter = new JSONDataWriter(getDataSetWriterProperties());
-		dataWriter.setLocale(buildLocaleFromSession());
+		dataWriter.setLocale(getLocale());
 		return dataWriter;
 	}
 

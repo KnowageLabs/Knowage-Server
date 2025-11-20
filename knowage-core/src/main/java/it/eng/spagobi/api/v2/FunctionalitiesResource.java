@@ -149,7 +149,7 @@ public class FunctionalitiesResource extends AbstractSpagoBIResource {
 		} catch (Exception e) {
 			String errorString = "sbi.folder.load.folders.error";
 			LOGGER.error(errorString, e);
-			throw new SpagoBIRestServiceException(errorString, buildLocaleFromSession(), e);
+			throw new SpagoBIRestServiceException(errorString, getLocale(), e);
 		} finally {
 			LOGGER.debug("OUT");
 		}
@@ -265,7 +265,7 @@ public class FunctionalitiesResource extends AbstractSpagoBIResource {
 		} catch (Exception e) {
 			String errorString = "Cannot get available folders for sharing";
 			LOGGER.error(errorString, e);
-			throw new SpagoBIRestServiceException(errorString, buildLocaleFromSession(), e);
+			throw new SpagoBIRestServiceException(errorString, getLocale(), e);
 		} finally {
 			LOGGER.debug("OUT");
 		}
@@ -290,7 +290,7 @@ public class FunctionalitiesResource extends AbstractSpagoBIResource {
 		} catch (Exception e) {
 			String errorString = "sbi.folder.load.folder.moveUp";
 			LOGGER.error(errorString, e);
-			throw new SpagoBIRestServiceException(errorString, buildLocaleFromSession(), e);
+			throw new SpagoBIRestServiceException(errorString, getLocale(), e);
 		}
 
 	}
@@ -314,7 +314,7 @@ public class FunctionalitiesResource extends AbstractSpagoBIResource {
 		} catch (Exception e) {
 			String errorString = "sbi.folder.load.parent.folder";
 			LOGGER.error(errorString, e);
-			throw new SpagoBIRestServiceException(errorString, buildLocaleFromSession(), e);
+			throw new SpagoBIRestServiceException(errorString, getLocale(), e);
 		}
 
 	}
@@ -338,7 +338,7 @@ public class FunctionalitiesResource extends AbstractSpagoBIResource {
 		} catch (Exception e) {
 			String errorString = "sbi.folder.load.folder.moveDown";
 			LOGGER.error(errorString, e);
-			throw new SpagoBIRestServiceException(errorString, buildLocaleFromSession(), e);
+			throw new SpagoBIRestServiceException(errorString, getLocale(), e);
 		}
 
 	}
@@ -418,7 +418,7 @@ public class FunctionalitiesResource extends AbstractSpagoBIResource {
 		} catch (Exception e) {
 			String errorString = "sbi.folder.save.error";
 			LOGGER.error(errorString, e);
-			throw new SpagoBIRestServiceException(errorString, buildLocaleFromSession(), e, "MessageFiles.messages");
+			throw new SpagoBIRestServiceException(errorString, getLocale(), e, "MessageFiles.messages");
 		}
 
 	}
@@ -501,7 +501,7 @@ public class FunctionalitiesResource extends AbstractSpagoBIResource {
 		} catch (Exception e) {
 			String errorString = "sbi.folder.modify.error";
 			LOGGER.error(errorString, e);
-			throw new SpagoBIRestServiceException(errorString, buildLocaleFromSession(), e);
+			throw new SpagoBIRestServiceException(errorString, getLocale(), e);
 		}
 	}
 
@@ -760,11 +760,11 @@ public class FunctionalitiesResource extends AbstractSpagoBIResource {
 		} catch (EMFUserError eMFUserError) {
 			String errorString = eMFUserError.getDescription();
 			LOGGER.error(errorString, eMFUserError);
-			throw new SpagoBIRestServiceException(errorString, buildLocaleFromSession(), eMFUserError);
+			throw new SpagoBIRestServiceException(errorString, getLocale(), eMFUserError);
 		} catch (Exception e) {
 			String errorString = "sbi.folder.delete.error";
 			LOGGER.error(errorString, e);
-			throw new SpagoBIRestServiceException(errorString, buildLocaleFromSession(), e);
+			throw new SpagoBIRestServiceException(errorString, getLocale(), e);
 		}
 	}
 }

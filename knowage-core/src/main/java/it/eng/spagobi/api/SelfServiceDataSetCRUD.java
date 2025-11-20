@@ -485,7 +485,7 @@ public class SelfServiceDataSetCRUD extends AbstractSpagoBIResource {
 				new DatasetManagementAPI(profile).canShare(ds);
 			} catch (ActionNotPermittedException e) {
 				logger.error("User " + profile.getUserId() + " cannot share the dataset with label " + ds.getLabel());
-				throw new SpagoBIRestServiceException(e.getI18NCode(), buildLocaleFromSession(),
+				throw new SpagoBIRestServiceException(e.getI18NCode(), getLocale(),
 						"User " + profile.getUserId() + " cannot share the dataset with label " + ds.getLabel(), e, "MessageFiles.messages");
 			}
 

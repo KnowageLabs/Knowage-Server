@@ -103,7 +103,7 @@ public class I18nResource extends AbstractSpagoBIResource {
 		} catch (Exception e) {
 			String errorString = "Error in getting translations";
 			LOGGER.error(errorString, e);
-			throw new SpagoBIRestServiceException(errorString, buildLocaleFromSession(), e);
+			throw new SpagoBIRestServiceException(errorString, getLocale(), e);
 		}
 
 	}
@@ -122,7 +122,7 @@ public class I18nResource extends AbstractSpagoBIResource {
 		} catch (Exception e) {
 			String errorString = "Error has occurred while getting Internationalization Message translations";
 			LOGGER.error(errorString, e);
-			throw new SpagoBIRestServiceException(errorString, buildLocaleFromSession(), e);
+			throw new SpagoBIRestServiceException(errorString, getLocale(), e);
 		}
 	}
 
@@ -137,7 +137,7 @@ public class I18nResource extends AbstractSpagoBIResource {
 			return Response.ok().build();
 		} catch (Exception e) {
 			LOGGER.error("Error while saving I18NMessage", e);
-			throw new SpagoBIRestServiceException("Error while saving new I18NMessage", buildLocaleFromSession(), e);
+			throw new SpagoBIRestServiceException("Error while saving new I18NMessage", getLocale(), e);
 		}
 	}
 
@@ -165,7 +165,7 @@ public class I18nResource extends AbstractSpagoBIResource {
 					.build();
 		} catch (Exception e) {
 			LOGGER.error("Error while updating I18NMessage", e);
-			throw new SpagoBIRestServiceException("Error while updating I18NMessage", buildLocaleFromSession(), e);
+			throw new SpagoBIRestServiceException("Error while updating I18NMessage", getLocale(), e);
 		}
 	}
 
@@ -188,7 +188,7 @@ public class I18nResource extends AbstractSpagoBIResource {
 			return Response.ok().entity(encodedI18NMessage).build();
 		} catch (Exception e) {
 			LOGGER.error("Error has occurred while deleting I18NMessage", e);
-			throw new SpagoBIRestServiceException("Error while deleting I18NMessage", buildLocaleFromSession(), e);
+			throw new SpagoBIRestServiceException("Error while deleting I18NMessage", getLocale(), e);
 		}
 	}
 
@@ -210,7 +210,7 @@ public class I18nResource extends AbstractSpagoBIResource {
 		} catch (Exception e) {
 			LOGGER.error("Error has occurred while deleting Default-Language I18NMessage", e);
 			throw new SpagoBIRestServiceException("Error while deleting Default-Language I18NMessage",
-					buildLocaleFromSession(), e);
+					getLocale(), e);
 		}
 	}
 

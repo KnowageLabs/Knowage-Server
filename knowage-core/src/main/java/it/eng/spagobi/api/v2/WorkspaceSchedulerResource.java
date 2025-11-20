@@ -74,7 +74,7 @@ public class WorkspaceSchedulerResource extends AbstractSpagoBIResource {
 			snapDao = DAOFactory.getSnapshotDAO();
 			list = snapDao.getSnapshotsBySchedulation(name, collate, false);
 		} catch (EMFUserError e) {
-			throw new SpagoBIRestServiceException("Error with getting snapshpots", buildLocaleFromSession(), e);
+			throw new SpagoBIRestServiceException("Error with getting snapshpots", getLocale(), e);
 
 		}
 		boolean isAllPDf = true;

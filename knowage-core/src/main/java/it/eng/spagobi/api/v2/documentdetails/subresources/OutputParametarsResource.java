@@ -114,7 +114,7 @@ public class OutputParametarsResource extends AbstractSpagoBIResource {
 
 		} catch (Exception e) {
 			logger.error("Error while updating a output parameter", e);
-			throw new SpagoBIRestServiceException("Error while updating a output parameter", buildLocaleFromSession(), e);
+			throw new SpagoBIRestServiceException("Error while updating a output parameter", getLocale(), e);
 		} finally {
 			logger.debug("OUT");
 		}
@@ -134,7 +134,7 @@ public class OutputParametarsResource extends AbstractSpagoBIResource {
 
 		} catch (EMFUserError e) {
 			logger.error("Error while deleting driver", e);
-			throw new SpagoBIRestServiceException("Deleting driver has failed", buildLocaleFromSession(), e);
+			throw new SpagoBIRestServiceException("Deleting driver has failed", getLocale(), e);
 		}
 		logger.debug("OUT");
 		return outputparId;

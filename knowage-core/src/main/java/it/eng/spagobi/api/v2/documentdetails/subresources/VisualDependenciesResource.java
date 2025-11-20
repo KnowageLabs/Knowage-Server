@@ -60,7 +60,7 @@ public class VisualDependenciesResource extends AbstractSpagoBIResource {
 			Assert.assertNotNull(parameterViewObjects, "Visual Dependencies can not be null");
 		} catch (HibernateException e) {
 			logger.error("Visual dependencies could not be loaded", e);
-			throw new SpagoBIRestServiceException(e.getCause().getCause().getLocalizedMessage(), buildLocaleFromSession(), e);
+			throw new SpagoBIRestServiceException(e.getCause().getCause().getLocalizedMessage(), getLocale(), e);
 		}
 		logger.debug("OUT");
 		return parameterViewObjects;
@@ -80,7 +80,7 @@ public class VisualDependenciesResource extends AbstractSpagoBIResource {
 			parameterViewObject.setId(parameterViewDAO.insertObjParview(parameterViewObject));
 		} catch (HibernateException e) {
 			logger.error("Visual Dependencies can not be created", e);
-			throw new SpagoBIRestServiceException(e.getCause().getCause().getLocalizedMessage() + "in Visual Dependencsies", buildLocaleFromSession(), e);
+			throw new SpagoBIRestServiceException(e.getCause().getCause().getLocalizedMessage() + "in Visual Dependencsies", getLocale(), e);
 		}
 		logger.debug("OUT");
 		return parameterViewObject;
@@ -99,7 +99,7 @@ public class VisualDependenciesResource extends AbstractSpagoBIResource {
 			parameterViewDAO.eraseObjParview(parameterViewObject);
 		} catch (HibernateException e) {
 			logger.error("Visual Dependencies can not be removed", e);
-			throw new SpagoBIRestServiceException(e.getCause().getCause().getLocalizedMessage(), buildLocaleFromSession(), e);
+			throw new SpagoBIRestServiceException(e.getCause().getCause().getLocalizedMessage(), getLocale(), e);
 		}
 		logger.debug("OUT");
 	}
@@ -118,7 +118,7 @@ public class VisualDependenciesResource extends AbstractSpagoBIResource {
 			parameterViewDAO.modifyObjParview(parameterViewObject);
 		} catch (HibernateException e) {
 			logger.error("Visual Dependencies can not be modified", e);
-			throw new SpagoBIRestServiceException(e.getCause().getCause().getLocalizedMessage(), buildLocaleFromSession(), e);
+			throw new SpagoBIRestServiceException(e.getCause().getCause().getLocalizedMessage(), getLocale(), e);
 		}
 		logger.debug("OUT");
 	}
@@ -134,7 +134,7 @@ public class VisualDependenciesResource extends AbstractSpagoBIResource {
 			parameterViewDAO.eraseObjParview(parameterViewObject);
 		} catch (HibernateException e) {
 			logger.error("Visual Dependencies can not be removed", e);
-			throw new SpagoBIRestServiceException(e.getCause().getCause().getLocalizedMessage(), buildLocaleFromSession(), e);
+			throw new SpagoBIRestServiceException(e.getCause().getCause().getLocalizedMessage(), getLocale(), e);
 		}
 		logger.debug("OUT");
 	}

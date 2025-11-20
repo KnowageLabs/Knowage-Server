@@ -61,7 +61,7 @@ public class DriversResource extends AbstractSpagoBIResource {
 
 		} catch (HibernateException e) {
 			logger.error("Driver could not be loaded", e);
-			throw new SpagoBIRestServiceException(e.getCause().getCause().getLocalizedMessage(), buildLocaleFromSession(), e);
+			throw new SpagoBIRestServiceException(e.getCause().getCause().getLocalizedMessage(), getLocale(), e);
 		}
 		logger.debug("OUT");
 		return biObjectParameters;
@@ -81,7 +81,7 @@ public class DriversResource extends AbstractSpagoBIResource {
 			biObjectParameter.setId(driverId);
 		} catch (HibernateException e) {
 			logger.error("Error while inserting new driver", e);
-			throw new SpagoBIRestServiceException(e.getCause().getCause().getLocalizedMessage(), buildLocaleFromSession(), e);
+			throw new SpagoBIRestServiceException(e.getCause().getCause().getLocalizedMessage(), getLocale(), e);
 		}
 		logger.debug("OUT");
 		return biObjectParameter;
@@ -102,7 +102,7 @@ public class DriversResource extends AbstractSpagoBIResource {
 			parameterDAO.modifyBIObjectParameter(biObjectParameter);
 		} catch (HibernateException e) {
 			logger.error("Error while inserting new driver", e);
-			throw new SpagoBIRestServiceException(e.getCause().getCause().getLocalizedMessage(), buildLocaleFromSession(), e);
+			throw new SpagoBIRestServiceException(e.getCause().getCause().getLocalizedMessage(), getLocale(), e);
 		}
 		logger.debug("OUT");
 		return biObjectParameter;
@@ -124,7 +124,7 @@ public class DriversResource extends AbstractSpagoBIResource {
 			Assert.assertNotNull(parameter, "Driver can not be null");
 		} catch (HibernateException e) {
 			logger.error("Error while try to retrieve the specified driver", e);
-			throw new SpagoBIRestServiceException(e.getCause().getCause().getLocalizedMessage(), buildLocaleFromSession(), e);
+			throw new SpagoBIRestServiceException(e.getCause().getCause().getLocalizedMessage(), getLocale(), e);
 		}
 		logger.debug("OUT");
 		return parameter;
@@ -146,7 +146,7 @@ public class DriversResource extends AbstractSpagoBIResource {
 			parameterDAO.eraseBIObjectParameter(parameter, true);
 		} catch (HibernateException e) {
 			logger.error("Error while trying to delete the specified driver");
-			throw new SpagoBIRestServiceException(e.getCause().getCause().getLocalizedMessage(), buildLocaleFromSession(), e);
+			throw new SpagoBIRestServiceException(e.getCause().getCause().getLocalizedMessage(), getLocale(), e);
 		}
 		logger.debug("OUT");
 

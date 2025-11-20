@@ -50,7 +50,6 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.core.Response.Status;
 
-import it.eng.spagobi.commons.SingletonConfig;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.LogMF;
 import org.apache.log4j.Logger;
@@ -177,14 +176,12 @@ public class DataSetResource extends AbstractDataSetResource {
 
 		try {
 			logger.debug("OUT");
-			if (callback == null || callback.isEmpty())
-
+			if (callback == null || callback.isEmpty()) {
 				return ((JSONArray) SerializerFactory.getSerializer("application/json").serialize(toBeReturned,
-						buildLocaleFromSession())).toString();
-
-			else {
+						getLocale())).toString();
+			} else {
 				String jsonString = ((JSONArray) SerializerFactory.getSerializer("application/json")
-						.serialize(toBeReturned, buildLocaleFromSession())).toString();
+						.serialize(toBeReturned, getLocale())).toString();
 
 				return callback + "(" + jsonString + ")";
 			}
@@ -211,8 +208,9 @@ public class DataSetResource extends AbstractDataSetResource {
 			IDataSourceDAO dataSourceDAO = DAOFactory.getDataSourceDAO();
 			IDataSource dataSource = dataSourceDAO.loadDataSourceWriteDefault();
 
-			if (dataSource == null)
+			if (dataSource == null) {
 				throw new SpagoBIRuntimeException("No data source found for cache");
+			}
 
 			String dataBaseDialect = dataSource.getDialectName();
 			List<String> availableFunctions = datasetFunctionsConfig.getAvailableFunctions(dataBaseDialect);
@@ -277,9 +275,9 @@ public class DataSetResource extends AbstractDataSetResource {
 		}
 
 		logger.debug("OUT");
-		if (callback == null || callback.isEmpty())
+		if (callback == null || callback.isEmpty()) {
 			return JsonConverter.objectToJson(toBeReturned, toBeReturned.getClass());
-		else {
+		} else {
 			String jsonString = JsonConverter.objectToJson(toBeReturned, toBeReturned.getClass());
 
 			return callback + "(" + jsonString + ")";
@@ -699,7 +697,7 @@ public class DataSetResource extends AbstractDataSetResource {
 			response.setContentType(MediaType.TEXT_HTML);
 			return new View("/WEB-INF/jsp/commons/preview.jsp");
 		} catch (Exception e) {
-			throw new SpagoBIRestServiceException(buildLocaleFromSession(), e);
+			throw new SpagoBIRestServiceException(getLocale(), e);
 		} finally {
 			logger.debug("OUT");
 		}
@@ -779,7 +777,7 @@ public class DataSetResource extends AbstractDataSetResource {
 			throw e;
 		} catch (Exception e) {
 			logger.error("Error loading dataset data from " + label, e);
-			throw new SpagoBIRestServiceException(buildLocaleFromSession(), e);
+			throw new SpagoBIRestServiceException(getLocale(), e);
 		}
 	}
 
@@ -841,8 +839,9 @@ public class DataSetResource extends AbstractDataSetResource {
 				for (int i = 0; i < metadata.getFieldCount(); i++) {
 					IFieldMetaData fieldMetaData = metadata.getFieldMeta(i);
 					String alias = fieldMetaData.getAlias();
-					if (qbeHiddenColumns.contains(alias))
+					if (qbeHiddenColumns.contains(alias)) {
 						continue;
+					}
 					JSONObject json = new JSONObject();
 					json.put("id", alias);
 					json.put("alias", alias);
@@ -889,13 +888,13 @@ public class DataSetResource extends AbstractDataSetResource {
 			return getDataStore(label, parameters, driversRuntimeMap, null, likeSelections, -1, aggregations, null,
 					start, limit, columns, null, false);
 		} catch (JSONException e) {
-			throw new SpagoBIRestServiceException(buildLocaleFromSession(), e);
+			throw new SpagoBIRestServiceException(getLocale(), e);
 		} catch (Exception e) {
 			if (isPreparedDAtaset(dataSet)) {
 				if (e.getCause() != null && e.getCause().getCause() instanceof SQLSyntaxErrorException) {
 					logger.error("Error while previewing prepared dataset " + label, e);
 					throw new SpagoBIRestServiceException("sbi.dataprep.preview.loading.error",
-							buildLocaleFromSession(), e, "MessageFiles.messages");
+							getLocale(), e, "MessageFiles.messages");
 				} else {
 					throw new SpagoBIRuntimeException("Error while previewing dataset " + label + ". " + e.getMessage(),
 							e);
@@ -923,8 +922,9 @@ public class DataSetResource extends AbstractDataSetResource {
 						.getJSONArray("fields");
 				for (int i = 0; i < fields.length(); i++) {
 					JSONObject field = fields.getJSONObject(i);
-					if (field.has("visible") && !field.getBoolean("visible"))
+					if (field.has("visible") && !field.getBoolean("visible")) {
 						hiddenColumns.add(field.getString("alias"));
+					}
 				}
 			} catch (Exception e) {
 				logger.error("Error while getting list of hidden QBE columns.", e);
@@ -960,7 +960,7 @@ public class DataSetResource extends AbstractDataSetResource {
 			}
 			return Response.ok().build();
 		} catch (Exception e) {
-			throw new SpagoBIRestServiceException(buildLocaleFromSession(), e);
+			throw new SpagoBIRestServiceException(getLocale(), e);
 		} finally {
 			logger.debug("OUT");
 		}
@@ -969,7 +969,7 @@ public class DataSetResource extends AbstractDataSetResource {
 	@Override
 	protected IDataWriter getDataStoreWriter() throws JSONException {
 		CockpitJSONDataWriter dataWriter = new CockpitJSONDataWriter(getDataSetWriterProperties());
-		dataWriter.setLocale(buildLocaleFromSession());
+		dataWriter.setLocale(getLocale());
 		return dataWriter;
 	}
 
@@ -1010,13 +1010,13 @@ public class DataSetResource extends AbstractDataSetResource {
 					okResponse.put("msg", "ok");
 					return okResponse.toString();
 				} catch (ValidationException v) {
-					throw new ValidationServiceException(buildLocaleFromSession(), v);
+					throw new ValidationServiceException(getLocale(), v);
 
 				}
 			}
 			timing.stop();
 		} catch (JSONException e) {
-			throw new SpagoBIRestServiceException(buildLocaleFromSession(), e);
+			throw new SpagoBIRestServiceException(getLocale(), e);
 		}
 		return null;
 
@@ -1096,8 +1096,9 @@ public class DataSetResource extends AbstractDataSetResource {
 								String[] valLst = val.split(sep);
 								for (int k2 = 0; k2 < valLst.length; k2++) {
 									String itemVal2 = valLst[k2];
-									if (itemVal2 != null && !"".equals(itemVal2))
+									if (itemVal2 != null && !"".equals(itemVal2)) {
 										paramValueLst.add(itemVal2);
+									}
 								}
 							} else {
 								if (itemVal != null && !"".equals(itemVal)) {

@@ -67,8 +67,6 @@ import com.google.common.collect.BiMap;
 import it.eng.knowage.monitor.IKnowageMonitor;
 import it.eng.knowage.monitor.KnowageMonitorFactory;
 import it.eng.knowage.security.OwaspDefaultEncoderFactory;
-import it.eng.spago.base.RequestContainer;
-import it.eng.spago.base.RequestContainerAccess;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.document.BusinessModelOpenUtils;
@@ -101,7 +99,6 @@ import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.serializer.SerializationException;
 import it.eng.spagobi.commons.services.DelegatedBasicListService;
-import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
 import it.eng.spagobi.commons.utilities.messages.MessageBuilderFactory;
 import it.eng.spagobi.services.rest.annotations.UserConstraint;
@@ -846,8 +843,6 @@ public class DataSetResource {
 
 		Map<String, Object> resultAsMap = new HashMap<>();
 
-		RequestContainer aRequestContainer = RequestContainerAccess.getRequestContainer(req);
-		Locale locale = GeneralUtilities.getCurrentLocale(aRequestContainer);
 
 		String role;
 		String biparameterId;
@@ -907,7 +902,7 @@ public class DataSetResource {
 
 				List errorList = DocumentExecutionUtils.handleNormalExecutionError(this.getUserProfile(),
 						datasetMetaModel, req, this.getAttributeAsString("SBI_ENVIRONMENT"), role,
-						biObjectParameter.getParameter().getModalityValue().getSelectionType(), null, locale);
+						biObjectParameter.getParameter().getModalityValue().getSelectionType(), null, req.getLocale());
 
 				resultAsMap.put("errors", errorList);
 			}

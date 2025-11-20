@@ -132,8 +132,9 @@ public class DataSetResource extends AbstractDataSetResource {
 
 			for (IDataSet dataset : dataSets) {
 				if (DataSetUtilities.isExecutableByUser(dataset, getUserProfile())
-						&& (idList == null || idList.contains(dataset.getId())))
+						&& (idList == null || idList.contains(dataset.getId()))) {
 					toBeReturned.add(dataset);
+				}
 			}
 
 			return serializeDataSets(toBeReturned, typeDoc);
@@ -198,8 +199,9 @@ public class DataSetResource extends AbstractDataSetResource {
 
 			for (IDataSet dataset : dataSets) {
 
-				if (dataset == null)
+				if (dataset == null) {
 					continue;
+				}
 
 				/**
 				 * alberto ghedin next line is commented because the dao that return the datasets will return just datset owned by user or of same category
@@ -405,8 +407,9 @@ public class DataSetResource extends AbstractDataSetResource {
 			IDataSetDAO datasetDao = DAOFactory.getDataSetDAO();
 			datasetDao.setUserProfile(getUserProfile());
 			List<IDataSet> dataset = datasetDao.loadDerivedDataSetByLabel(dsLabel);
-			if (!dataset.isEmpty())
+			if (!dataset.isEmpty()) {
 				return true;
+			}
 			return false;
 		} catch (Exception e) {
 			throw new SpagoBIServiceException(this.request.getPathInfo(),
@@ -503,7 +506,7 @@ public class DataSetResource extends AbstractDataSetResource {
 			logger.error("User " + getUserProfile().getUserId() + " cannot export the dataset with label "
 					+ dataSet.getLabel());
 			throw new SpagoBIRestServiceException(
-					e.getI18NCode(), buildLocaleFromSession(), "User " + getUserProfile().getUserId()
+					e.getI18NCode(), getLocale(), "User " + getUserProfile().getUserId()
 							+ " cannot export the dataset with label " + dataSet.getLabel(),
 					e, "MessageFiles.messages");
 		}
@@ -1052,7 +1055,7 @@ public class DataSetResource extends AbstractDataSetResource {
 	protected String serializeDataSets(List<IDataSet> dataSets, String typeDocWizard) {
 		try {
 			JSONArray datasetsJSONArray = (JSONArray) SerializerFactory.getSerializer("application/json")
-					.serialize(dataSets, buildLocaleFromSession());
+					.serialize(dataSets, getLocale());
 			JSONArray datasetsJSONReturn = putActions(getUserProfile(), datasetsJSONArray, typeDocWizard);
 			JSONObject resultJSON = new JSONObject();
 			resultJSON.put("root", datasetsJSONReturn);

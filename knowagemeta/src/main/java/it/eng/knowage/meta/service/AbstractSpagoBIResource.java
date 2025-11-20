@@ -17,6 +17,11 @@
  */
 package it.eng.knowage.meta.service;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.log4j.Logger;
+
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.utilities.UserUtilities;
 import it.eng.spagobi.user.UserProfileManager;
@@ -24,18 +29,7 @@ import it.eng.spagobi.utilities.engines.EngineStartServletIOManager;
 import it.eng.spagobi.utilities.engines.rest.AbstractRestService;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.ws.rs.core.Context;
-
-import org.apache.log4j.Logger;
-
 public class AbstractSpagoBIResource extends AbstractRestService {
-
-	@Context
-	protected HttpServletRequest request;
-	@Context
-	protected HttpServletResponse response;
 
 	public static transient Logger logger = Logger.getLogger(AbstractSpagoBIResource.class);
 

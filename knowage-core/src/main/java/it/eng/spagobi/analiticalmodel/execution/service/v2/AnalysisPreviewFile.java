@@ -17,16 +17,6 @@
  */
 package it.eng.spagobi.analiticalmodel.execution.service.v2;
 
-import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
-import it.eng.spagobi.api.AbstractSpagoBIResource;
-import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.commons.utilities.GeneralUtilities;
-import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
-import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
-import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
-import it.eng.spagobi.utilities.file.FileUtils;
-
 import java.io.File;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -45,6 +35,16 @@ import org.apache.commons.fileupload.FileItemFactory;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.log4j.Logger;
+
+import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
+import it.eng.spagobi.api.AbstractSpagoBIResource;
+import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.utilities.GeneralUtilities;
+import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
+import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
+import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
+import it.eng.spagobi.utilities.file.FileUtils;
 
 @Path("/2.0/analysis")
 @ManageAuthorization
@@ -92,7 +92,7 @@ public class AnalysisPreviewFile extends AbstractSpagoBIResource {
 		} catch (Throwable t) {
 			String s = t.getMessage();
 			logger.error("Error while uploading preview file for document in workspace", t);
-			throw new SpagoBIRestServiceException(s, buildLocaleFromSession(), t);
+			throw new SpagoBIRestServiceException(s, getLocale(), t);
 		} finally {
 			logger.debug("OUT");
 		}
@@ -198,58 +198,58 @@ public class AnalysisPreviewFile extends AbstractSpagoBIResource {
 
 	/*
 	 * @POST
-	 * 
+	 *
 	 * @Path("/{id}")
-	 * 
+	 *
 	 * @Consumes({ MediaType.MULTIPART_FORM_DATA, MediaType.APPLICATION_JSON }) public Response persistDataSets(@MultipartForm MultipartFormDataInput input,
 	 * @PathParam("id") int documentId) {
-	 * 
+	 *
 	 * Map<String, List<InputPart>> uploadForm = input.getFormDataMap(); List<InputPart> fileNamePart = uploadForm.get("fileName"); List<InputPart> fileParts =
 	 * uploadForm.get("file");
-	 * 
+	 *
 	 * try { String previewFile = fileNamePart.get(0).getBodyAsString(); BIObject biObject = DAOFactory.getBIObjectDAO().loadBIObjectById((documentId));
 	 * biObject.setPreviewFile(previewFile); DAOFactory.getBIObjectDAO().modifyBIObject(biObject); return Response.status(200).build(); } catch (Exception e) {
 	 * throw new SpagoBIRestServiceException(getLocale(), e); }
-	 * 
-	 * 
+	 *
+	 *
 	 * }
 	 */
 
 	/*
 	 * @POST
-	 * 
+	 *
 	 * @Path("/{ID}/versions")
-	 * 
+	 *
 	 * @Consumes({ MediaType.MULTIPART_FORM_DATA, MediaType.APPLICATION_JSON }) public Response uploadFile(@MultipartForm MultipartFormDataInput input,
 	 * @PathParam("ID") int artifactId) {
-	 * 
+	 *
 	 * Content content = new Content(); byte[] bytes = null;
-	 * 
+	 *
 	 * artifactDAO = DAOFactory.getArtifactsDAO();
-	 * 
+	 *
 	 * Map<String, List<InputPart>> uploadForm = input.getFormDataMap();
-	 * 
+	 *
 	 * List<InputPart> fileNamePart = uploadForm.get("fileName"); List<InputPart> fileParts = uploadForm.get("file");
-	 * 
+	 *
 	 * if (fileNamePart != null && fileParts != null) { try {
-	 * 
+	 *
 	 * content.setFileName(fileNamePart.get(0).getBodyAsString());
-	 * 
+	 *
 	 * // convert the uploaded file to input stream InputStream inputStream = fileParts.get(0).getBody(InputStream.class, null);
-	 * 
+	 *
 	 * bytes = IOUtils.toByteArray(inputStream);
-	 * 
+	 *
 	 * content.setContent(bytes); content.setCreationDate(new Date()); content.setCreationUser(getUserProfile().getUserName().toString());
-	 * 
+	 *
 	 * artifactDAO.insertArtifactContent(artifactId, content); String encodedContentId = URLEncoder.encode("" + content.getId(), StandardCharsets.UTF_8); //
 	 * System.out.println(new URI(uri.getAbsolutePath() + encodedContentId)); } catch (IOException e) { e.printStackTrace(); }
-	 * 
+	 *
 	 * } else { return Response.status(Status.BAD_REQUEST).build();
-	 * 
+	 *
 	 * }
-	 * 
+	 *
 	 * return Response.status(200).build();
-	 * 
+	 *
 	 * }
 	 */
 }

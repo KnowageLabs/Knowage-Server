@@ -1,8 +1,6 @@
 package it.eng.spagobi.engines.qbe.api;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.ws.rs.core.Context;
 
 import org.apache.log4j.Logger;
 
@@ -14,10 +12,6 @@ import it.eng.spagobi.utilities.engines.rest.AbstractRestService;
 import it.eng.spagobi.utilities.engines.rest.ExecutionSession;
 
 public class AbstractQbeEngineResource extends AbstractRestService {
-	@Context
-	protected HttpServletRequest request;
-	@Context
-	protected HttpServletResponse response;
 
 	public static transient Logger logger = Logger.getLogger(AbstractRestService.class);
 

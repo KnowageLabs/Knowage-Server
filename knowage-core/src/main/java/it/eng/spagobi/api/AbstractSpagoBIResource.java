@@ -20,7 +20,6 @@ package it.eng.spagobi.api;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.ws.rs.core.Context;
 
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.utilities.UserUtilities;
@@ -35,12 +34,6 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
  *
  */
 public class AbstractSpagoBIResource extends AbstractRestService {
-
-	@Context
-	protected HttpServletRequest request;
-
-	@Context
-	protected HttpServletResponse response;
 
 	public EngineStartServletIOManager getIOManager() {
 		EngineStartServletIOManager ioManager = null;
