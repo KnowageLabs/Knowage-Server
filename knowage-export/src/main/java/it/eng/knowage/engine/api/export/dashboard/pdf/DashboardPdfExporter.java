@@ -43,7 +43,7 @@ public class DashboardPdfExporter extends DashboardExporter {
     private float[] columnPercentWidths;
 
     public DashboardPdfExporter(String userUniqueIdentifier, JSONObject body) {
-        super(userUniqueIdentifier);
+        super(userUniqueIdentifier, null);
         locale = getLocaleFromBody(body);
     }
 
