@@ -3,13 +3,12 @@
   <q-btn round flat icon="link" @click="copyLink" class="copyButton">
     <q-tooltip :delay="500">{{ $t("documentExecution.main.copyLink") }}</q-tooltip>
   </q-btn>
-  <vue-markdown-it v-if="markdown" :source="markdown" :options="{ html: true }" class="markdownContent"> </vue-markdown-it>
+  <KnMarkdown v-if="markdown" :source="markdown" class="markdownContent"> </KnMarkdown>
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted, watch, defineProps, defineEmit } from "vue";
-// @ts-ignore: module has no type declarations
-import { VueMarkdownIt } from "@f3ve/vue-markdown-it";
+import KnMarkdown from "@/components/KnMarkdown.vue";
 import { findNodesByLabelPath } from "./DocumentationHelper";
 import axios from "axios";
 import mainStore from "@/App.store";
