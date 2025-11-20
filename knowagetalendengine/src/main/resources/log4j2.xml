@@ -8,9 +8,8 @@
 		</Console>
 		<RollingFile
 				name="KNOWAGE_TALEND_ENGINE"
-				fileName="${sys:catalina.base}/logs/knowageTalendEngine.log"
-				append="true"
-				filePattern="${sys:catalina.base}/logs/knowageTalendEngine-%i.log"
+                append="true"
+				filePattern="${sys:catalina.base}/logs/$${ctx:tenant:-global}/knowageTalendEngine-$${ctx:tenant:-global}-%i.log"
 				ignoreExceptions="false"
 				createOnDemand="true">
 			<PatternLayout>

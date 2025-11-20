@@ -44,12 +44,14 @@ public class ContextPropertiesConfig {
 
 	private static String hmacKey;
 	private static String resourcePathKey;
+    private static String logPathKey;
 
 	@Autowired
-	public ContextPropertiesConfig(@Value("${jndi.lookup.hmackey}") String hmacKey, @Value("${jndi.lookup.resourcepath}") String resourcePathKey) {
+	public ContextPropertiesConfig(@Value("${jndi.lookup.hmackey}") String hmacKey, @Value("${jndi.lookup.resourcepath}") String resourcePathKey, @Value("${jndi.lookup.logpath}") String logPathKey) {
 		// TODO : values for static attributes shouldn't not be injected in a non-static way
 		this.hmacKey = hmacKey;
 		this.resourcePathKey = resourcePathKey;
+        this.logPathKey = logPathKey;
 	}
 
 	public static String jwtToken2userId(String jwtToken) throws JWTVerificationException {
@@ -81,5 +83,18 @@ public class ContextPropertiesConfig {
 		}
 		return resourcePath;
 	}
+
+    public static String getLogPath() {
+        String logPath = null;
+        Context ctx;
+        try {
+            ctx = new InitialContext();
+            logPath = (String) ctx.lookup(logPathKey);
+
+        } catch (Exception e) {
+            throw new KnowageRuntimeException(e.getMessage(), e);
+        }
+        return logPath;
+    }
 
 }

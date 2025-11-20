@@ -8,9 +8,8 @@
 		</Console>
 		<RollingFile
 				name="KNOWAGE_VUE"
-				fileName="${sys:catalina.base}/logs/knowageVue.log"
-				append="true"
-				filePattern="${sys:catalina.base}/logs/knowageVue-%i.log"
+                append="true"
+				filePattern="${sys:catalina.base}/logs/$${ctx:tenant:-global}/knowageVue-$${ctx:tenant:-global}-%i.log"
 				ignoreExceptions="false"
 				createOnDemand="true">
 			<PatternLayout>

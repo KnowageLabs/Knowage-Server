@@ -408,4 +408,6 @@
 	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="MondrianSchemaManagement" roleType="ADMIN" />
 	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="MondrianSchemaManagement" roleType="DEV_ROLE" />
 
+    <ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="LogManagement" roleType="ADMIN" />
+
 </ROLE_TYPE_USER_FUNCTIONALITIES>
