@@ -1,7 +1,9 @@
 package it.eng.knowage.dashboardexport;
 
+import it.eng.knowage.commons.multitenant.OrganizationImageManager;
 import it.eng.knowage.engine.api.export.dashboard.excel.DashboardExcelExporter;
 import it.eng.knowage.engine.api.export.dashboard.pdf.DashboardPdfExporter;
+import it.eng.spagobi.tenant.TenantManager;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.mime.MimeUtils;
 import it.eng.spagobi.utilities.rest.RestUtilities;
@@ -38,7 +40,7 @@ public class DashboardExportResource {
             JSONObject body = RestUtilities.readBodyAsJSONObject(req);
             String token = request.getHeader(TOKEN_HEADER);
             String userId = token.substring(7);
-            DashboardExcelExporter excelExporter = new DashboardExcelExporter(userId, body);
+            DashboardExcelExporter excelExporter = new DashboardExcelExporter(userId, body, OrganizationImageManager.getOrganizationB64ImageWide(TenantManager.getTenant().getName()));
             String mimeType = excelExporter.getMimeType();
 
             if (!MimeUtils.isValidMimeType(mimeType))
@@ -47,7 +49,11 @@ public class DashboardExportResource {
             if (mimeType != null) {
                 byte[] data;
                 boolean isDashboardSingleWidgetExport = !body.has("widgets");
-                data = excelExporter.getDashboardBinaryData(body, isDashboardSingleWidgetExport);
+                if (isDashboardSingleWidgetExport && body.getString("type").equals("static-pivot-table")) {
+                    data = excelExporter.getPivotBinaryData(body);
+                } else {
+                    data = excelExporter.getDashboardBinaryData(body, isDashboardSingleWidgetExport);
+                }
                 if (!isDashboardSingleWidgetExport) {
                     String documentLabel = body.getJSONObject("document").getString("label");
                     response.setHeader("Content-Disposition", "attachment; fileName=" + documentLabel + ".xlsx");

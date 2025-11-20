@@ -39,8 +39,16 @@ class GenericDashboardWidgetExporter extends DashboardExporter implements IWidge
     JSONObject drivers;
     JSONObject parameters;
 
-    public GenericDashboardWidgetExporter(DashboardExcelExporter excelExporter, Workbook wb, JSONObject widget, String documentName, Map<String, Map<String, JSONArray>> selections, JSONObject drivers, JSONObject parameters, String userUniqueIdentifier) {
-        super(userUniqueIdentifier);
+    public GenericDashboardWidgetExporter(DashboardExcelExporter excelExporter,
+                                          Workbook wb,
+                                          JSONObject widget,
+                                          String documentName,
+                                          Map<String, Map<String, JSONArray>> selections,
+                                          JSONObject drivers,
+                                          JSONObject parameters,
+                                          String userUniqueIdentifier,
+                                          String imageB64) {
+        super(userUniqueIdentifier, imageB64);
         this.excelExporter = excelExporter;
         this.wb = wb;
         this.widget = widget;

@@ -1,35 +1,44 @@
 package it.eng.knowage.engine.api.export.dashboard;
 
+import it.eng.knowage.commons.multitenant.OrganizationImageManager;
 import it.eng.knowage.engine.api.export.ExporterClient;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.IDashboardThemeDAO;
 import it.eng.spagobi.commons.metadata.SbiDashboardTheme;
 import it.eng.spagobi.i18n.dao.I18NMessagesDAO;
+import it.eng.spagobi.tenant.TenantManager;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.bo.SolrDataSet;
 import it.eng.spagobi.tools.dataset.bo.VersionedDataSet;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import lombok.Getter;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.HorizontalAlignment;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.VerticalAlignment;
+import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.util.Units;
+import org.apache.poi.xssf.streaming.SXSSFSheet;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.*;
+
+import static it.eng.knowage.engine.api.export.dashboard.StaticLiterals.EXCEL_ERROR;
 
 @Getter
 public class DashboardExporter {
 
     private final JSONObjectUtils jsonObjectUtils;
     private final String userUniqueIdentifier;
+    private String imageB64;
     protected Map<String, String> i18nMessages;
     protected Locale locale;
+    private static final String DOCUMENT_NAME = "";
     private static final String STATIC_CUSTOM_STYLE = "static";
     private static final String CONDITIONAL_STYLE = "conditional";
     private static final String ALL_COLUMNS_STYLE = "all";
@@ -37,9 +46,10 @@ public class DashboardExporter {
     private static final String DRILL_SORTING_OBJ = "drillSortingObj";
     private static final String BOTH = "both";
 
-    public DashboardExporter(String userUniqueIdentifier) {
+    public DashboardExporter(String userUniqueIdentifier, String imageB64) {
         this.jsonObjectUtils = new JSONObjectUtils();
         this.userUniqueIdentifier = userUniqueIdentifier;
+        this.imageB64 = imageB64;
     }
 
     private static final Logger LOGGER = LogManager.getLogger(DashboardExporter.class);
@@ -1134,6 +1144,439 @@ public class DashboardExporter {
         }
     }
 
+    public int createBrandedHeaderSheet(Sheet sheet, String imageB64,
+                                        int startRow, float rowHeight, int rowspan, int startCol, int colWidth, int colspan, int namespan, int dataspan,
+                                        String documentName, String widgetName) {
+        if (StringUtils.isNotEmpty(imageB64)) {
+            for (int r = startRow; r < startRow+rowspan; r++) {
+                sheet.createRow(r).setHeightInPoints(rowHeight);
+                for (int c = startCol; c < startCol+colspan; c++) {
+                    sheet.getRow(r).createCell(c);
+                    sheet.setColumnWidth(c, colWidth * 256);
+                }
+            }
+
+            // set brandend header image
+            sheet.addMergedRegion(new CellRangeAddress(startRow, startRow+rowspan-1, startCol, startCol+colspan-1));
+
+            drawBrandendHeaderImage(sheet, imageB64, Workbook.PICTURE_TYPE_PNG, startCol, startRow, colspan, rowspan);
+
+            // set document name
+            sheet.getRow(startRow).createCell(startCol+colspan).setCellValue(documentName);
+            sheet.addMergedRegion(new CellRangeAddress(startRow, startRow, startCol+colspan, namespan));
+            // set cell style
+            CellStyle documentNameCellStyle = buildCellStyle(sheet, true, HorizontalAlignment.LEFT, VerticalAlignment.CENTER, (short) 16);
+            sheet.getRow(startRow).getCell(startCol+colspan).setCellStyle(documentNameCellStyle);
+
+            // set date
+            DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+            Date date = new Date();
+            sheet.getRow(startRow+1).createCell(startCol+colspan).setCellValue("Data di generazione: " + dateFormat.format(date));
+            sheet.addMergedRegion(new CellRangeAddress(startRow+1, startRow+1, startCol+colspan, dataspan));
+            // set cell style
+            CellStyle dateCellStyle = buildCellStyle(sheet, false, HorizontalAlignment.LEFT, VerticalAlignment.CENTER, (short) 8);
+            sheet.getRow(startRow+1).getCell(startCol+colspan).setCellStyle(dateCellStyle);
+        }
+
+        int headerIndex = (StringUtils.isNotEmpty(imageB64)) ? (startRow+rowspan) : 0;
+        Row widgetNameRow = sheet.createRow((short) headerIndex);
+        Cell widgetNameCell = widgetNameRow.createCell(0);
+        widgetNameCell.setCellValue(widgetName);
+        // set cell style
+        CellStyle widgetNameStyle = buildCellStyle(sheet, true, HorizontalAlignment.LEFT, VerticalAlignment.CENTER, (short) 14);
+        widgetNameCell.setCellStyle(widgetNameStyle);
+
+        return headerIndex;
+    }
+
+
+    public void drawBrandendHeaderImage(Sheet sheet, String imageB64, int pictureType, int startCol, int startRow,
+                                        int colspan, int rowspan) {
+        try {
+            Workbook wb = sheet.getWorkbook();
+            CreationHelper helper = wb.getCreationHelper();
+            ClientAnchor anchor = helper.createClientAnchor();
+
+            Picture pict = drawImage(sheet, imageB64, pictureType, startCol, startRow, colspan, rowspan, anchor, wb);
+            buildImageMesaures(sheet, startCol, startRow, colspan, rowspan, pict, anchor);
+
+        } catch (Exception e) {
+            throw new SpagoBIRuntimeException(EXCEL_ERROR, e);
+        }
+    }
+
+    public CellStyle buildCellStyle(Sheet sheet, boolean bold, HorizontalAlignment alignment, VerticalAlignment verticalAlignment, short headerFontSizeShort) {
+
+        // CELL
+        CellStyle cellStyle = sheet.getWorkbook().createCellStyle();
+
+        // alignment
+        cellStyle.setAlignment(alignment);
+        cellStyle.setVerticalAlignment(verticalAlignment);
+
+        // FONT
+        Font font = sheet.getWorkbook().createFont();
+
+        font.setFontHeightInPoints(headerFontSizeShort);
+
+        font.setBold(bold);
+
+        cellStyle.setFont(font);
+        return cellStyle;
+    }
+
+    private static void buildImageMesaures(Sheet sheet, int startCol, int startRow, int colspan, int rowspan, Picture pict, ClientAnchor anchor) {
+        float colsWidthPx;
+        int horCenterPosPx;
+        float rowsHeightPx;
+        int vertCenterPosPx;
+        int pictWidthPx = pict.getImageDimension().width;
+        int pictHeightPx = pict.getImageDimension().height;
+
+        // get the heights of all merged rows in px
+        float[] rowHeightsPx = new float[startRow + rowspan];
+        rowsHeightPx = 0f;
+        for (int r = startRow; r < startRow + rowspan; r++) {
+            Row row = sheet.getRow(r);
+            float rowHeightPt = row.getHeightInPoints();
+            rowHeightsPx[r- startRow] = rowHeightPt * Units.PIXEL_DPI / Units.POINT_DPI;
+            rowsHeightPx += rowHeightsPx[r- startRow];
+        }
+
+        // get the widths of all merged cols in px
+        float[] colWidthsPx = new float[startCol + colspan];
+        colsWidthPx = 0f;
+        for (int c = startCol; c < startCol + colspan; c++) {
+            colWidthsPx[c - startCol] = sheet.getColumnWidthInPixels(c);
+            colsWidthPx += colWidthsPx[c - startCol];
+        }
+
+        // calculate scale
+        float scale = 1;
+        if (pictHeightPx > rowsHeightPx) {
+            float tmpscale = rowsHeightPx / pictHeightPx;
+            if (tmpscale < scale)
+                scale = tmpscale;
+        }
+        if (pictWidthPx > colsWidthPx) {
+            float tmpscale = colsWidthPx / pictWidthPx;
+            if (tmpscale < scale)
+                scale = tmpscale;
+        }
+
+        // calculate the horizontal center position
+        horCenterPosPx = Math.round(colsWidthPx / 2f - pictWidthPx * scale / 2f);
+        Integer col1 = null;
+        colsWidthPx = 0f;
+        for (int c = 0; c < colWidthsPx.length; c++) {
+            float colWidthPx = colWidthsPx[c];
+            if (colsWidthPx + colWidthPx > horCenterPosPx) {
+                col1 = c + startCol;
+                break;
+            }
+            colsWidthPx += colWidthPx;
+        }
+
+        // set the horizontal center position as Col1 plus Dx1 of anchor
+        if (col1 != null) {
+            anchor.setCol1(col1);
+            anchor.setDx1(Math.round(horCenterPosPx - colsWidthPx) * Units.EMU_PER_PIXEL);
+        }
+
+        // calculate the vertical center position
+        vertCenterPosPx = Math.round(rowsHeightPx / 2f - pictHeightPx * scale / 2f);
+        Integer row1 = null;
+        rowsHeightPx = 0f;
+        for (int r = 0; r < rowHeightsPx.length; r++) {
+            float rowHeightPx = rowHeightsPx[r];
+            if (rowsHeightPx + rowHeightPx > vertCenterPosPx) {
+                row1 = r + startRow;
+                break;
+            }
+            rowsHeightPx += rowHeightPx;
+        }
+
+        if (row1 != null) {
+            anchor.setRow1(row1);
+            anchor.setDy1(Math.round(vertCenterPosPx - rowsHeightPx) * Units.EMU_PER_PIXEL); //in unit EMU for XSSF
+        }
+
+        if (sheet instanceof SXSSFSheet) {
+            anchor.setDx2(Math.round(colsWidthPx - Math.round(horCenterPosPx - colsWidthPx)) * Units.EMU_PER_PIXEL);
+            anchor.setDy2(Math.round(rowsHeightPx - Math.round(vertCenterPosPx - rowsHeightPx)) * Units.EMU_PER_PIXEL);
+        }
+    }
+
+    private Picture drawImage(Sheet sheet, String imageB64, int pictureType, int startCol, int startRow, int colspan, int rowspan, ClientAnchor anchor, Workbook wb) {
+
+        String encodingPrefix = "base64,";
+        int contentStartIndex = imageB64.indexOf(encodingPrefix) + encodingPrefix.length();
+        byte[] bytes = org.apache.commons.codec.binary.Base64.decodeBase64(imageB64.substring(contentStartIndex));
+        int pictureIdx = wb.addPicture(bytes, pictureType);
+
+        anchor.setCol1(startCol);
+        anchor.setRow1(startRow);
+        anchor.setCol2(startCol + colspan);
+        anchor.setRow2(startRow + rowspan);
+
+        Drawing<?> drawing = sheet.createDrawingPatriarch();
+        return drawing.createPicture(anchor, pictureIdx);
+    }
+
+/*
+        * -------------------------------------------------------------------------------------------------------------------
+        * START OF DASHBOARD SELECTIONS AND DRIVERS METHOD
+*/
+
+    public Sheet createUniqueSafeSheetForSelections(Workbook wb, String widgetName) {
+        Sheet sheet;
+        try {
+            sheet = wb.createSheet(widgetName);
+            return sheet;
+        } catch (Exception e) {
+            throw new SpagoBIRuntimeException("Couldn't create sheet", e);
+        }
+    }
+
+    public void fillDashboardSelectionsSheetWithData(Map<String, Map<String, JSONArray>> selections, Sheet selectionsSheet) {
+        try {
+            int startRow = 0;
+            float rowHeight = 35; // in points
+            int rowspan = 2;
+            int startCol = 0;
+            int colWidth = 25;
+            int colspan = 2;
+            int namespan = 10;
+            int dataspan = 10;
+
+            Row newheader;
+
+            int headerIndex = createBrandedHeaderSheet(
+                    selectionsSheet,
+                    this.imageB64,
+                    startRow,
+                    rowHeight,
+                    rowspan,
+                    startCol,
+                    colWidth,
+                    colspan,
+                    namespan,
+                    dataspan,
+                    DOCUMENT_NAME,
+                    selectionsSheet.getSheetName());
+
+            newheader = selectionsSheet.createRow((short) headerIndex + 1); // first row
+            CellStyle headerCellStyle = buildCellStyle(selectionsSheet, true, HorizontalAlignment.LEFT, VerticalAlignment.CENTER, (short) 11);
+
+            Cell cell = newheader.createCell(0);
+            cell.setCellValue("Dataset");
+            cell.setCellStyle(headerCellStyle);
+
+            Cell cell2 = newheader.createCell(1);
+            cell2.setCellValue("Field");
+            cell2.setCellStyle(headerCellStyle);
+
+            Cell cell3 = newheader.createCell(2);
+            cell3.setCellValue("Values");
+            cell3.setCellStyle(headerCellStyle);
+
+            int j = headerIndex + 2;
+
+            for (Map.Entry<String, Map<String, JSONArray>> entry : selections.entrySet()) {
+                String datasetLabel = entry.getKey();
+                Map<String, JSONArray> datasetSelections = entry.getValue();
+                for (Map.Entry<String, JSONArray> datasetSelection : datasetSelections.entrySet()) {
+                    String columnName = datasetSelection.getKey();
+                    JSONArray values = datasetSelection.getValue();
+                    for (int i = 0; i < values.length(); i++) {
+                        Row newRow = selectionsSheet.createRow(j);
+                        newRow.createCell(0).setCellValue(datasetLabel);
+                        newRow.createCell(1).setCellValue(columnName);
+                        newRow.createCell(2).setCellValue(values.getString(i));
+                        j++;
+                    }
+                }
+            }
+            // Create a new row in current sheet
+
+        } catch (Exception e) {
+            LOGGER.error("Cannot fill selections sheet", e);
+            throw new SpagoBIRuntimeException("Cannot fill selections sheet", e);
+        }
+    }
+
+    public void transformDatasetDriversForExcelSheet(JSONObject body, JSONArray driversFromBody, JSONArray parameters) {
+        try {
+            if (body.has("datasetDrivers") && body.getJSONArray("datasetDrivers") != null && body.getJSONArray("datasetDrivers").length() > 0) {
+                for (int i = 0; i < body.getJSONArray("datasetDrivers").length(); i++) {
+                    JSONObject datasetDriver = body.getJSONArray("datasetDrivers").getJSONObject(i);
+                    getParameterValuesFromDatasetDriver(driversFromBody, datasetDriver);
+                }
+
+            } else if (body.has("configuration") && body.getJSONObject("configuration") != null && body.getJSONObject("configuration").has("datasets") && body.getJSONObject("configuration").getJSONArray("datasets") != null && body.getJSONObject("configuration").getJSONArray("datasets").length() > 0) {
+                for (int i = 0; i < body.getJSONObject("configuration").getJSONArray("datasets").length(); i++) {
+                    JSONObject dataset = body.getJSONObject("configuration").getJSONArray("datasets").getJSONObject(i);
+                    if (dataset.has("drivers") && dataset.getJSONArray("drivers") != null && dataset.getJSONArray("drivers").length() > 0) {
+                        for (int j = 0; j < dataset.getJSONArray("drivers").length(); j++) {
+                            JSONObject datasetDriver = dataset.getJSONArray("drivers").getJSONObject(j);
+                            getParameterValuesFromDatasetDriver(driversFromBody, datasetDriver);
+                        }
+                    }
+                }
+            }
+
+            transformParametersForExcelSheet(parameters, driversFromBody);
+        } catch (JSONException jsonException) {
+            LOGGER.error("Unable to transform driver", jsonException);
+            throw new SpagoBIRuntimeException("Unable to transform driver", jsonException);
+        }
+    }
+
+    public void transformParametersForExcelSheet(JSONArray parameters, JSONArray driversFromBody) {
+        if (parameters != null && parameters.length() > 0) {
+            for (int i = 0; i < parameters.length(); i++) {
+                try {
+                    JSONObject parameter = parameters.getJSONObject(i);
+                    try {
+                        parameter.put("value", parameter.getString("value"));
+                    } catch (JSONException e) {
+                        parameter.put("value", parameter.getJSONArray("value").toString());
+                    }
+                    parameter.put("description", "NOT APPLICABLE");
+                    parameter.put("driverLabel", "NOT APPLICABLE");
+                    parameter.put("type", "NOT APPLICABLE");
+                    parameter.put("urlName", "NOT APPLICABLE");
+                    driversFromBody.put(parameter);
+
+                } catch (JSONException e) {
+                    LOGGER.error("Unable to transform parameter", e);
+                }
+            }
+        }
+    }
+
+    private void getParameterValuesFromDatasetDriver(JSONArray driversFromBody, JSONObject datasetDriver) throws JSONException {
+        JSONArray parameterValues = datasetDriver.getJSONArray("parameterValue");
+        if (parameterValues != null && parameterValues.length() > 0) {
+            for (int k = 0; k < parameterValues.length(); k++) {
+                JSONObject parameterValue = parameterValues.getJSONObject(k);
+                if (!datasetDriver.has("value")) {
+                    datasetDriver.put("value", parameterValue.getString("value"));
+                } else {
+                    datasetDriver.put("value","," + parameterValue.getString("value"));
+                }
+            }
+        }
+        datasetDriver.put("name", datasetDriver.getString("driverLabel"));
+        driversFromBody.put(datasetDriver);
+    }
+
+    public void fillDashboardDriversSheetWithData(JSONArray drivers, Sheet sheet) {
+
+        try {
+            this.imageB64 = OrganizationImageManager.getOrganizationB64ImageWide(TenantManager.getTenant().getName());
+            int startRow = 0;
+            float rowHeight = 35; // in points
+            int rowspan = 2;
+            int startCol = 0;
+            int colWidth = 25;
+            int colspan = 2;
+            int namespan = 10;
+            int dataspan = 10;
+
+            Row newheader;
+
+            int headerIndex = createBrandedHeaderSheet(
+                    sheet,
+                    this.imageB64,
+                    startRow,
+                    rowHeight,
+                    rowspan,
+                    startCol,
+                    colWidth,
+                    colspan,
+                    namespan,
+                    dataspan,
+                    DOCUMENT_NAME,
+                    sheet.getSheetName());
+
+            newheader = sheet.createRow((short) headerIndex + 1); // first row
+
+            Cell cell = newheader.createCell(0);
+            cell.setCellValue("Name");
+            CellStyle headerCellStyle = buildCellStyle(sheet, true, HorizontalAlignment.LEFT, VerticalAlignment.CENTER, (short) 11);
+            cell.setCellStyle(headerCellStyle);
+
+            Cell cell2 = newheader.createCell(1);
+            cell2.setCellValue("Type");
+            cell2.setCellStyle(headerCellStyle);
+
+            Cell cell3 = newheader.createCell(2);
+            cell3.setCellValue("Multivalue");
+            cell3.setCellStyle(headerCellStyle);
+
+            Cell cell4 = newheader.createCell(3);
+            cell4.setCellValue("Value");
+            cell4.setCellStyle(headerCellStyle);
+
+            Cell cell5 = newheader.createCell(4);
+            cell5.setCellValue("Url Name");
+            cell5.setCellStyle(headerCellStyle);
+
+            Cell cell6 = newheader.createCell(5);
+            cell6.setCellValue("Driver label");
+            cell6.setCellStyle(headerCellStyle);
+
+            Cell cell7 = newheader.createCell(6);
+            cell7.setCellValue("Driver type");
+            cell7.setCellStyle(headerCellStyle);
+
+            int j = headerIndex + 2;
+
+            for (int i = 0; i < drivers.length(); i++) {
+                JSONObject driver = drivers.getJSONObject(i);
+                Row newRow = sheet.createRow(j);
+                newRow.createCell(0).setCellValue(driver.getString("name"));
+                newRow.createCell(1).setCellValue(driver.getString("type"));
+                try {
+                    newRow.createCell(2).setCellValue(driver.getBoolean("multivalue"));
+                } catch (JSONException e) {
+                    try {
+                        newRow.createCell(2).setCellValue(driver.getString("multivalue"));
+                    } catch (JSONException ex) {
+                        newRow.createCell(2).setCellValue(false);
+                    }
+                }
+                newRow.createCell(3).setCellValue(driver.getString("value"));
+                newRow.createCell(4).setCellValue(driver.getString("urlName"));
+                newRow.createCell(5).setCellValue(driver.getString("driverLabel"));
+                newRow.createCell(6).setCellValue(setDriverType(driver));
+
+                j++;
+            }
+
+        } catch (Exception e) {
+            LOGGER.error("Cannot fill drivers sheet", e);
+            throw new SpagoBIRuntimeException("Cannot fill drivers sheet", e);
+        }
+
+    }
+
+    private String setDriverType(JSONObject driver) {
+        if (driver.has("parameterValue")) {
+            return "DATASET DRIVER";
+        } else {
+            try {
+                if (driver.getString("description").equals("NOT APPLICABLE")) {
+                    return "DATASET PARAMETER";
+                } else {
+                    return "DOCUMENT DRIVER";
+                }
+            } catch (JSONException e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
 
 
 

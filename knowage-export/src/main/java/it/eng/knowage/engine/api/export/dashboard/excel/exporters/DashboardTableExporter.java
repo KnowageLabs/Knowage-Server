@@ -15,8 +15,8 @@ import java.util.Map;
 public class DashboardTableExporter extends GenericDashboardWidgetExporter implements IWidgetExporter {
     public static Logger logger = Logger.getLogger(DashboardTableExporter.class);
 
-    public DashboardTableExporter(DashboardExcelExporter excelExporter, Workbook wb, JSONObject widget, String documentName, Map<String, Map<String, JSONArray>> selections, JSONObject drivers, JSONObject parameters, String userUniqueIdentifier) {
-        super(excelExporter, wb, widget, documentName, selections, drivers, parameters, userUniqueIdentifier);
+    public DashboardTableExporter(DashboardExcelExporter excelExporter, Workbook wb, JSONObject widget, String documentName, Map<String, Map<String, JSONArray>> selections, JSONObject drivers, JSONObject parameters, String userUniqueIdentifier, String imageB64) {
+        super(excelExporter, wb, widget, documentName, selections, drivers, parameters, userUniqueIdentifier, imageB64);
     }
 
     @Override

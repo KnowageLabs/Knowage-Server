@@ -54,7 +54,9 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import it.eng.knowage.commons.multitenant.OrganizationImageManager;
 import it.eng.knowage.engine.api.export.dashboard.excel.DashboardExcelExporter;
+import it.eng.spagobi.tenant.TenantManager;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.logging.log4j.LogManager;
@@ -377,7 +379,7 @@ public class PageResource extends AbstractCockpitEngineResource {
 		String userId = request.getParameter("user_id");
 		String documentLabel = request.getParameter("DOCUMENT_LABEL");
 
-		DashboardExcelExporter excelExporter = new DashboardExcelExporter(getIOManager().getTemplateAsJSONObject(), role, requestURL, organization, userId);
+		DashboardExcelExporter excelExporter = new DashboardExcelExporter(getIOManager().getTemplateAsJSONObject(), role, requestURL, organization, userId, OrganizationImageManager.getOrganizationB64ImageWide(TenantManager.getTenant().getName()));
 		String mimeType = excelExporter.getMimeType();
 		byte[] data = excelExporter.getScheduledBinaryData(documentLabel);
 
