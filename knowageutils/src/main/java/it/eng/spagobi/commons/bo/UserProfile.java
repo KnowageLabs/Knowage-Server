@@ -49,7 +49,6 @@ import static it.eng.spagobi.commons.constants.CommunityFunctionalityConstants.E
 import static it.eng.spagobi.commons.constants.CommunityFunctionalityConstants.FEDERATION_DEFINITION;
 import static it.eng.spagobi.commons.constants.CommunityFunctionalityConstants.FUNCTIONALITIES_MANAGEMENT;
 import static it.eng.spagobi.commons.constants.CommunityFunctionalityConstants.FUNCTIONS_CATALOG_MANAGEMENT;
-import static it.eng.spagobi.commons.constants.CommunityFunctionalityConstants.GEO_LAYERS_MANAGEMENT;
 import static it.eng.spagobi.commons.constants.CommunityFunctionalityConstants.GIS_WEB_DESIGNER;
 import static it.eng.spagobi.commons.constants.CommunityFunctionalityConstants.HOTLINK_MANAGEMENT;
 import static it.eng.spagobi.commons.constants.CommunityFunctionalityConstants.IMAGES_MANAGEMENT;
@@ -249,7 +248,7 @@ public class UserProfile implements IEngUserProfile {
 				DOCUMENT_METADATA_MANAGEMENT, DOCUMENT_MOVE_DOWN_STATE, DOCUMENT_MOVE_UP_STATE,
 				DOCUMENT_STATE_MANAGEMENT, DOCUMENT_MANAGEMENT_TEST, DOCUMENT_MANAGEMENT_USER, DOMAIN_WRITE,
 				EVENTS_MANAGEMENT, EXECUTE_CROSS_NAVIGATION, FEDERATION_DEFINITION, FUNCTIONALITIES_MANAGEMENT,
-				FUNCTIONS_CATALOG_MANAGEMENT, GEO_LAYERS_MANAGEMENT, GIS_WEB_DESIGNER, HOTLINK_MANAGEMENT,
+				FUNCTIONS_CATALOG_MANAGEMENT, GIS_WEB_DESIGNER, HOTLINK_MANAGEMENT,
 				IMAGES_MANAGEMENT, KPI_MANAGEMENT, KPI_SCHEDULATION, LOVS_MANAGEMENT, LOVS_VIEW,
 				MANAGE_CROSS_NAVIGATION, MAPCATALOGUE_MANAGEMENT, MENU_MANAGEMENT, META_MODEL_LIFECYCLE_MANAGEMENT,
 				META_MODELS_CATALOGUE_MANAGEMENT, MODIFY_REFRESH, MANAGE_MULTISHEET_COCKPIT,
