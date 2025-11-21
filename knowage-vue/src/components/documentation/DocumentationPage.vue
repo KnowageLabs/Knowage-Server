@@ -108,10 +108,26 @@ function toggleDrawer() {
   margin-top: 0;
   padding-left: 20%;
   padding-right: 20%;
+
+  &:deep(h1) {
+    font-size: 2rem;
+    line-height: 2rem;
+  }
+
+  &:deep(h2) {
+    font-size: 1.7rem;
+    line-height: 1.7rem;
+  }
+
+  &:deep(h3) {
+    font-size: 1.5rem;
+    line-height: 1.5rem;
+  }
   &:deep(h1),
   &:deep(h2),
   &:deep(h3) {
     color: var(--kn-documentation-content-heading-color);
+    text-transform: capitalize;
   }
   &:deep(a) {
     color: var(--kn-documentation-content-link-color);

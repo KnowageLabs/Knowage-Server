@@ -23,7 +23,7 @@ import axios from "axios";
 import { onMounted, ref } from "vue";
 import { findFoldersWithLabel } from "./DocumentationHelper";
 import { useStore } from "vuex";
-import DocumentationMenuItem from "./DocumentationMenuItem.vue"; // <- import nuovo componente
+import DocumentationMenuItem from "./DocumentationMenuItem.vue";
 import { useRouter } from "vue-router";
 
 const store = useStore();
@@ -32,7 +32,7 @@ const router = useRouter();
 const drawer = ref(true);
 const folderKey = ref<string | null>("");
 const config = ref<any | null>(null);
-const logoWide = process.env.VUE_APP_PUBLIC_PATH + "/images/commons/logo_knowage.svg";
+const logoWide = process.env.VUE_APP_PUBLIC_PATH + "images/commons/logo_knowage.svg";
 
 onMounted(async () => {
   await axios
