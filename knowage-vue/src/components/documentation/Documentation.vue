@@ -22,20 +22,19 @@
 import axios from "axios";
 import { onMounted, ref } from "vue";
 import { findFoldersWithLabel } from "./DocumentationHelper";
-import mainStore from "@/App.store";
+import { useStore } from "vuex";
 import DocumentationMenuItem from "./DocumentationMenuItem.vue"; // <- import nuovo componente
 import { useRouter } from "vue-router";
 
-const store = mainStore();
+const store = useStore();
 const router = useRouter();
 
 const drawer = ref(true);
 const folderKey = ref<string | null>("");
 const config = ref<any | null>(null);
-const logoWide = process.env.VUE_APP_PUBLIC_PATH + "/images/commons/knowage-black.svg";
+const logoWide = process.env.VUE_APP_PUBLIC_PATH + "/images/commons/logo_knowage.svg";
 
 onMounted(async () => {
-  store.setLoading(true);
   await axios
     .get(process.env.VUE_APP_API_URL + `/api/2.0/resources/folders`)
     .then((response: any) => {
@@ -48,7 +47,6 @@ onMounted(async () => {
     });
 
   if (!folderKey.value) {
-    store.setLoading(false);
     push404();
     return;
   }
@@ -64,7 +62,8 @@ onMounted(async () => {
       }
     )
     .then((response: any) => {
-      const userRole = store.user?.sessionRole || store.user?.defaultRole;
+      const user = (store.state as any).user;
+      const userRole = user?.sessionRole || user?.defaultRole;
 
       function filterNode(node: any): any | null {
         if (node == null) return null;
@@ -97,22 +96,21 @@ onMounted(async () => {
     })
     .catch(() => {
       push404();
-    })
-    .finally(() => store.setLoading(false));
+    });
 });
 
 function push404() {
   config.value = null;
   router.push({ name: "404" });
 }
-
 function getLogoUrl() {
   if (config.value && config.value.logo) {
     if (typeof config.value.logo === "string" && config.value.logo.startsWith("http")) {
       return config.value.logo;
     } else {
       try {
-        return process.env.VUE_APP_HOST_URL + `/restful-services/multitenant/${store.user.organization}/logo-wide`;
+        const organization = (store.state as any).user?.organization;
+        return process.env.VUE_APP_HOST_URL + `/restful-services/multitenant/${organization}/logo-wide`;
       } catch {
         return logoWide;
       }
