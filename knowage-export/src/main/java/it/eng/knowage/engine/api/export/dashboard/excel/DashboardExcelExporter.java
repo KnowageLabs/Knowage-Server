@@ -43,7 +43,7 @@ import static org.apache.poi.xssf.usermodel.XSSFFont.DEFAULT_FONT_SIZE;
 public class DashboardExcelExporter extends DashboardExporter {
     private static final Logger LOGGER = LogManager.getLogger(DashboardExcelExporter.class);
 
-    private static final String[] WIDGETS_TO_IGNORE = {"image", "text", "selector", "selection", "html"};
+    private static final String[] WIDGETS_TO_IGNORE = {"image", "text", "selector", "selection", "html", "static-pivot-table"};
     private static final int SHEET_NAME_MAX_LEN = 31;
     protected static final String DATE_FORMAT = "dd/MM/yyyy";
 
