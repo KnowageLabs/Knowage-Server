@@ -1,3 +1,6 @@
-.layout-main {
+.q-layout {
   width: calc(100% - #{var(--kn-mainmenu-width)});
+  .q-drawer--left {
+    left: var(--kn-mainmenu-width);
+  }
 }
