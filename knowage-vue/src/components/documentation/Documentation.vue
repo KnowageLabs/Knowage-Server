@@ -108,12 +108,7 @@ function getLogoUrl() {
     if (typeof config.value.logo === "string" && config.value.logo.startsWith("http")) {
       return config.value.logo;
     } else {
-      try {
-        const organization = (store.state as any).user?.organization;
-        return process.env.VUE_APP_HOST_URL + `/restful-services/multitenant/${organization}/logo-wide`;
-      } catch {
-        return logoWide;
-      }
+      return logoWide;
     }
   }
   return false;
