@@ -12,9 +12,6 @@
  <ACTION name="MENU_BEFORE_EXEC" class="it.eng.spagobi.wapp.services.BeforeExecutionAction" scope="REQUEST">
  	<CONFIG/>
  </ACTION>
- <ACTION name="CHANGE_LANGUAGE" class="it.eng.spagobi.wapp.services.ChangeLanguage" scope="REQUEST">
- 	<CONFIG/>
- </ACTION> 
  <ACTION name="CHANGE_THEME" class="it.eng.spagobi.wapp.services.ChangeTheme" scope="REQUEST">
  	<CONFIG/>
  </ACTION> 
