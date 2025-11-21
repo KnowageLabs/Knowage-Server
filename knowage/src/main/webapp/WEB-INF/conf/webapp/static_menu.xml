@@ -64,7 +64,6 @@
 				requiredFunctionality="MeasuresCatalogueManagement"
 				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=measuresCatalogue" />
 			<ITEM id="4006" label="menu.LayersCatalogue"
-				requiredFunctionality="GeoLayersManagement"
 				to="/layers-management" />
 			<ITEM id="4007" label="menu.glossary.technical"
 				requiredFunctionality="ManageGlossaryTechnical"

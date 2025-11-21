@@ -88,7 +88,6 @@ public class CommunityFunctionalityConstants {
 	public static final String FUNCTIONALITIES_MANAGEMENT = "FunctionalitiesManagement";
 	public static final String FUNCTIONS_CATALOG_MANAGEMENT = "FunctionsCatalogManagement";
 	public static final String FUNCTIONS_CATALOG_USAGE = "FunctionsCatalogUsage";
-	public static final String GEO_LAYERS_MANAGEMENT = "GeoLayersManagement";
 	/**
 	 * @deprecated Only used in it.eng.spagobi.commons.bo.UserProfile.getSchedulerUserFunctionalities()
 	 */
