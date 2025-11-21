@@ -44,7 +44,7 @@ async function loadMarkdown() {
 
   const folders = ["docs", ...(props.path ? props.path.slice(0, -1) : [])];
   await axios
-    .get(process.env.VUE_APP_API_URL + `/api/2.0/resources/folders`)
+    .get(process.env.VUE_APP_API_PATH + `2.0/resources/folders`)
     .then((response: any) => {
       const root = Array.isArray(response.data.root) ? response.data.root : Array.isArray(response.data) ? response.data : [];
       const folder = findNodesByLabelPath(root, folders)[0];
@@ -57,7 +57,7 @@ async function loadMarkdown() {
   const fileName = `${props.path ? props.path[props.path.length - 1] : "index.md"}`;
   await axios
     .post(
-      process.env.VUE_APP_API_URL + `/api/2.0/resources/files/download`,
+      process.env.VUE_APP_API_PATH + `2.0/resources/files/download`,
       { key: folderKey.value, selectedFilesNames: [fileName] },
       {
         headers: {

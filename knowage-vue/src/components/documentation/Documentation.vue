@@ -36,7 +36,7 @@ const logoWide = process.env.VUE_APP_PUBLIC_PATH + "/images/commons/logo_knowage
 
 onMounted(async () => {
   await axios
-    .get(process.env.VUE_APP_API_URL + `/api/2.0/resources/folders`)
+    .get(process.env.VUE_APP_API_PATH + `2.0/resources/folders`)
     .then((response: any) => {
       const root = Array.isArray(response.data.root) ? response.data.root : Array.isArray(response.data) ? response.data : [];
       const folder = findFoldersWithLabel(root, "docs")[0];
@@ -52,7 +52,7 @@ onMounted(async () => {
   }
   await axios
     .post(
-      process.env.VUE_APP_API_URL + `/api/2.0/resources/files/download`,
+      process.env.VUE_APP_API_PATH + `2.0/resources/files/download`,
       { key: folderKey.value, selectedFilesNames: ["config.json"] },
       {
         headers: {
