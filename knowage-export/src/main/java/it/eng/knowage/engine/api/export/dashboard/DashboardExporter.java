@@ -977,8 +977,8 @@ public class DashboardExporter {
                 addToCategoriesOrMeasuresArray(row, categories, sortingColumnId, sortingOrder, measures);
             }
             for (int i = 0; i < data.length(); i++) {
-                JSONObject datum = getMeasure(data.getJSONObject(i));
-                measures.put(datum);
+                JSONObject datum = data.getJSONObject(i);
+                addToCategoriesOrMeasuresArray(datum, categories, sortingColumnId, sortingOrder, measures);
             }
             for (int i = 0; i < filters.length(); i++) {
                 JSONObject filter = filters.getJSONObject(i);
