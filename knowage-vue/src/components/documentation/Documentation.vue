@@ -32,7 +32,7 @@ const router = useRouter();
 const drawer = ref(true);
 const folderKey = ref<string | null>("");
 const config = ref<any | null>(null);
-const logoWide = process.env.VUE_APP_PUBLIC_PATH + "images/commons/logo_knowage.svg";
+const logoWide = require("@/assets/images/commons/logo_knowage.svg");
 
 onMounted(async () => {
   await axios
