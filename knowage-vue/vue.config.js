@@ -68,18 +68,17 @@ module.exports = {
     devServer: {
       headers: { "Access-Control-Allow-Origin": "*" },
     },
-
     module: {
       rules: [
         {
           test: /\.mjs$/,
           include: /node_modules/,
-          type: "javascript/auto",
+          type: "javascript/auto", // risolve problemi con ESM in Webpack 4
         },
       ],
     },
     resolve: {
-      fullySpecified: false, // evita errori con import ESM
+      extensions: [".js", ".vue", ".json"], // aggiungi le estensioni necessarie
     },
   },
 
