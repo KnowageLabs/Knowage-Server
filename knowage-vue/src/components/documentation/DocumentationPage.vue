@@ -11,13 +11,11 @@ import { ref, onMounted, watch, defineProps, defineEmit } from "vue";
 import KnMarkdown from "@/components/KnMarkdown.vue";
 import { findNodesByLabelPath } from "./DocumentationHelper";
 import axios from "axios";
-import mainStore from "@/App.store";
 import { useQuasar } from "quasar";
 import i18n from "@/App.i18n";
 
 const { t } = i18n.global;
 const $q = useQuasar();
-const store = mainStore();
 
 const markdown = ref<string | null>(null);
 const folderKey = ref<string | null>(null);
@@ -40,8 +38,6 @@ watch(
 );
 
 async function loadMarkdown() {
-  store.setLoading(true);
-
   const folders = ["docs", ...(props.path ? props.path.slice(0, -1) : [])];
   await axios
     .get(process.env.VUE_APP_API_PATH + `2.0/resources/folders`)
@@ -68,8 +64,7 @@ async function loadMarkdown() {
     )
     .then((response: any) => {
       markdown.value = response.data;
-    })
-    .finally(() => store.setLoading(false));
+    });
 }
 
 function copyLink() {
