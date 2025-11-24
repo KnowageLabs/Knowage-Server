@@ -1,20 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Configuration status="info">
 	<Appenders>
-	                <RollingFile
-                                name="KNOWAGE_META"
-                                append="true"
-                                filePattern="${sys:catalina.base}/logs/$${ctx:tenant:-global}/knowageMeta-$${ctx:tenant:-global}.%d{yyyy-MM-dd}.log"
-                                ignoreExceptions="true"
-                                createOnDemand="true">
-                        <PatternLayout>
-                                <Pattern>%d{ISO8601_OFFSET_DATE_TIME_HHCMM} [%u{RANDOM}] %5p [%t] [%c.%M:%L] [%X{correlationId}/%X{jSessionId}] [%X{environment}] [%X{tenant}]%n%message%n%xThrowable</Pattern>
-                        </PatternLayout>
-                        <Policies>
-                                <TimeBasedTriggeringPolicy />
-                        </Policies>
-                        <DirectWriteRolloverStrategy/>
-                </RollingFile>
+		<Routing name="KNOWAGE_META">
+			<Routes pattern="$${ctx:tenant:-global}">
+				<Route>
+					<RollingFile
+						name="KNOWAGE_META_${route}"
+						append="true"
+						fileName="${sys:catalina.base}/logs/${route}/knowageMeta-${route}.log"
+						filePattern="${sys:catalina.base}/logs/${route}/knowageMeta-${route}.%d{yyyy-MM-dd}.log"
+						ignoreExceptions="true"
+						createOnDemand="true">
+						<PatternLayout>
+							<Pattern>%d{ISO8601_OFFSET_DATE_TIME_HHCMM} [%u{RANDOM}] %5p [%t] [%c.%M:%L] [%X{correlationId}/%X{jSessionId}] [%X{environment}] [%X{tenant}]%n%message%n%xThrowable</Pattern>
+						</PatternLayout>
+						<Policies>
+							<TimeBasedTriggeringPolicy />
+						</Policies>
+					</RollingFile>
+				</Route>
+			</Routes>
+		</Routing>
 	</Appenders>
 	<Loggers>
 		<logger name="edu.yale" additivity="false" level="error">
