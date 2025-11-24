@@ -18,13 +18,11 @@
 package it.eng.spagobi.commons.services;
 
 import java.io.IOException;
-import java.util.Locale;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.json.JSONObject;
 
-import it.eng.spago.base.Constants;
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.configuration.ConfigSingleton;
 import it.eng.spago.security.IEngUserProfile;
@@ -35,7 +33,6 @@ import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.utilities.AuditLogUtilities;
 import it.eng.spagobi.commons.utilities.SpagoBIServiceExceptionHandler;
 import it.eng.spagobi.commons.utilities.UserUtilities;
-import it.eng.spagobi.commons.utilities.messages.MessageBuilder;
 import it.eng.spagobi.services.security.bo.SpagoBIUserProfile;
 import it.eng.spagobi.services.security.service.ISecurityServiceSupplier;
 import it.eng.spagobi.services.security.service.SecurityServiceSupplierFactory;
@@ -161,14 +158,6 @@ public class LoginActionWeb extends AbstractBaseHttpAction {
 			// Propagate BACK URL if present
 			if (!StringUtils.isEmpty(backUrl)) {
 				getHttpSession().setAttribute(SpagoBIConstants.BACK_URL, backUrl);
-			}
-
-			// Propagate locale
-			Locale locale = MessageBuilder.getBrowserLocaleFromSpago();
-			logger.debug("User [" + usr + "] loacale has been set to [" + locale.getLanguage() + "/" + locale.getCountry() + "]");
-			if (locale != null) {
-				getSessionContainer().getPermanentContainer().setAttribute(Constants.USER_LANGUAGE, locale.getLanguage());
-				getSessionContainer().getPermanentContainer().setAttribute(Constants.USER_COUNTRY, locale.getCountry());
 			}
 
 			try {

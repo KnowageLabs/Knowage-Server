@@ -285,10 +285,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         	contextName: '<%= KnowageSystemConfiguration.getKnowageContext() %>',
         	adapterPath: '<%= KnowageSystemConfiguration.getKnowageContext() + GeneralUtilities.getSpagoAdapterHttpUrl() %>',
         	supportedLocales: <%= GeneralUtilities.getSupportedLocalesAsJSONArray().toString() %>,
-            // the date format localized according to user language and country
-            localizedDateFormat: '<%= GeneralUtilities.getLocaleDateFormatForExtJs(permanentSession) %>',
-            // the timestamp format localized according to user language and country
-            localizedTimestampFormat: '<%= GeneralUtilities.getLocaleDateFormatForExtJs(permanentSession) %> H:i:s',
             // the date format to be used when communicating with server
             clientServerDateFormat: '<%= GeneralUtilities.getServerDateFormatExtJs() %>',
             // the timestamp format to be used when communicating with server

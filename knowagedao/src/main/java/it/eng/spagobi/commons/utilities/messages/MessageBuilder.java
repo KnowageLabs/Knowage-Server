@@ -21,19 +21,13 @@ import java.util.Locale;
 import java.util.Locale.Builder;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
-import it.eng.spago.base.RequestContainer;
-import it.eng.spago.base.SessionContainer;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.message.MessageBundle;
-import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.SingletonConfig;
-import it.eng.spagobi.commons.bo.UserProfile;
-import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.i18n.dao.I18NMessagesDAO;
@@ -163,107 +157,38 @@ public class MessageBuilder implements IMessageBuilder, IEngineMessageBuilder {
 		return message;
 	}
 
-	public static Locale getBrowserLocaleFromSpago() {
-		logger.debug("IN");
-		Locale browserLocale = null;
-		RequestContainer reqCont = RequestContainer.getRequestContainer();
-		if (reqCont != null) {
-			Object obj = reqCont.getInternalRequest();
-			if (obj != null && (obj instanceof HttpServletRequest)) {
-				HttpServletRequest request = (HttpServletRequest) obj;
-				Locale reqLocale = request.getLocale();
-				String language = reqLocale.getLanguage();
-				String country = reqLocale.getCountry();
-				if (StringUtils.isBlank(country)) {
-					country = GeneralUtilities.getCountry(language);
-				}
-				browserLocale = new Locale(language, country);
-
-			}
-		}
-		if (browserLocale == null) {
-			browserLocale = GeneralUtilities.getDefaultLocale();
-		}
-		logger.debug("OUT");
-		return browserLocale;
-	}
-
 	private Locale getBrowserLocale(HttpServletRequest request) {
 		logger.debug("IN");
-		Locale browserLocale = null;
-		Locale reqLocale = request.getLocale();
-		String language = reqLocale.getLanguage();
-		String country = GeneralUtilities.getCountry(language);
 
-		String script = reqLocale.getScript();
-		Builder tmpLocale = new Builder().setLanguage(language).setRegion(country);
-		if (StringUtils.isNotBlank(script)) {
-			tmpLocale.setScript(script);
-		}
-		browserLocale = tmpLocale.build();
+		try {
+			Locale browserLocale = null;
+			Locale reqLocale = request.getLocale();
+			String language = reqLocale.getLanguage();
+			String country = GeneralUtilities.getCountry(language);
 
-		if (browserLocale == null) {
-			browserLocale = GeneralUtilities.getDefaultLocale();
+			String script = reqLocale.getScript();
+			Builder tmpLocale = new Builder().setLanguage(language).setRegion(country);
+			if (StringUtils.isNotBlank(script)) {
+				tmpLocale.setScript(script);
+			}
+			browserLocale = tmpLocale.build();
+
+			if (browserLocale == null) {
+				browserLocale = GeneralUtilities.getDefaultLocale();
+			}
+			logger.debug("OUT");
+			return browserLocale;
+		} catch (Exception e) {
+			logger.warn("Warning getBrowserLocale request is null");
+			return GeneralUtilities.getDefaultLocale();
 		}
-		logger.debug("OUT");
-		return browserLocale;
 	}
 
 	public Locale getLocale(HttpServletRequest request) {
 		logger.debug("IN");
-		String sbiMode = getSpagoBIMode(request);
-		UserProfile profile = null;
-		HttpSession session = null;
-		if (request != null) {
-			session = request.getSession();
-		}
-		if (session != null) {
-			profile = (UserProfile) session.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
-		}
-		Locale locale = null;
-		if (sbiMode.equalsIgnoreCase("WEB")) {
-			String language = null;
-			String country = null;
-			String script = null;
 
-			RequestContainer reqCont = RequestContainer.getRequestContainer();
-			if (reqCont != null) {
-				SessionContainer sessCont = reqCont.getSessionContainer();
-				SessionContainer permSess = sessCont.getPermanentContainer();
-				language = (String) permSess.getAttribute("AF_LANGUAGE");
-				country = (String) permSess.getAttribute("AF_COUNTRY");
-				script = (String) permSess.getAttribute("AF_SCRIPT");
-			}
+		Locale locale = getBrowserLocale(request);
 
-			if (country == null) {
-				country = "";
-			}
-
-			if (script == null) {
-				script = "";
-			}
-
-			if (profile != null && !profile.getUserId().equals(SpagoBIConstants.PUBLIC_USER_ID) && language != null) {
-				// check preference from user attributes if presents
-//				try {
-//					String userLocale = (String) profile.getUserAttribute("language");
-//					if (StringUtils.isNotBlank(userLocale)) {
-//						language = userLocale.substring(0, userLocale.indexOf("_"));
-//						country = userLocale.substring(userLocale.indexOf("_") + 1);
-//						logger.info("User attribute language: " + language);
-//						logger.info("User attribute country: " + country);
-//					}
-//				} catch (Exception e) {
-//					logger.debug("Error on reading user attribute language: " + e);
-//				}
-
-				locale = new Builder().setLanguage(language).setRegion(country).setScript(script).build();
-			} else if (request == null) {
-				locale = getBrowserLocaleFromSpago();
-			} else {
-				locale = getBrowserLocale(request);
-			}
-		}
 		if (!isValidLocale(locale)) {
 			logger.warn((new StringBuilder("Request locale ")).append(locale).append(" not valid since it is not configured.").toString());
 			locale = GeneralUtilities.getDefaultLocale();

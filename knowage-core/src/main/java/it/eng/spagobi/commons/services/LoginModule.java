@@ -30,13 +30,11 @@ import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
-import java.util.Locale.Builder;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.stream.IntStream;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang3.StringUtils;
@@ -49,9 +47,6 @@ import it.eng.knowage.monitor.IKnowageMonitor;
 import it.eng.knowage.monitor.KnowageMonitorFactory;
 import it.eng.knowage.privacymanager.LoginEventBuilder;
 import it.eng.knowage.privacymanager.PrivacyManagerClient;
-import it.eng.spago.base.Constants;
-import it.eng.spago.base.RequestContainer;
-import it.eng.spago.base.SessionContainer;
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.base.SourceBeanException;
 import it.eng.spago.dispatching.module.AbstractHttpModule;
@@ -72,7 +67,6 @@ import it.eng.spagobi.commons.dao.ITenantsDAO;
 import it.eng.spagobi.commons.metadata.SbiExtRoles;
 import it.eng.spagobi.commons.metadata.SbiTenant;
 import it.eng.spagobi.commons.utilities.AuditLogUtilities;
-import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.commons.utilities.HibernateSessionManager;
 import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
 import it.eng.spagobi.commons.utilities.StringUtilities;
@@ -136,28 +130,10 @@ public class LoginModule extends AbstractHttpModule {
 
 		IEngUserProfile profile = null;
 
-		RequestContainer reqCont = RequestContainer.getRequestContainer();
-		SessionContainer sessCont = reqCont.getSessionContainer();
-		SessionContainer permSess = sessCont.getPermanentContainer();
-
 		HttpServletRequest servletRequest = getHttpRequest();
 		HttpSession httpSession = servletRequest.getSession();
 
 		String currTheme = ThemesManager.getDefaultTheme();
-
-		manageLocale(permSess);
-
-		String language = (String) permSess.getAttribute(Constants.USER_LANGUAGE);
-		String country = (String) permSess.getAttribute(Constants.USER_COUNTRY);
-		String script = permSess.getAttribute(USER_SCRIPT) != null ? (String) permSess.getAttribute(USER_SCRIPT) : null;
-		Builder tmpLocale = new Builder().setLanguage(language).setRegion(country);
-		if (StringUtils.isNotBlank(script)) {
-			tmpLocale.setScript(script);
-		}
-		Locale browserLocale = tmpLocale.build();
-
-		String localeCookie = browserLocale.toLanguageTag();
-		HttpServletResponse resp = getHttpResponse();
 
 		MessageBuilder msgBuilder = new MessageBuilder();
 		Locale locale = msgBuilder.getLocale(servletRequest);
@@ -550,28 +526,6 @@ public class LoginModule extends AbstractHttpModule {
 			activeSoo = true;
 		}
 		return activeSoo;
-	}
-
-	private void manageLocale(SessionContainer permSess) {
-		// updates locale information on permanent container for Spago messages mechanism
-		// search firstly if a default language is set on configuraiton file, else take browser from spago
-		if (permSess.getAttribute(Constants.USER_LANGUAGE) == null || permSess.getAttribute(Constants.USER_COUNTRY) == null) {
-			logger.debug("getting locale...");
-			Locale locale = GeneralUtilities.getStartingDefaultLocale();
-			if (locale == null) {
-				locale = MessageBuilder.getBrowserLocaleFromSpago();
-			} else {
-				logger.debug("Locale " + locale.getLanguage() + " - " + locale.getCountry() + " taken as default from configuraiton file");
-			}
-			if (locale != null) {
-				logger.debug("locale taken as default is " + locale.getLanguage() + " - " + locale.getCountry());
-				permSess.setAttribute(Constants.USER_LANGUAGE, locale.getLanguage());
-				permSess.setAttribute(Constants.USER_COUNTRY, locale.getCountry());
-				permSess.setAttribute(USER_SCRIPT, locale.getScript());
-			}
-		} else {
-			logger.debug("locale already found in session");
-		}
 	}
 
 	private HttpSession regenerateSession(HttpServletRequest request) {
