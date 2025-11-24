@@ -86,7 +86,7 @@ public class DashboardPivotExporter extends GenericDashboardWidgetExporter imple
                         new AreaReference(isImagePresent? new CellReference("Source_sheet!A4") : new CellReference("Source_sheet!A2"),
                                 new CellReference("Source_sheet!" + lastColLetter + (totalNumberOfRows + (isImagePresent ? 3 : 1))), //make the reference big enough for later data
                                 SpreadsheetVersion.EXCEL2007),
-                        new CellReference("A5"));
+                        new CellReference("A8"));
 
                 formatPivot(pivotTable);
 
@@ -112,6 +112,7 @@ public class DashboardPivotExporter extends GenericDashboardWidgetExporter imple
             JSONObject fields = widget.getJSONObject("fields");
             JSONArray columns = fields.getJSONArray("columns");
             JSONArray rows = fields.getJSONArray("rows");
+            JSONArray filters = fields.getJSONArray("filters");
             JSONArray data = fields.getJSONArray("data");
 
             int counter = 0;
@@ -126,10 +127,15 @@ public class DashboardPivotExporter extends GenericDashboardWidgetExporter imple
                 counter++;
             }
 
+            for (int i = 0; i < filters.length(); ++i) {
+                pivotTable.addReportFilter(counter);
+                counter++;
+            }
+
             for (int i = 0; i < data.length(); ++i) {
                 JSONObject datum = data.getJSONObject(i);
                 DataConsolidateFunction function = getAggregationFunction(datum.getString("aggregation").toUpperCase());
-                pivotTable.addColumnLabel(function, counter, datum.getString("alias"));
+                pivotTable.addColumnLabel(function, counter, datum.optString("alias", datum.optString("columnName")));
                 counter++;
             }
 
