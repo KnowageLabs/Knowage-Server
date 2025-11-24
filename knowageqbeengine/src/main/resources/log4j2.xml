@@ -1,34 +1,47 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Configuration status="info">
 	<Appenders>
-		        <RollingFile
-                                name="KNOWAGE_QBE_ENGINE"
-                                append="true"
-                                filePattern="${sys:catalina.base}/logs/$${ctx:tenant:-global}/knowageQbeEngine-$${ctx:tenant:-global}.%d{yyyy-MM-dd}.log"
-                                ignoreExceptions="true"
-                                createOnDemand="true">
-                        <PatternLayout>
-                                <Pattern>%d{ISO8601_OFFSET_DATE_TIME_HHCMM} [%u{RANDOM}] %5p [%t] [%c.%M:%L] [%X{correlationId}/%X{jSessionId}] [%X{environment}] [%X{tenant}]%n%message%n%xThrowable</Pattern>
-                        </PatternLayout>
-                        <Policies>
-                                <TimeBasedTriggeringPolicy />
-                        </Policies>
-                        <DirectWriteRolloverStrategy/>
-                </RollingFile>
-				<RollingFile
-                                name="KNOWAGE_QBE_ENGINE_AUDIT"
-                                append="true"
-                                filePattern="${sys:catalina.base}/logs/$${ctx:tenant:-global}/knowageQbeAudit-$${ctx:tenant:-global}.%d{yyyy-MM-dd}.log"
-                                ignoreExceptions="true"
-                                createOnDemand="true">
-                        <PatternLayout>
-                                <Pattern>%d{ISO8601_OFFSET_DATE_TIME_HHCMM} [%u{RANDOM}] %5p [%t] [%c.%M:%L] [%X{correlationId}/%X{jSessionId}] [%X{environment}] [%X{tenant}]%n%message%n%xThrowable</Pattern>
-                        </PatternLayout>
-                        <Policies>
-                                <TimeBasedTriggeringPolicy />
-                        </Policies>
-                        <DirectWriteRolloverStrategy/>
-                </RollingFile>
+		<Routing name="KNOWAGE_QBE_ENGINE">
+			<Routes pattern="$${ctx:tenant:-global}">
+				<Route>
+					<RollingFile
+						name="KNOWAGE_QBE_ENGINE_${route}"
+						append="true"
+						fileName="${sys:catalina.base}/logs/${route}/knowageQbeEngine-${route}.log"
+						filePattern="${sys:catalina.base}/logs/${route}/knowageQbeEngine-${route}.%d{yyyy-MM-dd}.log"
+						ignoreExceptions="true"
+						createOnDemand="true">
+						<PatternLayout>
+							<Pattern>%d{ISO8601_OFFSET_DATE_TIME_HHCMM} [%u{RANDOM}] %5p [%t] [%c.%M:%L] [%X{correlationId}/%X{jSessionId}] [%X{environment}] [%X{tenant}]%n%message%n%xThrowable</Pattern>
+						</PatternLayout>
+						<Policies>
+							<TimeBasedTriggeringPolicy />
+						</Policies>
+					</RollingFile>
+				</Route>
+			</Routes>
+		</Routing>
+
+		<Routing name="KNOWAGE_QBE_ENGINE_AUDIT">
+			<Routes pattern="$${ctx:tenant:-global}">
+				<Route>
+					<RollingFile
+						name="KNOWAGE_QBE_ENGINE_AUDIT_${route}"
+						append="true"
+						fileName="${sys:catalina.base}/logs/${route}/knowageQbeAudit-${route}.log"
+						filePattern="${sys:catalina.base}/logs/${route}/knowageQbeAudit-${route}.%d{yyyy-MM-dd}.log"
+						ignoreExceptions="true"
+						createOnDemand="true">
+						<PatternLayout>
+							<Pattern>%d{ISO8601_OFFSET_DATE_TIME_HHCMM} [%u{RANDOM}] %5p [%t] [%c.%M:%L] [%X{correlationId}/%X{jSessionId}] [%X{environment}] [%X{tenant}]%n%message%n%xThrowable</Pattern>
+						</PatternLayout>
+						<Policies>
+							<TimeBasedTriggeringPolicy />
+						</Policies>
+					</RollingFile>
+				</Route>
+			</Routes>
+		</Routing>
 
 	</Appenders>
 	<Loggers>
