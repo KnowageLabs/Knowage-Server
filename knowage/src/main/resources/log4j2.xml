@@ -7,7 +7,7 @@
                     <RollingFile
                             name="KNOWAGE_DATASET_AUDIT_${ctx:tenant:-global}"
                             append="true"
-                            fileName="${sys:catalina.base}/logs/${ctx:tenant:-global}/knowageDatasetAudit.log"
+                            fileName="${sys:catalina.base}/logs/${ctx:tenant:-global}/knowageDatasetAudit.${date:yyyy-MM-dd}.log"
                             filePattern="${sys:catalina.base}/logs/${ctx:tenant:-global}/knowageDatasetAudit.%d{yyyy-MM-dd}.log"
                             ignoreExceptions="true"
                             createOnDemand="true">
@@ -27,7 +27,7 @@
                     <RollingFile
                             name="KNOWAGE_HIERARCHIES_${ctx:tenant:-global}"
                             append="true"
-                            fileName="${sys:catalina.base}/logs/${ctx:tenant:-global}/knowageHiearchies.log"
+                            fileName="${sys:catalina.base}/logs/${ctx:tenant:-global}/knowageHiearchies.${date:yyyy-MM-dd}.log"
                             filePattern="${sys:catalina.base}/logs/${ctx:tenant:-global}/knowageHiearchies.%d{yyyy-MM-dd}.log"
                             ignoreExceptions="true"
                             createOnDemand="true">
@@ -47,7 +47,7 @@
                     <RollingFile
                             name="KNOWAGE_CORE_${ctx:tenant:-global}"
                             append="true"
-                            fileName="${sys:catalina.base}/logs/${ctx:tenant:-global}/knowage.log"
+                            fileName="${sys:catalina.base}/logs/${ctx:tenant:-global}/knowage.${date:yyyy-MM-dd}.log"
                             filePattern="${sys:catalina.base}/logs/${ctx:tenant:-global}/knowage.%d{yyyy-MM-dd}.log"
                             ignoreExceptions="true"
                             createOnDemand="true">
@@ -67,7 +67,7 @@
                     <RollingFile
                             name="KNOWAGE_RESOURCE_EXPORT_FOLDER_CLEANING_MANAGER_${ctx:tenant:-global}"
                             append="true"
-                            fileName="${sys:catalina.base}/logs/${ctx:tenant:-global}/knowageResourceExportFolderCleaningManager.log"
+                            fileName="${sys:catalina.base}/logs/${ctx:tenant:-global}/knowageResourceExportFolderCleaningManager.${date:yyyy-MM-dd}.log"
                             filePattern="${sys:catalina.base}/logs/${ctx:tenant:-global}/knowageResourceExportFolderCleaningManager.%d{yyyy-MM-dd}.log"
                             ignoreExceptions="true"
                             createOnDemand="true">
@@ -87,7 +87,7 @@
                     <RollingFile
                             name="KNOWAGE_SERVER_MANAGER_${ctx:tenant:-global}"
                             append="true"
-                            fileName="${sys:catalina.base}/logs/${ctx:tenant:-global}/knowageServerManager.log"
+                            fileName="${sys:catalina.base}/logs/${ctx:tenant:-global}/knowageServerManager.${date:yyyy-MM-dd}.log"
                             filePattern="${sys:catalina.base}/logs/${ctx:tenant:-global}/knowageServerManager.%d{yyyy-MM-dd}.log"
                             ignoreExceptions="true"
                             createOnDemand="true">
@@ -107,7 +107,7 @@
                     <RollingFile
                             name="KNOWAGE_QUARTZ_${ctx:tenant:-global}"
                             append="true"
-                            fileName="${sys:catalina.base}/logs/${ctx:tenant:-global}/knowageQuartz.log"
+                            fileName="${sys:catalina.base}/logs/${ctx:tenant:-global}/knowageQuartz.${date:yyyy-MM-dd}.log"
                             filePattern="${sys:catalina.base}/logs/${ctx:tenant:-global}/knowageQuartz.%d{yyyy-MM-dd}.log"
                             ignoreExceptions="true"
                             createOnDemand="true">
@@ -127,7 +127,7 @@
                     <RollingFile
                             name="KNOWAGE_OPERATOR_TRACE_${ctx:tenant:-global}"
                             append="true"
-                            fileName="${sys:catalina.base}/logs/${ctx:tenant:-global}/knowage_OperatorTrace.log"
+                            fileName="${sys:catalina.base}/logs/${ctx:tenant:-global}/knowage_OperatorTrace.${date:yyyy-MM-dd}.log"
                             filePattern="${sys:catalina.base}/logs/${ctx:tenant:-global}/knowage_OperatorTrace.%d{yyyy-MM-dd}.log"
                             ignoreExceptions="true"
                             createOnDemand="true">

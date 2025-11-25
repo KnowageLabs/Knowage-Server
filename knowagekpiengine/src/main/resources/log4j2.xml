@@ -7,7 +7,7 @@
 					<RollingFile
 						name="KNOWAGE_KPI_ENGINE_${route}"
 						append="true"
-						fileName="${sys:catalina.base}/logs/${route}/knowageKpiEngine-${route}.log"
+						fileName="${sys:catalina.base}/logs/${route}/knowageKpiEngine-${route}.${date:yyyy-MM-dd}.log"
 						filePattern="${sys:catalina.base}/logs/${route}/knowageKpiEngine-${route}.%d{yyyy-MM-dd}.log"
 						ignoreExceptions="true"
 						createOnDemand="true">

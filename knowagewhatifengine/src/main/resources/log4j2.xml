@@ -13,7 +13,7 @@
 					<RollingFile
 						name="KNOWAGE_WHAT_IF_ENGINE_${route}"
 						append="true"
-						fileName="${sys:catalina.base}/logs/${route}/knowageWhatIfEngine-${route}.log"
+						fileName="${sys:catalina.base}/logs/${route}/knowageWhatIfEngine-${route}.${date:yyyy-MM-dd}.log"
 						filePattern="${sys:catalina.base}/logs/${route}/knowageWhatIfEngine-${route}.%d{yyyy-MM-dd}.log"
 						ignoreExceptions="true"
 						createOnDemand="true">
@@ -34,7 +34,7 @@
 					<RollingFile
 						name="KNOWAGE_WHAT_IF_ENGINE_STACK_AUDIT_${route}"
 						append="true"
-						fileName="${sys:catalina.base}/logs/${route}/knowageWhatIfEngineStackAudit-${route}.log"
+						fileName="${sys:catalina.base}/logs/${route}/knowageWhatIfEngineStackAudit-${route}.${date:yyyy-MM-dd}.log"
 						filePattern="${sys:catalina.base}/logs/${route}/knowageWhatIfEngineStackAudit-${route}.%d{yyyy-MM-dd}.log"
 						ignoreExceptions="true"
 						createOnDemand="true">
