@@ -107,7 +107,7 @@ public class DashboardExcelExporter extends DashboardExporter {
             // avoid sonar security hotspot issue
             String cockpitExportExternalProcessName = SingletonConfig.getInstance()
                     .getConfigValue("KNOWAGE.DASHBOARD.EXTERNAL_PROCESS_NAME");
-            LOGGER.info("CONFIG label=\"KNOWAGE.DASHBOARD.EXTERNAL_PROCESS_NAME\": " + cockpitExportExternalProcessName);
+            LOGGER.info("CONFIG label=\"KNOWAGE.DASHBOARD.EXTERNAL_PROCESS_NAME\": {}", cockpitExportExternalProcessName);
 
             String stringifiedRequestUrl = url.toString();
             ProcessBuilder processBuilder = new ProcessBuilder(cockpitExportExternalProcessName, exportScriptFullPath.toString(),
@@ -208,8 +208,6 @@ public class DashboardExcelExporter extends DashboardExporter {
                 exportedSheets++;
             }
 
-            transformDatasetDriversForExcelSheet(body, driversFromBody, parameters);
-
             if (driversFromBody != null && driversFromBody.length() > 0) {
                 Sheet driversSheet = createUniqueSafeSheetForSelections(wb, "Filters");
                 fillDashboardDriversSheetWithData(driversFromBody, driversSheet);
@@ -264,8 +262,6 @@ public class DashboardExcelExporter extends DashboardExporter {
                 Sheet selectionsSheet = createUniqueSafeSheetForSelections(wb, "Active Selections");
                 fillDashboardSelectionsSheetWithData(selections, selectionsSheet);
             }
-
-            transformDatasetDriversForExcelSheet(body, driversFromBody, parameters);
 
             if (driversFromBody != null && driversFromBody.length() > 0) {
                 Sheet driversSheet = createUniqueSafeSheetForSelections(wb, "Filters");
@@ -598,7 +594,7 @@ public class DashboardExcelExporter extends DashboardExporter {
             Row header = createHeader(sheet, startRow, rowHeight, rowspan, startCol, colWidth, colspan, namespan, dataspan, widgetName, groupsAndColumnsMap, columnsOrdered);
             for (int i = 0; i < columnsOrdered.length(); i++) {
                 JSONObject column = columnsOrdered.getJSONObject(i);
-                String columnName = "";
+                String columnName;
                 try {
                     columnName = column.getString("alias");
                 } catch (JSONException e) {
@@ -686,9 +682,8 @@ public class DashboardExcelExporter extends DashboardExporter {
             String defaultRowBackgroundColor = getDefaultRowBackgroundColor(alternatedRows, rowIsEven);
 
             boolean styleAlreadyAppliedToPreviousCells = false;
-            String styleKeyToApplyToTheEntireRow = null;
             List<Boolean> styleCanBeOverriddenByWholeRowStyle = new ArrayList<>();
-            cellStyle = buildCols(wb, sheet, settings, rows, columnsOrdered, columnStylesMap, cellStyle, columnsCellStyles, numberOfSummaryRows, summaryRowsLabels, row, rowObject, r, styleCanBeOverriddenByWholeRowStyle, rawCurrentNumberType, styleAlreadyAppliedToPreviousCells, defaultRowBackgroundColor, styleKeyToApplyToTheEntireRow);
+            cellStyle = buildCols(wb, sheet, settings, rows, columnsOrdered, columnStylesMap, cellStyle, columnsCellStyles, numberOfSummaryRows, summaryRowsLabels, row, rowObject, r, styleCanBeOverriddenByWholeRowStyle, rawCurrentNumberType, styleAlreadyAppliedToPreviousCells, defaultRowBackgroundColor, null);
         }
     }
 
