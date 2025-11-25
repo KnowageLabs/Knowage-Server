@@ -7,7 +7,7 @@
 					<RollingFile
 						name="KNOWAGE_QBE_ENGINE_${route}"
 						append="true"
-						fileName="${sys:catalina.base}/logs/${route}/knowageQbeEngine-${route}.log"
+						fileName="${sys:catalina.base}/logs/${route}/knowageQbeEngine-${route}.${date:yyyy-MM-dd}.log"
 						filePattern="${sys:catalina.base}/logs/${route}/knowageQbeEngine-${route}.%d{yyyy-MM-dd}.log"
 						ignoreExceptions="true"
 						createOnDemand="true">
@@ -28,7 +28,7 @@
 					<RollingFile
 						name="KNOWAGE_QBE_ENGINE_AUDIT_${route}"
 						append="true"
-						fileName="${sys:catalina.base}/logs/${route}/knowageQbeAudit-${route}.log"
+						fileName="${sys:catalina.base}/logs/${route}/knowageQbeAudit-${route}.${date:yyyy-MM-dd}.log"
 						filePattern="${sys:catalina.base}/logs/${route}/knowageQbeAudit-${route}.%d{yyyy-MM-dd}.log"
 						ignoreExceptions="true"
 						createOnDemand="true">

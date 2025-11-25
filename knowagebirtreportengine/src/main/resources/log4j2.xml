@@ -7,7 +7,7 @@
 					<RollingFile
 						name="KNOWAGE_BIRT_REPORT_ENGINE_${route}"
 						append="true"
-						fileName="${sys:catalina.base}/logs/${route}/knowageBirtReportEngine-${route}.log"
+						fileName="${sys:catalina.base}/logs/${route}/knowageBirtReportEngine-${route}.${date:yyyy-MM-dd}.log"
 						filePattern="${sys:catalina.base}/logs/${route}/knowageBirtReportEngine-${route}.%d{yyyy-MM-dd}.log"
 						ignoreExceptions="true"
 						createOnDemand="true">

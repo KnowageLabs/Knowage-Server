@@ -12,8 +12,8 @@
 					<RollingFile
 						name="KNOWAGE_VUE_${route}"
 						append="true"
-						fileName="${sys:catalina.base}/logs/${route}/knowageVue-${route}-%i.log"
-						filePattern="${sys:catalina.base}/logs/${route}/knowageVue-${route}-%i.log"
+						fileName="${sys:catalina.base}/logs/${route}/knowageVue-${route}.${date:yyyy-MM-dd}-%i.log"
+						filePattern="${sys:catalina.base}/logs/${route}/knowageVue-${route}.${date:yyyy-MM-dd}-%i.log"
 						ignoreExceptions="false"
 						createOnDemand="true">
 						<PatternLayout>
