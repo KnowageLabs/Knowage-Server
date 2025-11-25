@@ -157,9 +157,6 @@ public class Router {
 			if (!response.isCommitted()) {
 				RequestDispatcher requestDispatcher = servletContext.getRequestDispatcher(publishingURL);
 				requestDispatcher.forward(request, response);
-			} else {
-				TracerSingleton.log(Constants.NOME_MODULO, TracerSingleton.CRITICAL,
-						"Router::route: impossible to go forward, the risk has already been committed. Redirection alternatively.");
 			}
 
         } // if (_isForward)
