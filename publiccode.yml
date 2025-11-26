@@ -127,7 +127,7 @@ it:
     cie: false
     pagopa: false
     spid: false
-landingURL: "https://www.knowage-suite.com/site/home/"
+landingURL: "https://www.knowage-suite.com/site/"
 legal:
   license: AGPL-3.0-only
   mainCopyrightOwner: Engineering Ingegneria Informatica S.p.A.
