@@ -6,6 +6,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 
 import it.eng.spagobi.services.security.SpagoBIUserProfile;
+import org.apache.logging.log4j.ThreadContext;
 
 public class KnowageHttpServletRequestWrapper extends HttpServletRequestWrapper {
 
@@ -15,6 +16,7 @@ public class KnowageHttpServletRequestWrapper extends HttpServletRequestWrapper 
 		super(request);
 
 		this.principal = new KnowageUserPrincipal(userProfile);
+        ThreadContext.put("tenant", userProfile.getOrganization());
 	}
 
 	@Override

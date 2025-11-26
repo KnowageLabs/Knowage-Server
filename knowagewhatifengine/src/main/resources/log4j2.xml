@@ -11,10 +11,10 @@
 			<Routes pattern="$${ctx:tenant:-global}">
 				<Route>
 					<RollingFile
-						name="KNOWAGE_WHAT_IF_ENGINE_${route}"
+						name="KNOWAGE_WHAT_IF_ENGINE_$${ctx:tenant:-global}"
 						append="true"
-						fileName="${sys:catalina.base}/logs/${route}/knowageWhatIfEngine-${route}.${date:yyyy-MM-dd}.log"
-						filePattern="${sys:catalina.base}/logs/${route}/knowageWhatIfEngine-${route}.%d{yyyy-MM-dd}.log"
+						fileName="${sys:catalina.base}/logs/${ctx:tenant:-global}/knowageWhatIfEngine.${date:yyyy-MM-dd}.log"
+						filePattern="${sys:catalina.base}/logs/${ctx:tenant:-global}/knowageWhatIfEngine.%d{yyyy-MM-dd}.log"
 						ignoreExceptions="true"
 						createOnDemand="true">
 						<PatternLayout>
@@ -32,10 +32,10 @@
 			<Routes pattern="$${ctx:tenant:-global}">
 				<Route>
 					<RollingFile
-						name="KNOWAGE_WHAT_IF_ENGINE_STACK_AUDIT_${route}"
+						name="KNOWAGE_WHAT_IF_ENGINE_STACK_AUDIT_$${ctx:tenant:-global}"
 						append="true"
-						fileName="${sys:catalina.base}/logs/${route}/knowageWhatIfEngineStackAudit-${route}.${date:yyyy-MM-dd}.log"
-						filePattern="${sys:catalina.base}/logs/${route}/knowageWhatIfEngineStackAudit-${route}.%d{yyyy-MM-dd}.log"
+						fileName="${sys:catalina.base}/logs/$${ctx:tenant:-global}/knowageWhatIfEngineStackAudit-$${date:yyyy-MM-dd}.log"
+						filePattern="${sys:catalina.base}/logs/$${ctx:tenant:-global}/knowageWhatIfEngineStackAudit-$${ctx:tenant:-global}.%d{yyyy-MM-dd}.log"
 						ignoreExceptions="true"
 						createOnDemand="true">
 						<PatternLayout>

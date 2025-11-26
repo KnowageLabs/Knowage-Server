@@ -7,11 +7,7 @@ import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.servlet.Filter;
-import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
+import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -35,7 +31,11 @@ public class LoggerSetupFilter implements Filter {
 
 	private static final String THREAD_CONTEXT_KEY_CORRELATION_ID = "correlationId";
 	private static final String THREAD_CONTEXT_KEY_ENVIRONMENT = "environment";
-    private static final String THREAD_CONTEXT_KEY_TENANT = "tenant";
+
+    @Override
+    public void init(FilterConfig filterConfig) throws ServletException {
+
+    }
 
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
@@ -60,6 +60,7 @@ public class LoggerSetupFilter implements Filter {
 
 	private void preDoFilterForTenant(HttpServletRequest httpRequest) {
 		String header = httpRequest.getHeader(HTTP_HEADER_X_FORWARDED_HOST);
+        ThreadContext.put("tenant", "pippo");
 		if (header != null) {
 			if (header.contains(",")) {
 				int iend = header.indexOf(".");
@@ -75,7 +76,6 @@ public class LoggerSetupFilter implements Filter {
 			}
 
 			ThreadContext.put(THREAD_CONTEXT_KEY_ENVIRONMENT, header);
-            ThreadContext.put(THREAD_CONTEXT_KEY_TENANT, header);
 		}
 	}
 
@@ -115,7 +115,6 @@ public class LoggerSetupFilter implements Filter {
 
 	private void postDoFilterForTenant() {
 		ThreadContext.remove(THREAD_CONTEXT_KEY_ENVIRONMENT);
-        ThreadContext.remove(THREAD_CONTEXT_KEY_TENANT);
 	}
 
 	private void postDoFilterForCorrelationId() {

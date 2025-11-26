@@ -5,10 +5,10 @@
 			<Routes pattern="$${ctx:tenant:-global}">
 				<Route>
 					<RollingFile
-						name="KNOWAGE_META_${route}"
+						name="KNOWAGE_META_$${ctx:tenant:-global}"
 						append="true"
-						fileName="${sys:catalina.base}/logs/${route}/knowageMeta-${route}.${date:yyyy-MM-dd}.log"
-						filePattern="${sys:catalina.base}/logs/${route}/knowageMeta-${route}.%d{yyyy-MM-dd}.log"
+						fileName="${sys:catalina.base}/logs/${ctx:tenant:-global}/knowageMeta.${date:yyyy-MM-dd}.log"
+						filePattern="${sys:catalina.base}/logs/${ctx:tenant:-global}/knowageMeta.%d{yyyy-MM-dd}.log"
 						ignoreExceptions="true"
 						createOnDemand="true">
 						<PatternLayout>
