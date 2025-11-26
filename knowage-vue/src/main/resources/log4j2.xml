@@ -10,10 +10,10 @@
 			<Routes pattern="$${ctx:tenant:-global}">
 				<Route>
 					<RollingFile
-						name="KNOWAGE_VUE_${route}"
+						name="KNOWAGE_VUE_$${ctx:tenant:-global}"
 						append="true"
-						fileName="${sys:catalina.base}/logs/${route}/knowageVue-${route}.${date:yyyy-MM-dd}-%i.log"
-						filePattern="${sys:catalina.base}/logs/${route}/knowageVue-${route}.${date:yyyy-MM-dd}-%i.log"
+						fileName="${sys:catalina.base}/logs/${ctx:tenant:-global}/knowageVue.${date:yyyy-MM-dd}.log"
+						filePattern="${sys:catalina.base}/logs/${ctx:tenant:-global}/knowageVue.%d{yyyy-MM-dd}-%i.log"
 						ignoreExceptions="false"
 						createOnDemand="true">
 						<PatternLayout>

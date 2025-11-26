@@ -7,9 +7,10 @@
 			</PatternLayout>
 		</Console>
 		<RollingFile
-				name="KNOWAGE_TALEND_ENGINE"
+				name="KNOWAGE_TALEND_ENGINE_$${ctx:tenant:-global}"
                 append="true"
-				filePattern="${sys:catalina.base}/logs/$${ctx:tenant:-global}/knowageTalendEngine-$${ctx:tenant:-global}-%i.log"
+                fileName="${sys:catalina.base}/logs/${ctx:tenant:-global}/knowageTalendEngine.${date:yyyy-MM-dd}.log"
+                filePattern="${sys:catalina.base}/logs/${ctx:tenant:-global}/knowageTalendEngine.%d{yyyy-MM-dd}.log"
 				ignoreExceptions="false"
 				createOnDemand="true">
 			<PatternLayout>

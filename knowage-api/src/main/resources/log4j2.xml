@@ -5,10 +5,10 @@
 			<Routes pattern="$${ctx:tenant:-global}">
 				<Route>
 					<RollingFile
-						name="KNOWAGE_API_${route}"
+						name="KNOWAGE_API_${ctx:tenant:-global}"
 						append="true"
-						fileName="${sys:catalina.base}/logs/${route}/knowageApi-${route}.${date:yyyy-MM-dd}.log"
-						filePattern="${sys:catalina.base}/logs/${route}/knowageApi-${route}.%d{yyyy-MM-dd}.log"
+						fileName="${sys:catalina.base}/logs/${ctx:tenant:-global}/knowageApi.${date:yyyy-MM-dd}.log"
+						filePattern="${sys:catalina.base}/logs/${ctx:tenant:-global}/knowageApi.%d{yyyy-MM-dd}.log"
 						ignoreExceptions="true"
 						createOnDemand="true">
 						<PatternLayout>
