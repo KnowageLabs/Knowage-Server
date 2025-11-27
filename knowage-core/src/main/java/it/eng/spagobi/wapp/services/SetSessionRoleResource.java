@@ -1,59 +1,49 @@
-/*
- * Knowage, Open Source Business Intelligence suite
- * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- *
- * Knowage is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * Knowage is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
 package it.eng.spagobi.wapp.services;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 import org.apache.log4j.LogMF;
 import org.apache.log4j.Logger;
 
 import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.api.AbstractSpagoBIResource;
 import it.eng.spagobi.commons.bo.SessionUserProfile;
 import it.eng.spagobi.commons.bo.SessionUserProfileBuilder;
 import it.eng.spagobi.commons.bo.UserProfile;
-import it.eng.spagobi.commons.services.AbstractSpagoBIAction;
 import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.commons.utilities.UserUtilities;
 import it.eng.spagobi.services.security.bo.SpagoBIUserProfile;
-import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
-import it.eng.spagobi.utilities.service.JSONAcknowledge;
 
-public class SetSessionRoleAction extends AbstractSpagoBIAction {
+@Path("/setsessionrole")
+public class SetSessionRoleResource extends AbstractSpagoBIResource {
 
-	private static Logger logger = Logger.getLogger(SetSessionRoleAction.class);
-
-	UserProfile userProfile = null;
-
-	public static final String SERVICE_NAME = "SET_SESSION_ROLE_ACTION";
-	// REQUEST PARAMETERS
+	private static Logger logger = Logger.getLogger(SetSessionRoleResource.class);
+	public static final String SERVICE_NAME = "SET_SESSION_ROLE";
 	public static final String SELECTED_ROLE = "SELECTED_ROLE";
 
-	@Override
-	public void doService() {
+	@POST
+	@Path("/")
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response setSessionRole(@Context HttpServletRequest request) {
+
 		logger.debug("IN on service");
 		try {
 
-			IEngUserProfile profile = this.getUserProfile();
-
-			String sessionRole = this.getAttributeAsString(SELECTED_ROLE);
+			IEngUserProfile profile = getUserProfile();
+			String sessionRole = request.getParameter(SELECTED_ROLE);
 			logger.debug("Selected role " + sessionRole);
 
 			// check if selected role is part of the user ones
@@ -68,6 +58,7 @@ public class SetSessionRoleAction extends AbstractSpagoBIAction {
 			}
 
 			if (sessionRole != null && !roles.contains(sessionRole)) {
+				UserProfile userProfile = (UserProfile) profile;
 				logger.error("Security alert. Role not among the user ones");
 				throw new SpagoBIServiceException(SERVICE_NAME, "Role selected is not permitted for user " + userProfile.getUserId());
 			}
@@ -78,7 +69,7 @@ public class SetSessionRoleAction extends AbstractSpagoBIAction {
 				logger.debug("Creating an instance of SessionUserProfile...");
 				profile = SessionUserProfileBuilder.getDefaultUserProfile((UserProfile) profile);
 				logger.debug("Storing the SessionUserProfile in session in place of the previous profile object");
-				storeProfileInSession(profile);
+				storeProfileInSession(profile, request);
 			}
 			// at this moment, the profile is and instance of SessionUserProfile
 			String previousSessionRole = ((SessionUserProfile) profile).getSessionRole();
@@ -106,24 +97,25 @@ public class SetSessionRoleAction extends AbstractSpagoBIAction {
 			}
 			logger.debug("Filtered functionalities for selected role " + sessionRole);
 
-			try {
-				writeBackToClient(new JSONAcknowledge());
-			} catch (IOException e) {
-				String message = "Impossible to write back the responce to the client";
-				throw new SpagoBIEngineServiceException(getActionName(), message, e);
-			}
+			return Response.ok().build();
 
+		} catch (SpagoBIServiceException sbe) {
+			// Errori di validazione/servizio -> 400
+			logger.error("Service error in " + SERVICE_NAME, sbe);
+			return Response.status(Response.Status.BAD_REQUEST).entity(Collections.singletonMap("error", sbe.getMessage())).build();
 		} catch (Exception e) {
-			throw new SpagoBIServiceException(SERVICE_NAME, "Exception occurred while retrieving metadata", e);
+			// Errori generici -> 500
+			logger.error("Exception occurred while retrieving metadata", e);
+			return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+					.entity(Collections.singletonMap("error", e.getMessage())).build();
 		} finally {
 			logger.debug("OUT");
 		}
-
 	}
 
-	private void storeProfileInSession(IEngUserProfile userProfile) {
+	private void storeProfileInSession(IEngUserProfile userProfile, HttpServletRequest request) {
 		logger.debug("IN");
-		getHttpRequest().getSession().setAttribute(IEngUserProfile.ENG_USER_PROFILE, userProfile);
+		request.getSession().setAttribute(IEngUserProfile.ENG_USER_PROFILE, userProfile);
 		logger.debug("OUT");
 	}
 
@@ -148,4 +140,5 @@ public class SetSessionRoleAction extends AbstractSpagoBIAction {
 		}
 		return toReturn;
 	}
+
 }

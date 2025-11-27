@@ -15,9 +15,6 @@
  <ACTION name="CHANGE_THEME" class="it.eng.spagobi.wapp.services.ChangeTheme" scope="REQUEST">
  	<CONFIG/>
  </ACTION> 
- <ACTION name="SET_SESSION_ROLE_ACTION" class="it.eng.spagobi.wapp.services.SetSessionRoleAction" scope="REQUEST">
- 	<CONFIG/>
- </ACTION> 
  <ACTION name="LOGOUT_ACTION" class="it.eng.spagobi.commons.services.LogoutAction" scope="REQUEST">
  	<CONFIG/>
  </ACTION> 
