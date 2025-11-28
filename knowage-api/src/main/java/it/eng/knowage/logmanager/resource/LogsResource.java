@@ -83,12 +83,7 @@ public class LogsResource {
         SpagoBIUserProfile profile = businessContext.getUserProfile();
         try {
             LOGGER.debug("getLogs raw folder: " + folder);
-            if (folder == null) {
-                folder = "";
-            } else {
-                folder = URLDecoder.decode(folder, StandardCharsets.UTF_8.name());
-                folder = folder.replaceAll("^/+", "").replaceAll("/+$", "");
-            }
+            folder = getFileName(folder);
 
             List<LogFileDTO> result = logManagerAPIservice.getListOfLogs(folder, profile);
 
@@ -121,19 +116,9 @@ public class LogsResource {
         try {
             LOGGER.debug("viewLog raw folder: " + folder + ", raw log name: " + fileName);
 
-            if (folder == null){
-                folder = "";
-            } else {
-                folder = URLDecoder.decode(folder, StandardCharsets.UTF_8.name());
-                folder = folder.replaceAll("^/+", "").replaceAll("/+$", "");
-            }
+            folder = getFileName(folder);
 
-            if (fileName == null) {
-                fileName = "";
-            } else {
-                fileName = URLDecoder.decode(fileName, StandardCharsets.UTF_8.name());
-                fileName = fileName.replaceAll("^/+", "").replaceAll("/+$", "");
-            }
+            fileName = getFileName(fileName);
 
             combined = folder.isEmpty() ? fileName : folder + "/" + fileName;
             return logManagerAPIservice.getLogContent(combined, profile);
@@ -143,11 +128,25 @@ public class LogsResource {
         }
     }
 
+    private String getFileName(String fileName) {
+        if (fileName == null) {
+            fileName = "";
+        } else {
+            fileName = URLDecoder.decode(fileName, StandardCharsets.UTF_8);
+            int start = 0;
+            int end = fileName.length();
+            while (start < end && fileName.charAt(start) == '/') start++;
+            while (end > start && fileName.charAt(end - 1) == '/') end--;
+            fileName = fileName.substring(start, end);
+        }
+        return fileName;
+    }
+
     // List files in the root folder (workDir).
     @GET
     @Path("/root")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<LogFileDTO> getRootLogs() throws KnowageBusinessException {
+    public List<LogFileDTO> getRootLogs() {
         SpagoBIUserProfile profile = businessContext.getUserProfile();
         try {
             return logManagerAPIservice.getListOfLogs("", profile);
@@ -186,7 +185,7 @@ public class LogsResource {
         }
 
         SpagoBIUserProfile profile = businessContext.getUserProfile();
-        java.nio.file.Path zipPath = null;
+        java.nio.file.Path zipPath;
         try {
             // Service returns a path to a temp zip, service must ensure log files are permitted.
             zipPath = logManagerAPIservice.getDownloadLogFilePath(dto.getSelectedLogsNames(), profile);

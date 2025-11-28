@@ -11,6 +11,7 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import lombok.Getter;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.SystemUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.poi.ss.usermodel.*;
@@ -31,6 +32,9 @@ import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.attribute.FileAttribute;
+import java.nio.file.attribute.PosixFilePermission;
+import java.nio.file.attribute.PosixFilePermissions;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -80,8 +84,19 @@ public class DashboardExcelExporter extends DashboardExporter {
 
     public byte[] getScheduledBinaryData(String documentLabel) throws IOException, InterruptedException {
         try {
-            final Path outputDir = Files.createTempDirectory("knowage-xls-exporter-");
-
+            Path outputDir;
+            if (SystemUtils.IS_OS_UNIX) {
+                FileAttribute<Set<PosixFilePermission>> attr =
+                        PosixFilePermissions.asFileAttribute(PosixFilePermissions.fromString("rwx------"));
+                outputDir = Files.createTempDirectory("knowage-xls-exporter-", attr);
+            } else {
+                File dir = Files.createTempDirectory("knowage-xls-exporter-").toFile();
+                // try to restrict to owner where supported; second param ensures owner-only on platforms honoring it
+                dir.setReadable(true, true);
+                dir.setWritable(true, true);
+                dir.setExecutable(true, true);
+                outputDir = dir.toPath();
+            }
             String encodedUserId = Base64.encodeBase64String(getUserUniqueIdentifier().getBytes(UTF_8));
             // Script
             String cockpitExportScriptPath = SingletonConfig.getInstance()
