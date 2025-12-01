@@ -31,7 +31,7 @@
 	ResponseContainer aResponseContainer = null;
 	SessionContainer aSessionContainer = null;
 	IUrlBuilder urlBuilder = null;
-	IMessageBuilder msgBuilder = null;
+	MessageBuilder msgBuilder = new MessageBuilder();
 		
 	
 	aRequestContainer = RequestContainer.getRequestContainer();
@@ -50,9 +50,6 @@
 	
 	// create url builder 
 	urlBuilder = UrlBuilderFactory.getUrlBuilder("WEB");
-	
-	// create message builder
-	msgBuilder = MessageBuilderFactory.getMessageBuilder();
 	
 	//get the current theme name
 	String currTheme = ThemesManager.getCurrentTheme(aRequestContainer);
@@ -81,7 +78,7 @@
 
 		locale = tmpLocale.build();
 	} else {
-		locale = MessageBuilder.getBrowserLocaleFromSpago();
+		locale = msgBuilder.getLocale(request);
 		// updates locale information on permanent container for Spago messages mechanism
 		if (locale != null) {
 			permanentSession.setAttribute(Constants.USER_LANGUAGE, locale.getLanguage());

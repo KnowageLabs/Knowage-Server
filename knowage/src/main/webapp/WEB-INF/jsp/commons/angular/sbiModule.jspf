@@ -45,7 +45,6 @@ sbiM.factory('sbiModule_config',function(){
     	 
     	<%--     	currTheme: '<%= currTheme %>', --%>
 		<%-- 	supportedLocales: <%= GeneralUtilities.getSupportedLocalesAsJSONArray().toString() %>, --%>
- 		dateFormat: '<%= GeneralUtilities.getLocaleDateFormat(permanentSession) %>',  // the date format localized according to user language and country 
  		clientServerDateFormat: '<%= GeneralUtilities.getServerDateFormatExtJs() %>',  // the date format to be used when communicating with server
 		clientServerTimestampFormat: '<%= GeneralUtilities.getServerTimestampFormatExtJs() %>',   // the timestamp format to be used when communicating with server
 		engineUrls:<%= aServiceResponse.getAttribute("engineUrls") %>,
@@ -173,7 +172,7 @@ sbiM.factory('sbiModule_user',function(){
 	user.userUniqueIdentifier = '<%= StringEscapeUtils.escapeJavaScript(userUniqueIdentifier) %>';
 	user.userId = '<%= StringEscapeUtils.escapeJavaScript(userId) %>';
 	user.userName = '<%= StringEscapeUtils.escapeJavaScript(userName) %>'; 
-	user.ismodeweb = <%= sbiMode.equals("WEB")? "true" : "false"%>;
+	user.ismodeweb = "true";
 	user.isSuperAdmin = '<%= userProfile != null && ((UserProfile)userProfile).getIsSuperadmin() %>';
 	user.isTechnicalUser = '<%= userProfile != null && UserUtilities.isTechnicalUser((UserProfile)userProfile)%>'
 	user.isTesterUser = '<%= userProfile != null && UserUtilities.isTester((UserProfile)userProfile)%>'
