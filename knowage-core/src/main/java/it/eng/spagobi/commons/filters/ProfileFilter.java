@@ -46,8 +46,6 @@ import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.bo.SessionUserProfileBuilder;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.bo.UserProfileUtility;
-import it.eng.spagobi.commons.services.LoginActionByToken;
-import it.eng.spagobi.commons.services.LoginActionWeb;
 import it.eng.spagobi.commons.services.LoginModule;
 import it.eng.spagobi.commons.utilities.ChannelUtilities;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
@@ -188,8 +186,6 @@ public class ProfileFilter implements Filter {
 				} else {
 					// @formatter:off
 					if (!requestIsForHomePage(httpRequest) &&
-							!requestIsForLoginByToken(httpRequest) &&
-							!requestIsForLoginByJavaScriptSDK(httpRequest) &&
 							!requestIsForSessionExpired(httpRequest))
 					// @formatter:on
 					{
@@ -221,18 +217,6 @@ public class ProfileFilter implements Filter {
 		// returns true in case request has PAGE=LoginPage parameter, false otherwise
 		return request.getParameter(Constants.PAGE) != null
 				&& request.getParameter(Constants.PAGE).equalsIgnoreCase(LoginModule.PAGE_NAME);
-	}
-
-	private boolean requestIsForLoginByToken(HttpServletRequest request) {
-		// returns true in case request has ACTION_NAME=LOGIN_ACTION_BY_TOKEN parameter, false otherwise
-		return request.getParameter(Constants.ACTION_NAME) != null
-				&& request.getParameter(Constants.ACTION_NAME).equalsIgnoreCase(LoginActionByToken.SERVICE_NAME);
-	}
-
-	private boolean requestIsForLoginByJavaScriptSDK(HttpServletRequest request) {
-		// returns true in case request has ACTION_NAME=LOGIN_ACTION_WEB parameter, false otherwise
-		return request.getParameter(Constants.ACTION_NAME) != null
-				&& request.getParameter(Constants.ACTION_NAME).equalsIgnoreCase(LoginActionWeb.SERVICE_NAME);
 	}
 
 	private boolean requestIsForSessionExpired(HttpServletRequest request) {
