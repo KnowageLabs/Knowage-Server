@@ -5,7 +5,7 @@
 	
 	<groupId>it.eng.knowage</groupId>
 	<artifactId>knowage-ce-parent</artifactId>
-	<version>9.0.1</version>
+	<version>9.0.2-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>knowage-ce-parent</name>
 	
