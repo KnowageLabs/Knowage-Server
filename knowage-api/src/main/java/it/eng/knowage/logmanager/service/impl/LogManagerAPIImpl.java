@@ -9,6 +9,7 @@ import it.eng.knowage.logmanager.resource.dto.LogFolderDTO;
 import it.eng.knowage.logmanager.service.LogManagerAPI;
 import it.eng.spagobi.services.security.SpagoBIUserProfile;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.SystemUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -17,6 +18,9 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.attribute.FileAttribute;
+import java.nio.file.attribute.PosixFilePermission;
+import java.nio.file.attribute.PosixFilePermissions;
 import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
@@ -267,8 +271,25 @@ public class LogManagerAPIImpl implements LogManagerAPI {
     public Path createZipFileOfLogs(List<String> fullPaths, SpagoBIUserProfile profile) {
 
         try {
-            Path tempDirectory = Files.createTempDirectory("knowage-zip");
-            Path tempLog = Files.createTempFile("knowage-zip", ".zip");
+            Path tempDirectory;
+            Path tempLog;
+
+            if (SystemUtils.IS_OS_UNIX) {
+                FileAttribute<Set<PosixFilePermission>> attr = PosixFilePermissions.asFileAttribute(PosixFilePermissions.fromString("rwx------"));
+                tempDirectory = Files.createTempDirectory("knowage-logmanager-", attr);
+                tempLog = Files.createTempFile("knowage-logmanager-", ".zip", attr);
+            } else {
+                File directory = Files.createTempDirectory("knowage-logmanager-").toFile();
+                File file = Files.createTempFile("knowage-logmanager-", ".zip").toFile();
+                directory.setReadable(true);
+                directory.setWritable(true);
+                directory.setExecutable(true);
+                file.setReadable(true);
+                file.setWritable(true);
+                file.setExecutable(true);
+                tempDirectory = directory.toPath();
+                tempLog = file.toPath();
+            }
 
             Path workDir = getWorkDirectory(profile).normalize();
 
