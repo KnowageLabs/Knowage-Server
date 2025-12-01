@@ -253,7 +253,6 @@
 	<CONFIGURATOR path="/WEB-INF/conf/config/validators.xml" />
 	<CONFIGURATOR path="/WEB-INF/conf/config/validation.xml" />
 	<CONFIGURATOR path="/WEB-INF/conf/config/transcoder.xml" />
-	<CONFIGURATOR path="/WEB-INF/conf/config/upload.xml" />
 	<CONFIGURATOR path="/WEB-INF/conf/config/events.xml" />
 	<CONFIGURATOR path="/WEB-INF/conf/config/useragents.xml" />
 	<CONFIGURATOR path="/WEB-INF/conf/config/renderers.xml" />
