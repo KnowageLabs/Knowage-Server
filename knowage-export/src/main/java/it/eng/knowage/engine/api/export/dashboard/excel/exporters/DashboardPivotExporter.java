@@ -118,7 +118,7 @@ public class DashboardPivotExporter extends GenericDashboardWidgetExporter imple
             int counter = 0;
 
             for (int i = 0; i < columns.length(); ++i) {
-                pivotTable.addRowLabel(counter);
+                pivotTable.addColLabel(counter);
                 counter++;
             }
 
@@ -132,11 +132,19 @@ public class DashboardPivotExporter extends GenericDashboardWidgetExporter imple
                 counter++;
             }
 
-            for (int i = 0; i < data.length(); ++i) {
-                JSONObject datum = data.getJSONObject(i);
-                DataConsolidateFunction function = getAggregationFunction(datum.getString("aggregation").toUpperCase());
-                pivotTable.addColumnLabel(function, counter, datum.optString("alias", datum.optString("columnName")));
-                counter++;
+            try {
+                for (int i = 0; i < data.length(); ++i) {
+                    JSONObject dataObj = data.getJSONObject(i);
+                    String aggregation = dataObj.optString("aggregation", "SUM");
+                    DataConsolidateFunction func = getAggregationFunction(aggregation);
+                    if (func == null) {
+                        func = SUM;
+                    }
+                    pivotTable.addColumnLabel(func, counter);
+                    counter++;
+                }
+            } catch (JSONException e) {
+                logger.error("Error while adding data columns to pivot table", e);
             }
 
         } catch (JSONException e) {
