@@ -2,7 +2,6 @@
 <PRESENTATION>
 
 	<MAPPING business_name="LoginPage" business_type="PAGE" publisher_name="LoginPublisherJava"/>
-	<MAPPING business_name="LOGOUT_ACTION" business_type="ACTION" publisher_name="LogoutPublisher"/>
 	<MAPPING business_name="ViewBuilderPage" business_type="PAGE" publisher_name="ViewBuilderPublisherJava"/> 
 	<MAPPING business_name="DirectExecutionPage" business_type="PAGE" publisher_name="DirectExecutionPublisherJava"/> 
 	<MAPPING business_name="MenuPage" business_type="PAGE" publisher_name="MenuPublisherJava"/>

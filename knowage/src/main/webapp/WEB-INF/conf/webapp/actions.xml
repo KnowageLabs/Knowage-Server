@@ -15,9 +15,6 @@
  <ACTION name="CHANGE_THEME" class="it.eng.spagobi.wapp.services.ChangeTheme" scope="REQUEST">
  	<CONFIG/>
  </ACTION> 
- <ACTION name="LOGOUT_ACTION" class="it.eng.spagobi.commons.services.LogoutAction" scope="REQUEST">
- 	<CONFIG/>
- </ACTION> 
  <ACTION name="GET_PUBLIC_SUBOBJECTS_INFO" class="it.eng.spagobi.analiticalmodel.document.service.GetPublicSubobjectsInfo" scope="REQUEST">
  	<CONFIG/>
  </ACTION> 
