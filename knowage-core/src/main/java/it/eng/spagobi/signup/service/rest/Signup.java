@@ -110,51 +110,6 @@ public class Signup {
 	@Context
 	private HttpServletRequest request;
 
-	@GET
-	@Path("/prepareUpdate")
-	public View prepareUpdate(@Context HttpServletRequest req) {
-		LOGGER.debug("IN");
-		try {
-			UserProfile profile = (UserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
-			ISbiUserDAO userDao = DAOFactory.getSbiUserDAO();
-			SbiUser user = userDao.loadSbiUserByUserId((String) profile.getUserId());
-			Map<String, Object> data = profile.getUserAttributes();
-			if (user.getFullName() != null) {
-				int i = user.getFullName().indexOf(" ");
-				if (i >= 0) {
-					data.put("name", user.getFullName().substring(0, i));
-					data.put("surname", user.getFullName().substring(i + 1));
-				} else {
-					data.put("name", user.getFullName());
-				}
-			}
-			data.put("username", user.getUserId());
-			data.put("userIn", user.getCommonInfo().getUserIn());
-
-			req.setAttribute("data", data);
-
-		} catch (Throwable t) {
-			LOGGER.error("An unexpected error occurred while executing the subscribe action", t);
-			throw new SpagoBIServiceException("An unexpected error occurred while executing the subscribe action", t);
-		}
-		try {
-			String currTheme = ThemesManager.getDefaultTheme();
-			LOGGER.debug("currTheme: " + currTheme);
-
-			String url = "/themes/" + currTheme + "/jsp/signup/modify.jsp";
-			LOGGER.debug("url for modify: " + url);
-
-			String strActiveSignup = SingletonConfig.getInstance().getConfigValue("SPAGOBI.SECURITY.ACTIVE_SIGNUP_FUNCTIONALITY");
-			boolean activeSignup = strActiveSignup.equalsIgnoreCase("true");
-			req.setAttribute("activeSignup", activeSignup);
-
-			return new View(url);
-		} catch (Throwable t) {
-			LOGGER.error("An unexpected error occurred while executing the subscribe action", t);
-			throw new SpagoBIServiceException("An unexpected error occurred while executing the subscribe action", t);
-		}
-	}
-
 	@POST
 	@Path("/delete")
 	@Produces(MediaType.APPLICATION_JSON)
