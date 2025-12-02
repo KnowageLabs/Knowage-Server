@@ -17,17 +17,17 @@
  */
 package it.eng.spagobi.monitoring.dao;
 
+import java.io.InputStream;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Properties;
 
 import org.apache.log4j.Logger;
 
-import it.eng.spago.base.SourceBean;
-import it.eng.spago.configuration.ConfigSingleton;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
@@ -68,59 +68,69 @@ public class AuditManager {
 	private String closeBlockMarker;
 
 	private AuditManager() {
+
 		logger.debug("Begin istantiation of AuditManager");
-		SourceBean config = (SourceBean) ConfigSingleton.getInstance().getAttribute("AUDIT.CONFIG");
-		logger.debug("Audit configuration found: \n" + config.toString());
-		String disable = (String) config.getAttribute("disable");
-		if (disable != null && disable.toLowerCase().trim().equals("true")) {
-			_disabled = true;
-		}
-		String activeStr = SingletonConfig.getInstance().getConfigValue("KNOWAGE.AUDIT_ENABLED");
-		if (!_disabled || activeStr.equals("true")) {
-			/*
-			 * loads the document state and try to find it in the SBI_DOMAINS table; if it does not exist, the default value is considered
-			 */
-			String documentState = (String) config.getAttribute("document_state");
-			logger.debug("document_state=" + documentState);
-			if (documentState != null) {
-				documentState = documentState.toUpperCase().trim();
-				if (!documentState.toUpperCase().trim().equals("ALL")) {
-					List availableStates = new ArrayList();
-					try {
-						availableStates = DAOFactory.getDomainDAO().loadListDomainsByType("STATE");
-					} catch (EMFUserError e) {
-						logger.error("Error while getting available document states from db", e);
-					}
-					boolean stateFound = false;
-					Iterator it = availableStates.iterator();
-					while (it.hasNext()) {
-						Domain aDomain = (Domain) it.next();
-						if (aDomain.getValueCd().equalsIgnoreCase(documentState)) {
-							stateFound = true;
-							break;
-						}
-					}
-					if (stateFound) {
-						_documentState = documentState;
-					}
-				}
-			}
+		try (InputStream inputStream = Thread.currentThread().getContextClassLoader().getResourceAsStream("conf/audit.properties")) {
 
-			/*
-			 * instantiates the persistence class; if some errors occur, the audit log is disabled
-			 */
-			String persistenceClassName = (String) config.getAttribute("persistenceClass");
-			try {
-				Class persistenceClass = Class.forName(persistenceClassName);
-				_auditDAO = (IAuditDAO) persistenceClass.newInstance();
+			Properties props = new Properties();
+			props.load(inputStream);
 
-			} catch (Exception e) {
-				logger.error("Error while instantiating persistence class. Audit log will be disabled", e);
+			String disable = props.getProperty("audit.disable");
+			if (disable != null && disable.toLowerCase().trim().equals("true")) {
 				_disabled = true;
 			}
+			String activeStr = SingletonConfig.getInstance().getConfigValue("KNOWAGE.AUDIT_ENABLED");
+			if (!_disabled || activeStr.equals("true")) {
+				/*
+				 * loads the document state and try to find it in the SBI_DOMAINS table; if it does not exist, the default value is considered
+				 */
+				String documentState = props.getProperty("audit.document_state");
+				logger.debug("document_state=" + documentState);
+				if (documentState != null) {
+					documentState = documentState.toUpperCase().trim();
+					if (!documentState.toUpperCase().trim().equals("ALL")) {
+						List availableStates = new ArrayList();
+						try {
+							availableStates = DAOFactory.getDomainDAO().loadListDomainsByType("STATE");
+						} catch (EMFUserError e) {
+							logger.error("Error while getting available document states from db", e);
+						}
+						boolean stateFound = false;
+						Iterator it = availableStates.iterator();
+						while (it.hasNext()) {
+							Domain aDomain = (Domain) it.next();
+							if (aDomain.getValueCd().equalsIgnoreCase(documentState)) {
+								stateFound = true;
+								break;
+							}
+						}
+						if (stateFound) {
+							_documentState = documentState;
+						}
+					}
+				}
+
+				/*
+				 * instantiates the persistence class; if some errors occur, the audit log is disabled
+				 */
+				String persistenceClassName = props.getProperty("audit.persistenceClass");
+				try {
+					Class persistenceClass = Class.forName(persistenceClassName);
+					_auditDAO = (IAuditDAO) persistenceClass.newInstance();
+
+				} catch (Exception e) {
+					logger.error("Error while instantiating persistence class. Audit log will be disabled", e);
+					_disabled = true;
+				}
+			}
+			logger.debug("AuditManager instatiation end");
+
+		} catch (Exception e) {
+			logger.error("Error reading and parsing audit.xml", e);
+			_disabled = true;
 		}
-		logger.debug("AuditManager instatiation end");
 	}
+
 
 	/**
 	 * Gets the single instance of AuditManager.
@@ -156,8 +166,9 @@ public class AuditManager {
 	 * @throws EMFUserError the EMF user error
 	 */
 	private void insertAudit(SbiAudit aSbiAudit) throws EMFUserError {
-		if (canBeRegistered(aSbiAudit))
+		if (canBeRegistered(aSbiAudit)) {
 			_auditDAO.insertAudit(aSbiAudit);
+		}
 	}
 
 	/**
@@ -168,8 +179,9 @@ public class AuditManager {
 	 * @throws EMFUserError the EMF user error
 	 */
 	private void modifyAudit(SbiAudit aSbiAudit) throws EMFUserError {
-		if (canBeRegistered(aSbiAudit))
+		if (canBeRegistered(aSbiAudit)) {
 			_auditDAO.modifyAudit(aSbiAudit);
+		}
 	}
 
 	private boolean canBeRegistered(SbiAudit aSbiAudit) {
@@ -220,10 +232,12 @@ public class AuditManager {
 				if (parameter.getParameterValues() != null) {
 					String value = encode(parameter);
 					documentParameters += value;
-				} else
+				} else {
 					documentParameters += "NULL";
-				if (i < parameters.size() - 1)
+				}
+				if (i < parameters.size() - 1) {
 					documentParameters += "&";
+				}
 			}
 		}
 		audit.setDocumentParameters(documentParameters);
@@ -467,12 +481,14 @@ public class AuditManager {
 			} else {
 				List values = biobjPar.getParameterValues();
 				if (values != null && values.size() > 0) {
-					if (values.size() == 1)
+					if (values.size() == 1) {
 						return (String) biobjPar.getParameterValues().get(0);
-					else
+					} else {
 						return encodeMultivaluesParam(biobjPar.getParameterValues(), type);
-				} else
+					}
+				} else {
 					return "";
+				}
 			}
 		} else {
 			Integer parId = biobjPar.getParID();
@@ -490,12 +506,14 @@ public class AuditManager {
 			}
 			List values = biobjPar.getParameterValues();
 			if (values != null && values.size() > 0) {
-				if (values.size() == 1)
+				if (values.size() == 1) {
 					return (String) biobjPar.getParameterValues().get(0);
-				else
+				} else {
 					return encodeMultivaluesParam(biobjPar.getParameterValues(), type);
-			} else
+				}
+			} else {
 				return "";
+			}
 		}
 
 	}
@@ -510,8 +528,9 @@ public class AuditManager {
 		logger.debug("IN");
 		String value = "";
 
-		if (values == null || values.size() == 0)
+		if (values == null || values.size() == 0) {
 			return value;
+		}
 
 		value += openBlockMarker;
 		value += separator;
