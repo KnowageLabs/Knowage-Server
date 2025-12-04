@@ -120,7 +120,7 @@
  -->
 	
 	<!-- tools.importexport -->
-	
+	<!--
 	<CONFIGURATOR path="/WEB-INF/conf/tools/importexport/importexport.xml" />
 	<CONFIGURATOR path="/WEB-INF/conf/tools/importexport/pages.xml" />
 	<CONFIGURATOR path="/WEB-INF/conf/tools/importexport/modules.xml" />
@@ -130,7 +130,7 @@
 	<CONFIGURATOR path="/WEB-INF/conf/tools/importexport/messages.xml" />
 	<CONFIGURATOR path="/WEB-INF/conf/tools/importexport/validation.xml" />
 	<CONFIGURATOR path="/WEB-INF/conf/tools/importexport/business_map.xml" />
-	
+	-->
   
 	<!-- tools.scheduler -->
 	<!--
