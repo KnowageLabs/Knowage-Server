@@ -8,16 +8,16 @@
 	
 <!--  commons -->	
 	<!--  <CONFIGURATOR path="/WEB-INF/conf/commons/audit.xml" />
-	<CONFIGURATOR path="/WEB-INF/conf/commons/actions.xml" />
-	<CONFIGURATOR path="/WEB-INF/conf/commons/modules.xml" />
-	<CONFIGURATOR path="/WEB-INF/conf/commons/pages.xml" />
-	<CONFIGURATOR path="/WEB-INF/conf/commons/presentation.xml" />
-	<CONFIGURATOR path="/WEB-INF/conf/commons/publishers.xml" />
 	<CONFIGURATOR path="/WEB-INF/conf/commons/errors.xml" />
 	<CONFIGURATOR path="/WEB-INF/conf/commons/traps.xml" />	
 	<CONFIGURATOR path="/WEB-INF/conf/commons/business_map.xml" />
 	<CONFIGURATOR path="/WEB-INF/conf/commons/validation.xml" />			
 	-->
+	<CONFIGURATOR path="/WEB-INF/conf/commons/actions.xml" />
+	<CONFIGURATOR path="/WEB-INF/conf/commons/modules.xml" />
+	<CONFIGURATOR path="/WEB-INF/conf/commons/pages.xml" />
+	<CONFIGURATOR path="/WEB-INF/conf/commons/presentation.xml" />
+	<CONFIGURATOR path="/WEB-INF/conf/commons/publishers.xml" />
 	<CONFIGURATOR path="/WEB-INF/conf/commons/messages.xml" />
 <!-- analiticalmodel -->
 
