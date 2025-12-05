@@ -458,8 +458,10 @@ public class DashboardExporter {
         Optional<SbiDashboardTheme> optionalTheme = dao.readByThemeName(settings.getJSONObject("style").optString("themeName"));
         if (optionalTheme.isPresent()) {
             SbiDashboardTheme dashboardTheme = optionalTheme.get();
+            String widgetName = settings.getJSONObject("style").optJSONObject("title").optString("text");
             settings.remove("style");
             settings.put("style", dashboardTheme.getConfig().getJSONObject("table").getJSONObject("style"));
+            settings.getJSONObject("style").getJSONObject("title").put("text", widgetName);
         }
     }
 
@@ -495,7 +497,6 @@ public class DashboardExporter {
             String country = body.getString(SpagoBIConstants.SBI_COUNTRY);
             return new Locale(language, country);
         } catch (Exception e) {
-            LOGGER.warn("Cannot get locale information from input parameters body", e);
             return Locale.ENGLISH;
         }
 

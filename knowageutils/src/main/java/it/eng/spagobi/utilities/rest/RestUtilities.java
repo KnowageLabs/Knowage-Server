@@ -186,7 +186,7 @@ public class RestUtilities {
 	 */
 	public static JSONObject readBodyAsJSONObject(HttpServletRequest request) throws IOException, JSONException {
 		String requestBody = RestUtilities.readBodyXSSUnsafe(request);
-		if (requestBody == null || requestBody.equals("")) {
+		if (requestBody.isEmpty()) {
 			return new JSONObject();
 		}
 		final JSONObject jsonObject = new JSONObject(requestBody);

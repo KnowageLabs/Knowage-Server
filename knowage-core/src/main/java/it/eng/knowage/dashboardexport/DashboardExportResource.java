@@ -8,6 +8,7 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.mime.MimeUtils;
 import it.eng.spagobi.utilities.rest.RestUtilities;
 import org.apache.log4j.Logger;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import javax.servlet.http.HttpServletRequest;
@@ -60,6 +61,7 @@ public class DashboardExportResource {
                 } else {
                     String widgetName = body.getJSONObject("settings").getJSONObject("style").getJSONObject("title")
                             .optString("text");
+                    widgetName = getWidgetName(widgetName, body);
                     response.setHeader("Content-Disposition", "attachment; fileName=" + widgetName + "." + "xlsx");
                 }
                 response.setContentType(MediaType.APPLICATION_OCTET_STREAM);
@@ -76,6 +78,32 @@ public class DashboardExportResource {
         } finally {
             logger.debug("OUT");
         }
+    }
+
+    private static String getWidgetName(String widgetName, JSONObject body) throws JSONException {
+
+        if (widgetName == null || widgetName.trim().isEmpty()) {
+            switch (body.getString("type")) {
+                case "highcharts":
+                    widgetName = "chart";
+                    break;
+                case "static-pivot-table":
+                    widgetName = "pivot";
+                    break;
+                case "map":
+                    widgetName = "map";
+                    break;
+                case "table":
+                    widgetName = "table";
+                    break;
+                case "customchart":
+                    widgetName = "custom_chart";
+                    break;
+                default:
+                    widgetName = "widget";
+            }
+        }
+        return widgetName;
     }
 
     @POST
