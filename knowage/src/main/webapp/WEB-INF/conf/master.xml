@@ -235,11 +235,12 @@
 <CONFIGURATOR path="/WEB-INF/conf/webapp/static_menu.xml" />
 -->
 	<CONFIGURATOR path="/WEB-INF/conf/config/security_liferay_config.xml" />
-	<CONFIGURATOR path="/WEB-INF/conf/config/internal_profiling.xml" />
+	
 	<CONFIGURATOR path="/WEB-INF/conf/config/tree_initialization.xml" />
-	<!--<CONFIGURATOR path="/WEB-INF/conf/config/spagobi_dao.xml" />-->
-	<CONFIGURATOR path="/WEB-INF/conf/config/tenants.xml" />
-	 	
+	<!--
+	<CONFIGURATOR path="/WEB-INF/conf/config/internal_profiling.xml" />
+	<CONFIGURATOR path="/WEB-INF/conf/config/spagobi_dao.xml" />
+	<CONFIGURATOR path="/WEB-INF/conf/config/tenants.xml" /> -->
 	
 	<!--  Spago Config.    -->
 	<CONFIGURATOR path="/WEB-INF/conf/config/common.xml" />
