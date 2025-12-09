@@ -25,13 +25,10 @@ import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
-import it.eng.spago.base.SourceBean;
-import it.eng.spago.configuration.ConfigSingleton;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.analiticalmodel.functionalitytree.bo.LowFunctionality;
 import it.eng.spagobi.commons.constants.CommunityFunctionalityConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.wapp.bo.Menu;
 
 /**
@@ -41,6 +38,9 @@ public class MenuHelper {
 
 	private static Logger logger = Logger.getLogger(MenuHelper.class);
 
+	private static final String urlDocumentUserBrowser = "/document-browser";
+	private static final String urlWorkspaceManagement = "/workspace";
+
 	public static String findFunctionalityUrl(Menu menu, String contextPath) {
 		logger.debug("IN");
 		String url = null;
@@ -49,37 +49,31 @@ public class MenuHelper {
 			if (functionality == null || functionality.trim().equals("")) {
 				logger.error("Input menu is not associated to a SpagoBI functionality");
 			} else {
-				SourceBean config = (SourceBean) ConfigSingleton.getInstance().getFilteredSourceBeanAttribute("FINAL_USER_FUNCTIONALITIES.APPLICATION",
-						"functionality", functionality);
-				if (config != null) {
-					url = (String) config.getAttribute("link");
-					url = url.replaceAll("\\$\\{SPAGOBI_CONTEXT\\}", contextPath);
-					url = url.replaceAll("\\$\\{SPAGO_ADAPTER_HTTP\\}", GeneralUtilities.getSpagoAdapterHttpUrl());
-					if (functionality.equals(CommunityFunctionalityConstants.DOCUMENT_BROWSER_USER)) {
-						String initialPath = menu.getInitialPath();
-						if (initialPath != null && !initialPath.trim().equals("")) {
-							// url += "&" + BIObjectsModule.MODALITY + "=" + BIObjectsModule.FILTER_TREE + "&" + TreeObjectsModule.PATH_SUBTREE + "="
-							// + initialPath;
 
-							String idsPath = convertPathInIds(initialPath);
+				if (functionality.equals(CommunityFunctionalityConstants.DOCUMENT_BROWSER_USER)) {
+					url = urlDocumentUserBrowser;
+					String initialPath = menu.getInitialPath();
+					if (initialPath != null && !initialPath.trim().equals("")) {
+						// url += "&" + BIObjectsModule.MODALITY + "=" + BIObjectsModule.FILTER_TREE + "&" + TreeObjectsModule.PATH_SUBTREE + "="
+						// + initialPath;
+
+						String idsPath = convertPathInIds(initialPath);
 //							url += "&" + BIObjectsModule.MODALITY + "=" + BIObjectsModule.FILTER_TREE + "&" + TreeObjectsModule.PATH_SUBTREE + "=" + initialPath
 //									+ idsPath;
-							url = String.format("%s/%s", url, idsPath);
-						}
-					} else if (functionality.equals(CommunityFunctionalityConstants.WORKSPACE_MANAGEMENT)) {
-						String initialPath = menu.getInitialPath();
-						if (initialPath != null && initialPath.equals("documents")) {
-							url += "/recent";
-						} else if (initialPath != null && initialPath.equals("datasets")) {
-							url += "/data";
-						} else if (initialPath != null && initialPath.equals("models")) {
-							url += "/models";
-						}
+						url = String.format("%s/%s", url, idsPath);
 					}
-
-				} else {
-					logger.warn("No configuration found for SpagoBI functionality [" + menu.getFunctionality() + "]");
+				} else if (functionality.equals(CommunityFunctionalityConstants.WORKSPACE_MANAGEMENT)) {
+					url = urlWorkspaceManagement;
+					String initialPath = menu.getInitialPath();
+					if (initialPath != null && initialPath.equals("documents")) {
+						url += "/recent";
+					} else if (initialPath != null && initialPath.equals("datasets")) {
+						url += "/data";
+					} else if (initialPath != null && initialPath.equals("models")) {
+						url += "/models";
+					}
 				}
+
 			}
 		} catch (Exception e) {
 			logger.error(e);

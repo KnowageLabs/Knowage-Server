@@ -29,7 +29,6 @@ import java.util.Vector;
 import org.apache.log4j.Logger;
 
 import it.eng.spago.base.SourceBean;
-import it.eng.spago.configuration.ConfigSingleton;
 import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.error.EMFUserError;
@@ -38,7 +37,6 @@ import it.eng.spagobi.commons.bo.Role;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.AdmintoolsConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.commons.utilities.UserUtilities;
 import it.eng.spagobi.commons.utilities.messages.MessageBuilder;
 import it.eng.spagobi.wapp.bo.Menu;
 
@@ -77,8 +75,9 @@ public class MenuUtilities {
 						break;
 					}
 				}
-				if (parent == null)
+				if (parent == null) {
 					parent = DAOFactory.getMenuDAO().loadMenuByID(menu.getParentId());
+				}
 				// can happen that parent is not found
 				if (parent == null) {
 					if (menu.getName().startsWith("#")) {
@@ -101,7 +100,7 @@ public class MenuUtilities {
 	public static void checkAndSetNotClickableMenus(Menu menu, IEngUserProfile userProfile) {
 		if (menu.getObjId() != null) {
 			boolean clickable = MenuAccessVerifier.checkClickable(menu, userProfile);
-			if (clickable == false) {
+			if (!clickable) {
 				menu.setClickable(false);
 			}
 		}
@@ -119,10 +118,12 @@ public class MenuUtilities {
 			for (int i = 0; i < menuList.size(); i++) {
 				Menu menuElem = (Menu) menuList.get(i);
 				boolean canView = false;
-				if (menuElem.getCode() == null)
+				if (menuElem.getCode() == null) {
 					canView = MenuAccessVerifier.canView(menuElem, userProfile);
-				else
+				}
+				else {
 					canView = true; // technical menu voice is ever visible if
+				}
 									// it's present
 				if (canView) {
 					filteredMenuList.add(menuElem);
@@ -145,71 +146,6 @@ public class MenuUtilities {
             // call recursively for menu to set clickable also for children
             checkAndSetNotClickableMenus(menu, userProfile);
         }
-	}
-
-
-
-		/**
-         * Gets the elements of menu relative by the user logged. It reaches the role from the request and asks to the DB all detail menu information, by calling
-         * the method <code>loadMenuByRoleId</code>.
-         *
-         * @param request  The request Source Bean
-         * @param response The response Source Bean
-         * @throws EMFUserError If an exception occurs
-         */
-	public static void getMenuItems(SourceBean request, SourceBean response, IEngUserProfile profile) throws EMFUserError {
-		try {
-			List lstFinalMenu = new ArrayList();
-			boolean technicalMenuLoaded = false;
-
-			Collection lstRolesForUser = ((UserProfile) profile).getRolesForUse();
-			logger.debug("** Roles for user: " + lstRolesForUser.size());
-
-			Object[] arrRoles = lstRolesForUser.toArray();
-			Integer levelItem = 1;
-			for (int i = 0; i < arrRoles.length; i++) {
-				logger.debug("*** arrRoles[i]): " + arrRoles[i]);
-				Role role = DAOFactory.getRoleDAO().loadByName((String) arrRoles[i]);
-				if (role != null) {
-
-					List menuItemsForARole = DAOFactory.getMenuRolesDAO().loadMenuByRoleId(role.getId());
-					if (menuItemsForARole != null) {
-						mergeMenuItems(lstFinalMenu, menuItemsForARole);
-					} else {
-						logger.debug("Not found menu items for user role " + (String) arrRoles[i]);
-					}
-
-					if (!technicalMenuLoaded && UserUtilities.isTechnicalUser(profile)) {
-						// list technical user menu
-						technicalMenuLoaded = true;
-						List firstLevelItems = ConfigSingleton.getInstance().getAttributeAsList("TECHNICAL_USER_MENU.ITEM");
-						Iterator it = firstLevelItems.iterator();
-						while (it.hasNext()) {
-							SourceBean itemSB = (SourceBean) it.next();
-							if (isAbleToSeeItem(itemSB, profile)) {
-
-								lstFinalMenu.add(getAdminItemRec(itemSB, levelItem, profile, null));
-								levelItem++;
-							}
-						}
-					}
-				} else
-					logger.debug("Role " + (String) arrRoles[i] + " not found on db");
-			}
-			response.setAttribute(LIST_MENU, lstFinalMenu);
-
-			logger.debug("List Menu Size " + lstFinalMenu.size());
-			// String menuMode =
-			// (configSingleton.getAttribute("SPAGOBI.MENU.mode")==null)?DEFAULT_LAYOUT_MODE:(String)configSingleton.getAttribute("SPAGOBI.MENU.mode");
-			// response.setAttribute(MENU_MODE, menuMode);
-			response.setAttribute(MENU_MODE, DEFAULT_LAYOUT_MODE);
-
-		} catch (Exception ex) {
-			logger.error("Cannot fill response container" + ex.getLocalizedMessage());
-			HashMap params = new HashMap();
-			params.put(AdmintoolsConstants.PAGE, MODULE_PAGE);
-			throw new EMFUserError(EMFErrorSeverity.ERROR, 500, new Vector(), params);
-		}
 	}
 
 	/**
@@ -261,8 +197,9 @@ public class MenuUtilities {
 //							}
 //						}
 //					}
-                } else
-                    logger.debug("Role " + (String) arrRole + " not found on db");
+                } else {
+					logger.debug("Role " + (String) arrRole + " not found on db");
+				}
             }
 
 			logger.debug("List Menu Size " + lstFinalMenu.size());
@@ -321,8 +258,9 @@ public class MenuUtilities {
 	 */
 	private static boolean isAbleToSeeContainedItems(SourceBean itemSB, IEngUserProfile profile) throws EMFInternalError {
 		List subItems = itemSB.getAttributeAsList("ITEM");
-		if (subItems == null || subItems.isEmpty())
+		if (subItems == null || subItems.isEmpty()) {
 			return false;
+		}
 		Iterator it = subItems.iterator();
 		while (it.hasNext()) {
 			SourceBean subItem = (SourceBean) it.next();
@@ -370,16 +308,17 @@ public class MenuUtilities {
 			node.setAdminsMenu(true);
 			node.setIconCls(iconCls);
 			node.setLinkType(linkType);
-			if (groupingMenu != null)
+			if (groupingMenu != null) {
 				node.setGroupingMenu(groupingMenu);
+			}
 
 			if (functionality == null) {
 				// father node
 				List subItems = itemSB.getAttributeAsList("ITEM");
 				Iterator it = subItems.iterator();
-				if (subItems == null || subItems.isEmpty())
+				if (subItems == null || subItems.isEmpty()) {
 					node.setHasChildren(false);
-				else {
+				} else {
 					node.setHasChildren(true);
 					List lstChildren = new ArrayList();
 					while (it.hasNext()) {
@@ -412,8 +351,9 @@ public class MenuUtilities {
 	 * @return the index of the input menu item or -1 if it is not found in the list
 	 */
 	public static int indexOf(List lst, Menu menu) {
-		if (lst == null)
+		if (lst == null) {
 			return -1;
+		}
 		for (int i = 0; i < lst.size(); i++) {
 			Menu tmpMenu = (Menu) lst.get(i);
 			if (tmpMenu.getMenuId().intValue() == menu.getMenuId().intValue()) {
