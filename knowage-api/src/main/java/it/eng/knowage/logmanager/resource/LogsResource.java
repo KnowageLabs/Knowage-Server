@@ -30,7 +30,7 @@ import java.util.Collections;
 import java.util.List;
 
 @Path("/2.0/resources/logs")
-@Component
+@Component("logsResourceLogManager")
 @Validated
 
 /*
