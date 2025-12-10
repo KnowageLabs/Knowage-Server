@@ -1,7 +1,6 @@
 package it.eng.knowage.logmanager.service.impl;
 
 import it.eng.knowage.boot.error.KnowageRuntimeException;
-import it.eng.knowage.boot.utils.ContextPropertiesConfig;
 import it.eng.knowage.boot.utils.HMACUtilities;
 import it.eng.knowage.knowageapi.error.*;
 import it.eng.knowage.logmanager.resource.dto.LogFileDTO;
@@ -75,12 +74,13 @@ public class LogManagerAPIImpl implements LogManagerAPI {
     * - Creates directories when missing.
     */
     public Path getWorkDirectory(SpagoBIUserProfile profile) throws IOException {
-        String logPathBase = ContextPropertiesConfig.getLogPath();
+        String catalinaBase = System.getProperty("catalina.base");
+        String logPathBase = catalinaBase + File.separator + "logs";
         Path totalPath = Paths.get(logPathBase);
-        if (!Files.isDirectory(totalPath)) {
-            LOGGER.info("The log folder is missing at [" + totalPath + "]. It will be created now.");
+        if (!Files.exists(totalPath)) {
             Files.createDirectories(totalPath);
         }
+
         return totalPath;
     }
 
@@ -151,7 +151,9 @@ public class LogManagerAPIImpl implements LogManagerAPI {
 
         if (hasAdminFunctionality(profile)){
             String tenant = resolveTenant(profile);
-            Path baseLogPath = Paths.get(ContextPropertiesConfig.getLogPath()).normalize();
+            Path workDir = getWorkDirectory(profile).normalize();
+            //now that I have the work dir I can build the base log path
+            Path baseLogPath = workDir.normalize();
             Path logsRoot = baseLogPath.resolve("logs").normalize();
             Path target = path.normalize();
 
