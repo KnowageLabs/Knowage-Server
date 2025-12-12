@@ -17,6 +17,8 @@
  */
 package it.eng.spagobi.commons.services;
 
+import java.lang.reflect.Method;
+
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -24,6 +26,7 @@ import javax.servlet.http.HttpServlet;
 import org.apache.log4j.Logger;
 
 import it.eng.knowage.encryption.DataEncryptionInitializer;
+import it.eng.spago.base.SourceBean;
 import it.eng.spagobi.commons.initializers.caching.CachingInitializer;
 import it.eng.spagobi.commons.initializers.metadata.CategoriesInitializer;
 import it.eng.spagobi.commons.initializers.metadata.MetadataInitializer;
@@ -78,6 +81,33 @@ public class InitializerKnowageServlet extends HttpServlet {
 		CleanAuditQuartzInitializer cleanAuditQuartzInitializer = new CleanAuditQuartzInitializer();
 		cleanAuditQuartzInitializer.init(null);
 
+		this.invokeCockpitStatisticsInitializer("it.eng.spagobi.commons.initializers.metadata.CockpitStatisticsInitializer");
+
+	}
+
+	private void invokeCockpitStatisticsInitializer(String fqcn) {
+		ClassLoader cl = Thread.currentThread().getContextClassLoader();
+
+		try {
+
+			Class<?> clazz = Class.forName(fqcn, true, cl);
+
+			Object instance = clazz.getDeclaredConstructor().newInstance();
+
+			Method init = clazz.getMethod("init", SourceBean.class);
+
+			init.invoke(instance, (Object) null);
+
+
+		} catch (ClassNotFoundException | NoClassDefFoundError e) {
+			logger.info(String.format("Class %s non found", fqcn));
+		} catch (NoSuchMethodException e) {
+			logger.warn(String.format("Method init(Object) non found su %s.", fqcn));
+		} catch (ReflectiveOperationException e) {
+			logger.error(String.format("Error invocation %s.init(null): %s", fqcn, e.getMessage()));
+		} catch (Throwable t) {
+			logger.error("Generic error reflection: " + t.getMessage());
+		}
 	}
 
 
