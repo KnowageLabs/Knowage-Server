@@ -234,7 +234,7 @@
 <!--
 <CONFIGURATOR path="/WEB-INF/conf/webapp/static_menu.xml" />
 -->
-	<CONFIGURATOR path="/WEB-INF/conf/config/security_liferay_config.xml" />
+	
 	
 	
 	<!--
@@ -246,21 +246,22 @@
 	<!--  Spago Config.    -->
 	<!--
 	<CONFIGURATOR path="/WEB-INF/conf/config/cache.xml" />
-	-->
-	<CONFIGURATOR path="/WEB-INF/conf/config/common.xml" />
-	<CONFIGURATOR path="/WEB-INF/conf/config/data_access.xml" />    
-	<CONFIGURATOR path="/WEB-INF/conf/config/dispatchers.xml" />
-	<CONFIGURATOR path="/WEB-INF/conf/config/ce-initializers.xml" />
 	<CONFIGURATOR path="/WEB-INF/conf/config/statements.xml" />
-	<CONFIGURATOR path="/WEB-INF/conf/config/tracing.xml" />
 	<CONFIGURATOR path="/WEB-INF/conf/config/portletinitializers.xml" />
 	<CONFIGURATOR path="/WEB-INF/conf/config/validators.xml" />
 	<CONFIGURATOR path="/WEB-INF/conf/config/validation.xml" />
 	<CONFIGURATOR path="/WEB-INF/conf/config/transcoder.xml" />
 	<CONFIGURATOR path="/WEB-INF/conf/config/events.xml" />
 	<CONFIGURATOR path="/WEB-INF/conf/config/useragents.xml" />
+	<CONFIGURATOR path="/WEB-INF/conf/config/business_map.xml" /> 
+	<CONFIGURATOR path="/WEB-INF/conf/config/security_liferay_config.xml" />
+	-->
+	<CONFIGURATOR path="/WEB-INF/conf/config/common.xml" /> 
+	<CONFIGURATOR path="/WEB-INF/conf/config/dispatchers.xml" />
+	<CONFIGURATOR path="/WEB-INF/conf/config/ce-initializers.xml" />
+	<CONFIGURATOR path="/WEB-INF/conf/config/tracing.xml" />
+	<CONFIGURATOR path="/WEB-INF/conf/config/data_access.xml" />
 	<CONFIGURATOR path="/WEB-INF/conf/config/renderers.xml" />
-	<CONFIGURATOR path="/WEB-INF/conf/config/business_map.xml" />    	
 	<CONFIGURATOR path="/WEB-INF/conf/config/security.xml" />	
 
 	<!-- exo profile manager 
