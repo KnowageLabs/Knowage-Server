@@ -255,12 +255,12 @@
 	<CONFIGURATOR path="/WEB-INF/conf/config/useragents.xml" />
 	<CONFIGURATOR path="/WEB-INF/conf/config/business_map.xml" /> 
 	<CONFIGURATOR path="/WEB-INF/conf/config/security_liferay_config.xml" />
+	<CONFIGURATOR path="/WEB-INF/conf/config/data_access.xml" />
 	-->
 	<CONFIGURATOR path="/WEB-INF/conf/config/common.xml" /> 
 	<CONFIGURATOR path="/WEB-INF/conf/config/dispatchers.xml" />
 	<CONFIGURATOR path="/WEB-INF/conf/config/ce-initializers.xml" />
 	<CONFIGURATOR path="/WEB-INF/conf/config/tracing.xml" />
-	<CONFIGURATOR path="/WEB-INF/conf/config/data_access.xml" />
 	<CONFIGURATOR path="/WEB-INF/conf/config/renderers.xml" />
 	<CONFIGURATOR path="/WEB-INF/conf/config/security.xml" />	
 
