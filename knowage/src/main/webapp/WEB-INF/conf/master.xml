@@ -20,7 +20,7 @@
 	<CONFIGURATOR path="/WEB-INF/conf/commons/publishers.xml" />
 	<CONFIGURATOR path="/WEB-INF/conf/commons/messages.xml" />
 <!-- analiticalmodel -->
-
+<!--
 	<CONFIGURATOR path="/WEB-INF/conf/analiticalmodel/actions.xml" />
 	<CONFIGURATOR path="/WEB-INF/conf/analiticalmodel/modules.xml" />
 	<CONFIGURATOR path="/WEB-INF/conf/analiticalmodel/pages.xml" />
@@ -28,7 +28,7 @@
   	<CONFIGURATOR path="/WEB-INF/conf/analiticalmodel/publishers.xml" />  
   	<CONFIGURATOR path="/WEB-INF/conf/analiticalmodel/business_map.xml" />
    	<CONFIGURATOR path="/WEB-INF/conf/analiticalmodel/validation.xml" />
-	
+	-->
    	<!-- document browser -->
     <!--
 	<CONFIGURATOR path="/WEB-INF/conf/analiticalmodel/documentBrowser.xml" />
