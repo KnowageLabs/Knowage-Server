@@ -898,4 +898,11 @@ public class Role implements Serializable {
 	}
 
 
+	public boolean getAbleToManageFunctionsCatalog() {
+		return isAbleToUseFunctionsCatalog;
+	}
+
+	public void setAbleToManageFunctionsCatalog(boolean b) {
+		this.isAbleToUseFunctionsCatalog = b;
+	}
 }

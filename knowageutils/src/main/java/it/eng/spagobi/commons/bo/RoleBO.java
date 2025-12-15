@@ -115,6 +115,7 @@ public class RoleBO implements Serializable {
 
 	private boolean ableToManageCalendar;
 	private boolean ableToUseFunctionsCatalog;
+	private boolean ableToManageFunctionsCatalog;
 
 	private boolean isAbleToManageInternationalization;
 
@@ -604,6 +605,14 @@ public class RoleBO implements Serializable {
 
 	public void setAbleToUseFunctionsCatalog(boolean ableToUseFunctionsCatalog) {
 		this.ableToUseFunctionsCatalog = ableToUseFunctionsCatalog;
+	}
+
+	public boolean isAbleToManageFunctionsCatalog() {
+		return ableToManageFunctionsCatalog;
+	}
+
+	public void setAbleToManageFunctionsCatalog(boolean ableToManageFunctionsCatalog) {
+		this.ableToManageFunctionsCatalog = ableToManageFunctionsCatalog;
 	}
 
 	public boolean isAbleToManageInternationalization() {
