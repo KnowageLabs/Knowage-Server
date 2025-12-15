@@ -87,6 +87,7 @@
 		<AUTHORIZATION productType="KnowageSI" authorizationName="ENABLE_DOSSIER" organization="DEFAULT_TENANT" />
 	    <AUTHORIZATION productType="KnowageSI" authorizationName="MANAGE_CALENDAR" organization="DEFAULT_TENANT" />
 		<AUTHORIZATION productType="KnowageSI" authorizationName="FUNCTIONS_CATALOG_USAGE" organization="DEFAULT_TENANT" />
+		<AUTHORIZATION productType="KnowageSI" authorizationName="FUNCTIONS_CATALOG_MANAGEMENT" organization="DEFAULT_TENANT" />
 	</DEFAULT_AUTHORIZATIONS>
 
 	<DEFAULT_AUTHORIZATIONS_ROLES>
@@ -118,6 +119,7 @@
 		<AUTHORIZATION_ROLES authorizationName="SEE_MY_WORKSPACE" roleName="user" organization="DEFAULT_TENANT"/>
 		<AUTHORIZATION_ROLES authorizationName="CREATE_DOCUMENTS" roleName="user" organization="DEFAULT_TENANT"/>
 		<AUTHORIZATION_ROLES authorizationName="CREATE_SELF_SERVICE_COCKPIT" roleName="user" organization="DEFAULT_TENANT"/>
+
 	</DEFAULT_AUTHORIZATIONS_ROLES>
 
 	<EXT_ROLES_CATEGORIES>

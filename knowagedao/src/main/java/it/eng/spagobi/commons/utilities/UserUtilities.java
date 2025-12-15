@@ -764,6 +764,9 @@ public class UserUtilities {
 			if (virtualRole.getAbleToUseFunctionsCatalog()) {
 				roleFunctionalities.add(CommunityFunctionalityConstants.FUNCTIONS_CATALOG_USAGE);
 			}
+			if (virtualRole.getAbleToManageFunctionsCatalog()) {
+				roleFunctionalities.add(CommunityFunctionalityConstants.FUNCTIONS_CATALOG_MANAGEMENT);
+			}
 			if (virtualRole.getAbleToManageInternationalization()) {
 				roleFunctionalities.add(CommunityFunctionalityConstants.MANAGE_INTERNATIONALIZATION);
 			}
@@ -1053,6 +1056,14 @@ public class UserUtilities {
 					if (anotherRole.getAbleToUseFunctionsCatalog()) {
 						LOGGER.debug("User has role " + roleName + " that is able to use functions catalog.");
 						virtualRole.setAbleToUseFunctionsCatalog(true);
+					}
+					if (anotherRole.getAbleToManageFunctionsCatalog()) {
+						LOGGER.debug("User has role " + roleName + " that is able to manage functions catalog.");
+						virtualRole.setAbleToManageFunctionsCatalog(true);
+					}
+					if (anotherRole.getAbleToManageFunctionsCatalog()) {
+						LOGGER.debug("User has role " + roleName + " that is able to manage functions catalog.");
+						virtualRole.setAbleToManageFunctionsCatalog(true);
 					}
 					if (anotherRole.getAbleToManageInternationalization()) {
 						LOGGER.debug("User has role " + roleName + " that is able to manage Internationalization.");
