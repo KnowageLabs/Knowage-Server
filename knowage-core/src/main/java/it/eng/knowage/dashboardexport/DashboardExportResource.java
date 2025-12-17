@@ -18,6 +18,8 @@ import javax.ws.rs.Path;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
+import java.util.Locale;
+
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 @Path("/1.0/dashboardExport")
@@ -111,11 +113,12 @@ public class DashboardExportResource {
     public void downloadPdf(@Context HttpServletRequest req) {
         logger.debug("IN");
         response.setCharacterEncoding(UTF_8.name());
+        Locale locale = req.getLocale();
         try {
             JSONObject body = RestUtilities.readBodyAsJSONObject(req);
             String token = request.getHeader(TOKEN_HEADER);
             String userId = token.substring(7);
-            DashboardPdfExporter dashboardPdfExporter = new DashboardPdfExporter(userId, body);
+            DashboardPdfExporter dashboardPdfExporter = new DashboardPdfExporter(userId, locale);
             String mimeType = dashboardPdfExporter.getMimeType();
 
             if (!MimeUtils.isValidMimeType(mimeType))
@@ -126,6 +129,26 @@ public class DashboardExportResource {
                 data = dashboardPdfExporter.getBinaryData(body);
                 String widgetName = body.getJSONObject("settings").getJSONObject("style").getJSONObject("title")
                         .optString("text");
+                if (widgetName != null && widgetName.startsWith("$P{")) {
+                    // Extract the value between {} - e.g., "$P{country}" -> "country"
+                    int startIndex = widgetName.indexOf('{') + 1;
+                    int endIndex = widgetName.indexOf('}');
+                    String placeholderToReplace = (startIndex > 0 && endIndex > startIndex)
+                            ? widgetName.substring(startIndex, endIndex)
+                            : "";
+                    String remainingPart = widgetName.substring(endIndex + 1);
+                    try {
+                        for (int i = 0; i < body.optJSONArray("drivers").length(); i++) {
+                            JSONObject driver = body.optJSONArray("drivers").getJSONObject(i);
+                            if (driver.getString("urlName").equals(placeholderToReplace)) {
+                                widgetName= driver.getString("value") + remainingPart;
+                                break;
+                            }
+                        }
+                    } catch (JSONException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
                 response.setHeader("Content-Disposition", "attachment; fileName=" + widgetName + "." + "pdf");
                 response.setContentType(MediaType.APPLICATION_OCTET_STREAM);
                 response.setHeader("Content-length", Integer.toString(data.length));
