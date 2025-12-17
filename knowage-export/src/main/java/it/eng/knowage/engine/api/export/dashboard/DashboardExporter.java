@@ -34,7 +34,7 @@ import static it.eng.knowage.engine.api.export.dashboard.StaticLiterals.EXCEL_ER
 public class DashboardExporter {
 
     private final JSONObjectUtils jsonObjectUtils;
-    private final String userUniqueIdentifier;
+    protected final String userUniqueIdentifier;
     private String imageB64;
     protected Map<String, String> i18nMessages;
     protected Locale locale;
@@ -196,13 +196,18 @@ public class DashboardExporter {
             }
             return selectionsToReturn;
         } catch (JSONException e) {
-            return Collections.emptyMap();
+            throw new SpagoBIRuntimeException("Cannot get selections from body", e);
         }
     }
 
     private void loopOverSelectionValues(JSONObject selection, Map<String, Map<String, JSONArray>> selectionsToReturn) throws JSONException {
         for (int j = 0; j < selection.getJSONArray("value").length(); j++) {
-            String valueToInsert = "('" + selection.getJSONArray("value").getString(j) + "')";
+            String valueToInsert;
+            try {
+                valueToInsert = "('" + selection.getJSONArray("value").getString(j) + "')";
+            } catch (JSONException e) {
+                valueToInsert = "('" + selection.getJSONArray("value").getInt(j) + "')";
+            }
             selectionsToReturn.get(selection.getString("datasetLabel")).get(selection.getString("columnName")).put(valueToInsert);
         }
     }
@@ -286,7 +291,20 @@ public class DashboardExporter {
             for (int i = 0; i < parameters.length(); i++) {
                 JSONObject parameter = parameters.getJSONObject(i);
                 if (parameter.getInt("dataset") == body.getInt("dataset")) {
-                    parametersToSend.put(parameter.getString("name"), parameter.get("value"));
+                    if (parameter.get("value") != null && !parameter.getString("value").equals("null")) {
+                        parametersToSend.put(parameter.getString("name"), parameter.get("value"));
+                    } else {
+                        JSONArray drivers = body.optJSONArray("drivers") != null ? body.getJSONArray("drivers") : null;
+                        if (drivers != null) {
+                            for (int j = 0; j < drivers.length(); j++) {
+                                JSONObject driver = drivers.getJSONObject(j);
+                                if (driver.getString("urlName").equals(parameter.getString("name"))) {
+                                    parametersToSend.put(parameter.getString("name"), driver.get("value"));
+                                    break;
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }
