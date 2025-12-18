@@ -5,7 +5,7 @@
   <div class="layout-wrapper-content" :class="{ 'layout-wrapper-content-embed': documentExecution.embed, isMobileDevice: isMobileDevice }">
     <MainMenu v-if="showMenu && !hideMainMenu" @menuItemSelected="setSelectedMenuItem" :closeMenu="closedMenu" @openMenu="openMenu"></MainMenu>
 
-    <div class="layout-main" @click="closeMenu" @blur="closeMenu">
+    <div class="layout-main" :class="{ hiddenMenu: hideMainMenu }" @click="closeMenu" @blur="closeMenu">
       <router-view :selectedMenuItem="selectedMenuItem" :menuItemClickedTrigger="menuItemClickedTrigger" @click="closeMenu" />
     </div>
   </div>
@@ -338,5 +338,10 @@ body {
 .layout-main {
   margin-left: 58px;
   flex: 1;
+   &.hiddenMenu {
+        margin-left: 0;
+        margin-top: 0;
+        max-width: 100%;
+    }
 }
 </style>
