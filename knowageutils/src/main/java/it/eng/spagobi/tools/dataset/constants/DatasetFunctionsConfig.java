@@ -3,6 +3,7 @@ package it.eng.spagobi.tools.dataset.constants;
 import static it.eng.spagobi.tools.dataset.metasql.query.DatabaseDialect.BIGQUERY;
 import static it.eng.spagobi.tools.dataset.metasql.query.DatabaseDialect.CASSANDRA;
 import static it.eng.spagobi.tools.dataset.metasql.query.DatabaseDialect.DB2;
+import static it.eng.spagobi.tools.dataset.metasql.query.DatabaseDialect.DORIS;
 import static it.eng.spagobi.tools.dataset.metasql.query.DatabaseDialect.HIVE;
 import static it.eng.spagobi.tools.dataset.metasql.query.DatabaseDialect.HIVE2;
 import static it.eng.spagobi.tools.dataset.metasql.query.DatabaseDialect.IMPALA;
@@ -49,7 +50,8 @@ public class DatasetFunctionsConfig {
 		availableFunctions.add(NULLIF);
 		map.put(AVAILABLE_FUNCTIONS, availableFunctions);
 
-		Stream.of(HIVE2, MONGO, DB2, IMPALA, MYSQL, MYSQL_INNODB, ORACLE_9I10G, ORACLE, POSTGRESQL, SPARKSQL, SQLSERVER, ORACLE_SPATIAL, TERADATA, VERTICA,
+		Stream.of(HIVE2, MONGO, DB2, IMPALA, MYSQL, DORIS, MYSQL_INNODB, ORACLE_9I10G, ORACLE, POSTGRESQL, SPARKSQL, SQLSERVER, ORACLE_SPATIAL, TERADATA,
+				VERTICA,
 				REDSHIFT, BIGQUERY, SYNAPSE, SPANNER).forEach(e -> functionsConfigurationMap.put(e.getValue(), map));
 	}
 

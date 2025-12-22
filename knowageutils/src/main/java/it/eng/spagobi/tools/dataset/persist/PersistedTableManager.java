@@ -1025,6 +1025,9 @@ public class PersistedTableManager implements IPersistedManager {
 				toReturn += ((i < l - 1) ? " , " : "");
 			}
 			toReturn += " )";
+			if (dataSource.getDialectName().contains(DatabaseDialect.DORIS.getValue())) {
+				toReturn = toReturn + " ENGINE=OLAP";
+			}
 		} else {
 			LOGGER.debug("Metadata fields object not found! Doesn't create temporary table.");
 		}
@@ -1110,7 +1113,7 @@ public class PersistedTableManager implements IPersistedManager {
 			statement = "SELECT TABLE_NAME " + "FROM USER_TABLES " + "WHERE TABLE_NAME LIKE '" + prefix.toUpperCase()
 					+ "%'";
 		} else if (dialect.equals(DatabaseDialect.SQLSERVER) || dialect.equals(DatabaseDialect.MYSQL)
-				|| dialect.equals(DatabaseDialect.MYSQL_INNODB) || dialect.equals(DatabaseDialect.POSTGRESQL)) {
+				|| dialect.equals(DatabaseDialect.MYSQL_INNODB) || dialect.equals(DatabaseDialect.POSTGRESQL) || dialect.equals(DatabaseDialect.DORIS)) {
 			statement = "SELECT TABLE_NAME " + "FROM INFORMATION_SCHEMA.TABLES " + "WHERE TABLE_NAME LIKE '"
 					+ prefix.toLowerCase() + "%'";
 		}

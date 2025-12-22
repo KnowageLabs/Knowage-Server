@@ -35,6 +35,7 @@ public enum DatabaseDialect {
 	DB2("IBM DB2", "org.hibernate.dialect.DB2400Dialect", true, true, false, false),
 	IMPALA("Apache Impala","org.hibernate.dialect.impala", true, true, false,true),
 	MYSQL("MySQL/MariaDB", "org.hibernate.dialect.MySQLDialect", true, true, true, true),
+	DORIS("Doris", "doris", true, true, true, true),
 	MYSQL_INNODB("MySQL/MariaDB (INNODB)", "org.hibernate.dialect.MySQLInnoDBDialect", true, true, true, true),
 	ORACLE_9I10G("Oracle 9i/10g","org.hibernate.dialect.Oracle9Dialect", true, true, true, true),
 	ORACLE("Oracle", "org.hibernate.dialect.OracleDialect", true, true, true, true),
@@ -67,7 +68,7 @@ public enum DatabaseDialect {
 	private final boolean multiColumnInOperatorSupported;
 	private final boolean inLineViewSupported;
 
-	private DatabaseDialect(String name, String value, boolean isSqlLike, boolean isSingleColumnInOperatorSupported, boolean isMultiColumnInOperatorSupported,
+	DatabaseDialect(String name, String value, boolean isSqlLike, boolean isSingleColumnInOperatorSupported, boolean isMultiColumnInOperatorSupported,
 			boolean inLineViewSupported) {
 		Assert.assertTrue(isSingleColumnInOperatorSupported || !isMultiColumnInOperatorSupported,
 				"Dialect can't support multi-column IN operator if it doesn't support single-column IN operator");
