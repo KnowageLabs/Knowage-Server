@@ -52,6 +52,8 @@ public abstract class DataBaseFactory {
 				case MYSQL:
 				case MYSQL_INNODB:
 					return new MySQLDataBase(dataSource);
+				case DORIS:
+					return new MySQLDataBase(dataSource);
 				case ORACLE:
 					return new OracleDataBase(dataSource);
 				case ORACLE_9I10G:

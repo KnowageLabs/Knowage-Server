@@ -41,6 +41,8 @@ public class SelectQueryVisitorFactory {
 		case MYSQL:
 		case MYSQL_INNODB:
 			return new MySqlSelectQueryVisitor(database);
+		case DORIS:
+			return new MySqlSelectQueryVisitor(database);
 		case ORACLE:
 		case ORACLE_9I10G:
 		case ORACLE_SPATIAL:

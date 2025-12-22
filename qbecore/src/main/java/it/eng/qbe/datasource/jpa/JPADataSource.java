@@ -60,6 +60,7 @@ import it.eng.qbe.utility.CustomFunctionsSingleton;
 import it.eng.qbe.utility.CustomizedFunctionsReader;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.bo.UserProfile;
+import it.eng.spagobi.tools.dataset.metasql.query.DatabaseDialect;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.user.UserProfileManager;
 import it.eng.spagobi.utilities.assertion.Assert;
@@ -359,6 +360,8 @@ public class JPADataSource extends AbstractDataSource implements IJpaDataSource 
 		/*
 		 * TODO : Check if (dialect != null && dialect.contains("SQLServerDialect")) { dialect = "org.hibernate.dialect.ExtendedSQLServerDialect"; } else
 		 */ if (dialect != null && dialect.contains("MySQL")) {
+			dialect = "org.hibernate.dialect.ExtendedMySQLDialect";
+		} else if (dialect != null && dialect.contains(DatabaseDialect.DORIS.getValue())) {
 			dialect = "org.hibernate.dialect.ExtendedMySQLDialect";
 		} else if (dialect != null && dialect.contains("CustomOracleSpatialDialect")) {
 			dialect = "org.hibernatespatial.oracle.CustomOracleSpatialDialect";

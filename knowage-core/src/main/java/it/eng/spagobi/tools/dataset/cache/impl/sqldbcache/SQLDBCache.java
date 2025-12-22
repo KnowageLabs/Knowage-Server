@@ -72,8 +72,6 @@ import it.eng.spagobi.utilities.Helper;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.cache.CacheItem;
 import it.eng.spagobi.utilities.database.DataBaseException;
-import it.eng.spagobi.utilities.database.DataBaseFactory;
-import it.eng.spagobi.utilities.database.DatabaseUtilities;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.locks.DistributedLockFactory;
 
@@ -302,7 +300,7 @@ public class SQLDBCache implements ICache {
 			if (mapLocks.tryLock(hashedSignature, getTimeout(), TimeUnit.SECONDS, getLeaseTime(), TimeUnit.SECONDS)) {
 				timing.stop();
 
-				cacheMetadata.updateAllCacheItems(getDataSource());
+				// cacheMetadata.updateAllCacheItems(getDataSource());
 
 				try {
 					timing = MonitorFactory.start("Knowage.SQLDBCache.queryStandardCachedDataset:usingLock[" + hashedSignature + "]");
@@ -413,7 +411,7 @@ public class SQLDBCache implements ICache {
 				timing.stop();
 				try {
 					timing = MonitorFactory.start("Knowage.SQLDBCache.putWithIterator:usingLock[" + hashedSignature + "]");
-					cacheMetadata.updateAllCacheItems(getDataSource());
+					// cacheMetadata.updateAllCacheItems(getDataSource());
 
 					// check again it is not already inserted
 					if (!cacheMetadata.containsCacheItem(signature)) {
@@ -433,8 +431,11 @@ public class SQLDBCache implements ICache {
 
 						JSONArray parameters = DataSetUtilities.paramsFromXML2JSONObj(dataSet);
 
+						// cacheMetadata.addCacheItem(dataSet.getName(), signature, tableName,
+						// DatabaseUtilities.getUsedMemorySize(DataBaseFactory.getCacheDataBase(getDataSource()), "cache", tableName), parameters);
+
 						cacheMetadata.addCacheItem(dataSet.getName(), signature, tableName,
-								DatabaseUtilities.getUsedMemorySize(DataBaseFactory.getCacheDataBase(getDataSource()), "cache", tableName), parameters);
+								new BigDecimal(0), parameters);
 
 						if (getMetadata().isCleaningEnabled() && getMetadata().getAvailableMemory().compareTo(new BigDecimal(0)) < 0) {
 							deleteToQuota();
@@ -844,7 +845,8 @@ public class SQLDBCache implements ICache {
 						persistedTableManager.renameTable(tableNameRefresh, tableName, getDataSource());
 
 						ICacheDAO cacheDao = DAOFactory.getCacheDao();
-						cacheItem.setDimension(DatabaseUtilities.getUsedMemorySize(DataBaseFactory.getCacheDataBase(getDataSource()), "cache", tableName));
+						// cacheItem.setDimension(DatabaseUtilities.getUsedMemorySize(DataBaseFactory.getCacheDataBase(getDataSource()), "cache", tableName));
+						cacheItem.setDimension(new BigDecimal(0));
 						cacheDao.updateCacheItem(cacheItem);
 
 						TenantManager.unset();
