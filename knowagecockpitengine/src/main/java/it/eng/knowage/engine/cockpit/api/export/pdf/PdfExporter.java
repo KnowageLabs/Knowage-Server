@@ -206,7 +206,7 @@ public class PdfExporter extends AbstractFormatExporter {
 		String summaryRowLabel = null;
 		if (settings.has("summary")) {
 			JSONObject summary = settings.getJSONObject("summary");
-			if (Objects.nonNull(summary)) {
+			if (Objects.nonNull(summary) && summary.has("list")) {
 				summaryRowEnabled = Boolean.parseBoolean(summary.getString("enabled"));
 				JSONArray list = summary.getJSONArray("list");
 				int listLenght = list.length();
