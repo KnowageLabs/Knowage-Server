@@ -450,7 +450,7 @@ public class DashboardExcelExporter extends DashboardExporter {
         }
     }
 
-    private void setFormattedCellValue(Workbook wb, int precision, String type, Cell cell, String stringifiedValue) {
+    private void setFormattedCellValue(Workbook wb, JSONObject visualizationType, String type, Cell cell, String stringifiedValue) throws JSONException {
         CreationHelper creationHelper = wb.getCreationHelper();
 
         DateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT, getLocale());
@@ -458,30 +458,67 @@ public class DashboardExcelExporter extends DashboardExporter {
         switch (type) {
             case "int":
                 if (!stringifiedValue.trim().isEmpty()) {
-                    cell.getCellStyle().setDataFormat(getFormat(precision, creationHelper));
-                    cell.setCellValue(Integer.parseInt(stringifiedValue));
+                    cell.getCellStyle().setDataFormat(getFormat(visualizationType, creationHelper));
+                    if (visualizationType.has("prefix") || visualizationType.has("suffix")) {
+                        stringifiedValue = visualizationType.optString("prefix", "") + stringifiedValue;
+                        if (visualizationType.has("precision")) {
+                            int precision = visualizationType.getInt("precision");
+                            if (precision > 0) {
+                                stringifiedValue += "." + "0".repeat(precision);
+                            }
+                            stringifiedValue += visualizationType.optString("suffix", "");
+                        }
+                        cell.setCellValue(stringifiedValue);
+                    } else {
+                        cell.setCellValue(Integer.parseInt(stringifiedValue));
+                    }
                 }
                 break;
             case "float":
                 if (!stringifiedValue.trim().isEmpty()) {
-                    cell.getCellStyle().setDataFormat(getFormat(precision, creationHelper));
-                    cell.setCellValue(Double.parseDouble(stringifiedValue));
+                    cell.getCellStyle().setDataFormat(getFormat(visualizationType, creationHelper));
+                    if (visualizationType.has("prefix") || visualizationType.has("suffix")) {
+                        if (visualizationType.has("precision")) {
+                            int precision = visualizationType.getInt("precision");
+                            double doubleValue = Double.parseDouble(stringifiedValue);
+                            double factor = Math.pow(10, precision);
+                            doubleValue = Math.round(doubleValue * factor) / factor;
+                            stringifiedValue = String.format(String.format("%%.%df", precision), doubleValue);
+                        }
+                        stringifiedValue = visualizationType.optString("prefix", "") + stringifiedValue;
+                        stringifiedValue = stringifiedValue + visualizationType.optString("suffix", "");
+                        cell.setCellValue(stringifiedValue);
+                    } else {
+                        cell.setCellValue(Double.parseDouble(stringifiedValue));
+                    }
                 }
                 break;
             case "date":
                 try {
                     if (!stringifiedValue.trim().isEmpty()) {
-                        Date date = dateFormat.parse(stringifiedValue);
-                        cell.setCellValue(date);
+                        cell.getCellStyle().setDataFormat(getFormat(visualizationType, creationHelper));
+                        if (visualizationType.has("prefix") || visualizationType.has("suffix")) {
+                            stringifiedValue = visualizationType.optString("prefix", "") + stringifiedValue;
+                            stringifiedValue = stringifiedValue + visualizationType.optString("suffix", "");
+                            cell.setCellValue(stringifiedValue);
+                        } else {
+                            Date date = dateFormat.parse(stringifiedValue);
+                            cell.setCellValue(date);
+                        }
                     }
                 } catch (Exception e) {
                     LOGGER.debug("Date will be exported as string due to error: ", e);
                     cell.setCellValue(stringifiedValue);
                 }
+                break;
             case "string":
                 if (!stringifiedValue.trim().isEmpty()) {
+                    if (visualizationType.has("prefix") || visualizationType.has("suffix")) {
+                        stringifiedValue = visualizationType.optString("prefix", "") + stringifiedValue;
+                        stringifiedValue = stringifiedValue + visualizationType.optString("suffix", "");
+                    }
                     try {
-                        cell.getCellStyle().setDataFormat(getFormat(precision, creationHelper));
+                        cell.getCellStyle().setDataFormat(getFormat(visualizationType, creationHelper));
                         cell.setCellValue(Integer.parseInt(stringifiedValue));
                     } catch (Exception e) {
                         cell.setCellValue(stringifiedValue);
@@ -494,10 +531,12 @@ public class DashboardExcelExporter extends DashboardExporter {
         }
     }
 
-    private short getFormat(int precision, CreationHelper helper) {
+    private short getFormat(JSONObject visualizationType, CreationHelper helper) throws JSONException {
         String format = "0";
-        if (precision != -1) {
-            format = getNumberFormatByPrecision(precision, format);
+        if (visualizationType != null) {
+            if (visualizationType.has("precision")) {
+                format = getNumberFormatByPrecision(visualizationType.getInt("precision"), format);
+            }
             return helper.createDataFormat().getFormat(format);
         }
         return helper.createDataFormat().getFormat(format);
@@ -737,10 +776,10 @@ public class DashboardExcelExporter extends DashboardExporter {
                 }
                 cell.setCellStyle(cellStyle);
             }
-            int precision = getPrecisionByColumn(settings, column);
+            JSONObject visualizationType = getVisualizationTypeByColumn(settings, column);
 
             if (r < rows.length() - numberOfSummaryRows) {
-                setFormattedCellValue(wb, precision, type, cell, stringifiedValue);
+                setFormattedCellValue(wb, visualizationType, type, cell, stringifiedValue);
             } else {
                     if (isSummaryColumnVisible(getDashboardHiddenColumnsList(settings, "hideFromSummary"), column)) {
                         String label = "";
@@ -748,7 +787,7 @@ public class DashboardExcelExporter extends DashboardExporter {
                             label = summaryRowsLabels.get(r - (rows.length() - numberOfSummaryRows)).concat(" ");
                         }
                         cell.setCellStyle(cellStyle);
-                        setFormattedCellValue(wb, precision, type, cell, label.concat(stringifiedValue));
+                        setFormattedCellValue(wb, visualizationType, type, cell, label.concat(stringifiedValue));
                      }
                 }
             }
@@ -798,41 +837,6 @@ public class DashboardExcelExporter extends DashboardExporter {
         } catch (Exception e) {
             throw new SpagoBIRuntimeException("Couldn't create header column names", e);
         }
-    }
-
-    protected int getPrecisionByColumn(JSONObject settings, JSONObject column) {
-        try {
-            JSONObject visualization = getJsonObjectUtils().getVisualizationFromSettings(settings);
-            
-            if (visualization == null || !visualization.has("visualizationTypes"))
-                return -1;
-
-            JSONObject visualizationTypes = visualization.getJSONObject("visualizationTypes");
-
-            JSONArray types = visualizationTypes.getJSONArray("types");
-
-            for (int i = 0; i < types.length(); i++) {
-                JSONObject type = types.getJSONObject(i);
-                JSONArray target;
-                try {
-                    target = type.getJSONArray("target");
-                } catch (JSONException e) {
-                    target = new JSONArray();
-                    target.put(type.getString("target"));
-                }
-
-                if (type.has("precision")) {
-                    if (target.toString().contains(column.getString("id")) || target.toString().contains("all")) {
-                        return type.getInt("precision");
-                    } else {
-                        return -1;
-                    }
-                }
-            }
-        } catch (Exception ignored) {
-            return -1;
-        }
-        return -1;
     }
 
     public CellStyle buildPoiCellStyle(Style style, XSSFFont font, Workbook wb) {
