@@ -275,7 +275,7 @@
 			to="/cross-navigation-management" />
 		<ITEM id="11010" label="menu.calendar"
 			requiredFunctionality="ManageCalendar"
-			to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=calendarTemplate"
+		    to="/calendar-management"
 			iconCls="fas fa-calendar" />
 		<ITEM id="11011" label="menu.lovs.management"
 			requiredFunctionality="LovsManagement"
