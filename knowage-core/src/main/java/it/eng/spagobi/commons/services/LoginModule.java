@@ -431,6 +431,13 @@ public class LoginModule extends AbstractHttpModule {
 	}
 
 	private boolean checkCodeMfa(SourceBean request, String userId, MessageBuilder msgBuilder) throws Exception {
+
+		String securityServiceSupplier = SingletonConfig.getInstance().getConfigValue("SPAGOBI.SECURITY.USER-PROFILE-FACTORY-CLASS.className");
+		// If securityServiceSupplier is Ldap compliant, skip MFA
+		if (StringUtils.containsIgnoreCase(securityServiceSupplier, "LdapSecurityService")) {
+			return true;
+		}
+
 		// Load user data from the database
 		ISbiUserDAO userDao = DAOFactory.getSbiUserDAO();
 		SbiUser user = userDao.loadSbiUserByUserId(userId);
