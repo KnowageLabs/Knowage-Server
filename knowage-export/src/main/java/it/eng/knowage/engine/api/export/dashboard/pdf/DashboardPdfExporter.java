@@ -564,6 +564,9 @@ public class DashboardPdfExporter extends DashboardExporter {
                 }
                 valueStr = workaroundToRemoveCommonProblematicChars(valueStr);
 
+                JSONObject visualizationType = getVisualizationTypeByColumn(settings, column);
+                valueStr = applyVisualizationTypeToValueStr(visualizationType, valueStr);
+
                 Cell<PDPage> cell = row.createCell(columnPercentWidths[c], valueStr,
                         HorizontalAlignment.get("center"), VerticalAlignment.get("top"));
 
@@ -601,6 +604,24 @@ public class DashboardPdfExporter extends DashboardExporter {
                 }
             }
         }
+    }
+
+    private String applyVisualizationTypeToValueStr(JSONObject visualizationType, String valueStr) throws JSONException {
+
+        if (visualizationType.has("precision")) {
+            int precision = visualizationType.getInt("precision");
+            try {
+                double numericValue = Double.parseDouble(valueStr);
+                String formatString = "%." + precision + "f";
+                valueStr = String.format(formatString, numericValue);
+            } catch (NumberFormatException e) {
+                logger.warn("Cannot apply precision to non-numeric value: " + valueStr, e);
+            }
+        }
+
+        String prefix = visualizationType.optString("prefix", "");
+        String suffix = visualizationType.optString("suffix", "");
+        return prefix + valueStr + suffix;
     }
 
     private void applyWholeRowStyle(int c, List<Boolean> styleCanBeOverriddenByWholeRowStyle, Row<PDPage> row, Style cellStyle) {

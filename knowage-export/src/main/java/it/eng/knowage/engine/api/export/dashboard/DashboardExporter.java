@@ -489,7 +489,7 @@ public class DashboardExporter {
             numberOfSummaryRows = list.length();
 
             for (int i = 0; i < numberOfSummaryRows; i++) {
-                summaryRowsLabels.add(list.getJSONObject(i).getString("label"));
+                summaryRowsLabels.add(list.getJSONObject(i).optString("label", ""));
             }
 
         }
@@ -1481,8 +1481,45 @@ public class DashboardExporter {
             LOGGER.error("Cannot fill drivers sheet", e);
             throw new SpagoBIRuntimeException("Cannot fill drivers sheet", e);
         }
-
     }
+
+    protected JSONObject getVisualizationTypeByColumn(JSONObject settings, JSONObject column) {
+        try {
+            JSONObject visualization = getJsonObjectUtils().getVisualizationFromSettings(settings);
+
+            if (visualization == null || !visualization.has("visualizationTypes"))
+                return null;
+
+            JSONObject visualizationTypes = visualization.getJSONObject("visualizationTypes");
+
+            JSONArray types = visualizationTypes.getJSONArray("types");
+
+            JSONObject allVisualizationType = null;
+            for (int i = 0; i < types.length(); i++) {
+                JSONObject type = types.getJSONObject(i);
+                JSONArray target;
+                try {
+                    target = type.getJSONArray("target");
+                } catch (JSONException e) {
+                    target = new JSONArray();
+                    target.put(type.getString("target"));
+                }
+
+
+                if (target.toString().contains("all")) {
+                    allVisualizationType = type;
+                }
+
+                if (target.toString().contains(column.getString("id"))) {
+                    return type;
+                }
+            }
+            return allVisualizationType;
+        } catch (Exception ignored) {
+            return null;
+        }
+    }
+
 
 
 
