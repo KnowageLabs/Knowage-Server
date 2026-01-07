@@ -127,7 +127,7 @@ it:
     cie: false
     pagopa: false
     spid: false
-landingURL: "https://www.knowage-suite.com/site/"
+landingURL: "https://github.com/KnowageLabs/Knowage-Server"
 legal:
   license: AGPL-3.0-only
   mainCopyrightOwner: Engineering Ingegneria Informatica S.p.A.
