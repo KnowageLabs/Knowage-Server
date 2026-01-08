@@ -338,7 +338,11 @@ public class DriversValidationAPI {
 				if (val.equalsIgnoreCase("%")) {
 					value = "%";
 				} else {
-					value = URLDecoder.decode(val, "UTF-8");
+					try {
+						value = URLDecoder.decode(val, "UTF-8");
+					} catch (Exception e) {
+						value = val;
+					}
 				}
 				String description = null;
 				if (value.equals("")) {
