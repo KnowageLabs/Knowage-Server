@@ -92,7 +92,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		  			document.getElementById('utility-bar').classList.remove("hidden");
 		  			document.getElementById('myGrid').classList.add("has-utility-bar");
 		  			for(var e in options['exports']){
-		  				document.getElementById('utility-bar').innerHTML += '<button class="kn-button" id="export-'+options['exports'][e].toUpperCase()+'">Export '+options['exports'][e].toUpperCase()+'</button>'
+		  				document.getElementById('utility-bar').innerHTML += '<button class="kn-button" id="export-'+options['exports'][e].toUpperCase()+'" onclick="exportDataset(\''+options['exports'][e].toUpperCase()+'\')">Export '+options['exports'][e].toUpperCase()+'</button>'
 		  			}
 		  			exporterBarShown = true;
 		  		}
@@ -401,8 +401,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					DATASET = data.item[0];
 				})
 	  		}
-
-
+			
 			function exportDataset(format){
 				var body = {};
 				Toastify({
@@ -446,10 +445,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						}
 					})
 			}
-
-            document.getElementsByClassName('kn-button').addEventListener('click', function(e){
-                exportDataset(e.target.id.replace('export-',''));
-            });
 
 			var eGridDiv = document.querySelector('#myGrid');
 			new agGrid.Grid(eGridDiv, gridOptions);
