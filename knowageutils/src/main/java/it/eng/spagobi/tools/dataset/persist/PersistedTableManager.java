@@ -17,9 +17,17 @@
  */
 package it.eng.spagobi.tools.dataset.persist;
 
+import java.io.BufferedWriter;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.security.SecureRandom;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -27,22 +35,29 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Random;
 import java.util.Set;
 import java.util.UUID;
+import java.util.zip.GZIPOutputStream;
 
 import org.apache.log4j.Logger;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jamonapi.Monitor;
 import com.jamonapi.MonitorFactory;
 
 import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.tools.dataset.bo.AbstractJDBCDataset;
 import it.eng.spagobi.tools.dataset.bo.FileDataSet;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
@@ -79,6 +94,7 @@ public class PersistedTableManager implements IPersistedManager {
 	private static final int BATCH_SIZE = 1000;
 	private static final Random RANDOM = new SecureRandom();
 	private static final String ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+	private static final String COLUMN_SEPARATOR = "|";
 
 	private DatabaseDialect dialect = null;
 	private String tableName = "";
@@ -148,7 +164,127 @@ public class PersistedTableManager implements IPersistedManager {
 		}
 	}
 
+	private void persistDoris(IDataSet dataSet, IDataSource datasource, String tableName) throws Exception {
+		LOGGER.debug("IN");
+		Path tempCsv = null;
+		Path gzPath = null;
+		try (DataIterator iterator = dataSet.iterator()) {
+			createTable(iterator.getMetaData(), datasource);
+
+			tempCsv = Files.createTempFile("doris_streamload_", ".csv");
+			LOGGER.debug("Serializing dataset to CSV: " + tempCsv);
+			serializeIteratorToCsvStreaming(iterator, tempCsv);
+
+			gzPath = Files.createTempFile("doris_streamload_", ".csv.gz");
+			LOGGER.debug("Compressing CSV to GZIP: " + gzPath);
+			gzipFile(tempCsv, gzPath);
+
+			String label = "knowage_" + tableName + "_" + Instant.now().getEpochSecond();
+
+			String user = Optional.ofNullable(datasource.getUser()).filter(u -> !u.isEmpty())
+					.orElse(SingletonConfig.getInstance().getConfigValue("KNOWAGE.DORIS.USER"));
+			if (user == null || user.isEmpty()) {
+				throw new RuntimeException("Error : User doris is undefined");
+			}
+			String password = Optional.ofNullable(datasource.getPwd()).filter(u -> !u.isEmpty())
+					.or(() -> Optional.ofNullable(SingletonConfig.getInstance().getConfigValue("KNOWAGE.DORIS.PASSWORD")).filter(u -> !u.isEmpty())).orElse("");
+
+			String endpoint = SingletonConfig.getInstance().getConfigValue("KNOWAGE.DORIS.ENDPOINT");
+			if (endpoint == null || endpoint.isEmpty()) {
+				throw new RuntimeException("Error : Endpoint doris is undefined");
+			}
+			endpoint = endpoint.replace("{table}", tableName);
+
+			String basicAuth = Base64.getEncoder().encodeToString((user + ":" + password).getBytes(StandardCharsets.UTF_8));
+
+			HttpClient client = HttpClient.newBuilder().version(HttpClient.Version.HTTP_1_1).connectTimeout(java.time.Duration.ofSeconds(10)).build();
+
+			HttpRequest request = HttpRequest.newBuilder().uri(URI.create(endpoint)).timeout(java.time.Duration.ofMinutes(10))
+					.header("Authorization", "Basic " + basicAuth).header("label", label).header("format", "csv").header("compress_type", "gz")
+					.header("column_separator", COLUMN_SEPARATOR).header("Content-Type", "text/csv; charset=UTF-8").expectContinue(true)
+					.PUT(HttpRequest.BodyPublishers.ofFile(gzPath))
+					.build();
+
+			LOGGER.info("Executing Stream Load: " + endpoint);
+			LOGGER.debug("Label: " + label);
+
+			HttpResponse<String> resp = client.send(request, HttpResponse.BodyHandlers.ofString());
+			LOGGER.info("Stream Load HTTP status: " + resp.statusCode());
+			LOGGER.debug("Stream Load response body: " + resp.body());
+
+			ObjectMapper mapper = new ObjectMapper();
+			JsonNode node = mapper.readTree(resp.body());
+			String status = node.get("Status").asText();
+
+			if (resp.statusCode() == 200 && status != null && status.equalsIgnoreCase("Success")) {
+				LOGGER.info("Stream Load completed successfully for table " + tableName);
+
+			} else {
+				throw new RuntimeException("Stream Load failed: HTTP " + resp.statusCode() + " - " + resp.body());
+			}
+
+		} finally {
+			Files.deleteIfExists(tempCsv);
+			Files.deleteIfExists(gzPath);
+		}
+	}
+
+	private void serializeIteratorToCsvStreaming(DataIterator iterator, Path tempCsv) throws Exception {
+		try (BufferedWriter bw = Files.newBufferedWriter(tempCsv, StandardCharsets.UTF_8)) {
+			long count = 0;
+			while (iterator.hasNext()) {
+				IRecord r = iterator.next();
+				bw.write(toCsvLine(r));
+				bw.write("\n");
+				count++;
+				if (count % 10000 == 0) {
+					LOGGER.debug("Serialized records " + count);
+				}
+			}
+			bw.flush();
+		}
+	}
+
+	private String toCsvLine(IRecord record) {
+		StringBuilder sb = new StringBuilder();
+		for (int j = 0; j < record.getFields().size(); j++) {
+			IField field = record.getFieldAt(j);
+			Object fieldValue = field.getValue();
+			if (j > 0) {
+				sb.append(COLUMN_SEPARATOR);
+			}
+			sb.append(escapeCsv(fieldValue));
+		}
+
+		return sb.toString();
+	}
+
+	private String escapeCsv(Object v) {
+		if (v == null) {
+			return "\\N";// convenzione Doris per NULL
+		}
+		String s = String.valueOf(v);
+		s = s.replace("\r", " ").replace("\n", " ");
+		return s;
+	}
+
+	private void gzipFile(Path src, Path dst) throws Exception {
+		try (var in = Files.newInputStream(src); var out = new GZIPOutputStream(Files.newOutputStream(dst))) {
+			in.transferTo(out);
+			// GZIPOutputStream chiude l'header/CRC su close()
+		}
+	}
+
 	public void persist(IDataSet dataSet, IDataSource datasource, String tableName) throws Exception {
+		if (datasource.getDialectName().contains(DatabaseDialect.DORIS.getValue())) {
+			persistDoris(dataSet, datasource, tableName);
+		} else {
+			persistJdbc(dataSet, datasource, tableName);
+		}
+
+	}
+
+	private void persistJdbc(IDataSet dataSet, IDataSource datasource, String tableName) throws Exception {
 		LOGGER.debug("IN");
 
 		Monitor monitor = MonitorFactory.start("spagobi.cache.sqldb.persist.paginated");
