@@ -27,23 +27,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	IUrlBuilder urlBuilder = null;	
 	String sbiMode = null;
 		
-	// case of portlet mode
-	aRequestContainer = RequestContainerPortletAccess.getRequestContainer(request);
-	if (aRequestContainer == null) {
-		// case of web mode
-		aRequestContainer = RequestContainer.getRequestContainer();
-		if(aRequestContainer == null){
-			//case of REST 
-			aRequestContainer = RequestContainerAccess.getRequestContainer(request);
-		}
+	
+	// case of web mode
+	aRequestContainer = RequestContainer.getRequestContainer();
+	if(aRequestContainer == null){
+		//case of REST 
+		aRequestContainer = RequestContainerAccess.getRequestContainer(request);
 	}
 
-	String channelType = aRequestContainer.getChannelType();
-	if ("PORTLET".equalsIgnoreCase(channelType)) sbiMode = "PORTLET";
-	else sbiMode = "WEB";
-
 	// create url builder 
-	urlBuilder = UrlBuilderFactory.getUrlBuilder(sbiMode);
+	urlBuilder = UrlBuilderFactory.getUrlBuilder("WEB");
 %>
 <!DOCTYPE html>
     <head>
@@ -88,20 +81,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	  		
 	  		var exporterBarShown = false;	  		
 	  		function showExportersBar(){
-                  if(options && options['exports'] && !exporterBarShown) {
-                    var ub = document.getElementById('utility-bar');
-                    ub.classList.remove("hidden");
-                    document.getElementById('myGrid').classList.add("has-utility-bar");
-                    options['exports'].forEach(function(e){
-                      var btn = document.createElement('button');
-                      btn.className = 'kn-button';
-                      btn.id = 'export-' + e.toUpperCase();
-                      btn.textContent = 'Export ' + e.toUpperCase();
-                      btn.addEventListener('click', function(){ exportDataset(e.toUpperCase()); });
-                      ub.appendChild(btn);
-                    });
-                    exporterBarShown = true;
-                  }
+	  			if(options && options['exports'] && !exporterBarShown) {
+		  			document.getElementById('utility-bar').classList.remove("hidden");
+		  			document.getElementById('myGrid').classList.add("has-utility-bar");
+		  			for(var e in options['exports']){
+		  				document.getElementById('utility-bar').innerHTML += '<button class="kn-button" id="export-'+options['exports'][e].toUpperCase()+'">Export '+options['exports'][e].toUpperCase()+'</button>'
+		  			}
+		  			exporterBarShown = true;
+		  		}
 	  		}
 	  		
 	  		//Utility methods
@@ -261,41 +248,27 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			}
 		  	
 		  	//Pagination template and utility methods
-            function paginationTemplate(){
-              return  '<span ref="eSummaryPanel" class="ag-paging-row-summary-panel">'+
-                      '  <span ref="lbFirstRowOnPage">'+((backEndPagination.page-1)*backEndPagination.itemsPerPage+1)+'</span> to <span ref="lbLastRowOnPage">'+maxPageNumber()+'</span> of <span ref="lbRecordCount">'+backEndPagination.totalRows+'</span>'+
-                      '</span>'+
-                      '<span class="ag-paging-page-summary-panel">'+
-                      '  <div class="ag-paging-button-wrapper '+disableFirstClass()+'">'+
-                      '    <button type="button" class="ag-icon ag-icon-first" data-action="first" '+disableFirst()+'></button>'+
-                      '  </div>'+
-                      '  <div class="ag-paging-button-wrapper '+disableFirstClass()+'">'+
-                      '    <button type="button" class="ag-icon ag-icon-previous" data-action="prev" '+disableFirst()+'></button>'+
-                      '  </div>'+
-                      '  page <span ref="lbCurrent">'+backEndPagination.page+'</span> of <span ref="lbTotal">'+backEndPagination.totalPages+'</span>'+
-                      '  <div class="ag-paging-button-wrapper '+disableLastClass()+'">'+
-                      '    <button type="button" class="ag-icon ag-icon-next" data-action="next" '+disableLast()+'></button>'+
-                      '  </div>'+
-                      '  <div class="ag-paging-button-wrapper '+disableLastClass()+'">'+
-                      '    <button type="button" class="ag-icon ag-icon-last" data-action="last" '+disableLast()+'></button>'+
-                      '  </div>'+
-                      '</span>';
-            }
-
-            function attachPaginationListeners(){
-              var panel = document.getElementsByClassName('ag-paging-panel')[0];
-              if(!panel) return;
-              panel.querySelectorAll('button[data-action]').forEach(function(btn){
-                // ensure no duplicate handlers
-                btn.addEventListener('click', function(){
-                  var action = btn.getAttribute('data-action');
-                  if(action === 'first') first();
-                  else if(action === 'prev') prev();
-                  else if(action === 'next') next();
-                  else if(action === 'last') last();
-                });
-              });
-            }
+		  	function paginationTemplate(){
+		  		return 	'<span ref="eSummaryPanel" class="ag-paging-row-summary-panel">'+
+			            '	<span ref="lbFirstRowOnPage">'+((backEndPagination.page-1)*backEndPagination.itemsPerPage+1)+'</span> to <span ref="lbLastRowOnPage">'+maxPageNumber()+'</span> of <span ref="lbRecordCount">'+backEndPagination.totalRows+'</span>'+
+			            '</span>'+
+			            '<span class="ag-paging-page-summary-panel">'+
+			            
+			            '	<div ref="btFirst" class="ag-paging-button-wrapper '+disableFirstClass()+'">'+
+		       			'		<button type="button"class="ag-icon ag-icon-first" ref="btFirst" '+disableFirst()+' onclick="first()"></button>'+
+		      			'	</div>'+
+		      			'	<div ref="btPrevious" class="ag-paging-button-wrapper '+disableFirstClass()+'">'+
+		       			'		<button type="button" class="ag-icon ag-icon-previous" ref="btPrevious" '+disableFirst()+' onclick="prev()"></button>'+
+		       			'	</div>'+
+		       			'page <span ref="lbCurrent">'+backEndPagination.page+'</span> of <span ref="lbTotal">'+backEndPagination.totalPages+'</span>'+
+		       			'	<div ref="btNext" class="ag-paging-button-wrapper '+disableLastClass()+'" >'+
+		       			'   	<button type="button" class="ag-icon ag-icon-next"  ref="btNext" onclick="next()" '+disableLast()+'"></button>'+
+		       			'	</div>'+
+		       			'	<div ref="btLast" class="ag-paging-button-wrapper '+disableLastClass()+'" >'+
+		       			'   	<button type="button" class="ag-icon ag-icon-last" ref="btLast" onclick="last()" '+disableLast()+'"></button>'+
+		       			'	</div>'+
+						'</span>';
+		  	}
 		  	
 		  	function CustomErrorOverlay () {}
 
@@ -394,11 +367,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 							gridOptions.api.setRowData(data.rows);
 							//backEndPagination.itemsPerPage = gridOptions.api.getLastDisplayedRow()+1;
 							backEndPagination.totalPages = Math.ceil(backEndPagination.totalRows/backEndPagination.itemsPerPage) || 0;
-                            var pagingPanel = document.getElementsByClassName('ag-paging-panel')[0];
-                            if(pagingPanel){
-                              pagingPanel.innerHTML = paginationTemplate();
-                              attachPaginationListeners();
-                            }
+							document.getElementsByClassName('ag-paging-panel')[0].innerHTML = paginationTemplate();
 						}else{
 							
 							gridOptions.api.setRowData(data.rows);
@@ -407,11 +376,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 								options.backEndPagination = true;
 								backEndPagination.itemsPerPage = gridOptions.api.getLastDisplayedRow()+1;
 								backEndPagination.totalPages = Math.ceil(backEndPagination.totalRows/backEndPagination.itemsPerPage) || 0;
-                                var pagingPanel = document.getElementsByClassName('ag-paging-panel')[0];
-                                if(pagingPanel){
-                                  pagingPanel.innerHTML = paginationTemplate();
-                                  attachPaginationListeners();
-                                }
+								document.getElementsByClassName('ag-paging-panel')[0].innerHTML = paginationTemplate();
 							}
 						}
 						gridOptions.api.hideOverlay();
@@ -429,7 +394,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					DATASET = data.item[0];
 				})
 	  		}
-			
+
+
 			function exportDataset(format){
 				var body = {};
 				Toastify({
@@ -473,6 +439,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						}
 					})
 			}
+
+            document.getElementsByClassName('kn-button').addEventListener('click', function(e){
+                exportDataset(e.target.id.replace('export-',''));
+            });
 
 			var eGridDiv = document.querySelector('#myGrid');
 			new agGrid.Grid(eGridDiv, gridOptions);
