@@ -202,7 +202,7 @@ public class PdfExporter extends AbstractFormatExporter {
 		// Check if summary row is enabled
 		boolean summaryRowEnabled = false;
 		String summaryRowLabel = null;
-		if (settings.has("summary")) {
+		if (settings.has("summary") && settings.getJSONObject("summary").has("list")) {
 			JSONObject summary = settings.getJSONObject("summary");
 			if (Objects.nonNull(summary)) {
 				summaryRowEnabled = Boolean.parseBoolean(summary.getString("enabled"));
