@@ -94,7 +94,7 @@ public class PersistedTableManager implements IPersistedManager {
 	private static final int BATCH_SIZE = 1000;
 	private static final Random RANDOM = new SecureRandom();
 	private static final String ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-	private static final String COLUMN_SEPARATOR = "|";
+	private static final String COLUMN_SEPARATOR = "\t";
 
 	private DatabaseDialect dialect = null;
 	private String tableName = "";
@@ -184,6 +184,7 @@ public class PersistedTableManager implements IPersistedManager {
 			String user = Optional.ofNullable(datasource.getUser()).filter(u -> !u.isEmpty())
 					.orElse(SingletonConfig.getInstance().getConfigValue("KNOWAGE.DORIS.USER"));
 			if (user == null || user.isEmpty()) {
+				LOGGER.error("Error : User doris is undefined");
 				throw new RuntimeException("Error : User doris is undefined");
 			}
 			String password = Optional.ofNullable(datasource.getPwd()).filter(u -> !u.isEmpty())
@@ -191,24 +192,32 @@ public class PersistedTableManager implements IPersistedManager {
 
 			String endpoint = SingletonConfig.getInstance().getConfigValue("KNOWAGE.DORIS.ENDPOINT");
 			if (endpoint == null || endpoint.isEmpty()) {
+				LOGGER.error("Error : Endpoint doris is undefined");
 				throw new RuntimeException("Error : Endpoint doris is undefined");
 			}
 			endpoint = endpoint.replace("{table}", tableName);
 
 			String basicAuth = Base64.getEncoder().encodeToString((user + ":" + password).getBytes(StandardCharsets.UTF_8));
 
-			HttpClient client = HttpClient.newBuilder().version(HttpClient.Version.HTTP_1_1).connectTimeout(java.time.Duration.ofSeconds(10)).build();
+			HttpResponse<String> resp = null;
+			HttpRequest request = null;
+			try {
+				HttpClient client = HttpClient.newBuilder().version(HttpClient.Version.HTTP_1_1).connectTimeout(java.time.Duration.ofSeconds(10)).build();
 
-			HttpRequest request = HttpRequest.newBuilder().uri(URI.create(endpoint)).timeout(java.time.Duration.ofMinutes(10))
-					.header("Authorization", "Basic " + basicAuth).header("label", label).header("format", "csv").header("compress_type", "gz")
-					.header("column_separator", COLUMN_SEPARATOR).header("Content-Type", "text/csv; charset=UTF-8").expectContinue(true)
-					.PUT(HttpRequest.BodyPublishers.ofFile(gzPath))
-					.build();
+				request = HttpRequest.newBuilder().uri(URI.create(endpoint)).timeout(java.time.Duration.ofMinutes(10))
+						.header("Authorization", "Basic " + basicAuth).header("label", label).header("format", "csv").header("compress_type", "gz")
+						.header("column_separator", COLUMN_SEPARATOR).header("Content-Type", "text/csv; charset=UTF-8").expectContinue(true)
+						.PUT(HttpRequest.BodyPublishers.ofFile(gzPath))
+						.build();
 
-			LOGGER.info("Executing Stream Load: " + endpoint);
-			LOGGER.debug("Label: " + label);
+				LOGGER.info("Executing Stream Load: " + endpoint);
+				LOGGER.debug("Label: " + label);
 
-			HttpResponse<String> resp = client.send(request, HttpResponse.BodyHandlers.ofString());
+				resp = client.send(request, HttpResponse.BodyHandlers.ofString());
+			} catch (Exception e) {
+				LOGGER.error("Error Communication Knowage/Doris " + endpoint, e);
+				throw e;
+			}
 			LOGGER.info("Stream Load HTTP status: " + resp.statusCode());
 			LOGGER.debug("Stream Load response body: " + resp.body());
 
@@ -220,6 +229,7 @@ public class PersistedTableManager implements IPersistedManager {
 				LOGGER.info("Stream Load completed successfully for table " + tableName);
 
 			} else {
+				LOGGER.error("Error Doris body " + resp.body());
 				throw new RuntimeException("Stream Load failed: HTTP " + resp.statusCode() + " - " + resp.body());
 			}
 
