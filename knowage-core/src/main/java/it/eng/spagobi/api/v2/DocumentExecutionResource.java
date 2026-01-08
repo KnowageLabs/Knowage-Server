@@ -1046,7 +1046,12 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 				String value = String.valueOf(valueObj);
 				// if (!value.equals("%7B%3B%7B") && !value.equalsIgnoreCase("%")) {
 				if (!value.equals("") && !value.equalsIgnoreCase("%")) {
-					toReturn.put(key, encoder.decodeFromURL(value.replaceAll("%", "%25").replace("+", "%2B")));
+					try {
+						toReturn.put(key, encoder.decodeFromURL(value.replaceAll("%", "%25").replace("+", "%2B")));
+					} catch (EncodingException e) {
+						LOGGER.debug("An error occured while decoding parameter with value[" + value + "]" + e);
+						toReturn.put(key, value);
+					}
 				} else {
 					toReturn.put(key, value); // uses the original value for list and %
 				}
