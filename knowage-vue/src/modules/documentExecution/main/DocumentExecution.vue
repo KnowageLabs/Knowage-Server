@@ -1048,7 +1048,7 @@ export default defineComponent({
                         })
                         let tempString = ''
                         for (let i = 0; i < parameter.parameterValue.length; i++) {
-                            tempString += parameter.parameterValue[i].description
+                            tempString += parameter.parameterValue[i].description || parameter.parameterDescription[i]
                             tempString += i === parameter.parameterValue.length - 1 ? '' : ';'
                         }
                         parameters[parameter.urlName + '_field_visible_description'] = tempString
