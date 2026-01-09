@@ -199,12 +199,10 @@ public class PersistedTableManager implements IPersistedManager {
 
 			String basicAuth = Base64.getEncoder().encodeToString((user + ":" + password).getBytes(StandardCharsets.UTF_8));
 
-			HttpResponse<String> resp = null;
-			HttpRequest request = null;
 			try {
 				HttpClient client = HttpClient.newBuilder().version(HttpClient.Version.HTTP_1_1).connectTimeout(java.time.Duration.ofSeconds(10)).build();
 
-				request = HttpRequest.newBuilder().uri(URI.create(endpoint)).timeout(java.time.Duration.ofMinutes(10))
+				HttpRequest request = HttpRequest.newBuilder().uri(URI.create(endpoint)).timeout(java.time.Duration.ofMinutes(10))
 						.header("Authorization", "Basic " + basicAuth).header("label", label).header("format", "csv").header("compress_type", "gz")
 						.header("column_separator", COLUMN_SEPARATOR).header("Content-Type", "text/csv; charset=UTF-8").expectContinue(true)
 						.PUT(HttpRequest.BodyPublishers.ofFile(gzPath))
@@ -213,24 +211,28 @@ public class PersistedTableManager implements IPersistedManager {
 				LOGGER.info("Executing Stream Load: " + endpoint);
 				LOGGER.debug("Label: " + label);
 
-				resp = client.send(request, HttpResponse.BodyHandlers.ofString());
+				HttpResponse<String> resp = client.send(request, HttpResponse.BodyHandlers.ofString());
+
+				LOGGER.info("Stream Load HTTP status: " + resp.statusCode());
+				LOGGER.debug("Stream Load response body: " + resp.body());
+
+				ObjectMapper mapper = new ObjectMapper();
+				JsonNode node = mapper.readTree(resp.body());
+				String status = node.get("Status").asText();
+
+				if (resp.statusCode() == 200 && status != null && status.equalsIgnoreCase("Success")) {
+					LOGGER.info("Stream Load completed successfully for table " + tableName);
+
+				} else {
+					dropTableIfExists(datasource, tableName);
+					LOGGER.error("Error Doris body " + resp.body());
+					throw new RuntimeException("Stream Load failed: HTTP " + resp.statusCode() + " - " + resp.body());
+				}
+
 			} catch (Exception e) {
+				dropTableIfExists(datasource, tableName);
 				LOGGER.error("Error Communication Knowage/Doris " + endpoint, e);
 				throw e;
-			}
-			LOGGER.info("Stream Load HTTP status: " + resp.statusCode());
-			LOGGER.debug("Stream Load response body: " + resp.body());
-
-			ObjectMapper mapper = new ObjectMapper();
-			JsonNode node = mapper.readTree(resp.body());
-			String status = node.get("Status").asText();
-
-			if (resp.statusCode() == 200 && status != null && status.equalsIgnoreCase("Success")) {
-				LOGGER.info("Stream Load completed successfully for table " + tableName);
-
-			} else {
-				LOGGER.error("Error Doris body " + resp.body());
-				throw new RuntimeException("Stream Load failed: HTTP " + resp.statusCode() + " - " + resp.body());
 			}
 
 		} finally {
