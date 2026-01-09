@@ -30,6 +30,7 @@ import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.validation.SpagoBIValidationImpl;
 import it.eng.spagobi.tools.catalogue.metadata.IDrivableBIResource;
 import it.eng.spagobi.utilities.objects.Couple;
+import org.owasp.esapi.errors.EncodingException;
 
 public class DriversValidationAPI {
 
@@ -76,7 +77,7 @@ public class DriversValidationAPI {
 			throws Exception {
 		logger.debug("IN");
 		List toReturn = new ArrayList();
-		List drivers = object.getDrivers();
+ 		List drivers = object.getDrivers();
 		if (drivers.isEmpty()) {
 			return toReturn;
 		}
@@ -360,7 +361,12 @@ public class DriversValidationAPI {
 					value = "%";
 				} else {
 					Encoder encoder = OwaspDefaultEncoderFactory.getInstance().getEncoder();
-					value = encoder.decodeFromURL(val);
+					try {
+						value = encoder.decodeFromURL(val);
+					} catch (EncodingException ex) {
+						logger.error("Error decoding value from URL encoding: " + val, ex);
+						value = val;
+					}
 				}
 				String description = null;
 				if (value.equals("")) {
