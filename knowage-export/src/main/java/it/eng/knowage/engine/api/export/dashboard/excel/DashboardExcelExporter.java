@@ -459,7 +459,7 @@ public class DashboardExcelExporter extends DashboardExporter {
             case "int":
                 if (!stringifiedValue.trim().isEmpty()) {
                     cell.getCellStyle().setDataFormat(getFormat(visualizationType, creationHelper));
-                    if (visualizationType.has("prefix") || visualizationType.has("suffix")) {
+                    if (visualizationType != null && (visualizationType.has("prefix") || visualizationType.has("suffix"))) {
                         stringifiedValue = visualizationType.optString("prefix", "") + stringifiedValue;
                         if (visualizationType.has("precision")) {
                             int precision = visualizationType.getInt("precision");
@@ -477,7 +477,7 @@ public class DashboardExcelExporter extends DashboardExporter {
             case "float":
                 if (!stringifiedValue.trim().isEmpty()) {
                     cell.getCellStyle().setDataFormat(getFormat(visualizationType, creationHelper));
-                    if (visualizationType.has("prefix") || visualizationType.has("suffix")) {
+                    if (visualizationType != null && (visualizationType.has("prefix") || visualizationType.has("suffix"))) {
                         if (visualizationType.has("precision")) {
                             int precision = visualizationType.getInt("precision");
                             double doubleValue = Double.parseDouble(stringifiedValue);
@@ -497,7 +497,7 @@ public class DashboardExcelExporter extends DashboardExporter {
                 try {
                     if (!stringifiedValue.trim().isEmpty()) {
                         cell.getCellStyle().setDataFormat(getFormat(visualizationType, creationHelper));
-                        if (visualizationType.has("prefix") || visualizationType.has("suffix")) {
+                        if (visualizationType != null && (visualizationType.has("prefix") || visualizationType.has("suffix"))) {
                             stringifiedValue = visualizationType.optString("prefix", "") + stringifiedValue;
                             stringifiedValue = stringifiedValue + visualizationType.optString("suffix", "");
                             cell.setCellValue(stringifiedValue);
@@ -513,7 +513,7 @@ public class DashboardExcelExporter extends DashboardExporter {
                 break;
             case "string":
                 if (!stringifiedValue.trim().isEmpty()) {
-                    if (visualizationType.has("prefix") || visualizationType.has("suffix")) {
+                    if (visualizationType != null && (visualizationType.has("prefix") || visualizationType.has("suffix"))) {
                         stringifiedValue = visualizationType.optString("prefix", "") + stringifiedValue;
                         stringifiedValue = stringifiedValue + visualizationType.optString("suffix", "");
                     }
