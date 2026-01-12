@@ -90,13 +90,19 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 			LOGGER.error(message);
 			throw new SpagoBIRuntimeException(message);
 		}
-		String userId = (String) userProfile.getUserAttribute("user_id");
-		byte[] temp = null;
-		JSONObject jsonTemplate = null;
+
+		byte[] temp;
+		JSONObject jsonTemplate;
 
 		try {
 			IBIObjectDAO documentDao = DAOFactory.getBIObjectDAO();
 			BIObject document = documentDao.loadBIObjectById(id);
+
+			if (!ProductProfiler.canExecuteDocumentByLicenseExpiredOrAbsent(document)) {
+				String message = "This document cannot be executed within the current product";
+				LOGGER.error(message);
+				throw new SpagoBIRuntimeException(message);
+			}
 
 			if (!ObjectsAccessVerifier.canExec(document, userProfile)) {
 				String message = "User cannot exec the document";

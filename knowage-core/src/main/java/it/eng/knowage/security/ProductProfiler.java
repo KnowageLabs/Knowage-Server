@@ -84,6 +84,22 @@ public class ProductProfiler {
 		}
 	}
 
+	public static boolean canExecuteDocumentByLicenseExpiredOrAbsent(BIObject biObj) {
+		if (isCommunity) {
+			return true;
+		} else {
+			boolean toReturn = false;
+			try {
+				Method canExecuteDocumentByLicenseExpiredOrAbsentMethod = productProfilerEE.getMethod("canExecuteDocumentByLicenseExpiredOrAbsent", BIObject.class);
+				toReturn = (boolean) canExecuteDocumentByLicenseExpiredOrAbsentMethod.invoke(productProfilerEE, biObj);
+			} catch (Exception e) {
+				logger.error("Error while filtering engines by product: ", e);
+			}
+			return toReturn;
+		}
+
+	}
+
 	public static boolean canCreateDataset(String type, UserProfile profile) {
 		if (isCommunity) {
 			return true;
