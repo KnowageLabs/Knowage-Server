@@ -22,7 +22,7 @@ import it.eng.spagobi.utilities.rest.RestUtilities;
 @Path("/1.0/cockpit/export")
 public class CockpitExportResource extends AbstractCockpitEngineResource {
 
-	static private Logger logger = Logger.getLogger(CockpitExportResource.class);
+	static private final Logger logger = Logger.getLogger(CockpitExportResource.class);
 	private static final String OUTPUT_TYPE = "outputType";
 	private static final String USER_ID = "user_id";
 	private static final String DOCUMENT_ID = "document";
@@ -108,7 +108,8 @@ public class CockpitExportResource extends AbstractCockpitEngineResource {
 			String template = getIOManager().getTemplateAsString();
 			body.put("template", template);
             JSONObject selections = body.optJSONObject("COCKPIT_SELECTIONS").optJSONObject("userSelections");
-            byte[] data = pdfExporter.getBinaryData(documentId, documentLabel, template, selections);
+			JSONObject variables = body.optJSONObject("COCKPIT_VARIABLES");
+			byte[] data = pdfExporter.getBinaryData(documentId, documentLabel, template, selections, variables);
 
 			response.setContentType(MediaType.APPLICATION_OCTET_STREAM);
 			response.setHeader("Content-length", Integer.toString(data.length));

@@ -1,6 +1,6 @@
 {
   "name": "knowage-vue",
-  "version": "8.1.41",
+  "version": "8.1.42",
   "description": "Knowage is the professional open source suite for modern business analytics over traditional sources and big data systems.",
   "author": "knowage labs <knowage@eng.it>",
   "scripts": {
@@ -24,9 +24,11 @@
     "cronstrue": "^2.1.0",
     "crypto-js": "^4.0.0",
     "deepcopy": "^2.1.0",
+    "dompurify": "^3.3.0",
     "fast-json-patch": "^3.1.0",
     "js-base64": "3.6.1",
     "luxon": "^2.3.1",
+    "markdown-it": "^14.1.0",
     "mitt": "^2.1.0",
     "moment": "2.29.4",
     "pleaserotate.js": "^0.1.2",
@@ -59,7 +61,7 @@
     "@vue/cli-plugin-typescript": "^4.5.11",
     "@vue/cli-plugin-vuex": "^4.5.11",
     "@vue/cli-service": "~4.5.0",
-    "@vue/compiler-sfc": "^3.0.7",
+    "@vue/compiler-sfc": "3.1.1",
     "@vue/eslint-config-typescript": "^5.0.2",
     "babel-eslint": "^10.1.0",
     "eslint": "^6.7.2",

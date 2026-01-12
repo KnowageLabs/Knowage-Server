@@ -1,124 +1,125 @@
 {
-    "emptyTheme": {
-        "active": false,
-        "config": {},
-        "themeName": "New Custom Theme"
-    },
-    "examples": {
-        "breadcrumbs": {
-            "home": {
-                "icon": "pi pi-home"
-            },
-            "items": [
-                {
-                    "label": "First"
-                },
-                {
-                    "label": "Second"
-                },
-                {
-                    "label": "Last"
-                }
-            ]
+  "emptyTheme": {
+    "active": false,
+    "config": {},
+    "themeName": "New Custom Theme"
+  },
+  "examples": {
+    "breadcrumbs": {
+      "home": {
+        "icon": "pi pi-home"
+      },
+      "items": [
+        {
+          "label": "First"
         },
-        "dataTable": [
-            {
-                "category": "Accessories",
-                "code": "f230fh0g3",
-                "inventoryStatus": "INSTOCK",
-                "name": "Bamboo Watch",
-                "rating": 5
-            },
-            {
-                "category": "Accessories",
-                "code": "nvklal433",
-                "inventoryStatus": "INSTOCK",
-                "name": "Black Watch",
-                "rating": 4
-            },
-            {
-                "category": "Fitness",
-                "code": "zz21cz3c1",
-                "inventoryStatus": "LOWSTOCK",
-                "name": "Blue Band",
-                "rating": 3
-            },
-            {
-                "category": "Clothing",
-                "code": "244wgerg2",
-                "inventoryStatus": "INSTOCK",
-                "name": "Blue T-Shirt",
-                "rating": 5
-            },
-            {
-                "category": "Accessories",
-                "code": "h456wer53",
-                "inventoryStatus": "INSTOCK",
-                "name": "Bracelet",
-                "rating": 4
-            },
-            {
-                "category": "Accessories",
-                "code": "av2231fwg",
-                "inventoryStatus": "OUTOFSTOCK",
-                "name": "Brown Purse",
-                "rating": 4
-            },
-            {
-                "category": "Accessories",
-                "code": "bib36pfvm",
-                "inventoryStatus": "LOWSTOCK",
-                "name": "Chakra Bracelet",
-                "rating": 3
-            },
-            {
-                "category": "Accessories",
-                "code": "mbvjkgip5",
-                "inventoryStatus": "INSTOCK",
-                "name": "Galaxy Earrings",
-                "rating": 5
-            },
-            {
-                "category": "Electronics",
-                "code": "vbb124btr",
-                "inventoryStatus": "LOWSTOCK",
-                "name": "Game Controller",
-                "rating": 4
-            },
-            {
-                "category": "Electronics",
-                "code": "cm230f032",
-                "inventoryStatus": "INSTOCK",
-                "name": "Gaming Set",
-                "rating": 3
-            }
-        ],
-        "input": {
-            "disabled": "disabled",
-            "invalid": "invalid",
-            "number": 10,
-            "text": "text"
+        {
+          "label": "Second"
+        },
+        {
+          "label": "Last"
         }
+      ]
     },
-    "knListSettings": {
-        "badgeIcon": "active",
-        "badgeSeverity": "success",
-        "buttons": [
-            {
-                "emits": "delete",
-                "icon": "far fa-trash-alt",
-                "label": "common.delete"
-            }
-        ],
-        "defaultSortField": "id",
-        "filterFields": ["themeName"],
-        "interaction": {
-            "parameterLabel": "id",
-            "parameterValue": "id",
-            "type": "event"
-        },
-        "selectProperty": "id",
-        "textField": false,
-        "titleField": "themeName"
-    }
+    "dataTable": [
+      {
+        "category": "Accessories",
+        "code": "f230fh0g3",
+        "inventoryStatus": "INSTOCK",
+        "name": "Bamboo Watch",
+        "rating": 5
+      },
+      {
+        "category": "Accessories",
+        "code": "nvklal433",
+        "inventoryStatus": "INSTOCK",
+        "name": "Black Watch",
+        "rating": 4
+      },
+      {
+        "category": "Fitness",
+        "code": "zz21cz3c1",
+        "inventoryStatus": "LOWSTOCK",
+        "name": "Blue Band",
+        "rating": 3
+      },
+      {
+        "category": "Clothing",
+        "code": "244wgerg2",
+        "inventoryStatus": "INSTOCK",
+        "name": "Blue T-Shirt",
+        "rating": 5
+      },
+      {
+        "category": "Accessories",
+        "code": "h456wer53",
+        "inventoryStatus": "INSTOCK",
+        "name": "Bracelet",
+        "rating": 4
+      },
+      {
+        "category": "Accessories",
+        "code": "av2231fwg",
+        "inventoryStatus": "OUTOFSTOCK",
+        "name": "Brown Purse",
+        "rating": 4
+      },
+      {
+        "category": "Accessories",
+        "code": "bib36pfvm",
+        "inventoryStatus": "LOWSTOCK",
+        "name": "Chakra Bracelet",
+        "rating": 3
+      },
+      {
+        "category": "Accessories",
+        "code": "mbvjkgip5",
+        "inventoryStatus": "INSTOCK",
+        "name": "Galaxy Earrings",
+        "rating": 5
+      },
+      {
+        "category": "Electronics",
+        "code": "vbb124btr",
+        "inventoryStatus": "LOWSTOCK",
+        "name": "Game Controller",
+        "rating": 4
+      },
+      {
+        "category": "Electronics",
+        "code": "cm230f032",
+        "inventoryStatus": "INSTOCK",
+        "name": "Gaming Set",
+        "rating": 3
+      }
+    ],
+    "input": {
+      "disabled": "disabled",
+      "invalid": "invalid",
+      "number": 10,
+      "text": "text"
+    },
+    "markdown": "# Theme Management Examples \nThis is an example of a custom theme applied to various components.\n## Breadcrumbs\nBelow is an example of breadcrumbs styled with the custom theme:\n```html\n<Breadcrumb :model=\"examples.breadcrumbs.items\" />\n```\n## Data Table\nHere is a data table showcasing the custom theme:\n| Month    | Savings |\n| -------- | ------- |\n| January  | $250    |\n| February | $80     |\n| March    | $420    |\n\n## Links\nThe following are links:\n[link text](URL)"
+  },
+  "knListSettings": {
+    "badgeIcon": "active",
+    "badgeSeverity": "success",
+    "buttons": [
+      {
+        "emits": "delete",
+        "icon": "far fa-trash-alt",
+        "label": "common.delete"
+      }
+    ],
+    "defaultSortField": "id",
+    "filterFields": ["themeName"],
+    "interaction": {
+      "parameterLabel": "id",
+      "parameterValue": "id",
+      "type": "event"
+    },
+    "selectProperty": "id",
+    "textField": false,
+    "titleField": "themeName"
+  }
 }

@@ -9,6 +9,7 @@ import workspaceRoutes from "@/modules/workspace/workspace.routes.js";
 import overlayRoutes from "@/overlay/Overlay.routes.js";
 import authHelper from "@/helpers/commons/authHelper";
 import dataPreparationRoutes from "@/modules/workspace/dataPreparation/DataPreparation.routes.js";
+import documentationRoutes from "@/components/documentation/Documentation.routes.js";
 
 const baseRoutes = [
   {
@@ -72,7 +73,8 @@ const routes = baseRoutes
   .concat(documentBrowserRoutes)
   .concat(workspaceRoutes)
   .concat(overlayRoutes)
-  .concat(dataPreparationRoutes);
+  .concat(dataPreparationRoutes)
+  .concat(documentationRoutes);
 
 const router = createRouter({
   base: process.env.VUE_APP_PUBLIC_PATH,
