@@ -236,6 +236,8 @@ public class UniqueMailDocumentDispatchChannel implements IDocumentDispatchChann
 			messageMailDto.setZipFileName(zipFileName);
 			messageMailDto.setTempFolder(tempFolder);
 			messageMailDto.setContentType(contentType);
+			messageMailDto.setSubtype("html");
+			messageMailDto.setCharset("UTF-8");
 
 			// send message
 			FactoryMailSender.getMailSender(SingletonConfig.getInstance().getConfigValue(IMailSender.MAIL_SENDER)).sendMail(messageMailDto);
