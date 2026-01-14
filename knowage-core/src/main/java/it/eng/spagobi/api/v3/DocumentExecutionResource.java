@@ -98,12 +98,6 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 			IBIObjectDAO documentDao = DAOFactory.getBIObjectDAO();
 			BIObject document = documentDao.loadBIObjectById(id);
 
-			if (!ProductProfiler.canExecuteDocumentByLicenseExpiredOrAbsent(document)) {
-				String message = "This document cannot be executed within the current product";
-				LOGGER.error(message);
-				throw new SpagoBIRuntimeException(message);
-			}
-
 			if (!ObjectsAccessVerifier.canExec(document, userProfile)) {
 				String message = "User cannot exec the document";
 				LOGGER.error(message);
@@ -269,7 +263,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 
 	private void checkExecRightsByProducts(BIObject biobj) throws EMFUserError {
 
-		if (!ProductProfiler.canExecuteDocument(biobj)) {
+		if (!ProductProfiler.canExecuteDocumentByLicenseExpiredOrAbsent(biobj)) {
 			throw new SpagoBIRuntimeException("This document cannot be executed within the current product");
 		}
 	}
