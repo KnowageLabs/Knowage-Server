@@ -216,7 +216,12 @@ public class ExecutionProxy {
 			// String userId = (String) UserProfile.createSchedulerUserProfileWithRole(null).getUserUniqueIdentifier();
 			UserProfile userProfile = (UserProfile) profile;
 			String encodedUserId = Base64.getEncoder().encodeToString(((String) userProfile.getUserId()).getBytes(UTF_8));
-			httpMethod.addRequestHeader("Authorization", "Direct " + encodedUserId);
+
+			if (driverClassName.equals("it.eng.spagobi.engines.drivers.dashboard.DashboardDriver")) {
+				httpMethod.addRequestHeader("X-Kn-Authorization", "Bearer " + encodedUserId);
+			} else {
+				httpMethod.addRequestHeader("Authorization", "Direct " + encodedUserId);
+			}
 
 			// sent request to the engine
 			LOGGER.debug("Calling {} with parameters {} and headers {}", httpMethod.getURI(), httpMethod.getParams(), httpMethod.getRequestHeaders());

@@ -15,7 +15,16 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package it.eng.knowage.engine.cockpit.api.export.pdf.nodejs;
+package it.eng.knowage.engine.api.export.nodejs;
+
+import it.eng.knowage.export.pdf.ExportDetails;
+import it.eng.knowage.export.pdf.PDFCreator;
+import it.eng.knowage.export.wrapper.beans.RenderOptions;
+import it.eng.spago.error.EMFUserError;
+import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
+import org.apache.commons.io.IOUtils;
+import org.apache.log4j.Logger;
+import org.json.JSONException;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -23,16 +32,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.List;
-
-import org.apache.commons.io.IOUtils;
-import org.apache.log4j.Logger;
-import org.json.JSONException;
-
-import it.eng.knowage.export.pdf.ExportDetails;
-import it.eng.knowage.export.pdf.PDFCreator;
-import it.eng.knowage.export.wrapper.beans.RenderOptions;
-import it.eng.spago.error.EMFUserError;
-import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 
 public class PdfExporterV2 extends AbstractNodeJSBasedExporter {
 

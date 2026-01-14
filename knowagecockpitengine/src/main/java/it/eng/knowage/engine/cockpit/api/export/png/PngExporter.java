@@ -25,11 +25,11 @@ import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
+import it.eng.knowage.engine.api.export.nodejs.AbstractNodeJSBasedExporter;
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 import org.json.JSONException;
 
-import it.eng.knowage.engine.cockpit.api.export.pdf.nodejs.AbstractNodeJSBasedExporter;
 import it.eng.knowage.export.wrapper.beans.RenderOptions;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;

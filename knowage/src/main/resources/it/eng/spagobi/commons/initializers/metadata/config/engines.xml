@@ -43,7 +43,7 @@
 		engineTypeCd="EXT" classNm="" biobjTypeCd="DOCUMENT_COMPOSITE"
 		useDataSet="false" useDataSource="false" encrypt="0" />
 	<ENGINE label="knowagedashboardengine" name="Dashboard Engine" descr="Dashboard Engine"
-		mainUrl="/knowagecockpitengine/api/1.0/pages/execute" driverNm="it.eng.spagobi.engines.drivers.dashboard.DashboardDriver"
+		mainUrl="/knowage/api/1.0/dashboardExport/callPuppeteer" driverNm="it.eng.spagobi.engines.drivers.dashboard.DashboardDriver"
 		engineTypeCd="EXT" classNm="" biobjTypeCd="DASHBOARD"
 		useDataSet="false" useDataSource="false" encrypt="0" />
 	<ENGINE label="knowageolapengine" name="OLAP Engine" descr="OLAP Engine"
