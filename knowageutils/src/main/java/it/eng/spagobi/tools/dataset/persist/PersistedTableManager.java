@@ -250,10 +250,10 @@ public class PersistedTableManager implements IPersistedManager {
 		try (BufferedWriter bw = Files.newBufferedWriter(tempCsv, StandardCharsets.UTF_8)) {
 			long count = 0;
 			while (iterator.hasNext()) {
-				IRecord r = iterator.next();
-				bw.write(toCsvLine(r));
-				bw.write("\n");
 				count++;
+				IRecord r = iterator.next();
+				bw.write(toCsvLine(r, count));
+				bw.write("\n");
 				if (count % 10000 == 0) {
 					LOGGER.debug("Serialized records " + count);
 				}
@@ -266,9 +266,9 @@ public class PersistedTableManager implements IPersistedManager {
 		try (BufferedWriter bw = Files.newBufferedWriter(tempCsv, StandardCharsets.UTF_8)) {
 			long count = 0;
             for (IRecord r : records) {
-                bw.write(toCsvLine(r));
-                bw.write("\n");
-                count++;
+				count++;
+				bw.write(toCsvLine(r, count));
+				bw.write("\n");
                 if (count % 10000 == 0) {
                     LOGGER.debug("Serialized records " + count);
                 }
@@ -277,8 +277,14 @@ public class PersistedTableManager implements IPersistedManager {
 		}
 	}
 
-	private String toCsvLine(IRecord record) {
+	private String toCsvLine(IRecord record, long count) {
 		StringBuilder sb = new StringBuilder();
+
+		if (this.isRowCountColumIncluded()) {
+			sb.append(count);
+			sb.append(COLUMN_SEPARATOR);
+		}
+
 		for (int j = 0; j < record.getFields().size(); j++) {
 			IField field = record.getFieldAt(j);
 			Object fieldValue = field.getValue();
