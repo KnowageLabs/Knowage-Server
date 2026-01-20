@@ -33,6 +33,8 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import javax.naming.NamingException;
@@ -1049,6 +1051,9 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 
 		List<String> reserverWords = getReserverWords();
 		String statement = getQueryDefinition();
+		if (databaseDialect.getValue().contains(DatabaseDialect.SQLSERVER.getValue())) {
+			statement = removeOuterOrderBy(statement);
+		}
 		statement = StringUtilities.substituteProfileAttributesInString(statement, profile);
 		statement = substituteParametersInString(statement, drivers);
 		StringBuilder buffer = new StringBuilder();
@@ -1069,6 +1074,21 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 		}
 		this.checkReservedWords(reserverWords,getColumnSQLName(this.descriptionColumnName));
 		return buffer.toString();
+	}
+
+	public static String removeOuterOrderBy(String sql) {
+		if (sql == null) {
+			return null;
+		}
+
+		Pattern pattern = Pattern.compile("(?i)order\\s+by(?=[^()]*$)");
+		Matcher matcher = pattern.matcher(sql);
+
+		if (matcher.find()) {
+			return sql.substring(0, matcher.start()).trim();
+		}
+
+		return sql.trim();
 	}
 
 	private String checkReservedWords(List<String> reserverWords, String columnName) {
