@@ -49,6 +49,7 @@ import it.eng.spagobi.commons.bo.UserProfileUtility;
 import it.eng.spagobi.commons.services.LoginModule;
 import it.eng.spagobi.commons.utilities.ChannelUtilities;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
+import it.eng.spagobi.services.common.GenericJWTSsoService;
 import it.eng.spagobi.services.common.SsoServiceFactory;
 import it.eng.spagobi.services.common.SsoServiceInterface;
 import it.eng.spagobi.services.security.bo.SpagoBIUserProfile;
@@ -120,11 +121,17 @@ public class ProfileFilter implements Filter {
 					if (ChannelUtilities.isWebRunning() && !GeneralUtilities.isSSOEnabled()) {
 						// case of installation as web application without SSO
 						try {
-							userId = getUserIdInWebModeWithoutSSO(httpRequest);
+							String jwtLabel = System.getProperty("JWT_LABEL", System.getenv("JWT_LABEL"));
+							if (jwtLabel != null && request.getParameter(jwtLabel) != null) {
+								GenericJWTSsoService genericJWTSsoService = new GenericJWTSsoService();
+								userId = genericJWTSsoService.readUserIdentifier(httpRequest);
+							} else {
+								userId = getUserIdInWebModeWithoutSSO(httpRequest);
+							}
 						} catch (Exception e) {
 							LOGGER.error("Error authenticating user", e);
-							httpRequest.getRequestDispatcher("/WEB-INF/jsp/commons/silentLoginFailed.jsp")
-									.forward(request, response);
+							// httpRequest.getRequestDispatcher("/WEB-INF/jsp/commons/silentLoginFailed.jsp").forward(request, response);
+							httpResponse.sendError(HttpServletResponse.SC_UNAUTHORIZED);
 							return;
 						}
 					} else {
