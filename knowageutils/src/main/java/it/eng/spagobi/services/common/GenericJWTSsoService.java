@@ -82,7 +82,7 @@ public class GenericJWTSsoService extends JWTSsoService implements SsoServiceInt
 
 	private DecodedJWT verifyTokenBySignature(String token, String signature) throws Exception {
 		Algorithm algorithmInputTocken = Algorithm.HMAC256(signature);
-		JWTVerifier verifier = JWT.require(algorithmInputTocken).build();
+		JWTVerifier verifier = JWT.require(algorithmInputTocken).withIssuer(System.getProperty("JWT_ISSUER", System.getenv("JWT_ISSUER"))).build();
 		return verifier.verify(token);
 	}
 
