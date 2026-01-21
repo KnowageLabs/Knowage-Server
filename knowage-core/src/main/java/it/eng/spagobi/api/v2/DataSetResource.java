@@ -720,6 +720,7 @@ public class DataSetResource extends AbstractDataSetResource {
 			Map<String, Object> driversRuntimeMap = null;
 			String selections = null;
 			String likeSelections = null;
+			String drilldown = null;
 			String aggregations = null;
 			String summaryRow = null;
 			String options = null;
@@ -739,6 +740,9 @@ public class DataSetResource extends AbstractDataSetResource {
 
 				JSONObject jsonLikeSelections = jsonBody.optJSONObject("likeSelections");
 				likeSelections = jsonLikeSelections != null ? jsonLikeSelections.toString() : null;
+
+				JSONObject jsonDrilldown = jsonBody.optJSONObject("drilldown");
+				drilldown = jsonDrilldown != null ? jsonDrilldown.toString() : null;
 
 				JSONObject jsonAggregations = jsonBody.optJSONObject("aggregations");
 				aggregations = jsonAggregations != null ? jsonAggregations.toString() : null;
@@ -773,7 +777,7 @@ public class DataSetResource extends AbstractDataSetResource {
 				}
 			}
 			timing.stop();
-			return getDataStore(label, parameters, driversRuntimeMap, selections, likeSelections, maxRowCount,
+			return getDataStore(label, parameters, driversRuntimeMap, selections, likeSelections, drilldown, maxRowCount,
 					aggregations, summaryRow, offset, fetchSize, isNearRealtime, options, columns, widgetName, useGroupBy);
 		} catch (CatalogFunctionException e) {
 			throw e;
