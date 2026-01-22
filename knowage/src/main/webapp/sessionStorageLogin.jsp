@@ -2,6 +2,10 @@
 <%@page import="it.eng.knowage.commons.security.KnowageSystemConfiguration"%>
 <%
 if (session!=null) session.invalidate();
+
+response.setHeader("Cache-Control", "no-store, no-cache, must-revalidate, max-age=0");
+response.setHeader("Pragma", "no-cache");
+response.setDateHeader("Expires", 0);
 %>
 <head>
 </head>
