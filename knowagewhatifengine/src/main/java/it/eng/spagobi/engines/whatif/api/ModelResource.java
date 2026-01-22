@@ -64,6 +64,7 @@ import org.pivot4j.ui.collector.NonInternalPropertyCollector;
 import org.pivot4j.ui.collector.PropertyCollector;
 import org.pivot4j.ui.fop.FopExporter;
 import org.pivot4j.ui.poi.ExcelExporter;
+import org.pivot4j.ui.poi.Format;
 import org.pivot4j.ui.table.TableRenderer;
 
 import com.jamonapi.Monitor;
@@ -414,6 +415,8 @@ public class ModelResource extends AbstractWhatIfEngineService {
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 
 		ExcelExporter exporter = new KnowageExcelExporter(out, getLocale());
+		exporter.setFormat(Format.SXSSF); // Imposta il formato XLSX
+
 		ExportConfig exportConfig = WhatIfEngineConfig.getInstance().getExportProperties();
 		if (exportConfig.getFontFamily() != null)
 			exporter.setFontFamily(exportConfig.getFontFamily());
@@ -432,7 +435,7 @@ public class ModelResource extends AbstractWhatIfEngineService {
 		// restore the query without calculated fields
 		model.restoreQuery();
 		byte[] outputByte = out.toByteArray();
-		String fileName = getExportFileName() + ".xls";
+		String fileName = getExportFileName() + ".xlsx";
 
 		return Response.ok(outputByte, MediaType.APPLICATION_OCTET_STREAM).header("content-disposition", "attachment; filename = " + fileName).build();
 	}
