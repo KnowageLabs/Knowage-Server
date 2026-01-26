@@ -861,7 +861,7 @@ public class ProcessKpiJob extends AbstractSuspendableJob {
 					.setParameter("escapedSequenceName", escapedSequenceName).setParameter("newRowsCount", newRowsCount).executeUpdate();
 			lastId = 0;
 		} else {
-			session.createSQLQuery("UPDATE hibernate_sequences SET NEXT_VAL = NEXT_VAL :newRowsCount WHERE SEQUENCE_NAME = :escapedSequenceName")
+			session.createSQLQuery("UPDATE hibernate_sequences SET NEXT_VAL = NEXT_VAL + :newRowsCount WHERE SEQUENCE_NAME = :escapedSequenceName")
 					.setParameter("escapedSequenceName", escapedSequenceName).setParameter("newRowsCount", newRowsCount).executeUpdate();
 		}
 		session.getTransaction().commit();
