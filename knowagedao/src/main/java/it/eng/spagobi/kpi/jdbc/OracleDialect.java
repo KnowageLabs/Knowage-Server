@@ -21,7 +21,7 @@ public class OracleDialect implements ISQLDialect {
 
 	@Override
 	public String getCastingToFloatFormula(Number number) {
-		return "cast(" + number + " as number)";
+		return "cast(" + number + " as float)";
 	}
 
 }
