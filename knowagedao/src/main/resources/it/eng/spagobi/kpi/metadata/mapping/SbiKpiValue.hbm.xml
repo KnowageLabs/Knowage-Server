@@ -65,7 +65,7 @@
 		<property name="theYear" type="string">
 			<column name="THE_YEAR" length="4" not-null="true" />
 		</property>
-		<property name="state" type="char">
+		<property name="state" type="string">
 			<column name="STATE" length="1" not-null="true" default="0"/>
 		</property>
 	
