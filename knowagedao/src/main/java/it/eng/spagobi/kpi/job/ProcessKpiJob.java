@@ -822,7 +822,7 @@ public class ProcessKpiJob extends AbstractSuspendableJob {
 				Object theQuarter = ifNull(temporalValues.get("QUARTER"), CARDINALITY_ALL);
 				Object theYear = ifNull(temporalValues.get("YEAR"), CARDINALITY_ALL);
 				String insertSql = "INSERT INTO SBI_KPI_VALUE (id, kpi_id, kpi_version, logical_key, time_run, computed_value,"
-						+ " the_day, the_week, the_month, the_quarter, the_year, state) VALUES (?,  ?, ?, ?" + ",?, coalesce(? , 0) ,?,?,?,?,?,?)";
+						+ " the_day, the_week, the_month, the_quarter, the_year, state) VALUES (?,  ?, ?, ?" + ",?, coalesce(? , ?) ,?,?,?,?,?,?)";
 				String whereCondition = "kpi_id = " + parsedKpi.id + " AND kpi_version = " + parsedKpi.version + " AND logical_key = '"
 						+ logicalKey.toString().replaceAll("'", "''") + "'" + " AND the_day = '" + theDay + "' AND the_week = '" + theWeek + "'"
 						+ " AND the_month = '" + theMonth + "' AND the_quarter = '" + theQuarter + "' AND the_year = '" + theYear + "'";
@@ -835,10 +835,17 @@ public class ProcessKpiJob extends AbstractSuspendableJob {
 
 				logger.debug("PERFORMING INSERT: " + insertSql);
 
-				session.createSQLQuery(insertSql).setParameter(0, ++lastId).setParameter(1, parsedKpi.id).setParameter(2, parsedKpi.version)
-						.setParameter(3, logicalKey.toString().replaceAll("'", "''")).setParameter(4, timeRun).setParameter(5, (nullValue ? "0" : value))
-						.setParameter(6, theDay).setParameter(7, theWeek).setParameter(8, theMonth).setParameter(9, theQuarter).setParameter(10, theYear)
-						.setParameter(11, (nullValue ? "1" : "0")).executeUpdate();
+				try {
+					session.createSQLQuery(insertSql).setParameter(0, ++lastId).setParameter(1, parsedKpi.id).setParameter(2, parsedKpi.version)
+							.setParameter(3, logicalKey.toString().replaceAll("'", "''")).setParameter(4, timeRun).setParameter(5, (nullValue ? "0" : value))
+							.setParameter(6, 0).setParameter(7, theDay).setParameter(8, theWeek).setParameter(9, theMonth).setParameter(10, theQuarter).setParameter(11, theYear)
+							.setParameter(12, (nullValue ? "1" : "0")).executeUpdate();
+				} catch (Exception ex) {
+					session.createSQLQuery(insertSql).setParameter(0, ++lastId).setParameter(1, parsedKpi.id).setParameter(2, parsedKpi.version)
+							.setParameter(3, logicalKey.toString().replaceAll("'", "''")).setParameter(4, timeRun).setParameter(5, (nullValue ? "0" : value))
+							.setParameter(6, '0').setParameter(7, theDay).setParameter(8, theWeek).setParameter(9, theMonth).setParameter(10, theQuarter).setParameter(11, theYear)
+							.setParameter(12, (nullValue ? "1" : "0")).executeUpdate();
+				}
 				session.getTransaction().commit();
 			}
 
