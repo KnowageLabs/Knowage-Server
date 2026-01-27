@@ -838,7 +838,7 @@ public class ProcessKpiJob extends AbstractSuspendableJob {
 				session.createSQLQuery(insertSql).setParameter(0, ++lastId).setParameter(1, parsedKpi.id).setParameter(2, parsedKpi.version)
 						.setParameter(3, logicalKey.toString().replaceAll("'", "''")).setParameter(4, timeRun).setParameter(5, (nullValue ? "0" : value))
 						.setParameter(6, theDay).setParameter(7, theWeek).setParameter(8, theMonth).setParameter(9, theQuarter).setParameter(10, theYear)
-						.setParameter(11, (nullValue ? '1' : '0')).executeUpdate();
+						.setParameter(11, (nullValue ? "1" : "0")).executeUpdate();
 				session.getTransaction().commit();
 			}
 
