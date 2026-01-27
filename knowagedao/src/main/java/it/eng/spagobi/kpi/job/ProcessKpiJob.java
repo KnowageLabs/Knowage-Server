@@ -838,7 +838,7 @@ public class ProcessKpiJob extends AbstractSuspendableJob {
 				session.createSQLQuery(insertSql).setParameter(0, ++lastId).setParameter(1, parsedKpi.id).setParameter(2, parsedKpi.version)
 						.setParameter(3, logicalKey.toString().replaceAll("'", "''")).setParameter(4, timeRun).setParameter(5, (nullValue ? "0" : value))
 						.setParameter(6, theDay).setParameter(7, theWeek).setParameter(8, theMonth).setParameter(9, theQuarter).setParameter(10, theYear)
-						.setParameter(11, (nullValue ? '1' : '0')).executeUpdate();
+						.setParameter(11, (nullValue ? "1" : "0")).executeUpdate();
 				session.getTransaction().commit();
 			}
 
@@ -856,13 +856,14 @@ public class ProcessKpiJob extends AbstractSuspendableJob {
 		session.beginTransaction();
 		Number lastId = (Number) session.createSQLQuery("SELECT NEXT_VAL FROM hibernate_sequences WHERE SEQUENCE_NAME = :escapedSequenceName")
 				.setParameter("escapedSequenceName", escapedSequenceName).uniqueResult();
+		int lastIdInt = lastId == null ? 0 : lastId.intValue();
 		if (lastId == null) {
 			session.createSQLQuery("INSERT INTO hibernate_sequences (SEQUENCE_NAME, NEXT_VAL) VALUES (:escapedSequenceName, :newRowsCount)")
 					.setParameter("escapedSequenceName", escapedSequenceName).setParameter("newRowsCount", newRowsCount).executeUpdate();
 			lastId = 0;
 		} else {
-			session.createSQLQuery("UPDATE hibernate_sequences SET NEXT_VAL = NEXT_VAL :newRowsCount WHERE SEQUENCE_NAME = :escapedSequenceName")
-					.setParameter("escapedSequenceName", escapedSequenceName).setParameter("newRowsCount", newRowsCount).executeUpdate();
+			session.createSQLQuery("UPDATE hibernate_sequences SET NEXT_VAL = :newNextVal WHERE SEQUENCE_NAME = :escapedSequenceName")
+					.setParameter("escapedSequenceName", escapedSequenceName).setParameter("newNextVal", lastIdInt + newRowsCount).executeUpdate();
 		}
 		session.getTransaction().commit();
 		return lastId.intValue();

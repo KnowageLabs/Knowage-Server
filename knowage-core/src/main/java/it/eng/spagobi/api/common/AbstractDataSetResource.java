@@ -128,7 +128,7 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 
 	private static final Logger LOGGER = LogManager.getLogger(AbstractDataSetResource.class);
 
-	private static final String REGEX_FIELDS_VALIDATION = "(?:\\\"[a-zA-Z0-9\\-\\_\\s]*\\\")";
+	private static final String REGEX_FIELDS_VALIDATION = "\\(([^)]{1,50})\\)";
 	private static final int SOLR_FACETS_DEFAULT_LIMIT = 10;
 	private static final String VALIDATION_OK = "OK";
 
@@ -835,22 +835,26 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 	}
 
 	private void validateFields(String formula, List<SimpleSelectionField> columns) {
-		String regex = REGEX_FIELDS_VALIDATION;
-		Pattern p = Pattern.compile(regex);
+        Pattern p = Pattern.compile(REGEX_FIELDS_VALIDATION);
 		Matcher m = p.matcher(formula);
 
 		while (m.find()) {
+
+			if (!m.group(1).startsWith("\"") || !m.group(1).endsWith("\"")) {
+				throw new ValidationException("common.errors.formulas.missingQuotes");
+			}
+
 			boolean found = false;
 			for (SimpleSelectionField simpleSelectionField : columns) {
 
-				if (simpleSelectionField.getName().equals(m.group(0).replace("\"", ""))) {
+				if (simpleSelectionField.getName().equals(m.group(1).replace("\"", ""))) {
 					found = true;
 					break;
 				}
 			}
 
 			if (!found) {
-				throw new ValidationException();
+				throw new ValidationException("common.errors.formulas.unknownField");
 			}
 		}
 
