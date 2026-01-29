@@ -14,7 +14,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.Form;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang3.StringUtils;
@@ -27,6 +32,7 @@ import com.auth0.jwt.JWTCreator.Builder;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import it.eng.knowage.monitor.IKnowageMonitor;
 import it.eng.knowage.monitor.KnowageMonitorFactory;
@@ -65,6 +71,7 @@ import it.eng.spagobi.services.common.JWTSsoService;
 import it.eng.spagobi.services.common.JWTSsoServiceAlgorithmFactory;
 import it.eng.spagobi.services.common.SsoServiceFactory;
 import it.eng.spagobi.services.common.SsoServiceInterface;
+import it.eng.spagobi.services.oauth2.Oauth2SsoService;
 import it.eng.spagobi.services.rest.annotations.PublicService;
 import it.eng.spagobi.services.security.bo.SpagoBIUserProfile;
 import it.eng.spagobi.services.security.exceptions.SecurityException;
@@ -253,8 +260,7 @@ public class LoginResource extends AbstractSpagoBIResource {
 			if (!isValidCode) {
 				logger.error("Invalid MFA code for user: " + userId);
 				monitor.stop(new SpagoBIRuntimeException("Invalid MFA code"));
-				// return Response.status(Response.Status.UNAUTHORIZED)
-				// .entity(Map.of("error", "Invalid MFA code")).build();
+				return Response.status(Response.Status.UNAUTHORIZED).entity(Map.of("error", "Invalid MFA code")).build();
 			}
 
 			// Se è il primo setup, salvo il secret nel database
@@ -318,40 +324,7 @@ public class LoginResource extends AbstractSpagoBIResource {
 		IKnowageMonitor monitor = KnowageMonitorFactory.getInstance().start("knowage.login.oauth2.authentication");
 
 		try {
-			// Get userId using SSO service
-			String userId = getUserIdWithSSO(req);
-
-			if (StringUtils.isBlank(userId)) {
-				logger.error("OAuth2 authentication failed");
-				AuditLogUtilities.updateAudit(req, null, "SPAGOBI.Login.OAuth2", null, "KO");
-				monitor.stop(new SpagoBIRuntimeException("OAuth2 authentication failed"));
-				return buildUnauthorizedResponse("OAuth2 authentication failed");
-			}
-
-			logger.debug("OAuth2 user authenticated: userID=" + userId);
-
-			// Create new user profile
-			IEngUserProfile profile = GeneralUtilities.createNewUserProfile(userId);
-
-			if (profile == null) {
-				logger.error("User has no profile defined : " + userId);
-				AuditLogUtilities.updateAudit(req, null, "SPAGOBI.Login.OAuth2", null, "ERR");
-				monitor.stop(new SpagoBIRuntimeException("User has no profile defined"));
-				return buildUnauthorizedResponse("User has no profile defined");
-			}
-
-			// Align with standard login: use default role profile when available
-			profile = SessionUserProfileBuilder.getDefaultUserProfile((UserProfile) profile);
-
-			monitor.stop();
-
-			// Store profile in session
-			storeProfileInSession((UserProfile) profile, req);
-			recordLoginEvent((UserProfile) profile);
-
-			// Complete login with tenant context
-			return completeLogin(req, profile);
-
+			return performOAuth2Login(req, monitor);
 		} catch (Exception e) {
 			logger.error("Unexpected error during OAuth2 login", e);
 			monitor.stop(e);
@@ -369,36 +342,132 @@ public class LoginResource extends AbstractSpagoBIResource {
 		IKnowageMonitor monitor = KnowageMonitorFactory.getInstance().start("knowage.login.oidc.authentication");
 
 		try {
-			// Verifica se è presente l'access_token nella request
-			String accessToken = req.getParameter("access_token");
 
-			if (StringUtils.isBlank(accessToken)) {
-				logger.debug("Access token not found in request, redirecting to flow.jsp");
-				monitor.stop();
-
-				// Redirect alla JSP per avviare il flusso OIDC usando il path dalla configurazione
-				OAuth2Config config = OAuth2Config.getInstance();
-				String flowJspUrl = config.getFlowJSPPath();
-
-				return Response.status(Response.Status.FOUND).header("Location", flowJspUrl).entity(Map.of("message", "Redirecting to OIDC flow")).build();
+			final String code = payload.get("code");
+			final String codeVerifier = payload.get("code_verifier");
+			if (StringUtils.isBlank(code)) {
+				return buildUnauthorizedResponse("Missing authorization code");
 			}
 
-			logger.debug("Access token found in request, proceeding with OIDC authentication");
+			OAuth2Config oauth2Config = OAuth2Config.getInstance();
+			TokenResponse token = exchangeCodeForToken(oauth2Config, code, codeVerifier);
 
-			// TODO: Implementare autenticazione OIDC con Keycloak
-			// 1. Estrarre e validare ID token dal payload
-			// 2. Verificare firma JWT con chiavi pubbliche Keycloak
-			// 3. Estrarre claims (userId, email, roles, custom attributes)
-			// 4. Creare/aggiornare profilo utente Knowage
-			// 5. Gestire mapping ruoli Keycloak -> Knowage
+			if (token == null || StringUtils.isBlank(token.access_token)) {
+				monitor.stop(new SpagoBIRuntimeException("Failed to obtain access token from OAuth2 provider"));
+				return buildUnauthorizedResponse("Failed to obtain access token from OAuth2 provider");
+			}
+			req.setAttribute(Oauth2SsoService.ACCESS_TOKEN, token.access_token);
+			req.setAttribute(Oauth2SsoService.ID_TOKEN, token.id_token);
 
-			monitor.stop();
-			return Response.status(Response.Status.NOT_IMPLEMENTED).entity(Map.of("message", "OIDC login not yet implemented")).build();
+			return performOAuth2Login(req, monitor);
 
 		} catch (Exception e) {
-			logger.error("Error during OIDC login", e);
+			logger.error("Unexpected error during OIDC login", e);
 			monitor.stop(e);
 			return buildErrorResponse("OIDC login failed", e);
+		}
+
+	}
+
+	/**
+	 * Performs OAuth2 authentication logic
+	 */
+	private Response performOAuth2Login(HttpServletRequest req, IKnowageMonitor monitor) throws Exception {
+		// Get userId using SSO service
+		String userId = getUserIdWithSSO(req);
+
+		if (StringUtils.isBlank(userId)) {
+			logger.error("OAuth2 authentication failed");
+			AuditLogUtilities.updateAudit(req, null, "SPAGOBI.Login.OAuth2", null, "KO");
+			monitor.stop(new SpagoBIRuntimeException("OAuth2 authentication failed"));
+			return buildUnauthorizedResponse("OAuth2 authentication failed");
+		}
+
+		logger.debug("OAuth2 user authenticated: userID=" + userId);
+
+		// Create new user profile
+		IEngUserProfile profile = GeneralUtilities.createNewUserProfile(userId);
+
+		if (profile == null) {
+			logger.error("User has no profile defined : " + userId);
+			AuditLogUtilities.updateAudit(req, null, "SPAGOBI.Login.OAuth2", null, "ERR");
+			monitor.stop(new SpagoBIRuntimeException("User has no profile defined"));
+			return buildUnauthorizedResponse("User has no profile defined");
+		}
+
+		// Align with standard login: use default role profile when available
+		profile = SessionUserProfileBuilder.getDefaultUserProfile((UserProfile) profile);
+
+		monitor.stop();
+
+		// Store profile in session
+		storeProfileInSession((UserProfile) profile, req);
+		recordLoginEvent((UserProfile) profile);
+
+		// Complete login with tenant context
+		return completeLogin(req, profile);
+	}
+
+
+
+	private TokenResponse exchangeCodeForToken(OAuth2Config cfg, String code, String codeVerifier) throws Exception {
+
+		Client client = ClientBuilder.newBuilder().connectTimeout(5, java.util.concurrent.TimeUnit.SECONDS)
+				.readTimeout(10, java.util.concurrent.TimeUnit.SECONDS).build();
+
+		Form form = new Form();
+		form.param("grant_type", "authorization_code");
+		form.param("client_id", cfg.getClientId());
+		form.param("redirect_uri", cfg.getRedirectUrl());
+		form.param("code", code);
+
+		// Se il client è CONFIDENTIAL, aggiungi client_secret
+		if (StringUtils.isNotBlank(cfg.getClientSecret())) {
+			form.param("client_secret", cfg.getClientSecret());
+		}
+
+		// PKCE
+		if (StringUtils.isNotBlank(codeVerifier)) {
+			form.param("code_verifier", codeVerifier);
+		}
+
+		Response resp = null;
+		try {
+			resp = client.target(cfg.getAccessTokenUrl()) // es: http://localhost:7071/realms/knowage/protocol/openid-connect/token
+					.request(MediaType.APPLICATION_JSON_TYPE).post(Entity.entity(form, MediaType.APPLICATION_FORM_URLENCODED_TYPE));
+
+			String raw = resp.readEntity(String.class);
+
+			if (resp.getStatus() != 200) {
+				logger.error("Keycloak token endpoint error. HTTP " + resp.getStatus() + " body=" + raw);
+				return null;
+			}
+
+			ObjectMapper om = new ObjectMapper();
+			return om.readValue(raw, TokenResponse.class);
+
+		} finally {
+			if (resp != null) {
+				resp.close();
+			}
+			client.close();
+		}
+	}
+
+	public static class TokenResponse {
+		public String access_token;
+		public String id_token;
+		public String refresh_token;
+		public String token_type;
+		public Long expires_in;
+		public Long refresh_expires_in;
+		public String scope;
+
+		@Override
+		public String toString() {
+			return "TokenResponse{" + "access_token='" + (access_token != null ? "***" : null) + '\'' + ", id_token='" + (id_token != null ? "***" : null)
+					+ '\'' + ", refresh_token='" + (refresh_token != null ? "***" : null) + '\'' + ", token_type='" + token_type + '\'' + ", expires_in="
+					+ expires_in + ", refresh_expires_in=" + refresh_expires_in + ", scope='" + scope + '\'' + '}';
 		}
 	}
 
