@@ -59,11 +59,20 @@ onMounted(async () => {
           "Content-Type": "application/json",
           Accept: "application/zip; charset=utf-8",
         },
-      }
+      },
     )
-    .then((response: any) => {
-      const user = (store.state as any).user;
-      const userRole = user?.sessionRole || user?.defaultRole;
+    .then(async (response: any) => {
+      // Attendi che l'utente sia caricato nel store se necessario
+      let user = (store.state as any).user;
+      let attempts = 0;
+      while (!user && attempts < 10) {
+        await new Promise((resolve) => setTimeout(resolve, 100));
+        user = (store.state as any).user;
+        attempts++;
+      }
+
+      let userRole = user?.sessionRole || user?.defaultRole;
+      const userRoles = Array.isArray(user?.roles) ? user.roles : userRole ? [userRole] : [];
 
       function filterNode(node: any): any | null {
         if (node == null) return null;
@@ -72,8 +81,11 @@ onMounted(async () => {
         }
         if (typeof node !== "object") return node;
 
-        if (Array.isArray(node.roles) && userRole && !node.roles.includes(userRole)) {
-          return null;
+        if (Array.isArray(node.roles) && node.roles.length > 0) {
+          const hasAccess = userRoles.some((role: string) => node.roles.includes(role));
+          if (!hasAccess) {
+            return null;
+          }
         }
 
         const newNode: any = { ...node };
