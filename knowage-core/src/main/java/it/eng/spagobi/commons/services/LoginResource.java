@@ -90,8 +90,6 @@ public class LoginResource extends AbstractSpagoBIResource {
 	@PublicService
 	public Response login(@Context HttpServletRequest req, Map<String, String> payload) throws Exception {
 		// Initialize context
-		MessageBuilder msgBuilder = new MessageBuilder();
-		Locale locale = msgBuilder.getLocale(req);
 		IKnowageMonitor monitor = KnowageMonitorFactory.getInstance().start("knowage.login.authentication");
 
 		try {
@@ -133,7 +131,7 @@ public class LoginResource extends AbstractSpagoBIResource {
 			}
 
 			// Handle MFA if required
-			if (checkCodeMfa(req, user, msgBuilder)) {
+			if (checkCodeMfa(req, user)) {
 				return handleMfaRequired(userId, user);
 			}
 
@@ -144,7 +142,7 @@ public class LoginResource extends AbstractSpagoBIResource {
 
 			// Validate and update password if not admin
 			if (!isAdminUser) {
-				Response passwordCheckResponse = validateAndUpdatePassword(user, userDao, msgBuilder, locale);
+				Response passwordCheckResponse = validateAndUpdatePassword(user, userDao);
 				if (passwordCheckResponse != null) {
 					return passwordCheckResponse;
 				}
@@ -499,7 +497,7 @@ public class LoginResource extends AbstractSpagoBIResource {
 	}
 
 
-	private boolean checkCodeMfa(HttpServletRequest req, SbiUser user, MessageBuilder msgBuilder) throws Exception {
+	private boolean checkCodeMfa(HttpServletRequest req, SbiUser user) throws Exception {
 
 		String securityServiceSupplier = SingletonConfig.getInstance().getConfigValue("SPAGOBI.SECURITY.USER-PROFILE-FACTORY-CLASS.className");
 		// If securityServiceSupplier is Ldap compliant, skip MFA
@@ -644,18 +642,19 @@ public class LoginResource extends AbstractSpagoBIResource {
 	/**
 	 * Validates and updates user password if needed
 	 */
-	private Response validateAndUpdatePassword(SbiUser user, ISbiUserDAO userDao, MessageBuilder msgBuilder, Locale locale) throws Exception {
+	private Response validateAndUpdatePassword(SbiUser user, ISbiUserDAO userDao) throws Exception {
 		logger.debug("Validation password starting...");
 		boolean goToChangePwd = checkPwd(user);
 
 		if (goToChangePwd) {
-			String oldEncMethodMessage = null;
 			if (user.getPassword().startsWith(Password.PREFIX_SHA_SECRETPHRASE_ENCRIPTING)) {
 				logger.info("Old encrypting method. Change password required.");
-				oldEncMethodMessage = msgBuilder.getMessage("old_enc_method_message", "messages", locale);
+				return Response.status(Response.Status.FORBIDDEN)
+						.entity(Map.of("error", "Password expired", "requiresPasswordChange", true, "reason", "Old encryption method"))
+						.build();
 			}
 			return Response.status(Response.Status.FORBIDDEN)
-					.entity(Map.of("error", "Password expired", "oldEncMethodMessage", oldEncMethodMessage))
+					.entity(Map.of("error", "Password expired", "requiresPasswordChange", true))
 					.build();
 		}
 
