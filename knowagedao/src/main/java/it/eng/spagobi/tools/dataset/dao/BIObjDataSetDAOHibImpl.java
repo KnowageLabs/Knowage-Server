@@ -23,6 +23,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import it.eng.spagobi.tools.dataset.metadata.SbiDataSet;
 import org.apache.log4j.Logger;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -321,6 +322,26 @@ public class BIObjDataSetDAOHibImpl extends AbstractHibernateDAO implements IBIO
 			logger.debug("OUT");
 		}
 		return biObjects;
+	}
+
+	@Override
+	public List<SbiDataSet> getDatasetsByBIObject(Integer biObjId) throws EMFUserError {
+		logger.debug("IN");
+
+		ArrayList<SbiDataSet> toReturn = new ArrayList<>();
+
+		String hql = "from SbiObjDataSet s where s.sbiObject.biobjId = :biObjId";
+		Query hqlQuery = getSession().createQuery(hql);
+		hqlQuery.setParameter("biObjId", biObjId);
+		List<SbiObjDataSet> hibSbiObjDs = hqlQuery.list();
+
+        for (SbiObjDataSet aSbiObjDataSet : hibSbiObjDs) {
+            SbiDataSet sbiDataSet = DAOFactory.getSbiDataSetDAO().loadSbiDataSetByIdAndOrganiz(aSbiObjDataSet.getDsId(), getTenant());
+            toReturn.add(sbiDataSet);
+        }
+
+		logger.debug("OUT");
+		return toReturn;
 	}
 
 	@Override

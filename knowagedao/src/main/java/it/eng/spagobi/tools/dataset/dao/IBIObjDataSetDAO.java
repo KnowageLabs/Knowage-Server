@@ -20,6 +20,7 @@ package it.eng.spagobi.tools.dataset.dao;
 import java.util.ArrayList;
 import java.util.List;
 
+import it.eng.spagobi.tools.dataset.metadata.SbiDataSet;
 import org.hibernate.Session;
 
 import it.eng.spago.error.EMFUserError;
@@ -53,6 +54,8 @@ public interface IBIObjDataSetDAO extends ISpagoBIDao {
 	List<BIObject> getBIObjectsUsingDataset(Integer datasetId, Session currSession) throws EMFUserError;
 
 	List<BIObject> getBIObjectsUsingDataset(Integer datasetId) throws EMFUserError;
+
+	List<SbiDataSet> getDatasetsByBIObject(Integer biObjId) throws EMFUserError;
 
 	List<BIObjDataSet> getBiObjDataSets(Integer biObjId, Session currSession) throws EMFUserError;
 

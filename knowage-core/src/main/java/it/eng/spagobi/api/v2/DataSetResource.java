@@ -50,6 +50,10 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.core.Response.Status;
 
+import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
+import it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO;
+import it.eng.spagobi.metadata.dao.ISbiObjDsDAO;
+import it.eng.spagobi.tools.dataset.dao.IBIObjDataSetDAO;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.LogMF;
 import org.apache.log4j.Logger;
@@ -374,6 +378,29 @@ public class DataSetResource extends AbstractDataSetResource {
 	@UserConstraint(functionalities = { CommunityFunctionalityConstants.SELF_SERVICE_DATASET_MANAGEMENT })
 	public Response deleteDataset(@PathParam("label") String label) throws ActionNotPermittedException {
 		return super.deleteDataset(label);
+	}
+
+	@GET
+	@Path("/{id}/documents")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getDocumentsUsingDataset(@PathParam("id") Integer id) {
+		logger.debug("IN");
+		IBIObjDataSetDAO ibiObjDataSetDAO;
+		try {
+			ibiObjDataSetDAO = DAOFactory.getBIObjDataSetDAO();
+			List<BIObject> documents = ibiObjDataSetDAO.getBIObjectsUsingDataset(id);
+
+			if (documents.isEmpty()) {
+				return Response.noContent().build();
+			}
+			return Response.ok(documents).build();
+
+		} catch (Exception e) {
+			logger.error("Error while getting documents using dataset: " + id, e);
+			throw new SpagoBIRuntimeException("Error while getting documents using dataset: " + id, e);
+		} finally {
+			logger.debug("OUT");
+		}
 	}
 
 	@GET
