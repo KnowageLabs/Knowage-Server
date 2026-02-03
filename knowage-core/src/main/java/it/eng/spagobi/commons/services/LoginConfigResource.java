@@ -30,13 +30,13 @@ public class LoginConfigResource extends AbstractSpagoBIResource {
     public Response getLoginConfig(@Context HttpServletRequest req) {
         IKnowageMonitor monitor = KnowageMonitorFactory.getInstance().start("knowage.login.config.load");
         try {
-            String activeStr = SingletonConfig.getInstance().getConfigValue("SPAGOBI_SSO.ACTIVE");
-            String flowType = Optional.ofNullable(System.getProperty("oauth2_flow_type", System.getenv("OAUTH2_FLOW_TYPE")))
-                    .orElse("");
 
-            Map<String, Object> item = new HashMap<>();
-            item.put("ssoActive", activeStr);
-            item.put("oauth2FlowType", flowType);
+			SingletonConfig config = SingletonConfig.getInstance();
+
+			Map<String, Object> item = new HashMap<>();
+			item.put("ssoActive", config.getConfigValue("SPAGOBI_SSO.ACTIVE"));
+			item.put("defaultLanguage", config.getConfigValue("SPAGOBI.LANGUAGE_SUPPORTED.LANGUAGE.default"));
+			item.put("oauth2FlowType", Optional.ofNullable(System.getProperty("oauth2_flow_type", System.getenv("OAUTH2_FLOW_TYPE"))).orElse(""));
 
             monitor.stop();
             return Response.ok(Map.of("items", List.of(item))).build();
