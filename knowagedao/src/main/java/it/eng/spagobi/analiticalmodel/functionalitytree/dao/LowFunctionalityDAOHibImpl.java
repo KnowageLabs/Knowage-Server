@@ -969,7 +969,7 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 
 						if (date != null) {
 							SbiObjects sbiObj = hibObjFunc.getId().getSbiObjects();
-							if (status != null && !filteringStatusList.contains(sbiObj.getStateCode())) {
+							if (status != null && !filteringStatusList.contains(sbiObj.getStateCode()) || !sbiObj.getCommonInfo().getOrganization().equals(getTenant())) {
 								continue;
 							}
 
@@ -986,7 +986,7 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 
 						} else if (status != null) {
 							SbiObjects sbiObj = hibObjFunc.getId().getSbiObjects();
-							if (!filteringStatusList.contains(sbiObj.getStateCode())) {
+							if (!filteringStatusList.contains(sbiObj.getStateCode()) || !sbiObj.getCommonInfo().getOrganization().equals(getTenant())) {
 								continue;
 							}
 							biObjects.add(object);
