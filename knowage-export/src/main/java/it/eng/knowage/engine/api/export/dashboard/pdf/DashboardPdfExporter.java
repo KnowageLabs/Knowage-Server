@@ -357,60 +357,91 @@ public class DashboardPdfExporter extends DashboardExporter {
             float baseBottomMargin = 20f;
 
             PDPage page = table.getCurrentPage();
+            float pageWidth = page.getMediaBox().getWidth();
             float pageHeight = page.getMediaBox().getHeight();
+            float availableTextWidth = pageWidth - (2 * margin);
 
-            // Count number of selections
-            int selectionCount = 0;
-            for (Map.Entry<String, Map<String, JSONArray>> datasetEntry : selections.entrySet()) {
-                Map<String, JSONArray> selectionContent = datasetEntry.getValue();
-                if (selectionContent != null && !selectionContent.isEmpty()) {
-                    selectionCount += selectionContent.size();
+            // Build wrapped lines first so we can paginate correctly
+            final class SelectionLine {
+                final String key;
+                final float keyWidth;
+                final java.util.List<String> wrappedValueLines;
+
+                SelectionLine(String key, float keyWidth, java.util.List<String> wrappedValueLines) {
+                    this.key = key;
+                    this.keyWidth = keyWidth;
+                    this.wrappedValueLines = wrappedValueLines;
                 }
             }
 
-            if (selectionCount == 0) return;
+            java.util.List<SelectionLine> lines = new java.util.ArrayList<>();
+
+            for (Map.Entry<String, Map<String, JSONArray>> datasetEntry : selections.entrySet()) {
+                Map<String, JSONArray> selectionContent = datasetEntry.getValue();
+                if (selectionContent == null || selectionContent.isEmpty()) {
+                    continue;
+                }
+
+                for (Map.Entry<String, JSONArray> columnEntry : selectionContent.entrySet()) {
+                    String key = columnEntry.getKey();
+                    key = key.replace("('", "").replace("')", "");
+
+                    String valueStr = getValues(columnEntry).toString().replace("('", "").replace("')", "");
+
+                    float keyWidth = font.getStringWidth(key) / 1000f * fontSize;
+                    float prefixWidth = keyWidth + (font.getStringWidth(": ") / 1000f * fontSize);
+                    float valueStartX = margin + prefixWidth;
+                    float valueAvailableWidth = Math.max(10f, (margin + availableTextWidth) - valueStartX);
+
+                    java.util.List<String> wrappedValues = wrapText(font, fontSize, valueStr, valueAvailableWidth);
+                    if (wrappedValues.isEmpty()) {
+                        wrappedValues = java.util.Collections.singletonList("");
+                    }
+
+                    lines.add(new SelectionLine(key, keyWidth, wrappedValues));
+                }
+            }
+
+            if (lines.isEmpty()) {
+                return;
+            }
+
+            int totalLines = 0;
+            for (SelectionLine sl : lines) {
+                totalLines += Math.max(1, sl.wrappedValueLines.size());
+            }
 
             // Calculate where the table actually ends
             // Table starts at y=550 (from createBaseTable)
             float tableStartY = 550f;
             float tableHeight = 0f;
 
-            // Sum up all row heights to get total table height
             try {
                 List<Row<PDPage>> rows = table.getRows();
                 for (Row<PDPage> row : rows) {
                     tableHeight += row.getHeight();
                 }
             } catch (Exception e) {
-                // If we can't get rows, use an estimate
                 logger.warn("Could not calculate exact table bottom");
                 tableHeight = 0;
             }
 
-            // Table ends at: startY - totalHeight
             float tableEndY = tableStartY - tableHeight;
 
-            // Calculate required height for all selections
-            float requiredHeight = selectionCount * leading;
-
-            // Check if there's space below the table
-            // Available space = tableEndY - baseBottomMargin
+            float requiredHeight = totalLines * leading;
             float availableSpace = tableEndY - baseBottomMargin;
             boolean needsNewPage = availableSpace < requiredHeight;
 
             PDPage targetPage;
-            float topBaseline;
+            float currentY;
 
             if (needsNewPage) {
-                // Create a new page for selections
                 targetPage = new PDPage(page.getMediaBox());
                 table.document.addPage(targetPage);
-                // On the new page, start from near the top with margins
-                topBaseline = pageHeight - margin - leading;
+                currentY = pageHeight - margin - leading;
             } else {
-                // Position selections immediately after the table
                 targetPage = page;
-                topBaseline = tableEndY - leading;
+                currentY = tableEndY - leading;
             }
 
             try (PDPageContentStream contentStream =
@@ -419,57 +450,100 @@ public class DashboardPdfExporter extends DashboardExporter {
                 contentStream.setNonStrokingColor(Color.BLACK);
                 contentStream.setFont(font, fontSize);
 
-                float currentY = topBaseline;
+                for (SelectionLine sl : lines) {
+                    float keyX = margin;
+                    float keyWidth = sl.keyWidth;
+                    float afterKeyX = keyX + keyWidth;
+                    float colonWidth = font.getStringWidth(": ") / 1000f * fontSize;
+                    float valuesX = afterKeyX + colonWidth;
 
-                for (Map.Entry<String, Map<String, JSONArray>> datasetEntry : selections.entrySet()) {
-                    Map<String, JSONArray> selectionContent = datasetEntry.getValue();
+                    java.util.List<String> wrapped = sl.wrappedValueLines;
+                    int lineCount = Math.max(1, wrapped.size());
 
-                    if (selectionContent == null || selectionContent.isEmpty()) {
-                        continue;
-                    }
+                    for (int i = 0; i < lineCount; i++) {
+                        // page break
+                        if (currentY <= baseBottomMargin + leading) {
+                            targetPage = new PDPage(page.getMediaBox());
+                            table.document.addPage(targetPage);
+                            currentY = pageHeight - margin - leading;
 
-                    for (Map.Entry<String, JSONArray> columnEntry : selectionContent.entrySet()) {
-                        String key = columnEntry.getKey();
-                        // Remove 'WA' and spaces from the key
-                        key = key.replace("('", "").replace("')", "");
+                            try (PDPageContentStream csNew =
+                                         new PDPageContentStream(table.document, targetPage, PDPageContentStream.AppendMode.APPEND, true)) {
+                                csNew.setNonStrokingColor(Color.BLACK);
+                                csNew.setFont(font, fontSize);
 
-                        StringBuilder values = getValues(columnEntry);
-                        String valueStr = values.toString().replace("('", "").replace("')", "");
+                                for (int j = i; j < lineCount; j++) {
+                                    if (j == 0) {
+                                        csNew.beginText();
+                                        csNew.newLineAtOffset(keyX, currentY);
+                                        csNew.showText(sl.key);
+                                        csNew.endText();
 
-                        float currentX = margin;
+                                        float underlineY = currentY - 2.0f;
+                                        csNew.setLineWidth(0.5f);
+                                        csNew.moveTo(keyX, underlineY);
+                                        csNew.lineTo(keyX + keyWidth, underlineY);
+                                        csNew.stroke();
 
-                        // Print the key in bold
-                        float keyWidth = font.getStringWidth(key) / 1000f * fontSize;
-                        contentStream.beginText();
-                        contentStream.setFont(font, fontSize);
-                        contentStream.newLineAtOffset(currentX, currentY);
-                        contentStream.showText(key);
-                        contentStream.endText();
-                        contentStream.setFont(font, fontSize);
+                                        csNew.beginText();
+                                        csNew.newLineAtOffset(afterKeyX, currentY);
+                                        csNew.showText(": ");
+                                        csNew.endText();
 
-                        // Draw underline under the key
-                        float underlineY = currentY - 2.0f;
-                        contentStream.setLineWidth(0.5f);
-                        contentStream.moveTo(currentX, underlineY);
-                        contentStream.lineTo(currentX + keyWidth, underlineY);
-                        contentStream.stroke();
+                                        csNew.beginText();
+                                        csNew.newLineAtOffset(valuesX, currentY);
+                                        csNew.showText(wrapped.get(j));
+                                        csNew.endText();
+                                    } else {
+                                        csNew.beginText();
+                                        csNew.newLineAtOffset(valuesX, currentY);
+                                        csNew.showText(wrapped.get(j));
+                                        csNew.endText();
+                                    }
 
-                        currentX += keyWidth;
+                                    currentY -= leading;
+                                    if (currentY <= baseBottomMargin + leading && j + 1 < lineCount) {
+                                        targetPage = new PDPage(page.getMediaBox());
+                                        table.document.addPage(targetPage);
+                                        currentY = pageHeight - margin - leading;
+                                        i = j + 1;
+                                        break;
+                                    }
+                                }
+                            }
 
-                        // Print ": "
-                        contentStream.beginText();
-                        contentStream.newLineAtOffset(currentX, currentY);
-                        contentStream.showText(": ");
-                        contentStream.endText();
-                        currentX += font.getStringWidth(": ") / 1000f * fontSize;
+                            i = lineCount;
+                            break;
+                        }
 
-                        // Print the values
-                        contentStream.beginText();
-                        contentStream.newLineAtOffset(currentX, currentY);
-                        contentStream.showText(valueStr);
-                        contentStream.endText();
+                        if (i == 0) {
+                            contentStream.beginText();
+                            contentStream.newLineAtOffset(keyX, currentY);
+                            contentStream.showText(sl.key);
+                            contentStream.endText();
 
-                        // Move to next line
+                            float underlineY = currentY - 2.0f;
+                            contentStream.setLineWidth(0.5f);
+                            contentStream.moveTo(keyX, underlineY);
+                            contentStream.lineTo(keyX + keyWidth, underlineY);
+                            contentStream.stroke();
+
+                            contentStream.beginText();
+                            contentStream.newLineAtOffset(afterKeyX, currentY);
+                            contentStream.showText(": ");
+                            contentStream.endText();
+
+                            contentStream.beginText();
+                            contentStream.newLineAtOffset(valuesX, currentY);
+                            contentStream.showText(wrapped.get(i));
+                            contentStream.endText();
+                        } else {
+                            contentStream.beginText();
+                            contentStream.newLineAtOffset(valuesX, currentY);
+                            contentStream.showText(wrapped.get(i));
+                            contentStream.endText();
+                        }
+
                         currentY -= leading;
                     }
                 }
@@ -492,6 +566,86 @@ public class DashboardPdfExporter extends DashboardExporter {
             }
         }
         return values;
+    }
+
+    /**
+     * Wrap text so that each line fits within maxWidth using the provided font metrics.
+     * Splits by whitespace; if a single token is wider than maxWidth it will be hard-split.
+     */
+    private static java.util.List<String> wrapText(PDFont font, float fontSize, String text, float maxWidth) throws IOException {
+        java.util.List<String> result = new java.util.ArrayList<>();
+        if (text == null || text.isEmpty()) {
+            return result;
+        }
+
+        String[] words = text.split("\\s+");
+        StringBuilder line = new StringBuilder();
+
+        for (String word : words) {
+            if (word.isEmpty()) {
+                continue;
+            }
+
+            if (line.length() == 0) {
+                if (stringWidth(font, fontSize, word) <= maxWidth) {
+                    line.append(word);
+                } else {
+                    for (String part : hardSplitToken(font, fontSize, word, maxWidth)) {
+                        if (!part.isEmpty()) {
+                            result.add(part);
+                        }
+                    }
+                }
+            } else {
+                String candidate = line + " " + word;
+                if (stringWidth(font, fontSize, candidate) <= maxWidth) {
+                    line.append(' ').append(word);
+                } else {
+                    result.add(line.toString());
+                    line.setLength(0);
+                    if (stringWidth(font, fontSize, word) <= maxWidth) {
+                        line.append(word);
+                    } else {
+                        for (String part : hardSplitToken(font, fontSize, word, maxWidth)) {
+                            if (!part.isEmpty()) {
+                                result.add(part);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        if (line.length() > 0) {
+            result.add(line.toString());
+        }
+
+        return result;
+    }
+
+    private static float stringWidth(PDFont font, float fontSize, String text) throws IOException {
+        return (font.getStringWidth(text) / 1000f) * fontSize;
+    }
+
+    private static java.util.List<String> hardSplitToken(PDFont font, float fontSize, String token, float maxWidth) throws IOException {
+        java.util.List<String> parts = new java.util.ArrayList<>();
+        StringBuilder current = new StringBuilder();
+        for (int i = 0; i < token.length(); i++) {
+            char c = token.charAt(i);
+            current.append(c);
+            if (stringWidth(font, fontSize, current.toString()) > maxWidth) {
+                current.setLength(current.length() - 1);
+                if (current.length() > 0) {
+                    parts.add(current.toString());
+                }
+                current.setLength(0);
+                current.append(c);
+            }
+        }
+        if (current.length() > 0) {
+            parts.add(current.toString());
+        }
+        return parts;
     }
 
     private void buildRowsAndCols(BaseTable table, JSONObject settings, JSONArray rows, JSONArray columnsOrdered, int numberOfSummaryRows, List<String> summaryRowsLabels, PDFont font, String[] columnDateFormats,  Map<String, JSONArray> styles) throws JSONException {
@@ -632,7 +786,7 @@ public class DashboardPdfExporter extends DashboardExporter {
             }
         }
     }
-    
+
     private void applyStyleToCell(Style style, Cell<PDPage> cell) {
         if (!style.getBackgroundColor().isEmpty()) {
             cell.setFillColor(getJavaColorFromRGBA(style.getBackgroundColor()));
