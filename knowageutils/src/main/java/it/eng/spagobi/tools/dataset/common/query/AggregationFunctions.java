@@ -66,7 +66,7 @@ public class AggregationFunctions {
 
 		@Override
 		public String apply(String fieldName) {
-			return "AVG(" + fieldName + ")";
+			return "ROUND(AVG(" + fieldName + "), 10)";
 		}
 	};
 
