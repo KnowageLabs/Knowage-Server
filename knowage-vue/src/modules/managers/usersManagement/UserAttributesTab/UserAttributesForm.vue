@@ -14,7 +14,15 @@
             <div class="p-field" v-for="attribute in attributes" :key="attribute.attributeId">
               <div class="p-inputgroup" v-if="modelValue[attribute.attributeId]">
                 <span class="p-float-label">
-                  <InputText :disabled="attribute.lovId" class="p-inputtext p-component kn-material-input" :id="attribute.attributeId" :value="(userAttributesForm[attribute.attributeId] && userAttributesForm[attribute.attributeId][attribute.attributeName]) || ''" @input="onInputChange(attribute, $event.target.value)" type="text" />
+                  <InputText
+                    :key="`${attribute.attributeId}-${userAttributesForm[attribute.attributeId]?.[attribute.attributeName]}`"
+                    :disabled="attribute.lovId"
+                    class="p-inputtext p-component kn-material-input"
+                    :id="attribute.attributeId"
+                    :value="(userAttributesForm[attribute.attributeId] && userAttributesForm[attribute.attributeId][attribute.attributeName]) || ''"
+                    @input="onInputChange(attribute, $event.target.value)"
+                    type="text"
+                  />
                   <label :for="attribute.attributeName">{{ attribute.attributeName }}</label>
                 </span>
                 <Button v-if="attribute.lovId" icon="pi pi-pencil" class="p-button-text p-button-rounded p-button-plain" @click="openLovValuesDialog(attribute)" />
@@ -26,7 +34,7 @@
       </Card>
     </div>
   </div>
-  <UserAttributesLovValueDialog :attribute="selectedAttribute" :selection="initialSelection" :dialogVisible="lovDialogVisible" @saveLovValues="onSaveLovValues" @closeDialog="(lovDialogVisible = false), (selectedAttribute = null);"> </UserAttributesLovValueDialog>
+  <UserAttributesLovValueDialog :attribute="selectedAttribute" :selection="initialSelection" :dialogVisible="lovDialogVisible" @saveLovValues="onSaveLovValues" @closeDialog="(lovDialogVisible = false), (selectedAttribute = null)"> </UserAttributesLovValueDialog>
 </template>
 <script lang="ts">
 import { defineComponent, PropType } from "vue";
