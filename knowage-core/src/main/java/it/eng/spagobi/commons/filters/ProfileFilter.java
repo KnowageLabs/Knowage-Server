@@ -132,7 +132,7 @@ public class ProfileFilter implements Filter {
 							}
 						} catch (Exception e) {
 							LOGGER.error("Error authenticating user", e);
-							httpResponse.sendRedirect(httpRequest.getContextPath() + "/errorLogin.jsp");
+							httpResponse.sendRedirect(httpRequest.getContextPath() + "/errorLogin.html");
 							// httpResponse.sendError(HttpServletResponse.SC_UNAUTHORIZED);
 							return;
 						}
@@ -215,7 +215,7 @@ public class ProfileFilter implements Filter {
 			}
 		} catch (Exception e) {
 			LOGGER.error("Error while service execution", e);
-			((HttpServletResponse) response).sendRedirect(((HttpServletRequest) request).getContextPath() + "/errorLogin.jsp");
+			((HttpServletResponse) response).sendRedirect(((HttpServletRequest) request).getContextPath() + "/errorLogin.html");
 			// ((HttpServletResponse) response).sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 		} finally {
 			// since TenantManager uses a ThreadLocal, we must clean after
