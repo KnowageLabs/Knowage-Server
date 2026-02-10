@@ -237,9 +237,9 @@ public class QbeFilterLookupResource extends AbstractQbeEngineResource {
 
 			JSONObject responseJSON = new JSONObject();
 			try {
-			    responseJSON.put("success", true);
-			    responseJSON.put("results", gridDataFeed);
-			} catch (JSONException e) {
+			    //responseJSON.put("success", true);
+			    responseJSON = gridDataFeed;
+			} catch (Exception e) {
 			    LOGGER.error("Error creating response JSON", e);
 			}
 

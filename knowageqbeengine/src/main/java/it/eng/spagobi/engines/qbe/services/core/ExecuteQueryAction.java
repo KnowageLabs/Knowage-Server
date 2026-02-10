@@ -235,19 +235,12 @@ public class ExecuteQueryAction extends AbstractQbeEngineAction {
 	}
 
 	public static void updatePromptableFiltersValue(Query query, AbstractQbeEngineAction action, boolean useDefault) throws JSONException {
-		JSONObject requestPromptableFilters = action.getAttributeAsJSONObject("promptableFilters");
-		updatePromptableFiltersValue(query, requestPromptableFilters, useDefault);
-	}
-
-	public static void updatePromptableFiltersValue(Query query, JSONObject requestPromptableFilters) throws JSONException {
-		updatePromptableFiltersValue(query, requestPromptableFilters, false);
-	}
-
-	public static void updatePromptableFiltersValue(Query query, JSONObject requestPromptableFilters, boolean useDefault) throws JSONException {
 		logger.debug("IN");
 		List whereFields = query.getWhereFields();
 		Iterator whereFieldsIt = whereFields.iterator();
 		String[] question = { "?" };
+		
+		JSONObject requestPromptableFilters = action.getAttributeAsJSONObject("promptableFilters");
 
 		while (whereFieldsIt.hasNext()) {
 			WhereField whereField = (WhereField) whereFieldsIt.next();

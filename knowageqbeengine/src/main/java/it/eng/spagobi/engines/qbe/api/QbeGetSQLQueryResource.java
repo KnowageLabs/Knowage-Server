@@ -29,7 +29,7 @@ import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceExceptionHandler;
 
-@Path("/GetSQLQuery")
+@Path("/GetSqlQuery")
 public class QbeGetSQLQueryResource extends AbstractQbeEngineResource {
 
 
@@ -61,16 +61,23 @@ public class QbeGetSQLQueryResource extends AbstractQbeEngineResource {
 			Query filteredQuery = accessModality.getFilteredStatement(query, this.getEngineInstance().getDataSource(), userProfile.getUserAttributes());
 
 			getEngineInstance().setActiveQuery(filteredQuery);
-			
-            JSONObject promptFileds = ObjectUtils.toJSONObject(promptableFilters);
-			if (replaceParametersWithQuestion) {
-				// promptable filters values may come with request (read-only
-				// user modality)
-				ExecuteQueryAction.updatePromptableFiltersValue(filteredQuery, promptFileds, true);
-			} else {
-				// promptable filters values may come with request (read-only
-				// user modality)
-				ExecuteQueryAction.updatePromptableFiltersValue(filteredQuery, promptFileds);
+			JSONObject promptFileds = null;
+
+			if (promptableFilters != null && !promptableFilters.isEmpty()) {
+			    try {
+			    	if (replaceParametersWithQuestion) {
+						// promptable filters values may come with request (read-only
+						// user modality)
+						QbeQueryResource.updatePromptableFiltersValue(filteredQuery, true, promptableFilters);
+					} else {
+						// promptable filters values may come with request (read-only
+						// user modality)
+						QbeQueryResource.updatePromptableFiltersValue(filteredQuery, promptableFilters);
+					}
+			    } catch (Exception e) {
+			        logger.error("Errore nel parsing dei promptableFilters", e);
+			        promptFileds = new JSONObject();
+			    }
 			}
 
 			statement = getEngineInstance().getStatment();

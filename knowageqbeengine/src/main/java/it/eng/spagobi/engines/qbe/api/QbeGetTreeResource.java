@@ -2,6 +2,7 @@ package it.eng.spagobi.engines.qbe.api;
 
 import java.util.Iterator;
 
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -42,7 +43,7 @@ public class QbeGetTreeResource extends AbstractQbeEngineResource {
 
 	@GET
 	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
-	public Response getTree(@QueryParam("datamartName") String datamartName, @QueryParam("openDatasetInQbe") Boolean openDatasetInQbe) {
+	public Response getTree(@QueryParam("datamartName") String datamartName, @QueryParam("openDatasetInQbe") @DefaultValue("false")Boolean openDatasetInQbe) {
 		String queryId = null;
 		Query query = null;
 
