@@ -38,6 +38,10 @@ public class LoginConfigResource extends AbstractSpagoBIResource {
 			item.put("defaultLanguage", config.getConfigValue("SPAGOBI.LANGUAGE_SUPPORTED.LANGUAGE.default"));
 			item.put("oauth2FlowType", Optional.ofNullable(System.getProperty("oauth2_flow_type", System.getenv("OAUTH2_FLOW_TYPE"))).orElse(""));
 
+			item.put("JWT_LABEL", System.getProperty("JWT_LABEL", System.getenv("JWT_LABEL")));
+			item.put("JWT_SESSION_STORAGE", System.getProperty("JWT_SESSION_STORAGE", System.getenv("JWT_SESSION_STORAGE")));
+			item.put("JWT_SERVICE_LOGIN_URL", System.getProperty("JWT_SERVICE_LOGIN_URL", System.getenv("JWT_SERVICE_LOGIN_URL")));
+
             monitor.stop();
             return Response.ok(Map.of("items", List.of(item))).build();
         } catch (Exception e) {
