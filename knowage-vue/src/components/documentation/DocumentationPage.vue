@@ -100,7 +100,9 @@ function toggleDrawer() {
 .markdownContent {
   position: relative;
   width: 100%;
+  height: 100vh;
   top: 0;
+  overflow-y: auto;
   background: var(--kn-documentation-content-background);
   color: var(--kn-documentation-content-color);
   font-family: var(--kn-documentation-content-font-family);
