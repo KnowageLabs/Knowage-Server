@@ -75,8 +75,6 @@ import it.eng.knowage.commons.security.PathTraversalChecker;
 import it.eng.knowage.features.Feature;
 import it.eng.knowage.rest.annotation.FeatureFlag;
 import it.eng.knowage.security.OwaspDefaultEncoderFactory;
-import it.eng.spago.base.RequestContainer;
-import it.eng.spago.base.RequestContainerAccess;
 import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.analiticalmodel.document.BusinessModelOpenUtils;
@@ -101,7 +99,6 @@ import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.IBinContentDAO;
 import it.eng.spagobi.commons.serializer.SerializationException;
 import it.eng.spagobi.commons.utilities.DateRangeDAOUtilities;
-import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.commons.utilities.ObjectsAccessVerifier;
 import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
 import it.eng.spagobi.commons.utilities.messages.IMessageBuilder;
@@ -208,11 +205,8 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 
 		JSONObject jsonParameters = requestVal.optJSONObject("parameters");
 
-		RequestContainer aRequestContainer = RequestContainerAccess.getRequestContainer(req);
-
 		HashMap<String, Object> resultAsMap = new HashMap<>();
 		List errorList = new ArrayList<>();
-		Locale locale = GeneralUtilities.getCurrentLocale(aRequestContainer);
 		JSONObject err = new JSONObject();
 		JSONArray arrerr = new JSONArray();
 		if (sbiExecutionId == null || sbiExecutionId.isEmpty()) {
@@ -236,7 +230,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 			// BUILD THE PARAMETERS
 			Monitor buildJsonParametersMonitor = MonitorFactory
 					.start("Knowage.DocumentExecutionResource.getDocumentExecutionURL.buildJsonParametersMonitor");
-			DocumentRuntime dum = new DocumentRuntime(this.getUserProfile(), locale);
+			DocumentRuntime dum = new DocumentRuntime(this.getUserProfile(), getLocale());
 			JSONObject jsonParametersToSend = buildJsonParameters(jsonParameters, req, role, parameterUseDAO, obj, dum);
 			buildJsonParametersMonitor.stop();
 			// BUILD URL
@@ -245,14 +239,14 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 
 			String url = DocumentExecutionUtils.handleNormalExecutionUrl(this.getUserProfile(), obj, req,
 					this.getAttributeAsString("SBI_ENVIRONMENT"), executingRole, modality, jsonParametersToSend,
-					locale);
+					getLocale());
 
 			if (!isOLAPSubObjectExecution(obj, requestVal)) {
 				// in case of the execution of an OLAP subobject, we skip the validations on drivers for now
 				// TODO implement validation also for OLAP subobjects
 				errorList = DocumentExecutionUtils.handleNormalExecutionError(this.getUserProfile(), obj, req,
 						this.getAttributeAsString("SBI_ENVIRONMENT"), executingRole, modality, jsonParametersToSend,
-						locale);
+						getLocale());
 			}
 
 			engineParam = buildEngineUrlString(requestVal, obj, req, isForExport, cockpitSelections);
@@ -547,7 +541,6 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 
 		LOGGER.debug("IN");
 
-		RequestContainer aRequestContainer = RequestContainerAccess.getRequestContainer(req);
 		JSONObject requestVal = RestUtilities.readBodyAsJSONObject(req);
 		// decode requestVal parameters
 		JSONObject requestValParams = requestVal.getJSONObject("parameters");
@@ -575,12 +568,11 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 		BIObject biObject = DriversRuntimeLoaderFactory.getDriversRuntimeLoader()
 				.loadBIObjectForExecutionByLabelAndRole(label, role);
 
-		Locale locale = GeneralUtilities.getCurrentLocale(aRequestContainer);
 
-		applyRequestParameters(biObject, jsonCrossParameters, sessionParametersMap, role, locale, parsFromCross);
+		applyRequestParameters(biObject, jsonCrossParameters, sessionParametersMap, role, getLocale(), parsFromCross);
 
 		ArrayList<HashMap<String, Object>> parametersArrayList = new ArrayList<>();
-		DocumentRuntime dum = new DocumentRuntime(this.getUserProfile(), locale);
+		DocumentRuntime dum = new DocumentRuntime(this.getUserProfile(), getLocale());
 		List<DocumentDriverRuntime> parameters = DocumentExecutionUtils.getParameters(biObject, role, req.getLocale(),
 				null, parsFromCross, true, dum);
 
@@ -1119,8 +1111,6 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 	public Response getParameterValues(@Context HttpServletRequest req)
 			throws EMFUserError, IOException, JSONException {
 
-		RequestContainer aRequestContainer = RequestContainerAccess.getRequestContainer(req);
-		Locale locale = GeneralUtilities.getCurrentLocale(aRequestContainer);
 
 		String role;
 		String label;
@@ -1179,7 +1169,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 
 			List errorList = DocumentExecutionUtils.handleNormalExecutionError(this.getUserProfile(), biObject, req,
 					this.getAttributeAsString("SBI_ENVIRONMENT"), role,
-					biObjectParameter.getParameter().getModalityValue().getSelectionType(), null, locale);
+					biObjectParameter.getParameter().getModalityValue().getSelectionType(), null, getLocale());
 
 			resultAsMap.put("errors", errorList);
 		}

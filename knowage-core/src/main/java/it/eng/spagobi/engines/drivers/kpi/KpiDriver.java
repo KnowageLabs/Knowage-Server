@@ -35,7 +35,6 @@ import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.commons.constants.ObjectsTreeConstants;
-import it.eng.spagobi.engines.chart.utils.StyleLabel;
 import it.eng.spagobi.engines.config.bo.Engine;
 import it.eng.spagobi.engines.drivers.EngineURL;
 import it.eng.spagobi.engines.drivers.exceptions.InvalidOperationRequest;

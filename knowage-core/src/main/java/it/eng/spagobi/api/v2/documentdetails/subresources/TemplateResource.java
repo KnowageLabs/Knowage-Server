@@ -53,9 +53,9 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
 @Path("")
 public class TemplateResource extends AbstractSpagoBIResource {
 
-	public static enum FILETYPE {
+	public enum FILETYPE {
 		json, xml, bin, rptdesign, sbicockpit, jrxml, pdf, xls, xlsx, doc, docx, ppt, pptx
-	};
+	}
 
 	protected static Logger logger = Logger.getLogger(TemplateResource.class);
 
@@ -78,7 +78,7 @@ public class TemplateResource extends AbstractSpagoBIResource {
 			Assert.assertNotNull(documentTemplates, "Document Template can not be null");
 		} catch (EMFUserError e) {
 			logger.debug("Could not get content from template", e);
-			throw new SpagoBIRestServiceException("Could not get content from templates", buildLocaleFromSession(), e);
+			throw new SpagoBIRestServiceException("Could not get content from templates", getLocale(), e);
 		}
 		logger.debug("OUT");
 		return documentTemplates;
@@ -102,7 +102,7 @@ public class TemplateResource extends AbstractSpagoBIResource {
 			Assert.assertNotNull(documentTemplate, "Document Template can not be null");
 		} catch (EMFUserError e) {
 			logger.debug("Could not get content from template", e);
-			throw new SpagoBIRestServiceException("Could not get content from template", buildLocaleFromSession(), e);
+			throw new SpagoBIRestServiceException("Could not get content from template", getLocale(), e);
 		}
 		logger.debug("OUT");
 		return temp;
@@ -123,7 +123,7 @@ public class TemplateResource extends AbstractSpagoBIResource {
 			Assert.assertNotNull(documentTemplate, "Document Template can not be null");
 		} catch (EMFInternalError e) {
 			logger.debug("Could not get content from template", e);
-			throw new SpagoBIRestServiceException("Could not get content from template", buildLocaleFromSession(), e);
+			throw new SpagoBIRestServiceException("Could not get content from template", getLocale(), e);
 		}
 		logger.debug("OUT");
 		return temp;
@@ -162,7 +162,7 @@ public class TemplateResource extends AbstractSpagoBIResource {
 
 		} catch (Exception e) {
 			logger.debug("Template could not be uploaded", e);
-			throw new SpagoBIRestServiceException("Template could not be uploaded", buildLocaleFromSession(), e);
+			throw new SpagoBIRestServiceException("Template could not be uploaded", getLocale(), e);
 		}
 
 		logger.debug("OUT");
@@ -216,7 +216,7 @@ public class TemplateResource extends AbstractSpagoBIResource {
 			}
 		} catch (Exception e) {
 			logger.debug("Template could not be downloaded", e);
-			throw new SpagoBIRestServiceException("Template could not be downloaded", buildLocaleFromSession(), e);
+			throw new SpagoBIRestServiceException("Template could not be downloaded", getLocale(), e);
 		}
 		logger.debug("OUT");
 		return response.build();
@@ -241,7 +241,7 @@ public class TemplateResource extends AbstractSpagoBIResource {
 			templateDAO.setTemplateActive(template, document);
 		} catch (EMFUserError | EMFInternalError e) {
 			logger.debug("Template could not be modified", e);
-			throw new SpagoBIRestServiceException("Template could not be modified", buildLocaleFromSession(), e);
+			throw new SpagoBIRestServiceException("Template could not be modified", getLocale(), e);
 		}
 		logger.debug("OUT");
 	}
@@ -259,7 +259,7 @@ public class TemplateResource extends AbstractSpagoBIResource {
 			templateDAO.deleteBIObjectTemplate(templateId);
 		} catch (EMFInternalError e) {
 			logger.debug("Template could not be deleted", e);
-			throw new SpagoBIRestServiceException("Template could not be deleted", buildLocaleFromSession(), e);
+			throw new SpagoBIRestServiceException("Template could not be deleted", getLocale(), e);
 		}
 		logger.debug("OUT");
 		return templateId;

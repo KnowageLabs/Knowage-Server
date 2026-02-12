@@ -10,9 +10,11 @@ import org.apache.log4j.Logger;
 import org.apache.pdfbox.io.MemoryUsageSetting;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
+import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
 import org.apache.pdfbox.pdmodel.font.PDFont;
 import org.apache.pdfbox.pdmodel.font.PDType0Font;
+import org.checkerframework.checker.nullness.qual.NonNull;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -30,6 +32,8 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.List;
 
+import static it.eng.spagobi.commons.utilities.UserUtilities.getUserProfile;
+
 public class DashboardPdfExporter extends DashboardExporter {
 
     public static Logger logger = Logger.getLogger(DashboardPdfExporter.class);
@@ -37,14 +41,16 @@ public class DashboardPdfExporter extends DashboardExporter {
     private static final float POINTS_PER_INCH = 72;
     private static final float POINTS_PER_MM = 1 / (10 * 2.54f) * POINTS_PER_INCH;
     private static final int DEFAULT_COLUMN_WIDTH = 150;
+    private static final String KN_EXPORT_EXTRA_FIELD_LABEL = "kn-export-extra-field-label";
+    private static final String KN_EXPORT_EXTRA_FIELD_VALUE = "kn-export-extra-field-value";
     protected static final String DATE_FORMAT = "dd/MM/yyyy";
 
     private float totalColumnsWidth = 0;
     private float[] columnPercentWidths;
-
-    public DashboardPdfExporter(String userUniqueIdentifier, JSONObject body) {
-        super(userUniqueIdentifier);
-        locale = getLocaleFromBody(body);
+    private Locale locale;
+    public DashboardPdfExporter(String userUniqueIdentifier, Locale locale) {
+        super(userUniqueIdentifier, null);
+        this.locale = locale;
     }
 
     public byte[] getBinaryData(JSONObject template) throws JSONException {
@@ -59,8 +65,7 @@ public class DashboardPdfExporter extends DashboardExporter {
 
         JSONObject drivers = transformDriversForDatastore(getDrivers(template));
         JSONObject parameters = transformParametersForDatastore(template, getParametersFromBody(template));
-        //TODO GET THE CREATION USER FROM THE BODY
-        creationUser = "DEFAULT_TO_CHANGE";
+        creationUser = template.getString("creationUser");
 
         try (PDDocument document = new PDDocument(MemoryUsageSetting.setupTempFileOnly())) {
             String widgetId = template.getString("id");
@@ -104,10 +109,12 @@ public class DashboardPdfExporter extends DashboardExporter {
             do {
                 dataStore = getDataStoreForDashboardWidget(widget, offset, fetchSize, selections, drivers, parameters);
 
-                //this method is present in the cockpit pdf exporter
                 PDPage newPage = createPage(widget);
                 document.addPage(newPage);
-                table = createBaseTable(document, newPage);
+
+                // compute how many selection lines we will draw so we can reserve space at the bottom
+                int reservedSelectionLines = getReservedSelectionLines(selections);
+                table = createBaseTable(document, newPage, reservedSelectionLines);
 
                 JSONObject widgetData = dataStore.getJSONObject("widgetData");
 
@@ -132,7 +139,20 @@ public class DashboardPdfExporter extends DashboardExporter {
                     replaceWithThemeSettingsIfPresent(settings);
                     columnStylesMap = getStylesMap(settings);
                     initColumnWidths(columnsOrdered, columnStylesMap);
-                    buildFirstPageHeaders(table, settings, groupsAndColumnsMap, columnsOrdered, creationUser, selections, font);
+                    JSONArray variables = widget.optJSONArray("variables");
+                    String extraValueLabel = null;
+                    String extraValue = null;
+                    if (variables != null && variables.length() > 0) {
+                        for (int i = 0; i < variables.length(); i++) {
+                            JSONObject variable = variables.getJSONObject(i);
+                            if (variable.getString("name").equals(KN_EXPORT_EXTRA_FIELD_LABEL)) {
+                                extraValueLabel = variable.getString("value");
+                            } else if (variable.getString("name").equals(KN_EXPORT_EXTRA_FIELD_VALUE)) {
+                                extraValue = variable.optString("value", "NA");
+                            }
+                        }
+                    }
+                    buildFirstPageHeaders(table, settings, groupsAndColumnsMap, columnsOrdered, creationUser, font, extraValueLabel, extraValue);
                 }
 
                 rows = dataStore.getJSONArray("rows");
@@ -145,13 +165,30 @@ public class DashboardPdfExporter extends DashboardExporter {
 
                 table.draw();
 
+                if (offset >= totalNumberOfRows) {
+                    createSelectionsRows(table, font, selections);
+                }
 
             } while (offset < totalNumberOfRows);
-
-
         } catch (Exception e) {
             throw new SpagoBIRuntimeException("Unable to export table widget: " + widgetId, e);
         }
+    }
+
+    private static int getReservedSelectionLines(Map<String, Map<String, JSONArray>> selections) {
+        if (selections == null || selections.isEmpty()) {
+            return 0;
+        }
+
+        // Count the actual number of selections
+        int selectionCount = 0;
+        for (Map.Entry<String, Map<String, JSONArray>> datasetEntry : selections.entrySet()) {
+            Map<String, JSONArray> selectionContent = datasetEntry.getValue();
+            if (selectionContent != null && !selectionContent.isEmpty()) {
+                selectionCount += selectionContent.size();
+            }
+        }
+        return selectionCount;
     }
 
     private void initColumnWidths(JSONArray columnsOrdered, Map<String, JSONArray> columnStylesMap) throws JSONException {
@@ -172,9 +209,8 @@ public class DashboardPdfExporter extends DashboardExporter {
         }
     }
 
-    private void buildFirstPageHeaders(BaseTable table, JSONObject settings, Map<String, String> groupsAndColumnsMap, JSONArray columnsOrdered, String creationUser, Map<String, Map<String, JSONArray>> selections, PDFont font) throws JSONException {
-        createDocumentInformationRow(table, font, creationUser);
-        createSelectionsRows(table, font, selections);
+    private void buildFirstPageHeaders(BaseTable table, JSONObject settings, Map<String, String> groupsAndColumnsMap, JSONArray columnsOrdered, String creationUser, PDFont font, String extraValueLabel, String extraValueField) throws JSONException {
+        createDocumentInformationRow(table, font, creationUser, extraValueLabel, extraValueField);
 
         if (!groupsAndColumnsMap.isEmpty()) {
             Row<PDPage> groupHeaderRow = table.createRow(15f);
@@ -237,77 +273,379 @@ public class DashboardPdfExporter extends DashboardExporter {
         }
     }
 
-    //TODO ALREADY PRESENT IN THE COCKPIT EXPORTER
-    private static void createDocumentInformationRow(BaseTable table, PDFont font, String creationUser) {
-        Row<PDPage> documentInformationRow = table.createRow(12f);
-        String executionDate = LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss"));
-        Cell<PDPage> executionDateCell = documentInformationRow.createCell(50, "Execution Date: " + executionDate,
-                HorizontalAlignment.get("center"), VerticalAlignment.get("middle"));
-        executionDateCell.setFont(font);
-        executionDateCell.setFillColor(Color.LIGHT_GRAY);
-        executionDateCell.setTextColor(Color.BLACK);
-        executionDateCell.setFontSize(10);
-        Cell<PDPage> creationUserCell = documentInformationRow.createCell(50, "Creation User: " + creationUser,
-                HorizontalAlignment.get("center"), VerticalAlignment.get("middle"));
-        creationUserCell.setFont(font);
-        creationUserCell.setFillColor(Color.LIGHT_GRAY);
-        creationUserCell.setTextColor(Color.BLACK);
-        creationUserCell.setFontSize(10);
+    private void createDocumentInformationRow(BaseTable table, PDFont font, String creationUser, String extraValueLabel, String extraValue) {
+        try {
+
+            String executionDateLabel;
+            String creationUserLabel;
+
+            if (this.locale.toString().equals("sk_SK")) {
+                executionDateLabel = "Dátum vytvorenia: ";
+                creationUserLabel = "Vytvoril: ";
+            } else if (this.locale.toString().equals("it_IT")) {
+                executionDateLabel = "Data di esecuzione: ";
+                creationUserLabel = "Utente di creazione: ";
+            } else {
+                executionDateLabel = "Execution Date: ";
+                creationUserLabel = "Creation User: ";
+            }
+
+            PDPage page = table.getCurrentPage();
+
+            String executionDate = LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss"));
+
+            String line1 = executionDateLabel + executionDate;
+            String line2 = creationUserLabel + creationUser;
+            String line3 = null;
+            boolean isExtraValuePresent = extraValueLabel != null && !extraValueLabel.isEmpty() && extraValue != null && !extraValue.isEmpty();
+            if (isExtraValuePresent) {
+                line3 = extraValueLabel + ": " + extraValue;
+            }
+
+            float fontSize = 10f;
+            float leading = 12f;
+            float margin = 20f;
+
+            float pageWidth = page.getMediaBox().getWidth();
+            float pageHeight = page.getMediaBox().getHeight();
+
+            float w1 = font.getStringWidth(line1) / 1000f * fontSize;
+            float w2 = font.getStringWidth(line2) / 1000f * fontSize;
+
+            float w3 = isExtraValuePresent ? font.getStringWidth(line3) / 1000f * fontSize : 0;
+
+            float maxW = Math.max(w1, Math.max(w2, w3));
+
+            float x = pageWidth - margin - maxW;
+
+            float yStartNewPage = pageHeight - (2 * margin);
+
+            float additionalGap = 12f;
+            float y = yStartNewPage + additionalGap + leading;
+
+            try (PDPageContentStream contentStream =
+                       new PDPageContentStream(table.document, page, PDPageContentStream.AppendMode.APPEND, true)) {
+
+                contentStream.beginText();
+                contentStream.setFont(font, fontSize);
+                contentStream.setNonStrokingColor(Color.BLACK);
+                contentStream.newLineAtOffset(x, y);
+                contentStream.showText(line1);
+                contentStream.newLineAtOffset(0, -leading);
+                contentStream.showText(line2);
+                if (isExtraValuePresent) {
+                    contentStream.newLineAtOffset(0, -leading);
+                    contentStream.showText(line3);
+                }
+                contentStream.endText();
+            }
+
+        } catch (Exception e) {
+            throw new SpagoBIRuntimeException("Couldn't add document information to the page", e);
+        }
     }
 
-    private static void createSelectionsRows(BaseTable table, PDFont font, Map<String, Map<String, JSONArray>> selections) {
+    private void createSelectionsRows(BaseTable table, PDFont font, Map<String, Map<String, JSONArray>> selections) {
         try {
-            if (selections != null && !selections.isEmpty()) {
-                for (Map.Entry<String, Map<String, JSONArray>> datasetEntry : selections.entrySet()) {
-                    String datasetName = datasetEntry.getKey();
-                    Map<String, JSONArray> selectionContent = datasetEntry.getValue();
+            if (selections == null || selections.isEmpty()) {
+                return;
+            }
 
-                    if (selectionContent == null || selectionContent.isEmpty()) {
-                        continue;
+            float fontSize = 10f;
+            float leading = 12f;
+            float margin = 20f;
+            float baseBottomMargin = 20f;
+
+            PDPage page = table.getCurrentPage();
+            float pageWidth = page.getMediaBox().getWidth();
+            float pageHeight = page.getMediaBox().getHeight();
+            float availableTextWidth = pageWidth - (2 * margin);
+
+            // Build wrapped lines first so we can paginate correctly
+            final class SelectionLine {
+                final String key;
+                final float keyWidth;
+                final java.util.List<String> wrappedValueLines;
+
+                SelectionLine(String key, float keyWidth, java.util.List<String> wrappedValueLines) {
+                    this.key = key;
+                    this.keyWidth = keyWidth;
+                    this.wrappedValueLines = wrappedValueLines;
+                }
+            }
+
+            java.util.List<SelectionLine> lines = new java.util.ArrayList<>();
+
+            for (Map.Entry<String, Map<String, JSONArray>> datasetEntry : selections.entrySet()) {
+                Map<String, JSONArray> selectionContent = datasetEntry.getValue();
+                if (selectionContent == null || selectionContent.isEmpty()) {
+                    continue;
+                }
+
+                for (Map.Entry<String, JSONArray> columnEntry : selectionContent.entrySet()) {
+                    String key = columnEntry.getKey();
+                    key = key.replace("('", "").replace("')", "");
+
+                    String valueStr = getValues(columnEntry).toString().replace("('", "").replace("')", "");
+
+                    float keyWidth = font.getStringWidth(key) / 1000f * fontSize;
+                    float prefixWidth = keyWidth + (font.getStringWidth(": ") / 1000f * fontSize);
+                    float valueStartX = margin + prefixWidth;
+                    float valueAvailableWidth = Math.max(10f, (margin + availableTextWidth) - valueStartX);
+
+                    java.util.List<String> wrappedValues = wrapText(font, fontSize, valueStr, valueAvailableWidth);
+                    if (wrappedValues.isEmpty()) {
+                        wrappedValues = java.util.Collections.singletonList("");
                     }
 
-                    for (Map.Entry<String, JSONArray> columnEntry : selectionContent.entrySet()) {
-                        String subKey = columnEntry.getKey();
-                        JSONArray valuesArray = columnEntry.getValue();
+                    lines.add(new SelectionLine(key, keyWidth, wrappedValues));
+                }
+            }
 
-                        Row<PDPage> selectionRow = table.createRow(12f);
+            if (lines.isEmpty()) {
+                return;
+            }
 
-                        Cell<PDPage> selectionDatasetNameCell = selectionRow.createCell(
-                                50,
-                                "Selections Dataset: " + datasetName,
-                                HorizontalAlignment.get("right"),
-                                VerticalAlignment.get("middle")
-                        );
-                        selectionDatasetNameCell.setFont(font);
-                        selectionDatasetNameCell.setFillColor(Color.LIGHT_GRAY);
-                        selectionDatasetNameCell.setTextColor(Color.BLACK);
-                        selectionDatasetNameCell.setFontSize(10);
+            int totalLines = 0;
+            for (SelectionLine sl : lines) {
+                totalLines += Math.max(1, sl.wrappedValueLines.size());
+            }
 
-                        StringBuilder sb = new StringBuilder();
-                        if (valuesArray != null) {
-                            for (int i = 0; i < valuesArray.length(); i++) {
-                                if (i > 0) sb.append(", ");
-                                Object v = valuesArray.opt(i);
-                                sb.append(v != null ? String.valueOf(v) : "null");
+            // Calculate where the table actually ends
+            // Table starts at y=550 (from createBaseTable)
+            float tableStartY = 550f;
+            float tableHeight = 0f;
+
+            try {
+                List<Row<PDPage>> rows = table.getRows();
+                for (Row<PDPage> row : rows) {
+                    tableHeight += row.getHeight();
+                }
+            } catch (Exception e) {
+                logger.warn("Could not calculate exact table bottom");
+                tableHeight = 0;
+            }
+
+            float tableEndY = tableStartY - tableHeight;
+
+            float requiredHeight = totalLines * leading;
+            float availableSpace = tableEndY - baseBottomMargin;
+            boolean needsNewPage = availableSpace < requiredHeight;
+
+            PDPage targetPage;
+            float currentY;
+
+            if (needsNewPage) {
+                targetPage = new PDPage(page.getMediaBox());
+                table.document.addPage(targetPage);
+                currentY = pageHeight - margin - leading;
+            } else {
+                targetPage = page;
+                currentY = tableEndY - leading;
+            }
+
+            try (PDPageContentStream contentStream =
+                         new PDPageContentStream(table.document, targetPage, PDPageContentStream.AppendMode.APPEND, true)) {
+
+                contentStream.setNonStrokingColor(Color.BLACK);
+                contentStream.setFont(font, fontSize);
+
+                for (SelectionLine sl : lines) {
+                    float keyX = margin;
+                    float keyWidth = sl.keyWidth;
+                    float afterKeyX = keyX + keyWidth;
+                    float colonWidth = font.getStringWidth(": ") / 1000f * fontSize;
+                    float valuesX = afterKeyX + colonWidth;
+
+                    java.util.List<String> wrapped = sl.wrappedValueLines;
+                    int lineCount = Math.max(1, wrapped.size());
+
+                    for (int i = 0; i < lineCount; i++) {
+                        // page break
+                        if (currentY <= baseBottomMargin + leading) {
+                            targetPage = new PDPage(page.getMediaBox());
+                            table.document.addPage(targetPage);
+                            currentY = pageHeight - margin - leading;
+
+                            try (PDPageContentStream csNew =
+                                         new PDPageContentStream(table.document, targetPage, PDPageContentStream.AppendMode.APPEND, true)) {
+                                csNew.setNonStrokingColor(Color.BLACK);
+                                csNew.setFont(font, fontSize);
+
+                                for (int j = i; j < lineCount; j++) {
+                                    if (j == 0) {
+                                        csNew.beginText();
+                                        csNew.newLineAtOffset(keyX, currentY);
+                                        csNew.showText(sl.key);
+                                        csNew.endText();
+
+                                        float underlineY = currentY - 2.0f;
+                                        csNew.setLineWidth(0.5f);
+                                        csNew.moveTo(keyX, underlineY);
+                                        csNew.lineTo(keyX + keyWidth, underlineY);
+                                        csNew.stroke();
+
+                                        csNew.beginText();
+                                        csNew.newLineAtOffset(afterKeyX, currentY);
+                                        csNew.showText(": ");
+                                        csNew.endText();
+
+                                        csNew.beginText();
+                                        csNew.newLineAtOffset(valuesX, currentY);
+                                        csNew.showText(wrapped.get(j));
+                                        csNew.endText();
+                                    } else {
+                                        csNew.beginText();
+                                        csNew.newLineAtOffset(valuesX, currentY);
+                                        csNew.showText(wrapped.get(j));
+                                        csNew.endText();
+                                    }
+
+                                    currentY -= leading;
+                                    if (currentY <= baseBottomMargin + leading && j + 1 < lineCount) {
+                                        targetPage = new PDPage(page.getMediaBox());
+                                        table.document.addPage(targetPage);
+                                        currentY = pageHeight - margin - leading;
+                                        i = j + 1;
+                                        break;
+                                    }
+                                }
                             }
+
+                            i = lineCount;
+                            break;
                         }
 
-                        Cell<PDPage> subSelectionValueCell = selectionRow.createCell(
-                                50,
-                                "COLUMN " + subKey + ": " + sb,
-                                HorizontalAlignment.get("left"),
-                                VerticalAlignment.get("middle")
-                        );
-                        subSelectionValueCell.setFont(font);
-                        subSelectionValueCell.setFillColor(Color.LIGHT_GRAY);
-                        subSelectionValueCell.setTextColor(Color.BLACK);
-                        subSelectionValueCell.setFontSize(10);
+                        if (i == 0) {
+                            contentStream.beginText();
+                            contentStream.newLineAtOffset(keyX, currentY);
+                            contentStream.showText(sl.key);
+                            contentStream.endText();
+
+                            float underlineY = currentY - 2.0f;
+                            contentStream.setLineWidth(0.5f);
+                            contentStream.moveTo(keyX, underlineY);
+                            contentStream.lineTo(keyX + keyWidth, underlineY);
+                            contentStream.stroke();
+
+                            contentStream.beginText();
+                            contentStream.newLineAtOffset(afterKeyX, currentY);
+                            contentStream.showText(": ");
+                            contentStream.endText();
+
+                            contentStream.beginText();
+                            contentStream.newLineAtOffset(valuesX, currentY);
+                            contentStream.showText(wrapped.get(i));
+                            contentStream.endText();
+                        } else {
+                            contentStream.beginText();
+                            contentStream.newLineAtOffset(valuesX, currentY);
+                            contentStream.showText(wrapped.get(i));
+                            contentStream.endText();
+                        }
+
+                        currentY -= leading;
                     }
                 }
             }
+
         } catch (Exception e) {
-            throw new SpagoBIRuntimeException("Couldn't add selection information to the table", e);
+            throw new SpagoBIRuntimeException("Couldn't add selection information to the page", e);
         }
+    }
+
+    private static @NonNull StringBuilder getValues(Map.Entry<String, JSONArray> columnEntry) {
+        JSONArray valuesArray = columnEntry.getValue();
+
+        StringBuilder values = new StringBuilder();
+        if (valuesArray != null) {
+            for (int i = 0; i < valuesArray.length(); i++) {
+                if (i > 0) values.append(", ");
+                Object v = valuesArray.opt(i);
+                values.append(v != null ? String.valueOf(v) : "null");
+            }
+        }
+        return values;
+    }
+
+    /**
+     * Wrap text so that each line fits within maxWidth using the provided font metrics.
+     * Splits by whitespace; if a single token is wider than maxWidth it will be hard-split.
+     */
+    private static java.util.List<String> wrapText(PDFont font, float fontSize, String text, float maxWidth) throws IOException {
+        java.util.List<String> result = new java.util.ArrayList<>();
+        if (text == null || text.isEmpty()) {
+            return result;
+        }
+
+        String[] words = text.split("\\s+");
+        StringBuilder line = new StringBuilder();
+
+        for (String word : words) {
+            if (word.isEmpty()) {
+                continue;
+            }
+
+            if (line.length() == 0) {
+                if (stringWidth(font, fontSize, word) <= maxWidth) {
+                    line.append(word);
+                } else {
+                    for (String part : hardSplitToken(font, fontSize, word, maxWidth)) {
+                        if (!part.isEmpty()) {
+                            result.add(part);
+                        }
+                    }
+                }
+            } else {
+                String candidate = line + " " + word;
+                if (stringWidth(font, fontSize, candidate) <= maxWidth) {
+                    line.append(' ').append(word);
+                } else {
+                    result.add(line.toString());
+                    line.setLength(0);
+                    if (stringWidth(font, fontSize, word) <= maxWidth) {
+                        line.append(word);
+                    } else {
+                        for (String part : hardSplitToken(font, fontSize, word, maxWidth)) {
+                            if (!part.isEmpty()) {
+                                result.add(part);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        if (line.length() > 0) {
+            result.add(line.toString());
+        }
+
+        return result;
+    }
+
+    private static float stringWidth(PDFont font, float fontSize, String text) throws IOException {
+        return (font.getStringWidth(text) / 1000f) * fontSize;
+    }
+
+    private static java.util.List<String> hardSplitToken(PDFont font, float fontSize, String token, float maxWidth) throws IOException {
+        java.util.List<String> parts = new java.util.ArrayList<>();
+        StringBuilder current = new StringBuilder();
+        for (int i = 0; i < token.length(); i++) {
+            char c = token.charAt(i);
+            current.append(c);
+            if (stringWidth(font, fontSize, current.toString()) > maxWidth) {
+                current.setLength(current.length() - 1);
+                if (current.length() > 0) {
+                    parts.add(current.toString());
+                }
+                current.setLength(0);
+                current.append(c);
+            }
+        }
+        if (current.length() > 0) {
+            parts.add(current.toString());
+        }
+        return parts;
     }
 
     private void buildRowsAndCols(BaseTable table, JSONObject settings, JSONArray rows, JSONArray columnsOrdered, int numberOfSummaryRows, List<String> summaryRowsLabels, PDFont font, String[] columnDateFormats,  Map<String, JSONArray> styles) throws JSONException {
@@ -315,7 +653,7 @@ public class DashboardPdfExporter extends DashboardExporter {
         // Check if summary row is enabled
         boolean summaryRowEnabled = settings.getJSONObject("configuration").has("summaryRows") &&
                 settings.getJSONObject("configuration").getJSONObject("summaryRows").getBoolean("enabled");
-        DateFormat inputDateFormat = new SimpleDateFormat(DATE_FORMAT, getLocale());
+        DateFormat inputDateFormat = new SimpleDateFormat(DATE_FORMAT, this.locale);
 
         for (int r = 0; r < rows.length(); r++) {
             JSONObject rowObject = rows.getJSONObject(r);
@@ -380,6 +718,9 @@ public class DashboardPdfExporter extends DashboardExporter {
                 }
                 valueStr = workaroundToRemoveCommonProblematicChars(valueStr);
 
+                JSONObject visualizationType = getVisualizationTypeByColumn(settings, column);
+                valueStr = applyVisualizationTypeToValueStr(visualizationType, valueStr);
+
                 Cell<PDPage> cell = row.createCell(columnPercentWidths[c], valueStr,
                         HorizontalAlignment.get("center"), VerticalAlignment.get("top"));
 
@@ -419,6 +760,24 @@ public class DashboardPdfExporter extends DashboardExporter {
         }
     }
 
+    private String applyVisualizationTypeToValueStr(JSONObject visualizationType, String valueStr) throws JSONException {
+
+        if (visualizationType.has("precision")) {
+            int precision = visualizationType.getInt("precision");
+            try {
+                double numericValue = Double.parseDouble(valueStr);
+                String formatString = "%." + precision + "f";
+                valueStr = String.format(formatString, numericValue);
+            } catch (NumberFormatException e) {
+                logger.warn("Cannot apply precision to non-numeric value: " + valueStr, e);
+            }
+        }
+
+        String prefix = visualizationType.optString("prefix", "");
+        String suffix = visualizationType.optString("suffix", "");
+        return prefix + valueStr + suffix;
+    }
+
     private void applyWholeRowStyle(int c, List<Boolean> styleCanBeOverriddenByWholeRowStyle, Row<PDPage> row, Style cellStyle) {
         for (int previousCell = c - 1; previousCell >= 0; previousCell--) {
             if (styleCanBeOverriddenByWholeRowStyle.get(previousCell).equals(Boolean.TRUE)) {
@@ -427,7 +786,7 @@ public class DashboardPdfExporter extends DashboardExporter {
             }
         }
     }
-    
+
     private void applyStyleToCell(Style style, Cell<PDPage> cell) {
         if (!style.getBackgroundColor().isEmpty()) {
             cell.setFillColor(getJavaColorFromRGBA(style.getBackgroundColor()));
@@ -477,14 +836,20 @@ public class DashboardPdfExporter extends DashboardExporter {
             return new Color(red, green, blue);
     }
 
-
-    //TODO GENERALISE THIS METHOD
-    private BaseTable createBaseTable(PDDocument doc, PDPage page) {
+    /**
+     * Create a BaseTable reserving space at the bottom for custom contents (like selections).
+     * reservedSelectionLines is the number of text lines we'll draw below the table.
+     */
+    private BaseTable createBaseTable(PDDocument doc, PDPage page, int reservedSelectionLines) {
         try {
             float margin = 20;
             // starting y position is whole page height subtracted by top and bottom margin
             float yStartNewPage = page.getMediaBox().getHeight() - (2 * margin);
-            float bottomMargin = 20;
+            float baseBottomMargin = 20;
+            float leading = 12f;
+            float extraGapFromTable = 6f; // gap between table and selections
+
+            float bottomMargin = baseBottomMargin + reservedSelectionLines * leading + extraGapFromTable;
             float tableWidth = page.getMediaBox().getWidth() - (2 * margin);
             // y position is your coordinate of top left corner of the table
             Assert.assertTrue(tableWidth > 0, "Page dimension is too small!");
@@ -495,7 +860,6 @@ public class DashboardPdfExporter extends DashboardExporter {
         }
     }
 
-    //TODO WATCH OUT FOR THE PAGE CREATION (ALREADY PRESENT IN THE COCKPIT EXPORTER)
     private PDPage createPage(JSONObject widget) {
         try {
             JSONObject settings = widget.getJSONObject("settings");
@@ -553,6 +917,5 @@ public class DashboardPdfExporter extends DashboardExporter {
         valueStr = valueStr.replace('\t', ' ');
         return valueStr;
     }
-
 
 }

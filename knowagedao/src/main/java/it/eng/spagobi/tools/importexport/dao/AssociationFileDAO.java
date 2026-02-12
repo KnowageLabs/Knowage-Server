@@ -27,9 +27,9 @@ import java.util.Properties;
 
 import org.apache.log4j.Logger;
 
-import it.eng.spago.base.SourceBean;
 import it.eng.spago.configuration.ConfigSingleton;
 import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
+import it.eng.spagobi.tools.importexport.ImportExportConfig;
 import it.eng.spagobi.tools.importexport.bo.AssociationFile;
 
 public class AssociationFileDAO implements IAssociationFileDAO {
@@ -118,16 +118,18 @@ public class AssociationFileDAO implements IAssociationFileDAO {
 			// if the folder exists the association file exists
 			// if a file with the same name exists then tries to delete it
 			if (baseAssFile.exists()) {
-				if (baseAssFile.isDirectory())
+				if (baseAssFile.isDirectory()) {
 					return true;
-				else {
-					if (baseAssFile.delete())
+				} else {
+					if (baseAssFile.delete()) {
 						return false;
-					else
+					} else {
 						return true;
+					}
 				}
-			} else
+			} else {
 				return false;
+			}
 		} finally {
 			LOGGER.debug("OUT");
 		}
@@ -221,9 +223,8 @@ public class AssociationFileDAO implements IAssociationFileDAO {
 		LOGGER.debug("IN");
 		File assrepdirFile = null;
 		try {
-			ConfigSingleton conf = ConfigSingleton.getInstance();
-			SourceBean assRepo = (SourceBean) conf.getAttribute("IMPORTEXPORT.ASSOCIATIONS_REPOSITORY");
-			String assRepoPath = (String) assRepo.getAttribute("path");
+			String assRepoPath = ImportExportConfig.getInstance().getRepoAss();
+
 			if (!assRepoPath.startsWith("/")) {
 				String pathcont = ConfigSingleton.getRootPath();
 				assRepoPath = pathcont + "/" + assRepoPath;

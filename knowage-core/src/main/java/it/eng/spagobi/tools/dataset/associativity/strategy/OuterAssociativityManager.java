@@ -113,6 +113,10 @@ public class OuterAssociativityManager extends AbstractAssociativityManager {
 
 		IAssociativeDatasetContainer container = associativeDatasetContainers.get(dataset);
 
+        if (container == null) {
+            return;
+        }
+
 		if (datasetFilters.get(dataset) != null) {
 
 			List<SimpleFilter> filtersList = this.calculateMinMaxFilters(datasetFilters.get(dataset), datasetFilters.get(dataset), userProfile);

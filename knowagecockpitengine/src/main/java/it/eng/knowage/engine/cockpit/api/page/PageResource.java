@@ -25,7 +25,6 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Base64;
 import java.util.Base64.Encoder;
@@ -38,7 +37,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -54,8 +52,10 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import it.eng.knowage.commons.multitenant.OrganizationImageManager;
 import it.eng.knowage.engine.api.export.dashboard.excel.DashboardExcelExporter;
-import org.apache.commons.lang3.StringUtils;
+import it.eng.knowage.engine.api.export.nodejs.PdfExporterV2;
+import it.eng.spagobi.tenant.TenantManager;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -69,7 +69,6 @@ import com.google.common.collect.Iterables;
 import it.eng.knowage.engine.cockpit.CockpitEngine;
 import it.eng.knowage.engine.cockpit.CockpitEngineInstance;
 import it.eng.knowage.engine.cockpit.api.AbstractCockpitEngineResource;
-import it.eng.knowage.engine.cockpit.api.export.pdf.nodejs.PdfExporterV2;
 import it.eng.knowage.engine.cockpit.api.export.png.PngExporter;
 import it.eng.knowage.export.wrapper.beans.RenderOptions;
 import it.eng.knowage.export.wrapper.beans.ViewportDimensions;
@@ -77,7 +76,6 @@ import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
-import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
 import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
@@ -377,7 +375,7 @@ public class PageResource extends AbstractCockpitEngineResource {
 		String userId = request.getParameter("user_id");
 		String documentLabel = request.getParameter("DOCUMENT_LABEL");
 
-		DashboardExcelExporter excelExporter = new DashboardExcelExporter(getIOManager().getTemplateAsJSONObject(), role, requestURL, organization, userId);
+		DashboardExcelExporter excelExporter = new DashboardExcelExporter(getIOManager().getTemplateAsJSONObject(), role, requestURL, organization, userId, OrganizationImageManager.getOrganizationB64ImageWide(TenantManager.getTenant().getName()));
 		String mimeType = excelExporter.getMimeType();
 		byte[] data = excelExporter.getScheduledBinaryData(documentLabel);
 
@@ -570,11 +568,7 @@ public class PageResource extends AbstractCockpitEngineResource {
 		Engine eng = biObject.getEngine();
 		URIBuilder externalUrl = GeneralUtilities.getBE2BEEngineUrl(eng);
 
-		if (isDashboard(eng)) {
-			manageParametersForDashboards(biObject, documentLabel, externalUrl);
-		} else {
-			manageParametersForEverythingElse(externalUrl);
-		}
+		manageParameters(externalUrl);
 		externalUrl.setParameter("export", "true");
 		return externalUrl.toString();
 	}
@@ -591,11 +585,7 @@ public class PageResource extends AbstractCockpitEngineResource {
 		Engine eng = biObject.getEngine();
 		URIBuilder externalUrl = GeneralUtilities.getBE2BEEngineUrl(eng);
 
-		if (isDashboard(eng)) {
-			manageParametersForDashboards(biObject, documentLabel, externalUrl);
-		} else {
-			manageParametersForEverythingElse(externalUrl);
-		}
+		manageParameters(externalUrl);
 		externalUrl.setParameter("scheduledexport", "true");
 		return externalUrl.toString();
 	}
@@ -638,16 +628,7 @@ public class PageResource extends AbstractCockpitEngineResource {
 		return template;
 	}
 
-	private void manageParametersForDashboards(BIObject biObject, String documentLabel, URIBuilder uriBuilder)
-			throws JSONException {
-
-		uriBuilder.setPath(getKnowageVueContext() + "/dashboard/" + documentLabel);
-		uriBuilder.setParameter("params", createJsonFromParemeters(biObject));
-		uriBuilder.setParameter("role", getExecutionRoleForDashboard());
-		addParametersToHideToolbarAndMenuInVue(uriBuilder);
-	}
-
-	private void manageParametersForEverythingElse(URIBuilder uriBuilder) {
+	private void manageParameters(URIBuilder uriBuilder) {
 		Map<String, String[]> parameterMap = request.getParameterMap();
 		for (Entry<String, String[]> parameter : parameterMap.entrySet()) {
 			String key = parameter.getKey();
@@ -658,114 +639,9 @@ public class PageResource extends AbstractCockpitEngineResource {
 		}
 	}
 
-	private String getExecutionRoleForDashboard() {
-		Map<String, String[]> parameterMap = request.getParameterMap();
-		String role = Optional.ofNullable(parameterMap.get("SBI_EXECUTION_ROLE")).map(e -> e[0]).orElse("");
-		if (StringUtils.isEmpty(role)) {
-			role = Optional.ofNullable(parameterMap.get("role")).map(e -> e[0]).orElse("");
-		}
-		return role;
-	}
-
-	private String createJsonFromParemeters(BIObject biObject) throws JSONException {
-		List<BIObjectParameter> drivers = biObject.getDrivers();
-		// We wrap parameters map because it could be updated here below
-		Map<String, String[]> parameterMap = new HashMap<>(request.getParameterMap());
-		JSONArray parametersAsJson = new JSONArray();
-
-		reconcileParametersWithParamsV2FromUrl(parameterMap);
-
-		for (BIObjectParameter driver : drivers) {
-			String urlName = driver.getParameterUrlName();
-
-			boolean isMultivalue = driver.isMultivalue();
-
-			List<String> values = Optional.ofNullable(parameterMap.get(urlName)).map(Arrays::asList)
-					.orElse(Collections.emptyList());
-			List<String> descriptions = Optional.ofNullable(parameterMap.get(urlName + "_description"))
-					.map(Arrays::asList).orElse(Collections.emptyList());
-
-            List<String> splitValues = new ArrayList<>();
-            if (biObject.getEngine().getLabel().equals("knowagedashboardengine")) {
-                List<String> finalSplitValues = splitValues;
-                values.forEach(v -> {
-                    finalSplitValues.addAll(Arrays.asList(v.split(";")));
-                });
-            }
-
-			if (OUTPUT_TYPE.equals(urlName)) {
-				LOGGER.debug("Forcing outputType to HTML");
-				splitValues = Arrays.asList("HTML");
-				descriptions = Arrays.asList("HTML");
-			}
-
-			JSONObject currentDriverJson = new JSONObject();
-
-			JSONArray valuesAsJSONArray = new JSONArray();
-
-			for (int i = 0; i < Math.max(splitValues.size(), descriptions.size()); i++) {
-				Object value = Iterables.get(splitValues, i, "");
-				Object description = Iterables.get(descriptions, i, "");
-
-				JSONObject currValue = new JSONObject();
-
-				currValue.put("value", value);
-				currValue.put("description", description);
-
-				valuesAsJSONArray.put(currValue);
-			}
-
-			currentDriverJson.put("value", valuesAsJSONArray);
-			currentDriverJson.put("urlName", urlName);
-			currentDriverJson.put("multivalue", isMultivalue);
-
-			parametersAsJson.put(currentDriverJson);
-		}
-
-		String parametersAsString = parametersAsJson.toString();
-		return java.util.Base64.getEncoder().withoutPadding().encodeToString(parametersAsString.getBytes());
-	}
-
-	private boolean isDashboard(Engine eng) {
-		return "knowagedashboardengine".equals(eng.getLabel());
-	}
-
 	private void addParametersToHideToolbarAndMenuInVue(URIBuilder uriBuilder) {
 		uriBuilder.setParameter("toolbar", "false");
 		uriBuilder.setParameter("menu", "false");
 		uriBuilder.setParameter("finalUser", "true");
 	}
-
-	private void reconcileParametersWithParamsV2FromUrl(Map<String, String[]> parameterMap) throws JSONException {
-		// Manage new parameters format in Base64
-		String parametersV2FromUrl = Optional.ofNullable(request.getParameter("params"))
-				.map(e -> new String(java.util.Base64.getDecoder().decode(e))).orElse("[]");
-		JSONArray parametersV2FromUrlAsJSONArray = new JSONArray(parametersV2FromUrl);
-		for (int i = 0; i < parametersV2FromUrlAsJSONArray.length(); i++) {
-			JSONObject currParameterFromParametersV2 = (JSONObject) parametersV2FromUrlAsJSONArray.get(i);
-
-			String urlName = currParameterFromParametersV2.getString("urlName");
-
-			if (!parameterMap.containsKey(urlName)) {
-				List<String> values = new ArrayList<>();
-				List<String> descriptions = new ArrayList<>();
-
-				JSONArray value = currParameterFromParametersV2.getJSONArray("value");
-
-				for (int k = 0; k < value.length(); k++) {
-					JSONObject currentParameterValue = (JSONObject) value.get(k);
-
-					String cValue = currentParameterValue.getString("value");
-					String cDesc = currentParameterValue.getString("description");
-
-					values.add(cValue);
-					descriptions.add(cDesc);
-				}
-
-				parameterMap.put(urlName, values.toArray(new String[0]));
-				parameterMap.put(urlName + "_description", descriptions.toArray(new String[0]));
-			}
-		}
-	}
-
 }

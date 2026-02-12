@@ -22,6 +22,7 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.log4j.Logger;
+import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -698,6 +699,7 @@ public class ProcessKpiJob extends AbstractSuspendableJob {
 		KpiValueExecLog result = new KpiValueExecLog();
 		Session session = HibernateSessionManager.getCurrentSession();
 		ISQLDialect dialect = SQLDialectFactory.getSQLDialect(session);
+		List<Map<String, Number>> rowsMeasureValues = new ArrayList<>();
 
 		try {
 			logger.info(DateFormat.getInstance().format(new Date()) + " Processing Kpi Job...");
@@ -722,9 +724,13 @@ public class ProcessKpiJob extends AbstractSuspendableJob {
 					}
 					// sb.append("[" + field.getValue() + "]");
 				}
+				Map<String, Number> mv = new HashMap<>();
+				mv.put("M" + mainMeasure, measureValue);
+				rowsMeasureValues.add(mv);
+
 				// we are casting measures as float values because formulas are not working on Oracle and Postgres the
 				// same way, for example: 1283 / 48204 is returning 0.0266... on Oracle and 0 on Postgres
-				String rowFormula = parsedKpi.formula.replaceFirst("M" + mainMeasure + "([^\\d].*)*$", dialect.getCastingToFloatFormula(measureValue) + "$1");
+				String rowFormula = parsedKpi.formula;
 				rowsFormulae.add(rowFormula);
 				rowsAttributesValues.add(rowAttributesValues);
 				// sb.append("###");
@@ -760,6 +766,7 @@ public class ProcessKpiJob extends AbstractSuspendableJob {
 							row = qr.iterator.next();
 						}
 					}
+					rowsMeasureValues.get(r).put("M" + m, measureValue);
 					String rowFormula = rowsFormulae.get(r);
 					// we are casting measures as float values because formulas are not working on Oracle and Postgres the
 					// same way, for example: 1283 / 48204 is returning 0.0266... on Oracle and 0 on Postgres
@@ -821,8 +828,22 @@ public class ProcessKpiJob extends AbstractSuspendableJob {
 				Object theMonth = ifNull(temporalValues.get("MONTH"), CARDINALITY_ALL);
 				Object theQuarter = ifNull(temporalValues.get("QUARTER"), CARDINALITY_ALL);
 				Object theYear = ifNull(temporalValues.get("YEAR"), CARDINALITY_ALL);
-				String insertSql = "INSERT INTO SBI_KPI_VALUE (id, kpi_id, kpi_version, logical_key, time_run, computed_value,"
-						+ " the_day, the_week, the_month, the_quarter, the_year, state) VALUES (?,  ?, ?, ?" + ",?, coalesce(? , 0) ,?,?,?,?,?,?)";
+
+				String evalSql = "SELECT COALESCE((" + parsedKpi.formula.replaceAll("\\bM(\\d+)\\b", ":M$1") + "), 0) AS V FROM dual";
+				SQLQuery q = session.createSQLQuery(evalSql);
+
+				for (int m = 0; m < parsedKpi.measures.size(); m++) {
+					Number mvVal = rowsMeasureValues.get(r).get("M" + m);
+					q.setParameter("M" + m, mvVal);
+				}
+
+				Number computedValue = (Number) q.uniqueResult();
+
+
+				String insertSql =
+						"INSERT INTO SBI_KPI_VALUE (id, kpi_id, kpi_version, logical_key, time_run, computed_value,"
+								+ " the_day, the_week, the_month, the_quarter, the_year, state) "
+								+ "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 				String whereCondition = "kpi_id = " + parsedKpi.id + " AND kpi_version = " + parsedKpi.version + " AND logical_key = '"
 						+ logicalKey.toString().replaceAll("'", "''") + "'" + " AND the_day = '" + theDay + "' AND the_week = '" + theWeek + "'"
 						+ " AND the_month = '" + theMonth + "' AND the_quarter = '" + theQuarter + "' AND the_year = '" + theYear + "'";
@@ -835,10 +856,21 @@ public class ProcessKpiJob extends AbstractSuspendableJob {
 
 				logger.debug("PERFORMING INSERT: " + insertSql);
 
-				session.createSQLQuery(insertSql).setParameter(0, ++lastId).setParameter(1, parsedKpi.id).setParameter(2, parsedKpi.version)
-						.setParameter(3, logicalKey.toString().replaceAll("'", "''")).setParameter(4, timeRun).setParameter(5, (nullValue ? "0" : value))
-						.setParameter(6, theDay).setParameter(7, theWeek).setParameter(8, theMonth).setParameter(9, theQuarter).setParameter(10, theYear)
-						.setParameter(11, (nullValue ? '1' : '0')).executeUpdate();
+				session.createSQLQuery(insertSql)
+						.setParameter(0, ++lastId)
+						.setParameter(1, parsedKpi.id)
+						.setParameter(2, parsedKpi.version)
+						.setParameter(3, logicalKey.toString().replaceAll("'", "''"))
+						.setParameter(4, timeRun)
+						.setParameter(5, computedValue) // numeric bind
+						.setParameter(6, theDay)
+						.setParameter(7, theWeek)
+						.setParameter(8, theMonth)
+						.setParameter(9, theQuarter)
+						.setParameter(10, theYear)
+						.setParameter(11, (nullValue ? "1" : "0"))
+						.executeUpdate();
+
 				session.getTransaction().commit();
 			}
 
@@ -856,13 +888,14 @@ public class ProcessKpiJob extends AbstractSuspendableJob {
 		session.beginTransaction();
 		Number lastId = (Number) session.createSQLQuery("SELECT NEXT_VAL FROM hibernate_sequences WHERE SEQUENCE_NAME = :escapedSequenceName")
 				.setParameter("escapedSequenceName", escapedSequenceName).uniqueResult();
+		int lastIdInt = lastId == null ? 0 : lastId.intValue();
 		if (lastId == null) {
 			session.createSQLQuery("INSERT INTO hibernate_sequences (SEQUENCE_NAME, NEXT_VAL) VALUES (:escapedSequenceName, :newRowsCount)")
 					.setParameter("escapedSequenceName", escapedSequenceName).setParameter("newRowsCount", newRowsCount).executeUpdate();
 			lastId = 0;
 		} else {
-			session.createSQLQuery("UPDATE hibernate_sequences SET NEXT_VAL = NEXT_VAL :newRowsCount WHERE SEQUENCE_NAME = :escapedSequenceName")
-					.setParameter("escapedSequenceName", escapedSequenceName).setParameter("newRowsCount", newRowsCount).executeUpdate();
+			session.createSQLQuery("UPDATE hibernate_sequences SET NEXT_VAL = :newNextVal WHERE SEQUENCE_NAME = :escapedSequenceName")
+					.setParameter("escapedSequenceName", escapedSequenceName).setParameter("newNextVal", lastIdInt + newRowsCount).executeUpdate();
 		}
 		session.getTransaction().commit();
 		return lastId.intValue();

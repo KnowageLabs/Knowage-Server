@@ -47,6 +47,12 @@ public interface ICacheMetadata {
 	BigDecimal getUsedMemory() throws DataBaseException;
 
 	/**
+	 * @return used cache memory in bytes
+	 * @throws DataBaseException
+	 */
+	BigDecimal getUsedMemory(String table) throws DataBaseException;
+
+	/**
 	 * @return available cache memory in bytes
 	 * @throws DataBaseException
 	 */

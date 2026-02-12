@@ -194,7 +194,7 @@ public class DocumentImageResource extends AbstractSpagoBIResource {
 			throw new SpagoBIRuntimeException("User is not allowed to preview document", e);
 		} catch (EMFUserError e) {
 			LOGGER.error("Preview file cannot be deleted", e);
-			throw new SpagoBIRestServiceException("Preview file cannot be deleted", buildLocaleFromSession(), e);
+			throw new SpagoBIRestServiceException("Preview file cannot be deleted", getLocale(), e);
 		}
 	}
 

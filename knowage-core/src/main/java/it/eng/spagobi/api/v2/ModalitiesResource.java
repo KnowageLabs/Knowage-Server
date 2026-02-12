@@ -60,7 +60,7 @@ public class ModalitiesResource extends AbstractSpagoBIResource {
 			return Response.ok(fullList).build();
 		} catch (Exception e) {
 			LOGGER.error("Error with loading resource", e);
-			throw new SpagoBIRestServiceException("sbi.modalities.check.rest.error", buildLocaleFromSession(), e);
+			throw new SpagoBIRestServiceException("sbi.modalities.check.rest.error", getLocale(), e);
 		}
 
 	}

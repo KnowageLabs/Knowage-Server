@@ -59,7 +59,7 @@ public class SubreportsDocumentResource extends AbstractSpagoBIResource {
 			Assert.assertNotNull(subreports, "Subreports can not be null");
 		} catch (EMFUserError e) {
 			logger.debug("Getting subreport has failed", e);
-			throw new SpagoBIRestServiceException("Getting subreport has failed", buildLocaleFromSession(), e);
+			throw new SpagoBIRestServiceException("Getting subreport has failed", getLocale(), e);
 		}
 		logger.debug("OUT");
 		return subreports;
@@ -82,7 +82,7 @@ public class SubreportsDocumentResource extends AbstractSpagoBIResource {
 			subReportDAO.insertSubreport(subreport);
 		} catch (EMFUserError e) {
 			logger.debug("Adding subreport has failed", e);
-			throw new SpagoBIRestServiceException("Adding subreport has failed", buildLocaleFromSession(), e);
+			throw new SpagoBIRestServiceException("Adding subreport has failed", getLocale(), e);
 		}
 		logger.debug("OUT");
 		return subreport;
@@ -102,7 +102,7 @@ public class SubreportsDocumentResource extends AbstractSpagoBIResource {
 			subReportDAO.eraseSubreportBySubRptId(subreportId);
 		} catch (EMFUserError e) {
 			logger.debug("Documents objects can not be provided", e);
-			throw new SpagoBIRestServiceException("Erasing subreport has failed", buildLocaleFromSession(), e);
+			throw new SpagoBIRestServiceException("Erasing subreport has failed", getLocale(), e);
 		}
 		logger.debug("OUT");
 		return subreport;

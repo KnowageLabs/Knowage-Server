@@ -75,7 +75,7 @@ public class DocumentResource extends AbstractSpagoBIResource {
 			allDocuments = documentsDao.loadAllBIObjects();
 		} catch (EMFUserError e) {
 			logger.debug("Documents objects can not be provided", e);
-			throw new SpagoBIRestServiceException("Getting documents has failed", buildLocaleFromSession(), e);
+			throw new SpagoBIRestServiceException("Getting documents has failed", getLocale(), e);
 		}
 		logger.debug("OUT");
 		return allDocuments;
@@ -115,7 +115,7 @@ public class DocumentResource extends AbstractSpagoBIResource {
 			return document;
 		} catch (Exception e) {
 			logger.error("Document could not be created", e);
-			throw new SpagoBIRestServiceException(e.getCause().getCause().getLocalizedMessage(), buildLocaleFromSession(), e);
+			throw new SpagoBIRestServiceException(e.getCause().getCause().getLocalizedMessage(), getLocale(), e);
 		}
 	}
 
@@ -144,10 +144,10 @@ public class DocumentResource extends AbstractSpagoBIResource {
 			document = documentDao.loadBIObjectById(document.getId());
 		} catch (SpagoBIDAOException e) {
 			logger.error("Document can not be updated", e);
-			throw new SpagoBIRestServiceException("Updating document has failed, document already exists", buildLocaleFromSession(), e);
+			throw new SpagoBIRestServiceException("Updating document has failed, document already exists", getLocale(), e);
 		} catch (EMFUserError e) {
 			logger.error("Document can not be updated", e);
-			throw new SpagoBIRestServiceException("Updating document has failed", buildLocaleFromSession(), e);
+			throw new SpagoBIRestServiceException("Updating document has failed", getLocale(), e);
 		}
 		logger.debug("OUT");
 		return document;
@@ -167,7 +167,7 @@ public class DocumentResource extends AbstractSpagoBIResource {
 			Assert.assertNotNull(document, "Document can not be null");
 		} catch (EMFUserError e) {
 			logger.error("Document could not be loaded", e);
-			throw new SpagoBIRestServiceException("Could not get document", buildLocaleFromSession(), e);
+			throw new SpagoBIRestServiceException("Could not get document", getLocale(), e);
 		}
 		logger.debug("Object that is returning is " + document);
 		return document;
@@ -192,7 +192,7 @@ public class DocumentResource extends AbstractSpagoBIResource {
 			Assert.assertNotNull(document, "Document can not be null");
 		} catch (EMFUserError e) {
 			logger.error("Document can not be deleted", e);
-			throw new SpagoBIRestServiceException("Deleting of document has failed", buildLocaleFromSession(), e);
+			throw new SpagoBIRestServiceException("Deleting of document has failed", getLocale(), e);
 		}
 
 		logger.debug("OUT");

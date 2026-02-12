@@ -419,7 +419,7 @@ public class DataSetUtilities {
 						result = Timestamp.valueOf(formattedValue);
 					} catch (DateTimeParseException | IllegalArgumentException ex) { // tries Solr date format
 						try {
-							DateTimeFormatter dateTime = ISODateTimeFormat.dateTimeNoMillis();
+							DateTimeFormatter dateTime = ISODateTimeFormat.date();
 							DateTime parsedDateTime = dateTime.parseDateTime(value);
 							Date dateToconvert = parsedDateTime.toDate();
 							// SimpleDateFormat sdf = new SimpleDateFormat(CockpitJSONDataWriter.CACHE_TIMESTAMP_FORMAT);
@@ -428,23 +428,49 @@ public class DataSetUtilities {
 							String valuesToChange = formatter.format(dateToconvert.toInstant().atZone(ZoneId.systemDefault()));
 							result = Timestamp.valueOf(valuesToChange);
 						} catch (Exception ex2) {
-							throw new SpagoBIRuntimeException(ex2);
-						}
+                            // Caused by: java.lang.IllegalArgumentException: Invalid format: "2015-03-30T00:00" is malformed at "T00:00"
+                            // try to parse it
+                            try {
+                                LocalDateTime localDateTime = LocalDateTime.parse(value,
+                                        java.time.format.DateTimeFormatter.ISO_DATE_TIME);
+                                String formattedValue = localDateTime
+                                        .format(java.time.format.DateTimeFormatter.ofPattern(JSONDataWriter.CACHE_TIMESTAMP_FORMAT));
+                                result = Timestamp.valueOf(formattedValue);
+                            } catch (DateTimeParseException | IllegalArgumentException ex3) {
+                                throw new SpagoBIRuntimeException(ex3);
+                            }}
 					}
 				}
 			} else if (Date.class.isAssignableFrom(type)) {
 				try {
 					LocalDate dateTime = LocalDate.parse(value, java.time.format.DateTimeFormatter.ofPattern(JSONDataWriter.DATE_FORMAT));
 					result = Date.from(dateTime.atStartOfDay(ZoneId.systemDefault()).toInstant());
-					// result = new SimpleDateFormat(CockpitJSONDataWriter.DATE_FORMAT).parse(value);
 				} catch (DateTimeParseException e) {
 					try {
-						LocalDate dateTime = LocalDate.parse(value, java.time.format.DateTimeFormatter.ofPattern(JSONDataWriter.CACHE_DATE_FORMAT));
-						result = Date.from(dateTime.atStartOfDay(ZoneId.systemDefault()).toInstant());
-						// result = new SimpleDateFormat(CockpitJSONDataWriter.CACHE_DATE_FORMAT).parse(value);
-					} catch (DateTimeParseException pe) {
-						throw new SpagoBIRuntimeException(pe);
-					}
+						LocalDate localDate = LocalDate.parse(value, java.time.format.DateTimeFormatter.ofPattern(JSONDataWriter.CACHE_DATE_FORMAT));
+						result = Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+                    } catch (DateTimeParseException pe) {
+                        try {
+                            LocalDateTime localDateTime = LocalDateTime.parse(value, java.time.format.DateTimeFormatter.ISO_DATE_TIME);
+                            result = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
+                        } catch (DateTimeParseException ex) {
+                            // Caused by: java.time.format.DateTimeParseException: Text '2015-01-01 00:00:00' could not be parsed at index 10
+                            try {
+                                LocalDateTime localDateTime = LocalDateTime.parse(value,
+                                        java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+                                result = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
+                            } catch (DateTimeParseException exc) {
+                                // Caused by: it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException: java.time.format.DateTimeParseException: Text '1998-08-12 00:00:00.0' could not be parsed, unparsed text found at index 19
+                                try {
+                                    LocalDateTime localDateTime = LocalDateTime.parse(value,
+                                            java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.S"));
+                                    result = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
+                                } catch (DateTimeParseException excp) {
+                                    throw new SpagoBIRuntimeException(excp);
+                                }
+                            }
+                        }
+                    }
 				}
 			} else if (Boolean.class.isAssignableFrom(type)) {
 				result = Boolean.valueOf(value);

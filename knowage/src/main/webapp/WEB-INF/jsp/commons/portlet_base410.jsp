@@ -41,7 +41,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <%@page
 	import="it.eng.spagobi.commons.utilities.messages.IMessageBuilder"%>
 <%@page import="it.eng.spagobi.commons.utilities.urls.WebUrlBuilder"%>
-<%@page import="it.eng.spagobi.commons.utilities.urls.PortletUrlBuilder"%>
 <%@page
 	import="it.eng.spagobi.commons.utilities.messages.MessageBuilder"%>
 <%@page
@@ -60,7 +59,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <%@page import="java.util.Iterator"%>
 <%@page import="it.eng.spagobi.commons.utilities.GeneralUtilities"%>
 <%@page import="it.eng.knowage.commons.security.KnowageSystemConfiguration"%>
-<%@page import="it.eng.spagobi.commons.utilities.PortletUtilities"%>
 <%@page import="it.eng.spagobi.commons.utilities.UserUtilities"%>
 <%@page import="it.eng.spagobi.commons.bo.UserProfile"%>
 <%@page import="it.eng.spagobi.utilities.themes.ThemesManager"%>
@@ -89,31 +87,22 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	IUrlBuilder urlBuilder = null;
 	IMessageBuilder msgBuilder = null;
 	
-	String sbiMode = null;
+	String sbiMode = "WEB";
 		
-	// case of portlet mode
-	aRequestContainer = RequestContainerPortletAccess.getRequestContainer(request);
-	aResponseContainer = ResponseContainerPortletAccess.getResponseContainer(request);
+	
+	aRequestContainer = RequestContainer.getRequestContainer();
+	aResponseContainer = ResponseContainer.getResponseContainer();
 	if (aRequestContainer == null) {
-		// case of web mode
-		//aRequestContainer = RequestContainerAccess.getRequestContainer(request);
-		aRequestContainer = RequestContainer.getRequestContainer();
 		if(aRequestContainer == null){
 			//case of REST 
 			aRequestContainer = RequestContainerAccess.getRequestContainer(request);
 		}
-		
-		//aResponseContainer = ResponseContainerAccess.getResponseContainer(request);
-		aResponseContainer = ResponseContainer.getResponseContainer();
 		if(aResponseContainer == null){
 			//case of REST
 			aResponseContainer = ResponseContainerAccess.getResponseContainer(request);
 		}
 	}
-	
-	String channelType = aRequestContainer.getChannelType();
-	if ("PORTLET".equalsIgnoreCase(channelType)) sbiMode = "PORTLET";
-	else sbiMode = "WEB";
+
 	
 	boolean forceIE8Compatibility = true;
 
@@ -165,11 +154,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		locale = tmpLocale.build();
 	}
 	else {	
-	if (sbiMode.equals("PORTLET")) {
-		locale = PortletUtilities.getLocaleForMessage();
-	} else {
 		locale = MessageBuilder.getBrowserLocaleFromSpago();
-	}
 	// updates locale information on permanent container for Spago messages mechanism
 	if (locale != null) {
 		permanentSession.setAttribute(Constants.USER_LANGUAGE, locale.getLanguage());
@@ -300,10 +285,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         	contextName: '<%= KnowageSystemConfiguration.getKnowageContext() %>',
         	adapterPath: '<%= KnowageSystemConfiguration.getKnowageContext() + GeneralUtilities.getSpagoAdapterHttpUrl() %>',
         	supportedLocales: <%= GeneralUtilities.getSupportedLocalesAsJSONArray().toString() %>,
-            // the date format localized according to user language and country
-            localizedDateFormat: '<%= GeneralUtilities.getLocaleDateFormatForExtJs(permanentSession) %>',
-            // the timestamp format localized according to user language and country
-            localizedTimestampFormat: '<%= GeneralUtilities.getLocaleDateFormatForExtJs(permanentSession) %> H:i:s',
             // the date format to be used when communicating with server
             clientServerDateFormat: '<%= GeneralUtilities.getServerDateFormatExtJs() %>',
             // the timestamp format to be used when communicating with server

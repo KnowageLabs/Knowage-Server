@@ -19,21 +19,23 @@
 package it.eng.spagobi.utilities.engines.rest;
 
 import java.util.Locale;
-import java.util.Locale.Builder;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import javax.ws.rs.core.Context;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.engines.IEngineInstance;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 /**
  * The Class AbstractRestService.
@@ -45,6 +47,12 @@ public abstract class AbstractRestService {
 	private static final Logger LOGGER = Logger.getLogger(AbstractRestService.class);
 
 	public ExecutionSession es;
+
+	@Context
+	protected HttpServletRequest request;
+
+	@Context
+	protected HttpServletResponse response;
 
 	/**
 	 * Creates the context manager
@@ -102,33 +110,9 @@ public abstract class AbstractRestService {
 	}
 
 	public Locale getLocale() {
-		Locale locale = Locale.getDefault();
-		try {
-			locale = (Locale) getEnv().get(EngineConstants.ENV_LOCALE);
-		} catch (Exception e) {
-			LOGGER.warn("Locale not set: is the engine instance into session?");
-		}
-		return locale;
-	}
-
-	public Locale buildLocaleFromSession() {
-		Locale locale = null;
-		HttpSession httpSession = getHttpSession();
-		if (httpSession != null) {
-
-			String currLanguage = (String) httpSession.getAttribute(SpagoBIConstants.AF_LANGUAGE);
-			String currCountry = (String) httpSession.getAttribute(SpagoBIConstants.AF_COUNTRY);
-			String currScript = (String) httpSession.getAttribute(SpagoBIConstants.AF_SCRIPT);
-			if (currLanguage != null && currCountry != null) {
-				Builder tmpLocale = new Locale.Builder().setLanguage(currLanguage).setRegion(currCountry);
-
-				if (StringUtils.isNotBlank(currScript)) {
-					tmpLocale.setScript(currScript);
-				}
-
-				locale = tmpLocale.build();
-			} else
-				locale = new Locale("en_US");
+		Locale locale = request.getLocale();
+		if (locale == null) {
+			locale = this.getDefaultLocale();
 		}
 		return locale;
 	}
@@ -196,5 +180,19 @@ public abstract class AbstractRestService {
 
 	public JSONArray getAttributeAsJSONArray(String attrName) {
 		return getExecutionSession().getAttributeAsJSONArray(attrName);
+	}
+
+	private Locale getDefaultLocale() {
+
+		Locale locale = null;
+		try {
+			String defaultLanguageTag = SingletonConfig.getInstance().getConfigValue("SPAGOBI.LANGUAGE_SUPPORTED.LANGUAGE.default");
+			String languageTag = StringUtils.isNotBlank(defaultLanguageTag) ? defaultLanguageTag : "en-US";
+
+			locale = Locale.forLanguageTag(languageTag);
+		} catch (Throwable t) {
+			throw new SpagoBIRuntimeException("Error while getting default locale", t);
+		}
+		return locale;
 	}
 }

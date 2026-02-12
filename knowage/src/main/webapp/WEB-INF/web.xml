@@ -308,7 +308,7 @@
 			<param-name>start-scheduler-on-load</param-name>
 			<param-value>false</param-value>
 		</init-param>
-		<load-on-startup>1</load-on-startup>
+		<load-on-startup>2</load-on-startup>
 	</servlet>
 
 	<servlet>
@@ -318,11 +318,17 @@
 			<param-name>AF_CONFIG_FILE</param-name>
 			<param-value>/WEB-INF/conf/master.xml</param-value>
 		</init-param>
-		<load-on-startup>0</load-on-startup>
+		<load-on-startup>1</load-on-startup>
 	</servlet>
 	<servlet>
 		<servlet-name>AdapterHTTP</servlet-name>
 		<servlet-class>it.eng.spago.dispatching.httpchannel.AdapterHTTP</servlet-class>
+	</servlet>
+	
+	<servlet>
+		<servlet-name>InitializerKnowageServlet</servlet-name>
+		<servlet-class>it.eng.spagobi.commons.services.InitializerKnowageServlet</servlet-class>
+		<load-on-startup>0</load-on-startup>
 	</servlet>
 
 	<!-- This will start up all Admin4J Servlets with standard defaults.

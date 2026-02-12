@@ -383,15 +383,6 @@ public abstract class AbstractDriverRuntime<T extends AbstractDriver> {
 												&& defVal.get("description").equals(item.get("description"))) {
 											defaultParameterAlreadyExist = true;
 											break;
-										} else {
-											HashMap<String, Object> itemErrorMap = new HashMap<>();
-											itemErrorMap.put("error", true);
-											itemErrorMap.put("value", defVal.get("value"));
-											itemErrorMap.put("labelAlreadyExist", defVal.get("label"));
-											itemErrorMap.put("labelSameValue", item.get("label"));
-											defaultErrorValues.add(itemErrorMap);
-											// return defaultErrorValues;
-											admissibleValues = defaultErrorValues;
 										}
 									}
 								} else {

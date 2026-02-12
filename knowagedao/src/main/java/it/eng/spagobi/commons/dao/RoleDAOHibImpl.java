@@ -682,6 +682,7 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 				|| (authI.getName().equals("MANAGE_GLOSSARY_TECHNICAL") && aRole.getAbleToManageGlossaryTechnical())
 				|| (authI.getName().equals("MANAGE_CALENDAR") && aRole.getAbleToManageCalendar())
 				|| (authI.getName().equals("FUNCTIONS_CATALOG_USAGE") && aRole.getAbleToUseFunctionsCatalog())
+				|| (authI.getName().equals("FUNCTIONS_CATALOG_MANAGEMENT") && aRole.getAbleToManageFunctionsCatalog())
 				|| (authI.getName().equals("MANAGE_INTERNATIONALIZATION")
 						&& aRole.getAbleToManageInternationalization())
 				|| (authI.getName().equals("CREATE_SELF_SERVICE_COCKPIT") && aRole.getAbleToCreateSelfServiceCockpit())

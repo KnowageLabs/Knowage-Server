@@ -21,8 +21,6 @@ import javax.jws.WebService;
 import javax.jws.soap.SOAPBinding;
 import javax.jws.soap.SOAPBinding.Style;
 
-import it.eng.spagobi.services.common.ParametersWrapper;
-
 /**
  * @author Angelo Bernabei angelo.bernabei@eng.it
  * @author Marco Libanori
@@ -35,16 +33,6 @@ import it.eng.spagobi.services.common.ParametersWrapper;
 	)
 @SOAPBinding(style = Style.RPC)
 public interface DocumentExecuteService {
-	/**
-	 * Return the IMAGE of a chart The primary goal is to integrate a chart in a JasperReport
-	 *
-	 * @param token
-	 * @param user
-	 * @param document
-	 * @param parameters
-	 * @return
-	 */
-	byte[] executeChart(String token, String user, String document, ParametersWrapper parameters);
 
 	/**
 	 * Returns the XML DATA of the Kpi value with id kpiValueID

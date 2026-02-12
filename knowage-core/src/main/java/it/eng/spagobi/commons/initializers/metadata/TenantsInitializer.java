@@ -29,7 +29,6 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 
 import it.eng.spago.base.SourceBean;
-import it.eng.spago.configuration.ConfigSingleton;
 import it.eng.spagobi.commons.metadata.SbiCommonInfo;
 import it.eng.spagobi.commons.metadata.SbiOrganizationProductType;
 import it.eng.spagobi.commons.metadata.SbiOrganizationProductTypeId;
@@ -43,23 +42,14 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
  */
 public class TenantsInitializer extends SpagoBIInitializer {
 
-	private static String TENANTS_CONFIG_TAG_NAME = "TENANTS";
 	private static String TENANT_CONFIG_TAG_NAME = "TENANT";
 	private static String TENANT_CONFIG_NAME_ATTRIBUTE = "name";
-
-	@Override
-	protected SourceBean getConfiguration() throws Exception {
-		SourceBean config = (SourceBean) ConfigSingleton.getInstance().getAttribute(TENANTS_CONFIG_TAG_NAME);
-		if (config == null) {
-			throw new Exception("Tenants configuration not found!!!");
-		}
-		return config;
-	}
 
 	private static Logger logger = Logger.getLogger(TenantsInitializer.class);
 
 	public TenantsInitializer() {
 		targetComponentName = "Tenants";
+		configurationFileName = "it/eng/spagobi/commons/initializers/metadata/config/tenants.xml";
 	}
 
 	@Override

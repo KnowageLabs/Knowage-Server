@@ -17,18 +17,22 @@
  */
 package it.eng.spagobi.engines.whatif.api.page;
 
-import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
-import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceExceptionHandler;
-import it.eng.spagobi.utilities.engines.rest.AbstractRestService;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+
 import org.apache.log4j.Logger;
 import org.jboss.resteasy.plugins.providers.html.View;
 import org.json.JSONObject;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.ws.rs.*;
-import javax.ws.rs.core.Context;
-import java.util.Map;
+import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
+import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceExceptionHandler;
+import it.eng.spagobi.utilities.engines.rest.AbstractRestService;
 
 @Path("/pages")
 @ManageAuthorization
@@ -36,10 +40,6 @@ public class PageResource extends AbstractRestService {
 
 	private static Map<String, JSONObject> pages;
 	private static Map<String, String> urls;
-	@Context
-	HttpServletRequest request;
-	@Context
-	HttpServletResponse response;
 
 	private static Logger logger = Logger.getLogger(PageResource.class);
 

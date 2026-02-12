@@ -257,8 +257,9 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 			errorHitsMonitor.stop();
 			throw new SpagoBIServiceException(this.request.getPathInfo(), t.getMessage(), t);
 		} finally {
-			if (totalTimeMonitor != null)
+			if (totalTimeMonitor != null) {
 				totalTimeMonitor.stop();
+			}
 			LOGGER.debug("OUT");
 		}
 
@@ -282,7 +283,7 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 
 		} catch (Exception e) {
 			LOGGER.debug("Drivers cannot be transformed from string to map");
-			throw new SpagoBIRestServiceException("Drivers cannot be transformed from string to map", buildLocaleFromSession(), e);
+			throw new SpagoBIRestServiceException("Drivers cannot be transformed from string to map", getLocale(), e);
 		}
 		dataSet.setDrivers(drivers);
 
@@ -375,7 +376,7 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 			}
 		} catch (Exception e) {
 			LOGGER.debug("Impossible to deserialize query");
-			throw new SpagoBIRestServiceException("Impossible to deserialize query", buildLocaleFromSession(), e);
+			throw new SpagoBIRestServiceException("Impossible to deserialize query", getLocale(), e);
 		}
 
 		UserProfile userProfile = (UserProfile) getEnv().get(EngineConstants.ENV_USER_PROFILE);
@@ -392,7 +393,7 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 			drivers = JSONObjectDeserializator.getHashMapFromString(stringDrivers);
 		} catch (Exception e) {
 			LOGGER.debug("Drivers cannot be transformed from string to map");
-			throw new SpagoBIRestServiceException("Drivers cannot be transformed from string to map", buildLocaleFromSession(), e);
+			throw new SpagoBIRestServiceException("Drivers cannot be transformed from string to map", getLocale(), e);
 		}
 		dataSet.setDrivers(drivers);
 
@@ -426,7 +427,7 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 				iterator.close();
 			}
 			LOGGER.debug("Query results cannot be exported");
-			throw new SpagoBIRestServiceException("Query results cannot be exported", buildLocaleFromSession(), e);
+			throw new SpagoBIRestServiceException("Query results cannot be exported", getLocale(), e);
 		}
 	}
 
@@ -540,8 +541,9 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 			Optional<AbstractJDBCDataset> opt = ((List) getEnv().get("DATASETS")).stream()
 					.filter((x) -> ((AbstractJDBCDataset) x).getName().equals(sourceDatasetName)).findFirst();
 
-			if (opt.isPresent())
+			if (opt.isPresent()) {
 				persistTableName = opt.get().getPersistTableName();
+			}
 
 		} catch (Throwable t) {
 			LOGGER.error("An unexpected error occured while executing service: QbeQueryResource.getDomainScopes", t);
@@ -622,8 +624,9 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 			errorHitsMonitor.stop();
 			throw new SpagoBIServiceException(this.request.getPathInfo(), t.getMessage(), t);
 		} finally {
-			if (totalTimeMonitor != null)
+			if (totalTimeMonitor != null) {
 				totalTimeMonitor.stop();
+			}
 			LOGGER.debug("OUT");
 		}
 	}

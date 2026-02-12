@@ -90,9 +90,9 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 			LOGGER.error(message);
 			throw new SpagoBIRuntimeException(message);
 		}
-		String userId = (String) userProfile.getUserAttribute("user_id");
-		byte[] temp = null;
-		JSONObject jsonTemplate = null;
+
+		byte[] temp;
+		JSONObject jsonTemplate;
 
 		try {
 			IBIObjectDAO documentDao = DAOFactory.getBIObjectDAO();
@@ -111,7 +111,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 			jsonTemplate = new JSONObject(new String(temp));
 		} catch (EMFUserError e) {
 			LOGGER.debug("Could not get content from template", e);
-			throw new SpagoBIRestServiceException("Could not get content from template", buildLocaleFromSession(), e);
+			throw new SpagoBIRestServiceException("Could not get content from template", getLocale(), e);
 		}
 		LOGGER.debug("OUT");
 		return jsonTemplate;
@@ -263,7 +263,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 
 	private void checkExecRightsByProducts(BIObject biobj) throws EMFUserError {
 
-		if (!ProductProfiler.canExecuteDocument(biobj)) {
+		if (!ProductProfiler.canExecuteDocumentByLicenseExpiredOrAbsent(biobj)) {
 			throw new SpagoBIRuntimeException("This document cannot be executed within the current product");
 		}
 	}

@@ -18,7 +18,6 @@
 package it.eng.spagobi.services.proxy;
 
 import java.net.URL;
-import java.util.HashMap;
 
 import javax.servlet.http.HttpSession;
 import javax.xml.namespace.QName;
@@ -26,7 +25,6 @@ import javax.xml.ws.Service;
 
 import org.apache.log4j.Logger;
 
-import it.eng.spagobi.services.common.ParametersWrapper;
 import it.eng.spagobi.services.execute.DocumentExecuteService;
 import it.eng.spagobi.services.security.exceptions.SecurityException;
 
@@ -52,7 +50,6 @@ public class DocumentExecuteServiceProxy extends AbstractServiceProxy {
 	}
 
 	private DocumentExecuteServiceProxy() {
-		super();
 	}
 
 	/**
@@ -80,31 +77,6 @@ public class DocumentExecuteServiceProxy extends AbstractServiceProxy {
 			logger.error("Impossible to locate [" + SERVICE_NAME + "] at [" + serviceUrl + "]");
 			throw new SecurityException("Impossible to locate [" + SERVICE_NAME + "] at [" + serviceUrl + "]", e);
 		}
-	}
-
-	/**
-	 * Return the image of a Chart
-	 *
-	 * @param documentLabel
-	 * @param parameters
-	 * @return
-	 */
-	public byte[] executeChart(String documentLabel, HashMap parameters) {
-		logger.debug("IN.documentLabel=" + documentLabel);
-		if (documentLabel == null || documentLabel.length() == 0) {
-			logger.error("documentLabel is NULL");
-			return null;
-		}
-		try {
-			ParametersWrapper _parameters = new ParametersWrapper();
-			_parameters.setMap(parameters);
-			return lookUp().executeChart(readTicket(), userId, documentLabel, _parameters);
-		} catch (Exception e) {
-			logger.error("Error during Service LookUp", e);
-		} finally {
-			logger.debug("OUT");
-		}
-		return null;
 	}
 
 	public java.lang.String getKpiValueXML(java.lang.Integer kpiValueID) {

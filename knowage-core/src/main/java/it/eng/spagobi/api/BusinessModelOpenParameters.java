@@ -35,8 +35,6 @@ import org.owasp.esapi.Encoder;
 import org.owasp.esapi.errors.EncodingException;
 
 import it.eng.knowage.security.OwaspDefaultEncoderFactory;
-import it.eng.spago.base.RequestContainer;
-import it.eng.spago.base.RequestContainerAccess;
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.base.SourceBeanAttribute;
 import it.eng.spago.error.EMFUserError;
@@ -63,7 +61,6 @@ import it.eng.spagobi.commons.serializer.JSONStoreFeedTransformer;
 import it.eng.spagobi.commons.serializer.SerializationException;
 import it.eng.spagobi.commons.services.DelegatedBasicListService;
 import it.eng.spagobi.commons.utilities.DateRangeDAOUtilities;
-import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.commons.utilities.messages.MessageBuilderFactory;
 import it.eng.spagobi.tools.catalogue.bo.MetaModel;
 import it.eng.spagobi.tools.catalogue.dao.IMetaModelsDAO;
@@ -520,7 +517,6 @@ public class BusinessModelOpenParameters extends AbstractSpagoBIResource {
 
 		LOGGER.debug("IN");
 
-		RequestContainer aRequestContainer = RequestContainerAccess.getRequestContainer(req);
 		JSONObject requestVal = RestUtilities.readBodyAsJSONObject(req);
 		// decode requestVal parameters
 		// JSONObject requestValParams = requestVal.getJSONObject("parameters");
@@ -530,8 +526,9 @@ public class BusinessModelOpenParameters extends AbstractSpagoBIResource {
 		String role = requestVal.getString("role");
 		// JSONObject jsonCrossParameters = requestVal.getJSONObject("parameters");
 		Map<String, JSONObject> sessionParametersMap = new HashMap<>();
-		if (("true").equals(SingletonConfig.getInstance().getConfigValue("SPAGOBI.SESSION_PARAMETERS_MANAGER.enabled")))
+		if (("true").equals(SingletonConfig.getInstance().getConfigValue("SPAGOBI.SESSION_PARAMETERS_MANAGER.enabled"))) {
 			sessionParametersMap = getSessionParameters(requestVal);
+		}
 
 		// keep track of par coming from cross to get descriptions from admissible values
 		// List<String> parsFromCross = new ArrayList<String>();
@@ -542,12 +539,10 @@ public class BusinessModelOpenParameters extends AbstractSpagoBIResource {
 		IParameterUseDAO parameterUseDAO = DAOFactory.getParameterUseDAO();
 		MetaModel businessModel = dao.loadMetaModelForExecutionByNameAndRole(name, role, false);
 
-		Locale locale = GeneralUtilities.getCurrentLocale(aRequestContainer);
-
 		// applyRequestParameters(businessModel, jsonCrossParameters, sessionParametersMap, role, locale, parsFromCross);
 
 		ArrayList<HashMap<String, Object>> parametersArrayList = new ArrayList<>();
-		BusinessModelRuntime dum = new BusinessModelRuntime(this.getUserProfile(), locale);
+		BusinessModelRuntime dum = new BusinessModelRuntime(this.getUserProfile(), getLocale());
 		List<BusinessModelDriverRuntime> parameters = BusinessModelOpenUtils.getParameters(businessModel, role,
 				req.getLocale(), null, true, dum);
 		for (BusinessModelDriverRuntime objParameter : parameters) {
@@ -615,13 +610,15 @@ public class BusinessModelOpenParameters extends AbstractSpagoBIResource {
 								String[] valLst = val.split(sep);
 								for (int k2 = 0; k2 < valLst.length; k2++) {
 									String itemVal2 = valLst[k2];
-									if (itemVal2 != null && !"".equals(itemVal2))
+									if (itemVal2 != null && !"".equals(itemVal2)) {
 										paramValueLst.add(itemVal2);
+									}
 
 								}
 							} else {
-								if (itemVal != null && !"".equals(itemVal))
+								if (itemVal != null && !"".equals(itemVal)) {
 									paramValueLst.add(itemVal);
+								}
 								paramDescrLst.add(itemDescr);
 
 							}
@@ -1158,9 +1155,6 @@ public class BusinessModelOpenParameters extends AbstractSpagoBIResource {
 	public Response getParameterValues(@Context HttpServletRequest req)
 			throws EMFUserError, IOException, JSONException {
 
-		RequestContainer aRequestContainer = RequestContainerAccess.getRequestContainer(req);
-		Locale locale = GeneralUtilities.getCurrentLocale(aRequestContainer);
-
 		String role;
 		String name;
 		String driverId;
@@ -1218,7 +1212,7 @@ public class BusinessModelOpenParameters extends AbstractSpagoBIResource {
 
 			List errorList = BusinessModelOpenUtils.handleNormalExecutionError(this.getUserProfile(), businessModel,
 					req, this.getAttributeAsString("SBI_ENVIRONMENT"), role,
-					biMetaModelParameter.getParameter().getModalityValue().getSelectionType(), null, locale);
+					biMetaModelParameter.getParameter().getModalityValue().getSelectionType(), null, getLocale());
 
 			resultAsMap.put("errors", errorList);
 		}

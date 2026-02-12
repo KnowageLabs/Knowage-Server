@@ -220,16 +220,6 @@ public class BusinessModelOpenUtils {
 								if (defVal.get("label").equals(item.get("label")) && defVal.get("description").equals(item.get("description"))) {
 									defaultParameterAlreadyExist = true;
 									break;
-								} else {
-									HashMap<String, Object> itemErrorMap = new HashMap<>();
-									itemErrorMap.put("error", true);
-									itemErrorMap.put("value", defVal.get("value"));
-									itemErrorMap.put("labelAlreadyExist", defVal.get("label"));
-									itemErrorMap.put("labelSameValue", item.get("label"));
-									defaultErrorValues.add(itemErrorMap);
-									// return defaultErrorValues;
-									result.put(DEFAULT_VALUES, defaultErrorValues);
-									return result;
 								}
 							}
 						}
@@ -283,8 +273,9 @@ public class BusinessModelOpenUtils {
 			} else if (retrieveIfNotcached) {
 				lovResult = lovDefinition.getLovResult(profile, dependencies, businessModel.getDrivers(), req.getLocale());
 				// insert the data in cache
-				if (lovResult != null)
+				if (lovResult != null) {
 					cache.put(cacheKey, lovResult);
+				}
 			}
 		} else {
 			// scrips, fixed list and java classes are not cached, and returned without considering retrieveIfNotcached input

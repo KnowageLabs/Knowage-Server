@@ -21,7 +21,6 @@ import java.io.IOException;
 import java.util.Calendar;
 import java.util.Date;
 
-import javax.portlet.PortletSession;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
@@ -89,12 +88,6 @@ public class JWTTokenAsUserUniqueIdentifierSsoService implements SsoServiceInter
 		} catch (JWTVerificationException e) {
 			throw new SpagoBIRuntimeException("Invalid JWT token!", e);
 		}
-	}
-
-	@Override
-	public String readUserIdentifier(PortletSession session) {
-		logger.debug("NOT Implemented");
-		return "";
 	}
 
 	@Override

@@ -29,7 +29,6 @@ import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 
 import it.eng.spago.base.SourceBean;
-import it.eng.spago.configuration.ConfigSingleton;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.commons.bo.Config;
 import it.eng.spagobi.commons.bo.Domain;
@@ -66,6 +65,7 @@ public class InternalSecurityInitializer extends SpagoBIInitializer {
 
 	public InternalSecurityInitializer() {
 		targetComponentName = "InternalSecurity";
+		configurationFileName = "it/eng/spagobi/commons/initializers/metadata/config/internal_profiling.xml";
 	}
 
 	@Override
@@ -175,15 +175,6 @@ public class InternalSecurityInitializer extends SpagoBIInitializer {
 			user.setPassword(pwd);
 			userDAO.updateSbiUser(user, user.getId());
 		});
-	}
-
-	@Override
-	protected SourceBean getConfiguration() throws Exception {
-		SourceBean config = (SourceBean) ConfigSingleton.getInstance().getAttribute(INTERNAL_SECURITY_CONFIG_TAG_NAME);
-		if (config == null) {
-			throw new Exception("Internal security configuration not found!!!");
-		}
-		return config;
 	}
 
 	private Integer findRoleId(List<Role> rolesList, String name, String organization) {

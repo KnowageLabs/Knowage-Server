@@ -102,7 +102,7 @@ public class MySQLDataBase extends AbstractDataBase implements CacheDataBase, Me
 	 */
 	@Override
 	public String getUsedMemorySizeQuery(String schema, String tableNamePrefix) {
-		String query = "SELECT " + " coalesce(sum(round(((data_length + index_length)),2)),0) as size "
+		String query = "SELECT " + " COALESCE(SUM(COALESCE(data_length, 0) + COALESCE(index_length, 0)), 0) AS size "
 				+ " FROM information_schema.TABLES WHERE table_name like '" + tableNamePrefix + "%'";
 		if ((schema != null) && (!schema.isEmpty())) {
 			query = query + " and table_schema = '" + schema + "'";

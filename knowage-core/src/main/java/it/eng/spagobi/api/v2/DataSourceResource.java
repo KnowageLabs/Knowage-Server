@@ -101,7 +101,7 @@ public class DataSourceResource extends AbstractSpagoBIResource {
 			}
 		} catch (Exception exception) {
 			LOGGER.error("Error while getting the list of DS", exception);
-			throw new SpagoBIRestServiceException("Error while getting the list of DS", buildLocaleFromSession(), exception);
+			throw new SpagoBIRestServiceException("Error while getting the list of DS", getLocale(), exception);
 		} finally {
 			LOGGER.debug("OUT");
 		}
@@ -126,7 +126,7 @@ public class DataSourceResource extends AbstractSpagoBIResource {
 			return dataSource;
 		} catch (Exception e) {
 			LOGGER.error("Error while loading a single data source", e);
-			throw new SpagoBIRestServiceException("Error while loading a single data source", buildLocaleFromSession(), e);
+			throw new SpagoBIRestServiceException("Error while loading a single data source", getLocale(), e);
 		} finally {
 			LOGGER.debug("OUT");
 		}
@@ -152,7 +152,7 @@ public class DataSourceResource extends AbstractSpagoBIResource {
 
 			if (existingDS != null && dataSource.getLabel().equals(existingDS.getLabel())) {
 				MessageBuilder msgBuilder = new MessageBuilder();
-				throw new SpagoBIRestServiceException(msgBuilder.getMessage("sbi.datasource.exists"), buildLocaleFromSession(), new Throwable());
+				throw new SpagoBIRestServiceException(msgBuilder.getMessage("sbi.datasource.exists"), getLocale(), new Throwable());
 			}
 
 			checkAuthorizationToManageCacheDataSource(dataSource);
@@ -168,7 +168,7 @@ public class DataSourceResource extends AbstractSpagoBIResource {
 			throw e;
 		} catch (Exception exception) {
 			LOGGER.error("Error while posting DS", exception);
-			throw new SpagoBIRestServiceException("Error while posting DS", buildLocaleFromSession(), exception);
+			throw new SpagoBIRestServiceException("Error while posting DS", getLocale(), exception);
 		} finally {
 			LOGGER.debug("OUT");
 		}
@@ -206,7 +206,7 @@ public class DataSourceResource extends AbstractSpagoBIResource {
 			throw e;
 		} catch (Exception e) {
 			LOGGER.error("Error while updating data source", e);
-			throw new SpagoBIRestServiceException("Error while updating data source", buildLocaleFromSession(), e);
+			throw new SpagoBIRestServiceException("Error while updating data source", getLocale(), e);
 		} finally {
 			LOGGER.debug("OUT");
 		}
@@ -231,7 +231,7 @@ public class DataSourceResource extends AbstractSpagoBIResource {
 
 			String message = "";
 			MessageBuilder msgBuild = new MessageBuilder();
-			Locale locale = buildLocaleFromSession();
+			Locale locale = getLocale();
 
 			for (int j = 0; j < dependsBy.length; j++) {
 				String key = dependsBy[j];
@@ -273,7 +273,7 @@ public class DataSourceResource extends AbstractSpagoBIResource {
 		} catch (Exception e) {
 
 			LOGGER.error("Error while deleting data source", e);
-			throw new SpagoBIRestServiceException("Error while deleting data source", buildLocaleFromSession(), e);
+			throw new SpagoBIRestServiceException("Error while deleting data source", getLocale(), e);
 
 		} finally {
 
@@ -303,7 +303,7 @@ public class DataSourceResource extends AbstractSpagoBIResource {
 			return getDataSources();
 		} catch (Exception e) {
 			LOGGER.error("Error while deleting multiple data sources", e);
-			throw new SpagoBIRestServiceException("Error while deleting multiple data sources", buildLocaleFromSession(), e);
+			throw new SpagoBIRestServiceException("Error while deleting multiple data sources", getLocale(), e);
 		} finally {
 			LOGGER.debug("OUT");
 		}
@@ -333,7 +333,7 @@ public class DataSourceResource extends AbstractSpagoBIResource {
 
 		} catch (Exception e) {
 			LOGGER.error("Error while getting structure of data source by id", e);
-			throw new SpagoBIRestServiceException("Error while getting structure of data source by id", buildLocaleFromSession(), e);
+			throw new SpagoBIRestServiceException("Error while getting structure of data source by id", getLocale(), e);
 		} finally {
 			LOGGER.debug("OUT");
 		}
@@ -415,14 +415,14 @@ public class DataSourceResource extends AbstractSpagoBIResource {
 					Class.forName(driver);
 				} catch (ClassNotFoundException e) {
 					LOGGER.error("Driver not found", e);
-					throw new SpagoBIRestServiceException("Driver not found: " + driver, buildLocaleFromSession(), e);
+					throw new SpagoBIRestServiceException("Driver not found: " + driver, getLocale(), e);
 				}
 
 				try (Connection connection = DriverManager.getConnection(url, user, pwd == null ? dataSource.getPwd() : pwd)) {
 					LOGGER.debug("Connection performed successfully");
 				} catch (SQLException sqlException) {
 					LOGGER.error("Connection failure", sqlException);
-					throw new SpagoBIRestServiceException("Connection failure ", buildLocaleFromSession(), sqlException.getMessage());
+					throw new SpagoBIRestServiceException("Connection failure ", getLocale(), sqlException.getMessage());
 				}
 			}
 
@@ -482,7 +482,7 @@ public class DataSourceResource extends AbstractSpagoBIResource {
 
 		if (!userProfile.getIsSuperadmin() && Boolean.TRUE.equals(dataSource.checkIsWriteDefault())) {
 			MessageBuilder msgBuilder = new MessageBuilder();
-			throw new SpagoBIRestServiceException(msgBuilder.getMessage("sbi.datasource.notAuthorizedToManageCacheDataSource"), buildLocaleFromSession(),
+			throw new SpagoBIRestServiceException(msgBuilder.getMessage("sbi.datasource.notAuthorizedToManageCacheDataSource"), getLocale(),
 					new Throwable());
 		}
 	}
@@ -490,7 +490,7 @@ public class DataSourceResource extends AbstractSpagoBIResource {
 	private void checkJNDIName(IDataSource dataSource) {
 		if (dataSource.getJndi() != null && !dataSource.getJndi().trim().isEmpty() && !dataSource.getJndi().startsWith("java:comp/env/jdbc/")) {
 			MessageBuilder msgBuilder = new MessageBuilder();
-			throw new SpagoBIRestServiceException(msgBuilder.getMessage("sbi.datasource.jndi"), buildLocaleFromSession(), new Throwable());
+			throw new SpagoBIRestServiceException(msgBuilder.getMessage("sbi.datasource.jndi"), getLocale(), new Throwable());
 		}
 	}
 

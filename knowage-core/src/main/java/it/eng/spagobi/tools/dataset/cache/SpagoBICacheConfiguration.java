@@ -17,15 +17,20 @@
  */
 package it.eng.spagobi.tools.dataset.cache;
 
+import java.io.InputStream;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
-import org.apache.log4j.Logger;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 
-import it.eng.spago.base.SourceBean;
-import it.eng.spago.configuration.ConfigSingleton;
+import org.apache.log4j.Logger;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
+
 import it.eng.spagobi.commons.bo.Config;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.IConfigDAO;
@@ -210,45 +215,90 @@ public class SpagoBICacheConfiguration {
 
 	public static void initCacheConfiguration() {
 		logger.trace("IN");
-		try {
-			SourceBean configSB = (SourceBean) ConfigSingleton.getInstance().getAttribute(CACHE_CONFIG_TAG);
-			if (configSB == null) {
+		try (InputStream xmlStream = SpagoBICacheConfiguration.class.getResourceAsStream("/conf/cache.xml")) {
+			if (xmlStream == null) {
+				throw new CacheException("Provided XML InputStream is null");
+			}
+
+			// Parse XML
+			DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+			// Disable external entity references
+			dbf.setFeature("http://xml.org/sax/features/external-general-entities", false);
+			dbf.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
+			// Disable DTDs entirely
+			dbf.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
+			// Enable secure processing
+			dbf.setFeature(javax.xml.XMLConstants.FEATURE_SECURE_PROCESSING, true);
+			// Prevent external entity resolution
+			dbf.setExpandEntityReferences(false);
+
+			DocumentBuilder db = dbf.newDocumentBuilder();
+			Document doc = db.parse(xmlStream);
+			doc.getDocumentElement().normalize();
+
+			// <CACHE_CONFIG>
+			Element cacheConfigEl = getSingleElementByTagName(doc, CACHE_CONFIG_TAG);
+			if (cacheConfigEl == null) {
 				throw new CacheException("Impossible to find configuration block [" + CACHE_CONFIG_TAG + "]");
 			}
 
-			SourceBean typesSB = (SourceBean) configSB.getAttribute(DATA_TYPES_TAG);
-			if (typesSB == null) {
+			// <DATA_TYPES>
+			Element dataTypesEl = getSingleElementByTagName(cacheConfigEl, DATA_TYPES_TAG);
+			if (dataTypesEl == null) {
 				throw new CacheException("Impossible to find configuration block [" + CACHE_CONFIG_TAG + "." + DATA_TYPES_TAG + "]");
 			}
 
-			List<SourceBean> typesList = typesSB.getAttributeAsList(TYPE_TAG);
-			if (typesSB == null) {
+			// <TYPE .../>
+			NodeList typesNodes = dataTypesEl.getElementsByTagName(TYPE_TAG);
+			if (typesNodes == null || typesNodes.getLength() == 0) {
 				throw new CacheException("Impossible to find configuration blocks [" + CACHE_CONFIG_TAG + "." + DATA_TYPES_TAG + "." + TYPE_TAG + "]");
 			}
 
 			logger.trace("Initializing types' default dimension");
-			logger.trace("Types' default dimension configuration block is equal to " + typesList.toString());
+			// logger.trace("Types' default dimension configuration block is equal to " + typesNodesToString(typesNodes));
+
 			dimensionTypes = new ArrayList<>();
-			for (SourceBean type : typesList) {
-				String name = (String) type.getAttribute("name");
-				String bytes = (String) type.getAttribute("bytes");
+			for (int i = 0; i < typesNodes.getLength(); i++) {
+				Element typeEl = (Element) typesNodes.item(i);
+
+				String name = typeEl.getAttribute("name");
+				String bytes = typeEl.getAttribute("bytes");
 
 				Properties props = new Properties();
-				if (name != null) {
+				if (name != null && !name.isEmpty()) {
 					props.setProperty("name", name);
 				}
-				if (bytes != null) {
+				if (bytes != null && !bytes.isEmpty()) {
 					props.setProperty("bytes", bytes);
 				}
+
 				logger.trace("Type [" + name + "] defualt dimension is equal to [" + bytes + "]");
 				dimensionTypes.add(props);
 			}
+
 			logger.trace("Types' default dimension succesfully initialized");
 		} catch (Throwable t) {
-			throw new RuntimeException("An error occured while loading geo dimension levels' properties from file engine-config.xml", t);
+			// Mantengo la semantica del catch del tuo metodo (solo allineo il messaggio al contesto cache)
+			throw new RuntimeException("An error occured while loading cache dimension levels' properties from XML", t);
 		} finally {
 			logger.debug("OUT");
 		}
+	}
+
+	private static Element getSingleElementByTagName(Element parent, String tagName) {
+		NodeList nl = parent.getElementsByTagName(tagName);
+		if (nl == null || nl.getLength() == 0) {
+			return null;
+		}
+		return (Element) nl.item(0);
+	}
+
+	private static Element getSingleElementByTagName(Document doc, String tagName) {
+		NodeList nl = doc.getElementsByTagName(tagName);
+		if (nl == null || nl.getLength() == 0) {
+			return null;
+		}
+		return (Element) nl.item(0);
 	}
 
 }

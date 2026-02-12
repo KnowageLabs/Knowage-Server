@@ -77,9 +77,9 @@ public class BusinessModelResource extends AbstractSpagoBIResource {
 	/**
 	 *
 	 */
-	public static enum FILETYPE {
+	public enum FILETYPE {
 		JAR, LOG, SBIMODEL
-	};
+	}
 
 	private static final String LOG_SUFFIX = ".log";
 
@@ -126,7 +126,7 @@ public class BusinessModelResource extends AbstractSpagoBIResource {
 
 		} catch (Exception e) {
 			logger.error("An error occurred while getting all business models from database!", e);
-			throw new SpagoBIRestServiceException("An error occurred while getting all business models from database!", buildLocaleFromSession(), e);
+			throw new SpagoBIRestServiceException("An error occurred while getting all business models from database!", getLocale(), e);
 
 		} finally {
 			logger.debug("OUT");
@@ -217,7 +217,7 @@ public class BusinessModelResource extends AbstractSpagoBIResource {
 
 		} catch (Exception e) {
 			logger.error("An error occurred while getting versions of business model with id:" + bmId, e);
-			throw new SpagoBIRestServiceException("An error occurred while getting versions of business model with id:" + bmId, buildLocaleFromSession(), e);
+			throw new SpagoBIRestServiceException("An error occurred while getting versions of business model with id:" + bmId, getLocale(), e);
 
 		} finally {
 			logger.debug("OUT");
@@ -258,7 +258,7 @@ public class BusinessModelResource extends AbstractSpagoBIResource {
 			return businessModel;
 		} catch (Exception e) {
 			logger.error("An error occurred while getting business model with id:" + bmId, e);
-			throw new SpagoBIRestServiceException("An error occurred while getting business model with id:" + bmId, buildLocaleFromSession(), e);
+			throw new SpagoBIRestServiceException("An error occurred while getting business model with id:" + bmId, getLocale(), e);
 
 		} finally {
 			logger.debug("OUT");
@@ -286,7 +286,7 @@ public class BusinessModelResource extends AbstractSpagoBIResource {
 		} catch (Exception e) {
 			logger.error("An error occurred while getting version with id:" + vId + " of business model with id:" + bmId, e);
 			throw new SpagoBIRestServiceException("An error occurred while getting version with id:" + vId + " of business model with id:" + bmId,
-					buildLocaleFromSession(), e);
+					getLocale(), e);
 
 		} finally {
 			logger.debug("OUT");
@@ -405,10 +405,10 @@ public class BusinessModelResource extends AbstractSpagoBIResource {
 			return insertedBM;
 		} catch (SpagoBIDAOMetaModelNameExistingException e) {
 			logger.error("Error while trying to add new business model with existing name", e);
-			throw new SpagoBIRestServiceException("A model with same name already exists", buildLocaleFromSession(), e);
+			throw new SpagoBIRestServiceException("A model with same name already exists", getLocale(), e);
 		} catch (Exception e) {
 			logger.error("An error occurred while inserting new business model in database", e);
-			throw new SpagoBIRestServiceException("An error occurred while inserting new business model in database", buildLocaleFromSession(), e);
+			throw new SpagoBIRestServiceException("An error occurred while inserting new business model in database", getLocale(), e);
 
 		} finally {
 			logger.debug("OUT");
@@ -440,7 +440,7 @@ public class BusinessModelResource extends AbstractSpagoBIResource {
 			return bm;
 		} catch (Exception e) {
 			logger.error("An error occurred while updating business model with id:" + bmId, e);
-			throw new SpagoBIRestServiceException("An error occurred while updating business model with id:" + bmId, buildLocaleFromSession(), e);
+			throw new SpagoBIRestServiceException("An error occurred while updating business model with id:" + bmId, getLocale(), e);
 
 		} finally {
 			logger.debug("OUT");
@@ -465,7 +465,7 @@ public class BusinessModelResource extends AbstractSpagoBIResource {
 			return businessModelsDAO.loadActiveMetaModelContentById(bmId);
 		} catch (Exception e) {
 			logger.error("An error occurred while updating active version of business model with id:" + bmId, e);
-			throw new SpagoBIRestServiceException("An error occurred while updating active version of business model with id:" + bmId, buildLocaleFromSession(),
+			throw new SpagoBIRestServiceException("An error occurred while updating active version of business model with id:" + bmId, getLocale(),
 					e);
 
 		} finally {
@@ -497,7 +497,7 @@ public class BusinessModelResource extends AbstractSpagoBIResource {
 					configurationMap = JSONObjectDeserializator.getHashMapFromString(dataSet.getConfiguration());
 				} catch (Exception e) {
 					logger.debug("Configuration cannot be transformed from string to map");
-					throw new SpagoBIRestServiceException("Configuration cannot be transformed from string to map", buildLocaleFromSession(), e);
+					throw new SpagoBIRestServiceException("Configuration cannot be transformed from string to map", getLocale(), e);
 				}
 
 				if (businessModel.getName().equals(configurationMap.get(qbeDatamarts))) {
@@ -510,11 +510,11 @@ public class BusinessModelResource extends AbstractSpagoBIResource {
 			return Response.ok().build();
 		} catch (SpagoBIRuntimeException e) {
 			logger.error("An error occurred while deleting business model with id:" + bmId, e);
-			throw new SpagoBIRestServiceException(e.getMessage(), buildLocaleFromSession(), e);
+			throw new SpagoBIRestServiceException(e.getMessage(), getLocale(), e);
 
 		} catch (Exception e) {
 			logger.error("An error occurred while deleting business model with id:" + bmId, e);
-			throw new SpagoBIRestServiceException("An error occurred while deleting business model with id:" + bmId, buildLocaleFromSession(), e);
+			throw new SpagoBIRestServiceException("An error occurred while deleting business model with id:" + bmId, getLocale(), e);
 
 		} finally {
 			logger.debug("OUT");
@@ -539,7 +539,7 @@ public class BusinessModelResource extends AbstractSpagoBIResource {
 			return Response.ok().build();
 		} catch (Exception e) {
 			logger.error("An error occurred while deleting many business models", e);
-			throw new SpagoBIRestServiceException("An error occurred while deleting many business models", buildLocaleFromSession(), e);
+			throw new SpagoBIRestServiceException("An error occurred while deleting many business models", getLocale(), e);
 
 		} finally {
 			logger.debug("OUT");
@@ -562,7 +562,7 @@ public class BusinessModelResource extends AbstractSpagoBIResource {
 		} catch (Exception e) {
 			logger.error("An error occurred while deleting active version (" + vId + ") of  business model with id:" + bmId, e);
 			throw new SpagoBIRestServiceException("An error occurred while deleting active version (" + vId + ") of business model with id:" + bmId,
-					buildLocaleFromSession(), e);
+					getLocale(), e);
 
 		} finally {
 			logger.debug("OUT");
@@ -587,7 +587,7 @@ public class BusinessModelResource extends AbstractSpagoBIResource {
 			return Response.ok().build();
 		} catch (Exception e) {
 			logger.error("An error occurred while deleting many versions of business model with id:" + bmId, e);
-			throw new SpagoBIRestServiceException("An error occurred while deleting many versions of business model with id:" + bmId, buildLocaleFromSession(),
+			throw new SpagoBIRestServiceException("An error occurred while deleting many versions of business model with id:" + bmId, getLocale(),
 					e);
 
 		} finally {

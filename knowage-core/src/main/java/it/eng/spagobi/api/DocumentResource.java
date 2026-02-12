@@ -42,6 +42,9 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactoryConfigurationError;
 
+import it.eng.spagobi.tools.dataset.dao.IBIObjDataSetDAO;
+import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
+import it.eng.spagobi.tools.dataset.metadata.SbiDataSet;
 import org.apache.clerezza.jaxrs.utils.form.MultiPartBody;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
@@ -226,6 +229,30 @@ public class DocumentResource extends AbstractDocumentResource {
 			modalitiesValues = modalitiesValueDAO.loadModalitiesValueByBIObjectLabel(label);
 
 			return Response.ok(modalitiesValues).build();
+		} catch (Throwable t) {
+			throw new SpagoBIServiceException(this.request.getPathInfo(),
+					"An unexpected error occured while executing service", t);
+		} finally {
+			LOGGER.debug("OUT");
+		}
+	}
+
+	@GET
+	@Path("/{id}/dataset")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getDocumentDataSet(@PathParam("id") Integer id) {
+		LOGGER.debug("IN");
+		AnalyticalModelDocumentManagementAPI documentManager = new AnalyticalModelDocumentManagementAPI(
+				getUserProfile());
+		IBIObjDataSetDAO ibiObjDataSetDAO;
+		try {
+			BIObject document = documentManager.getDocument(id);
+			if (document == null)
+				throw new SpagoBIRuntimeException("Document with label [" + id + "] doesn't exist");
+
+			ibiObjDataSetDAO = DAOFactory.getBIObjDataSetDAO();
+			List<SbiDataSet> ds = ibiObjDataSetDAO.getDatasetsByBIObject(id);
+			return Response.ok(ds).build();
 		} catch (Throwable t) {
 			throw new SpagoBIServiceException(this.request.getPathInfo(),
 					"An unexpected error occured while executing service", t);

@@ -99,7 +99,7 @@ public class AnalyticalDriversResource extends AbstractSpagoBIResource {
 		} catch (Exception e) {
 			LOGGER.error("Error with loading resource", e);
 			monitor.stop(e);
-			throw new SpagoBIRestServiceException("Error with loading resource", buildLocaleFromSession(), e);
+			throw new SpagoBIRestServiceException("Error with loading resource", getLocale(), e);
 		}
 
 	}
@@ -120,7 +120,7 @@ public class AnalyticalDriversResource extends AbstractSpagoBIResource {
 	// return Response.ok(fullList).build();
 	// } catch (Exception e) {
 	// logger.error("Error with loading resource", e);
-	// throw new SpagoBIRestServiceException("Error with loading resource", buildLocaleFromSession(), e);
+	// throw new SpagoBIRestServiceException("Error with loading resource", getLocale(), e);
 	// }
 	//
 	// }
@@ -141,7 +141,7 @@ public class AnalyticalDriversResource extends AbstractSpagoBIResource {
 			return Response.ok(fullList).build();
 		} catch (Exception e) {
 			LOGGER.error("Error with loading resource", e);
-			throw new SpagoBIRestServiceException("Error with loading resource", buildLocaleFromSession(), e);
+			throw new SpagoBIRestServiceException("Error with loading resource", getLocale(), e);
 		}
 
 	}
@@ -163,7 +163,7 @@ public class AnalyticalDriversResource extends AbstractSpagoBIResource {
 		} catch (Exception e) {
 			LOGGER.error("Driver with selected id {} doesn't exists", id, e);
 			throw new SpagoBIRestServiceException("Item with selected id: " + id + " doesn't exists",
-					buildLocaleFromSession(), e);
+					getLocale(), e);
 		}
 
 	}
@@ -182,7 +182,7 @@ public class AnalyticalDriversResource extends AbstractSpagoBIResource {
 			return Response.ok(fullList).build();
 		} catch (Exception e) {
 			LOGGER.error("Error with loading resource", e);
-			throw new SpagoBIRestServiceException("Error with loading resource", buildLocaleFromSession(), e);
+			throw new SpagoBIRestServiceException("Error with loading resource", getLocale(), e);
 		}
 
 	}
@@ -207,7 +207,7 @@ public class AnalyticalDriversResource extends AbstractSpagoBIResource {
 			return Response.ok(modalitiesValues).build();
 		} catch (Exception e) {
 			LOGGER.error("Error with loading resource", e);
-			throw new SpagoBIRestServiceException("Error with loading resource", buildLocaleFromSession(), e);
+			throw new SpagoBIRestServiceException("Error with loading resource", getLocale(), e);
 		}
 
 	}
@@ -230,7 +230,7 @@ public class AnalyticalDriversResource extends AbstractSpagoBIResource {
 			return Response.ok(documents).build();
 		} catch (Exception e) {
 			LOGGER.error("Error with loading resource", e);
-			throw new SpagoBIRestServiceException("Error with loading resource", buildLocaleFromSession(), e);
+			throw new SpagoBIRestServiceException("Error with loading resource", getLocale(), e);
 		}
 
 	}
@@ -263,7 +263,7 @@ public class AnalyticalDriversResource extends AbstractSpagoBIResource {
 			return Response.ok(toReturn).build();
 		} catch (Exception e) {
 			LOGGER.error("Error while inserting resource", e);
-			throw new SpagoBIRestServiceException("Error while inserting resource", buildLocaleFromSession(), e);
+			throw new SpagoBIRestServiceException("Error while inserting resource", getLocale(), e);
 		}
 	}
 
@@ -308,7 +308,7 @@ public class AnalyticalDriversResource extends AbstractSpagoBIResource {
 			return Response.created(new URI("2.0/analyticalDrivers/" + encodedUseMode)).entity(encodedUseMode).build();
 		} catch (Exception e) {
 			LOGGER.error("Error while inserting resource", e);
-			throw new SpagoBIRestServiceException("Error while inserting resource", buildLocaleFromSession(), e);
+			throw new SpagoBIRestServiceException("Error while inserting resource", getLocale(), e);
 		}
 	}
 
@@ -355,7 +355,7 @@ public class AnalyticalDriversResource extends AbstractSpagoBIResource {
 		} catch (Exception e) {
 			LOGGER.error("Error while modifying resource with id: {}", id, e);
 			throw new SpagoBIRestServiceException("Error while modifying resource with id: " + id,
-					buildLocaleFromSession(), e);
+					getLocale(), e);
 		}
 	}
 
@@ -372,7 +372,7 @@ public class AnalyticalDriversResource extends AbstractSpagoBIResource {
 			useMode = mapper.readValue(body, ParameterUse.class);
 		} catch (Exception e1) {
 			LOGGER.error(e1);
-			throw new SpagoBIRestServiceException("Error while inserting resource", buildLocaleFromSession(), e1);
+			throw new SpagoBIRestServiceException("Error while inserting resource", getLocale(), e1);
 		}
 		List<Role> roles = useMode.getAssociatedRoles();
 		List<Check> checks = useMode.getAssociatedChecks();
@@ -415,7 +415,7 @@ public class AnalyticalDriversResource extends AbstractSpagoBIResource {
 		} catch (Exception e) {
 			LOGGER.error("Error while modifying resource with id: {}", id, e);
 			throw new SpagoBIRestServiceException("Error while modifying use mode : " + useMode.getName() + ", check correlations inside documents with label " + (documents != null ? documents.toString() : ""),
-					buildLocaleFromSession(), e);
+					getLocale(), e);
 		}
 	}
 
@@ -449,7 +449,7 @@ public class AnalyticalDriversResource extends AbstractSpagoBIResource {
 		} catch (Exception e) {
 			LOGGER.error("Error with deleting resource with id: {}", id, e);
 			throw new SpagoBIRestServiceException("Error with deleting resource with id: " + id,
-					buildLocaleFromSession(), e);
+					getLocale(), e);
 		}
 	}
 
@@ -474,7 +474,7 @@ public class AnalyticalDriversResource extends AbstractSpagoBIResource {
 		} catch (Exception e) {
 			LOGGER.error("Error with deleting resource with id: {}", id, e);
 			throw new SpagoBIRestServiceException("Error with deleting resource with id: " + id,
-					buildLocaleFromSession(), e);
+					getLocale(), e);
 		}
 	}
 

@@ -50,7 +50,7 @@
     "font-awesome": "4.7.0",
     "html2canvas": "1.4.1",
     "jsonformatter": "0.6.0",
-    "jspdf": "1.5.3",
+    "jspdf": "4.1.0",
     "luxon": "^3.1.1",
     "moment": "2.29.4",
     "ng-scrollbars": "0.0.11",

@@ -18,7 +18,6 @@
 package it.eng.spagobi.api.common;
 
 import java.io.IOException;
-import java.math.BigDecimal;
 import java.net.URL;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
@@ -26,13 +25,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -42,7 +35,6 @@ import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.core.Response;
 
-import com.fasterxml.jackson.databind.node.DecimalNode;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
@@ -56,6 +48,7 @@ import org.json.JSONObject;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.DecimalNode;
 import com.jamonapi.Monitor;
 import com.jamonapi.MonitorFactory;
 
@@ -135,7 +128,7 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 
 	private static final Logger LOGGER = LogManager.getLogger(AbstractDataSetResource.class);
 
-	private static final String REGEX_FIELDS_VALIDATION = "(?:\\\"[a-zA-Z0-9\\-\\_\\s]*\\\")";
+	private static final String REGEX_FIELDS_VALIDATION = "\\(([^)]{1,50})\\)";
 	private static final int SOLR_FACETS_DEFAULT_LIMIT = 10;
 	private static final String VALIDATION_OK = "OK";
 
@@ -175,19 +168,19 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 	public String getDataStore(String label, String parameters, Map<String, Object> drivers, String selections,
 			String likeSelections, int maxRowCount, String aggregations, String summaryRow, int offset, int fetchSize,
 			Boolean isNearRealtime, Set<String> indexes, String widgetName, boolean useGroupBy) {
-		return getDataStore(label, parameters, drivers, selections, likeSelections, maxRowCount, aggregations,
+		return getDataStore(label, parameters, drivers, selections, likeSelections, null, maxRowCount, aggregations,
 				summaryRow, offset, fetchSize, isNearRealtime, null, indexes, widgetName, useGroupBy);
 	}
 
 	public String getDataStore(String label, String parameters, Map<String, Object> drivers, String selections,
 			String likeSelections, int maxRowCount, String aggregations, String summaryRow, int offset, int fetchSize,
 			Set<String> indexes, String widgetName, boolean useGroupBy) {
-		return getDataStore(label, parameters, drivers, selections, likeSelections, maxRowCount, aggregations,
+		return getDataStore(label, parameters, drivers, selections, likeSelections, null, maxRowCount, aggregations,
 				summaryRow, offset, fetchSize, null, null, indexes, widgetName, useGroupBy);
 	}
 
 	public String getDataStore(String label, String parameters, Map<String, Object> drivers, String selections,
-			String likeSelections, int maxRowCount, String aggregations, String summaryRow, int offset, int fetchSize,
+			String likeSelections, String drilldown, int maxRowCount, String aggregations, String summaryRow, int offset, int fetchSize,
 			Boolean isNearRealtime, String options, Set<String> indexes, String widgetName, boolean useGroupBy) {
 		LOGGER.debug("IN");
 		DatasetManagementAPI datasetManagementAPI = getDatasetManagementAPI();
@@ -291,11 +284,21 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 				}
 			}
 
+			List<Filter> drilldownFilters = new ArrayList<>(0);
+			if (drilldown != null && !drilldown.equals("")) {
+				JSONObject drilldownObject = new JSONObject(drilldown);
+				if (drilldownObject.names() != null) {
+					drilldownFilters.addAll(getDrilldownFilters(label, drilldownObject, columnAliasToName));
+				}
+			}
+
 			Monitor timingMinMax = MonitorFactory.start("Knowage.AbstractDataSetResource.getDataStore:calculateMinMax");
 			Map<String, String> parametersMap = DataSetUtilities.getParametersMap(parameters);
 			filters = datasetManagementAPI.calculateMinMaxFilters(dataSet, isNearRealtime, parametersMap, filters,
 					likeFilters, indexes);
 			timingMinMax.stop();
+
+			filters.addAll(drilldownFilters);
 
 			Filter where = datasetManagementAPI.getWhereFilter(filters, likeFilters);
 
@@ -347,7 +350,8 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 		}
 	}
 
-    public String getDataStoreAI(String label, String parameters, Map<String, Object> drivers, String selections,
+
+	public String getDataStoreAI(String label, String parameters, Map<String, Object> drivers, String selections,
                                String likeSelections, Integer maxRowCount, String aggregations, String summaryRow, int offset, int fetchSize, Integer maxRows,
                                Boolean isNearRealtime, String options, Set<String> indexes) {
         LOGGER.debug("IN");
@@ -831,22 +835,26 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 	}
 
 	private void validateFields(String formula, List<SimpleSelectionField> columns) {
-		String regex = REGEX_FIELDS_VALIDATION;
-		Pattern p = Pattern.compile(regex);
+        Pattern p = Pattern.compile(REGEX_FIELDS_VALIDATION);
 		Matcher m = p.matcher(formula);
 
 		while (m.find()) {
+
+			if (!m.group(1).startsWith("\"") || !m.group(1).endsWith("\"")) {
+				throw new ValidationException("common.errors.formulas.missingQuotes");
+			}
+
 			boolean found = false;
 			for (SimpleSelectionField simpleSelectionField : columns) {
 
-				if (simpleSelectionField.getName().equals(m.group(0).replace("\"", ""))) {
+				if (simpleSelectionField.getName().equals(m.group(1).replace("\"", ""))) {
 					found = true;
 					break;
 				}
 			}
 
 			if (!found) {
-				throw new ValidationException();
+				throw new ValidationException("common.errors.formulas.unknownField");
 			}
 		}
 
@@ -1127,6 +1135,47 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 		return likeFilters;
 	}
 
+
+	private List<Filter> getDrilldownFilters(String datasetLabel, JSONObject drilldownObject, Map<String, String> columnAliasToName) throws JSONException {
+
+		List<Filter> drilldownFilters = new ArrayList<>(0);
+
+		if (drilldownObject.has(datasetLabel)) {
+			IDataSet dataSet = getDataSetDAO().loadDataSetByLabel(datasetLabel);
+			boolean isAnEmptySelection = false;
+
+			JSONObject drilldownObjectJSONObject = drilldownObject.getJSONObject(datasetLabel);
+			Iterator<String> it = drilldownObjectJSONObject.keys();
+			while (it.hasNext()) {
+				String columns = it.next();
+				String value = drilldownObjectJSONObject.getString(columns);
+				if (value == null || value.isEmpty()) {
+					isAnEmptySelection = true;
+					break;
+				}
+
+				List<String> columnsList = getColumnList(columns, dataSet, columnAliasToName);
+				List<Projection> projections = new ArrayList<>(columnsList.size());
+				for (String columnName : columnsList) {
+					projections.add(new Projection(dataSet, columnName));
+				}
+
+				for (Projection projection : projections) {
+					SimpleFilter filter = new InFilter(projection, value);
+					drilldownFilters.add(filter);
+				}
+			}
+
+			if (isAnEmptySelection) {
+				drilldownFilters.clear();
+				drilldownFilters.add(new UnsatisfiedFilter());
+			}
+		}
+
+		return drilldownFilters;
+	}
+
+
 	protected List<String> getColumnList(String columns, IDataSet dataSet,
 			Map<String, String> columnAliasToColumnName) {
 		List<String> columnList = new ArrayList<>(Arrays.asList(columns.trim().replaceAll("\\s+", " ").split("\\s?,\\s?")));
@@ -1157,7 +1206,7 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 
 	protected IDataWriter getDataStoreWriter() throws JSONException {
 		JSONDataWriter dataWriter = new JSONDataWriter(getDataSetWriterProperties());
-		dataWriter.setLocale(buildLocaleFromSession());
+		dataWriter.setLocale(getLocale());
 		return dataWriter;
 	}
 

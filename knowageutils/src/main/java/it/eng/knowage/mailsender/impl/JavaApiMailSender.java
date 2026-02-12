@@ -151,7 +151,7 @@ public class JavaApiMailSender implements IMailSender {
 			if (messageMailDto.getCharset() != null && !messageMailDto.getCharset().equals("")) {
 				mbp.setText(messageMailDto.getText(), messageMailDto.getCharset(), messageMailDto.getSubtype());
 			} else {
-				mbp.setText(messageMailDto.getText(), "UTF-8", messageMailDto.getSubtype());
+				mbp.setText(messageMailDto.getText());
 			}
 
 			mp.addBodyPart(mbp);

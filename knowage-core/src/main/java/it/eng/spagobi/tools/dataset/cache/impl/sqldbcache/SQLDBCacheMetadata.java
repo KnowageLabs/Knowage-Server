@@ -118,6 +118,14 @@ public class SQLDBCacheMetadata implements ICacheMetadata {
 		return usedMemory;
 	}
 
+	@Override
+	public BigDecimal getUsedMemory(String table) throws DataBaseException {
+		CacheDataBase dataBase = DataBaseFactory.getCacheDataBase(cacheConfiguration.getCacheDataSource());
+		BigDecimal usedMemory = DatabaseUtilities.getUsedMemorySize(dataBase, cacheConfiguration.getSchema(), table);
+		logger.debug("Used memory is equal to [" + usedMemory + "] in ");
+		return usedMemory;
+	}
+
 	/**
 	 * Returns the number of bytes available in the cache (approximate)
 	 *

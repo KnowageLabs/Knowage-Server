@@ -17,9 +17,18 @@
  */
 package it.eng.spagobi.tools.dataset.persist;
 
+import java.io.BufferedWriter;
+import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.security.SecureRandom;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -27,22 +36,29 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Random;
 import java.util.Set;
 import java.util.UUID;
+import java.util.zip.GZIPOutputStream;
 
 import org.apache.log4j.Logger;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jamonapi.Monitor;
 import com.jamonapi.MonitorFactory;
 
 import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.tools.dataset.bo.AbstractJDBCDataset;
 import it.eng.spagobi.tools.dataset.bo.FileDataSet;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
@@ -79,6 +95,7 @@ public class PersistedTableManager implements IPersistedManager {
 	private static final int BATCH_SIZE = 1000;
 	private static final Random RANDOM = new SecureRandom();
 	private static final String ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+	private static final String COLUMN_SEPARATOR = "\t";
 
 	private DatabaseDialect dialect = null;
 	private String tableName = "";
@@ -148,7 +165,165 @@ public class PersistedTableManager implements IPersistedManager {
 		}
 	}
 
+	private void persistDoris(IDataSet dataSet, IDataSource datasource, String tableName) throws Exception {
+		LOGGER.debug("IN");
+		Path tempCsv = null;
+		Path gzPath = null;
+		try (DataIterator iterator = dataSet.iterator()) {
+			createTable(iterator.getMetaData(), datasource);
+
+			tempCsv = Files.createTempFile("doris_streamload_", ".csv");
+			LOGGER.debug("Serializing dataset to CSV: " + tempCsv);
+			serializeIteratorToCsvStreaming(iterator, tempCsv);
+
+			gzPath = Files.createTempFile("doris_streamload_", ".csv.gz");
+			LOGGER.debug("Compressing CSV to GZIP: " + gzPath);
+			gzipFile(tempCsv, gzPath);
+
+			callDoris(datasource, tableName, gzPath);
+
+		} finally {
+			Files.deleteIfExists(tempCsv);
+			Files.deleteIfExists(gzPath);
+		}
+	}
+
+	private void callDoris(IDataSource datasource, String tableName, Path gzPath) throws IOException, InterruptedException {
+		String label = "knowage_" + tableName + "_" + Instant.now().getEpochSecond();
+
+		String user = Optional.ofNullable(datasource.getUser()).filter(u -> !u.isEmpty())
+				.orElse(SingletonConfig.getInstance().getConfigValue("KNOWAGE.DORIS.USER"));
+		if (user == null || user.isEmpty()) {
+			LOGGER.error("Error : User doris is undefined");
+			throw new RuntimeException("Error : User doris is undefined");
+		}
+		String password = Optional.ofNullable(datasource.getPwd()).filter(u -> !u.isEmpty())
+				.or(() -> Optional.ofNullable(SingletonConfig.getInstance().getConfigValue("KNOWAGE.DORIS.PASSWORD")).filter(u -> !u.isEmpty())).orElse("");
+
+		String endpoint = SingletonConfig.getInstance().getConfigValue("KNOWAGE.DORIS.ENDPOINT");
+		if (endpoint == null || endpoint.isEmpty()) {
+			LOGGER.error("Error : Endpoint doris is undefined");
+			throw new RuntimeException("Error : Endpoint doris is undefined");
+		}
+		endpoint = endpoint.replace("{table}", tableName);
+
+		String basicAuth = Base64.getEncoder().encodeToString((user + ":" + password).getBytes(StandardCharsets.UTF_8));
+
+		try {
+			HttpClient client = HttpClient.newBuilder().version(HttpClient.Version.HTTP_1_1).connectTimeout(java.time.Duration.ofSeconds(10)).build();
+
+			HttpRequest request = HttpRequest.newBuilder().uri(URI.create(endpoint)).timeout(java.time.Duration.ofMinutes(10))
+					.header("Authorization", "Basic " + basicAuth).header("label", label).header("format", "csv").header("compress_type", "gz")
+					.header("column_separator", COLUMN_SEPARATOR).header("Content-Type", "text/csv; charset=UTF-8").expectContinue(true)
+					.PUT(HttpRequest.BodyPublishers.ofFile(gzPath))
+					.build();
+
+			LOGGER.info("Executing Stream Load: " + endpoint);
+			LOGGER.debug("Label: " + label);
+
+			HttpResponse<String> resp = client.send(request, HttpResponse.BodyHandlers.ofString());
+
+			LOGGER.info("Stream Load HTTP status: " + resp.statusCode());
+			LOGGER.debug("Stream Load response body: " + resp.body());
+
+			ObjectMapper mapper = new ObjectMapper();
+			JsonNode node = mapper.readTree(resp.body());
+			String status = node.get("Status").asText();
+
+			if (resp.statusCode() == 200 && status != null && status.equalsIgnoreCase("Success")) {
+				LOGGER.info("Stream Load completed successfully for table " + tableName);
+
+			} else {
+				dropTableIfExists(datasource, tableName);
+				LOGGER.error("Error Doris body " + resp.body());
+				throw new RuntimeException("Stream Load failed: HTTP " + resp.statusCode() + " - " + resp.body());
+			}
+
+		} catch (Exception e) {
+			dropTableIfExists(datasource, tableName);
+			LOGGER.error("Error Communication Knowage/Doris " + endpoint, e);
+			throw e;
+		}
+	}
+
+	private void serializeIteratorToCsvStreaming(DataIterator iterator, Path tempCsv) throws Exception {
+		try (BufferedWriter bw = Files.newBufferedWriter(tempCsv, StandardCharsets.UTF_8)) {
+			long count = 0;
+			while (iterator.hasNext()) {
+				count++;
+				IRecord r = iterator.next();
+				bw.write(toCsvLine(r, count));
+				bw.write("\n");
+				if (count % 10000 == 0) {
+					LOGGER.debug("Serialized records " + count);
+				}
+			}
+			bw.flush();
+		}
+	}
+
+	private void serializeIteratorToCsvStreaming(List<IRecord> records, Path tempCsv) throws Exception {
+		try (BufferedWriter bw = Files.newBufferedWriter(tempCsv, StandardCharsets.UTF_8)) {
+			long count = 0;
+            for (IRecord r : records) {
+				count++;
+				bw.write(toCsvLine(r, count));
+                bw.write("\n");
+                if (count % 10000 == 0) {
+                    LOGGER.debug("Serialized records " + count);
+                }
+            }
+			bw.flush();
+		}
+	}
+
+	private String toCsvLine(IRecord record, long count) {
+		StringBuilder sb = new StringBuilder();
+
+		if (this.isRowCountColumIncluded()) {
+			sb.append(count);
+			sb.append(COLUMN_SEPARATOR);
+		}
+
+
+		for (int j = 0; j < record.getFields().size(); j++) {
+			IField field = record.getFieldAt(j);
+			Object fieldValue = field.getValue();
+			if (j > 0) {
+				sb.append(COLUMN_SEPARATOR);
+			}
+			sb.append(escapeCsv(fieldValue));
+		}
+
+		return sb.toString();
+	}
+
+	private String escapeCsv(Object v) {
+		if (v == null) {
+			return "\\N";// convenzione Doris per NULL
+		}
+		String s = String.valueOf(v);
+		s = s.replace("\r", " ").replace("\n", " ");
+		return s;
+	}
+
+	private void gzipFile(Path src, Path dst) throws Exception {
+		try (var in = Files.newInputStream(src); var out = new GZIPOutputStream(Files.newOutputStream(dst))) {
+			in.transferTo(out);
+			// GZIPOutputStream chiude l'header/CRC su close()
+		}
+	}
+
 	public void persist(IDataSet dataSet, IDataSource datasource, String tableName) throws Exception {
+		if (datasource.getDialectName().contains(DatabaseDialect.DORIS.getValue())) {
+			persistDoris(dataSet, datasource, tableName);
+		} else {
+			persistJdbc(dataSet, datasource, tableName);
+		}
+
+	}
+
+	private void persistJdbc(IDataSet dataSet, IDataSource datasource, String tableName) throws Exception {
 		LOGGER.debug("IN");
 
 		Monitor monitor = MonitorFactory.start("spagobi.cache.sqldb.persist.paginated");
@@ -543,58 +718,82 @@ public class PersistedTableManager implements IPersistedManager {
 	}
 
 	public void persistDataset(IDataStore datastore, IDataSource datasource) throws Exception {
-		LOGGER.debug("IN");
-		Connection connection = null;
-		String dialect = datasource.getHibDialectClass();
-		try {
-			LOGGER.debug("The datastore metadata object contains # [" + datastore.getMetaData().getFieldCount()
-					+ "] fields");
-			if (datastore.getMetaData().getFieldCount() == 0) {
-				LOGGER.debug("The datastore metadata object hasn't fields. Dataset doesn't persisted!!");
-				return;
-			}
-			connection = getConnection(datasource);
+		if (datasource.getDialectName().contains(DatabaseDialect.DORIS.getValue())) {
+			LOGGER.debug("IN");
+			Path tempCsv = null;
+			Path gzPath = null;
+			try {
+				createTable(datastore.getMetaData(), datasource);
 
-			// VoltDB does not allow explicit commit/rollback actions.
-			// It uses an internal transaction committing mechanism.
-			// More tests to see the consistency has to be done on this.
-			if (!dialect.contains("VoltDB")) {
-				connection.setAutoCommit(false);
+				tempCsv = Files.createTempFile("doris_streamload_", ".csv");
+				LOGGER.debug("Serializing dataset to CSV: " + tempCsv);
+				serializeIteratorToCsvStreaming(datastore.getRecords(), tempCsv);
+
+				gzPath = Files.createTempFile("doris_streamload_", ".csv.gz");
+				LOGGER.debug("Compressing CSV to GZIP: " + gzPath);
+				gzipFile(tempCsv, gzPath);
+
+				callDoris(datasource, tableName, gzPath);
+
+			} finally {
+				Files.deleteIfExists(tempCsv);
+				Files.deleteIfExists(gzPath);
 			}
-			// Steps #1: define prepared statement (and max column size for
-			// strings type)
-			PreparedStatement[] statements = defineStatements(datastore, datasource, connection);
-			// Steps #2: set query timeout (if necessary)
-			if (queryTimeout > 0) {
-				for (int i = 0; i < statements.length; i++) {
-					statements[i].setQueryTimeout(queryTimeout);
+		} else {
+
+			LOGGER.debug("IN");
+			Connection connection = null;
+			String dialect = datasource.getHibDialectClass();
+			try {
+				LOGGER.debug("The datastore metadata object contains # [" + datastore.getMetaData().getFieldCount()
+						+ "] fields");
+				if (datastore.getMetaData().getFieldCount() == 0) {
+					LOGGER.debug("The datastore metadata object hasn't fields. Dataset doesn't persisted!!");
+					return;
 				}
-			}
-			// Steps #3,4: define create table statement
-			createTable(datastore.getMetaData(), datasource);
-			// Step #5: execute batch with insert statements
-			for (int i = 0; i < statements.length; i++) {
-				PreparedStatement statement = statements[i];
-				statement.executeBatch();
-				statement.close();
-			}
-			if (!dialect.contains("VoltDB")) {
-				connection.commit();
-			}
-			LOGGER.debug("Insertion of records on persistable table executed successfully!");
-		} catch (Exception e) {
-			LOGGER.error("Error persisting the dataset into table", e);
-			if (connection != null && !dialect.contains("VoltDB")) {
-				connection.rollback();
-			}
-			throw new SpagoBIEngineRuntimeException("Error persisting the dataset into table", e);
-		} finally {
-			if (connection != null && !connection.isClosed()) {
-				connection.close();
+				connection = getConnection(datasource);
+
+				// VoltDB does not allow explicit commit/rollback actions.
+				// It uses an internal transaction committing mechanism.
+				// More tests to see the consistency has to be done on this.
+				if (!dialect.contains("VoltDB")) {
+					connection.setAutoCommit(false);
+				}
+				// Steps #1: define prepared statement (and max column size for
+				// strings type)
+				PreparedStatement[] statements = defineStatements(datastore, datasource, connection);
+				// Steps #2: set query timeout (if necessary)
+				if (queryTimeout > 0) {
+					for (int i = 0; i < statements.length; i++) {
+						statements[i].setQueryTimeout(queryTimeout);
+					}
+				}
+				// Steps #3,4: define create table statement
+				createTable(datastore.getMetaData(), datasource);
+				// Step #5: execute batch with insert statements
+				for (int i = 0; i < statements.length; i++) {
+					PreparedStatement statement = statements[i];
+					statement.executeBatch();
+					statement.close();
+				}
+				if (!dialect.contains("VoltDB")) {
+					connection.commit();
+				}
+				LOGGER.debug("Insertion of records on persistable table executed successfully!");
+			} catch (Exception e) {
+				LOGGER.error("Error persisting the dataset into table", e);
+				if (connection != null && !dialect.contains("VoltDB")) {
+					connection.rollback();
+				}
+				throw new SpagoBIEngineRuntimeException("Error persisting the dataset into table", e);
+			} finally {
+				if (connection != null && !connection.isClosed()) {
+					connection.close();
+				}
+				LOGGER.debug("OUT");
 			}
 			LOGGER.debug("OUT");
 		}
-		LOGGER.debug("OUT");
 	}
 
 	private PreparedStatement[] defineStatements(IDataStore datastore, IDataSource datasource, Connection connection)
@@ -1025,6 +1224,9 @@ public class PersistedTableManager implements IPersistedManager {
 				toReturn += ((i < l - 1) ? " , " : "");
 			}
 			toReturn += " )";
+			if (dataSource.getDialectName().contains(DatabaseDialect.DORIS.getValue())) {
+				toReturn = toReturn + " ENGINE=OLAP";
+			}
 		} else {
 			LOGGER.debug("Metadata fields object not found! Doesn't create temporary table.");
 		}
@@ -1110,7 +1312,7 @@ public class PersistedTableManager implements IPersistedManager {
 			statement = "SELECT TABLE_NAME " + "FROM USER_TABLES " + "WHERE TABLE_NAME LIKE '" + prefix.toUpperCase()
 					+ "%'";
 		} else if (dialect.equals(DatabaseDialect.SQLSERVER) || dialect.equals(DatabaseDialect.MYSQL)
-				|| dialect.equals(DatabaseDialect.MYSQL_INNODB) || dialect.equals(DatabaseDialect.POSTGRESQL)) {
+				|| dialect.equals(DatabaseDialect.MYSQL_INNODB) || dialect.equals(DatabaseDialect.POSTGRESQL) || dialect.equals(DatabaseDialect.DORIS)) {
 			statement = "SELECT TABLE_NAME " + "FROM INFORMATION_SCHEMA.TABLES " + "WHERE TABLE_NAME LIKE '"
 					+ prefix.toLowerCase() + "%'";
 		}

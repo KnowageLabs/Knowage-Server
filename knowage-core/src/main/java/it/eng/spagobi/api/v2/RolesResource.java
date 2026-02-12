@@ -100,7 +100,7 @@ public class RolesResource extends AbstractSpagoBIResource {
 			return Response.ok(filteredList).build();
 		} catch (Exception e) {
 			LOGGER.error("Error with loading resource", e);
-			throw new SpagoBIRestServiceException("Error with loading resource", buildLocaleFromSession(), e);
+			throw new SpagoBIRestServiceException("Error with loading resource", getLocale(), e);
 		}
 	}
 
@@ -130,7 +130,7 @@ public class RolesResource extends AbstractSpagoBIResource {
 		} catch (Exception e) {
 			LOGGER.error("Role with selected id: " + id + " doesn't exists", e);
 			throw new SpagoBIRestServiceException("Item with selected id: " + id + " doesn't exists",
-					buildLocaleFromSession(), e);
+					getLocale(), e);
 		}
 	}
 
@@ -150,7 +150,7 @@ public class RolesResource extends AbstractSpagoBIResource {
 		} catch (Exception e) {
 			LOGGER.error("Role with selected id: " + id + " doesn't exists", e);
 			throw new SpagoBIRestServiceException("Item with selected id: " + id + " doesn't exists",
-					buildLocaleFromSession(), e);
+					getLocale(), e);
 		}
 	}
 
@@ -173,7 +173,7 @@ public class RolesResource extends AbstractSpagoBIResource {
 		} catch (Exception e) {
 			LOGGER.error("Role with selected id: " + roles + " doesn't exists", e);
 			throw new SpagoBIRestServiceException("Item with selected id: " + roles + " doesn't exists",
-					buildLocaleFromSession(), e);
+					getLocale(), e);
 		}
 	}
 
@@ -194,7 +194,7 @@ public class RolesResource extends AbstractSpagoBIResource {
 		} catch (Exception e) {
 			LOGGER.error("Role with selected id: " + id + " doesn't exists", e);
 			throw new SpagoBIRestServiceException("Item with selected id: " + id + " doesn't exists",
-					buildLocaleFromSession(), e);
+					getLocale(), e);
 		}
 	}
 
@@ -238,7 +238,7 @@ public class RolesResource extends AbstractSpagoBIResource {
 		} catch (Exception e) {
 			LOGGER.error("Error loading the list of dataset categories associated to user", e);
 			throw new SpagoBIRestServiceException("Error loading the list of dataset categories associated to user",
-					buildLocaleFromSession(), e);
+					getLocale(), e);
 		}
 	}
 
@@ -249,7 +249,7 @@ public class RolesResource extends AbstractSpagoBIResource {
 	public Response insertRole(@Valid RoleBO body) {
 		IRoleDAO rolesDao = null;
 		if(body.getName().contains(" ")) {
-			throw new SpagoBIRestServiceException("Role name cannot contain spaces", buildLocaleFromSession(), new RuntimeException());
+			throw new SpagoBIRestServiceException("Role name cannot contain spaces", getLocale(), new RuntimeException());
 		}
 		Role role = roleBoToRole(body);
 		List<RoleMetaModelCategory> listMetaModelCategories = body.getRoleMetaModelCategories();
@@ -268,7 +268,7 @@ public class RolesResource extends AbstractSpagoBIResource {
 			return Response.created(new URI("2.0/roles/" + encodedRole)).entity(encodedRole).build();
 		} catch (Exception e) {
 			LOGGER.error("Error while inserting resource", e);
-			throw new SpagoBIRestServiceException("Error while inserting resource", buildLocaleFromSession(), e);
+			throw new SpagoBIRestServiceException("Error while inserting resource", getLocale(), e);
 		}
 	}
 
@@ -319,7 +319,7 @@ public class RolesResource extends AbstractSpagoBIResource {
 		} catch (Exception e) {
 			LOGGER.error("Error while modifying resource with id: " + id, e);
 			throw new SpagoBIRestServiceException("Error while modifying resource with id: " + id,
-					buildLocaleFromSession(), e);
+					getLocale(), e);
 		}
 	}
 
@@ -349,7 +349,7 @@ public class RolesResource extends AbstractSpagoBIResource {
 		} catch (Exception e) {
 			LOGGER.error("Error with deleting resource with id: " + id, e);
 			throw new SpagoBIRestServiceException("Error with deleting resource with id: " + id,
-					buildLocaleFromSession(), e);
+					getLocale(), e);
 		}
 	}
 
@@ -376,6 +376,7 @@ public class RolesResource extends AbstractSpagoBIResource {
 		role.setAbleToCreateSelfServiceGeoreport(bo.isAbleToCreateSelfServiceGeoreport());
 		role.setAbleToCreateSelfServiceKpi(bo.isAbleToCreateSelfServiceKpi());
 		role.setAbleToUseFunctionsCatalog(bo.isAbleToUseFunctionsCatalog());
+		role.setAbleToManageFunctionsCatalog(bo.isAbleToManageFunctionsCatalog());
 		role.setAbleToEditPythonScripts(bo.isAbleToEditPythonScripts());
 		role.setAbleToCreateCustomChart(bo.isAbleToCreateCustomChart());
 		role.setAbleToSaveSubobjects(bo.isAbleToSaveSubobjects());
@@ -455,7 +456,7 @@ public class RolesResource extends AbstractSpagoBIResource {
 		} catch (Exception e) {
 			String errorString = "sbi.folder.roles.load.error";
 			LOGGER.error(errorString, e);
-			throw new SpagoBIRestServiceException(errorString, buildLocaleFromSession(), e);
+			throw new SpagoBIRestServiceException(errorString, getLocale(), e);
 		}
 	}
 }

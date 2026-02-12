@@ -449,9 +449,9 @@ public class MemberResource extends AbstractWhatIfEngineService {
 
 		} catch (NullPointerException e) {
 			throw new SpagoBIRestServiceException("Selected member isnt associated with table column",
-					buildLocaleFromSession(), e);
+					getLocale(), e);
 		} catch (Exception e) {
-			throw new SpagoBIRestServiceException("Mondrian error", buildLocaleFromSession(), e);
+			throw new SpagoBIRestServiceException("Mondrian error", getLocale(), e);
 		}
 		return array.toString();
 	}

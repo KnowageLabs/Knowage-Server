@@ -50,7 +50,6 @@ import it.eng.spago.base.SourceBean;
 import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.error.EMFUserError;
-import it.eng.spago.navigation.LightNavigationManager;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spago.util.JavaScript;
 import it.eng.spago.validation.EMFValidationError;
@@ -354,8 +353,9 @@ public class ExecutionInstance implements Serializable {
 					continue;
 				}
 				String parUrlName = chunks[0];
-				if (parUrlName == null || parUrlName.trim().equals(""))
+				if (parUrlName == null || parUrlName.trim().equals("")) {
 					continue;
+				}
 				BIObjectParameter biparameter = null;
 				Iterator<BIObjectParameter> it = biparameters.iterator();
 				while (it.hasNext()) {
@@ -411,8 +411,9 @@ public class ExecutionInstance implements Serializable {
 					continue;
 				}
 				String parUrlName = chunks[0];
-				if (parUrlName == null || parUrlName.trim().equals(""))
+				if (parUrlName == null || parUrlName.trim().equals("")) {
 					continue;
+				}
 				BIObjectParameter biparameter = null;
 				Iterator<BIObjectParameter> it = biparameters.iterator();
 				while (it.hasNext()) {
@@ -461,8 +462,9 @@ public class ExecutionInstance implements Serializable {
 				 * (see initBIParameters method)
 				 */
 				// if (isSingleValue(biparam) || biparam.isTransientParmeters())
-				if (biparam.isTransientParmeters())
+				if (biparam.isTransientParmeters()) {
 					continue;
+				}
 				biparam.setParameterValues(null);
 				biparam.setParameterValuesDescription(null);
 			} else {
@@ -548,21 +550,24 @@ public class ExecutionInstance implements Serializable {
 		String nameUrl = biparam.getParameterUrlName();
 		List paramAttrsList = request.getAttributeAsList(nameUrl);
 		ArrayList paramvalues = new ArrayList();
-		if (paramAttrsList.isEmpty())
+		if (paramAttrsList.isEmpty()) {
 			return;
+		}
 		Iterator iterParAttr = paramAttrsList.iterator();
 		while (iterParAttr.hasNext()) {
 			String values = (String) iterParAttr.next();
 			String[] value = values.split(";");
 			for (int i = 0; i < value.length; i++) {
-				if (!value[i].trim().equalsIgnoreCase(""))
+				if (!value[i].trim().equalsIgnoreCase("")) {
 					paramvalues.add(value[i]);
+				}
 			}
 		}
-		if (paramvalues.isEmpty())
+		if (paramvalues.isEmpty()) {
 			biparam.setParameterValues(null);
-		else
+		} else {
 			biparam.setParameterValues(paramvalues);
+		}
 		biparam.setTransientParmeters(transientMode);
 		LOGGER.debug("End refreshing parameter value");
 	}
@@ -652,8 +657,9 @@ public class ExecutionInstance implements Serializable {
 		LOGGER.debug("Getting parameters errors with edit mode equals to {}", onEditMode);
 		List toReturn = new ArrayList();
 		List<BIObjectParameter> biparams = object.getDrivers();
-		if (biparams.isEmpty())
+		if (biparams.isEmpty()) {
 			return toReturn;
+		}
 		Iterator<BIObjectParameter> iterParams = biparams.iterator();
 		while (iterParams.hasNext()) {
 			BIObjectParameter biparam = iterParams.next();
@@ -721,8 +727,9 @@ public class ExecutionInstance implements Serializable {
 			Check check = null;
 			while (it.hasNext()) {
 				check = (Check) it.next();
-				if (check.getValueTypeCd().equalsIgnoreCase("MANDATORY"))
+				if (check.getValueTypeCd().equalsIgnoreCase("MANDATORY")) {
 					continue;
+				}
 				LOGGER.debug("Applying check {} to biparameter {}...", check.getLabel(), label);
 				List errors = getValidationErrorOnCheck(biparameter, check);
 				if (errors != null && !errors.isEmpty()) {
@@ -823,8 +830,9 @@ public class ExecutionInstance implements Serializable {
 						error = SpagoBIValidationImpl.validateField(urlName, label, aValue, "DATE",
 								check.getFirstValue(), null, null);
 					}
-					if (error != null)
+					if (error != null) {
 						toReturn.add(error);
+					}
 				}
 			}
 		}
@@ -1166,22 +1174,6 @@ public class ExecutionInstance implements Serializable {
 		LOGGER.debug("OUT");
 	}
 
-	public String getSnapshotUrl() {
-		LOGGER.debug("Getting snapshot URL");
-		if (this.snapshot == null) {
-			throw new SpagoBIServiceException("", "no snapshot set");
-		}
-		StringBuilder buffer = new StringBuilder();
-		buffer.append(GeneralUtilities.getSpagoBIProfileBaseUrl(this.userProfile.getUserUniqueIdentifier().toString()));
-		buffer.append("&ACTION_NAME=GET_SNAPSHOT_CONTENT");
-		buffer.append("&" + SpagoBIConstants.SNAPSHOT_ID + "=" + snapshot.getId());
-		buffer.append("&" + ObjectsTreeConstants.OBJECT_ID + "=" + object.getId());
-		buffer.append("&" + LightNavigationManager.LIGHT_NAVIGATOR_DISABLED + "=TRUE");
-
-		String url = buffer.toString();
-		LOGGER.debug("End getting snapshot URL: returning url {}", url);
-		return url;
-	}
 
 	public String getSubObjectUrl(Locale locale) throws EncodingException {
 		LOGGER.debug("Getting sub object URL for locale {}", locale);
@@ -1559,8 +1551,9 @@ public class ExecutionInstance implements Serializable {
 
 			ExecutionInstance anInstance = (ExecutionInstance) another;
 			return this.executionId.equals(anInstance.executionId);
-		} else
+		} else {
 			return false;
+		}
 	}
 
 	public Locale getLocale() {

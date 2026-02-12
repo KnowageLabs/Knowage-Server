@@ -60,6 +60,9 @@ public class PdfExporter extends AbstractFormatExporter {
 	private static final float POINTS_PER_INCH = 72;
 	private static final float POINTS_PER_MM = 1 / (10 * 2.54f) * POINTS_PER_INCH;
 	private static final int DEFAULT_COLUMN_WIDTH = 150;
+	private static final String KN_EXPORT_EXTRA_FIELD_LABEL = "kn-export-extra-field-label";
+	private static final String KN_EXPORT_EXTRA_FIELD_VALUE = "kn-export-extra-field-value";
+
 
 	private float totalColumnsWidth = 0;
 	private float[] columnPercentWidths;
@@ -68,7 +71,7 @@ public class PdfExporter extends AbstractFormatExporter {
 		super(userUniqueIdentifier, body);
 	}
 
-	public byte[] getBinaryData(Integer documentId, String documentLabel, String templateString, JSONObject selections) throws JSONException {
+	public byte[] getBinaryData(Integer documentId, String documentLabel, String templateString, JSONObject selections, JSONObject variables) throws JSONException {
 
 			ObjTemplate template = null;
 			String message = "Unable to get template for document with id [" + documentId + "] and label ["
@@ -94,7 +97,7 @@ public class PdfExporter extends AbstractFormatExporter {
 		try (PDDocument document = new PDDocument(MemoryUsageSetting.setupTempFileOnly())) {
 			long widgetId = body.getLong("widget");
 
-			exportTableWidget(document, templateString, widgetId, creationUser, selections);
+			exportTableWidget(document, templateString, widgetId, creationUser, selections, variables);
 
 			ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
 			document.save(byteArrayOutputStream);
@@ -107,7 +110,7 @@ public class PdfExporter extends AbstractFormatExporter {
 
 	}
 
-	private void exportTableWidget(PDDocument document, String templateString, long widgetId, String creationUser, JSONObject selections) {
+	private void exportTableWidget(PDDocument document, String templateString, long widgetId, String creationUser, JSONObject selections, JSONObject variables) {
 		try {
 			JSONObject template = new JSONObject(templateString);
 			JSONObject widget = getWidgetById(template, widgetId);
@@ -166,13 +169,23 @@ public class PdfExporter extends AbstractFormatExporter {
 
 				PDFont font = PDType0Font.load(table.document, pdfFontFile);
 
+				String extraValueLabel = null;
+				String extraValue = null;
+				if (variables != null && variables.length() > 0) {
+					extraValueLabel = variables.optString(KN_EXPORT_EXTRA_FIELD_LABEL);
+					extraValue = variables.optString(KN_EXPORT_EXTRA_FIELD_VALUE);
+				}
+
 				addDataToTable(table, settings, columnsOrdered, pdfHiddenColumns, columnDateFormats, columnStyles,
-						rows, font, style, widgetData, widgetContent, creationUser, selections);
+						rows, font, style, widgetData, widgetContent, creationUser, extraValueLabel, extraValue);
 
 				offset += fetchSize;
 
 				table.draw();
 
+				if (offset >= totalNumberOfRows) {
+					createSelectionsRows(table, font, selections);
+				}
 
 			} while (offset < totalNumberOfRows);
 
@@ -183,17 +196,17 @@ public class PdfExporter extends AbstractFormatExporter {
 	}
 
 	private void addDataToTable(BaseTable table, JSONObject settings, JSONArray columnsOrdered,
-			List<Integer> pdfHiddenColumns, String[] columnDateFormats, JSONObject[] columnStyles, JSONArray rows, PDFont font, JSONObject style, JSONObject widgetData, JSONObject widgetContent, String creationUser, JSONObject selections)
-            throws JSONException, IOException, URISyntaxException {
+			List<Integer> pdfHiddenColumns, String[] columnDateFormats, JSONObject[] columnStyles, JSONArray rows, PDFont font, JSONObject style, JSONObject widgetData, JSONObject widgetContent, String creationUser, String extraValueLabel, String extraValue)
+            throws JSONException {
 
-		addHeaderToTable(table, style, widgetData, widgetContent, columnsOrdered, pdfHiddenColumns, font, creationUser, selections);
+		addHeaderToTable(table, style, widgetData, widgetContent, columnsOrdered, pdfHiddenColumns, font, creationUser, extraValueLabel, extraValue);
 
 		// Check if summary row is enabled
 		boolean summaryRowEnabled = false;
 		String summaryRowLabel = null;
 		if (settings.has("summary")) {
 			JSONObject summary = settings.getJSONObject("summary");
-			if (Objects.nonNull(summary)) {
+			if (Objects.nonNull(summary) && summary.has("list")) {
 				summaryRowEnabled = Boolean.parseBoolean(summary.getString("enabled"));
 				JSONArray list = summary.getJSONArray("list");
 				int listLenght = list.length();
@@ -296,13 +309,11 @@ public class PdfExporter extends AbstractFormatExporter {
 	}
 
 	private void addHeaderToTable(BaseTable table, JSONObject style, JSONObject widgetData, JSONObject widgetContent,
-			JSONArray columnsOrdered, List<Integer> pdfHiddenColumns, PDFont font, String creationUser, JSONObject selections) throws JSONException {
+			JSONArray columnsOrdered, List<Integer> pdfHiddenColumns, PDFont font, String creationUser, String extraValueLabel, String extraValueField) throws JSONException {
         JSONArray groupsFromWidgetContent = getGroupsFromWidgetContent(widgetData);
 		Map<String, String> groupsAndColumnsMap = getGroupAndColumnsMap(widgetContent, groupsFromWidgetContent);
 
-        createDocumentInformationRow(table, font, creationUser);
-
-        createSelectionsRows(table, font, selections);
+        createDocumentInformationRow(table, font, creationUser, extraValueLabel, extraValueField);
 
         if (!groupsAndColumnsMap.isEmpty()) {
 			Row<PDPage> groupHeaderRow = table.createRow(15f);
@@ -348,10 +359,6 @@ public class PdfExporter extends AbstractFormatExporter {
 
 			JSONObject column = columnsOrdered.getJSONObject(i);
 			String columnName = column.getString("header");
-//			if (arrayHeader.get(columnName) != null) {
-//				columnName = arrayHeader.get(columnName);
-//			}
-			
 			JSONArray columnSelectedOfDataset = widgetContent.getJSONArray("columnSelectedOfDataset");
 			for (int j = 0; j < columnSelectedOfDataset.length(); j++) {
 				JSONObject columnSelected = columnSelectedOfDataset.getJSONObject(j);
@@ -371,70 +378,436 @@ public class PdfExporter extends AbstractFormatExporter {
 
     private static void createSelectionsRows(BaseTable table, PDFont font, JSONObject selections) {
         try {
-            if (selections != null && selections.length() > 0) {
-                selections.keys().forEachRemaining(key -> {
+            if (selections == null || selections.length() == 0) {
+                return;
+            }
+
+            float fontSize = 10f;
+            float leading = 12f;
+            float margin = 20f;
+            float baseBottomMargin = 20f;
+
+            PDPage page = table.getCurrentPage();
+            float pageWidth = page.getMediaBox().getWidth();
+            float pageHeight = page.getMediaBox().getHeight();
+            float availableTextWidth = pageWidth - (2 * margin);
+
+            // Calculate where the table actually ends
+            // Table starts at y=550 (from createBaseTable)
+            float tableStartY = 550f;
+            float tableHeight = 0f;
+
+            // Sum up all row heights to get total table height
+            try {
+                List<Row<PDPage>> rows = table.getRows();
+                for (Row<PDPage> row : rows) {
+                    tableHeight += row.getHeight();
+                }
+            } catch (Exception e) {
+                // If we can't get rows, use an estimate
+                LOGGER.warn("Could not calculate exact table bottom");
+                tableHeight = 0;
+            }
+
+            // Table ends at: startY - totalHeight
+            float tableEndY = tableStartY - tableHeight;
+
+            // Precompute wrapped lines so we can paginate correctly
+            final class SelectionLine {
+                final String key;
+                final float keyWidth;
+                final java.util.List<String> wrappedValueLines;
+
+                SelectionLine(String key, float keyWidth, java.util.List<String> wrappedValueLines) {
+                    this.key = key;
+                    this.keyWidth = keyWidth;
+                    this.wrappedValueLines = wrappedValueLines;
+                }
+
+                int getLineCount() {
+                    return wrappedValueLines == null ? 0 : wrappedValueLines.size();
+                }
+            }
+
+            java.util.List<SelectionLine> lines = new java.util.ArrayList<>();
+
+            Iterator<String> datasetKeysForCount = selections.keys();
+            while (datasetKeysForCount.hasNext()) {
+                String datasetKey = datasetKeysForCount.next();
+                JSONObject selectionContent = selections.getJSONObject(datasetKey);
+                if (selectionContent == null || selectionContent.length() == 0) {
+                    continue;
+                }
+
+                Iterator<String> columnKeys = selectionContent.keys();
+                while (columnKeys.hasNext()) {
+                    String columnKey = columnKeys.next();
+                    String displayKey = extractParameterName(columnKey);
+
+                    StringBuilder valuesBuilder = new StringBuilder();
                     try {
-                        JSONObject selectionContent = selections.getJSONObject(key);
-                        selectionContent.keys().forEachRemaining(subKey -> {
-                          Row<PDPage> selectionRow = table.createRow(12f);
-                          Cell<PDPage> selectionDatasetNameCell = selectionRow.createCell(50, "Selections Dataset: " + key,
-                                HorizontalAlignment.get("right"), VerticalAlignment.get("middle"));
-                          selectionDatasetNameCell.setFont(font);
-                          selectionDatasetNameCell.setFillColor(Color.LIGHT_GRAY);
-                          selectionDatasetNameCell.setTextColor(Color.BLACK);
-                          selectionDatasetNameCell.setFontSize(10);
-                          StringBuilder stringBuilder = new StringBuilder();
-                            try {
-                                for (int i = 0; i < selectionContent.getJSONArray(subKey).length(); i++) {
-                                        if (i > 0) {
-                                            stringBuilder.append(", ");
-                                        }
-                                        try {
-                                            String selectionValue = selectionContent.getJSONArray(subKey).toString().replace("('", "").replace("')", "");
-                                            stringBuilder.append(selectionValue);
-                                        } catch (JSONException e) {
-                                            throw new RuntimeException(e);
-                                        }
-                                }
-                            } catch (JSONException e) {
-                                try {
-                                    String selectionValue = selectionContent.getJSONObject(subKey).getJSONArray("filterVals").toString().replace("('", "").replace("')", "");
-                                    stringBuilder.append(selectionValue);
-                                } catch (JSONException ex) {
-                                    throw new RuntimeException(ex);
+                        JSONArray valueArray = selectionContent.getJSONArray(columnKey);
+                        appendValues(valuesBuilder, valueArray);
+                    } catch (JSONException e) {
+                        try {
+                            JSONArray filterVals = selectionContent.getJSONObject(columnKey).getJSONArray("filterVals");
+                            appendValues(valuesBuilder, filterVals);
+                        } catch (JSONException ex) {
+                            LOGGER.error("Cannot extract selection value", ex);
+                        }
+                    }
+
+                    String valuesText = valuesBuilder.toString();
+                    float keyWidth = font.getStringWidth(displayKey) / 1000f * fontSize;
+                    float prefixWidth = keyWidth + (font.getStringWidth(": ") / 1000f * fontSize);
+                    float valueStartX = margin + prefixWidth;
+                    float valueAvailableWidth = Math.max(10f, (margin + availableTextWidth) - valueStartX);
+
+                    java.util.List<String> wrappedValues = wrapText(font, fontSize, valuesText, valueAvailableWidth);
+                    if (wrappedValues.isEmpty()) {
+                        wrappedValues = java.util.Collections.singletonList("");
+                    }
+
+                    lines.add(new SelectionLine(displayKey, keyWidth, wrappedValues));
+                }
+            }
+
+            if (lines.isEmpty()) {
+                return;
+            }
+
+            // Total required height in lines after wrapping
+            int totalLines = 0;
+            for (SelectionLine sl : lines) {
+                totalLines += Math.max(1, sl.getLineCount());
+            }
+            float requiredHeight = totalLines * leading;
+
+            // Check if there's space below the table
+            // Available space = tableEndY - baseBottomMargin
+            float availableSpaceBelowTable = tableEndY - baseBottomMargin;
+            boolean needsNewPage = availableSpaceBelowTable < requiredHeight;
+
+            PDPage targetPage;
+            float currentY;
+
+            if (needsNewPage) {
+                targetPage = new PDPage(page.getMediaBox());
+                table.document.addPage(targetPage);
+                currentY = pageHeight - margin - leading;
+            } else {
+                targetPage = page;
+                currentY = tableEndY - leading;
+            }
+
+            try (org.apache.pdfbox.pdmodel.PDPageContentStream contentStream =
+                         new org.apache.pdfbox.pdmodel.PDPageContentStream(table.document, targetPage, org.apache.pdfbox.pdmodel.PDPageContentStream.AppendMode.APPEND, true)) {
+
+                contentStream.setNonStrokingColor(Color.BLACK);
+                contentStream.setFont(font, fontSize);
+
+                for (SelectionLine sl : lines) {
+
+                    // Render the selection (wrapped)
+                    float keyX = margin;
+                    float keyWidth = sl.keyWidth;
+                    float afterKeyX = keyX + keyWidth;
+                    float colonWidth = font.getStringWidth(": ") / 1000f * fontSize;
+                    float valuesX = afterKeyX + colonWidth;
+
+                    java.util.List<String> wrapped = sl.wrappedValueLines;
+                    int lineCount = Math.max(1, wrapped.size());
+
+                    for (int i = 0; i < lineCount; i++) {
+                        // Page break between wrapped lines if needed
+                        if (currentY <= baseBottomMargin + leading) {
+                            // new page
+                            targetPage = new PDPage(page.getMediaBox());
+                            table.document.addPage(targetPage);
+                            currentY = pageHeight - margin - leading;
+                            // finish current stream and open a new one for the new page
+                            // NOTE: we can't close and reopen the try-with-resources stream, so we create a short-lived stream
+                            // for the new page content and continue.
+                            // Close current stream implicitly by returning and reopening isn't possible here,
+                            // so we draw on the new page with a nested stream.
+                            try (org.apache.pdfbox.pdmodel.PDPageContentStream csNew =
+                                         new org.apache.pdfbox.pdmodel.PDPageContentStream(table.document, targetPage, org.apache.pdfbox.pdmodel.PDPageContentStream.AppendMode.APPEND, true)) {
+                                csNew.setNonStrokingColor(Color.BLACK);
+                                csNew.setFont(font, fontSize);
+                                // draw the remaining wrapped lines for this selection in the new stream
+                                for (int j = i; j < lineCount; j++) {
+                                    if (j == 0) {
+                                        // key
+                                        csNew.beginText();
+                                        csNew.newLineAtOffset(keyX, currentY);
+                                        csNew.showText(sl.key);
+                                        csNew.endText();
+
+                                        float underlineY = currentY - 2.0f;
+                                        csNew.setLineWidth(0.5f);
+                                        csNew.moveTo(keyX, underlineY);
+                                        csNew.lineTo(keyX + keyWidth, underlineY);
+                                        csNew.stroke();
+
+                                        // colon
+                                        csNew.beginText();
+                                        csNew.newLineAtOffset(afterKeyX, currentY);
+                                        csNew.showText(": ");
+                                        csNew.endText();
+
+                                        // values first line
+                                        csNew.beginText();
+                                        csNew.newLineAtOffset(valuesX, currentY);
+                                        csNew.showText(wrapped.get(j));
+                                        csNew.endText();
+                                    } else {
+                                        // continuation line aligned under values
+                                        csNew.beginText();
+                                        csNew.newLineAtOffset(valuesX, currentY);
+                                        csNew.showText(wrapped.get(j));
+                                        csNew.endText();
+                                    }
+                                    currentY -= leading;
+                                    if (currentY <= baseBottomMargin + leading && j + 1 < lineCount) {
+                                        // start yet another page
+                                        targetPage = new PDPage(page.getMediaBox());
+                                        table.document.addPage(targetPage);
+                                        currentY = pageHeight - margin - leading;
+                                        // reopen stream for next page
+                                        // easiest: recurse by restarting nested stream loop
+                                        // break so outer while re-enters with a new nested stream
+                                        i = j + 1;
+                                        break;
+                                    }
                                 }
                             }
-                            Cell<PDPage> subSelectionValueCell = selectionRow.createCell(50, "COLUMN ".concat(subKey).concat(": ").concat(stringBuilder.toString()), HorizontalAlignment.get("left"), VerticalAlignment.get("middle"));
-                            subSelectionValueCell.setFont(font);
-                            subSelectionValueCell.setFillColor(Color.LIGHT_GRAY);
-                            subSelectionValueCell.setTextColor(Color.BLACK);
-                            subSelectionValueCell.setFontSize(10);
-                       });
-                    } catch (JSONException e) {
-                        throw new RuntimeException(e);
+                            // we've rendered the rest with nested streams; skip the outer loop
+                            currentY -= 0;
+                            i = lineCount; // end outer for
+                            break;
+                        }
+
+                        if (i == 0) {
+                            // key
+                            contentStream.beginText();
+                            contentStream.newLineAtOffset(keyX, currentY);
+                            contentStream.showText(sl.key);
+                            contentStream.endText();
+
+                            // underline under the key
+                            float underlineY = currentY - 2.0f;
+                            contentStream.setLineWidth(0.5f);
+                            contentStream.moveTo(keyX, underlineY);
+                            contentStream.lineTo(keyX + keyWidth, underlineY);
+                            contentStream.stroke();
+
+                            // colon
+                            contentStream.beginText();
+                            contentStream.newLineAtOffset(afterKeyX, currentY);
+                            contentStream.showText(": ");
+                            contentStream.endText();
+
+                            // values first line
+                            contentStream.beginText();
+                            contentStream.newLineAtOffset(valuesX, currentY);
+                            contentStream.showText(wrapped.get(i));
+                            contentStream.endText();
+                        } else {
+                            // continuation line aligned under values
+                            contentStream.beginText();
+                            contentStream.newLineAtOffset(valuesX, currentY);
+                            contentStream.showText(wrapped.get(i));
+                            contentStream.endText();
+                        }
+
+                        currentY -= leading;
                     }
-                });
+                }
             }
+
         } catch (Exception e) {
-            throw new SpagoBIRuntimeException("Couldn't add selection information to the table", e);
+            throw new SpagoBIRuntimeException("Couldn't add selection information to the page", e);
         }
     }
 
-    private static void createDocumentInformationRow(BaseTable table, PDFont font, String creationUser) {
-        Row<PDPage> documentInformationRow = table.createRow(12f);
-        String executionDate = LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss"));
-        Cell<PDPage> executionDateCell = documentInformationRow.createCell(50, "Execution Date: " + executionDate,
-                HorizontalAlignment.get("center"), VerticalAlignment.get("middle"));
-        executionDateCell.setFont(font);
-        executionDateCell.setFillColor(Color.LIGHT_GRAY);
-        executionDateCell.setTextColor(Color.BLACK);
-        executionDateCell.setFontSize(10);
-        Cell<PDPage> creationUserCell = documentInformationRow.createCell(50, "Creation User: " + creationUser,
-                HorizontalAlignment.get("center"), VerticalAlignment.get("middle"));
-        creationUserCell.setFont(font);
-        creationUserCell.setFillColor(Color.LIGHT_GRAY);
-        creationUserCell.setTextColor(Color.BLACK);
-        creationUserCell.setFontSize(10);
+    /**
+     * Wrap text so that each line fits within maxWidth using the provided font metrics.
+     * Splits by whitespace; if a single token is wider than maxWidth it will be hard-split.
+     */
+    private static java.util.List<String> wrapText(PDFont font, float fontSize, String text, float maxWidth) throws java.io.IOException {
+        java.util.List<String> result = new java.util.ArrayList<>();
+        if (text == null || text.isEmpty()) {
+            return result;
+        }
+
+        String[] words = text.split("\\s+");
+        StringBuilder line = new StringBuilder();
+
+        for (String word : words) {
+            if (word.isEmpty()) {
+                continue;
+            }
+
+            if (line.length() == 0) {
+                if (stringWidth(font, fontSize, word) <= maxWidth) {
+                    line.append(word);
+                } else {
+                    // hard split long token
+                    for (String part : hardSplitToken(font, fontSize, word, maxWidth)) {
+                        if (!part.isEmpty()) {
+                            result.add(part);
+                        }
+                    }
+                }
+            } else {
+                String candidate = line + " " + word;
+                if (stringWidth(font, fontSize, candidate) <= maxWidth) {
+                    line.append(' ').append(word);
+                } else {
+                    result.add(line.toString());
+                    line.setLength(0);
+                    if (stringWidth(font, fontSize, word) <= maxWidth) {
+                        line.append(word);
+                    } else {
+                        for (String part : hardSplitToken(font, fontSize, word, maxWidth)) {
+                            if (!part.isEmpty()) {
+                                result.add(part);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        if (line.length() > 0) {
+            result.add(line.toString());
+        }
+
+        return result;
+    }
+
+    private static float stringWidth(PDFont font, float fontSize, String text) throws java.io.IOException {
+        return (font.getStringWidth(text) / 1000f) * fontSize;
+    }
+
+    private static java.util.List<String> hardSplitToken(PDFont font, float fontSize, String token, float maxWidth) throws java.io.IOException {
+        java.util.List<String> parts = new java.util.ArrayList<>();
+        StringBuilder current = new StringBuilder();
+        for (int i = 0; i < token.length(); i++) {
+            char c = token.charAt(i);
+            current.append(c);
+            if (stringWidth(font, fontSize, current.toString()) > maxWidth) {
+                // remove last char and flush
+                current.setLength(current.length() - 1);
+                if (current.length() > 0) {
+                    parts.add(current.toString());
+                }
+                current.setLength(0);
+                current.append(c);
+            }
+        }
+        if (current.length() > 0) {
+            parts.add(current.toString());
+        }
+        return parts;
+    }
+
+	private static void appendValues(StringBuilder valuesBuilder, JSONArray valueArray) throws JSONException {
+		for (int i = 0; i < valueArray.length(); i++) {
+			if (i > 0) {
+				valuesBuilder.append(", ");
+			}
+			String value = valueArray.get(i).toString();
+			value = value.replace("('", "").replace("')", "");
+			valuesBuilder.append(value);
+		}
+	}
+
+ 	/**
+     * Extract parameter name from format like "$P{country}" -> "country"
+     * or return the original key if not in that format
+     */
+    private static String extractParameterName(String parameterKey) {
+        if (parameterKey != null && parameterKey.startsWith("$P{")) {
+            int startIndex = parameterKey.indexOf('{') + 1;
+            int endIndex = parameterKey.indexOf('}');
+            if (startIndex > 0 && endIndex > startIndex) {
+                return parameterKey.substring(startIndex, endIndex);
+            }
+        }
+        return parameterKey;
+    }
+
+    private void createDocumentInformationRow(BaseTable table, PDFont font, String creationUser, String extraValueLabel, String extraValue) {
+        try {
+            String executionDateLabel;
+            String creationUserLabel;
+
+            if (getLocale().toString().equals("sk_SK")) {
+                executionDateLabel = "Dátum vytvorenia: ";
+                creationUserLabel = "Vytvoril: ";
+            } else if (getLocale().toString().equals("it_IT")) {
+                executionDateLabel = "Data di esecuzione: ";
+                creationUserLabel = "Utente di creazione: ";
+            } else {
+                executionDateLabel = "Execution Date: ";
+                creationUserLabel = "Creation User: ";
+            }
+
+            PDPage page = table.getCurrentPage();
+
+            String executionDate = LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss"));
+
+            String line1 = executionDateLabel + executionDate;
+            String line2 = creationUserLabel + creationUser;
+			String line3 = null;
+			if (extraValueLabel != null && !extraValueLabel.isEmpty() && extraValue != null && !extraValue.isEmpty()) {
+				line3 = extraValueLabel + ": " + extraValue;
+			}
+
+            float fontSize = 10f;
+            float leading = 12f;
+            float margin = 20f;
+
+            float pageWidth = page.getMediaBox().getWidth();
+            float pageHeight = page.getMediaBox().getHeight();
+
+            float w1 = font.getStringWidth(line1) / 1000f * fontSize;
+            float w2 = font.getStringWidth(line2) / 1000f * fontSize;
+			float w3;
+			if (line3 != null) {
+				w3 = font.getStringWidth(line3) / 1000f * fontSize;
+				w2 = Math.max(w2,  w3);
+			}
+            float maxW = Math.max(w1, w2);
+
+            float x = pageWidth - margin - maxW;
+
+            float yStartNewPage = pageHeight - (2 * margin);
+
+            float additionalGap = 12f;
+            float y = yStartNewPage + additionalGap + leading;
+
+            try (org.apache.pdfbox.pdmodel.PDPageContentStream contentStream =
+                       new org.apache.pdfbox.pdmodel.PDPageContentStream(table.document, page, org.apache.pdfbox.pdmodel.PDPageContentStream.AppendMode.APPEND, true)) {
+
+                contentStream.beginText();
+                contentStream.setFont(font, fontSize);
+                contentStream.setNonStrokingColor(Color.BLACK);
+                contentStream.newLineAtOffset(x, y);
+                contentStream.showText(line1);
+                contentStream.newLineAtOffset(0, -leading);
+                contentStream.showText(line2);
+				if (line3 != null) {
+					contentStream.newLineAtOffset(0, -leading);
+					contentStream.showText(line3);
+				}
+                contentStream.endText();
+
+            }
+        } catch (Exception e) {
+            throw new SpagoBIRuntimeException("Couldn't add document information to the page", e);
+        }
     }
 
     private int getAdjacentEqualNamesAmount(Map<String, String> groupsAndColumnsMap, JSONArray columnsOrdered, int matchStartIndex, String groupNameToMatch) {

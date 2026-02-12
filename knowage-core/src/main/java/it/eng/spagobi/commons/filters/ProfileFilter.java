@@ -46,11 +46,10 @@ import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.bo.SessionUserProfileBuilder;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.bo.UserProfileUtility;
-import it.eng.spagobi.commons.services.LoginActionByToken;
-import it.eng.spagobi.commons.services.LoginActionWeb;
 import it.eng.spagobi.commons.services.LoginModule;
 import it.eng.spagobi.commons.utilities.ChannelUtilities;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
+import it.eng.spagobi.services.common.GenericJWTSsoService;
 import it.eng.spagobi.services.common.SsoServiceFactory;
 import it.eng.spagobi.services.common.SsoServiceInterface;
 import it.eng.spagobi.services.security.bo.SpagoBIUserProfile;
@@ -122,11 +121,17 @@ public class ProfileFilter implements Filter {
 					if (ChannelUtilities.isWebRunning() && !GeneralUtilities.isSSOEnabled()) {
 						// case of installation as web application without SSO
 						try {
-							userId = getUserIdInWebModeWithoutSSO(httpRequest);
+							String jwtLabel = System.getProperty("JWT_LABEL", System.getenv("JWT_LABEL"));
+							if (jwtLabel != null && request.getParameter(jwtLabel) != null) {
+								GenericJWTSsoService genericJWTSsoService = new GenericJWTSsoService();
+								userId = genericJWTSsoService.readUserIdentifier(httpRequest);
+							} else {
+								userId = getUserIdInWebModeWithoutSSO(httpRequest);
+							}
 						} catch (Exception e) {
 							LOGGER.error("Error authenticating user", e);
-							httpRequest.getRequestDispatcher("/WEB-INF/jsp/commons/silentLoginFailed.jsp")
-									.forward(request, response);
+							httpResponse.sendRedirect(httpRequest.getContextPath() + "/errorLogin.html");
+							// httpResponse.sendError(HttpServletResponse.SC_UNAUTHORIZED);
 							return;
 						}
 					} else {
@@ -188,8 +193,6 @@ public class ProfileFilter implements Filter {
 				} else {
 					// @formatter:off
 					if (!requestIsForHomePage(httpRequest) &&
-							!requestIsForLoginByToken(httpRequest) &&
-							!requestIsForLoginByJavaScriptSDK(httpRequest) &&
 							!requestIsForSessionExpired(httpRequest))
 					// @formatter:on
 					{
@@ -208,7 +211,8 @@ public class ProfileFilter implements Filter {
 			}
 		} catch (Exception e) {
 			LOGGER.error("Error while service execution", e);
-			((HttpServletResponse) response).sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+			((HttpServletResponse) response).sendRedirect(((HttpServletRequest) request).getContextPath() + "/errorLogin.html");
+			// ((HttpServletResponse) response).sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 		} finally {
 			// since TenantManager uses a ThreadLocal, we must clean after
 			// request processed in each case
@@ -221,18 +225,6 @@ public class ProfileFilter implements Filter {
 		// returns true in case request has PAGE=LoginPage parameter, false otherwise
 		return request.getParameter(Constants.PAGE) != null
 				&& request.getParameter(Constants.PAGE).equalsIgnoreCase(LoginModule.PAGE_NAME);
-	}
-
-	private boolean requestIsForLoginByToken(HttpServletRequest request) {
-		// returns true in case request has ACTION_NAME=LOGIN_ACTION_BY_TOKEN parameter, false otherwise
-		return request.getParameter(Constants.ACTION_NAME) != null
-				&& request.getParameter(Constants.ACTION_NAME).equalsIgnoreCase(LoginActionByToken.SERVICE_NAME);
-	}
-
-	private boolean requestIsForLoginByJavaScriptSDK(HttpServletRequest request) {
-		// returns true in case request has ACTION_NAME=LOGIN_ACTION_WEB parameter, false otherwise
-		return request.getParameter(Constants.ACTION_NAME) != null
-				&& request.getParameter(Constants.ACTION_NAME).equalsIgnoreCase(LoginActionWeb.SERVICE_NAME);
 	}
 
 	private boolean requestIsForSessionExpired(HttpServletRequest request) {

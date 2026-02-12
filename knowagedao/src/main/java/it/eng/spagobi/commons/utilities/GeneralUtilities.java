@@ -46,12 +46,9 @@ import org.owasp.esapi.errors.EncodingException;
 
 import it.eng.knowage.commons.security.KnowageSystemConfiguration;
 import it.eng.knowage.security.OwaspDefaultEncoderFactory;
-import it.eng.spago.base.RequestContainer;
-import it.eng.spago.base.SessionContainer;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.bo.Config;
-import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.IConfigDAO;
 import it.eng.spagobi.commons.utilities.messages.IMessageBuilder;
@@ -136,15 +133,18 @@ public class GeneralUtilities extends SpagoBIUtilities {
 			key = splitted[0].trim();
 			if (splitted.length == 1) {
 				String replacement = msgBuilder.getMessage(key, bundle);
-				if (!replacement.equalsIgnoreCase(key))
+				if (!replacement.equalsIgnoreCase(key)) {
 					message = message.replaceAll("\\$\\{" + toBeReplaced + "\\}", replacement);
+				}
 			}
 			if (splitted.length == 2) {
-				if (splitted[1] != null && !splitted[1].trim().equals(""))
+				if (splitted[1] != null && !splitted[1].trim().equals("")) {
 					bundle = splitted[1].trim();
+				}
 				String replacement = msgBuilder.getMessage(key, bundle);
-				if (!replacement.equalsIgnoreCase(key))
+				if (!replacement.equalsIgnoreCase(key)) {
 					message = message.replaceAll("\\$\\{" + toBeReplaced + "\\}", replacement);
+				}
 			}
 		}
 		startIndex = message.indexOf("${", endIndex);
@@ -227,26 +227,6 @@ public class GeneralUtilities extends SpagoBIUtilities {
 		}
 		LOGGER.debug("Returning: {}", adapUrlStr);
 		return adapUrlStr;
-	}
-
-	/**
-	 * Gets the default locale from SpagoBI configuration file, the behaviors is the same of getDefaultLocale() function, with difference that if not finds returns
-	 * null
-	 *
-	 * TODO : merge its behaviour with GetDefaultLocale (not done know cause today is release date). Gets the default locale.
-	 *
-	 * @return the default locale
-	 */
-	public static Locale getStartingDefaultLocale() {
-		LOGGER.trace("Getting starting default locale");
-		Locale locale = null;
-		SingletonConfig config = SingletonConfig.getInstance();
-		String languageConfig = config.getConfigValue("SPAGOBI.LANGUAGE_SUPPORTED.LANGUAGE.default");
-		if (languageConfig != null) {
-			locale = Locale.forLanguageTag(languageConfig);
-		}
-		LOGGER.trace("Locale is: {}", locale);
-		return locale;
 	}
 
 	/**
@@ -344,69 +324,6 @@ public class GeneralUtilities extends SpagoBIUtilities {
 		return ret;
 	}
 
-	public static Locale getCurrentLocale(RequestContainer requestContainer) {
-		LOGGER.trace("Getting current locale from request");
-		Locale ret = null;
-		if (requestContainer != null) {
-			SessionContainer permSession = requestContainer.getSessionContainer().getPermanentContainer();
-			if (permSession != null) {
-				String languageTag = (String) permSession.getAttribute(SpagoBIConstants.AF_LANGUAGE_TAG);
-				if (StringUtils.isNotBlank(languageTag)) {
-					ret = Locale.forLanguageTag(languageTag);
-				} else {
-					String language = (String) permSession.getAttribute(SpagoBIConstants.AF_LANGUAGE);
-					String country = (String) permSession.getAttribute(SpagoBIConstants.AF_COUNTRY);
-					String script = (String) permSession.getAttribute(SpagoBIConstants.AF_SCRIPT);
-
-					ret = new Builder().setLanguage(language).setRegion(country).setScript(script).build();
-				}
-			}
-		}
-		if (ret == null) {
-			ret = getDefaultLocale();
-		}
-		LOGGER.trace("Current locale from request: {}", ret);
-		return ret;
-	}
-
-	public static String getLocaleDateFormat(SessionContainer permSess) {
-		LOGGER.debug("Getting locale date format from session");
-		String languageTag = (String) permSess.getAttribute(SpagoBIConstants.AF_LANGUAGE_TAG);
-		// if a particular language is specified take the corrisponding date-format
-		String ret = null;
-
-		if (StringUtils.isBlank(languageTag)) {
-
-			String language = (String) permSess.getAttribute(SpagoBIConstants.AF_LANGUAGE);
-			String country = (String) permSess.getAttribute(SpagoBIConstants.AF_COUNTRY);
-			String script = (String) permSess.getAttribute(SpagoBIConstants.AF_SCRIPT);
-
-			Locale locale = new Builder().setLanguage(language).setRegion(country).setScript(script).build();
-			languageTag = locale.toLanguageTag();
-		}
-		if (languageTag != null) {
-			ret = SingletonConfig.getInstance().getConfigValue("SPAGOBI.DATE-FORMAT-" + languageTag + ".format");
-		}
-		if (ret == null) {
-			ret = SingletonConfig.getInstance().getConfigValue("SPAGOBI.DATE-FORMAT.format");
-		}
-		LOGGER.debug("Locale date format from session: {}", ret);
-		return ret;
-
-	}
-
-	public static String getScriptFromLocale(SessionContainer permSess) {
-		String toReturn = "";
-		String script = (String) permSess.getAttribute(SpagoBIConstants.AF_SCRIPT);
-
-		if (StringUtils.isNotBlank(script)) {
-			toReturn = script + "-";
-		}
-
-		return toReturn;
-
-	}
-
 	public static String getLocaleDateFormat(Locale locale) {
 		LOGGER.debug("Getting date format from locale");
 		String ret = null;
@@ -423,34 +340,8 @@ public class GeneralUtilities extends SpagoBIUtilities {
 
 	}
 
-	public static String getLocaleDateFormatForExtJs(SessionContainer permSess) {
-		LOGGER.debug("Getting date format from locale for ExtJS");
-		String languageTag = (String) permSess.getAttribute(SpagoBIConstants.AF_LANGUAGE_TAG);
-		String ret = null;
-
-		if (StringUtils.isBlank(languageTag)) {
-
-			String language = (String) permSess.getAttribute(SpagoBIConstants.AF_LANGUAGE);
-			String country = (String) permSess.getAttribute(SpagoBIConstants.AF_COUNTRY);
-			String script = (String) permSess.getAttribute(SpagoBIConstants.AF_SCRIPT);
-
-			Locale locale = new Builder().setLanguage(language).setRegion(country).setScript(script).build();
-			languageTag = locale.toLanguageTag();
-		}
-		// if a particular language is specified take the corrisponding date-format
-		if (languageTag != null) {
-			ret = SingletonConfig.getInstance().getConfigValue("SPAGOBI.DATE-FORMAT-" + languageTag + ".format");
-		}
-		if (ret == null) {
-			ret = SingletonConfig.getInstance().getConfigValue("SPAGOBI.DATE-FORMAT.extJsFormat");
-		}
-		if (ret == null) {
-			LOGGER.warn("Locale date format for ExtJs not found, using d/m/Y as default");
-			ret = "d/m/Y";
-		}
-		LOGGER.debug("Date format from locale for ExtJS: {}", ret);
-		return ret;
-
+	public static String getLocaleDateFormatForExtJs() {
+		return SingletonConfig.getInstance().getConfigValue("SPAGOBI.DATE-FORMAT.extJsFormat");
 	}
 
 	public static String getServerDateFormat() {
@@ -815,7 +706,9 @@ public class GeneralUtilities extends SpagoBIUtilities {
 			LOGGER.debug("Url is relative");
 			String domain = getServiceHostUrl();
 			if (!isProduction)
+			 {
 				domain = domain.replaceAll("8080", "3000"); // for testing purposes
+			}
 			LOGGER.debug("SpagoBI domain is " + domain);
 			url = domain + url;
 			LOGGER.debug("Absolute url is " + url);

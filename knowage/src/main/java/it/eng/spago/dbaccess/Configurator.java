@@ -17,16 +17,13 @@
  */
 package it.eng.spago.dbaccess;
 
-import it.eng.spago.base.Constants;
-import it.eng.spago.base.SourceBean;
-import it.eng.spago.configuration.ConfigSingleton;
-import it.eng.spago.tracing.TracerSingleton;
-import it.eng.spagobi.commons.SingletonConfig;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import it.eng.spago.configuration.ConfigSingleton;
+import it.eng.spagobi.commons.SingletonConfig;
  /**
 * DATE            CONTRIBUTOR/DEVELOPER    NOTE
 * 13-12-2004		  Butano           Eliminato il parser creato appositamente per il DB
@@ -48,53 +45,6 @@ public class Configurator {
     	ConfigSingleton config = ConfigSingleton.getInstance();
     	_parameterConnectionPoolDescriptors = new HashMap();
     	_parameterRegisteredConnectionPoolNames = new ArrayList();
-    	SourceBean dataAccess = (SourceBean)config.getAttribute(DATA_ACCESS);
-
-    	List connectionPools = dataAccess.getAttributeAsList("CONNECTION-POOL");
-    	ConnectionPoolDescriptor connectionPoolDescriptor = null;
-    	SourceBean connectionPool = null;
-    	List poolParameters = null;
-    	String poolName = null;
-    	if (connectionPools != null) {
-	    	for (int i = 0; i < connectionPools.size(); i++) {
-	    		connectionPoolDescriptor = new ConnectionPoolDescriptor();
-	    		connectionPool = (SourceBean)connectionPools.get(i);
-	    		poolName = (String)connectionPool.getAttribute("connectionPoolName");
-				connectionPoolDescriptor.setConnectionPoolName(poolName);
-				connectionPoolDescriptor.setConnectionPoolFactory((String)connectionPool.getAttribute("connectionPoolFactoryClass"));
-				poolParameters = connectionPool.getAttributeAsList("CONNECTION-POOL-PARAMETER");
-				String parameterName = null;
-				String parameterValue = null;
-				if (poolParameters != null) {
-					for (int j = 0; j < poolParameters.size(); j++) {
-						parameterName = (String)(((SourceBean)poolParameters.get(j)).getAttribute("parameterName"));
-						parameterValue = (String)(((SourceBean)poolParameters.get(j)).getAttribute("parameterValue"));
-						ConnectionPoolParameter parameter = new ConnectionPoolParameter(parameterName, parameterValue);
-						connectionPoolDescriptor.addConnectionPoolParameter(parameter);
-					}
-				}
-				_parameterConnectionPoolDescriptors.put(poolName, connectionPoolDescriptor);
-	    	}
-    	}
-    	else
-    		TracerSingleton.log(
-    	            Constants.NOME_MODULO,
-    	            TracerSingleton.INFORMATION,
-    	            "Configurator::Configurator: nessuna definizione di CONNECTION-POOL");
-
-		List registerPools= dataAccess.getAttributeAsList("CONNECTION-MANAGER.REGISTER-POOL");
-    	SourceBean poolRegister = null;
-    	if (registerPools != null) {
-	    	for (int i = 0; i < registerPools.size(); i++) {
-	    		poolRegister = (SourceBean)registerPools.get(i);
-	    		_parameterRegisteredConnectionPoolNames.add(poolRegister.getAttribute("registeredPoolName"));
-	    	}
-    	}
-    	else
-    		TracerSingleton.log(
-    	            Constants.NOME_MODULO,
-    	            TracerSingleton.INFORMATION,
-    	            "Configurator::Configurator: nessuna pool registrato nella busta CONNECTION-MANAGER");
 
     	// start modifications by Zerbetto on March 9th 2009
     	// date format and timestamp format is read from spagobi.xml instead of data_access.xml
@@ -113,8 +63,9 @@ public class Configurator {
     public static Configurator getInstance() {
         if (_instance == null) {
             synchronized(Configurator.class) {
-                if (_instance == null)
-                    _instance = new Configurator();
+                if (_instance == null) {
+					_instance = new Configurator();
+				}
             } // synchronized(Configurator.class)
         } // if (instance == null)
         return _instance;

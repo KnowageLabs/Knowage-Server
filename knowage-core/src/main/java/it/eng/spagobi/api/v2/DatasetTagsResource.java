@@ -67,7 +67,7 @@ public class DatasetTagsResource extends AbstractSpagoBIResource {
 			return Response.ok(datasetTags).build();
 		} catch (Exception e) {
 			logger.error("Error has occurred while loading Tags for Dataset [" + dsId + "], version number: [" + versNum + "]", e);
-			throw new SpagoBIRestServiceException("Cannot return Dataset Tags", buildLocaleFromSession(), e);
+			throw new SpagoBIRestServiceException("Cannot return Dataset Tags", getLocale(), e);
 		}
 	}
 
@@ -91,7 +91,7 @@ public class DatasetTagsResource extends AbstractSpagoBIResource {
 			toReturn = tagDao.associateTagsToDatasetVersion(datasetId, tagsToAdd);
 		} catch (Exception e) {
 			logger.error("Error has occurred while associating Tags for Dataset [" + dsId + "], version number: [" + versNum + "]", e);
-			throw new SpagoBIRestServiceException("Cannot associate Tags to Dataset", buildLocaleFromSession(), e);
+			throw new SpagoBIRestServiceException("Cannot associate Tags to Dataset", getLocale(), e);
 		}
 		logger.debug("OUT");
 		return Response.ok(toReturn).build();

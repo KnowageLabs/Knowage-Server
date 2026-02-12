@@ -20,7 +20,6 @@ package it.eng.spagobi.services.execute.service;
 
 import javax.jws.WebService;
 
-import it.eng.spagobi.services.common.ParametersWrapper;
 import it.eng.spagobi.services.execute.DocumentExecuteService;
 
 /**
@@ -33,12 +32,6 @@ import it.eng.spagobi.services.execute.DocumentExecuteService;
 		targetNamespace = "http://documentexecute.services.spagobi.eng.it/"
 	)
 public class DocumentExecuteServiceImpl implements DocumentExecuteService {
-
-	@Override
-	public byte[] executeChart(String token, String user, String document, ParametersWrapper parameters) {
-		ServiceChartImpl service = new ServiceChartImpl();
-		return service.executeChart(token, user, document, parameters.getMap());
-	}
 
 	@Override
 	public String getKpiValueXML(String token, String user, Integer kpiValueID) {

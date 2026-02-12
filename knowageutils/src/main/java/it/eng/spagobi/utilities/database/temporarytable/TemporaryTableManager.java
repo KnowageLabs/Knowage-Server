@@ -450,7 +450,7 @@ public class TemporaryTableManager {
 	}
 
 	public static void renameTable(String tableNameOld, String tableNameNew, IDataSource dataSource) throws Exception {
-		executeStatement("ALTER TABLE " + tableNameOld + " RENAME TO " + tableNameNew, dataSource);
+		executeStatement("ALTER TABLE " + tableNameOld + " RENAME " + tableNameNew, dataSource);
 	}
 
 	private static void executeStatement(String sql, IDataSource dataSource) throws Exception {

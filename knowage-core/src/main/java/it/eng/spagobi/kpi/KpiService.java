@@ -32,6 +32,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.script.ScriptEngine;
@@ -1316,8 +1317,9 @@ public class KpiService {
 			// Replacing parameters from "@name" to "$P{name}" notation as expected by IDataSet
 
 			for (String paramName : parameterMap.keySet()) {
-				// query = query.replaceAll("\\@\\b" + Pattern.quote(paramName) + "\\b", "\\$P{" + Pattern.quote(paramName) + "}");
-				query = query.replaceAll("@" + Pattern.quote(paramName), "$P{" + paramName + "}");
+				String regex = "@" + Pattern.quote(paramName); // regex features preserved; paramName is literal
+				String replacement = Matcher.quoteReplacement("$P{" + paramName + "}"); // escape $ and \
+				query = query.replaceAll(regex, replacement);
 			}
 		}
 

@@ -377,6 +377,7 @@ public class XExecuteBIDocumentJob extends AbstractSpagoBIJob implements Job {
 				Map<String, String> parametersMap = new HashMap<>();
 				BIObjectParametersIterator objectParametersIterator = new BIObjectParametersIterator(
 						document.getDrivers());
+				objectParametersIteratorLoop:
 				while (objectParametersIterator.hasNext()) {
 					List parameters = (List) objectParametersIterator.next();
 					document.setDrivers(parameters);
@@ -436,166 +437,160 @@ public class XExecuteBIDocumentJob extends AbstractSpagoBIJob implements Job {
 						}
 					}
 
-					// do some checks : exec the document only if all its parameter are filled
-					if (executionController.directExecution()) {
+					// get the save options
+					DispatchContext dispatchContext = null;
 
-						// get the save options
+					if (globalDocumentDispatcher != null) {
+						dispatchContext = globalDispatchContext;
+					} else {
+						String encodedDispatchContext = jobDataMap.getString("biobject_id_" + document.getId() + "__" + (documentIndex + 1));
+						dispatchContext = SchedulerUtilities.decodeDispatchContext(encodedDispatchContext);
+						dispatchContext.setUserProfile(userProfile);
+						dispatchContext.setGlobalUniqueMail(uniqueMailForAll);
+					}
+
+					// this settings are for unique mail case and must be inserted equals for all disptchers. Not read in other use cases
+					dispatchContext.setTempFolderName(tempFolderName);
+					dispatchContext.setTempFolderPath(tempFolderPath);
+					dispatchContext.setGlobalUniqueMail(uniqueMailForAll);
+					dispatchContext.setDocumentLabels(documentLabelsString);
+
+					String[] outputTypeTriggerList = {};
+					if (!dispatchContext.getOutputTypeTrigger().trim().equals("")) {
+						outputTypeTriggerList = dispatchContext.getOutputTypeTrigger().split(",");
+					}
+					for (String outputTypeTrigger : outputTypeTriggerList) {
+
 						DocumentDispatcher documentDispatcher = null;
-						DispatchContext dispatchContext = null;
-
 						if (globalDocumentDispatcher != null) {
 							documentDispatcher = globalDocumentDispatcher;
-							dispatchContext = globalDispatchContext;
 						} else {
-							String encodedDispatchContext = jobDataMap
-									.getString("biobject_id_" + document.getId() + "__" + (documentIndex + 1));
-							dispatchContext = SchedulerUtilities.decodeDispatchContext(encodedDispatchContext);
-							dispatchContext.setUserProfile(userProfile);
-							dispatchContext.setGlobalUniqueMail(uniqueMailForAll);
 							documentDispatcher = new DocumentDispatcher(dispatchContext);
 						}
 
-						// this settings are for unique mail case and must be inserted equals for all disptchers. Not read in other use cases
-						dispatchContext.setTempFolderName(tempFolderName);
-						dispatchContext.setTempFolderPath(tempFolderPath);
-						dispatchContext.setGlobalUniqueMail(uniqueMailForAll);
-						dispatchContext.setDocumentLabels(documentLabelsString);
+						// do some checks : exec the document only if all its parameter are filled
+						if (executionController.directExecution()) {
 
-						boolean isSnapshotDispatch = dispatchContext.isSnapshootDispatchChannelEnabled();
-						boolean isFileSystemDispatch = dispatchContext.isFileSystemDispatchChannelEnabled();
-						boolean isDistributionDispatch = dispatchContext.isDistributionListDispatchChannelEnabled();
-						boolean isJavaClassDispatch = dispatchContext.isJavaClassDispatchChannelEnabled();
-						boolean isMailDispatch = dispatchContext.isMailDispatchChannelEnabled();
-						boolean isFunctionalityTreeDispatch = dispatchContext
-								.isFunctionalityTreeDispatchChannelEnabled();
+							boolean isSnapshotDispatch = dispatchContext.isSnapshootDispatchChannelEnabled();
+							boolean isFileSystemDispatch = dispatchContext.isFileSystemDispatchChannelEnabled();
+							boolean isDistributionDispatch = dispatchContext.isDistributionListDispatchChannelEnabled();
+							boolean isJavaClassDispatch = dispatchContext.isJavaClassDispatchChannelEnabled();
+							boolean isMailDispatch = dispatchContext.isMailDispatchChannelEnabled();
+							boolean isFunctionalityTreeDispatch = dispatchContext.isFunctionalityTreeDispatchChannelEnabled();
 
-						logger.debug("Dispatch to a snapshot is equal to ["
-								+ dispatchContext.isSnapshootDispatchChannelEnabled() + "]");
-						logger.debug("Dispatch to a file is equal to ["
-								+ dispatchContext.isFileSystemDispatchChannelEnabled() + "]");
-						logger.debug("Dispatch to a distribution list is eual to ["
-								+ dispatchContext.isDistributionListDispatchChannelEnabled() + "]");
-						logger.debug("Dispatch to a java class is equal to ["
-								+ dispatchContext.isJavaClassDispatchChannelEnabled() + "]");
-						logger.debug("Dispatch by mail-list is equal to ["
-								+ dispatchContext.isMailDispatchChannelEnabled() + "]");
-						logger.debug("Dispatch by folder-list is equal to ["
-								+ dispatchContext.isFunctionalityTreeDispatchChannelEnabled() + "]");
+							logger.debug("Dispatch to a snapshot is equal to [" + dispatchContext.isSnapshootDispatchChannelEnabled() + "]");
+							logger.debug("Dispatch to a file is equal to [" + dispatchContext.isFileSystemDispatchChannelEnabled() + "]");
+							logger.debug("Dispatch to a distribution list is eual to [" + dispatchContext.isDistributionListDispatchChannelEnabled() + "]");
+							logger.debug("Dispatch to a java class is equal to [" + dispatchContext.isJavaClassDispatchChannelEnabled() + "]");
+							logger.debug("Dispatch by mail-list is equal to [" + dispatchContext.isMailDispatchChannelEnabled() + "]");
+							logger.debug("Dispatch by folder-list is equal to [" + dispatchContext.isFunctionalityTreeDispatchChannelEnabled() + "]");
 
-						// Check case in which dispatcher is set as mail but no recipients are left (document must be not executed,
-						// different case from where no dispatcher is set that the documnt is executed anyway).
-						boolean onlyMailDispatchCase = false;
-						if (isMailDispatch && !isSnapshotDispatch && !isFileSystemDispatch && !isDistributionDispatch
-								&& !isJavaClassDispatch && !isFunctionalityTreeDispatch) {
-							logger.debug(
-									"Only mail dispatcher is set, if recipients are set with dataset check it returns recipients");
-							onlyMailDispatchCase = true;
-						}
+							// Check case in which dispatcher is set as mail but no recipients are left (document must be not executed,
+							// different case from where no dispatcher is set that the documnt is executed anyway).
+							boolean onlyMailDispatchCase = false;
+							if (isMailDispatch && !isSnapshotDispatch && !isFileSystemDispatch && !isDistributionDispatch && !isJavaClassDispatch
+									&& !isFunctionalityTreeDispatch) {
+								logger.debug("Only mail dispatcher is set, if recipients are set with dataset check it returns recipients");
+								onlyMailDispatchCase = true;
+							}
 
-						// if unique mail case has no recipients this suspend
-						if (suspendExecutionInUniqueMailCase && uniqueMailForAll
-								&& !documentDispatcher.canDispatch(document)) {
-							logger.info("Document [" + (documentIndex + 1) + "] with label [" + documentInstanceName
-									+ "] and parameters [" + descriptionSuffix
-									+ "] was not executed because only unique mail dispatcher is set but with no recipients specified in unique mail tab");
-							continue;
-						} else if (!uniqueMailForAll && !documentDispatcher.canDispatch(document)
-								&& onlyMailDispatchCase) {
-							logger.info("Document [" + (documentIndex + 1) + "] with label [" + documentInstanceName
-									+ "] and parameters [" + descriptionSuffix
-									+ "] was not executed because only mail dispatcher is set but with no recipients specified");
-							suspendExecutionInUniqueMailCase = true;
-							continue;
-						} else if (!uniqueMailForAll && !documentDispatcher.canDispatch(document)
-								&& !onlyMailDispatchCase) {
-							logger.debug(
-									"No valid dispatch target for document [" + (documentIndex + 1) + "] with label ["
-											+ documentInstanceName + "] and parameters [" + descriptionSuffix + "]");
-							logger.warn("Document [" + (documentIndex + 1) + "] with label [" + documentInstanceName
-									+ "] and parameters [" + descriptionSuffix
-									+ "] will be executed but not dispatched");
-							// continue;
+							// if unique mail case has no recipients this suspend
+							if (suspendExecutionInUniqueMailCase && uniqueMailForAll && !documentDispatcher.canDispatch(document)) {
+								logger.info("Document [" + (documentIndex + 1) + "] with label [" + documentInstanceName + "] and parameters ["
+										+ descriptionSuffix
+										+ "] was not executed because only unique mail dispatcher is set but with no recipients specified in unique mail tab");
+								continue objectParametersIteratorLoop;
+							} else if (!uniqueMailForAll && !documentDispatcher.canDispatch(document) && onlyMailDispatchCase) {
+								logger.info("Document [" + (documentIndex + 1) + "] with label [" + documentInstanceName + "] and parameters ["
+										+ descriptionSuffix + "] was not executed because only mail dispatcher is set but with no recipients specified");
+								suspendExecutionInUniqueMailCase = true;
+								continue objectParametersIteratorLoop;
+							} else if (!uniqueMailForAll && !documentDispatcher.canDispatch(document) && !onlyMailDispatchCase) {
+								logger.debug("No valid dispatch target for document [" + (documentIndex + 1) + "] with label [" + documentInstanceName
+										+ "] and parameters [" + descriptionSuffix + "]");
+								logger.warn("Document [" + (documentIndex + 1) + "] with label [" + documentInstanceName + "] and parameters ["
+										+ descriptionSuffix + "] will be executed but not dispatched");
+								// continue;
+							} else {
+								logger.debug("There is at list one dispatch target for document with label [" + documentInstanceName + "]");
+							}
+
+							// execute document
+							executionProxy = new ExecutionProxy();
+							executionProxy.setBiObject(document);
+
+							logger.info("Executing document [" + (documentIndex + 1) + "] with label [" + documentInstanceName + "] and parameters "
+									+ descriptionSuffix + " ...");
+							long start = System.currentTimeMillis();
+
+							// TODO manage this shit
+							// executionProxy.setSplittingFilter(isSplittingFilter);
+							executionProxy.setMimeType(outputMIMEType);
+							executionProxy.setOutputTypeTrigger(outputTypeTrigger);
+							byte[] executionOutput = executionProxy.exec(userProfile, modality, null);
+							if (executionOutput == null || executionOutput.length == 0) {
+								logger.debug("Document executed without any response");
+							}
+							String contentType = executionProxy.getReturnedContentType();
+
+							String mimeType = contentType.toLowerCase().replace(";charset=utf-8", "");
+							String fileExtension = null;
+							if (mimeType.contains("application/vnd.ms-excel")) {
+								fileExtension = "xls";
+							} else if (mimeType.contains("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")) {
+								fileExtension = "xlsx";
+							} else {
+								fileExtension = MimeUtils.getFileExtension(mimeType);
+							}
+
+							long end = System.currentTimeMillis();
+							long elapsed = (end - start) / 1000;
+							logger.info("Document [" + (documentIndex + 1) + "] with label [" + documentInstanceName + "] and parameters " + descriptionSuffix
+									+ " executed in [" + elapsed + "]");
+
+							// update the dispatch context
+							dispatchContext.setNameSuffix(nameSuffix.toString());
+							dispatchContext.setDescriptionSuffix(descriptionSuffix.toString());
+							dispatchContext.setJobExecutionContext(jobExecutionContext);
+							dispatchContext.setContentType(contentType);
+							dispatchContext.setFileExtension("." + fileExtension);
+							dispatchContext.setParametersMap(parametersMap);
+							dispatchContext.setTotalNumberOfDocumentsToDispatch(documentLabels.length);
+							dispatchContext.setIndexNumberOfDocumentToDispatch(documentIndex);
+							dispatchContext.setSchedulationStartDate(startSchedule);
+							dispatchContext.setSequence(sequence);
+
+							// unique mail is calculated one for all
+							dispatchContext.setGlobalUniqueMail(uniqueMailForAll);
+
+							documentDispatcher.setDispatchContext(dispatchContext);
+
+							// if we are in unique mail option and this is unique mail dispatcher take mail options settings, put here with dispatch context
+							// updated
+							if (uniqueMailForAll && dispatchContext.isUniqueMail()) {
+								mailOptions = getMailOptionsFromUniqueMaildispatcher(document, dispatchContext);
+								logger.debug("Mail options filled with values");
+							}
+
+							String documentStateCode = document.getStateCode();
+							// Execute dispatchers only if document is Released
+							if (documentStateCode.equals("REL")) {
+								documentDispatcher.dispatch(document, executionOutput);
+							} else {
+								logger.error("Document [" + (documentIndex + 1) + "] with label [" + documentInstanceName + "] and parameters ["
+										+ descriptionSuffix + "] was not dispatched because document state is [" + documentStateCode + "]");
+							}
+							if (globalDocumentDispatcher == null) {
+								documentDispatcher.dispose();
+							}
+							sequence++;
+
 						} else {
-							logger.debug("There is at list one dispatch target for document with label ["
-									+ documentInstanceName + "]");
+							logger.warn("The document with label " + documentInstanceName + " cannot be executed directly, "
+									+ "maybe some prameters are not filled ");
+							throw new Exception("The document with label " + documentInstanceName + " cannot be executed directly, "
+									+ "maybe some prameters are not filled ");
 						}
-
-						// execute document
-						executionProxy = new ExecutionProxy();
-						executionProxy.setBiObject(document);
-
-						logger.info("Executing document [" + (documentIndex + 1) + "] with label ["
-								+ documentInstanceName + "] and parameters " + descriptionSuffix + " ...");
-						long start = System.currentTimeMillis();
-
-						// TODO manage this shit
-						// executionProxy.setSplittingFilter(isSplittingFilter);
-						executionProxy.setMimeType(outputMIMEType);
-						executionProxy.setOutputTypeTrigger(dispatchContext.getOutputTypeTrigger());
-						byte[] executionOutput = executionProxy.exec(userProfile, modality, null);
-						if (executionOutput == null || executionOutput.length == 0) {
-							logger.debug("Document executed without any response");
-						}
-						String contentType = executionProxy.getReturnedContentType();
-
-						String mimeType = contentType.toLowerCase().replace(";charset=utf-8", "");
-						String fileExtension = null;
-						if (mimeType.contains("application/vnd.ms-excel")) {
-							fileExtension = "xls";
-						} else if (mimeType
-								.contains("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")) {
-							fileExtension = "xlsx";
-						} else {
-							fileExtension = MimeUtils.getFileExtension(mimeType);
-						}
-
-						long end = System.currentTimeMillis();
-						long elapsed = (end - start) / 1000;
-						logger.info("Document [" + (documentIndex + 1) + "] with label [" + documentInstanceName
-								+ "] and parameters " + descriptionSuffix + " executed in [" + elapsed + "]");
-
-						// update the dispatch context
-						dispatchContext.setNameSuffix(nameSuffix.toString());
-						dispatchContext.setDescriptionSuffix(descriptionSuffix.toString());
-						dispatchContext.setJobExecutionContext(jobExecutionContext);
-						dispatchContext.setContentType(contentType);
-						dispatchContext.setFileExtension("." + fileExtension);
-						dispatchContext.setParametersMap(parametersMap);
-						dispatchContext.setTotalNumberOfDocumentsToDispatch(documentLabels.length);
-						dispatchContext.setIndexNumberOfDocumentToDispatch(documentIndex);
-						dispatchContext.setSchedulationStartDate(startSchedule);
-						dispatchContext.setSequence(sequence);
-
-						// unique mail is calculated one for all
-						dispatchContext.setGlobalUniqueMail(uniqueMailForAll);
-
-						documentDispatcher.setDispatchContext(dispatchContext);
-
-						// if we are in unique mail option and this is unique mail dispatcher take mail options settings, put here with dispatch context updated
-						if (uniqueMailForAll && dispatchContext.isUniqueMail()) {
-							mailOptions = getMailOptionsFromUniqueMaildispatcher(document, dispatchContext);
-							logger.debug("Mail options filled with values");
-						}
-
-						String documentStateCode = document.getStateCode();
-						// Execute dispatchers only if document is Released
-						if (documentStateCode.equals("REL")) {
-							documentDispatcher.dispatch(document, executionOutput);
-						} else {
-							logger.error("Document [" + (documentIndex + 1) + "] with label [" + documentInstanceName
-									+ "] and parameters [" + descriptionSuffix
-									+ "] was not dispatched because document state is [" + documentStateCode + "]");
-						}
-						if (globalDocumentDispatcher == null) {
-							documentDispatcher.dispose();
-						}
-						sequence++;
-
-					} else {
-						logger.warn("The document with label " + documentInstanceName + " cannot be executed directly, "
-								+ "maybe some prameters are not filled ");
-						throw new Exception("The document with label " + documentInstanceName
-								+ " cannot be executed directly, " + "maybe some prameters are not filled ");
 					}
 				}
 

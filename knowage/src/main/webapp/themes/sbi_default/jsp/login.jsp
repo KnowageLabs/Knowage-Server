@@ -20,7 +20,7 @@
 <%@page import="it.eng.spagobi.security.google.config.GoogleSignInConfig"%>
 <%@page import="it.eng.spagobi.security.azure.config.AzureSignInConfig"%>
 <%@ page language="java"
-         extends="it.eng.spago.dispatching.httpchannel.AbstractHttpJspPagePortlet"
+         extends="it.eng.spago.dispatching.httpchannel.AbstractHttpJspPage"
          contentType="text/html; charset=UTF-8"
          pageEncoding="UTF-8"
          session="true" 
@@ -263,6 +263,7 @@
 	            	</form>
 	            	<% if (activeSignup){ %>
 		               	<button class="btn btn-lg btn-primary btn-block btn-signup" id="signupBtn" ><%=msgBuilder.getMessage("signup")%></button>
+		               	<a style="width: 100%;display: block;text-align: center;font-size: .8rem;margin-top: 8px;" href="<%=urlBuilder.getResourceLink(request, "restful-services/signup/forgotPassword")%>"><%=msgBuilder.getMessage("signup.forgotPassword")%></a>
 					<%} %> 
             	</div>
             	<!-- img class="col-xs-8 offset-sm-4 col-sm-4" src='<%=urlBuilder.getResourceLink(request, "themes/commons/img/defaultTheme/poweredBy.svg")%>' / -->

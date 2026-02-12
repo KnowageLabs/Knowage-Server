@@ -473,6 +473,10 @@
 		valueNm="sbidomains.nm.spanner" domainCd="DIALECT_HIB"
 		domainNm="Predefined hibernate dialect" valueDs="sbidomains.ds.spanner" />
 		
+	<DOMAIN valueCd="doris"
+		valueNm="sbidomains.nm.doris" domainCd="DIALECT_HIB"
+		domainNm="Predefined hibernate dialect" valueDs="sbidomains.ds.doris" />
+		
 	<DOMAIN valueCd="MEASURE" valueNm="sbidomains.nm.measure"
 		domainCd="KPI_RULEOUTPUT_TYPE" domainNm="KPI Rule Output types" valueDs="sbidomains.ds.measure" />
 		

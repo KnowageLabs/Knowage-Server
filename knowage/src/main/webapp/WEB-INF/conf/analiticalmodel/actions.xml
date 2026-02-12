@@ -14,9 +14,6 @@
  <ACTION name="DOWNLOAD_BIOBJ_TEMPLATE" class="it.eng.spagobi.analiticalmodel.document.service.DownloadBIObjectTemplateAction" scope="REQUEST">
  	<CONFIG/>
  </ACTION>
- <ACTION name="GET_SNAPSHOT_CONTENT" class="it.eng.spagobi.analiticalmodel.document.service.GetSnapshotContentAction" scope="REQUEST">
- 	<CONFIG/>
- </ACTION>
 
  <ACTION name="SAVE_PERSONAL_FOLDER" class="it.eng.spagobi.analiticalmodel.execution.service.SaveToPersonalFolderAction" scope="REQUEST">
  	<CONFIG/>
@@ -226,10 +223,6 @@
   <ACTION name="SELECT_DATASET_ACTION" 
     class="it.eng.spagobi.analiticalmodel.execution.service.SelectDatasetAction" scope="REQUEST">
     <CONFIG/>
- </ACTION>
-
- <ACTION name="MANAGE_PREVIEW_FILE_ACTION" class="it.eng.spagobi.analiticalmodel.document.service.ManagePreviewFileAction" scope="REQUEST">
- 	<CONFIG/>
  </ACTION>
 
 </ACTIONS>

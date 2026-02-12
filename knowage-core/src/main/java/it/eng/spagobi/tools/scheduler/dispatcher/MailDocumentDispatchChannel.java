@@ -156,8 +156,9 @@ public class MailDocumentDispatchChannel implements IDocumentDispatchChannel {
 			messageMailDto.setNameSuffix(nameSuffix);
 			messageMailDto.setText(mailTxt + "\n" + descriptionSuffix);
 			messageMailDto.setFileExtension(fileExtension);
-			messageMailDto.setContentType("text/html");
+			messageMailDto.setContentType(contentType);
 			messageMailDto.setSubtype("html");
+			messageMailDto.setCharset("UTF-8");
 
 			FactoryMailSender.getMailSender(SingletonConfig.getInstance().getConfigValue(IMailSender.MAIL_SENDER)).sendMail(messageMailDto);
 			logger.info("Mail sent for document with label " + document.getLabel());

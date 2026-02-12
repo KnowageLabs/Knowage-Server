@@ -48,28 +48,36 @@ public class CsvStreamingOutput implements StreamingOutput {
 			resultSetMetaData = ((it.eng.spagobi.tools.dataset.common.iterator.ResultSetIterator) iterator).getRs().getMetaData();
 			for (int i = 0; i < resultSetMetaData.getColumnCount(); i++) {
 				String columnName = resultSetMetaData.getColumnName(i + 1);
-				Optional<IFieldMetaData> fieldMetaData = fieldsMetadata.stream().filter(f -> f.getName().equals(columnName)).findFirst();
+				Optional<IFieldMetaData> fieldMetaData = fieldsMetadata.stream().filter(f -> f.getName().equalsIgnoreCase(columnName)).findFirst();
 				fieldMetaData.ifPresent(filteredMetadata::add);
 			}
 		} catch (Exception e) {
-			IMetaData metadati = iterator.getMetaData();
-			for (int i = 0; i < metadati.getFieldCount(); i++) {
-				filteredMetadata.add(metadati.getFieldMeta(i));
-			}
-			while (iterator.hasNext()) {
-				IRecord currRecord = iterator.next();
-				for (int j = 0; j < metadati.getFieldCount(); j++) {
-					IField field = currRecord.getFieldAt(j);
-					Object fieldValue = field.getValue();
-					if (fieldValue != null) {
-						filteredMetadata.add(metadati.getFieldMeta(j));
-					} else {
-					}
-				}
-			}
+            try {
+                IMetaData metadati = iterator.getMetaData();
+                for (int i = 0; i < metadati.getFieldCount(); i++) {
+                    filteredMetadata.add(metadati.getFieldMeta(i));
+                }
+                while (iterator.hasNext()) {
+                    IRecord currRecord = iterator.next();
+                    for (int j = 0; j < metadati.getFieldCount(); j++) {
+                        IField field = currRecord.getFieldAt(j);
+                        Object fieldValue = field.getValue();
+                        if (fieldValue != null) {
+                            filteredMetadata.add(metadati.getFieldMeta(j));
+                        }
+                    }
+                }
 
+            } catch (Exception ex) {
+                logger.error("Error while retrieving metadata from iterator", ex);
+                throw new RuntimeException("Error while retrieving metadata from iterator", ex);
+            }
 		}
 
+        if (filteredMetadata.isEmpty()) {
+            logger.error("No metadata found for the iterator");
+            throw new RuntimeException("No metadata found for the iterator");
+        }
 
 		this.visibleFields = filteredMetadata.stream().filter(e -> {
 			Object o = e.getProperties().get("visible");

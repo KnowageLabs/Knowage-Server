@@ -57,7 +57,7 @@ public class BusinessModelVisualDependenciesResource extends AbstractSpagoBIReso
 			Assert.assertNotNull(parameterViewObjects, "Visual Dependencies can not be null");
 		} catch (HibernateException e) {
 			logger.error("Visual dependencies could not be loaded", e);
-			throw new SpagoBIRestServiceException(e.getCause().getLocalizedMessage(), buildLocaleFromSession(), e);
+			throw new SpagoBIRestServiceException(e.getCause().getLocalizedMessage(), getLocale(), e);
 		}
 		logger.debug("OUT");
 		return parameterViewObjects;
@@ -77,7 +77,7 @@ public class BusinessModelVisualDependenciesResource extends AbstractSpagoBIReso
 			parameterViewObject.setId(newId);
 		} catch (HibernateException e) {
 			logger.error("Visual Dependencies can not be created", e);
-			throw new SpagoBIRestServiceException(e.getCause().getLocalizedMessage() + "in Visual Dependencsies", buildLocaleFromSession(), e);
+			throw new SpagoBIRestServiceException(e.getCause().getLocalizedMessage() + "in Visual Dependencsies", getLocale(), e);
 		}
 		logger.debug("OUT");
 		return parameterViewObject;
@@ -95,7 +95,7 @@ public class BusinessModelVisualDependenciesResource extends AbstractSpagoBIReso
 			parameterViewDAO.eraseMetaModelParview(parameterViewObject.getId());
 		} catch (HibernateException e) {
 			logger.error("Visual Dependencies can not be removed", e);
-			throw new SpagoBIRestServiceException(e.getCause().getLocalizedMessage(), buildLocaleFromSession(), e);
+			throw new SpagoBIRestServiceException(e.getCause().getLocalizedMessage(), getLocale(), e);
 		}
 		logger.debug("OUT");
 	}
@@ -113,7 +113,7 @@ public class BusinessModelVisualDependenciesResource extends AbstractSpagoBIReso
 			parameterViewDAO.modifyMetaModelParview(parameterViewObject);
 		} catch (HibernateException e) {
 			logger.error("Visual Dependencies can not be modified", e);
-			throw new SpagoBIRestServiceException(e.getCause().getLocalizedMessage(), buildLocaleFromSession(), e);
+			throw new SpagoBIRestServiceException(e.getCause().getLocalizedMessage(), getLocale(), e);
 		}
 		logger.debug("OUT");
 	}
@@ -128,7 +128,7 @@ public class BusinessModelVisualDependenciesResource extends AbstractSpagoBIReso
 			parameterViewDAO.eraseMetaModelParview(parameterViewObject.getId());
 		} catch (HibernateException e) {
 			logger.error("Visual Dependencies can not be removed", e);
-			throw new SpagoBIRestServiceException(e.getCause().getLocalizedMessage(), buildLocaleFromSession(), e);
+			throw new SpagoBIRestServiceException(e.getCause().getLocalizedMessage(), getLocale(), e);
 		}
 		logger.debug("OUT");
 	}

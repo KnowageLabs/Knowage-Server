@@ -76,6 +76,10 @@ public class AntiCsrfFilter implements Filter {
 		urlToExclude.add("/signup/prepare");
 		urlToExclude.add("/signup/prepareActive");
 		urlToExclude.add("/signup/captcha");
+		urlToExclude.add("/signup/forgotPassword");
+		urlToExclude.add("/signup/forgotPasswordMail");
+		urlToExclude.add("/signup/changePasswordMail");
+		urlToExclude.add("/signup/changePassword");
 		urlToExclude.add("/1.0/images/getImage");
 		urlToExclude.add("/publish");
 		urlToExclude.add("/2.0/datasets/preview");
@@ -87,6 +91,7 @@ public class AntiCsrfFilter implements Filter {
 		urlToExclude.add("/oauth2clientservice");
 		urlToExclude.add("/1.0/model/export/excel");
 		urlToExclude.add("/jwt/verify");
+		urlToExclude.add("/2.0/officeContent");
 
 		return urlToExclude.contains(path) || path.startsWith("/1.0/ai/") || path.startsWith("/dossier/activity/");
 	}

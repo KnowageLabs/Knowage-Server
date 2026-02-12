@@ -21,8 +21,6 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Locale;
-import java.util.Locale.Builder;
 import java.util.Map;
 import java.util.Set;
 
@@ -35,7 +33,6 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.jboss.resteasy.plugins.providers.html.View;
 import org.json.JSONArray;
@@ -45,7 +42,6 @@ import org.json.JSONObjectDeserializator;
 
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.bo.UserProfile;
-import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.tools.dataset.DatasetManagementAPI;
@@ -114,7 +110,7 @@ public class SelfServiceDataSetPreviewResource extends AbstractSpagoBIResource {
 		if (label == null || label.length() == 0) {
 			logger.error("No dataset found with label ");
 			throw new SpagoBIRestServiceException("sbi.tools.dataset.preview.no.visible.dataset",
-					buildLocaleFromSession(), "No dataset found with label " + label);
+					getLocale(), "No dataset found with label " + label);
 		}
 		logger.debug("Dataset loaded");
 
@@ -139,7 +135,7 @@ public class SelfServiceDataSetPreviewResource extends AbstractSpagoBIResource {
 			if (ds == null) {
 				logger.error("No dataset found with label " + label);
 				throw new SpagoBIRestServiceException("sbi.tools.dataset.preview.no.visible.dataset",
-						buildLocaleFromSession(), "No dataset found with label " + label);
+						getLocale(), "No dataset found with label " + label);
 			}
 
 			logger.debug("Checking if the user can see the dataset");
@@ -156,7 +152,7 @@ public class SelfServiceDataSetPreviewResource extends AbstractSpagoBIResource {
 			if (!isDatasetVisible) {
 				logger.error("The dataset with label " + label + " is not visible to the user");
 				throw new SpagoBIRestServiceException("sbi.tools.dataset.preview.no.visible.dataset",
-						buildLocaleFromSession(), "The dataset with label " + label + " is not visible to the user");
+						getLocale(), "The dataset with label " + label + " is not visible to the user");
 
 			}
 
@@ -166,7 +162,7 @@ public class SelfServiceDataSetPreviewResource extends AbstractSpagoBIResource {
 				datasetManagementAPI.canLoadData(ds);
 			} catch (ActionNotPermittedException e) {
 				logger.error("User " + profile.getUserId() + " cannot preview the dataset with label " + label);
-				throw new SpagoBIRestServiceException(e.getI18NCode(), buildLocaleFromSession(),
+				throw new SpagoBIRestServiceException(e.getI18NCode(), getLocale(),
 						"User " + profile.getUserId() + " cannot preview the dataset with label " + label, e,
 						"MessageFiles.messages");
 			}
@@ -199,7 +195,7 @@ public class SelfServiceDataSetPreviewResource extends AbstractSpagoBIResource {
 			logger.debug("Writing the result set");
 			Map<String, Object> properties = new HashMap<>();
 			JSONDataWriter dataSetWriter = new JSONDataWriter(properties);
-			// dataSetWriter.setLocale(buildLocaleFromSession());
+			// dataSetWriter.setLocale(getLocale());
 			// JSONObject gridDataFeed = (JSONObject)
 			// dataSetWriter.write(ds.getDataStore());
 			JSONObject gridDataFeed = getDatasetTestResultList(ds, parametersMap, profile, start, limit);
@@ -211,7 +207,7 @@ public class SelfServiceDataSetPreviewResource extends AbstractSpagoBIResource {
 			throw e;
 		} catch (Exception e) {
 			logger.error("Error loading the dataset values ", e);
-			throw new SpagoBIRestServiceException("sbi.tools.dataset.preview.generalerror", buildLocaleFromSession(),
+			throw new SpagoBIRestServiceException("sbi.tools.dataset.preview.generalerror", getLocale(),
 					e);
 		}
 
@@ -239,7 +235,7 @@ public class SelfServiceDataSetPreviewResource extends AbstractSpagoBIResource {
 				}
 				if (dataStore == null) {
 					throw new SpagoBIRestServiceException("sbi.tools.dataset.preview.generalerror",
-							buildLocaleFromSession(), "General error loading dataset");
+							getLocale(), "General error loading dataset");
 				}
 			} catch (Throwable t) {
 				Throwable rootException = t;
@@ -259,7 +255,7 @@ public class SelfServiceDataSetPreviewResource extends AbstractSpagoBIResource {
 				}
 
 				throw new SpagoBIRestServiceException("sbi.tools.dataset.preview.generalerror",
-						buildLocaleFromSession(), t);
+						getLocale(), t);
 			}
 
 			try {
@@ -267,17 +263,17 @@ public class SelfServiceDataSetPreviewResource extends AbstractSpagoBIResource {
 				dataSetJSON = (JSONObject) dataSetWriter.write(dataStore);
 				if (dataSetJSON == null) {
 					throw new SpagoBIRestServiceException("sbi.tools.dataset.preview.generalerror",
-							buildLocaleFromSession(), "Impossible to read serialized resultset");
+							getLocale(), "Impossible to read serialized resultset");
 				}
 			} catch (Exception t) {
 				throw new SpagoBIRestServiceException("sbi.tools.dataset.preview.generalerror",
-						buildLocaleFromSession(), t);
+						getLocale(), t);
 			}
 		} catch (Throwable t) {
 			if (t instanceof SpagoBIServiceException) {
 				throw (SpagoBIServiceException) t;
 			}
-			throw new SpagoBIRestServiceException("sbi.tools.dataset.preview.generalerror", buildLocaleFromSession(),
+			throw new SpagoBIRestServiceException("sbi.tools.dataset.preview.generalerror", getLocale(),
 					t);
 		} finally {
 			logger.debug("OUT");
@@ -308,7 +304,7 @@ public class SelfServiceDataSetPreviewResource extends AbstractSpagoBIResource {
 
 		} catch (Exception e) {
 			logger.error("Error loading the dataset values ", e);
-			throw new SpagoBIRestServiceException("sbi.tools.dataset.preview.generalerror", buildLocaleFromSession(),
+			throw new SpagoBIRestServiceException("sbi.tools.dataset.preview.generalerror", getLocale(),
 					e);
 		}
 
@@ -330,7 +326,7 @@ public class SelfServiceDataSetPreviewResource extends AbstractSpagoBIResource {
 				parametersMap.put("sortParam", sortParam);
 			} catch (JSONException e) {
 				logger.error("Error loading the sort options ", e);
-				throw new SpagoBIRestServiceException("sbi.tools.dataset.preview.sort.error", buildLocaleFromSession(),
+				throw new SpagoBIRestServiceException("sbi.tools.dataset.preview.sort.error", getLocale(),
 						e);
 			}
 		}
@@ -395,31 +391,10 @@ public class SelfServiceDataSetPreviewResource extends AbstractSpagoBIResource {
 			} catch (JSONException e) {
 				logger.error("Error loading the parameters ", e);
 				throw new SpagoBIRestServiceException("sbi.tools.dataset.preview.params.error",
-						buildLocaleFromSession(), e);
+						getLocale(), e);
 			}
 		}
 		logger.debug("Parameters fo the dataset loaded: " + parametersMap);
-	}
-
-	@Override
-	public Locale buildLocaleFromSession() {
-		Locale locale = null;
-
-		String currLanguage = (String) getHttpSession().getAttribute(SpagoBIConstants.AF_LANGUAGE);
-		String currCountry = (String) getHttpSession().getAttribute(SpagoBIConstants.AF_COUNTRY);
-		String currScript = (String) getHttpSession().getAttribute(SpagoBIConstants.AF_SCRIPT);
-		if (currLanguage != null && currCountry != null) {
-			Builder tmpLocale = new Locale.Builder().setLanguage(currLanguage).setRegion(currCountry);
-
-			if (StringUtils.isNotBlank(currScript)) {
-				tmpLocale.setScript(currScript);
-			}
-
-			locale = tmpLocale.build();
-		} else
-			locale = GeneralUtilities.getDefaultLocale();
-
-		return locale;
 	}
 
 	// private Map parseJsonDriversMap(JSONObject drivers) {

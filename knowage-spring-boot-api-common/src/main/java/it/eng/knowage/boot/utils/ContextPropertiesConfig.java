@@ -44,6 +44,7 @@ public class ContextPropertiesConfig {
 
 	private static String hmacKey;
 	private static String resourcePathKey;
+    private static String logPathKey;
 
 	@Autowired
 	public ContextPropertiesConfig(@Value("${jndi.lookup.hmackey}") String hmacKey, @Value("${jndi.lookup.resourcepath}") String resourcePathKey) {
@@ -81,5 +82,4 @@ public class ContextPropertiesConfig {
 		}
 		return resourcePath;
 	}
-
 }

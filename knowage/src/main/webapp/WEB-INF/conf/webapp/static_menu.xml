@@ -64,7 +64,6 @@
 				requiredFunctionality="MeasuresCatalogueManagement"
 				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=measuresCatalogue" />
 			<ITEM id="4006" label="menu.LayersCatalogue"
-				requiredFunctionality="GeoLayersManagement"
 				to="/layers-management" />
 			<ITEM id="4007" label="menu.glossary.technical"
 				requiredFunctionality="ManageGlossaryTechnical"
@@ -115,6 +114,8 @@
 				to="/models-management" toBeLicensed="KnowageSI"/>
 			<ITEM id="5009" label="menu.resourceManagement" requiredFunctionality="ResourceManagement,ResourceManagementDev"
 				to="/resource-management" toBeLicensed="KnowageSI"/>
+			<ITEM id="5010" label="menu.logManagement"
+				to="/log-management" />
 		</GROUP_ITEM>
 
 		<GROUP_ITEM id="6000" label="menu.KpiModel"

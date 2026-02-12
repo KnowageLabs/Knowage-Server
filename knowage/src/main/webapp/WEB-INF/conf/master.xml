@@ -7,20 +7,20 @@
 	
 	
 <!--  commons -->	
-	<CONFIGURATOR path="/WEB-INF/conf/commons/audit.xml" />
+	<!--  <CONFIGURATOR path="/WEB-INF/conf/commons/audit.xml" />
+	<CONFIGURATOR path="/WEB-INF/conf/commons/errors.xml" />
+	<CONFIGURATOR path="/WEB-INF/conf/commons/traps.xml" />	
+	<CONFIGURATOR path="/WEB-INF/conf/commons/business_map.xml" />
+	<CONFIGURATOR path="/WEB-INF/conf/commons/validation.xml" />			
+	-->
 	<CONFIGURATOR path="/WEB-INF/conf/commons/actions.xml" />
 	<CONFIGURATOR path="/WEB-INF/conf/commons/modules.xml" />
 	<CONFIGURATOR path="/WEB-INF/conf/commons/pages.xml" />
 	<CONFIGURATOR path="/WEB-INF/conf/commons/presentation.xml" />
 	<CONFIGURATOR path="/WEB-INF/conf/commons/publishers.xml" />
-	<CONFIGURATOR path="/WEB-INF/conf/commons/errors.xml" />
-	<CONFIGURATOR path="/WEB-INF/conf/commons/traps.xml" />	
-	<CONFIGURATOR path="/WEB-INF/conf/commons/business_map.xml" />
-	<CONFIGURATOR path="/WEB-INF/conf/commons/validation.xml" />
-	<CONFIGURATOR path="/WEB-INF/conf/commons/messages.xml" />			
-	
+	<CONFIGURATOR path="/WEB-INF/conf/commons/messages.xml" />
 <!-- analiticalmodel -->
-
+<!--
 	<CONFIGURATOR path="/WEB-INF/conf/analiticalmodel/actions.xml" />
 	<CONFIGURATOR path="/WEB-INF/conf/analiticalmodel/modules.xml" />
 	<CONFIGURATOR path="/WEB-INF/conf/analiticalmodel/pages.xml" />
@@ -28,7 +28,7 @@
   	<CONFIGURATOR path="/WEB-INF/conf/analiticalmodel/publishers.xml" />  
   	<CONFIGURATOR path="/WEB-INF/conf/analiticalmodel/business_map.xml" />
    	<CONFIGURATOR path="/WEB-INF/conf/analiticalmodel/validation.xml" />
-	
+	-->
    	<!-- document browser -->
     <!--
 	<CONFIGURATOR path="/WEB-INF/conf/analiticalmodel/documentBrowser.xml" />
@@ -84,12 +84,12 @@
 	<CONFIGURATOR path="/WEB-INF/conf/engines/kpi/custom_publishers.xml" /> 
 	-->	
 <!-- engines.officedocument -->
- 
+ <!--
 	<CONFIGURATOR path="/WEB-INF/conf/engines/officedocument/messages.xml" />
 	<CONFIGURATOR path="/WEB-INF/conf/engines/officedocument/publishers.xml" />
 	<CONFIGURATOR path="/WEB-INF/conf/engines/officedocument/actions.xml" />
 	<CONFIGURATOR path="/WEB-INF/conf/engines/officedocument/business_map.xml" /> 
- 
+ -->	
 <!-- engines.documentcomposition -->
 	<!--
 	<CONFIGURATOR path="/WEB-INF/conf/engines/documentcomposition/messages.xml" />
@@ -120,7 +120,7 @@
  -->
 	
 	<!-- tools.importexport -->
-	
+	<!--
 	<CONFIGURATOR path="/WEB-INF/conf/tools/importexport/importexport.xml" />
 	<CONFIGURATOR path="/WEB-INF/conf/tools/importexport/pages.xml" />
 	<CONFIGURATOR path="/WEB-INF/conf/tools/importexport/modules.xml" />
@@ -130,7 +130,7 @@
 	<CONFIGURATOR path="/WEB-INF/conf/tools/importexport/messages.xml" />
 	<CONFIGURATOR path="/WEB-INF/conf/tools/importexport/validation.xml" />
 	<CONFIGURATOR path="/WEB-INF/conf/tools/importexport/business_map.xml" />
-	
+	-->
   
 	<!-- tools.scheduler -->
 	<!--
@@ -218,46 +218,50 @@
 	-->
 	
 <!-- webapp -->	
-
-<CONFIGURATOR path="/WEB-INF/conf/webapp/messages.xml" />
 <CONFIGURATOR path="/WEB-INF/conf/webapp/modules.xml" />
 <CONFIGURATOR path="/WEB-INF/conf/webapp/pages.xml" />
 <CONFIGURATOR path="/WEB-INF/conf/webapp/presentation.xml" />
 <CONFIGURATOR path="/WEB-INF/conf/webapp/publishers.xml" />
+<!--
+<CONFIGURATOR path="/WEB-INF/conf/webapp/messages.xml" />
 <CONFIGURATOR path="/WEB-INF/conf/webapp/authorizations.xml" /> 
 <CONFIGURATOR path="/WEB-INF/conf/webapp/technical_user_menu.xml" />
 <CONFIGURATOR path="/WEB-INF/conf/webapp/final_users_functionalities.xml" />
 <CONFIGURATOR path="/WEB-INF/conf/webapp/actions.xml" />
 <CONFIGURATOR path="/WEB-INF/conf/webapp/business_map.xml" />
 <CONFIGURATOR path="/WEB-INF/conf/webapp/validation.xml" />
-
+-->
+<!--
 <CONFIGURATOR path="/WEB-INF/conf/webapp/static_menu.xml" />
-
-	<CONFIGURATOR path="/WEB-INF/conf/config/security_liferay_config.xml" />
-	<CONFIGURATOR path="/WEB-INF/conf/config/internal_profiling.xml" />
+-->
+	
+	
+	
+	<!--
 	<CONFIGURATOR path="/WEB-INF/conf/config/tree_initialization.xml" />
+	<CONFIGURATOR path="/WEB-INF/conf/config/internal_profiling.xml" />
 	<CONFIGURATOR path="/WEB-INF/conf/config/spagobi_dao.xml" />
-	<CONFIGURATOR path="/WEB-INF/conf/config/tenants.xml" />
-	 	
+	<CONFIGURATOR path="/WEB-INF/conf/config/tenants.xml" /> -->
 	
 	<!--  Spago Config.    -->
-	<CONFIGURATOR path="/WEB-INF/conf/config/common.xml" />
+	<!--
 	<CONFIGURATOR path="/WEB-INF/conf/config/cache.xml" />
-	<CONFIGURATOR path="/WEB-INF/conf/config/data_access.xml" />    
-	<CONFIGURATOR path="/WEB-INF/conf/config/dispatchers.xml" />
-	<CONFIGURATOR path="/WEB-INF/conf/config/ce-initializers.xml" />
-	<CONFIGURATOR path="/WEB-INF/conf/config/ee-initializers.xml" />
 	<CONFIGURATOR path="/WEB-INF/conf/config/statements.xml" />
-	<CONFIGURATOR path="/WEB-INF/conf/config/tracing.xml" />
 	<CONFIGURATOR path="/WEB-INF/conf/config/portletinitializers.xml" />
 	<CONFIGURATOR path="/WEB-INF/conf/config/validators.xml" />
 	<CONFIGURATOR path="/WEB-INF/conf/config/validation.xml" />
 	<CONFIGURATOR path="/WEB-INF/conf/config/transcoder.xml" />
-	<CONFIGURATOR path="/WEB-INF/conf/config/upload.xml" />
 	<CONFIGURATOR path="/WEB-INF/conf/config/events.xml" />
 	<CONFIGURATOR path="/WEB-INF/conf/config/useragents.xml" />
+	<CONFIGURATOR path="/WEB-INF/conf/config/business_map.xml" /> 
+	<CONFIGURATOR path="/WEB-INF/conf/config/security_liferay_config.xml" />
+	<CONFIGURATOR path="/WEB-INF/conf/config/data_access.xml" />
+	-->
+	<CONFIGURATOR path="/WEB-INF/conf/config/common.xml" /> 
+	<CONFIGURATOR path="/WEB-INF/conf/config/dispatchers.xml" />
+	<CONFIGURATOR path="/WEB-INF/conf/config/ce-initializers.xml" />
+	<CONFIGURATOR path="/WEB-INF/conf/config/tracing.xml" />
 	<CONFIGURATOR path="/WEB-INF/conf/config/renderers.xml" />
-	<CONFIGURATOR path="/WEB-INF/conf/config/business_map.xml" />    	
 	<CONFIGURATOR path="/WEB-INF/conf/config/security.xml" />	
 
 	<!-- exo profile manager 

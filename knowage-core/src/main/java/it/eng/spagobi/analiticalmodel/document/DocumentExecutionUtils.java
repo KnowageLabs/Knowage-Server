@@ -425,16 +425,6 @@ public class DocumentExecutionUtils {
 										&& defVal.get("description").equals(item.get("description"))) {
 									defaultParameterAlreadyExist = true;
 									break;
-								} else {
-									HashMap<String, Object> itemErrorMap = new HashMap<>();
-									itemErrorMap.put("error", true);
-									itemErrorMap.put("value", defVal.get("value"));
-									itemErrorMap.put("labelAlreadyExist", defVal.get("label"));
-									itemErrorMap.put("labelSameValue", item.get("label"));
-									defaultErrorValues.add(itemErrorMap);
-									// return defaultErrorValues;
-									result.put(DEFAULT_VALUES, defaultErrorValues);
-									return result;
 								}
 							}
 						}
@@ -604,15 +594,6 @@ public class DocumentExecutionUtils {
 								if (defVal.get("label").equals(item.get("description"))) {
 									defaultParameterAlreadyExist = true;
 									break;
-								} else {
-									HashMap<String, Object> itemErrorMap = new HashMap<>();
-									itemErrorMap.put("error", true);
-									itemErrorMap.put("value", defVal.get("value"));
-									itemErrorMap.put("labelAlreadyExist", defVal.get("label"));
-									itemErrorMap.put("labelSameValue", item.get("label"));
-									defaultErrorValues.add(itemErrorMap);
-									result.put(DEFAULT_VALUES, defaultErrorValues);
-									return result;
 								}
 							}
 						}
