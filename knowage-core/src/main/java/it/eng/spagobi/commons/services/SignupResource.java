@@ -26,6 +26,7 @@ import org.apache.log4j.Logger;
 import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.google.common.io.Resources;
 
+import it.eng.knowage.commons.security.KnowageSystemConfiguration;
 import it.eng.knowage.mailsender.IMailSender;
 import it.eng.knowage.mailsender.dto.MessageMailDto;
 import it.eng.knowage.mailsender.dto.ProfileNameMailEnum;
@@ -312,7 +313,7 @@ public class SignupResource {
 		String token = SignupJWTTokenManager.createJWTToken(user.getUserId());
 		String version = SbiCommonInfo.getVersion().substring(0, SbiCommonInfo.getVersion().lastIndexOf("."));
 
-		String urlString = req.getContextPath() + "/restful-services/signup/prepareActive?token=" + token + "&version=" + version;
+		String urlString = KnowageSystemConfiguration.getKnowageVueContext() + "/login?registrationToken=" + token + "&version=" + version;
 		URL url = new URL(req.getScheme(), host, port, urlString);
 
 		// Replace placeholders in template

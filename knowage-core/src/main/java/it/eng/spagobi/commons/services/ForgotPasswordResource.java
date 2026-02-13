@@ -22,6 +22,7 @@ import org.apache.log4j.Logger;
 
 import com.auth0.jwt.exceptions.TokenExpiredException;
 
+import it.eng.knowage.commons.security.KnowageSystemConfiguration;
 import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.commons.bo.Config;
@@ -221,7 +222,7 @@ public class ForgotPasswordResource {
 	}
 
 	private String buildResetPasswordUrl(HttpServletRequest req, String token, String version) throws Exception {
-		String urlString = req.getContextPath() + "/restful-services/signup/changePasswordMail?token=" + token + "&version=" + version;
+		String urlString = KnowageSystemConfiguration.getKnowageVueContext() + "/login?resetToken=" + token + "&version=" + version;
 		URL url = new URL(req.getScheme(), req.getServerName(), req.getServerPort(), urlString);
 		return url.toString();
 	}
