@@ -49,7 +49,7 @@ public class ForgotPasswordResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response sendEmail(@Context HttpServletRequest req, Map<String, String> payload) {
 
-		String mail = payload.get("mail");
+		String mail = payload.get("email");
 
 		if (StringUtils.isBlank(mail)) {
 			return Response.ok(Map.of("message", "Reset email sent successfully")).build();
