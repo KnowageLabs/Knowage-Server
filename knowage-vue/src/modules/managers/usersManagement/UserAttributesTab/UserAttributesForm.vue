@@ -19,8 +19,8 @@
                     :disabled="attribute.lovId"
                     class="p-inputtext p-component kn-material-input"
                     :id="attribute.attributeId"
-                    :value="(userAttributesForm[attribute.attributeId] && userAttributesForm[attribute.attributeId][attribute.attributeName]) || ''"
-                    @input="onInputChange(attribute, $event.target.value)"
+                    :modelValue="userAttributesForm[attribute.attributeId]?.[attribute.attributeName] ?? ''"
+                    @update:modelValue="onInputChange(attribute, $event)"
                     type="text"
                   />
                   <label :for="attribute.attributeName">{{ attribute.attributeName }}</label>
@@ -62,8 +62,12 @@ export default defineComponent({
     };
   },
   watch: {
-    modelValue: function(model) {
-      this.userAttributesForm = { ...model };
+    modelValue: {
+      handler(model) {
+        this.userAttributesForm = { ...model };
+      },
+      immediate: true,
+      deep: true,
     },
   },
   methods: {
