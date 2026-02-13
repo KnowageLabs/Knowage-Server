@@ -1,29 +1,24 @@
-/*
- * Knowage, Open Source Business Intelligence suite
- * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- *
- * Knowage is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * Knowage is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
-package it.eng.spagobi.engines.qbe.services.core;
+package it.eng.spagobi.engines.qbe.api;
 
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 
-import org.apache.log4j.Logger;
+import javax.naming.NamingException;
+import javax.ws.rs.FormParam;
+import javax.ws.rs.GET;
+import javax.ws.rs.HeaderParam;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Response;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jgrapht.Graph;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -33,6 +28,7 @@ import org.json.JSONObjectDeserializator;
 import com.jamonapi.Monitor;
 import com.jamonapi.MonitorFactory;
 
+import it.eng.qbe.datasource.IDataSource;
 import it.eng.qbe.model.accessmodality.IModelAccessModality;
 import it.eng.qbe.model.structure.IModelEntity;
 import it.eng.qbe.model.structure.IModelStructure;
@@ -47,10 +43,10 @@ import it.eng.qbe.statement.graph.GraphManager;
 import it.eng.qbe.statement.graph.bean.QueryGraph;
 import it.eng.qbe.statement.graph.bean.Relationship;
 import it.eng.qbe.statement.graph.bean.RootEntitiesGraph;
-import it.eng.spago.base.SourceBean;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.engines.qbe.QbeEngineConfig;
+import it.eng.spagobi.engines.qbe.QbeEngineInstance;
 import it.eng.spagobi.services.common.SsoServiceInterface;
 import it.eng.spagobi.tools.dataset.bo.DataSetVariable;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
@@ -58,44 +54,47 @@ import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.datawriter.JSONDataWriter;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.engines.EngineConstants;
+import it.eng.spagobi.utilities.engines.SpagoBIEngineException;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceException;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceExceptionHandler;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.service.JSONSuccess;
 
-public class GetValuesForQbeFilterLookup extends AbstractQbeEngineAction {
-
-	public static final String SERVICE_NAME = "GET_VALUES_FOR_QBE_FILTER_LOOKUP_ACTION";
+@Path("/GetValuesForQbeFilterLookup")
+public class QbeFilterLookupResource extends AbstractQbeEngineResource {
 
 	// request parameters
-	public static String ENTITY_ID = "ENTITY_ID";
-	public static String INLINE_CALCULATED_FIELD_DESCRIPTOR = "fieldDescriptor";
-	public static String FILTERS = "FILTERS";
-
-	public static String MODE = "MODE";
-	public static String MODE_SIMPLE = "simple";
-	public static String MODE_COMPLETE = "complete";
-	public static String START = "start";
-	public static String LIMIT = "limit";
-
+	public static final String ENTITY_ID = "ENTITY_ID";
+	public static final String INLINE_CALCULATED_FIELD_DESCRIPTOR = "fieldDescriptor";
+	public static final String FILTERS = "FILTERS";
 	public static final String DRIVERS = "DRIVERS";
-
-	// logger component
-	private static Logger logger = Logger.getLogger(GetValuesForQbeFilterLookup.class);
-
-	@Override
-	public void service(SourceBean request, SourceBean response) {
-		String entityId = null;
-
-		Integer limit = null;
-		Integer start = null;
+	
+	public static final String MODE = "MODE";
+	public static final String MODE_SIMPLE = "simple";
+	public static final String MODE_COMPLETE = "complete";
+	public static final String START = "start";
+	public static final String LIMIT = "limit";
+	
+	
+	private static final Logger LOGGER = LogManager.getLogger(QbeFilterLookupResource.class);
+	
+	@POST
+	public Response getValuesForQbeFilterLookup(
+            @QueryParam(ENTITY_ID) String entityId,
+            @FormParam(INLINE_CALCULATED_FIELD_DESCRIPTOR) String inlineDescriptorStr,
+            @FormParam(FILTERS) String filtersStr,
+            @QueryParam("SBI_EXECUTION_ID") String executionId,
+            @FormParam(START) Integer start,
+            @FormParam(LIMIT) Integer limit){
+		Response res = null;
+		
 		Integer maxSize = null;
 		IDataStore dataStore = null;
 		IDataSet dataSet = null;
 		JSONDataWriter serializer;
 		JSONObject filtersJSON = null;
-		JSONObject inlineCalculatedDescriptorJSON;
-		JSONObject simpleCalculatedDescriptorJSON;
+		JSONObject inlineCalculatedDescriptorJSON = null;
+		JSONObject simpleCalculatedDescriptorJSON = null;
 		Query query = null;
 		IStatement statement = null;
 
@@ -105,43 +104,35 @@ public class GetValuesForQbeFilterLookup extends AbstractQbeEngineAction {
 		Monitor totalTimeMonitor = null;
 		Monitor errorHitsMonitor = null;
 
-		logger.debug("IN");
+		QbeEngineInstance engineInstance = getEngineInstance();
 
-		try {
+		if (Objects.isNull(engineInstance)) {
+			LOGGER.warn("No engine instance: this is a statefull service. You must need to start QBE or Registry");
+			res = Response.status(Response.Status.NOT_FOUND)
+	                   .entity("QBE Engine Instance not found")
+	                   .build();
+		} else {
+			try {
+		    IDataSource dataSource = engineInstance.getDataSource();
 
-			super.service(request, response);
+		    if (entityId != null && !entityId.isEmpty()) {
+		        simpleCalculatedDescriptorJSON = new JSONObject();
+		        simpleCalculatedDescriptorJSON.put("entity", entityId);
+		    }
 
-			totalTimeMonitor = MonitorFactory.start("QbeEngine.GetValuesForQbeFilterLookup.totalTime");
+		    if (inlineDescriptorStr != null && !inlineDescriptorStr.isEmpty()) {
+		        inlineCalculatedDescriptorJSON = new JSONObject(inlineDescriptorStr);
+		    }
+		    if (simpleCalculatedDescriptorJSON == null && inlineCalculatedDescriptorJSON == null) {
+		        return Response.status(Response.Status.BAD_REQUEST)
+		                       .entity("Necessario ENTITY_ID oppure fieldDescriptor")
+		                       .build();
+		    }
 
-			simpleCalculatedDescriptorJSON = null;
-			if (this.requestContainsAttribute(ENTITY_ID)) {
-				entityId = getAttributeAsString(ENTITY_ID);
-				simpleCalculatedDescriptorJSON = new JSONObject();
-				simpleCalculatedDescriptorJSON.put("entity", entityId);
-			}
-
-			inlineCalculatedDescriptorJSON = null;
-			if (this.requestContainsAttribute(INLINE_CALCULATED_FIELD_DESCRIPTOR)) {
-				try {
-					inlineCalculatedDescriptorJSON = getAttributeAsJSONObject(INLINE_CALCULATED_FIELD_DESCRIPTOR);
-				} catch (Throwable t) {
-					throw new RuntimeException("Value [" + getAttributeAsString(INLINE_CALCULATED_FIELD_DESCRIPTOR) + "] of request parameter ["
-							+ INLINE_CALCULATED_FIELD_DESCRIPTOR + "] is not a well formed JSON string", t);
-				}
-			}
-
-			Assert.assertTrue(simpleCalculatedDescriptorJSON != null || inlineCalculatedDescriptorJSON != null,
-					"One between request parameters [" + ENTITY_ID + "] and [" + INLINE_CALCULATED_FIELD_DESCRIPTOR + "] must be not null");
-
-			if (this.requestContainsAttribute(FILTERS)) {
-				try {
-					filtersJSON = getAttributeAsJSONObject(FILTERS);
-				} catch (Throwable t) {
-					throw new RuntimeException(
-							"Value [" + getAttributeAsString(FILTERS) + "] of request parameter [" + FILTERS + "] is not a well formed JSON string", t);
-				}
-			}
-
+		    if (filtersStr != null && !filtersStr.isEmpty()) {
+		        filtersJSON = new JSONObject(filtersStr);
+		    }
+		    
 			if (inlineCalculatedDescriptorJSON != null) {
 				query = buildQuery(inlineCalculatedDescriptorJSON, ISelectField.IN_LINE_CALCULATED_FIELD, filtersJSON);
 			} else {
@@ -149,45 +140,36 @@ public class GetValuesForQbeFilterLookup extends AbstractQbeEngineAction {
 				// is impossible to get domain values of a CALCULATED_FIELD
 				query = buildQuery(simpleCalculatedDescriptorJSON, ISelectField.SIMPLE_FIELD, filtersJSON);
 			}
-
 			UserProfile userProfile = (UserProfile) getEnv().get(EngineConstants.ENV_USER_PROFILE);
 
 			// we create a new query adding filters defined by profile attributes
-			IModelAccessModality accessModality = this.getEngineInstance().getDataSource().getModelAccessModality();
-			Query filteredQuery = accessModality.getFilteredStatement(query, this.getDataSource(), userProfile.getUserAttributes());
-
+			IModelAccessModality accessModality = dataSource.getModelAccessModality();
+			Query filteredQuery = accessModality.getFilteredStatement(query, dataSource, userProfile.getUserAttributes());
+			
 			// calculate the default cover graph
 			logger.debug("Calculating the default graph");
-			IModelStructure modelStructure = getDataSource().getModelStructure();
-			RootEntitiesGraph rootEntitiesGraph = modelStructure.getRootEntitiesGraph(getDataSource().getConfiguration().getModelName(), false);
+			IModelStructure modelStructure = dataSource.getModelStructure();
+			RootEntitiesGraph rootEntitiesGraph = modelStructure.getRootEntitiesGraph(dataSource.getConfiguration().getModelName(), false);
 			Graph<IModelEntity, Relationship> graph = rootEntitiesGraph.getRootEntitiesGraph();
 			logger.debug("UndirectedGraph retrieved");
 
-			Set<IModelEntity> entities = filteredQuery.getQueryEntities(getDataSource());
+			Set<IModelEntity> entities = filteredQuery.getQueryEntities(dataSource);
 			if (entities.size() > 0) {
 				QueryGraph queryGraph = GraphManager.getDefaultCoverGraphInstance(QbeEngineConfig.getInstance().getDefaultCoverImpl()).getCoverGraph(graph,
 						entities);
 				filteredQuery.setQueryGraph(queryGraph);
 			}
 
-			statement = getDataSource().createStatement(query);
+			statement = engineInstance.getDataSource().createStatement(query);
 
 			statement.setParameters(getEnv());
 
 			String jpaQueryStr = statement.getQueryString();
-			// String sqlQuery = statement.getSqlQueryString();
 			logger.debug("Executable query (HQL/JPQL): [" + jpaQueryStr + "]");
-			// logger.debug("Executable query (SQL): [" + sqlQuery + "]");
-
-			start = getAttributeAsInteger(START);
-			limit = getAttributeAsInteger(LIMIT);
 
 			logger.debug("Parameter [" + ENTITY_ID + "] is equals to [" + entityId + "]");
 			logger.debug("Parameter [" + START + "] is equals to [" + start + "]");
 			logger.debug("Parameter [" + LIMIT + "] is equals to [" + limit + "]");
-
-			// Assert.assertNotNull(entityId, "Parameter [" + ENTITY_ID + "] cannot be null" );
-
 			try {
 				logger.debug("Executing query ...");
 				dataSet = getActiveQueryAsDataSet(filteredQuery);
@@ -196,15 +178,20 @@ public class GetValuesForQbeFilterLookup extends AbstractQbeEngineAction {
 				String stringDrivers = envs.get(DRIVERS);
 				Map<String, Object> drivers = null;
 				try {
-					drivers = JSONObjectDeserializator.getHashMapFromString(stringDrivers);
-				} catch (Exception e) {
+					if (stringDrivers != null) {
+				        drivers = JSONObjectDeserializator.getHashMapFromString(stringDrivers);
+				    }
+					} catch (Exception e) {
 					logger.debug("Drivers cannot be transformed from string to map");
 					throw new SpagoBIRuntimeException("Drivers cannot be transformed from string to map", e);
 				}
 				dataSet.setDrivers(drivers);
 
-				dataSet.loadData((start == null) ? -1 : start.intValue(), (limit == null) ? -1 : limit.intValue(), (maxSize == null) ? -1 : maxSize.intValue());
+				int startIdx = (start == null) ? -1 : start.intValue();
+				int limitIdx = (limit == null) ? -1 : limit.intValue();
+				dataSet.loadData(startIdx, limitIdx, -1);
 
+				dataStore = dataSet.getDataStore();
 				dataStore = dataSet.getDataStore();
 				Assert.assertNotNull(dataStore, "The dataStore returned by loadData method of the class [" + dataSet.getClass().getName() + "] cannot be null");
 			} catch (Exception e) {
@@ -212,8 +199,8 @@ public class GetValuesForQbeFilterLookup extends AbstractQbeEngineAction {
 				SpagoBIEngineServiceException exception;
 				String message;
 
-				message = "An error occurred in " + getActionName() + " service while executing query: [" + statement.getQueryString() + "]";
-				exception = new SpagoBIEngineServiceException(getActionName(), message, e);
+				message = "An error occurred in " + getClass().getSimpleName() + " service while executing query: [" + statement.getQueryString() + "]";
+				exception = new SpagoBIEngineServiceException(getClass().getSimpleName(), message, e);
 				exception.addHint("Check if the query is properly formed: [" + statement.getQueryString() + "]");
 				exception.addHint("Check connection configuration");
 				exception.addHint("Check the qbe jar file");
@@ -234,9 +221,9 @@ public class GetValuesForQbeFilterLookup extends AbstractQbeEngineAction {
 			// gridDataFeed = (JSONObject)serializer2.serialize(dataStore);
 
 			Map<String, Object> props = new HashMap<>();
-			props.put(JSONDataWriter.PROPERTY_PUT_IDS, Boolean.FALSE);
-			serializer = new JSONDataWriter(props);
-			gridDataFeed = (JSONObject) serializer.write(dataStore);
+	        props.put(JSONDataWriter.PROPERTY_PUT_IDS, Boolean.FALSE);
+	        JSONDataWriter dataWriter = new JSONDataWriter(props);
+	        gridDataFeed = (JSONObject) dataWriter.write(dataStore);
 
 			// the first column contains the actual domain values, we must put this information into the response
 			JSONObject metadataJSON = gridDataFeed.getJSONObject("metaData");
@@ -248,24 +235,30 @@ public class GetValuesForQbeFilterLookup extends AbstractQbeEngineAction {
 			metadataJSON.put("displayField", name);
 			metadataJSON.put("descriptionField", name);
 
+			JSONObject responseJSON = new JSONObject();
 			try {
-				writeBackToClient(new JSONSuccess(gridDataFeed));
-			} catch (IOException e) {
-				String message = "Impossible to write back the responce to the client";
-				throw new SpagoBIEngineServiceException(getActionName(), message, e);
+			    //responseJSON.put("success", true);
+			    responseJSON = gridDataFeed;
+			} catch (Exception e) {
+			    LOGGER.error("Error creating response JSON", e);
 			}
 
-		} catch (Throwable t) {
-			errorHitsMonitor = MonitorFactory.start("QbeEngine.errorHits");
-			errorHitsMonitor.stop();
-			throw SpagoBIEngineServiceExceptionHandler.getInstance().getWrappedException(getActionName(), getEngineInstance(), t);
-		} finally {
-			if (totalTimeMonitor != null)
-				totalTimeMonitor.stop();
-			logger.debug("OUT");
+
+			res = Response.ok(responseJSON.toString())
+			              .header("Content-Type", "application/json; charset=UTF-8")
+			              .build();
+	
+		    
+		}catch (JSONException e) {
+			LOGGER.warn("Error during GetValuesForQbeFilterLookup", e);
+			res = Response.serverError().build();
 		}
+		}
+		
+        return res;
 	}
 
+	
 	private IDataSet getActiveQueryAsDataSet(Query q) {
 		IStatement statement = getEngineInstance().getDataSource().createStatement(q);
 		IDataSet dataSet;
@@ -294,7 +287,6 @@ public class GetValuesForQbeFilterLookup extends AbstractQbeEngineAction {
 		return dataSet;
 
 	}
-
 	private Query buildQuery(JSONObject fieldDescriptor, String type, JSONObject filtersJSON) throws JSONException {
 
 		Query query = new Query();
@@ -353,5 +345,5 @@ public class GetValuesForQbeFilterLookup extends AbstractQbeEngineAction {
 		logger.debug("OUT");
 		return query;
 	}
-
 }
+	

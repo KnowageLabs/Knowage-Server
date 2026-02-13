@@ -239,7 +239,7 @@ public class ExecuteQueryAction extends AbstractQbeEngineAction {
 		List whereFields = query.getWhereFields();
 		Iterator whereFieldsIt = whereFields.iterator();
 		String[] question = { "?" };
-
+		
 		JSONObject requestPromptableFilters = action.getAttributeAsJSONObject("promptableFilters");
 
 		while (whereFieldsIt.hasNext()) {
