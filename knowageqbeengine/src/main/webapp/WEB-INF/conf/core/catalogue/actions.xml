@@ -9,12 +9,6 @@
 		<CONFIG></CONFIG>
 	</ACTION>
 	
-	<ACTION name="SET_CATALOGUE_ACTION" 
-			class="it.eng.spagobi.engines.qbe.services.core.catalogue.SetCatalogueAction"  
-			scope="REQUEST">
-			
-		<CONFIG></CONFIG>
-	</ACTION>
 	
 	<ACTION name="VALIDATE_CATALOGUE_ACTION" 
 			class="it.eng.spagobi.engines.qbe.services.core.catalogue.ValidateCatalogueAction"  

@@ -1,24 +1,14 @@
-/*
-* Knowage, Open Source Business Intelligence suite
-* Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
-*
-* Knowage is free software: you can redistribute it and/or modify
-* it under the terms of the GNU Affero General Public License as published by
-* the Free Software Foundation, either version 3 of the License, or
-* (at your option) any later version.
-*
-* Knowage is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-* GNU Affero General Public License for more details.
-*
-* You should have received a copy of the GNU Affero General Public License
-* along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-package it.eng.spagobi.engines.qbe.services.core.datamart;
+package it.eng.spagobi.engines.qbe.api;
 
-import java.io.IOException;
 import java.util.Iterator;
+
+import javax.ws.rs.DefaultValue;
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
@@ -33,23 +23,14 @@ import it.eng.qbe.model.structure.filter.QbeTreeOrderEntityFilter;
 import it.eng.qbe.model.structure.filter.QbeTreeOrderFieldFilter;
 import it.eng.qbe.model.structure.filter.QbeTreeQueryEntityFilter;
 import it.eng.qbe.query.Query;
-import it.eng.spago.base.SourceBean;
 import it.eng.spagobi.commons.bo.UserProfile;
-import it.eng.spagobi.engines.qbe.services.core.AbstractQbeEngineAction;
 import it.eng.spagobi.engines.qbe.tree.ExtJsQbeTreeBuilder;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.engines.EngineConstants;
-import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceException;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceExceptionHandler;
-import it.eng.spagobi.utilities.service.JSONSuccess;
 
-/**
- *
- * @author Andrea Gioia (andrea.gioia@eng.it)
- */
-public class GetTreeAction extends AbstractQbeEngineAction {
-
-	private static final long serialVersionUID = 1325035833244562916L;
+@Path("/GetTree")
+public class QbeGetTreeResource extends AbstractQbeEngineResource {
 
 	// INPUT PARAMETERS
 	public static final String QUERY_ID = "parentQueryId";
@@ -58,13 +39,12 @@ public class GetTreeAction extends AbstractQbeEngineAction {
 	public static final String ENTITIES = "entities";
 
 	/** Logger component. */
-	public static transient Logger logger = Logger.getLogger(GetTreeAction.class);
+	public static transient Logger logger = Logger.getLogger(QbeGetTreeResource.class);
 
-	@Override
-	public void service(SourceBean request, SourceBean response) {
-
+	@GET
+	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
+	public Response getTree(@QueryParam("datamartName") String datamartName, @QueryParam("openDatasetInQbe") @DefaultValue("false")Boolean openDatasetInQbe) {
 		String queryId = null;
-		String datamartName = null;
 		Query query = null;
 
 		IQbeTreeEntityFilter entityFilter = null;
@@ -76,17 +56,15 @@ public class GetTreeAction extends AbstractQbeEngineAction {
 		JSONArray nodes = null;
 		logger.debug("IN");
 
+		UserProfile userProfile = (UserProfile) getEnv().get(EngineConstants.ENV_USER_PROFILE);
+
+		// queryId = getAttributeAsString(QUERY_ID);
+		// logger.debug("Parameter [" + QUERY_ID + "] is equals to [" + queryId + "]");
+
+		Assert.assertNotNull(getEngineInstance(),
+				"It's not possible to execute GetTree service before having properly created an instance of EngineInstance class");
+
 		try {
-			super.service(request, response);
-
-			UserProfile userProfile = (UserProfile) getEnv().get(EngineConstants.ENV_USER_PROFILE);
-
-			queryId = getAttributeAsString(QUERY_ID);
-			logger.debug("Parameter [" + QUERY_ID + "] is equals to [" + queryId + "]");
-
-			Assert.assertNotNull(getEngineInstance(),
-					"It's not possible to execute " + this.getActionName() + " service before having properly created an instance of EngineInstance class");
-
 			logger.debug("Filtering entities list ...");
 			entityFilter = new QbeTreeAccessModalityEntityFilter();
 			logger.debug("Apply entity filter [" + entityFilter.getClass().getName() + "]");
@@ -110,21 +88,17 @@ public class GetTreeAction extends AbstractQbeEngineAction {
 
 			qbeBuilder = new ExtJsQbeTreeBuilder(treeFilter);
 
-			datamartName = getAttributeAsString(DATAMART_NAME);
-
-			boolean openDatasetInQbe = getAttributeAsBoolean("openDatasetInQbe");
-
 			if (!openDatasetInQbe && datamartName != null && !datamartName.equals("null")) {
 				// if(datamartName.equals("null"))
 				// datamartName="";
-				nodes = qbeBuilder.getQbeTree(getDataSource(), getLocale(), datamartName, userProfile);
+				nodes = qbeBuilder.getQbeTree(getEngineInstance().getDataSource(), getLocale(), datamartName, userProfile);
 
 			} else {
 				nodes = new JSONArray();
-				Iterator<String> it = getDataSource().getModelStructure(userProfile).getModelNames().iterator();
+				Iterator<String> it = getEngineInstance().getDataSource().getModelStructure(userProfile).getModelNames().iterator();
 				while (it.hasNext()) {
 					String modelName = it.next();
-					JSONArray temp = qbeBuilder.getQbeTree(getDataSource(), getLocale(), modelName, userProfile);
+					JSONArray temp = qbeBuilder.getQbeTree(getEngineInstance().getDataSource(), getLocale(), modelName, userProfile);
 					for (int i = 0; i < temp.length(); i++) {
 						Object object = temp.get(i);
 						nodes.put(object);
@@ -134,16 +108,11 @@ public class GetTreeAction extends AbstractQbeEngineAction {
 			}
 
 			node.put(ENTITIES, nodes);
-
-			try {
-				writeBackToClient(new JSONSuccess(node));
-			} catch (IOException e) {
-				String message = "Impossible to write back the responce to the client";
-				throw new SpagoBIEngineServiceException(getActionName(), message, e);
-			}
+			// writeBackToClient(new JSONSuccess(node));
+			return Response.status(200).entity(node.toString()).build();
 
 		} catch (Throwable t) {
-			throw SpagoBIEngineServiceExceptionHandler.getInstance().getWrappedException(getActionName(), getEngineInstance(), t);
+			throw SpagoBIEngineServiceExceptionHandler.getInstance().getWrappedException("GetTree", getEngineInstance(), t);
 		} finally {
 			logger.debug("OUT");
 		}
