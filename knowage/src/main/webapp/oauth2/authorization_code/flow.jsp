@@ -48,7 +48,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                     		    grant_type: "authorization_code",
                     		    redirect_uri: oauth2Config.redirectUrl,
                     		    code: code,
-                    		    state: state
+                    		    state: state,
+                    		    client_secret: oauth2Config.clientSecret
                     		  })
                     		})
                     		.then(response => response.json().then(data => ({ status: response.status, body: data })))

@@ -17,6 +17,7 @@ import it.eng.knowage.monitor.IKnowageMonitor;
 import it.eng.knowage.monitor.KnowageMonitorFactory;
 import it.eng.spagobi.api.AbstractSpagoBIResource;
 import it.eng.spagobi.commons.SingletonConfig;
+import it.eng.spagobi.security.OAuth2.OAuth2Config;
 import it.eng.spagobi.services.rest.annotations.PublicService;
 
 @Path("/loginconfig")
@@ -36,12 +37,23 @@ public class LoginConfigResource extends AbstractSpagoBIResource {
 			Map<String, Object> item = new HashMap<>();
 			Object ssoActiveValue = config.getConfigValue("SPAGOBI_SSO.ACTIVE");
 			boolean ssoActive = Boolean.parseBoolean(String.valueOf(ssoActiveValue));
+			String oauth2FlowType = Optional.ofNullable(System.getProperty("oauth2_flow_type", System.getenv("OAUTH2_FLOW_TYPE"))).orElse("");
 			item.put("ssoActive", ssoActive);
 			item.put("defaultLanguage", config.getConfigValue("SPAGOBI.LANGUAGE_SUPPORTED.LANGUAGE.default"));
-			item.put("oauth2FlowType", Optional.ofNullable(System.getProperty("oauth2_flow_type", System.getenv("OAUTH2_FLOW_TYPE"))).orElse(""));
+			item.put("oauth2FlowType", oauth2FlowType);
 
 			item.put("JWT_LABEL", System.getProperty("JWT_LABEL", System.getenv("JWT_LABEL")));
 			item.put("JWT_SESSION_STORAGE", System.getProperty("JWT_SESSION_STORAGE", System.getenv("JWT_SESSION_STORAGE")));
+
+			if (oauth2FlowType != null && !oauth2FlowType.equalsIgnoreCase("NONE")) {
+				OAuth2Config oauth2Config = OAuth2Config.getInstance();
+				item.put("authorizeUrl", oauth2Config.getAuthorizeUrl());
+				item.put("clientId", oauth2Config.getClientId());
+				item.put("redirectUrl", oauth2Config.getRedirectUrl());
+				item.put("scopes", oauth2Config.getScopes());
+				item.put("ssoProvider", "oidc");
+
+			}
 
             monitor.stop();
             return Response.ok(Map.of("items", List.of(item))).build();

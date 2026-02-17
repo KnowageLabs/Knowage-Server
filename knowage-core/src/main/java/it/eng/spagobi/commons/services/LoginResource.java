@@ -2,6 +2,8 @@ package it.eng.spagobi.commons.services;
 
 import java.net.URI;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -9,6 +11,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
@@ -34,6 +38,7 @@ import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.hazelcast.map.IMap;
 
 import it.eng.knowage.monitor.IKnowageMonitor;
 import it.eng.knowage.monitor.KnowageMonitorFactory;
@@ -83,6 +88,7 @@ import it.eng.spagobi.tenant.Tenant;
 import it.eng.spagobi.tenant.TenantManager;
 import it.eng.spagobi.tools.dataset.notifier.fiware.OAuth2Utils;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+import it.eng.spagobi.utilities.locks.DistributedLockFactory;
 
 @Path("/login")
 public class LoginResource extends AbstractSpagoBIResource {
@@ -185,6 +191,16 @@ public class LoginResource extends AbstractSpagoBIResource {
 		}
 	}
 
+	/**
+	 * Verifies MFA code and completes login process
+	 * Accepts MFA token and TOTP code for user authentication with multi-factor authentication
+	 * Supports first-time MFA setup with secret provisioning
+	 *
+	 * @param req The HTTP servlet request
+	 * @param payload Request payload containing tokenMfa (JWT MFA token), code (TOTP code), and optional secret
+	 * @return Response with login token on success, or error response on failure
+	 * @throws Exception if verification or login process fails
+	 */
 	@POST
 	@Path("/verifyMfa")
 	@PublicService
@@ -288,9 +304,8 @@ public class LoginResource extends AbstractSpagoBIResource {
 
 			List<String> roleNames = user.getSbiExtUserRoleses().stream().map(SbiExtRoles::getName).collect(Collectors.toCollection(ArrayList<String>::new));
 			spagoBIUserProfile.setRoles(roleNames.toArray(String[]::new));
-			// String jwtToken = JWTSsoService.userCompleteJwtToken(userId, roleNames, UserUtilities.readFunctionality(spagoBIUserProfile),
-			// expiresAt);
-			String jwtToken = JWTSsoService.userIdAndRole2jwtToken(userId, roleNames, expiresAt);
+
+			String jwtToken = JWTSsoService.userId2jwtToken(userId, expiresAt);
 			spagoBIUserProfile.setUniqueIdentifier(jwtToken);
 
 			IEngUserProfile profile = loadUserProfile(jwtToken, req);
@@ -462,6 +477,128 @@ public class LoginResource extends AbstractSpagoBIResource {
 		}
 	}
 
+	@POST
+	@Path("/refreshToken")
+	@PublicService
+	public Response refreshToken(@Context HttpServletRequest req, Map<String, String> payload) {
+
+		try {
+			String refreshToken = payload.get("refreshToken");
+			if (StringUtils.isBlank(refreshToken)) {
+				return Response.status(Response.Status.BAD_REQUEST).entity(Map.of("error", "Missing refreshToken")).build();
+			}
+
+			logger.debug("Refreshing access token using refreshToken");
+
+			// 1) Get the Hazelcast distributed map
+			IMap<String, String> tokenMap = DistributedLockFactory.getDistributedMap(SpagoBIConstants.DISTRIBUTED_MAP_INSTANCE_NAME,
+					SpagoBIConstants.DISTRIBUTED_MAP_FOR_REFRESH_TOKEN);
+
+			// 2) Check if refresh token exists (revoked or never issued?)
+			String userIdFromCache = tokenMap.get(refreshToken);
+			if (userIdFromCache == null) {
+				logger.warn("Refresh token not found or revoked");
+				return Response.status(Response.Status.UNAUTHORIZED).entity(Map.of("error", "Invalid or expired refreshToken")).build();
+			}
+
+			// 3) Verify JWT refresh token signature
+			Algorithm algorithm = ALGORITHM_FACTORY.getAlgorithm();
+			DecodedJWT decoded;
+
+			try {
+				decoded = JWT.require(algorithm).withIssuer(JWTSsoService.KNOWAGE_ISSUER).build().verify(refreshToken);
+			} catch (Exception e) {
+				logger.error("Invalid refresh token signature", e);
+				return Response.status(Response.Status.UNAUTHORIZED).entity(Map.of("error", "Invalid refreshToken")).build();
+			}
+
+			// 4) Extract data from refresh token
+			String userIdFromJWT = decoded.getClaim("user_id").asString();
+			Date expiresAt = decoded.getExpiresAt();
+			String deviceFromJWT = decoded.getClaim("device").asString();
+
+			// 5) Verify user ID consistency
+			if (!userIdFromJWT.equals(userIdFromCache)) {
+				logger.error("Refresh token mismatch: JWT user != Hazelcast user");
+				return Response.status(Response.Status.UNAUTHORIZED).entity(Map.of("error", "Invalid refreshToken")).build();
+			}
+
+			// 6) Check token expiration
+			if (expiresAt.before(new Date())) {
+				logger.warn("Expired refresh token");
+				return Response.status(Response.Status.UNAUTHORIZED).entity(Map.of("error", "Expired refreshToken")).build();
+			}
+
+			// 7) (Optional but recommended) Verify DEVICE / USER-AGENT
+			String currentUA = req.getHeader("User-Agent");
+			if (deviceFromJWT != null && !deviceFromJWT.equals(currentUA)) {
+				logger.error("Refresh token used from different device");
+				return Response.status(Response.Status.UNAUTHORIZED).entity(Map.of("error", "RefreshToken used from different device")).build();
+			}
+
+			// 8) At this point the refresh token is valid → generate new access token
+			String newAccessToken = JWTSsoService.userId2jwtToken(userIdFromJWT);
+
+			// 9) (Optional) Generate a new refresh token and revoke the previous one
+			// - Remove old token
+			tokenMap.remove(refreshToken);
+			// - Generate and save new token
+			String newRefreshToken = storeTokenInHazelcast(userIdFromJWT, req);
+
+			logger.info("Successfully refreshed access token for user: " + userIdFromJWT);
+
+			return Response.ok(Map.of("token", newAccessToken, "refresh_token", newRefreshToken)).build();
+
+		} catch (Exception e) {
+			logger.error("Error during refresh token process", e);
+			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(Map.of("error", "Internal server error")).build();
+		}
+	}
+
+
+	/**
+	 * Generates a new refresh token and stores it in Hazelcast distributed cache
+	 * The refresh token includes JWT ID, user ID, issue date, expiration time, and device information
+	 * Tokens are stored with TTL matching the configured refresh expiry period
+	 *
+	 * @param userId The unique identifier of the user
+	 * @param req The HTTP servlet request (used to extract User-Agent header)
+	 * @return The generated refresh token as a JWT string, or null if generation fails
+	 */
+	private String storeTokenInHazelcast(String userId, HttpServletRequest req) {
+		try {
+			logger.debug("Generating and storing refresh token for user: " + userId);
+
+			long refreshExpiryHours = 10L;
+
+
+			Algorithm algorithm = ALGORITHM_FACTORY.getAlgorithm();
+			String jti = UUID.randomUUID().toString();
+			Instant now = Instant.now();
+			Instant exp = now.plus(refreshExpiryHours, ChronoUnit.HOURS);
+
+			String userAgent = (req != null && req.getHeader("User-Agent") != null) ? req.getHeader("User-Agent") : null;
+
+			String refreshToken = JWT.create().withIssuer(JWTSsoService.KNOWAGE_ISSUER)
+					.withJWTId(jti).withClaim("user_id", userId).withIssuedAt(Date.from(now)).withExpiresAt(Date.from(exp))
+					.withClaim("device", userAgent).sign(algorithm);
+
+			IMap<String, String> tokenMap = DistributedLockFactory.getDistributedMap(SpagoBIConstants.DISTRIBUTED_MAP_INSTANCE_NAME,
+					SpagoBIConstants.DISTRIBUTED_MAP_FOR_REFRESH_TOKEN);
+
+			tokenMap.put(refreshToken, userId, refreshExpiryHours, TimeUnit.HOURS);
+
+			logger.info(
+					"Refresh token generated and stored in Hazelcast map : " + SpagoBIConstants.DISTRIBUTED_MAP_FOR_REFRESH_TOKEN + " for user : " + userId);
+
+			return refreshToken;
+
+		} catch (Exception e) {
+			logger.error("Error generating/storing refresh token in Hazelcast for user " + userId, e);
+			return null;
+		}
+	}
+
 	/**
 	 * Performs OAuth2 authentication logic
 	 */
@@ -501,6 +638,17 @@ public class LoginResource extends AbstractSpagoBIResource {
 		return completeLoginForKnowageFE(req, profile);
 	}
 
+	/**
+	 * Exchanges OAuth2 authorization code for access token
+	 * Sends token request to OAuth2 provider endpoint and handles PKCE code verifier if provided
+	 * Includes client authentication for CONFIDENTIAL clients
+	 *
+	 * @param cfg OAuth2 configuration containing client details and provider URLs
+	 * @param code Authorization code received from OAuth2 provider
+	 * @param codeVerifier PKCE code verifier (optional, for public clients)
+	 * @return TokenResponse containing access token, ID token, refresh token, and expiration info
+	 * @throws Exception if token exchange fails or provider is unreachable
+	 */
 	private TokenResponse exchangeCodeForToken(OAuth2Config cfg, String code, String codeVerifier) throws Exception {
 
 		Client client = ClientBuilder.newBuilder().connectTimeout(5, java.util.concurrent.TimeUnit.SECONDS)
@@ -562,6 +710,16 @@ public class LoginResource extends AbstractSpagoBIResource {
 		}
 	}
 
+	/**
+	 * Checks if Multi-Factor Authentication (MFA) is required for the user
+	 * MFA is skipped for LDAP-based security implementations
+	 * MFA requirement is determined by tenant configuration
+	 *
+	 * @param req The HTTP servlet request
+	 * @param user The SbiUser entity to check
+	 * @return true if MFA is required and enabled for the user's tenant, false otherwise
+	 * @throws Exception if tenant or configuration lookup fails
+	 */
 	private boolean checkCodeMfa(HttpServletRequest req, SbiUser user) throws Exception {
 
 		String securityServiceSupplier = SingletonConfig.getInstance().getConfigValue("SPAGOBI.SECURITY.USER-PROFILE-FACTORY-CLASS.className");
@@ -582,6 +740,13 @@ public class LoginResource extends AbstractSpagoBIResource {
 		return true;
 	}
 
+	/**
+	 * Stores user profile in HTTP session and enriches it with PM (Portal Manager) information
+	 * Enrichment includes additional user context and profile attributes from request
+	 *
+	 * @param userProfile The UserProfile object to store in session
+	 * @param req The HTTP servlet request
+	 */
 	private void storeProfileInSession(UserProfile userProfile, HttpServletRequest req) {
 		logger.debug("IN");
 		// PM-int
@@ -593,6 +758,15 @@ public class LoginResource extends AbstractSpagoBIResource {
 	}
 
 
+	/**
+	 * Checks if user password needs to be changed based on security policies
+	 * Validates password expiration, age, disuse period, and other configured controls
+	 * Returns true if password change is mandatory, false if password is active
+	 *
+	 * @param user The SbiUser entity to validate
+	 * @return true if password change is required, false otherwise
+	 * @throws Exception if configuration lookup fails
+	 */
 	private boolean checkPwd(SbiUser user) throws Exception {
 		logger.debug("IN");
 		boolean toReturn = false;
@@ -664,6 +838,13 @@ public class LoginResource extends AbstractSpagoBIResource {
 		return toReturn;
 	}
 
+	/**
+	 * Checks if user password was encrypted using the old SHA_SECRETPHRASE method (before version 7.2)
+	 * Passwords encrypted with this legacy method require immediate change
+	 *
+	 * @param user The SbiUser entity to check
+	 * @return true if password uses legacy encryption format, false otherwise
+	 */
 	private boolean encriptedBefore72(SbiUser user) {
 		return user.getPassword().startsWith(Password.PREFIX_SHA_SECRETPHRASE_ENCRIPTING);
 	}
@@ -838,7 +1019,6 @@ public class LoginResource extends AbstractSpagoBIResource {
 					aSession.close();
 				}
 			}
-
 			return Response.ok(Map.of("token", profile.getUserUniqueIdentifier())).build();
 
 		} finally {
@@ -868,7 +1048,7 @@ public class LoginResource extends AbstractSpagoBIResource {
 
 
 			URI redirectUri = URI
-					.create(System.getProperty("JWT_KNOWAGE_VUE", System.getenv("JWT_KNOWAGE_VUE")) + "login?authtoken=" + profile.getUserUniqueIdentifier());
+					.create(System.getProperty("JWT_KNOWAGE_VUE", System.getenv("JWT_KNOWAGE_VUE")) + "login?authToken=" + profile.getUserUniqueIdentifier());
 
 			return Response.seeOther(redirectUri).build();
 

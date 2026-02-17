@@ -21,7 +21,6 @@ import it.eng.knowage.privacymanager.PrivacyManagerClient;
 import it.eng.spagobi.api.AbstractSpagoBIResource;
 import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.bo.UserProfile;
-import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.utilities.AuditLogUtilities;
 
 @Path("/logout")
@@ -51,29 +50,10 @@ public class LogoutResource extends AbstractSpagoBIResource {
 		dto.setDescription("Logout");
 		PrivacyManagerClient.getInstance().sendMessage(dto);
 
-		String redirectUrl = null;
-
-		String active = SingletonConfig.getInstance().getConfigValue("SPAGOBI_SSO.ACTIVE");
-		String strUsePublicUser = SingletonConfig.getInstance().getConfigValue(SpagoBIConstants.USE_PUBLIC_USER);
-		Boolean usePublicUser = (strUsePublicUser == null) ? false : Boolean.valueOf(strUsePublicUser);
-
-
-		if ((active == null || active.equalsIgnoreCase("false"))) {
-			String context = request.getContextPath();
-			if (Boolean.TRUE.equals(usePublicUser)) {
-				context += "/servlet/AdapterHTTP?PAGE=LoginPage&NEW_SESSION=TRUE";
-				redirectUrl = context;
-			} else {
-				redirectUrl = context;
-			}
-		} else if (active != null && active.equalsIgnoreCase("true")) {
-
-			redirectUrl = SingletonConfig.getInstance().getConfigValue("SPAGOBI_SSO.SECURITY_LOGOUT_URL");
-		}
 		request.getSession().invalidate();
 
 		Map<String, Object> responseBody = new HashMap<>();
-		responseBody.put("redirectUrl", redirectUrl);
+		responseBody.put("redirectUrl", SingletonConfig.getInstance().getConfigValue("SPAGOBI_SSO.SECURITY_LOGOUT_URL"));
 		responseBody.put("urlEnginesInvalidate", getUrlEnginesInvalidate());
 
 		logger.debug("OUT");
