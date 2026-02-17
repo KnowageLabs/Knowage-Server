@@ -21,7 +21,6 @@ import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Form;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.NewCookie;
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang3.StringUtils;
@@ -867,15 +866,11 @@ public class LoginResource extends AbstractSpagoBIResource {
 				}
 			}
 
-			NewCookie cookie = new NewCookie("KNOWAGE_TOKEN", (String) userProfile.getUserUniqueIdentifier(), "/",   // path
-					null,  // domain
-					"Knowage Auth Token", NewCookie.DEFAULT_MAX_AGE, true,  // secure
-					false   // httpOnly
-			);
 
-			URI redirectUri = URI.create(System.getProperty("JWT_KNOWAGE_VUE", System.getenv("JWT_KNOWAGE_VUE")) + "login");
+			URI redirectUri = URI
+					.create(System.getProperty("JWT_KNOWAGE_VUE", System.getenv("JWT_KNOWAGE_VUE")) + "login?authtoken=" + profile.getUserUniqueIdentifier());
 
-			return Response.seeOther(redirectUri).cookie(cookie).build();
+			return Response.seeOther(redirectUri).build();
 
 		} finally {
 			TenantManager.unset();
