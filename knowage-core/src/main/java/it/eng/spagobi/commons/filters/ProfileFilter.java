@@ -56,6 +56,7 @@ import it.eng.spagobi.commons.services.LoginModule;
 import it.eng.spagobi.commons.utilities.ChannelUtilities;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.profiling.PublicProfile;
+import it.eng.spagobi.services.common.GenericJWTSsoService;
 import it.eng.spagobi.services.common.SsoServiceFactory;
 import it.eng.spagobi.services.common.SsoServiceInterface;
 import it.eng.spagobi.services.security.bo.SpagoBIUserProfile;
@@ -114,8 +115,9 @@ public class ProfileFilter implements Filter {
 					// only in case current session has no profile object, evaluate public user scenario
 					UserProfile publicProfile = PublicProfile.evaluatePublicCase(httpRequest, session, permanentSession);
 
-					if (publicProfile != null)
+					if (publicProfile != null) {
 						profile = publicProfile;
+					}
 				}
 
 				if (profile == null) {
@@ -127,10 +129,17 @@ public class ProfileFilter implements Filter {
 					if (ChannelUtilities.isWebRunning() && !GeneralUtilities.isSSOEnabled()) {
 						// case of installation as web application without SSO
 						try {
-							userId = getUserIdInWebModeWithoutSSO(httpRequest);
+							String jwtLabel = System.getProperty("JWT_LABEL", System.getenv("JWT_LABEL"));
+							if (jwtLabel != null && request.getParameter(jwtLabel) != null) {
+								GenericJWTSsoService genericJWTSsoService = new GenericJWTSsoService();
+								userId = genericJWTSsoService.readUserIdentifier(httpRequest);
+							} else {
+								userId = getUserIdInWebModeWithoutSSO(httpRequest);
+							}
 						} catch (Exception e) {
 							LOGGER.error("Error authenticating user", e);
-							httpRequest.getRequestDispatcher("/WEB-INF/jsp/commons/silentLoginFailed.jsp").forward(request, response);
+							httpResponse.sendRedirect(httpRequest.getContextPath() + "/errorLogin.html");
+							// httpResponse.sendError(HttpServletResponse.SC_UNAUTHORIZED);
 							return;
 						}
 					} else {
@@ -209,7 +218,8 @@ public class ProfileFilter implements Filter {
 			}
 		} catch (Exception e) {
 			LOGGER.error("Error while service execution", e);
-			((HttpServletResponse) response).sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+			((HttpServletResponse) response).sendRedirect(((HttpServletRequest) request).getContextPath() + "/errorLogin.html");
+			// ((HttpServletResponse) response).sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 		} finally {
 			// since TenantManager uses a ThreadLocal, we must clean after
 			// request processed in each case

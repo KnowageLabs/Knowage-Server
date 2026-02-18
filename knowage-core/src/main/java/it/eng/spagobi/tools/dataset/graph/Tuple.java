@@ -103,15 +103,17 @@ public final class Tuple {
 		StringBuilder tuple = new StringBuilder();
 		tuple.append(prefix);
 		for (int i = 0; i < values.size(); i++) {
-			if (i != 0) {
-				tuple.append(valueDelimiter);
-			}
 			String value = values.get(i) == null ? null : getProperValueString(values.get(i));
-			value = value.replaceAll(",", "&comma;");
-			String delimiter = value != null && value.startsWith(stringDelimiter) && value.endsWith(stringDelimiter) ? "" : stringDelimiter;
-			tuple.append(delimiter);
-			tuple.append(value != null ? value : "NULL");
-			tuple.append(delimiter);
+			if (value != null) {
+				if (i != 0) {
+					tuple.append(valueDelimiter);
+				}
+				value = value.replaceAll(",", "&comma;");
+				String delimiter = value.startsWith(stringDelimiter) && value.endsWith(stringDelimiter) ? "" : stringDelimiter;
+				tuple.append(delimiter);
+				tuple.append(value);
+				tuple.append(delimiter);
+			}
 		}
 		tuple.append(suffix);
 		return tuple.toString();

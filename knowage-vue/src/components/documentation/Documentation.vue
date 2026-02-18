@@ -1,5 +1,5 @@
 <template>
-  <q-layout v-if="config" view="hHh lpR fFf" class="full-height">
+  <q-layout v-if="config" view="hHh lpR fFf" :class="['full-height', { 'no-main-menu': isMainMenuHidden }]">
     <q-drawer v-model="drawer" side="left" bordered class="drawer">
       <div class="q-pa-md">
         <div class="full-width flex justify-center">
@@ -20,16 +20,18 @@
 
 <script setup lang="ts">
 import axios from "axios";
-import { onMounted, ref } from "vue";
+import { onMounted, ref, computed } from "vue";
 import { findFoldersWithLabel } from "./DocumentationHelper";
 import { useStore } from "vuex";
 import DocumentationMenuItem from "./DocumentationMenuItem.vue";
-import { useRouter } from "vue-router";
+import { useRouter, useRoute } from "vue-router";
 
 const store = useStore();
 const router = useRouter();
+const route = useRoute();
 
 const drawer = ref(true);
+const isMainMenuHidden = computed(() => route.query.menu === "false");
 const folderKey = ref<string | null>("");
 const config = ref<any | null>(null);
 const logoWide = require("@/assets/images/commons/logo_knowage.svg");
@@ -59,11 +61,20 @@ onMounted(async () => {
           "Content-Type": "application/json",
           Accept: "application/zip; charset=utf-8",
         },
-      }
+      },
     )
-    .then((response: any) => {
-      const user = (store.state as any).user;
-      const userRole = user?.sessionRole || user?.defaultRole;
+    .then(async (response: any) => {
+      // Attendi che l'utente sia caricato nel store se necessario
+      let user = (store.state as any).user;
+      let attempts = 0;
+      while (!user && attempts < 10) {
+        await new Promise((resolve) => setTimeout(resolve, 100));
+        user = (store.state as any).user;
+        attempts++;
+      }
+
+      let userRole = user?.sessionRole || user?.defaultRole;
+      const userRoles = Array.isArray(user?.roles) ? user.roles : userRole ? [userRole] : [];
 
       function filterNode(node: any): any | null {
         if (node == null) return null;
@@ -72,8 +83,11 @@ onMounted(async () => {
         }
         if (typeof node !== "object") return node;
 
-        if (Array.isArray(node.roles) && userRole && !node.roles.includes(userRole)) {
-          return null;
+        if (Array.isArray(node.roles) && node.roles.length > 0) {
+          const hasAccess = userRoles.some((role: string) => node.roles.includes(role));
+          if (!hasAccess) {
+            return null;
+          }
         }
 
         const newNode: any = { ...node };
@@ -126,6 +140,18 @@ function toggleDrawer() {
 </script>
 
 <style lang="scss" scoped>
+.no-main-menu {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: 100vw;
+  &:deep(.q-drawer .q-drawer--left) {
+    left: 0 !important;
+  }
+}
+
 :deep(.q-drawer) {
   background-color: var(--kn-documentation-drawer-color-background);
   color: var(--kn-documentation-drawer-color);

@@ -33,6 +33,8 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import javax.naming.NamingException;
@@ -88,6 +90,7 @@ import it.eng.spagobi.utilities.objects.Couple;
 public class QueryDetail extends AbstractLOV implements ILovDetail {
 	private static transient Logger logger = Logger.getLogger(QueryDetail.class);
 
+	private static final Pattern TOKENS = Pattern.compile("yyyy|yy|MM|M|dd|d|HH|H|hh|h|mm|m|ss|s|SSS|S|a|'.*?'|.");
 	public static final String TRUE_CONDITION = " ( 1 = 1 ) ";
 	private String dataSource = "";
 	private String queryDefinition = "";
@@ -725,31 +728,22 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 	private String composeStringToDt(DatabaseDialect dialect, String date) {
 		String toReturn = "";
 		date = escapeString(date); // for security reasons
+		String formatDate = SingletonConfig.getInstance().getConfigValue("SPAGOBI.DATE-FORMAT-SERVER.format");
 		if (dialect != null) {
 			if (dialect.equals(DatabaseDialect.MYSQL) || dialect.equals(DatabaseDialect.MYSQL_INNODB)) {
-				if (date.startsWith("'") && date.endsWith("'")) {
-					toReturn = " STR_TO_DATE(" + date + ",'%d/%m/%Y %h:%i:%s') ";
-				} else {
-					toReturn = " STR_TO_DATE('" + date + "','%d/%m/%Y %h:%i:%s') ";
-				}
-			} else if (dialect.equals(DatabaseDialect.ORACLE)) {
-				if (date.startsWith("'") && date.endsWith("'")) {
-					toReturn = " TO_TIMESTAMP(" + date + ",'DD/MM/YYYY HH24:MI:SS.FF') ";
-				} else {
-					toReturn = " TO_TIMESTAMP('" + date + "','DD/MM/YYYY HH24:MI:SS.FF') ";
-				}
-			} else if (dialect.equals(DatabaseDialect.ORACLE_9I10G)) {
-				if (date.startsWith("'") && date.endsWith("'")) {
-					toReturn = " TO_TIMESTAMP(" + date + ",'DD/MM/YYYY HH24:MI:SS.FF') ";
-				} else {
-					toReturn = " TO_TIMESTAMP('" + date + "','DD/MM/YYYY HH24:MI:SS.FF') ";
-				}
-			} else if (dialect.equals(DatabaseDialect.POSTGRESQL)) {
-				if (date.startsWith("'") && date.endsWith("'")) {
-					toReturn = " TO_TIMESTAMP(" + date + ",'DD/MM/YYYY HH24:MI:SS.FF') ";
-				} else {
-					toReturn = " TO_TIMESTAMP('" + date + "','DD/MM/YYYY HH24:MI:SS.FF') ";
-				}
+
+				String mysqlPattern = javaToMySqlPattern(formatDate);
+				boolean quoted = date.startsWith("'") && date.endsWith("'");
+				String q = quoted ? date : "'" + date + "'";
+				return "STR_TO_DATE(" + q + ", '" + mysqlPattern + "')";
+
+			} else if (dialect.equals(DatabaseDialect.ORACLE) || dialect.equals(DatabaseDialect.ORACLE_9I10G) || dialect.equals(DatabaseDialect.POSTGRESQL)) {
+
+				boolean quoted = date.startsWith("'") && date.endsWith("'");
+				String q = quoted ? date : "'" + date + "'";
+				String oracleTimestampPattern = javaToSqlTimestampPattern(formatDate);
+				return "TO_TIMESTAMP(" + q + ", '" + oracleTimestampPattern + "')";
+
 			} else if (dialect.equals(DatabaseDialect.SQLSERVER)) {
 				if (date.startsWith("'") && date.endsWith("'")) {
 					toReturn = date;
@@ -766,6 +760,91 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 		}
 
 		return toReturn;
+	}
+
+	private static String javaToSqlTimestampPattern(String javaPattern) {
+		if (javaPattern == null || javaPattern.isEmpty()) {
+			return "";
+		}
+
+		String p = javaPattern;
+		p = p.replace("SSS", "FF3");
+		p = p.replace("HH", "HH24");
+		p = p.replace("H", "HH24");
+		p = p.replace("mm", "MI");
+		p = p.replace("m", "MI");
+		p = p.replace("a", "AM");
+
+		return p;
+	}
+
+	private static String javaToMySqlPattern(String javaPattern) {
+		StringBuilder sb = new StringBuilder();
+		Matcher m = TOKENS.matcher(javaPattern);
+
+		while (m.find()) {
+			String t = m.group();
+
+			switch (t) {
+			case "yyyy":
+				sb.append("%Y");
+				break;
+			case "yy":
+				sb.append("%y");
+				break;
+
+			case "MM":
+				sb.append("%m");
+				break;
+			case "M":
+				sb.append("%c");
+				break;
+
+			case "dd":
+				sb.append("%d");
+				break;
+			case "d":
+				sb.append("%e");
+				break;
+
+			case "HH":
+			case "H":
+				sb.append("%H");
+				break;
+
+			case "hh":
+			case "h":
+				sb.append("%h");
+				break;
+
+			case "mm":
+			case "m":
+				sb.append("%i");
+				break;
+
+			case "ss":
+			case "s":
+				sb.append("%s");
+				break;
+
+			case "SSS":
+			case "S":
+				sb.append("%f");
+				break;
+
+			case "a":
+				sb.append("%p");
+				break;
+
+			default:
+				if (t.startsWith("'") && t.endsWith("'")) {
+					sb.append(t.substring(1, t.length() - 1));
+				} else {
+					sb.append(t);
+				}
+			}
+		}
+		return sb.toString();
 	}
 
 	/**
@@ -1049,6 +1128,9 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 
 		List<String> reserverWords = getReserverWords();
 		String statement = getQueryDefinition();
+		if (databaseDialect.getValue().contains(DatabaseDialect.SQLSERVER.getValue())) {
+			statement = removeOuterOrderBy(statement);
+		}
 		statement = StringUtilities.substituteProfileAttributesInString(statement, profile);
 		statement = substituteParametersInString(statement, drivers);
 		StringBuilder buffer = new StringBuilder();
@@ -1069,6 +1151,21 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 		}
 		this.checkReservedWords(reserverWords,getColumnSQLName(this.descriptionColumnName));
 		return buffer.toString();
+	}
+
+	public static String removeOuterOrderBy(String sql) {
+		if (sql == null) {
+			return null;
+		}
+
+		Pattern pattern = Pattern.compile("(?i)order\\s+by(?=[^()]*$)");
+		Matcher matcher = pattern.matcher(sql);
+
+		if (matcher.find()) {
+			return sql.substring(0, matcher.start()).trim();
+		}
+
+		return sql.trim();
 	}
 
 	private String checkReservedWords(List<String> reserverWords, String columnName) {

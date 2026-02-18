@@ -387,24 +387,9 @@ public class PdfExporter extends AbstractFormatExporter {
 			float baseBottomMargin = 20f;
 
 			PDPage page = table.getCurrentPage();
+			float pageWidth = page.getMediaBox().getWidth();
 			float pageHeight = page.getMediaBox().getHeight();
-
-			// Count number of selections
-			int selectionCount = 0;
-			Iterator<String> keys = selections.keys();
-			while (keys.hasNext()) {
-				String key = keys.next();
-				JSONObject selectionContent = selections.getJSONObject(key);
-				if (selectionContent != null && selectionContent.length() > 0) {
-					Iterator<String> subKeys = selectionContent.keys();
-					while (subKeys.hasNext()) {
-						subKeys.next();
-						selectionCount++;
-					}
-				}
-			}
-
-			if (selectionCount == 0) return;
+			float availableTextWidth = pageWidth - (2 * margin);
 
 			// Calculate where the table actually ends
 			// Table starts at y=550 (from createBaseTable)
@@ -426,27 +411,92 @@ public class PdfExporter extends AbstractFormatExporter {
 			// Table ends at: startY - totalHeight
 			float tableEndY = tableStartY - tableHeight;
 
-			// Calculate required height for all selections
-			float requiredHeight = selectionCount * leading;
+			// Precompute wrapped lines so we can paginate correctly
+			final class SelectionLine {
+				final String key;
+				final float keyWidth;
+				final java.util.List<String> wrappedValueLines;
+
+				SelectionLine(String key, float keyWidth, java.util.List<String> wrappedValueLines) {
+					this.key = key;
+					this.keyWidth = keyWidth;
+					this.wrappedValueLines = wrappedValueLines;
+				}
+
+				int getLineCount() {
+					return wrappedValueLines == null ? 0 : wrappedValueLines.size();
+				}
+			}
+
+			java.util.List<SelectionLine> lines = new java.util.ArrayList<>();
+
+			Iterator<String> datasetKeysForCount = selections.keys();
+			while (datasetKeysForCount.hasNext()) {
+				String datasetKey = datasetKeysForCount.next();
+				JSONObject selectionContent = selections.getJSONObject(datasetKey);
+				if (selectionContent == null || selectionContent.length() == 0) {
+					continue;
+				}
+
+				Iterator<String> columnKeys = selectionContent.keys();
+				while (columnKeys.hasNext()) {
+					String columnKey = columnKeys.next();
+					String displayKey = extractParameterName(columnKey);
+
+					StringBuilder valuesBuilder = new StringBuilder();
+					try {
+						JSONArray valueArray = selectionContent.getJSONArray(columnKey);
+						appendValues(valuesBuilder, valueArray);
+					} catch (JSONException e) {
+						try {
+							JSONArray filterVals = selectionContent.getJSONObject(columnKey).getJSONArray("filterVals");
+							appendValues(valuesBuilder, filterVals);
+						} catch (JSONException ex) {
+							LOGGER.error("Cannot extract selection value", ex);
+						}
+					}
+
+					String valuesText = valuesBuilder.toString();
+					float keyWidth = font.getStringWidth(displayKey) / 1000f * fontSize;
+					float prefixWidth = keyWidth + (font.getStringWidth(": ") / 1000f * fontSize);
+					float valueStartX = margin + prefixWidth;
+					float valueAvailableWidth = Math.max(10f, (margin + availableTextWidth) - valueStartX);
+
+					java.util.List<String> wrappedValues = wrapText(font, fontSize, valuesText, valueAvailableWidth);
+					if (wrappedValues.isEmpty()) {
+						wrappedValues = java.util.Collections.singletonList("");
+					}
+
+					lines.add(new SelectionLine(displayKey, keyWidth, wrappedValues));
+				}
+			}
+
+			if (lines.isEmpty()) {
+				return;
+			}
+
+			// Total required height in lines after wrapping
+			int totalLines = 0;
+			for (SelectionLine sl : lines) {
+				totalLines += Math.max(1, sl.getLineCount());
+			}
+			float requiredHeight = totalLines * leading;
 
 			// Check if there's space below the table
 			// Available space = tableEndY - baseBottomMargin
-			float availableSpace = tableEndY - baseBottomMargin;
-			boolean needsNewPage = availableSpace < requiredHeight;
+			float availableSpaceBelowTable = tableEndY - baseBottomMargin;
+			boolean needsNewPage = availableSpaceBelowTable < requiredHeight;
 
 			PDPage targetPage;
-			float topBaseline;
+			float currentY;
 
 			if (needsNewPage) {
-				// Create a new page for selections
 				targetPage = new PDPage(page.getMediaBox());
 				table.document.addPage(targetPage);
-				// On the new page, start from near the top with margins
-				topBaseline = pageHeight - margin - leading;
+				currentY = pageHeight - margin - leading;
 			} else {
-				// Position selections immediately after the table
 				targetPage = page;
-				topBaseline = tableEndY - leading;
+				currentY = tableEndY - leading;
 			}
 
 			try (org.apache.pdfbox.pdmodel.PDPageContentStream contentStream =
@@ -455,73 +505,120 @@ public class PdfExporter extends AbstractFormatExporter {
 				contentStream.setNonStrokingColor(Color.BLACK);
 				contentStream.setFont(font, fontSize);
 
-				float currentY = topBaseline;
+				for (SelectionLine sl : lines) {
 
-				Iterator<String> datasetKeys = selections.keys();
-				while (datasetKeys.hasNext()) {
-					String datasetKey = datasetKeys.next();
-					JSONObject selectionContent = selections.getJSONObject(datasetKey);
+					// Render the selection (wrapped)
+					float keyX = margin;
+					float keyWidth = sl.keyWidth;
+					float afterKeyX = keyX + keyWidth;
+					float colonWidth = font.getStringWidth(": ") / 1000f * fontSize;
+					float valuesX = afterKeyX + colonWidth;
 
-					if (selectionContent == null || selectionContent.length() == 0) {
-						continue;
-					}
+					java.util.List<String> wrapped = sl.wrappedValueLines;
+					int lineCount = Math.max(1, wrapped.size());
 
-					Iterator<String> columnKeys = selectionContent.keys();
-					while (columnKeys.hasNext()) {
-						String columnKey = columnKeys.next();
+					for (int i = 0; i < lineCount; i++) {
+						// Page break between wrapped lines if needed
+						if (currentY <= baseBottomMargin + leading) {
+							// new page
+							targetPage = new PDPage(page.getMediaBox());
+							table.document.addPage(targetPage);
+							currentY = pageHeight - margin - leading;
+							// finish current stream and open a new one for the new page
+							// NOTE: we can't close and reopen the try-with-resources stream, so we create a short-lived stream
+							// for the new page content and continue.
+							// Close current stream implicitly by returning and reopening isn't possible here,
+							// so we draw on the new page with a nested stream.
+							try (org.apache.pdfbox.pdmodel.PDPageContentStream csNew =
+										 new org.apache.pdfbox.pdmodel.PDPageContentStream(table.document, targetPage, org.apache.pdfbox.pdmodel.PDPageContentStream.AppendMode.APPEND, true)) {
+								csNew.setNonStrokingColor(Color.BLACK);
+								csNew.setFont(font, fontSize);
+								// draw the remaining wrapped lines for this selection in the new stream
+								for (int j = i; j < lineCount; j++) {
+									if (j == 0) {
+										// key
+										csNew.beginText();
+										csNew.newLineAtOffset(keyX, currentY);
+										csNew.showText(sl.key);
+										csNew.endText();
 
-						// Extract the value between {} if it's in format $P{...}
-						String displayKey = extractParameterName(columnKey);
+										float underlineY = currentY - 2.0f;
+										csNew.setLineWidth(0.5f);
+										csNew.moveTo(keyX, underlineY);
+										csNew.lineTo(keyX + keyWidth, underlineY);
+										csNew.stroke();
 
-						// Build the selection values string
-						StringBuilder valuesBuilder = new StringBuilder();
-						try {
-							JSONArray valueArray = selectionContent.getJSONArray(columnKey);
-							appendValues(valuesBuilder, valueArray);
-						} catch (JSONException e) {
-							// Try alternative structure: selectionContent.getJSONObject(columnKey).getJSONArray("filterVals")
-							try {
-								JSONArray filterVals = selectionContent.getJSONObject(columnKey).getJSONArray("filterVals");
-								appendValues(valuesBuilder, filterVals);
-							} catch (JSONException ex) {
-								LOGGER.error("Cannot extract selection value", ex);
+										// colon
+										csNew.beginText();
+										csNew.newLineAtOffset(afterKeyX, currentY);
+										csNew.showText(": ");
+										csNew.endText();
+
+										// values first line
+										csNew.beginText();
+										csNew.newLineAtOffset(valuesX, currentY);
+										csNew.showText(wrapped.get(j));
+										csNew.endText();
+									} else {
+										// continuation line aligned under values
+										csNew.beginText();
+										csNew.newLineAtOffset(valuesX, currentY);
+										csNew.showText(wrapped.get(j));
+										csNew.endText();
+									}
+									currentY -= leading;
+									if (currentY <= baseBottomMargin + leading && j + 1 < lineCount) {
+										// start yet another page
+										targetPage = new PDPage(page.getMediaBox());
+										table.document.addPage(targetPage);
+										currentY = pageHeight - margin - leading;
+										// reopen stream for next page
+										// easiest: recurse by restarting nested stream loop
+										// break so outer while re-enters with a new nested stream
+										i = j + 1;
+										break;
+									}
+								}
 							}
+							// we've rendered the rest with nested streams; skip the outer loop
+							currentY -= 0;
+							i = lineCount; // end outer for
+							break;
 						}
 
-						float currentX = margin;
+						if (i == 0) {
+							// key
+							contentStream.beginText();
+							contentStream.newLineAtOffset(keyX, currentY);
+							contentStream.showText(sl.key);
+							contentStream.endText();
 
-						// Print the key in bold (underlined)
-						float keyWidth = font.getStringWidth(displayKey) / 1000f * fontSize;
-						contentStream.beginText();
-						contentStream.setFont(font, fontSize);
-						contentStream.newLineAtOffset(currentX, currentY);
-						contentStream.showText(displayKey);
-						contentStream.endText();
-						contentStream.setFont(font, fontSize);
+							// underline under the key
+							float underlineY = currentY - 2.0f;
+							contentStream.setLineWidth(0.5f);
+							contentStream.moveTo(keyX, underlineY);
+							contentStream.lineTo(keyX + keyWidth, underlineY);
+							contentStream.stroke();
 
-						// Draw underline under the key
-						float underlineY = currentY - 2.0f;
-						contentStream.setLineWidth(0.5f);
-						contentStream.moveTo(currentX, underlineY);
-						contentStream.lineTo(currentX + keyWidth, underlineY);
-						contentStream.stroke();
+							// colon
+							contentStream.beginText();
+							contentStream.newLineAtOffset(afterKeyX, currentY);
+							contentStream.showText(": ");
+							contentStream.endText();
 
-						currentX += keyWidth;
+							// values first line
+							contentStream.beginText();
+							contentStream.newLineAtOffset(valuesX, currentY);
+							contentStream.showText(wrapped.get(i));
+							contentStream.endText();
+						} else {
+							// continuation line aligned under values
+							contentStream.beginText();
+							contentStream.newLineAtOffset(valuesX, currentY);
+							contentStream.showText(wrapped.get(i));
+							contentStream.endText();
+						}
 
-						// Print ": "
-						contentStream.beginText();
-						contentStream.newLineAtOffset(currentX, currentY);
-						contentStream.showText(": ");
-						contentStream.endText();
-						currentX += font.getStringWidth(": ") / 1000f * fontSize;
-
-						// Print the values
-						contentStream.beginText();
-						contentStream.newLineAtOffset(currentX, currentY);
-						contentStream.showText(valuesBuilder.toString());
-						contentStream.endText();
-
-						// Move to next line
 						currentY -= leading;
 					}
 				}
@@ -530,6 +627,88 @@ public class PdfExporter extends AbstractFormatExporter {
 		} catch (Exception e) {
 			throw new SpagoBIRuntimeException("Couldn't add selection information to the page", e);
 		}
+	}
+
+	/**
+	 * Wrap text so that each line fits within maxWidth using the provided font metrics.
+	 * Splits by whitespace; if a single token is wider than maxWidth it will be hard-split.
+	 */
+	private static java.util.List<String> wrapText(PDFont font, float fontSize, String text, float maxWidth) throws java.io.IOException {
+		java.util.List<String> result = new java.util.ArrayList<>();
+		if (text == null || text.isEmpty()) {
+			return result;
+		}
+
+		String[] words = text.split("\\s+");
+		StringBuilder line = new StringBuilder();
+
+		for (String word : words) {
+			if (word.isEmpty()) {
+				continue;
+			}
+
+			if (line.length() == 0) {
+				if (stringWidth(font, fontSize, word) <= maxWidth) {
+					line.append(word);
+				} else {
+					// hard split long token
+					for (String part : hardSplitToken(font, fontSize, word, maxWidth)) {
+						if (!part.isEmpty()) {
+							result.add(part);
+						}
+					}
+				}
+			} else {
+				String candidate = line + " " + word;
+				if (stringWidth(font, fontSize, candidate) <= maxWidth) {
+					line.append(' ').append(word);
+				} else {
+					result.add(line.toString());
+					line.setLength(0);
+					if (stringWidth(font, fontSize, word) <= maxWidth) {
+						line.append(word);
+					} else {
+						for (String part : hardSplitToken(font, fontSize, word, maxWidth)) {
+							if (!part.isEmpty()) {
+								result.add(part);
+							}
+						}
+					}
+				}
+			}
+		}
+
+		if (line.length() > 0) {
+			result.add(line.toString());
+		}
+
+		return result;
+	}
+
+	private static float stringWidth(PDFont font, float fontSize, String text) throws java.io.IOException {
+		return (font.getStringWidth(text) / 1000f) * fontSize;
+	}
+
+	private static java.util.List<String> hardSplitToken(PDFont font, float fontSize, String token, float maxWidth) throws java.io.IOException {
+		java.util.List<String> parts = new java.util.ArrayList<>();
+		StringBuilder current = new StringBuilder();
+		for (int i = 0; i < token.length(); i++) {
+			char c = token.charAt(i);
+			current.append(c);
+			if (stringWidth(font, fontSize, current.toString()) > maxWidth) {
+				// remove last char and flush
+				current.setLength(current.length() - 1);
+				if (current.length() > 0) {
+					parts.add(current.toString());
+				}
+				current.setLength(0);
+				current.append(c);
+			}
+		}
+		if (current.length() > 0) {
+			parts.add(current.toString());
+		}
+		return parts;
 	}
 
 	private static void appendValues(StringBuilder valuesBuilder, JSONArray valueArray) throws JSONException {

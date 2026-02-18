@@ -1,0 +1,44 @@
+​<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex" />
+    <title>Access Error</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+
+  <body
+    class="min-h-screen flex items-center justify-center p-4">
+    <div class="max-w-md w-full relative z-10">
+      
+      <div class="bg-white rounded-lg shadow-lg border border-gray-200 overflow-hidden">
+        
+        <div class="px-6 py-5 border-b border-gray-200">
+          <div class="flex items-start gap-4">
+            <div class="flex-shrink-0">
+              <div class="w-12 h-12 rounded-full bg-red-50 flex items-center justify-center">
+                <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                </svg>
+              </div>
+            </div>
+            <div class="flex-1 min-w-0 flex items-center">
+              <h1 id="pageTitle" class="text-4xl font-bold text-red-600 leading-tight">Error</h1>
+            </div>
+          </div>
+        </div>
+
+        
+        <div class="px-6 py-5 space-y-4">
+          
+          <div id="alertBox" class="p-4 bg-red-50 border border-red-200 rounded-lg" role="alert" tabindex="-1">
+            <p id="alertText" class="mt-1 text-sm text-red-700">An unexpected error occurred during the authentication process. If the problem persists, please contact your system administrator.</p>
+          </div>
+
+          
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
