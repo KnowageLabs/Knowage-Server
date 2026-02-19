@@ -141,7 +141,43 @@
 			<artifactId>resteasy-multipart-provider</artifactId>
 			<version>4.6.0.Final</version>
 		</dependency>
-		<!-- 
+		<!-- Commons IO - Must be BEFORE POI to ensure correct version in classpath -->
+		<dependency>
+			<groupId>commons-io</groupId>
+			<artifactId>commons-io</artifactId>
+			<version>2.15.1</version>
+			<scope>compile</scope>
+		</dependency>
+		<!-- Apache POI for Excel validation -->
+		<dependency>
+			<groupId>org.apache.poi</groupId>
+			<artifactId>poi</artifactId>
+			<version>${apache.poi}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>commons-io</groupId>
+					<artifactId>commons-io</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.poi</groupId>
+			<artifactId>poi-ooxml</artifactId>
+			<version>${apache.poi-ooxml}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>commons-io</groupId>
+					<artifactId>commons-io</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<!-- SuperCSV for CSV validation -->
+		<dependency>
+			<groupId>net.sf.supercsv</groupId>
+			<artifactId>super-csv</artifactId>
+			<version>2.1.0</version>
+		</dependency>
+		<!--
 			   ____        _          __             _            _       
 			  / __ \      | |        / _|           | |          | |      
 			 | |  | |_ __ | |_   _  | |_ ___  _ __  | |_ ___  ___| |_ ___ 

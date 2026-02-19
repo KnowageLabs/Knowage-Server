@@ -55,6 +55,7 @@ import it.eng.knowage.boot.error.KnowageRuntimeException;
 import it.eng.knowage.boot.validation.FilesValidator;
 import it.eng.knowage.knowageapi.error.ImpossibleToReadFilesListException;
 import it.eng.knowage.knowageapi.error.ImpossibleToReadFolderListException;
+import it.eng.knowage.knowageapi.utils.FileContentValidator;
 import it.eng.knowage.knowageapi.utils.PathTraversalChecker;
 import it.eng.knowage.resourcemanager.resource.dto.DownloadFilesDTO;
 import it.eng.knowage.resourcemanager.resource.dto.FileDTO;
@@ -164,6 +165,7 @@ public class FilesResource {
 			throw new KnowageBusinessException("Cannot find key part in input");
 		}
 
+
 		try {
 			String key = formDataMap.get("key").get(0).getBodyAsString();
 
@@ -189,16 +191,22 @@ public class FilesResource {
 				String path = Paths.get(resourceManagerAPIservice.getFolderByKey(key, profile)).resolve(fileName)
 						.toString();
 
-				if (!Arrays.asList("application/x-zip-compressed", "application/zip").contains(mediaType.toString())) {
-					try (InputStream is = inputPart.getBody(InputStream.class, null)) {
+			if (!Arrays.asList("application/x-zip-compressed", "application/zip").contains(mediaType.toString())) {
+				try (InputStream is = inputPart.getBody(InputStream.class, null)) {
 
-						resourceManagerAPIservice.importFile(is, path, profile);
-						return Response.status(Response.Status.OK).build();
+					// Validate file content matches extension and is not corrupted
+					InputStream validatedStream = FileContentValidator.validateFileContent(is, fileName);
 
-					} catch (IOException e) {
-						throw new KnowageRuntimeException("Error while importing file", e);
-					}
-				} else {
+					resourceManagerAPIservice.importFile(validatedStream, path, profile);
+					return Response.status(Response.Status.OK).build();
+
+				} catch (KnowageRuntimeException e) {
+					// File validation failed (extension mismatch or corrupted file)
+					throw e;
+				} catch (IOException e) {
+					throw new KnowageRuntimeException("Error while importing file", e);
+				}
+			} else {
 					try (InputStream is = inputPart.getBody(InputStream.class, null)) {
 
 						if (extract) {
@@ -217,13 +225,11 @@ public class FilesResource {
 				throw new KnowageRuntimeException("Invalid file content");
 			}
 
-		} catch (KnowageBusinessException e) {
-			throw new KnowageBusinessException(e, businessContext.getLocale());
-		} catch (IOException e) {
-			throw new KnowageRuntimeException(e);
-		}
 
-	}
+		} catch (KnowageBusinessException | KnowageRuntimeException | IOException e) {
+			throw new KnowageBusinessException(e.getMessage());
+		}
+    }
 
 	@GET
 	@Path("/metadata")
