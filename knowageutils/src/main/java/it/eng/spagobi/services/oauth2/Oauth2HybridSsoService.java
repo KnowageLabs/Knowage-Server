@@ -28,7 +28,6 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpStatus;
@@ -75,8 +74,7 @@ public class Oauth2HybridSsoService extends JWTSsoService {
 	@Override
 	public String readUserIdentifier(HttpServletRequest request) {
 		String jwtToken = null;
-		HttpSession session = request.getSession();
-		String accessToken = (String) session.getAttribute(Oauth2SsoService.ACCESS_TOKEN);
+		String accessToken = (String) request.getAttribute(Oauth2SsoService.ACCESS_TOKEN);
 		if (accessToken == null) {
 			logger.debug("Access token not found.");
 			return super.readUserIdentifier(request);

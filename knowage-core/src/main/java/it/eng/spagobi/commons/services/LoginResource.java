@@ -33,6 +33,7 @@ import com.auth0.jwt.JWTCreator.Builder;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import it.eng.knowage.monitor.IKnowageMonitor;
@@ -172,7 +173,7 @@ public class LoginResource extends AbstractSpagoBIResource {
 			recordLoginEvent((UserProfile) profile);
 
 			// Complete login with tenant context
-			return completeLogin(req, profile);
+			return completeLogin(req, profile, false);
 
 		} catch (SecurityException se) {
 			logger.error("Security exception during login", se);
@@ -313,7 +314,7 @@ public class LoginResource extends AbstractSpagoBIResource {
 			storeProfileInSession((UserProfile) profile, req);
 			recordLoginEvent((UserProfile) profile);
 
-			Response response = completeLogin(req, profile);
+			Response response = completeLogin(req, profile, false);
 			monitor.stop();
 			return response;
 
@@ -336,7 +337,7 @@ public class LoginResource extends AbstractSpagoBIResource {
 		IKnowageMonitor monitor = KnowageMonitorFactory.getInstance().start("knowage.login.oauth2.authentication");
 
 		try {
-			return performOAuth2Login(req, monitor);
+			return performOAuth2Login(req, monitor, true);
 		} catch (Exception e) {
 			logger.error("Unexpected error during OAuth2 login", e);
 			monitor.stop(e);
@@ -369,9 +370,9 @@ public class LoginResource extends AbstractSpagoBIResource {
 				return buildUnauthorizedResponse("Failed to obtain access token from OAuth2 provider");
 			}
 			req.setAttribute(Oauth2SsoService.ACCESS_TOKEN, token.access_token);
-			// req.setAttribute(Oauth2SsoService.ID_TOKEN, token.id_token);
+			req.setAttribute(Oauth2SsoService.ID_TOKEN, token.id_token);
 
-			return performOAuth2Login(req, monitor);
+			return performOAuth2Login(req, monitor, false);
 
 		} catch (Exception e) {
 			logger.error("Unexpected error during OIDC login", e);
@@ -462,7 +463,7 @@ public class LoginResource extends AbstractSpagoBIResource {
 			monitor.stop();
 
 			req.setAttribute(Oauth2SsoService.ID_TOKEN, idToken);
-			return performOAuth2Login(req, monitor);
+			return performOAuth2Login(req, monitor, false);
 
 		} catch (Exception e) {
 			logger.error("Error during ID token validation", e);
@@ -474,7 +475,7 @@ public class LoginResource extends AbstractSpagoBIResource {
 	/**
 	 * Performs OAuth2 authentication logic
 	 */
-	private Response performOAuth2Login(HttpServletRequest req, IKnowageMonitor monitor) throws Exception {
+	private Response performOAuth2Login(HttpServletRequest req, IKnowageMonitor monitor, boolean requiresRedirect) throws Exception {
 		// Get userId using SSO service
 		String userId = getUserIdWithSSO(req);
 
@@ -507,7 +508,7 @@ public class LoginResource extends AbstractSpagoBIResource {
 		recordLoginEvent((UserProfile) profile);
 
 		// Complete login with tenant context
-		return completeLoginForKnowageFE(req, profile);
+		return completeLogin(req, profile, requiresRedirect);
 	}
 
 	/**
@@ -565,20 +566,15 @@ public class LoginResource extends AbstractSpagoBIResource {
 		}
 	}
 
+	@JsonIgnoreProperties(ignoreUnknown = true)
 	public static class TokenResponse {
 		public String access_token;
 		public String id_token;
-		public String refresh_token;
-		public String token_type;
-		public Long expires_in;
-		public Long refresh_expires_in;
-		public String scope;
+
 
 		@Override
 		public String toString() {
-			return "TokenResponse{" + "access_token='" + (access_token != null ? "***" : null) + '\'' + ", id_token='" + (id_token != null ? "***" : null)
-					+ '\'' + ", refresh_token='" + (refresh_token != null ? "***" : null) + '\'' + ", token_type='" + token_type + '\'' + ", expires_in="
-					+ expires_in + ", refresh_expires_in=" + refresh_expires_in + ", scope='" + scope + '\'' + '}';
+			return "TokenResponse [access_token=" + access_token + ", id_token=" + id_token + "]";
 		}
 	}
 
@@ -871,8 +867,10 @@ public class LoginResource extends AbstractSpagoBIResource {
 
 	/**
 	 * Completes the login process with tenant context and audit logging
+	 * If requiresRedirect is true, performs a redirect to the Knowage FE with authToken
+	 * Otherwise, returns a JSON response with the authentication token
 	 */
-	private Response completeLogin(HttpServletRequest req, IEngUserProfile profile) throws Exception {
+	private Response completeLogin(HttpServletRequest req, IEngUserProfile profile, boolean requiresRedirect) throws Exception {
 		UserProfile userProfile = (UserProfile) profile;
 		Tenant tenant = new Tenant(userProfile.getOrganization());
 		TenantManager.setTenant(tenant);
@@ -891,38 +889,20 @@ public class LoginResource extends AbstractSpagoBIResource {
 					aSession.close();
 				}
 			}
-			return Response.ok(Map.of("token", profile.getUserUniqueIdentifier())).build();
 
-		} finally {
-			TenantManager.unset();
-		}
-	}
-
-	private Response completeLoginForKnowageFE(HttpServletRequest req, IEngUserProfile profile) throws Exception {
-		UserProfile userProfile = (UserProfile) profile;
-
-		Tenant tenant = new Tenant(userProfile.getOrganization());
-		TenantManager.setTenant(tenant);
-
-		try {
-			Session aSession = null;
-			try {
-				aSession = HibernateSessionManager.getCurrentSession();
-				AuditLogUtilities.updateAudit(req, profile, "SPAGOBI.Login", null, "OK");
-			} catch (HibernateException he) {
-				logger.error("Error writing audit log", he);
-				throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
-			} finally {
-				if (aSession != null && aSession.isOpen()) {
-					aSession.close();
+			if (requiresRedirect) {
+				URI redirectUri = URI
+						.create(System.getProperty("JWT_KNOWAGE_VUE", System.getenv("JWT_KNOWAGE_VUE")) + "login?authToken=" + profile.getUserUniqueIdentifier());
+				return Response.seeOther(redirectUri).build();
+			} else {
+				Object idToken = req.getAttribute(Oauth2SsoService.ID_TOKEN);
+				Map<String, Object> responseMap = new java.util.HashMap<>();
+				responseMap.put("token", profile.getUserUniqueIdentifier());
+				if (idToken != null) {
+					responseMap.put("idToken", idToken);
 				}
+				return Response.ok(responseMap).build();
 			}
-
-
-			URI redirectUri = URI
-					.create(System.getProperty("JWT_KNOWAGE_VUE", System.getenv("JWT_KNOWAGE_VUE")) + "login?authToken=" + profile.getUserUniqueIdentifier());
-
-			return Response.seeOther(redirectUri).build();
 
 		} finally {
 			TenantManager.unset();

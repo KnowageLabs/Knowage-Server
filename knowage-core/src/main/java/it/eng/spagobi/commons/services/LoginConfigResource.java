@@ -51,7 +51,6 @@ public class LoginConfigResource extends AbstractSpagoBIResource {
 				item.put("clientId", oauth2Config.getClientId());
 				item.put("redirectUrl", oauth2Config.getRedirectUrl());
 				item.put("scopes", oauth2Config.getScopes());
-				item.put("ssoProvider", "oidc");
 
 			}
 
