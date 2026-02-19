@@ -217,7 +217,8 @@ export default defineComponent({
             crossNavigationSourceDocumentName: '',
             metadataLoading: false,
             datasetPreviewShown: false as boolean,
-            datasetToPreview: {} as any
+            datasetToPreview: {} as any,
+            reportRefreshInterval: null as any
         }
     },
     watch: {
@@ -252,6 +253,7 @@ export default defineComponent({
     deactivated() {
         this.parameterSidebarVisible = false
         window.removeEventListener('message', this.iframeEventsListener)
+        if (this.reportRefreshInterval) clearInterval(this.reportRefreshInterval)
     },
     computed: {
         canEditCockpit(): boolean {
@@ -659,6 +661,9 @@ export default defineComponent({
             const link = this.$route.path.includes('workspace') ? '/workspace' : '/document-browser'
             this.$router.push(link)
             this.breadcrumbs = []
+
+            if (this.reportRefreshInterval) clearInterval(this.reportRefreshInterval)
+
             this.$emit('close')
         },
         setMode() {
@@ -867,6 +872,8 @@ export default defineComponent({
             }
 
             await this.sendForm(documentLabel, crossNavigationPopupMode)
+
+            if (this.document.typeCode === 'REPORT' && this.document.refreshSeconds > 0) this.startReportAutoRefresh()
         },
         async loadExporters() {
             if (!this.urlData || !this.urlData.engineLabel) return
@@ -1530,7 +1537,15 @@ export default defineComponent({
             this.crossNavigationContainerVisible = true
             this.crossNavigationSourceDocumentName = ''
             this.onBreadcrumbClick(this.breadcrumbs[this.breadcrumbs.length - 1])
-        }
+        },
+        startReportAutoRefresh() {
+            if (this.reportRefreshInterval) clearInterval(this.reportRefreshInterval)
+
+            const refreshIntervalMs = this.document.refreshSeconds * 1000
+            this.reportRefreshInterval = setInterval(async () => {
+                await this.refresh()
+            }, refreshIntervalMs)
+        },
     }
 })
 </script>
