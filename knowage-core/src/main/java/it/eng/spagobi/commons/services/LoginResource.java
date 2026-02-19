@@ -2,8 +2,6 @@ package it.eng.spagobi.commons.services;
 
 import java.net.URI;
 import java.text.SimpleDateFormat;
-import java.time.Instant;
-import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -11,8 +9,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.UUID;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
@@ -38,7 +34,6 @@ import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.hazelcast.map.IMap;
 
 import it.eng.knowage.monitor.IKnowageMonitor;
 import it.eng.knowage.monitor.KnowageMonitorFactory;
@@ -88,7 +83,6 @@ import it.eng.spagobi.tenant.Tenant;
 import it.eng.spagobi.tenant.TenantManager;
 import it.eng.spagobi.tools.dataset.notifier.fiware.OAuth2Utils;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
-import it.eng.spagobi.utilities.locks.DistributedLockFactory;
 
 @Path("/login")
 public class LoginResource extends AbstractSpagoBIResource {
@@ -474,128 +468,6 @@ public class LoginResource extends AbstractSpagoBIResource {
 			logger.error("Error during ID token validation", e);
 			monitor.stop(e);
 			return buildErrorResponse("ID token validation failed", e);
-		}
-	}
-
-	@POST
-	@Path("/refreshToken")
-	@PublicService
-	public Response refreshToken(@Context HttpServletRequest req, Map<String, String> payload) {
-
-		try {
-			String refreshToken = payload.get("refreshToken");
-			if (StringUtils.isBlank(refreshToken)) {
-				return Response.status(Response.Status.BAD_REQUEST).entity(Map.of("error", "Missing refreshToken")).build();
-			}
-
-			logger.debug("Refreshing access token using refreshToken");
-
-			// 1) Get the Hazelcast distributed map
-			IMap<String, String> tokenMap = DistributedLockFactory.getDistributedMap(SpagoBIConstants.DISTRIBUTED_MAP_INSTANCE_NAME,
-					SpagoBIConstants.DISTRIBUTED_MAP_FOR_REFRESH_TOKEN);
-
-			// 2) Check if refresh token exists (revoked or never issued?)
-			String userIdFromCache = tokenMap.get(refreshToken);
-			if (userIdFromCache == null) {
-				logger.warn("Refresh token not found or revoked");
-				return Response.status(Response.Status.UNAUTHORIZED).entity(Map.of("error", "Invalid or expired refreshToken")).build();
-			}
-
-			// 3) Verify JWT refresh token signature
-			Algorithm algorithm = ALGORITHM_FACTORY.getAlgorithm();
-			DecodedJWT decoded;
-
-			try {
-				decoded = JWT.require(algorithm).withIssuer(JWTSsoService.KNOWAGE_ISSUER).build().verify(refreshToken);
-			} catch (Exception e) {
-				logger.error("Invalid refresh token signature", e);
-				return Response.status(Response.Status.UNAUTHORIZED).entity(Map.of("error", "Invalid refreshToken")).build();
-			}
-
-			// 4) Extract data from refresh token
-			String userIdFromJWT = decoded.getClaim("user_id").asString();
-			Date expiresAt = decoded.getExpiresAt();
-			String deviceFromJWT = decoded.getClaim("device").asString();
-
-			// 5) Verify user ID consistency
-			if (!userIdFromJWT.equals(userIdFromCache)) {
-				logger.error("Refresh token mismatch: JWT user != Hazelcast user");
-				return Response.status(Response.Status.UNAUTHORIZED).entity(Map.of("error", "Invalid refreshToken")).build();
-			}
-
-			// 6) Check token expiration
-			if (expiresAt.before(new Date())) {
-				logger.warn("Expired refresh token");
-				return Response.status(Response.Status.UNAUTHORIZED).entity(Map.of("error", "Expired refreshToken")).build();
-			}
-
-			// 7) (Optional but recommended) Verify DEVICE / USER-AGENT
-			String currentUA = req.getHeader("User-Agent");
-			if (deviceFromJWT != null && !deviceFromJWT.equals(currentUA)) {
-				logger.error("Refresh token used from different device");
-				return Response.status(Response.Status.UNAUTHORIZED).entity(Map.of("error", "RefreshToken used from different device")).build();
-			}
-
-			// 8) At this point the refresh token is valid → generate new access token
-			String newAccessToken = JWTSsoService.userId2jwtToken(userIdFromJWT);
-
-			// 9) (Optional) Generate a new refresh token and revoke the previous one
-			// - Remove old token
-			tokenMap.remove(refreshToken);
-			// - Generate and save new token
-			String newRefreshToken = storeTokenInHazelcast(userIdFromJWT, req);
-
-			logger.info("Successfully refreshed access token for user: " + userIdFromJWT);
-
-			return Response.ok(Map.of("token", newAccessToken, "refresh_token", newRefreshToken)).build();
-
-		} catch (Exception e) {
-			logger.error("Error during refresh token process", e);
-			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(Map.of("error", "Internal server error")).build();
-		}
-	}
-
-
-	/**
-	 * Generates a new refresh token and stores it in Hazelcast distributed cache
-	 * The refresh token includes JWT ID, user ID, issue date, expiration time, and device information
-	 * Tokens are stored with TTL matching the configured refresh expiry period
-	 *
-	 * @param userId The unique identifier of the user
-	 * @param req The HTTP servlet request (used to extract User-Agent header)
-	 * @return The generated refresh token as a JWT string, or null if generation fails
-	 */
-	private String storeTokenInHazelcast(String userId, HttpServletRequest req) {
-		try {
-			logger.debug("Generating and storing refresh token for user: " + userId);
-
-			long refreshExpiryHours = 10L;
-
-
-			Algorithm algorithm = ALGORITHM_FACTORY.getAlgorithm();
-			String jti = UUID.randomUUID().toString();
-			Instant now = Instant.now();
-			Instant exp = now.plus(refreshExpiryHours, ChronoUnit.HOURS);
-
-			String userAgent = (req != null && req.getHeader("User-Agent") != null) ? req.getHeader("User-Agent") : null;
-
-			String refreshToken = JWT.create().withIssuer(JWTSsoService.KNOWAGE_ISSUER)
-					.withJWTId(jti).withClaim("user_id", userId).withIssuedAt(Date.from(now)).withExpiresAt(Date.from(exp))
-					.withClaim("device", userAgent).sign(algorithm);
-
-			IMap<String, String> tokenMap = DistributedLockFactory.getDistributedMap(SpagoBIConstants.DISTRIBUTED_MAP_INSTANCE_NAME,
-					SpagoBIConstants.DISTRIBUTED_MAP_FOR_REFRESH_TOKEN);
-
-			tokenMap.put(refreshToken, userId, refreshExpiryHours, TimeUnit.HOURS);
-
-			logger.info(
-					"Refresh token generated and stored in Hazelcast map : " + SpagoBIConstants.DISTRIBUTED_MAP_FOR_REFRESH_TOKEN + " for user : " + userId);
-
-			return refreshToken;
-
-		} catch (Exception e) {
-			logger.error("Error generating/storing refresh token in Hazelcast for user " + userId, e);
-			return null;
 		}
 	}
 
