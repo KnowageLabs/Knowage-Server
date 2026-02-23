@@ -82,7 +82,6 @@ import it.eng.spagobi.services.security.service.ISecurityServiceSupplier;
 import it.eng.spagobi.services.security.service.SecurityServiceSupplierFactory;
 import it.eng.spagobi.tenant.Tenant;
 import it.eng.spagobi.tenant.TenantManager;
-import it.eng.spagobi.tools.dataset.notifier.fiware.OAuth2Utils;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 @Path("/login")
@@ -357,7 +356,7 @@ public class LoginResource extends AbstractSpagoBIResource {
 		try {
 
 			final String code = payload.get("code");
-			final String codeVerifier = payload.get("code_verifier");
+			final String codeVerifier = payload.get("codeVerifier");
 			if (StringUtils.isBlank(code)) {
 				return buildUnauthorizedResponse("Missing authorization code");
 			}
@@ -382,16 +381,6 @@ public class LoginResource extends AbstractSpagoBIResource {
 
 	}
 
-	/**
-	 * OIDC Nonce generation endpoint
-	 */
-	@GET
-	@Path("/oidc/nonce")
-	@PublicService
-	public Response generateNonce() {
-		String nonce = OAuth2Utils.createNonce();
-		return Response.ok(Map.of("nonce", nonce)).build();
-	}
 
 	/**
 	 * OIDC ID token validation endpoint Accepts OIDC ID token and performs validation
@@ -406,22 +395,13 @@ public class LoginResource extends AbstractSpagoBIResource {
 			logger.debug("Starting ID token validation");
 
 			// Extract parameters from payload
-			String idToken = payload.get("id_token");
-			String expectedNonce = payload.get("nonce");
+			String idToken = payload.get("code");
 
 			if (StringUtils.isBlank(idToken)) {
 				logger.error("Missing id_token in payload");
 				monitor.stop(new SpagoBIRuntimeException("Missing id_token"));
 				return buildUnauthorizedResponse("Missing id_token");
 			}
-
-			if (StringUtils.isBlank(expectedNonce)) {
-				logger.error("Missing nonce in payload");
-				monitor.stop(new SpagoBIRuntimeException("Missing nonce"));
-				return buildUnauthorizedResponse("Missing nonce");
-			}
-
-			logger.debug("ID token validation starting with expected nonce: " + expectedNonce);
 
 			// Decode JWT
 			DecodedJWT decodedJWT = JWT.decode(idToken);
@@ -450,14 +430,6 @@ public class LoginResource extends AbstractSpagoBIResource {
 			}
 			logger.debug("JWT audience verified");
 
-			// Verify nonce (provided by client)
-			com.auth0.jwt.interfaces.Claim nonceClaim = decodedJWT.getClaim("nonce");
-			if (nonceClaim.isNull() || !nonceClaim.asString().equals(expectedNonce)) {
-				logger.error("JWT token nonce [" + nonceClaim.asString() + "] does not match the expected nonce [" + expectedNonce + "]");
-				monitor.stop(new SpagoBIRuntimeException("JWT nonce mismatch"));
-				return buildUnauthorizedResponse("JWT nonce does not match");
-			}
-			logger.debug("JWT nonce verified");
 
 			logger.info("ID token validated successfully");
 			monitor.stop();

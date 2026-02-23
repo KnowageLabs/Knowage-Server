@@ -18,7 +18,6 @@
 package it.eng.spagobi.services.oidc;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.LogMF;
 import org.apache.log4j.Logger;
@@ -32,8 +31,7 @@ public class OIDCIdTokenSSOService extends JWTSsoService {
 
 	@Override
 	public String readUserIdentifier(HttpServletRequest request) {
-		HttpSession session = request.getSession();
-		String idToken = (String) session.getAttribute(Oauth2SsoService.ID_TOKEN); // ID TOKEN IS TRUSTED: it was validated by OAuth2Filter
+		String idToken = (String) request.getAttribute(Oauth2SsoService.ID_TOKEN);
 		if (idToken == null) {
 			logger.debug("ID token not found.");
 			return super.readUserIdentifier(request);
