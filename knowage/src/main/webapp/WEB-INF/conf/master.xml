@@ -218,10 +218,12 @@
 	-->
 	
 <!-- webapp -->	
+<!--
 <CONFIGURATOR path="/WEB-INF/conf/webapp/modules.xml" />
 <CONFIGURATOR path="/WEB-INF/conf/webapp/pages.xml" />
 <CONFIGURATOR path="/WEB-INF/conf/webapp/presentation.xml" />
 <CONFIGURATOR path="/WEB-INF/conf/webapp/publishers.xml" />
+-->
 <!--
 <CONFIGURATOR path="/WEB-INF/conf/webapp/messages.xml" />
 <CONFIGURATOR path="/WEB-INF/conf/webapp/authorizations.xml" /> 

@@ -136,16 +136,8 @@
 	</filter>
 	${enable.cas.start} END-CAS -->
 
- 	<filter>
-		<filter-name>OAuthFilter</filter-name>
-		<filter-class>it.eng.spagobi.security.OAuth2.OAuth2Filter</filter-class>
-	</filter>
 
 	<!-- This filter tries to create the user profile object before AdapterHTTP servlet execution -->
-	<filter>
-		<filter-name>ProfileFilter</filter-name>
-		<filter-class>it.eng.spagobi.commons.filters.ProfileFilter</filter-class>
-	</filter>
 
 	<filter>
 		<filter-name>AntiInjectionFilter</filter-name>
@@ -179,11 +171,6 @@
 	</filter-mapping>
 	${enable.cas.start} END-CAS -->
 
-	<filter-mapping>
-		<filter-name>OAuthFilter</filter-name>
-		<url-pattern>/servlet/AdapterHTTP</url-pattern>
-	</filter-mapping>
-
 	<!-- HmacLoginFilter -->
 	<filter>
 		<filter-name>HmacLoginFilter</filter-name>
@@ -198,20 +185,6 @@
 		<filter-name>HmacLoginFilter</filter-name>
 		<url-pattern>/restful-services/publish</url-pattern>
 		<dispatcher>REQUEST</dispatcher>
-		<dispatcher>FORWARD</dispatcher>
-	</filter-mapping>
-
-	<filter-mapping>
-		<filter-name>ProfileFilter</filter-name>
-		<url-pattern>/servlet/AdapterHTTP</url-pattern>
-		<url-pattern>/restful-services/publish</url-pattern>
-		<dispatcher>REQUEST</dispatcher>
-		<dispatcher>FORWARD</dispatcher>
-	</filter-mapping>
-	
-	<filter-mapping>
-		<filter-name>ProfileFilter</filter-name>
-		<url-pattern>/WEB-INF/jsp/*</url-pattern>
 		<dispatcher>FORWARD</dispatcher>
 	</filter-mapping>
 	
