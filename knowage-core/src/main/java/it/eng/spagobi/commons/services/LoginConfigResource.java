@@ -42,8 +42,8 @@ public class LoginConfigResource extends AbstractSpagoBIResource {
 			item.put("defaultLanguage", config.getConfigValue("SPAGOBI.LANGUAGE_SUPPORTED.LANGUAGE.default"));
 			item.put("oauth2FlowType", oauth2FlowType);
 
-			item.put("JWT_LABEL", System.getProperty("JWT_LABEL", System.getenv("JWT_LABEL")));
-			item.put("JWT_SESSION_STORAGE", System.getProperty("JWT_SESSION_STORAGE", System.getenv("JWT_SESSION_STORAGE")));
+			item.put("jwtLabel", System.getProperty("JWT_LABEL", System.getenv("JWT_LABEL")));
+			item.put("jwtSessionStorage", System.getProperty("JWT_SESSION_STORAGE", System.getenv("JWT_SESSION_STORAGE")));
 
 			if (oauth2FlowType != null && !oauth2FlowType.equalsIgnoreCase("NONE")) {
 				OAuth2Config oauth2Config = OAuth2Config.getInstance();

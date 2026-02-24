@@ -164,8 +164,23 @@ public class GenericJWTSsoService extends JWTSsoService implements SsoServiceInt
 	}
 
 	private String getJWTFromLabel(HttpServletRequest request, String jwtLabel) {
-		return request.getHeader(jwtLabel) == null ? request.getParameter(jwtLabel) : request.getHeader(jwtLabel);
+		// Check header first
+		String token = request.getHeader(jwtLabel);
+		if (token != null) {
+			return token;
+		}
+
+		// Check GET/POST form parameters
+		token = request.getParameter(jwtLabel);
+		if (token != null) {
+			return token;
+		}
+
+		// Check request attribute (set by loginOAuth2 for POST with payload)
+		token = (String) request.getAttribute(jwtLabel);
+		return token;
 	}
+
 
 	private String getJWTFromURL(HttpServletRequest request, String jwtURLMethod) {
 

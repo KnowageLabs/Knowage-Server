@@ -546,4 +546,25 @@ public class RestUtilities {
 		} catch (MalformedURLException e) {
 			throw new SpagoBIRuntimeException("Invalid URL format: " + address, e);
 		}
-	}}
+	}
+
+	/**
+	 * Calculates the origin (scheme + host + port) from the HttpServletRequest.
+	 * The port is included only if it's not the default port for the scheme (80 for HTTP, 443 for HTTPS).
+	 *
+	 * @param request the HttpServletRequest
+	 * @return the origin URL (e.g., http://localhost:8080 or https://example.com)
+	 */
+	public static String getOrigin(HttpServletRequest request) {
+		String scheme = request.getScheme();
+		String serverName = request.getServerName();
+		int serverPort = request.getServerPort();
+
+		String origin = scheme + "://" + serverName;
+		if ((scheme.equals("http") && serverPort != 80) || (scheme.equals("https") && serverPort != 443)) {
+			origin += ":" + serverPort;
+		}
+
+		return origin;
+	}
+}

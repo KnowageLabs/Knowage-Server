@@ -63,6 +63,7 @@ import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.commons.utilities.TOTPService;
 import it.eng.spagobi.commons.utilities.UserUtilities;
 import it.eng.spagobi.commons.utilities.messages.MessageBuilder;
+import it.eng.spagobi.utilities.rest.RestUtilities;
 import it.eng.spagobi.profiling.bean.SbiUser;
 import it.eng.spagobi.profiling.dao.ISbiUserDAO;
 import it.eng.spagobi.security.InternalSecurityServiceSupplierImpl;
@@ -331,12 +332,23 @@ public class LoginResource extends AbstractSpagoBIResource {
 	@POST
 	@Path("/oauth2")
 	@PublicService
-	public Response loginOAuth2(@Context HttpServletRequest req) throws Exception {
+	public Response loginOAuth2(@Context HttpServletRequest req, Map<String, String> payload) throws Exception {
 
 		IKnowageMonitor monitor = KnowageMonitorFactory.getInstance().start("knowage.login.oauth2.authentication");
 
 		try {
-			return performOAuth2Login(req, monitor, true);
+
+			// Store payload as request attribute if present
+			if (payload != null) {
+				String jwtLabel = System.getProperty("JWT_LABEL", System.getenv("JWT_LABEL"));
+				req.setAttribute(jwtLabel, payload.get(jwtLabel));
+			}
+
+			// Check JWT_SESSION_STORAGE variable
+			String jwtSessionStorage = System.getProperty("JWT_SESSION_STORAGE", System.getenv("JWT_SESSION_STORAGE"));
+			boolean requiresRedirect = StringUtils.isBlank(jwtSessionStorage);
+
+			return performOAuth2Login(req, monitor, requiresRedirect);
 		} catch (Exception e) {
 			logger.error("Unexpected error during OAuth2 login", e);
 			monitor.stop(e);
@@ -863,8 +875,8 @@ public class LoginResource extends AbstractSpagoBIResource {
 			}
 
 			if (requiresRedirect) {
-				URI redirectUri = URI
-						.create(System.getProperty("JWT_KNOWAGE_VUE", System.getenv("JWT_KNOWAGE_VUE")) + "login?authToken=" + profile.getUserUniqueIdentifier());
+				String origin = RestUtilities.getOrigin(req);
+				URI redirectUri = URI.create(origin + "/knowage-vue/login?authToken=" + profile.getUserUniqueIdentifier());
 				return Response.seeOther(redirectUri).build();
 			} else {
 				Object idToken = req.getAttribute(Oauth2SsoService.ID_TOKEN);
