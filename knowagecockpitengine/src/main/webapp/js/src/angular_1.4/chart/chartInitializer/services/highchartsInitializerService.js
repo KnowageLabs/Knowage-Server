@@ -748,8 +748,8 @@ angular.module('chartInitializer')
 	this.setExtremes = function (chartConf){
 		var mapAxis=  {min:{},max:{}};
 		for (var i =0; i < chartConf.series.length; i++){
-			var max = Math.max.apply(Math, chartConf.series[i].data.map(function(o) {  if(o.y){return o.y;}else{return null} }));
-			var min = Math.min.apply(Math, chartConf.series[i].data.map(function(o) {  if(o.y){return o.y;}else{return null} }));
+			var max = Math.max.apply(Math, chartConf.series[i].data.map(function(o) {  if(o.y !== undefined && o.y !== null){return o.y;}else{return null} }));
+			var min = Math.min.apply(Math, chartConf.series[i].data.map(function(o) {  if(o.y !== undefined && o.y !== null){return o.y;}else{return null} }));
 			if(mapAxis.min[chartConf.series[i].yAxis]!=undefined){
 				if(mapAxis.min[chartConf.series[i].yAxis] > min)
 				mapAxis.min[chartConf.series[i].yAxis] = min;
