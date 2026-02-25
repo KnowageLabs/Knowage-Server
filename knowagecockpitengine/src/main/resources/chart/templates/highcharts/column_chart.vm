@@ -1550,8 +1550,8 @@
 	    	    #set($serieColumnsMapped = $dataColumnsMapper.get($relatedSerieColName.toLowerCase())) ## "Vendite_AVG" -> "column_5" ## "Ricavi_sum" -> "column_6"
 
 	    		#foreach($row in $rows)
-					#if( $row.get($serieColumnsMapped))
-						#set ($serieValue = $row.get($serieColumnsMapped))
+					#set ($serieValue = $row.get($serieColumnsMapped))
+					#if("$!serieValue" != "")
 						#set ($serieCategoryName =  $row.get($categorieColumnsMapped))
 				
 						#set( $serieCategoryName = $escapeTool.javascript($serieCategoryName))
