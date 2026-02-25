@@ -142,13 +142,10 @@ angular.module('chartInitializer')
 					var finalMax = Math.max.apply(Math, [mapAxis.max[i], plotBands && plotBands[0].to != plotBands[0].from ? plotBands[0].to : mapAxis.max[i],  plotLines && plotLines[0].width > 0 ? plotLines[0].value : mapAxis.max[i]].map(function(o) { return o; }));
 
 					if(chartConf.yAxis[i].min===undefined || chartConf.yAxis[i].min=='auto'){
-						chartConf.yAxis[i].min = finalMin>=0 ? finalMin * 0.5 : finalMin * 1.5;
+						chartConf.yAxis[i].min = finalMin > 0 ? finalMin * 0.5 : (finalMin < 0 ? finalMin * 1.5 : null);
 					}
-					finalMin = chartConf.yAxis[i].min;
-					if(chartConf.yAxis[i].min=="") chartConf.yAxis[i].min = null;
 					if(chartConf.yAxis[i].max===undefined || chartConf.yAxis[i].max=='auto') {
-						chartConf.yAxis[i].max = finalMax>=0 ? finalMax * 1.1 : finalMax * 0.9;
-
+						chartConf.yAxis[i].max = finalMax > 0 ? finalMax * 1.1 : (finalMax < 0 ? finalMax * 0.9 : null);
 					}
 					finalMax = chartConf.yAxis[i].max
 					if(chartConf.yAxis[i].max=="") chartConf.yAxis[i].max = null;
@@ -619,9 +616,13 @@ angular.module('chartInitializer')
 								}
 							}
                                
-								var maxData = Math.max.apply(Math, series.data.map(function(o) { if(o.y){return o.y;}else{return null} }));
-								if (maxData < 0) maxData = 0;
-								var minData = Math.min.apply(Math, series.data.map(function(o) { if(o.y){return o.y;}else{return null} }));
+							var maxData = Math.max.apply(Math, series.data.map(function(o) {
+								return (o.y !== undefined && o.y !== null) ? o.y : null;
+							}));
+							if (maxData < 0) maxData = 0;
+							var minData = Math.min.apply(Math, series.data.map(function(o) {
+								return (o.y !== undefined && o.y !== null) ? o.y : null;
+							}));
 
 							var minDrill = Math.min.apply(Math, [minData, chart.extremes[indexOfAxis].plotBands && chart.extremes[indexOfAxis].plotBands[0].from != chart.extremes[indexOfAxis].plotBands[0].to ? chart.extremes[indexOfAxis].plotBands[0].from : minData, chart.extremes[indexOfAxis].plotLines && chart.extremes[indexOfAxis].plotLines[0].width > 0 ? chart.extremes[indexOfAxis].plotLines[0].value : minData].map(function(o) { return o; }));
 							var maxDrill = Math.max.apply(Math, [maxData, chart.extremes[indexOfAxis].plotBands && chart.extremes[indexOfAxis].plotBands[0].to != chart.extremes[indexOfAxis].plotBands[0].from ? chart.extremes[indexOfAxis].plotBands[0].to : maxData,  chart.extremes[indexOfAxis].plotLines && chart.extremes[indexOfAxis].plotLines[0].width > 0 ? chart.extremes[indexOfAxis].plotLines[0].value : maxData].map(function(o) { return o; }));
@@ -894,15 +895,14 @@ angular.module('chartInitializer')
 
 		if(this.chart.options.chart.type == "pie"){
 			for (var i = 0; i<newData.length; i++){
+				counter = 0;  // ← reset qui
 				for (var j = 0; j<newData[i].length; j++){
-
 					if(newData[i][j].y==0){
 						counter ++
 					}
 				}
 				if (counter==newData[i].length){
 					newData[i]=[];
-					counter = 0;
 				}
 			}
 		}
