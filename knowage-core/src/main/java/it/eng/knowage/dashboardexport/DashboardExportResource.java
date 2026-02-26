@@ -4,6 +4,7 @@ import com.google.common.collect.Iterables;
 import it.eng.knowage.commons.multitenant.OrganizationImageManager;
 import it.eng.knowage.engine.api.export.dashboard.excel.DashboardExcelExporter;
 import it.eng.knowage.engine.api.export.dashboard.pdf.DashboardPdfExporter;
+import it.eng.knowage.engine.api.export.dashboard.png.PngExporter;
 import it.eng.knowage.engine.api.export.nodejs.PdfExporterV2;
 import it.eng.knowage.export.wrapper.beans.RenderOptions;
 import it.eng.knowage.export.wrapper.beans.ViewportDimensions;
@@ -36,10 +37,14 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.*;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 import static it.eng.knowage.commons.security.KnowageSystemConfiguration.getKnowageVueContext;
+import static it.eng.spagobi.commons.utilities.UserUtilities.getUserProfile;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 @Path("/1.0/dashboardExport")
@@ -228,6 +233,106 @@ public class DashboardExportResource {
         } finally {
             logger.debug("OUT");
         }
+    }
+
+    @POST
+    @Path("/callPuppeteer")
+    public Object callPuppeteer(
+            @Context HttpServletRequest request, @Context HttpServletResponse response) throws JSONException, IOException, EMFUserError, InterruptedException {
+        response.setContentType(MediaType.TEXT_HTML);
+        response.setCharacterEncoding(UTF_8.name());
+
+        String documentLabel = request.getParameter("DOCUMENT_LABEL");
+        BIObject biObject;
+        try {
+            biObject = DAOFactory.getBIObjectDAO().loadBIObjectByLabel(documentLabel);
+        } catch (EMFUserError e) {
+            throw new SpagoBIRuntimeException("Error retrieving document with label " + documentLabel, e);
+        }
+
+        Engine eng = biObject.getEngine();
+        URIBuilder externalUrl = GeneralUtilities.getBE2BEEngineUrl(eng);
+        String requestURL = getRequestUrl(biObject, documentLabel, externalUrl, false);
+
+        RenderOptions renderOptions = getRenderOptionsForPdfExporter(request);
+
+        int documentId = Integer.parseInt(request.getParameter("document"));
+        String userId = request.getParameter("user_id");
+        String pdfPageOrientation = request.getParameter(PDF_PAGE_ORIENTATION);
+        boolean pdfFrontPage = request.getParameter(PDF_FRONT_PAGE) != null
+                && Boolean.parseBoolean(request.getParameter(PDF_FRONT_PAGE));
+        boolean pdfBackPage = request.getParameter(PDF_BACK_PAGE) != null
+                && Boolean.parseBoolean(request.getParameter(PDF_BACK_PAGE));
+        String params = request.getParameter("parameters");
+
+        String role = getProfileRole();
+
+        String organization = UserProfileManager.getProfile().getOrganization();
+
+        PngExporter pngExporter = new PngExporter(documentId, userId, requestURL, renderOptions, pdfPageOrientation,
+                pdfFrontPage, pdfBackPage, role, organization, params);
+        byte[] data = pngExporter.getBinaryData();
+
+        boolean isZipped = false;
+
+        int thresholdEntries = 10000;
+        int thresholdSize = 1000000000;
+        double thresholdRatio = 10;
+        int totalSizeArchive = 0;
+        int totalEntryArchive = 0;
+
+        ZipInputStream zippedInputStream = new ZipInputStream(new ByteArrayInputStream(data));
+        ZipEntry zipEntry;
+
+        while((zipEntry = zippedInputStream.getNextEntry()) != null) {
+
+            totalEntryArchive ++;
+
+            int nBytes;
+            byte[] buffer = new byte[2048];
+            int totalSizeEntry = 0;
+
+            while((nBytes = new ZipInputStream(new ByteArrayInputStream(data)).read(buffer)) > 0) {
+                //out.write(buffer, 0, nBytes);
+                totalSizeEntry += nBytes;
+                totalSizeArchive += nBytes;
+
+                double compressionRatio = (double) totalSizeEntry / zipEntry.getCompressedSize();
+                if(compressionRatio > thresholdRatio) {
+                    // ratio between compressed and uncompressed data is highly suspicious, looks like a Zip Bomb Attack
+                    logger.error("Error while unzip file. Invalid archive file");
+                    throw new SpagoBIRuntimeException("Error while unzip file. Invalid archive file");
+                }
+            }
+
+            if(totalSizeArchive > thresholdSize) {
+                // the uncompressed data size is too much for the application resource capacity
+                logger.error("Error while unzip file. Invalid archive file");
+                throw new SpagoBIRuntimeException("Error while unzip file. Invalid archive file");
+            }
+
+            if(totalEntryArchive > thresholdEntries) {
+                // too much entries in this archive, can lead to inodes exhaustion of the system
+                logger.error("Error while unzip file. Invalid archive file");
+                throw new SpagoBIRuntimeException("Error while unzip file. Invalid archive file");
+            }
+
+            isZipped = new ZipInputStream(new ByteArrayInputStream(data)).getNextEntry() != null;
+        }
+
+        String mimeType;
+        String contentDisposition;
+
+        if (!isZipped) {
+            mimeType = "image/png";
+            contentDisposition = "attachment; fileName=" + documentLabel + ".png";
+        } else {
+            mimeType = "application/zip";
+            contentDisposition = "attachment; fileName=" + documentLabel + ".zip";
+        }
+
+        return Response.ok(data, mimeType).header("Content-length", Integer.toString(data.length))
+                .header("Content-Disposition", contentDisposition).build();
     }
 
     private Object createSpreadsheet(BIObject biObject, String documentLabel, URIBuilder externalUrl) throws IOException, InterruptedException, JSONException {

@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package it.eng.knowage.engine.cockpit.api.export.png;
+package it.eng.knowage.engine.api.export.dashboard.png;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -47,7 +47,7 @@ public class PngExporter extends AbstractNodeJSBasedExporter {
 	protected byte[] handleFile(Path outputDir, BIObject document, List<InputStream> imagesInputStreams)
 			throws IOException {
 		LOGGER.debug("IN");
-		byte[] bytes = null;
+		byte[] bytes;
 		if (imagesInputStreams.size() == 1) {
 			bytes = IOUtils.toByteArray(imagesInputStreams.get(0));
 		} else {
