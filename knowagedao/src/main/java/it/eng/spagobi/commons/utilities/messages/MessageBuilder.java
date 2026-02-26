@@ -19,6 +19,10 @@ package it.eng.spagobi.commons.utilities.messages;
 
 import java.util.Locale;
 import java.util.Locale.Builder;
+import java.util.Map;
+import java.util.MissingResourceException;
+import java.util.ResourceBundle;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -26,7 +30,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
 import it.eng.spago.error.EMFUserError;
-import it.eng.spago.message.MessageBundle;
 import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
@@ -48,6 +51,10 @@ public class MessageBuilder implements IMessageBuilder, IEngineMessageBuilder {
 	private static Logger logger = Logger.getLogger(MessageBuilder.class);
 
 	private static final String MESSAGES_FOLDER = "MessageFiles.";
+	private static final String DEFAULT_BUNDLE = "messages";
+	
+	// Cache per i ResourceBundle caricati
+	private static final Map<String, ResourceBundle> bundleCache = new ConcurrentHashMap<>();
 
 	public MessageBuilder() {
 	}
@@ -144,17 +151,72 @@ public class MessageBuilder implements IMessageBuilder, IEngineMessageBuilder {
 		logger.debug((new StringBuilder("IN-code:")).append(code).toString());
 		logger.debug((new StringBuilder("bundle:")).append(bundle).toString());
 		logger.debug((new StringBuilder("locale:")).append(locale).toString());
+		
 		String message = null;
-		if (bundle == null) {
-			message = MessageBundle.getMessage(code, locale);
-		} else {
-			message = MessageBundle.getMessage(code, MESSAGES_FOLDER + bundle, locale);
+		String bundleName = (bundle == null) ? DEFAULT_BUNDLE : bundle;
+		String fullBundleName = MESSAGES_FOLDER + bundleName;
+		
+		try {
+			// Crea la chiave per la cache combinando bundle name e locale
+			String cacheKey = fullBundleName + "_" + locale.toString();
+			
+			// Cerca nella cache
+			ResourceBundle resourceBundle = bundleCache.get(cacheKey);
+			
+			// Se non trovato nella cache, carica il ResourceBundle
+			if (resourceBundle == null) {
+				try {
+					resourceBundle = ResourceBundle.getBundle(fullBundleName, locale);
+					// Metti in cache
+					bundleCache.put(cacheKey, resourceBundle);
+					logger.debug("Loaded and cached ResourceBundle: " + cacheKey);
+				} catch (MissingResourceException e) {
+					logger.warn("Cannot find ResourceBundle for: " + fullBundleName + " with locale: " + locale, e);
+					// Prova con il bundle di default se quello richiesto non esiste
+					if (!bundleName.equals(DEFAULT_BUNDLE)) {
+						fullBundleName = MESSAGES_FOLDER + DEFAULT_BUNDLE;
+						cacheKey = fullBundleName + "_" + locale.toString();
+						resourceBundle = bundleCache.get(cacheKey);
+						if (resourceBundle == null) {
+							try {
+								resourceBundle = ResourceBundle.getBundle(fullBundleName, locale);
+								bundleCache.put(cacheKey, resourceBundle);
+								logger.debug("Loaded and cached default ResourceBundle: " + cacheKey);
+							} catch (MissingResourceException e2) {
+								logger.error("Cannot find default ResourceBundle: " + fullBundleName, e2);
+							}
+						}
+					}
+				}
+			}
+			
+			// Recupera il messaggio dal ResourceBundle
+			if (resourceBundle != null) {
+				try {
+					message = resourceBundle.getString(code);
+				} catch (MissingResourceException e) {
+					logger.debug("Message key '" + code + "' not found in bundle: " + fullBundleName);
+				}
+			}
+		} catch (Exception e) {
+			logger.error("Error retrieving message for code: " + code, e);
 		}
+		
+		// Se il messaggio non è stato trovato, ritorna il codice stesso
 		if (message == null || message.trim().equals("")) {
 			message = code;
 		}
+		
 		logger.debug((new StringBuilder("OUT-message:")).append(message).toString());
 		return message;
+	}
+	
+	/**
+	 * Metodo helper per pulire la cache dei ResourceBundle (utile per test o ricaricamenti)
+	 */
+	public static void clearBundleCache() {
+		bundleCache.clear();
+		logger.info("ResourceBundle cache cleared");
 	}
 
 	private Locale getBrowserLocale(HttpServletRequest request) {

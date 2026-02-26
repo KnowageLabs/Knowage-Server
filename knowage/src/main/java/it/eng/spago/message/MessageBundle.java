@@ -28,11 +28,9 @@ import java.util.ResourceBundle;
 import org.apache.commons.lang3.StringUtils;
 
 import it.eng.spago.base.Constants;
-import it.eng.spago.base.RequestContainer;
 import it.eng.spago.base.ResponseContainer;
-import it.eng.spago.base.SessionContainer;
-import it.eng.spago.configuration.ConfigSingleton;
 import it.eng.spago.tracing.TracerSingleton;
+import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.utilities.messages.UTF8Control;
 
 /**
@@ -54,52 +52,21 @@ public class MessageBundle {
 	 * @return The Locale corresponding to the current user.
 	 */
 	public static Locale getUserLocale() {
-		String language = null;
-		String country = null;
-		String script = null;
-		Object defaultLanguage = ConfigSingleton.getInstance().getAttribute(DEFAULT_USER_LANGUAGE);
-		Object defaultCountry = ConfigSingleton.getInstance().getAttribute(DEFAULT_USER_COUNTRY);
-		Object defaultScript = ConfigSingleton.getInstance().getAttribute(DEFAULT_USER_SCRIPT);
-		RequestContainer requestContainer = RequestContainer.getRequestContainer();
-		if (requestContainer == null)
-			TracerSingleton.log(Constants.NOME_MODULO, TracerSingleton.WARNING, "MessageBundle::getMessage: requestContainer nullo");
-		else {
-			SessionContainer sessionContainer = requestContainer.getSessionContainer().getPermanentContainer();
-			language = (String) sessionContainer.getAttribute(Constants.USER_LANGUAGE);
-			country = (String) sessionContainer.getAttribute(Constants.USER_COUNTRY);
-			script = (String) sessionContainer.getAttribute("USER_SCRIPT");
-		} // if (requestContainer != null)
-		if (language == null) {
-			// TracerSingleton.log(Constants.NOME_MODULO, TracerSingleton.DEBUG,
-			// "MessageBundle::getMessage: language non specificato in sessione");
-			if (defaultLanguage != null) {
-				language = (String) defaultLanguage;
-			} else {
-				// TracerSingleton.log(Constants.NOME_MODULO, TracerSingleton.DEBUG,
-				// "MessageBundle::getMessage: language non specificato in common.xml imposta 'en'");
-				language = "en";
-			}
-		} // if (language == null)
-		if (country == null) {
-			// TracerSingleton.log(Constants.NOME_MODULO, TracerSingleton.DEBUG,
-			// "MessageBundle::getMessage: country non specificato in sessione");
-			if (defaultCountry != null) {
-				country = (String) defaultCountry;
-			} else {
-				// TracerSingleton.log(Constants.NOME_MODULO, TracerSingleton.DEBUG,
-				// "MessageBundle::getMessage: country non specificato in common.xml imposta 'US'");
-				country = "US";
-			}
-		} // if (country == null)
-		if (script == null) {
+		SingletonConfig config = SingletonConfig.getInstance();
+		String language = config.getConfigValue("SPAGOBI.LANGUAGE_SUPPORTED.LANGUAGE.default");
 
-			if (defaultScript != null) {
-				script = (String) defaultScript;
-			} else {
-				script = "";
+		String languageCode = "en";
+		String regionCode = "US";
+
+		if (StringUtils.isNotBlank(language)) {
+			String[] parts = language.split("-");
+			languageCode = parts[0];
+			if (parts.length > 1) {
+				regionCode = parts[1];
 			}
 		}
-		Locale currentLocale = new Builder().setLanguage(language).setRegion(country).setScript(script).build();
+
+		Locale currentLocale = new Builder().setLanguage(languageCode).setRegion(regionCode).setScript("").build();
 		return currentLocale;
 	}
 
@@ -296,7 +263,7 @@ public class MessageBundle {
 				String toParse = message;
 				String replacing = "%" + i;
 				String replaced = (String) params.get(i);
-				StringBuffer parsed = new StringBuffer();
+				StringBuilder parsed = new StringBuilder();
 				int parameterIndex = toParse.indexOf(replacing);
 				while (parameterIndex != -1) {
 					parsed.append(toParse.substring(0, parameterIndex));

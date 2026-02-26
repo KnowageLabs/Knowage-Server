@@ -28,30 +28,6 @@
 		<url-pattern>/*</url-pattern>
 		<dispatcher>REQUEST</dispatcher>
 	</filter-mapping>
-
-
-
-	<filter>
-		<filter-name>EncodingFilter</filter-name>
-		<filter-class>it.eng.spagobi.utilities.filters.EncodingFilter</filter-class>
-		<init-param>
-			<param-name>encoding</param-name>
-			<param-value>UTF-8</param-value>
-		</init-param>
-	</filter>
-
-	<filter-mapping>
-		<filter-name>EncodingFilter</filter-name>
-		<url-pattern>/servlet/AdapterHTTP</url-pattern>
-		<url-pattern>/WEB-INF/jsp/*</url-pattern>
-		<dispatcher>REQUEST</dispatcher>
-		<dispatcher>FORWARD</dispatcher>
-	</filter-mapping>
-
-	<filter>
-		<filter-name>SpagoBICoreCheckSessionFilter</filter-name>
-		<filter-class>it.eng.spagobi.commons.filters.SpagoBICoreCheckSessionFilter</filter-class>
-	</filter>
 	
 	<!--  ANTI CSRF FILTER  	-->
 	<filter>
@@ -139,18 +115,6 @@
 
 	<!-- This filter tries to create the user profile object before AdapterHTTP servlet execution -->
 
-	<filter>
-		<filter-name>AntiInjectionFilter</filter-name>
-		<filter-class>it.eng.spagobi.utilities.filters.AntiInjectionFilter</filter-class>
-	</filter>
-
-	<filter-mapping>
-		<filter-name>SpagoBICoreCheckSessionFilter</filter-name>
-		<url-pattern>/servlet/AdapterHTTP</url-pattern>
-		<url-pattern>/restful-services/publish</url-pattern>
-		<dispatcher>REQUEST</dispatcher>
-	</filter-mapping>
-
 	<!-- START-CAS ${enable.cas.end}
 	<filter-mapping>
 		<filter-name>CAS Authentication Filter</filter-name>
@@ -186,11 +150,6 @@
 		<url-pattern>/restful-services/publish</url-pattern>
 		<dispatcher>REQUEST</dispatcher>
 		<dispatcher>FORWARD</dispatcher>
-	</filter-mapping>
-	
-	<filter-mapping>
-		<filter-name>AntiInjectionFilter</filter-name>
-		<url-pattern>/servlet/AdapterHTTP</url-pattern>
 	</filter-mapping>
 
 	
@@ -281,21 +240,7 @@
 			<param-name>start-scheduler-on-load</param-name>
 			<param-value>false</param-value>
 		</init-param>
-		<load-on-startup>2</load-on-startup>
-	</servlet>
-
-	<servlet>
-		<servlet-name>ConfigServlet</servlet-name>
-		<servlet-class>it.eng.spago.configuration.ConfigServlet</servlet-class>
-		<init-param>
-			<param-name>AF_CONFIG_FILE</param-name>
-			<param-value>/WEB-INF/conf/master.xml</param-value>
-		</init-param>
 		<load-on-startup>1</load-on-startup>
-	</servlet>
-	<servlet>
-		<servlet-name>AdapterHTTP</servlet-name>
-		<servlet-class>it.eng.spago.dispatching.httpchannel.AdapterHTTP</servlet-class>
 	</servlet>
 	
 	<servlet>
@@ -362,10 +307,6 @@
 	<servlet-mapping>
 		<servlet-name>ExtendSessionServlet</servlet-name>
 		<url-pattern>/servlet/ExtendSession</url-pattern>
-	</servlet-mapping>
-	<servlet-mapping>
-		<servlet-name>AdapterHTTP</servlet-name>
-		<url-pattern>/servlet/AdapterHTTP</url-pattern>
 	</servlet-mapping>
 
 	<!-- END SERVLET MAPPINGS -->

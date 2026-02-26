@@ -17,8 +17,6 @@
  */
 package it.eng.spago.base;
 
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.Serializable;
 import java.io.StringReader;
 import java.util.ArrayList;
@@ -26,14 +24,13 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
 
+import org.apache.log4j.Logger;
 import org.apache.xerces.parsers.SAXParser;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.InputSource;
 import org.xml.sax.XMLReader;
 
-import it.eng.spago.configuration.ConfigSingleton;
-import it.eng.spago.tracing.TracerSingleton;
 import it.eng.spago.util.XMLUtil;
 
 /**
@@ -99,6 +96,7 @@ import it.eng.spago.util.XMLUtil;
 public class SourceBean extends AbstractXMLObject implements CloneableObject, Serializable {
 
 	private static final long serialVersionUID = 1L;
+	private static final Logger logger = Logger.getLogger(SourceBean.class);
 
 	/**
 	 * Nome del <code>SourceBean</code>.
@@ -181,8 +179,9 @@ public class SourceBean extends AbstractXMLObject implements CloneableObject, Se
 	public SourceBean(SourceBean sourceBean) throws SourceBeanException {
 		// TracerSingleton.log(Constants.NOME_MODULO,
 		// TracerSingleton.DEBUG, "SourceBean::SourceBean: invocato");
-		if (sourceBean == null)
+		if (sourceBean == null) {
 			throw new SourceBeanException("sourceBean non valido");
+		}
 		_sourceBeanName = sourceBean._sourceBeanName;
 		_attributes.clear();
 		for (int i = 0; i < sourceBean._attributes.size(); i++) {
@@ -208,8 +207,7 @@ public class SourceBean extends AbstractXMLObject implements CloneableObject, Se
 			clonedObject = new SourceBean(this);
 		} // try
 		catch (SourceBeanException ex) {
-			TracerSingleton.log(Constants.NOME_MODULO, TracerSingleton.CRITICAL,
-					"SourceBean::cloneObject: clonedObject = new SourceBean(this)", ex);
+			logger.error("SourceBean::cloneObject: clonedObject = new SourceBean(this)", ex);
 		} // catch (SourceBeanException ex) try
 		return clonedObject;
 	} // public CloneableObject cloneObject()
@@ -245,8 +243,9 @@ public class SourceBean extends AbstractXMLObject implements CloneableObject, Se
 	 */
 	public void setBean(SourceBean sourceBean) {
 		clearBean();
-		if (sourceBean == null)
+		if (sourceBean == null) {
 			return;
+		}
 		setContainedAttributes(sourceBean.getContainedAttributes());
 		setCharacters(sourceBean.getCharacters());
 	} // public void setBean(SourceBean sourceBean)
@@ -262,7 +261,7 @@ public class SourceBean extends AbstractXMLObject implements CloneableObject, Se
 	public void setBean(String key, SourceBean sourceBean) throws SourceBeanException {
 		Object attribute = getAttribute(key);
 		if ((attribute == null) || (!(attribute instanceof SourceBean))) {
-			TracerSingleton.log(Constants.NOME_MODULO, TracerSingleton.WARNING, "SourceBean::setBean: chiave errata");
+			logger.warn("SourceBean::setBean: chiave errata");
 			throw new SourceBeanException("Chiave errata");
 		} // if ((attribute == null) || (!(attribute instanceof SourceBean)))
 		((SourceBean) attribute).setBean(sourceBean);
@@ -301,23 +300,24 @@ public class SourceBean extends AbstractXMLObject implements CloneableObject, Se
 	 */
 	public Object getAttributeItem(String key) {
 		if (key == null) {
-			TracerSingleton.log(Constants.NOME_MODULO, TracerSingleton.WARNING,
-					"SourceBean::getAttributeItem: chiave nulla");
+			logger.warn("SourceBean::getAttributeItem: chiave nulla");
 			return null;
 		} // if (key == null)
 			 // TracerSingleton.log(Constants.NOME_MODULO,
 			 // TracerSingleton.DEBUG, "SourceBean::getAttributeItem: key [" + key + "]");
 		boolean deepSearch = (key.indexOf('.') != -1);
 		String searchKey = key;
-		if (deepSearch)
+		if (deepSearch) {
 			searchKey = key.substring(0, key.indexOf('.'));
+		}
 		// TracerSingleton.log(Constants.NOME_MODULO, TracerSingleton.DEBUG,
 		// "SourceBean::getAttributeItem: searchKey [" + searchKey + "]");
 		List values = new ArrayList();
 		for (int i = 0; i < _attributes.size(); i++) {
 			SourceBeanAttribute attribute = (_attributes.get(i));
-			if (attribute.getKey().equalsIgnoreCase(searchKey))
+			if (attribute.getKey().equalsIgnoreCase(searchKey)) {
 				values.add(attribute);
+			}
 		} // for (int i = 0; i < _attributes.size(); i++)
 		if (values.size() == 0) {
 			// TracerSingleton.log(Constants.NOME_MODULO,
@@ -329,8 +329,7 @@ public class SourceBean extends AbstractXMLObject implements CloneableObject, Se
 		if (values.size() == 1) {
 			if (deepSearch) {
 				if (!((((SourceBeanAttribute) (values.get(0))).getValue()) instanceof SourceBean)) {
-					TracerSingleton.log(Constants.NOME_MODULO, TracerSingleton.WARNING,
-							"SourceBean::getAttributeItem: attributo [" + searchKey + "] non 衵n SourceBean");
+					logger.warn("SourceBean::getAttributeItem: attributo [" + searchKey + "] non 衵n SourceBean");
 					return null;
 				} // if (!(value instanceof SourceBean))
 				String childKey = key.substring(key.indexOf('.') + 1);
@@ -339,9 +338,8 @@ public class SourceBean extends AbstractXMLObject implements CloneableObject, Se
 			return values.get(0);
 		} // if (values.size() == 1)
 		if (deepSearch) {
-			TracerSingleton.log(Constants.NOME_MODULO, TracerSingleton.WARNING,
-					"SourceBean::getAttributeItem: attributo [" + searchKey
-							+ "] multivalore, impossibile eseguire una ricerca nidificata");
+			logger.warn("SourceBean::getAttributeItem: attributo [" + searchKey
+					+ "] multivalore, impossibile eseguire una ricerca nidificata");
 			return null;
 		} // if (deepSearch)
 		return values;
@@ -379,8 +377,9 @@ public class SourceBean extends AbstractXMLObject implements CloneableObject, Se
 		// TracerSingleton.log(Constants.NOME_MODULO,
 		// TracerSingleton.DEBUG, "SourceBean::getAttribute: key [" + key + "]");
 		Object attributeItem = getAttributeItem(key);
-		if (attributeItem == null)
+		if (attributeItem == null) {
 			return null;
+		}
 		if (attributeItem instanceof SourceBeanAttribute) {
 			// TracerSingleton.log(Constants.NOME_MODULO,
 			// TracerSingleton.DEBUG,
@@ -414,10 +413,12 @@ public class SourceBean extends AbstractXMLObject implements CloneableObject, Se
 	 */
 	public List getAttributeAsList(String key) {
 		Object value = getAttribute(key);
-		if (value == null)
+		if (value == null) {
 			return new ArrayList(0);
-		if (value instanceof List)
+		}
+		if (value instanceof List) {
 			return (List) value;
+		}
 		List values = new ArrayList(1);
 		values.add(value);
 		return values;
@@ -445,8 +446,7 @@ public class SourceBean extends AbstractXMLObject implements CloneableObject, Se
 	 */
 	public void setAttribute(String key, Object value) throws SourceBeanException {
 		if (key == null) {
-			TracerSingleton.log(Constants.NOME_MODULO, TracerSingleton.WARNING,
-					"SourceBean::setAttribute: chiave nulla");
+			logger.warn("SourceBean::setAttribute: chiave nulla");
 			throw new SourceBeanException("Chiave nulla");
 		} // if (key == null)
 			 // TracerSingleton.log(Constants.NOME_MODULO,
@@ -459,18 +459,21 @@ public class SourceBean extends AbstractXMLObject implements CloneableObject, Se
 				ArrayList filteredAttribute = new ArrayList();
 				for (int i = 0; i < ((ArrayList) attribute).size(); i++) {
 					Object attributeItem = ((ArrayList) attribute).get(i);
-					if (attributeItem instanceof SourceBean)
+					if (attributeItem instanceof SourceBean) {
 						filteredAttribute.add(attributeItem);
+					}
 				} // for (int i = 0; i < ((ArrayList)attribute).size(); i++)
-				if (filteredAttribute.size() == 0)
+				if (filteredAttribute.size() == 0) {
 					attribute = null;
-				else if (filteredAttribute.size() == 1)
+				} else if (filteredAttribute.size() == 1) {
 					attribute = filteredAttribute.get(0);
-				else
+				} else {
 					attribute = filteredAttribute;
+				}
 			} // if (attribute instanceof List)
-			if ((attribute != null) && !(attribute instanceof List) && !(attribute instanceof SourceBean))
+			if ((attribute != null) && !(attribute instanceof List) && !(attribute instanceof SourceBean)) {
 				attribute = null;
+			}
 			if (attribute == null) {
 				SourceBean sourceBean = new SourceBean(searchKey);
 				sourceBean.setAttribute(childKey, value);
@@ -482,8 +485,8 @@ public class SourceBean extends AbstractXMLObject implements CloneableObject, Se
 				sourceBean.setAttribute(childKey, value);
 				return;
 			} // if (attribute instanceof SourceBean)
-			TracerSingleton.log(Constants.NOME_MODULO, TracerSingleton.WARNING, "SourceBean::setAttribute: attributo ["
-					+ searchKey + "] multivalore, impossibile eseguire una ricerca nidificata");
+			logger.warn("SourceBean::setAttribute: attributo [" + searchKey
+					+ "] multivalore, impossibile eseguire una ricerca nidificata");
 			throw new SourceBeanException(
 					"Attributo [" + searchKey + "] multivalore, impossibile eseguire una ricerca nidificata");
 		} // if (key.indexOf('.') != -1)
@@ -534,8 +537,7 @@ public class SourceBean extends AbstractXMLObject implements CloneableObject, Se
 	 */
 	public void updAttribute(String key, Object value) throws SourceBeanException {
 		if (key == null) {
-			TracerSingleton.log(Constants.NOME_MODULO, TracerSingleton.WARNING,
-					"SourceBean::updAttribute: chiave nulla");
+			logger.warn("SourceBean::updAttribute: chiave nulla");
 			throw new SourceBeanException("Chiave nulla");
 		} // if (key == null)
 			 // TracerSingleton.log(Constants.NOME_MODULO,
@@ -556,14 +558,12 @@ public class SourceBean extends AbstractXMLObject implements CloneableObject, Se
 				return;
 			} // if (attribute instanceof SourceBean)
 			if (attribute instanceof List) {
-				TracerSingleton.log(Constants.NOME_MODULO, TracerSingleton.WARNING,
-						"SourceBean::updAttribute: attributo [" + searchKey
-								+ "] multivalore, impossibile eseguire una ricerca nidificata");
+				logger.warn("SourceBean::updAttribute: attributo [" + searchKey
+						+ "] multivalore, impossibile eseguire una ricerca nidificata");
 				throw new SourceBeanException(
 						"Attributo [" + searchKey + "] multivalore, impossibile eseguire una ricerca nidificata");
 			} // if (attribute instanceof List)
-			TracerSingleton.log(Constants.NOME_MODULO, TracerSingleton.WARNING,
-					"SourceBean::updAttribute: attributo [" + searchKey + "] non 衵n SourceBean");
+			logger.warn("SourceBean::updAttribute: attributo [" + searchKey + "] non 衵n SourceBean");
 			throw new SourceBeanException("Attributo [" + searchKey + "] non 衵n SourceBean");
 		} // if (key.indexOf('.') != -1)
 		Object attributeItem = getAttributeItem(key);
@@ -572,8 +572,8 @@ public class SourceBean extends AbstractXMLObject implements CloneableObject, Se
 			return;
 		} // if (attributeItem == null)
 		if (attributeItem instanceof List) {
-			TracerSingleton.log(Constants.NOME_MODULO, TracerSingleton.WARNING, "SourceBean::updAttribute: attributo ["
-					+ key + "] multivalore, impossibile eseguire aggiornamento");
+			logger.warn("SourceBean::updAttribute: attributo [" + key
+					+ "] multivalore, impossibile eseguire aggiornamento");
 			throw new SourceBeanException("Attributo [" + key + "] multivalore, impossibile eseguire aggiornamento");
 		} // if (attributeItem instanceof List)
 		SourceBeanAttribute sourceBeanAttribute = (SourceBeanAttribute) attributeItem;
@@ -593,8 +593,8 @@ public class SourceBean extends AbstractXMLObject implements CloneableObject, Se
 			return;
 		} // if (attributeItem == null)
 		if (attributeItem instanceof List) {
-			TracerSingleton.log(Constants.NOME_MODULO, TracerSingleton.WARNING, "SourceBean::updAttribute: attributo ["
-					+ value.getName() + "] multivalore, impossibile eseguire aggiornamento");
+			logger.warn("SourceBean::updAttribute: attributo [" + value.getName()
+					+ "] multivalore, impossibile eseguire aggiornamento");
 			throw new SourceBeanException(
 					"Attributo [" + value.getName() + "] multivalore, impossibile eseguire aggiornamento");
 		} // if (attributeItem instanceof List)
@@ -616,8 +616,7 @@ public class SourceBean extends AbstractXMLObject implements CloneableObject, Se
 	 */
 	public void delAttribute(String key) throws SourceBeanException {
 		if (key == null) {
-			TracerSingleton.log(Constants.NOME_MODULO, TracerSingleton.WARNING,
-					"SourceBean::delAttribute: chiave nulla");
+			logger.warn("SourceBean::delAttribute: chiave nulla");
 			throw new SourceBeanException("Chiave nulla");
 		} // if (key == null)
 			 // TracerSingleton.log(Constants.NOME_MODULO,
@@ -627,8 +626,9 @@ public class SourceBean extends AbstractXMLObject implements CloneableObject, Se
 			ArrayList values = new ArrayList();
 			for (int i = 0; i < _attributes.size(); i++) {
 				SourceBeanAttribute attribute = (_attributes.get(i));
-				if (attribute.getKey().equalsIgnoreCase(searchKey))
+				if (attribute.getKey().equalsIgnoreCase(searchKey)) {
 					values.add(attribute.getValue());
+				}
 			} // for (int i = 0; i < _attributes.size(); i++)
 			if (values.size() == 0) {
 				// TracerSingleton.log(Constants.NOME_MODULO,
@@ -639,15 +639,14 @@ public class SourceBean extends AbstractXMLObject implements CloneableObject, Se
 			} // if (values.size() == 0)
 			if (values.size() == 1) {
 				if (!((values.get(0)) instanceof SourceBean)) {
-					TracerSingleton.log(Constants.NOME_MODULO, TracerSingleton.WARNING,
-							"SourceBean::delAttribute: attributo [" + searchKey + "] non 衵n SourceBean");
+					logger.warn("SourceBean::delAttribute: attributo [" + searchKey + "] non 衵n SourceBean");
 					throw new SourceBeanException("Attributo [" + searchKey + "] non 衵n SourceBean");
 				} // if (!(value instanceof SourceBean))
 				((SourceBean) (values.get(0))).delAttribute(key.substring(key.indexOf('.') + 1));
 				return;
 			} // if (values.size() == 1)
-			TracerSingleton.log(Constants.NOME_MODULO, TracerSingleton.WARNING, "SourceBean::delAttribute: attributo ["
-					+ searchKey + "] multivalore, impossibile eseguire una ricerca nidificata");
+			logger.warn("SourceBean::delAttribute: attributo [" + searchKey
+					+ "] multivalore, impossibile eseguire una ricerca nidificata");
 			throw new SourceBeanException(
 					"Attributo [" + searchKey + "] multivalore, impossibile eseguire una ricerca nidificata");
 		} // if (key.indexOf('.') != -1)
@@ -691,8 +690,9 @@ public class SourceBean extends AbstractXMLObject implements CloneableObject, Se
 		// TracerSingleton.log(Constants.NOME_MODULO,
 		// TracerSingleton.DEBUG, "SourceBean::getCharacters: key [" + key + "]");
 		Object attribute = getAttribute(key);
-		if ((attribute == null) || (!(attribute instanceof SourceBean)))
+		if ((attribute == null) || (!(attribute instanceof SourceBean))) {
 			return null;
+		}
 		return ((SourceBean) attribute).getCharacters();
 	} // public String getCharacters(String key)
 
@@ -726,8 +726,9 @@ public class SourceBean extends AbstractXMLObject implements CloneableObject, Se
 	 */
 	public void setCharacters(String characters, boolean trim) {
 		delCharacters();
-		if ((characters == null) || (characters.trim().length() == 0))
+		if ((characters == null) || (characters.trim().length() == 0)) {
 			return;
+		}
 		_characters = trim ? characters.trim() : characters;
 	} // public void setCharacters(String characters)
 
@@ -746,8 +747,7 @@ public class SourceBean extends AbstractXMLObject implements CloneableObject, Se
 	public void setCharacters(String key, String characters) throws SourceBeanException {
 		Object attribute = getAttribute(key);
 		if ((attribute == null) || (!(attribute instanceof SourceBean))) {
-			TracerSingleton.log(Constants.NOME_MODULO, TracerSingleton.WARNING,
-					"SourceBean::setCharacters: chiave errata");
+			logger.warn("SourceBean::setCharacters: chiave errata");
 			throw new SourceBeanException("Chiave errata");
 		} // if ((attribute == null) || (!(attribute instanceof SourceBean)))
 		((SourceBean) attribute).setCharacters(characters);
@@ -782,8 +782,9 @@ public class SourceBean extends AbstractXMLObject implements CloneableObject, Se
 		// TracerSingleton.log(Constants.NOME_MODULO,
 		// TracerSingleton.DEBUG, "SourceBean::getCharacters: key [" + key + "]");
 		Object attribute = getAttribute(key);
-		if ((attribute == null) || (!(attribute instanceof SourceBean)))
+		if ((attribute == null) || (!(attribute instanceof SourceBean))) {
 			return;
+		}
 		((SourceBean) attribute).delCharacters();
 	} // public void delCharacters(String key)
 
@@ -802,13 +803,11 @@ public class SourceBean extends AbstractXMLObject implements CloneableObject, Se
 	public List getFilteredSourceBeanAttributeAsList(String key, String paramName, String paramValue) {
 		List sourceBeanAttributeValues = new ArrayList();
 		if (key == null) {
-			TracerSingleton.log(Constants.NOME_MODULO, TracerSingleton.WARNING,
-					"SourceBean::getFilteredSourceBeanAttributeAsList: chiave nulla");
+			logger.warn("SourceBean::getFilteredSourceBeanAttributeAsList: chiave nulla");
 			return sourceBeanAttributeValues;
 		} // if (key == null)
 		if (paramName == null) {
-			TracerSingleton.log(Constants.NOME_MODULO, TracerSingleton.WARNING,
-					"SourceBean::getFilteredSourceBeanAttributeAsList: nome parametro nullo");
+			logger.warn("SourceBean::getFilteredSourceBeanAttributeAsList: nome parametro nullo");
 			return sourceBeanAttributeValues;
 		} // if ((paramName == null)
 			 // TracerSingleton.log(Constants.NOME_MODULO, TracerSingleton.DEBUG,
@@ -816,26 +815,30 @@ public class SourceBean extends AbstractXMLObject implements CloneableObject, Se
 			 // [" + key + "], paramName [" + paramName +
 			 // "], paramValue [" + paramValue + "]");
 		Object attributeValue = getAttribute(key);
-		if (attributeValue == null)
+		if (attributeValue == null) {
 			return sourceBeanAttributeValues;
+		}
 		List attributeValues = null;
-		if (attributeValue instanceof List)
+		if (attributeValue instanceof List) {
 			attributeValues = (List) attributeValue;
-		else {
+		} else {
 			attributeValues = new ArrayList(1);
 			attributeValues.add(attributeValue);
 		} // if (attributeValue instanceof List)
 		for (int i = 0; i < attributeValues.size(); i++) {
 			attributeValue = attributeValues.get(i);
-			if (!(attributeValue instanceof SourceBean))
+			if (!(attributeValue instanceof SourceBean)) {
 				continue;
+			}
 			Object localParamValue = ((SourceBean) attributeValue).getAttribute(paramName);
 			if (((localParamValue == null) && (paramValue != null))
-					|| ((localParamValue != null) && (paramValue == null)))
+					|| ((localParamValue != null) && (paramValue == null))) {
 				continue;
+			}
 			if (((localParamValue == null) && (paramValue == null)) || ((localParamValue instanceof String)
-					&& (((String) localParamValue).equalsIgnoreCase(paramValue))))
+					&& (((String) localParamValue).equalsIgnoreCase(paramValue)))) {
 				sourceBeanAttributeValues.add(attributeValue);
+			}
 		} // for (int i = 0; i < attributeValues.size(); i++)
 		return sourceBeanAttributeValues;
 	} // public List
@@ -860,10 +863,12 @@ public class SourceBean extends AbstractXMLObject implements CloneableObject, Se
 	 */
 	public Object getFilteredSourceBeanAttribute(String key, String paramName, String paramValue) {
 		List sourceBeanAttributeValues = getFilteredSourceBeanAttributeAsList(key, paramName, paramValue);
-		if (sourceBeanAttributeValues.size() == 0)
+		if (sourceBeanAttributeValues.size() == 0) {
 			return null;
-		if (sourceBeanAttributeValues.size() == 1)
+		}
+		if (sourceBeanAttributeValues.size() == 1) {
 			return sourceBeanAttributeValues.get(0);
+		}
 		return sourceBeanAttributeValues;
 	} // public Object getFilteredSourceBeanAttribute(String
 		 // key, String paramName, String paramValue)
@@ -899,8 +904,9 @@ public class SourceBean extends AbstractXMLObject implements CloneableObject, Se
 		// TracerSingleton.log(Constants.NOME_MODULO, TracerSingleton.DEBUG,
 		// "SourceBean::getContainedAttributes: key [" + key + "]");
 		Object attribute = getAttribute(key);
-		if ((attribute == null) || (!(attribute instanceof SourceBean)))
+		if ((attribute == null) || (!(attribute instanceof SourceBean))) {
 			return new ArrayList(0);
+		}
 		return ((SourceBean) attribute).getContainedAttributes();
 	} // public List getContainedAttributes(String key)
 
@@ -936,32 +942,32 @@ public class SourceBean extends AbstractXMLObject implements CloneableObject, Se
 	public void setContainedAttributes(String key, List attributes) throws SourceBeanException {
 		Object attribute = getAttribute(key);
 		if ((attribute == null) || (!(attribute instanceof SourceBean))) {
-			TracerSingleton.log(Constants.NOME_MODULO, TracerSingleton.WARNING,
-					"SourceBean::setContainedAttributes: chiave errata");
+			logger.warn("SourceBean::setContainedAttributes: chiave errata");
 			throw new SourceBeanException("Chiave errata");
 		} // if ((attribute == null) || (!(attribute instanceof SourceBean)))
 		((SourceBean) attribute).setContainedAttributes(attributes);
 	} // public List getContainedAttributes()
 
 	public void updContainedAttributes(List attributes) throws SourceBeanException {
-		if (attributes == null)
+		if (attributes == null) {
 			return;
+		}
 		for (int i = 0; i < attributes.size(); i++) {
 			SourceBeanAttribute attribute = (SourceBeanAttribute) attributes.get(i);
 			String attributeKey = attribute.getKey();
 			Object attributeValue = attribute.getValue();
-			if (attributeValue instanceof SourceBean)
+			if (attributeValue instanceof SourceBean) {
 				updAttribute((SourceBean) attributeValue);
-			else
+			} else {
 				updAttribute(attributeKey, attributeValue);
+			}
 		} // for (int i = 0; i < attributes.size(); i++)
 	} // public void updContainedAttributes(List attributes) throws SourceBeanException
 
 	public void updContainedAttributes(String key, ArrayList attributes) throws SourceBeanException {
 		Object attribute = getAttribute(key);
 		if ((attribute == null) || (!(attribute instanceof SourceBean))) {
-			TracerSingleton.log(Constants.NOME_MODULO, TracerSingleton.WARNING,
-					"SourceBean::updContainedAttributes: chiave errata");
+			logger.warn("SourceBean::updContainedAttributes: chiave errata");
 			throw new SourceBeanException("Chiave errata");
 		} // if ((attribute == null) || (!(attribute instanceof SourceBean)))
 		((SourceBean) attribute).updContainedAttributes(attributes);
@@ -996,8 +1002,9 @@ public class SourceBean extends AbstractXMLObject implements CloneableObject, Se
 		// TracerSingleton.log(Constants.NOME_MODULO, TracerSingleton.DEBUG,
 		// "SourceBean::delContainedAttributes: key [" + key + "]");
 		Object attribute = getAttribute(key);
-		if ((attribute == null) || (!(attribute instanceof SourceBean)))
+		if ((attribute == null) || (!(attribute instanceof SourceBean))) {
 			return;
+		}
 		((SourceBean) attribute).delContainedAttributes();
 	} // public void delContainedAttributes(String key)
 
@@ -1014,8 +1021,9 @@ public class SourceBean extends AbstractXMLObject implements CloneableObject, Se
 		List attributes = new ArrayList();
 		for (int i = 0; i < _attributes.size(); i++) {
 			SourceBeanAttribute attribute = (_attributes.get(i));
-			if (attribute.getValue() instanceof SourceBean)
+			if (attribute.getValue() instanceof SourceBean) {
 				attributes.add(attribute);
+			}
 		} // for (int i = 0; i < _attributes.size(); i++)
 		return attributes;
 	} // public void Object getContainedSourceBeanAttributes()
@@ -1033,8 +1041,9 @@ public class SourceBean extends AbstractXMLObject implements CloneableObject, Se
 	 */
 	public List getContainedSourceBeanAttributes(String key) {
 		Object attribute = getAttribute(key);
-		if ((attribute == null) || (!(attribute instanceof SourceBean)))
+		if ((attribute == null) || (!(attribute instanceof SourceBean))) {
 			return new ArrayList(0);
+		}
 		return ((SourceBean) attribute).getContainedSourceBeanAttributes();
 	} // public List getContainedSourceBeanAttributes(String key)
 
@@ -1051,8 +1060,9 @@ public class SourceBean extends AbstractXMLObject implements CloneableObject, Se
 		List attributes = new ArrayList();
 		for (int i = 0; i < _attributes.size(); i++) {
 			SourceBeanAttribute attribute = (_attributes.get(i));
-			if (attribute.getValue() instanceof XMLObject)
+			if (attribute.getValue() instanceof XMLObject) {
 				attributes.add(attribute);
+			}
 		} // for (int i = 0; i < _attributes.size(); i++)
 		return attributes;
 	} // private List getContainedXMLObjectAttributes()
@@ -1070,8 +1080,9 @@ public class SourceBean extends AbstractXMLObject implements CloneableObject, Se
 		List attributes = new ArrayList();
 		for (int i = 0; i < _attributes.size(); i++) {
 			SourceBeanAttribute attribute = (_attributes.get(i));
-			if (!(attribute.getValue() instanceof XMLObject))
+			if (!(attribute.getValue() instanceof XMLObject)) {
 				attributes.add(attribute);
+			}
 		} // for (int i = 0; i < _attributes.size(); i++)
 		return attributes;
 	} // private Vector getContainedNotXMLObjectAttributes()
@@ -1102,10 +1113,11 @@ public class SourceBean extends AbstractXMLObject implements CloneableObject, Se
 			if (attribute.getValue() instanceof SourceBean) {
 				SourceBean sourceBean = (SourceBean) (attribute.getValue());
 				String newPath = null;
-				if (path == null)
+				if (path == null) {
 					newPath = sourceBean.getName();
-				else
+				} else {
 					newPath = path + "." + sourceBean.getName();
+				}
 				sourceBean.getFullKeyPaths(key, newPath, fullKeyPaths);
 			} // if (attribute.getValue() instanceof SourceBean)
 		} // for (int i = 0; i < _attributes.size(); i++)
@@ -1115,8 +1127,7 @@ public class SourceBean extends AbstractXMLObject implements CloneableObject, Se
 	public static SourceBean fromXMLStream(InputSource stream, boolean trimCharacters, boolean upperCase)
 			throws SourceBeanException {
 		if (stream == null) {
-			TracerSingleton.log(Constants.NOME_MODULO, TracerSingleton.WARNING,
-					"SourceBean::fromXMLStream: stream nullo");
+			logger.warn("SourceBean::fromXMLStream: stream nullo");
 			return null;
 		} // if (stream == null)
 		SourceBean sourceBean = null;
@@ -1128,8 +1139,7 @@ public class SourceBean extends AbstractXMLObject implements CloneableObject, Se
 			sourceBean = contentHandler.getSourceBean();
 		} // try
 		catch (Exception ex) {
-			TracerSingleton.log(Constants.NOME_MODULO, TracerSingleton.CRITICAL,
-					"SourceBean::fromXMLString: impossibile elaborare lo stream XML", ex);
+			logger.error("SourceBean::fromXMLString: impossibile elaborare lo stream XML", ex);
 			throw new SourceBeanException("Impossibile elaborare lo stream XML");
 		} // catch (Exception ex) try
 		return sourceBean;
@@ -1163,24 +1173,13 @@ public class SourceBean extends AbstractXMLObject implements CloneableObject, Se
 	 */
 	public static SourceBean fromXMLString(String xmlSourceBean, boolean trimCharacters, boolean upperCase)
 			throws SourceBeanException {
-		// TracerSingleton.log(Constants.NOME_MODULO,
-		// TracerSingleton.DEBUG, "SourceBean::fromXMLString: invocato");
+		// logger.debug("SourceBean::fromXMLString: invocato");
 		if (xmlSourceBean == null) {
-			TracerSingleton.log(Constants.NOME_MODULO, TracerSingleton.CRITICAL,
-					"SourceBean::fromXMLString: xmlSourceBean non valido");
+			logger.error("SourceBean::fromXMLString: xmlSourceBean non valido");
 			throw new SourceBeanException("xmlSourceBean non valido");
 		} // if (xmlSourceBean == null)
 		xmlSourceBean = xmlSourceBean.trim();
-		String uri = null;
-		try {
-			uri = (String) ConfigSingleton.getInstance().getAttribute("COMMON.FILE_URI_PREFIX");
 
-		} catch (Exception e) {
-			TracerSingleton.log("Spago", 4,
-					"SourceBean::fromXMLString: impossible to read from ConfigSingleton the COMMON.FILE_URI_PREFIX", e);
-		}
-		if (uri == null)
-			uri = "";
 		if (!xmlSourceBean.startsWith("<")) {
 			xmlSourceBean = XMLUtil.XML_HEADER_PREFIX + " version=\"" + XMLUtil.XML_HEADER_DEFAULT_VERSION + "\" "
 					+ "encoding=\"" + XMLUtil.XML_HEADER_DEFAULT_ENCODING + "\"?>\n"
@@ -1192,7 +1191,7 @@ public class SourceBean extends AbstractXMLObject implements CloneableObject, Se
 			SourceBean xmlRequestBean = fromXMLStream(new InputSource(new StringReader(xmlSourceBean)));
 			xmlSourceBean = xmlRequestBean.getCharacters();
 		} // if (!xmlSourceBean.startsWith("<"))
-		if (!xmlSourceBean.startsWith(XMLUtil.XML_HEADER_PREFIX))
+		if (!xmlSourceBean.startsWith(XMLUtil.XML_HEADER_PREFIX)) {
 			xmlSourceBean = XMLUtil.XML_HEADER_PREFIX + " version=\"" + XMLUtil.XML_HEADER_DEFAULT_VERSION + "\" "
 					+ "encoding=\"" + XMLUtil.XML_HEADER_DEFAULT_ENCODING + "\"?>\n"
 					// + "<!DOCTYPE SOURCEBEAN SYSTEM \""
@@ -1200,6 +1199,7 @@ public class SourceBean extends AbstractXMLObject implements CloneableObject, Se
 					// + XMLUtil.getDoctypeFilename()
 					// + "\">\n"
 					+ xmlSourceBean;
+		}
 		return fromXMLStream(new InputSource(new StringReader(xmlSourceBean)), trimCharacters, upperCase);
 	}
 
@@ -1229,49 +1229,7 @@ public class SourceBean extends AbstractXMLObject implements CloneableObject, Se
 	 * @see SourceBean#fromXMLStream(InputSource)
 	 * @see SourceBean#fromXMLString(String)
 	 */
-	public static SourceBean fromXMLFile(String xmlSourceBean, boolean trimCharacters, boolean upperCase)
-			throws SourceBeanException {
-		if (xmlSourceBean == null) {
-			TracerSingleton.log(Constants.NOME_MODULO, TracerSingleton.CRITICAL,
-					"SourceBean::fromXMLFile: xmlSourceBean non valido");
-			throw new SourceBeanException("XMLSourceBean non valido");
-		} // if (xmlSourceBean == null)
-		String rootPath = ConfigSingleton.getRootPath();
-		if (rootPath == null) {
-			TracerSingleton.log(Constants.NOME_MODULO, TracerSingleton.CRITICAL,
-					"SourceBean::fromXMLFile: root path non valido");
-			throw new SourceBeanException("Root path non valido");
-		} // if (rootPath == null)
-		xmlSourceBean = rootPath + xmlSourceBean;
-		SourceBean sourceBean = null;
-		try {
-			InputSource stream = new InputSource(new FileReader(xmlSourceBean));
-			sourceBean = fromXMLStream(stream, trimCharacters, upperCase);
-		} // try
-		catch (FileNotFoundException ex) {
-			TracerSingleton.log(Constants.NOME_MODULO, TracerSingleton.CRITICAL,
-					"SourceBean::fromXMLFile: file non trovato");
-			throw new SourceBeanException("File non trovato");
-		} // catch (FileNotFoundException ex)
-		return sourceBean;
-	} // public static SourceBean fromXMLFile(String xmlSourceBean) throws SourceBeanException
 
-	public static SourceBean fromXMLFile(String xmlSourceBean, boolean trimCharacters) throws SourceBeanException {
-		return fromXMLFile(xmlSourceBean, trimCharacters, true);
-	}
-
-	/**
-	 * Ritorna il <code>SourceBean</code> ottenuto dal parsing del file <em>xmlSourceBean</em>.
-	 * <p>
-	 *
-	 * @param xmlSourceBean nome del file che contiene la rappresentazione XML del <code>SourceBean</code>
-	 * @return il <code>SourceBean</code> corrispondente allo stream XML
-	 * @see SourceBean#fromXMLStream(InputSource)
-	 * @see SourceBean#fromXMLString(String)
-	 */
-	public static SourceBean fromXMLFile(String xmlSourceBean) throws SourceBeanException {
-		return fromXMLFile(xmlSourceBean, true, true);
-	}
 
 	/**
 	 * Ritorna un oggetto di tipo Element che verrࡵtilizzato nella rappresentazione in XML dell'oggetto.
@@ -1280,8 +1238,9 @@ public class SourceBean extends AbstractXMLObject implements CloneableObject, Se
 	 */
 	@Override
 	public Element toElement(Document document, XMLSerializer serializer) {
-		if (_upperCase)
+		if (_upperCase) {
 			_sourceBeanName = _sourceBeanName.toUpperCase();
+		}
 		Element element = document.createElement(_sourceBeanName);
 
 		for (Iterator it = _namespaceMappings.iterator(); it.hasNext();) {
@@ -1332,8 +1291,7 @@ public class SourceBean extends AbstractXMLObject implements CloneableObject, Se
 			} // try
 			catch (Exception ex) {
 				element.setAttribute(sourceBeanAttribute.getKey(), "NOT_AVAILABLE");
-				TracerSingleton.log(Constants.NOME_MODULO, TracerSingleton.CRITICAL,
-						"SourceBean::notXMLObjectAttributesToElement: error during XML transformation", ex);
+				logger.error("SourceBean::notXMLObjectAttributesToElement: error during XML transformation", ex);
 			} // catch (Exception ex)
 		} // for (int i = 0; i < notXMLObjectAttributes.size(); i++)
 	}
@@ -1343,15 +1301,98 @@ public class SourceBean extends AbstractXMLObject implements CloneableObject, Se
 		for (int i = 0; i < xmlObjectAttributes.size(); i++) {
 			SourceBeanAttribute sourceBeanAttribute = (SourceBeanAttribute) (xmlObjectAttributes.get(i));
 			XMLObject xmlObject = (XMLObject) (sourceBeanAttribute.getValue());
-			if (xmlObject instanceof SourceBean)
+			if (xmlObject instanceof SourceBean) {
 				element.appendChild(xmlObject.toElement(document));
-			else {
+			} else {
 				String key = (_upperCase) ? sourceBeanAttribute.getKey().toUpperCase() : sourceBeanAttribute.getKey();
 				Element keyElement = document.createElement(key);
 				keyElement.appendChild(xmlObject.toElement(document));
 				element.appendChild(keyElement);
 			} // if (xmlObject instanceof SourceBean)
 		} // for (int i = 0; i < xmlObjectAttributes.size(); i++)
+	}
+
+	/**
+	 * Ritorna la rappresentazione XML dell'oggetto in formato stringa.
+	 *
+	 * @param inlineEntity boolean indica se la stringa XML generata deve contenere la sezione del doc type Entity.
+	 * @return String la rappresentazione XML dell'oggetto.
+	 */
+	@Override
+	public String toXML(boolean inlineEntity) {
+		try {
+			Document document = javax.xml.parsers.DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
+			Element element = toElement(document);
+			document.appendChild(element);
+
+			// Convert Document to String
+			javax.xml.transform.TransformerFactory tf = javax.xml.transform.TransformerFactory.newInstance();
+			javax.xml.transform.Transformer transformer = tf.newTransformer();
+
+			if (!inlineEntity) {
+				transformer.setOutputProperty(javax.xml.transform.OutputKeys.OMIT_XML_DECLARATION, "yes");
+			} else {
+				transformer.setOutputProperty(javax.xml.transform.OutputKeys.OMIT_XML_DECLARATION, "no");
+			}
+
+			transformer.setOutputProperty(javax.xml.transform.OutputKeys.INDENT, "no");
+			transformer.setOutputProperty(javax.xml.transform.OutputKeys.METHOD, "xml");
+
+			java.io.StringWriter writer = new java.io.StringWriter();
+			transformer.transform(new javax.xml.transform.dom.DOMSource(document), new javax.xml.transform.stream.StreamResult(writer));
+			return writer.toString();
+		} catch (Exception e) {
+			logger.error("Error converting SourceBean to XML", e);
+			return "<ERROR>Error converting to XML: " + e.getMessage() + "</ERROR>";
+		}
+	}
+
+	/**
+	 * Ritorna la rappresentazione XML dell'oggetto. La stringa XML generata contiene la sezione del doc type Entity.
+	 */
+	@Override
+	public String toXML() {
+		return toXML(true);
+	}
+
+	/**
+	 * Ritorna la rappresentazione XML dell'oggetto in formato stringa.
+	 *
+	 * @param level livello di indentazione
+	 * @return String la rappresentazione XML dell'oggetto.
+	 */
+	@Override
+	public String toXML(int level) {
+		return toXML(false);
+	}
+
+	/**
+	 * Ritorna un oggetto di tipo Document.
+	 *
+	 * @return Document un oggetto di tipo Document.
+	 */
+	@Override
+	public Document toDocument() {
+		return toDocument(_xmlSerializer);
+	}
+
+	/**
+	 * Ritorna un oggetto di tipo Document.
+	 *
+	 * @param serializer il serializzatore XML da utilizzare
+	 * @return Document un oggetto di tipo Document.
+	 */
+	@Override
+	public Document toDocument(XMLSerializer serializer) {
+		try {
+			Document document = javax.xml.parsers.DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
+			Element element = toElement(document, serializer);
+			document.appendChild(element);
+			return document;
+		} catch (Exception e) {
+			logger.error("Error creating Document from SourceBean", e);
+			return null;
+		}
 	}
 
 	/*
