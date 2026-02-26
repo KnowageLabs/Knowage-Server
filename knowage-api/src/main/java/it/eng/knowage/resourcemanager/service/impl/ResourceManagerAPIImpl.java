@@ -77,6 +77,7 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 	private static final String METADATA_JSON = "metadata.json";
 	private static final String MODELS = "models";
 	private static final Logger LOGGER = Logger.getLogger(ResourceManagerAPIImpl.class);
+	private static final String DOCS_FOLDER = "docs";
 	private static Map<String, List<String>> foldersForDevs = new HashMap<>();
 	private Map<String, HashMap<String, Object>> cachedNodesInfo = new HashMap<String, HashMap<String, Object>>();
 
@@ -163,16 +164,16 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 				canSee = false;
 			}
 		}
-		if (nodeFile.isDirectory() && canSee(nodePath, profile)) {
+		if (nodeFile.isDirectory()) {
 			String[] subNote = nodeFile.list();
 			for (String fileName : subNote) {
 				Path path = nodePath.resolve(fileName);
-				if (path.getParent().equals(workDir)) {
+				if (path.getParent().equals(workDir) && !fileName.equals(DOCS_FOLDER)) {
 					if (!canSee(path, profile)) {
 						continue;
 					}
 				}
-				if (Files.isDirectory(path)) {
+				if (Files.isDirectory(path) && (fileName.equals(DOCS_FOLDER) || currentRelativePath.startsWith(DOCS_FOLDER) || canSee)) {
 					FolderDTO folder = new FolderDTO(path);
 					folder.setKey(HMACUtilities.getKeyHashedValue(path.toString()));
 
@@ -325,7 +326,7 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 				String pathFile = path.get(0);
 				Path workDirr = getFullRootByPath(pathFile, profile);
 
-				if (canSee(workDirr, profile)) {
+				if (pathFile.startsWith(DOCS_FOLDER) || canSee(workDirr, profile)) {
 					Path workDir = getWorkDirectory(profile);
 					pathToReturn = workDir.resolve(pathFile);
 				}

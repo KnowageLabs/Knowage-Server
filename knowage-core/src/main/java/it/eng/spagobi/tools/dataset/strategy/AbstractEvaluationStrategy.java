@@ -240,8 +240,34 @@ public abstract class AbstractEvaluationStrategy implements IDatasetEvaluationSt
 		IMetaData pagedMetaData = pagedDataStore.getMetaData();
 		IMetaData summaryRowMetaData = summaryRowDataStore.getMetaData();
 
-		Assert.assertTrue(pagedMetaData.getFieldCount() >= summaryRowMetaData.getFieldCount(), "Summary row field count cannot be less than data field count");
+		if (pagedMetaData.getFieldCount() < summaryRowMetaData.getFieldCount()) {
+			StringBuilder sb = new StringBuilder();
+			sb.append("Summary row field count (").append(summaryRowMetaData.getFieldCount())
+					.append(") is greater than paged data field count (").append(pagedMetaData.getFieldCount()).append(").");
 
+			// list paged field names (alias if present)
+			sb.append(" Paged fields: [");
+			for (int k = 0; k < pagedMetaData.getFieldCount(); k++) {
+				String name = pagedMetaData.getFieldAlias(k);
+				sb.append(name == null ? "null" : name);
+				if (k < pagedMetaData.getFieldCount() - 1) sb.append(", ");
+			}
+			sb.append("].");
+
+			// list summary row field names (alias if present)
+			sb.append(" Summary fields: [");
+			for (int k = 0; k < summaryRowMetaData.getFieldCount(); k++) {
+				String name = summaryRowMetaData.getFieldAlias(k);
+				sb.append(name == null ? "null" : name);
+				if (k < summaryRowMetaData.getFieldCount() - 1) sb.append(", ");
+			}
+			sb.append("].");
+
+			String msg = sb.toString();
+			// Log with MAJOR level (maps to an error-like severity) including class/method context
+			logger.error(msg);
+			throw new RuntimeException(msg);
+		}
 		// calc a map for summaryRowProjections -> projections
 		Map<Integer, Integer> projectionToSummaryRowProjection = new HashMap<>();
 		for (int i = 0; i < summaryRowProjections.size(); i++) {
