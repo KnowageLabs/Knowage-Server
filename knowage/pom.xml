@@ -6,7 +6,7 @@
 	<parent>
 		<groupId>it.eng.knowage</groupId>
 		<artifactId>knowage-ce-parent</artifactId>
-		<version>9.1.0-SNAPSHOT</version>
+		<version>9.0.6-SNAPSHOT</version>
 		<relativePath>../knowage-ce-parent/pom.xml</relativePath>
 	</parent>
 	
@@ -268,6 +268,20 @@
 							<workingDirectory>${basedir}/src/main/webapp</workingDirectory>
 						</configuration>
 					</execution>
+					<execution>
+						<id>grunt-concat-dist</id>
+						<phase>process-resources</phase>
+						<goals>
+							<goal>exec</goal>
+						</goals>
+						<configuration>
+							<executable>grunt</executable>
+							<arguments>
+								<argument>knowage-concat</argument>
+							</arguments>
+							<workingDirectory>${basedir}/src/main/webapp</workingDirectory>
+						</configuration>
+					</execution>
 				</executions>
 			</plugin>
 			<plugin>
@@ -331,6 +345,30 @@
 				</resources>
 				<pluginManagement>
 					<plugins>
+						<plugin>
+							<groupId>org.apache.maven.plugins</groupId>
+							<artifactId>maven-war-plugin</artifactId>
+							<configuration>
+								<warSourceExcludes>js/src/**,themes/commons/css/**</warSourceExcludes>
+								<webResources>
+									<resource>
+										<directory>src/main/webapp</directory>
+										<filtering>true</filtering>
+										<includes>
+											<include>**/angularImport.jsp</include>
+										</includes>
+									</resource>
+									<resource>
+										<directory>src/main/webapp/js/src</directory>
+										<targetPath>js/src-${project.version}</targetPath>
+									</resource>
+									<resource>
+										<directory>src/main/webapp/themes/commons/css</directory>
+										<targetPath>themes/commons/css-${project.version}</targetPath>
+									</resource>
+								</webResources>
+							</configuration>
+						</plugin>
 						<plugin>
 							<groupId>org.codehaus.cargo</groupId>
 							<artifactId>cargo-maven2-plugin</artifactId>
