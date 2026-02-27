@@ -54,6 +54,7 @@ import javax.ws.rs.core.Response;
 
 import it.eng.knowage.commons.multitenant.OrganizationImageManager;
 import it.eng.knowage.engine.api.export.dashboard.excel.DashboardExcelExporter;
+import it.eng.knowage.engine.api.export.dashboard.png.PngExporter;
 import it.eng.knowage.engine.api.export.nodejs.PdfExporterV2;
 import it.eng.spagobi.tenant.TenantManager;
 import org.apache.http.client.utils.URIBuilder;
@@ -69,7 +70,6 @@ import com.google.common.collect.Iterables;
 import it.eng.knowage.engine.cockpit.CockpitEngine;
 import it.eng.knowage.engine.cockpit.CockpitEngineInstance;
 import it.eng.knowage.engine.cockpit.api.AbstractCockpitEngineResource;
-import it.eng.knowage.engine.cockpit.api.export.png.PngExporter;
 import it.eng.knowage.export.wrapper.beans.RenderOptions;
 import it.eng.knowage.export.wrapper.beans.ViewportDimensions;
 import it.eng.spago.error.EMFInternalError;

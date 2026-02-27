@@ -29,6 +29,9 @@ import java.util.zip.ZipInputStream;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import it.eng.spagobi.engines.config.bo.Engine;
+import it.eng.spagobi.engines.config.dao.IEngineDAO;
+import it.eng.spagobi.engines.config.metadata.SbiEngines;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -558,12 +561,21 @@ public class AbstractDocumentExecutionWork extends DossierExecutionClient implem
 		String docLabel = biObject.getLabel();
 		String hostUrl = getServiceHostUrl();
 
+		IEngineDAO engineDao = DAOFactory.getEngineDAO();
+		Engine engine = null;
+		try {
+			engine = engineDao.loadEngineByLabel(biObject.getEngineLabel());
+		} catch (EMFUserError emfUserError) {
+			throw new SpagoBIRuntimeException("Error loading engine with label " + biObject.getEngineLabel(), emfUserError);
+		}
+
 		URIBuilder serviceUrlBuilder = new URIBuilder(hostUrl);
 		serviceUrlBuilder
-				.setPath(KnowageSystemConfiguration.getKnowageCockpitEngineContext() + "/api/1.0/pages/execute/png");
+				.setPath(engine.getUrl());
 		serviceUrlBuilder.setParameter("user_id", userUniqueIdentifier);
 		serviceUrlBuilder.setParameter("document", Integer.toString(docId));
 		serviceUrlBuilder.setParameter("DOCUMENT_LABEL", docLabel);
+		serviceUrlBuilder.setParameter("SBI_EXECUTION_ROLE", role);
 		serviceUrlBuilder.setParameter("toolbar", "false");
 		serviceUrlBuilder.setParameter("role", role);
 		serviceUrlBuilder.setParameter("menu", "false");
