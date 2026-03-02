@@ -17,7 +17,6 @@ dependsOn:
       versionMin: ""
 description:
   it:
-    apiDocumentation: "https://knowage.docs.apiary.io/"
     awards:
       - OW2CON '18 Best Project - Market Award
       - OW2CON '20 best Project - Technology Award
@@ -156,8 +155,8 @@ maintenance:
   contacts:
     - email: angelo.bernabei@eng.it
       name: Angelo Bernabei
-    - email: davide.zerbetto@eng.it
-      name: Davide Zerbetto
+    - email: davide.vernassa@eng.it
+      name: Davide Vernassa
   contractors:
     - name: Engineering Ingegneria Informatica S.p.A.
       until: "2050-12-31"
@@ -172,7 +171,7 @@ platforms:
 releaseDate: "2022-07-16"
 roadmap: "https://github.com/KnowageLabs/Knowage-Server/blob/master/ROADMAP.md"
 softwareType: standalone/web
-softwareVersion: "8.1"
+softwareVersion: "9.0"
 url: "https://github.com/KnowageLabs/Knowage-Server.git"
 usedBy:
   - Azienda Unità Locale Sanitaria di Modena
