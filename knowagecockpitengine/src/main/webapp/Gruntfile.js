@@ -9,7 +9,23 @@ module.exports = function (grunt) {
       },
       basic_and_extras: {
         files: {
-          "dist/knowagecockpit-lib-bundle.js": ["js/lib/angular/angular-gridster/angular-gridster.min.js", "js/lib/angular/angular-drag-and-drop-lists/angular-drag-and-drop-lists.js", "js/lib/angular/angular-json-tree/json-tree.js", "js/lib/openlayers/v6.15.1-dist/ol.js", "js/lib/mathjs/4.0.1/math.min.js"],
+          "dist/angular-bundle.js": ["js/lib/angular/angular_1.4/angular.min.js", "js/lib/angular/angular_1.4/angular-animate.min.js", "js/lib/angular/angular_1.4/angular-aria.min.js", "js/lib/angular/angular_1.4/angular-sanitize.min.js", "js/lib/angular/angular_1.4/angular-messages.min.js", "js/lib/angular/angular_1.4/angular-cookies.js"],
+          "dist/knowagecockpit-lib-bundle.js": [
+            "js/lib/angular/angular-gridster/angular-gridster.min.js",
+            "js/lib/angular/angular-drag-and-drop-lists/angular-drag-and-drop-lists.js",
+            "js/lib/angular/angular-json-tree/json-tree.js",
+            "js/lib/openlayers/v6.15.1-dist/ol.js",
+            "js/lib/mathjs/4.0.1/math.min.js",
+            "js/lib/angular/angular-material_1.1.0/angular-material.min.js",
+            "js/lib/angular/angular-tree/angular-ui-tree.js",
+            "js/lib/angular/contextmenu/ng-context-menu.js",
+            "js/lib/angular/pagination/dirPagination.js",
+            "js/lib/angular/expander-box/expanderBox.js",
+            "js/lib/angular/color-picker/tinycolor-min.js",
+            "js/lib/angular/color-picker/tinygradient.min.js",
+            "js/lib/angular/color-picker/angularjs-color-picker.js",
+            "js/lib/xml2js/xml2json.js",
+          ],
           "dist/knowagecockpit-modules-bundle.js": [
             "node_modules/ng-wysiwyg/dist/wysiwyg.min.js",
             "node_modules/jsonformatter/dist/json-formatter.min.js",
