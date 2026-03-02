@@ -308,6 +308,10 @@
 									<directory>src/main/webapp/js/src</directory>
 									<targetPath>js/src-${project.version}</targetPath>
 								</resource>
+								<resource>
+									<directory>src/main/webapp/themes/commons/css</directory>
+									<targetPath>themes/commons/css-${project.version}</targetPath>
+								</resource>
 							</webResources>
 						</configuration>
 					</plugin>
