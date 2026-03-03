@@ -219,7 +219,8 @@ public class AbstractDocumentExecutionWork extends DossierExecutionClient implem
 					if (isZipped) {
 						String message = "Document has more than one single sheet. Screenshot is replaced with an empty image.";
 						LOGGER.debug(message);
-						handleAllPicturesFromZipFile(responseAsByteArray, randomKey, imagesMap, reportToUse);
+						// read sheet number directly from the typed Report object inside handler
+						handleAllPicturesFromZipFile(imageName, path, responseAsByteArray, randomKey, imagesMap, reportToUse);
 
 					} else {
 
@@ -316,7 +317,7 @@ public class AbstractDocumentExecutionWork extends DossierExecutionClient implem
 		return serviceURL;
 	}
 
-	protected void handleAllPicturesFromZipFile(byte[] responseAsByteArray, String randomKey,
+	protected void handleAllPicturesFromZipFile(String imageName, String path, byte[] responseAsByteArray, String randomKey,
 			Map<String, String> imagesMap, Report reportToUse) throws IOException {
 
 		String outFolderPath = SpagoBIUtilities.getResourcePath() + File.separator + "dossierExecution" + File.separator
@@ -325,63 +326,69 @@ public class AbstractDocumentExecutionWork extends DossierExecutionClient implem
 		if (!dossierExDir.exists()) {
 			dossierExDir.mkdir();
 		}
-		File outFolder = new File(outFolderPath);
-
 		byte[] buffer = new byte[1024];
+		int zipEntryIndex = 1;
 		try (ZipInputStream zis = new ZipInputStream(new ByteArrayInputStream(responseAsByteArray))) {
 			ZipEntry zipEntry = zis.getNextEntry();
 			while (zipEntry != null) {
-				File newFile = FileUtilities.createFile(FilenameUtils.removeExtension(zipEntry.getName()), ".png",
-						randomKey, new ArrayList<>());
-				try (FileOutputStream fos = new FileOutputStream(newFile)) {
-					int len;
-					while ((len = zis.read(buffer)) > 0) {
-						fos.write(buffer, 0, len);
-					}
+
+				if (reportToUse.getSheetNumber().equals(zipEntryIndex)) {
+					File f = FileUtilities.createFile(imageName, ".png", randomKey, new ArrayList<>());
+
+					try (FileOutputStream fos = new FileOutputStream(f)) {
+						int len;
+						while ((len = zis.read(buffer)) > 0) {
+							fos.write(buffer, 0, len);
+						}
+						imagesMap.put(imageName, path);
+						zis.closeEntry();
+                    }
+					break;
 				}
 				zipEntry = zis.getNextEntry();
+				zipEntryIndex++;
 			}
 			zis.closeEntry();
 		}
 
-		// array of supported extensions (use a List if you prefer)
-		String[] extensions = new String[] { "gif", "png", "bmp" // and other formats you need
-		};
-		// filter to identify images based on their extensions
-		FilenameFilter imageFilter = (dir, name) -> {
-			for (final String ext : extensions) {
-				if (name.endsWith("." + ext) && name.startsWith("sheet")) {
-					return (true);
-				}
-			}
-			return (false);
-		};
-
-		String documentLabel = reportToUse.getLabel();
-
-		if (outFolder.isDirectory()) {
-			for (final File f : outFolder.listFiles(imageFilter)) {
-
-				try {
-
-					File to = FileUtilities.createFile(FilenameUtils.removeExtension(documentLabel + "_" + f.getName()),
-							".png", randomKey, new ArrayList<>());
-
-					FileUtils.copyFile(f, to);
-					if (reportToUse.getImageName().contains(FilenameUtils.removeExtension(f.getName()))) {
-						imagesMap.put(reportToUse.getImageName(), to.getAbsolutePath());
-					} else {
-						imagesMap.put(reportToUse.getImageName() + "_" + f.getName(), to.getAbsolutePath());
-					}
-
-					FileUtils.deleteQuietly(f);
-
-				} catch (final IOException e) {
-					// handle errors here
-				}
-			}
-
-		}
+//		// array of supported extensions (use a List if you prefer)
+//		String[] extensions = new String[] { "gif", "png", "bmp" // and other formats you need
+//		};
+//		// filter to identify images based on their extensions
+//		FilenameFilter imageFilter = (dir, name) -> {
+//			for (final String ext : extensions) {
+//				if (name.endsWith("." + ext) && name.startsWith("sheet")) {
+//					return (true);
+//				}
+//			}
+//			return (false);
+//		};
+//
+//		String documentLabel = reportToUse.getLabel();
+//
+//		if (outFolder.isDirectory()) {
+//			for (final File f : outFolder.listFiles(imageFilter)) {
+//
+//				try {
+//
+//					File to = FileUtilities.createFile(FilenameUtils.removeExtension(documentLabel + "_" + f.getName()),
+//							".png", randomKey, new ArrayList<>());
+//
+//					FileUtils.copyFile(f, to);
+//					if (reportToUse.getImageName().contains(FilenameUtils.removeExtension(f.getName()))) {
+//						imagesMap.put(reportToUse.getImageName(), to.getAbsolutePath());
+//					} else {
+//						imagesMap.put(reportToUse.getImageName() + "_" + f.getName(), to.getAbsolutePath());
+//					}
+//
+//					FileUtils.deleteQuietly(f);
+//
+//				} catch (final IOException e) {
+//					// handle errors here
+//				}
+//			}
+//
+//		}
 	}
 
 	public static File newFile(File destinationDir, ZipEntry zipEntry) throws IOException {

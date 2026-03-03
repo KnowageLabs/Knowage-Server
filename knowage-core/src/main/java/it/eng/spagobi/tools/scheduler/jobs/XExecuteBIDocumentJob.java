@@ -527,7 +527,13 @@ public class XExecuteBIDocumentJob extends AbstractSpagoBIJob implements Job {
 							// executionProxy.setSplittingFilter(isSplittingFilter);
 							executionProxy.setMimeType(outputMIMEType);
 							executionProxy.setOutputTypeTrigger(outputTypeTrigger);
+
+
+							//FIIIIREEEEE!!!!!!!!!!!!!!!!!!!!!!!!
 							byte[] executionOutput = executionProxy.exec(userProfile, modality, null);
+							//FIIIIREEEEE!!!!!!!!!!!!!!!!!!!!!!!!
+
+
 							if (executionOutput == null || executionOutput.length == 0) {
 								logger.debug("Document executed without any response");
 							}

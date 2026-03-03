@@ -35,6 +35,7 @@ public class Report {
 	String imageName;
 	String sheet;
 	String sheetHeight;
+	Integer sheetNumber;
 	String sheetWidth;
 	String deviceScaleFactor;
 	String source;
@@ -88,6 +89,15 @@ public class Report {
 	@JsonSetter("sheetHeight")
 	public void setSheetHeight(String sheetHeight) {
 		this.sheetHeight = sheetHeight;
+	}
+
+	public Integer getSheetNumber() {
+		return sheetNumber;
+	}
+
+	@JsonSetter("sheetNumber")
+	public void setSheetNumber(Integer sheetNumber) {
+		this.sheetNumber = sheetNumber;
 	}
 
 	public String getSheetWidth() {
