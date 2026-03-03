@@ -4,6 +4,7 @@ import be.quodlibet.boxable.*;
 import it.eng.knowage.engine.api.export.dashboard.DashboardExporter;
 import it.eng.knowage.engine.api.export.dashboard.Style;
 import it.eng.spagobi.commons.SingletonConfig;
+import it.eng.spagobi.user.UserProfileManager;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import org.apache.log4j.Logger;
@@ -55,7 +56,7 @@ public class DashboardPdfExporter extends DashboardExporter {
 
     public byte[] getBinaryData(JSONObject template) throws JSONException {
 
-        String creationUser;
+        String executionUser;
 
         if (template == null) {
             throw new SpagoBIRuntimeException("Unable to get template for dashboard");
@@ -65,12 +66,12 @@ public class DashboardPdfExporter extends DashboardExporter {
 
         JSONObject drivers = transformDriversForDatastore(getDrivers(template));
         JSONObject parameters = transformParametersForDatastore(template, getParametersFromBody(template));
-        creationUser = template.getString("creationUser");
+        executionUser = UserProfileManager.getProfile().getSpagoBIUserProfile().getUserId();
 
         try (PDDocument document = new PDDocument(MemoryUsageSetting.setupTempFileOnly())) {
             String widgetId = template.getString("id");
 
-            exportTableWidget(document, template, widgetId, creationUser, selections, drivers, parameters);
+            exportTableWidget(document, template, widgetId, executionUser, selections, drivers, parameters);
 
             ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
             document.save(byteArrayOutputStream);
@@ -82,7 +83,7 @@ public class DashboardPdfExporter extends DashboardExporter {
         }
     }
 
-    private void exportTableWidget(PDDocument document, JSONObject widget, String widgetId, String creationUser, Map<String, Map<String, JSONArray>> selections, JSONObject drivers, JSONObject parameters) {
+    private void exportTableWidget(PDDocument document, JSONObject widget, String widgetId, String executionUser, Map<String, Map<String, JSONArray>> selections, JSONObject drivers, JSONObject parameters) {
         try {
             JSONObject settings = widget.optJSONObject("settings");
 
@@ -152,7 +153,7 @@ public class DashboardPdfExporter extends DashboardExporter {
                             }
                         }
                     }
-                    buildFirstPageHeaders(table, settings, groupsAndColumnsMap, columnsOrdered, creationUser, font, extraValueLabel, extraValue);
+                    buildFirstPageHeaders(table, settings, groupsAndColumnsMap, columnsOrdered, executionUser, font, extraValueLabel, extraValue);
                 }
 
                 rows = dataStore.getJSONArray("rows");
@@ -209,8 +210,8 @@ public class DashboardPdfExporter extends DashboardExporter {
         }
     }
 
-    private void buildFirstPageHeaders(BaseTable table, JSONObject settings, Map<String, String> groupsAndColumnsMap, JSONArray columnsOrdered, String creationUser, PDFont font, String extraValueLabel, String extraValueField) throws JSONException {
-        createDocumentInformationRow(table, font, creationUser, extraValueLabel, extraValueField);
+    private void buildFirstPageHeaders(BaseTable table, JSONObject settings, Map<String, String> groupsAndColumnsMap, JSONArray columnsOrdered, String executionUser, PDFont font, String extraValueLabel, String extraValueField) throws JSONException {
+        createDocumentInformationRow(table, font, executionUser, extraValueLabel, extraValueField);
 
         if (!groupsAndColumnsMap.isEmpty()) {
             Row<PDPage> groupHeaderRow = table.createRow(15f);
@@ -273,21 +274,21 @@ public class DashboardPdfExporter extends DashboardExporter {
         }
     }
 
-    private void createDocumentInformationRow(BaseTable table, PDFont font, String creationUser, String extraValueLabel, String extraValue) {
+    private void createDocumentInformationRow(BaseTable table, PDFont font, String executionUser, String extraValueLabel, String extraValue) {
         try {
 
             String executionDateLabel;
-            String creationUserLabel;
+            String executionUserLabel;
 
             if (this.locale.toString().equals("sk_SK")) {
                 executionDateLabel = "Dátum vytvorenia: ";
-                creationUserLabel = "Vytvoril: ";
+                executionUserLabel = "Vytvoril: ";
             } else if (this.locale.toString().equals("it_IT")) {
                 executionDateLabel = "Data di esecuzione: ";
-                creationUserLabel = "Utente di creazione: ";
+                executionUserLabel = "Utente di esecuzione: ";
             } else {
                 executionDateLabel = "Execution Date: ";
-                creationUserLabel = "Creation User: ";
+                executionUserLabel = "Execution User: ";
             }
 
             PDPage page = table.getCurrentPage();
@@ -295,7 +296,7 @@ public class DashboardPdfExporter extends DashboardExporter {
             String executionDate = LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss"));
 
             String line1 = executionDateLabel + executionDate;
-            String line2 = creationUserLabel + creationUser;
+            String line2 = executionUserLabel + executionUser;
             String line3 = null;
             boolean isExtraValuePresent = extraValueLabel != null && !extraValueLabel.isEmpty() && extraValue != null && !extraValue.isEmpty();
             if (isExtraValuePresent) {

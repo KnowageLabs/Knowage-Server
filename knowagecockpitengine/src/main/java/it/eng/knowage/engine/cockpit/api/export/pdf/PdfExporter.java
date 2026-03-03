@@ -71,12 +71,11 @@ public class PdfExporter extends AbstractFormatExporter {
 		super(userUniqueIdentifier, body);
 	}
 
-	public byte[] getBinaryData(Integer documentId, String documentLabel, String templateString, JSONObject selections, JSONObject variables) throws JSONException {
+	public byte[] getBinaryData(Integer documentId, String executionUser, String documentLabel, String templateString, JSONObject selections, JSONObject variables) throws JSONException {
 
 			ObjTemplate template = null;
 			String message = "Unable to get template for document with id [" + documentId + "] and label ["
 					+ documentLabel + "]";
-            String creationUser;
 			try {
 				if (documentId != null && documentId != 0)
 					template = DAOFactory.getObjTemplateDAO().getBIObjectActiveTemplate(documentId);
@@ -89,7 +88,6 @@ public class PdfExporter extends AbstractFormatExporter {
                 if (templateString == null) {
                     templateString = new String(template.getContent());
                 }
-                creationUser = template.getCreationUser();
 			} catch (EMFAbstractError e) {
 				throw new SpagoBIRuntimeException(message, e);
 			}
@@ -97,7 +95,7 @@ public class PdfExporter extends AbstractFormatExporter {
 		try (PDDocument document = new PDDocument(MemoryUsageSetting.setupTempFileOnly())) {
 			long widgetId = body.getLong("widget");
 
-			exportTableWidget(document, templateString, widgetId, creationUser, selections, variables);
+			exportTableWidget(document, templateString, widgetId, executionUser, selections, variables);
 
 			ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
 			document.save(byteArrayOutputStream);
@@ -748,9 +746,9 @@ public class PdfExporter extends AbstractFormatExporter {
                 creationUserLabel = "Vytvoril: ";
             } else if (getLocale().toString().equals("it_IT")) {
                 executionDateLabel = "Data di esecuzione: ";
-                creationUserLabel = "Utente di creazione: ";
+                creationUserLabel = "Utente di esecuzione: ";
             } else {
-                executionDateLabel = "Execution Date: ";
+                executionDateLabel = "Execution User: ";
                 creationUserLabel = "Creation User: ";
             }
 
