@@ -109,7 +109,9 @@ public class CockpitExportResource extends AbstractCockpitEngineResource {
 			body.put("template", template);
             JSONObject selections = body.optJSONObject("COCKPIT_SELECTIONS").optJSONObject("userSelections");
 			JSONObject variables = body.optJSONObject("COCKPIT_VARIABLES");
-			byte[] data = pdfExporter.getBinaryData(documentId, documentLabel, template, selections, variables);
+			UserProfile profile = getUserProfile();
+			String executionUser = profile.getSpagoBIUserProfile().getUserId();
+			byte[] data = pdfExporter.getBinaryData(documentId, executionUser, documentLabel, template, selections, variables);
 
 			response.setContentType(MediaType.APPLICATION_OCTET_STREAM);
 			response.setHeader("Content-length", Integer.toString(data.length));
