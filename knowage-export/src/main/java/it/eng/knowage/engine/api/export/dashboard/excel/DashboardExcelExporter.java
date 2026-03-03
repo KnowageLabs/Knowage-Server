@@ -7,6 +7,9 @@ import it.eng.knowage.engine.api.export.dashboard.Style;
 import it.eng.knowage.engine.api.export.dashboard.excel.exporters.DashboardPivotExporter;
 import it.eng.knowage.engine.api.export.dashboard.excel.exporters.DashboardWidgetExporterFactory;
 import it.eng.spagobi.commons.SingletonConfig;
+import it.eng.spagobi.commons.bo.Config;
+import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.dao.IConfigDAO;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import lombok.Getter;
 import org.apache.commons.codec.binary.Base64;
@@ -53,6 +56,8 @@ public class DashboardExcelExporter extends DashboardExporter {
 
     // SCHEDULER
     private static final String CONFIG_NAME_FOR_EXPORT_SCRIPT_PATH = "internal.nodejs.chromium.export.path";
+    private static final String CONFIG_NAME_FOR_DRIVERS_SHEET_EXPORT = "DASHBOARD.EXPORT.SHOW_DRIVERS_SHEET";
+    private static final String CONFIG_NAME_FOR_SELECTIONS_SHEET_EXPORT = "DASHBOARD.EXPORT.SHOW_SELECTIONS_SHEET";
     private static final String SCRIPT_NAME = "cockpit-export-xls.js";
     private static final String DOCUMENT_NAME = "";
     private String role;
@@ -217,13 +222,18 @@ public class DashboardExcelExporter extends DashboardExporter {
                 exportedSheets += exportDashboard(widgetsJson, wb, getDocumentName(body), selections, drivers, parameters);
             }
 
-            if (!selections.isEmpty()) {
+            IConfigDAO configsDao = DAOFactory.getSbiConfigDAO();
+            Optional<Config> selectionsCfg = configsDao.loadConfigParametersByLabelIfExist(CONFIG_NAME_FOR_SELECTIONS_SHEET_EXPORT);
+
+            if (selectionsCfg.isPresent() && selectionsCfg.get().isActive() && Boolean.parseBoolean(selectionsCfg.get().getValueCheck()) && !selections.isEmpty()) {
                 Sheet selectionsSheet = createUniqueSafeSheetForSelections(wb, "Active Selections");
                 fillDashboardSelectionsSheetWithData(selections, selectionsSheet);
                 exportedSheets++;
             }
 
-            if (driversFromBody != null && driversFromBody.length() > 0) {
+            Optional<Config> driversConfig = configsDao.loadConfigParametersByLabelIfExist(CONFIG_NAME_FOR_DRIVERS_SHEET_EXPORT);
+
+            if (driversConfig.isPresent() && driversConfig.get().isActive() && Boolean.parseBoolean(driversConfig.get().getValueCheck()) && driversFromBody != null && driversFromBody.length() > 0) {
                 Sheet driversSheet = createUniqueSafeSheetForSelections(wb, "Filters");
                 fillDashboardDriversSheetWithData(driversFromBody, driversSheet);
                 exportedSheets++;
