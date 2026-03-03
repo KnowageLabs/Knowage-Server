@@ -83,7 +83,12 @@ public class SqlFilterModelAccessModality extends AbstractModelAccessModality {
 		Graph<IModelEntity, Relationship> rootEntitiesGraphFM = parentStatement.getDataSource().getModelStructure().getRootEntitiesGraph(modelNameFM, false)
 				.getRootEntitiesGraph();
 
-		return GraphManager.getDefaultCoverGraphInstance(((String) ConfigSingleton.getInstance().getAttribute("QBE.GRAPH-PATH.defaultCoverImpl")))
+		String defaultCoverImpl = null;
+		if (ConfigSingleton.getInstance() != null) {
+			defaultCoverImpl = (String) ConfigSingleton.getInstance().getAttribute("QBE.GRAPH-PATH.defaultCoverImpl");
+		}
+		
+		return GraphManager.getDefaultCoverGraphInstance(defaultCoverImpl)
 				.getCoverGraph(rootEntitiesGraphFM, unjoinedEntities);
 	}
 
