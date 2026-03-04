@@ -17,15 +17,13 @@
  */
 package it.eng.spagobi.tools.scheduler;
 
-import it.eng.spago.base.SourceBean;
-import it.eng.spago.configuration.ConfigSingleton;
-import it.eng.spagobi.utilities.groovy.GroovySandbox;
-
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+
+import it.eng.spagobi.utilities.groovy.GroovySandbox;
 
 public class Formula {
 
@@ -59,17 +57,20 @@ public class Formula {
 		this.groovyCode = groovyCode;
 	}
 
-	public Formula(SourceBean configuration) throws Exception {
+	public Formula(String name, String description, String groovyCode) throws Exception {
 		logger.debug("IN");
-		this.name = (String) configuration.getAttribute("name");
-		if (name == null || name.trim().equals(""))
+		this.name = name;
+		if (this.name == null || this.name.trim().equals("")) {
 			throw new Exception("Formula name not found!");
-		this.description = (String) configuration.getAttribute("description");
-		if (description == null || description.trim().equals(""))
+		}
+		this.description = description;
+		if (this.description == null || this.description.trim().equals("")) {
 			throw new Exception("Formula description not found!");
-		this.groovyCode = configuration.getCharacters();
-		if (groovyCode == null || groovyCode.trim().equals(""))
+		}
+		this.groovyCode = groovyCode;
+		if (this.groovyCode == null || this.groovyCode.trim().equals("")) {
 			throw new Exception("Formula groovy code not found!");
+		}
 		logger.debug("OUT");
 	}
 
@@ -102,26 +103,12 @@ public class Formula {
 	public static List<Formula> getAvailableFormulas() {
 		logger.debug("IN");
 		List<Formula> toReturn = new ArrayList<>();
-		List formulasList = ConfigSingleton.getInstance().getAttributeAsList("FORMULAS.FORMULA");
-		if (formulasList == null || formulasList.isEmpty()) {
+		List<Formula> cached = FormulaSingleton.getInstance().getFormulas();
+		if (cached == null || cached.isEmpty()) {
 			logger.debug("No formulas configured.");
 			return toReturn;
 		}
-		Iterator it = formulasList.iterator();
-		while (it.hasNext()) {
-			SourceBean sb = (SourceBean) it.next();
-			if (sb != null) {
-				Formula f = null;
-				try {
-					f = new Formula(sb);
-				} catch (Exception e) {
-					logger.error("The SourceBean is not a valid configuration for a Formula : " + sb, e);
-				}
-				if (f != null) {
-					toReturn.add(f);
-				}
-			}
-		}
+		toReturn.addAll(cached);
 		logger.debug("OUT");
 		return toReturn;
 	}
