@@ -47,16 +47,15 @@ public class TableExporter extends GenericWidgetExporter implements IWidgetExpor
 
 			int offset = 0;
 			int fetchSize = Integer.parseInt(SingletonConfig.getInstance().getConfigValue("SPAGOBI.API.DATASET.MAX_ROWS_NUMBER"));
-			JSONObject dataStore = excelExporter.getDataStoreForWidget(template, widget, offset, fetchSize);
-			if (dataStore != null) {
-				int totalNumberOfRows = dataStore.getInt("results");
-				while (offset < totalNumberOfRows) {
-					excelExporter.fillSheetWithData(dataStore, wb, sheet, widgetName, offset, settings);
-					offset += fetchSize;
-					dataStore = excelExporter.getDataStoreForWidget(template, widget, offset, fetchSize);
+			int totalNumberOfRows = 0;
+			do {
+				JSONObject dataStore = excelExporter.getDataStoreForWidget(template, widget, offset, fetchSize);
+				if (offset == 0) {
+					totalNumberOfRows = dataStore.getInt("results");
 				}
-				return 1;
-			}
+				excelExporter.fillSheetWithData(dataStore, wb, sheet, widgetName, offset, settings);
+				offset += fetchSize;
+			} while (offset < totalNumberOfRows);
 		} catch (Exception e) {
 			throw new SpagoBIRuntimeException("Unable to export table widget: " + widgetId, e);
 		}
