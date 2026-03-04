@@ -75,7 +75,7 @@ export default defineComponent({
   },
   mounted(){
     this.userAttributesForm = {...this.modelValue}
-  }
+  },
   methods: {
     onInputChange(attribute: iAttribute, value) {
       this.isUpdatingFromInput = true
