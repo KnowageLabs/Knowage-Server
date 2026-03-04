@@ -670,5 +670,16 @@
 		description="If true, when users with more than one role logon, they must choose a session role before continuing" isActive="true"
 		valueCheck="false" valueType="STRING" category="SECURITY" />
 
+	<CONFIG label="DASHBOARD.EXPORT.SHOW_DRIVERS_SHEET" name="Show drivers sheet in dashboard export"
+			description="If true, drivers sheet will be included in the exported workbook (dashboard xlsx export)" isActive="true"
+			valueCheck="false" valueType="STRING" category="GENERIC_CONFIGURATION" />
+
+	<CONFIG label="DASHBOARD.EXPORT.SHOW_SELECTIONS_SHEET" name="Show selections sheet in dashboard export"
+			description="If true, selections sheet will be included in the exported workbook (dashboard xlsx export)" isActive="true"
+			valueCheck="false" valueType="STRING" category="GENERIC_CONFIGURATION" />
+
+	<CONFIG label="COCKPIT.EXPORT.SHOW_FILTER" name="Show drivers and selections sheet in cockpit export"
+			description="If true, drivers and selections sheet will be included in the exported workbook (cockpit xlsx export)" isActive="true"
+			valueCheck="false" valueType="STRING" category="GENERIC_CONFIGURATION" />
 </CONFIGS>
 
