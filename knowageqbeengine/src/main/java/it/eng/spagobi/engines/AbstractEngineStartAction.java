@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package it.eng.spagobi.utilities.engines;
+package it.eng.spagobi.engines;
 
 import java.util.Base64;
 import java.util.HashMap;
@@ -59,8 +59,13 @@ import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.database.temporarytable.TemporaryTable;
 import it.eng.spagobi.utilities.database.temporarytable.TemporaryTableManager;
 import it.eng.spagobi.utilities.database.temporarytable.TemporaryTableRecorder;
+import it.eng.spagobi.utilities.engines.AuditServiceProxy;
+import it.eng.spagobi.utilities.engines.EngineAnalysisMetadata;
+import it.eng.spagobi.utilities.engines.EngineConstants;
+import it.eng.spagobi.utilities.engines.SpagoBIEngineException;
+import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
+import it.eng.spagobi.utilities.engines.SpagoBIEngineStartupException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
-import it.eng.spagobi.utilities.service.AbstractBaseHttpAction;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
@@ -263,10 +268,11 @@ public class AbstractEngineStartAction extends AbstractBaseHttpAction {
 	public String getTemplateAsString() {
 
 		byte[] temp = getTemplate();
-		if (temp != null)
+		if (temp != null) {
 			return new String(temp);
-		else
+		} else {
 			return new String("");
+		}
 	}
 
 	private byte[] getTemplate() {
@@ -284,8 +290,9 @@ public class AbstractEngineStartAction extends AbstractBaseHttpAction {
 			template = contentProxy.readTemplate(getDocumentId(), requestParameters);
 		}
 		try {
-			if (template == null)
+			if (template == null) {
 				throw new SpagoBIEngineRuntimeException("There are no template associated to document [" + documentId + "]");
+			}
 			templateContent = DECODER.decode(template.getContent());
 		} catch (Throwable e) {
 			SpagoBIEngineStartupException engineException = new SpagoBIEngineStartupException(getEngineName(), "Impossible to get template's content", e);

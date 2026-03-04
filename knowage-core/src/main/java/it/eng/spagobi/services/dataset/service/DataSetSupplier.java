@@ -18,11 +18,8 @@
 package it.eng.spagobi.services.dataset.service;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-
-import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
 
@@ -31,10 +28,8 @@ import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.services.dataset.bo.SpagoBiDataSet;
-import it.eng.spagobi.tools.dataset.bo.DataSetFactory;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
-import it.eng.spagobi.tools.dataset.service.ManageDatasets;
 
 public class DataSetSupplier {
 
@@ -158,7 +153,7 @@ public class DataSetSupplier {
 	 */
 	public SpagoBiDataSet[] getAllDataSet() {
 		SpagoBiDataSet[] dataSetsConfig = null;
-		;
+
 		List datasets;
 		ArrayList tmpList;
 
@@ -191,29 +186,5 @@ public class DataSetSupplier {
 		return dataSetsConfig;
 	}
 
-	public SpagoBiDataSet saveDataSet(SpagoBiDataSet datasetConfig, IEngUserProfile profile, HttpSession session) {
-		SpagoBiDataSet toReturn = null;
-
-		logger.debug("IN");
-		try {
-			String userId = ((UserProfile) profile).getUserId().toString();
-			IDataSet dataSet = DataSetFactory.getDataSet(datasetConfig, userId, session);
-			Integer id = DAOFactory.getDataSetDAO().insertDataSet(dataSet);
-			dataSet.setId(id);
-			ManageDatasets md = new ManageDatasets();
-			md.setProfile(profile);
-
-			md.insertPersistenceAndScheduling(dataSet, new HashMap<>());
-
-			toReturn = dataSet.toSpagoBiDataSet();
-
-		} catch (Exception e) {
-			logger.error("Error while saving dataset", e);
-		} finally {
-			logger.debug("OUT");
-		}
-
-		return toReturn;
-	}
 
 }

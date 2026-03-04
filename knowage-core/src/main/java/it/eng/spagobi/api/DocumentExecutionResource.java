@@ -117,7 +117,6 @@ import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
 import it.eng.spagobi.tools.objmetadata.bo.ObjMetacontent;
 import it.eng.spagobi.tools.objmetadata.dao.IObjMetacontentDAO;
 import it.eng.spagobi.utilities.assertion.Assert;
-import it.eng.spagobi.utilities.engines.AbstractEngineStartAction;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.rest.RestUtilities;
@@ -131,24 +130,37 @@ import it.eng.spagobi.utilities.rest.RestUtilities;
 public class DocumentExecutionResource extends AbstractSpagoBIResource {
 
 	// GENERAL METADATA NAMES
+	@Deprecated
 	public static final String LABEL = "metadata.docLabel";
+	@Deprecated
 	public static final String NAME = "metadata.docName";
+	@Deprecated
 	public static final String DESCR = "metadata.docDescr";
+	@Deprecated
 	public static final String TYPE = "metadata.docType";
+	@Deprecated
 	public static final String ENG_NAME = "metadata.docEngine";
+	@Deprecated
 	public static final String RATING = "metadata.docRating";
+	@Deprecated
 	public static final String SUBOBJ_NAME = "metadata.subobjName";
+	@Deprecated
 	public static final String METADATA = "METADATA";
+	@Deprecated
 	public static final String NODE_ID_SEPARATOR = "___SEPA__";
+	@Deprecated
 	public static final String EDIT_MODE_ON = "true";
 
+	@Deprecated
 	public static final String MODE_SIMPLE = "simple";
 	// public static String MODE_COMPLETE = "complete";
 	// public static String START = "start";
 	// public static String LIMIT = "limit";
+	@Deprecated
 	public String runDocumentExecution = SingletonConfig.getInstance()
 			.getConfigValue("document.execution.startAutomatically");
 
+	@Deprecated
 	public static final String SERVICE_NAME = "DOCUMENT_EXECUTION_RESOURCE";
 	private static final String DESCRIPTION_FIELD = "description";
 
@@ -178,6 +190,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 	 * @throws IOException
 	 * @throws EMFInternalError
 	 */
+	@Deprecated
 	@POST
 	@Path("/url")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
@@ -316,16 +329,16 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 				String subViewObjectVisibility = parameters.optString("subobj_visibility");
 
 				if (!StringUtils.isEmpty(subViewObjectID)) {
-					ret += "&" + AbstractEngineStartAction.SUBOBJ_ID + "=" + subViewObjectID;
+					ret += "&subobjectId=" + subViewObjectID;
 				}
 				if (!StringUtils.isEmpty(subViewObjectName)) {
-					ret += "&" + AbstractEngineStartAction.SUBOBJ_NAME + "=" + subViewObjectName;
+					ret += "&nameSubObject=" + subViewObjectName;
 				}
 				if (!StringUtils.isEmpty(subViewObjectDescription)) {
-					ret += "&" + AbstractEngineStartAction.SUBOBJ_DESCRIPTION + "=" + subViewObjectDescription;
+					ret += "&SUBOBJ_DESCRIPTION=" + subViewObjectDescription;
 				}
 				if (!StringUtils.isEmpty(subViewObjectVisibility)) {
-					ret += "&" + AbstractEngineStartAction.SUBOBJ_VISIBILITY + "=" + subViewObjectVisibility;
+					ret += "&SUBOBJ_VISIBILITY=" + subViewObjectVisibility;
 				}
 			}
 		}
@@ -533,6 +546,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 	 * @throws IOException
 	 * @throws EncodingException
 	 */
+	@Deprecated
 	@POST
 	@Path("/filters")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
@@ -875,6 +889,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 
 	// private List<AbstractDriverRuntime<AbstractDriver>>
 
+	@Deprecated
 	protected JSONObject decodeRequestParameters(JSONObject requestValParams)
 			throws JSONException, IOException, EncodingException {
 		JSONObject toReturn = new JSONObject();
@@ -962,6 +977,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 		}
 	}
 
+	@Deprecated
 	protected Map<String, JSONObject> getSessionParameters(JSONObject requestVal) {
 
 		Map<String, JSONObject> sessionParametersMap = new HashMap<>();
@@ -1101,6 +1117,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 		return defaultValues;
 	}
 
+	@Deprecated
 	@POST
 	@Path("/parametervalues")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
@@ -1181,6 +1198,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 	/**
 	 * @return the list of values when input parameter (urlName) is correlated to another
 	 */
+	@Deprecated
 	@GET
 	@Path("/filterlist")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
@@ -1208,6 +1226,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 	/**
 	 * @return the list of values when input parameter (urlName) is correlated to another
 	 */
+	@Deprecated
 	@POST
 	@Path("/canHavePublicExecutionUrl")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
@@ -1255,6 +1274,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 	/*
 	 * File Upload to local temp directory
 	 */
+	@Deprecated
 	@POST
 	@Path("/uploadfilemetadata")
 	@UserConstraint(functionalities = { CommunityFunctionalityConstants.DOCUMENT_METADATA_MANAGEMENT })
@@ -1304,6 +1324,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 	 * @return a response with a json
 	 * @throws EMFUserError
 	 */
+	@Deprecated
 	@GET
 	@Path("/{id}/{metadataObjectId}/documentfilemetadata")
 	public Response documentFileMetadata(@PathParam("id") Integer objectId,
@@ -1364,7 +1385,6 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 	//
 	// }
 
-	@SuppressWarnings("resource")
 	private byte[] getFileByteArray(String filePath, String fileName) throws IOException {
 
 		filePath = filePath + "/" + fileName;
@@ -1382,6 +1402,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 
 	}
 
+	@Deprecated
 	protected String getExecutionRole(String role) throws EMFInternalError, DocumentExecutionException {
 		UserProfile userProfile = getUserProfile();
 		if (role != null && !role.equals("")) {
@@ -1578,7 +1599,6 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 		return null;
 	}
 
-	@SuppressWarnings("resource")
 	private byte[] getFileByteArray(String filePath) throws IOException {
 		File file = new File(filePath);
 		byte[] bFile = null;
@@ -1594,6 +1614,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 
 	}
 
+	@Deprecated
 	public ArrayList<HashMap<String, Object>> transformRuntimeDrivers(List<BusinessModelDriverRuntime> parameters,
 			IParameterUseDAO parameterUseDAO, String role, MetaModel businessModel, BusinessModelOpenParameters bmop) {
 		ArrayList<HashMap<String, Object>> parametersArrayList = new ArrayList<>();
@@ -1860,6 +1881,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 		return parametersArrayList;
 	}
 
+	@Deprecated
 	public ArrayList<HashMap<String, Object>> getDatasetDriversByModelName(String businessModelName,
 			Boolean loadDSwithDrivers) {
 		ArrayList<HashMap<String, Object>> parametersArrList = new ArrayList<>();

@@ -35,7 +35,6 @@ import it.eng.spago.base.SourceBean;
 import it.eng.spagobi.engines.qbe.QbeEngineInstance;
 import it.eng.spagobi.engines.qbe.registry.bo.RegistryConfiguration;
 import it.eng.spagobi.engines.qbe.services.core.AbstractQbeEngineAction;
-import it.eng.spagobi.engines.qbe.services.initializers.RegistryEngineStartAction;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceException;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceExceptionHandler;
@@ -104,8 +103,9 @@ public class DeleteRecordsAction extends AbstractQbeEngineAction {
 			errorHitsMonitor.stop();
 			throw SpagoBIEngineServiceExceptionHandler.getInstance().getWrappedException(getActionName(), getEngineInstance(), t);
 		} finally {
-			if (totalTimeMonitor != null)
+			if (totalTimeMonitor != null) {
 				totalTimeMonitor.stop();
+			}
 			logger.debug("OUT");
 		}
 	}
@@ -123,7 +123,7 @@ public class DeleteRecordsAction extends AbstractQbeEngineAction {
 			return null;
 		}
 
-		qbeEngineInstance = (QbeEngineInstance) getAttributeFromSession(RegistryEngineStartAction.ENGINE_INSTANCE);
+		qbeEngineInstance = (QbeEngineInstance) getAttributeFromSession("REGISTRY_CONFIGURATION");
 		Assert.assertNotNull(qbeEngineInstance,
 				"It's not possible to execute " + this.getActionName() + " service before having properly created an instance of EngineInstance class");
 

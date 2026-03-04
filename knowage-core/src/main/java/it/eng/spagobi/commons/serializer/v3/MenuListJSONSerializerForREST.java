@@ -79,7 +79,6 @@ public class MenuListJSONSerializerForREST implements Serializer {
 	private static final String PLACEHOLDER_SPAGO_ADAPTER_HTTP = "${SPAGO_ADAPTER_HTTP}";
 	private static final String PLACEHOLDER_SPAGOBI_CONTEXT = "${SPAGOBI_CONTEXT}";
 	private static final String PLACEHOLDER_KNOWAGE_VUE_CONTEXT = "${KNOWAGE_VUE_CONTEXT}";
-	private static final String PLACEHOLDER_KNOWAGE_THEME = "${KNOWAGE_THEME}";
 
 	private static final String LABEL = "label";
 	private static final String ITEMS = "items";
@@ -100,7 +99,6 @@ public class MenuListJSONSerializerForREST implements Serializer {
 
 	private IEngUserProfile userProfile;
 	private HttpSession httpSession;
-	private String currentTheme = null;
 
 	private Set<Integer> technicalUserMenuIds = new HashSet<>();
 
@@ -115,11 +113,10 @@ public class MenuListJSONSerializerForREST implements Serializer {
 	 */
 	private final Map<String, String> technicalMenuCommunityOrEnterprise = new HashMap<>();
 
-	public MenuListJSONSerializerForREST(IEngUserProfile userProfile, HttpSession session, String currentTheme) {
+	public MenuListJSONSerializerForREST(IEngUserProfile userProfile, HttpSession session) {
 		Assert.assertNotNull(userProfile, "User profile in input is null");
 		this.setUserProfile(userProfile);
 		this.setHttpSession(session);
-		this.currentTheme = currentTheme;
 
 		allowedMenuToNotDuplicate.put("menu.Users", 2003);
 		allowedMenuToNotDuplicate.put("menu.HierarchiesEditor", 5003);
@@ -679,7 +676,6 @@ public class MenuListJSONSerializerForREST implements Serializer {
 		value = value.replace(PLACEHOLDER_SPAGOBI_CONTEXT, contextName);
 		value = value.replace(PLACEHOLDER_KNOWAGE_VUE_CONTEXT, vueContextName);
 		value = value.replace(PLACEHOLDER_SPAGO_ADAPTER_HTTP, GeneralUtilities.getSpagoAdapterHttpUrl());
-		value = value.replace(PLACEHOLDER_KNOWAGE_THEME, currentTheme);
 		return value;
 	}
 

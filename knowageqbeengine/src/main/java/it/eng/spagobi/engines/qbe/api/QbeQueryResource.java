@@ -556,81 +556,6 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 
 	}
 
-	@POST
-	@Path("/saveDataSet")
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response saveDataSet(@javax.ws.rs.core.Context HttpServletRequest req) {
-		Monitor totalTimeMonitor = null;
-		Monitor errorHitsMonitor = null;
-		Query query = null;
-		JSONArray catalogue = null;
-		JSONArray queries = null;
-		JSONObject queryJSON = null;
-		JSONArray subqueriesJSON = null;
-		JSONObject subqueryJSON = null;
-		try {
-			handleTimeFilter = false;
-
-			JSONObject jsonEncodedRequest = RestUtilities.readBodyAsJSONObject(req);
-			catalogue = jsonEncodedRequest.getJSONArray("catalogue");
-			if (catalogue == null) {
-				catalogue = jsonEncodedRequest.getJSONArray("qbeJSONQuery");
-				JSONObject jo = new JSONObject(catalogue);
-				jo = jo.getJSONObject("catalogue");
-				queries = jo.getJSONArray("queries");
-			} else {
-				queries = new JSONArray(catalogue.toString());
-			}
-
-			LOGGER.debug("catalogue" + " = [" + catalogue + "]");
-
-			try {
-
-				for (int i = 0; i < queries.length(); i++) {
-					queryJSON = queries.getJSONObject(i);
-					if (queryJSON.get("id").equals(jsonEncodedRequest.getString("currentQueryId"))) {
-						query = deserializeQuery(queryJSON);
-					} else {
-						subqueriesJSON = queryJSON.getJSONArray("subqueries");
-						for (int j = 0; j < subqueriesJSON.length(); j++) {
-							subqueryJSON = subqueriesJSON.getJSONObject(j);
-							if (subqueryJSON.get("id").equals(jsonEncodedRequest.getString("currentQueryId"))) {
-								query = deserializeQuery(subqueryJSON);
-							}
-						}
-					}
-				}
-			} catch (SerializationException e) {
-				throw new SpagoBIEngineServiceException(this.request.getPathInfo(), e.getMessage(), e);
-			}
-			String label = jsonEncodedRequest.getString("label");
-			String schedulingCronLine = jsonEncodedRequest.getString("schedulingCronLine");
-			String meta = jsonEncodedRequest.getString("meta");
-			String qbeJSONQuery = jsonEncodedRequest.getString("qbeJSONQuery");
-			String pars = getDataSetParametersAsString(jsonEncodedRequest);
-			validateLabel(label);
-			IDataSet dataset = getActiveQueryAsDataSet(query);
-			int datasetId = -1;
-
-			datasetId = saveQbeDataset(dataset, label, jsonEncodedRequest, schedulingCronLine, meta, qbeJSONQuery, pars);
-
-			JSONObject obj = new JSONObject();
-			obj.put("success", "true");
-			obj.put("id", String.valueOf(datasetId));
-			return Response.ok(obj.toString()).build();
-
-		} catch (Throwable t) {
-			errorHitsMonitor = MonitorFactory.start("QbeEngine.errorHits");
-			errorHitsMonitor.stop();
-			throw new SpagoBIServiceException(this.request.getPathInfo(), t.getMessage(), t);
-		} finally {
-			if (totalTimeMonitor != null) {
-				totalTimeMonitor.stop();
-			}
-			LOGGER.debug("OUT");
-		}
-	}
-
 	public JSONObject serializeDataStore(IDataStore dataStore) {
 		JSONDataWriter dataSetWriter = new JSONDataWriter();
 		return (JSONObject) dataSetWriter.write(dataStore);
@@ -1226,29 +1151,11 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 			AUDIT_LOGGER.info("[" + userProfile.getUserId() + "]:: SQL: " + ((JPQLDataSet) dataset).getSQLQuery(false));
 		} else if (dataset instanceof HQLDataSet) {
 			AUDIT_LOGGER.info("[" + userProfile.getUserId() + "]:: HQL: " + dataset.getStatement().getQueryString());
-			AUDIT_LOGGER.info("[" + userProfile.getUserId() + "]:: SQL: " + ((HQLDataSet) dataset).getSQLQuery(false));
+			AUDIT_LOGGER.info("[" + userProfile.getUserId() + "]:: SQL: " + dataset.getSQLQuery(false));
 		} else {
 			AUDIT_LOGGER.info("[" + userProfile.getUserId() + "]:: SQL: " + dataset.getStatement().getSqlQueryString());
 		}
 
-	}
-
-	private IDataSet saveNewDataset(IDataSet newDataset) {
-		DataSetServiceProxy proxy = (DataSetServiceProxy) getEnv().get(EngineConstants.ENV_DATASET_PROXY);
-		LOGGER.debug("Saving new dataset ...");
-		IDataSet saved = proxy.saveDataSet(newDataset);
-		LOGGER.debug("Dataset saved without errors");
-		return saved;
-	}
-
-	private int saveQbeDataset(IDataSet dataset, String label, JSONObject jsonEncodedRequest, String schedulingCronLine, String meta, String qbeJSONQuery,
-			String pars) throws JSONException {
-
-		QbeDataSet newDataset = createNewQbeDataset(dataset, label, jsonEncodedRequest, schedulingCronLine, meta, qbeJSONQuery, pars);
-
-		IDataSet datasetSaved = saveNewDataset(newDataset);
-
-		return datasetSaved.getId();
 	}
 
 	private void updateQueryGraphInQuery(Query filteredQuery, boolean b, Set<IModelEntity> modelEntities) {

@@ -55,28 +55,34 @@ public final class DataSetServiceProxy extends AbstractServiceProxy {
 
 	public DataSetServiceProxy(String user, HttpSession session) {
 		super(user, session);
-		if (user == null)
+		if (user == null) {
 			logger.error("User ID IS NULL....");
-		if (session == null)
+		}
+		if (session == null) {
 			logger.error("HttpSession IS NULL....");
+		}
 	}
 
 	private DataSetServiceProxy() {
-		super();
 	}
 
 	public DataSetServiceProxy(String user, String secureAttributes, String serviceUrlStr, String spagoBiServerURL, String token) {
 		super(user, secureAttributes, serviceUrlStr, spagoBiServerURL, token);
-		if (user == null)
+		if (user == null) {
 			logger.error("User ID IS NULL....");
-		if (secureAttributes == null)
+		}
+		if (secureAttributes == null) {
 			logger.error("secureAttributes IS NULL....");
-		if (serviceUrlStr == null)
+		}
+		if (serviceUrlStr == null) {
 			logger.error("serviceUrlStr NULL....");
-		if (spagoBiServerURL == null)
+		}
+		if (spagoBiServerURL == null) {
 			logger.error("spagoBiServerURL IS NULL....");
-		if (token == null)
+		}
+		if (token == null) {
 			logger.error("token IS NULL....");
+		}
 	}
 
 	public DataSetServiceProxy(String user, String secureAttributes, String serviceUrlStr, String spagoBiServerURL, String token,
@@ -163,32 +169,6 @@ public final class DataSetServiceProxy extends AbstractServiceProxy {
 			logger.debug("OUT");
 		}
 		return dataSet;
-	}
-
-	public IDataSet saveDataSet(IDataSet dataset) {
-		IDataSet toReturn = null;
-		SpagoBiDataSet dataSetConfig = null;
-
-		logger.debug("IN.dataset=" + dataset);
-
-		if (dataset == null) {
-			logger.error("Input dataset is NULL");
-			return null;
-		}
-		try {
-			dataSetConfig = dataset.toSpagoBiDataSet();
-			SpagoBiDataSet returnedConfig = lookUp().saveDataSet(readTicket(), userId, dataSetConfig);
-			if (returnedConfig != null) {
-				// added userId and session parameters to manage correctly Qbe dataset configuration in DataSetFactory
-				toReturn = DataSetFactory.getDataSet(returnedConfig, userId, this.session);
-				addMetaModelProxy(toReturn);
-			}
-		} catch (Exception e) {
-			logger.error("Error during Service LookUp", e);
-		} finally {
-			logger.debug("OUT");
-		}
-		return toReturn;
 	}
 
 	private void addMetaModelProxy(IDataSet dataSet) {

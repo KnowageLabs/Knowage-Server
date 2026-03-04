@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package it.eng.spagobi.utilities.service;
+package it.eng.spagobi.engines.whatif;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
@@ -47,6 +47,8 @@ import it.eng.spagobi.container.SpagoBIHttpSessionContainer;
 import it.eng.spagobi.container.SpagoBIRequestContainer;
 import it.eng.spagobi.container.SpagoBIResponseContainer;
 import it.eng.spagobi.container.SpagoBISessionContainer;
+import it.eng.spagobi.utilities.service.IServiceResponse;
+import it.eng.spagobi.utilities.service.IStreamEncoder;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
@@ -107,8 +109,9 @@ public abstract class AbstractBaseHttpAction extends AbstractHttpAction {
 	}
 
 	public boolean getAttributeAsBoolean(String attrName, boolean defaultValue) {
-		if (getAttribute(attrName) == null)
+		if (getAttribute(attrName) == null) {
 			return defaultValue;
+		}
 		return getSpagoBIRequestContainer().getBoolean(attrName).booleanValue();
 	}
 
@@ -317,8 +320,9 @@ public abstract class AbstractBaseHttpAction extends AbstractHttpAction {
 	}
 
 	public boolean getAttributeFromSessionAsBoolean(String attrName, boolean defaultValue) {
-		if (!sessionContainsAttribute(attrName))
+		if (!sessionContainsAttribute(attrName)) {
 			return defaultValue;
+		}
 		return getSpagoBISessionContainer().getBoolean(attrName).booleanValue();
 	}
 
@@ -366,8 +370,9 @@ public abstract class AbstractBaseHttpAction extends AbstractHttpAction {
 	}
 
 	public boolean getAttributeFromHttpSessionAsBoolean(String attrName, boolean defaultValue) {
-		if (!httpSessionContainsAttribute(attrName))
+		if (!httpSessionContainsAttribute(attrName)) {
 			return defaultValue;
+		}
 		return getSpagoBIHttpSessionContainer().getBoolean(attrName).booleanValue();
 	}
 

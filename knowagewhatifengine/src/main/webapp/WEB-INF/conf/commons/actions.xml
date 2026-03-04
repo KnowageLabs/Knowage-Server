@@ -11,7 +11,7 @@
 	<!-- ================================================================================= -->
 	
 	<ACTION name="ENGINE_STARTUP_EXCEPTION_TRAP_ACTION" 
-			class="it.eng.spagobi.utilities.engines.EngineStartupExceptionTrapAction" 
+			class="it.eng.spagobi.engines.whatif.EngineStartupExceptionTrapAction" 
 			scope="REQUEST">
 		<CONFIG></CONFIG>
 	</ACTION>

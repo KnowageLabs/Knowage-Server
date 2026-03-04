@@ -36,7 +36,6 @@ import it.eng.spago.base.SourceBean;
 import it.eng.spagobi.engines.qbe.QbeEngineInstance;
 import it.eng.spagobi.engines.qbe.registry.bo.RegistryConfiguration;
 import it.eng.spagobi.engines.qbe.services.core.AbstractQbeEngineAction;
-import it.eng.spagobi.engines.qbe.services.initializers.RegistryEngineStartAction;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceException;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceExceptionHandler;
@@ -105,8 +104,9 @@ public class UpdateRecordsAction extends AbstractQbeEngineAction {
 			throw SpagoBIEngineServiceExceptionHandler.getInstance().getWrappedException(getActionName(),
 					getEngineInstance(), t);
 		} finally {
-			if (totalTimeMonitor != null)
+			if (totalTimeMonitor != null) {
 				totalTimeMonitor.stop();
+			}
 			logger.debug("OUT");
 		}
 	}
@@ -124,7 +124,7 @@ public class UpdateRecordsAction extends AbstractQbeEngineAction {
 			return null;
 		}
 
-		qbeEngineInstance = (QbeEngineInstance) getAttributeFromSession(RegistryEngineStartAction.ENGINE_INSTANCE);
+		qbeEngineInstance = (QbeEngineInstance) getAttributeFromSession("REGISTRY_CONFIGURATION");
 		Assert.assertNotNull(qbeEngineInstance, "It's not possible to execute " + this.getActionName()
 				+ " service before having properly created an instance of EngineInstance class");
 
@@ -143,8 +143,9 @@ public class UpdateRecordsAction extends AbstractQbeEngineAction {
 			keyColumn = genericDatasource.getPersistenceManager().getKeyColumn(registryConf);
 
 			Object keyValueObject = null;
-			if (aRecord.has(keyColumn))
+			if (aRecord.has(keyColumn)) {
 				keyValueObject = aRecord.get(keyColumn);
+			}
 
 			if (keyValueObject == null || keyValueObject.toString().equalsIgnoreCase("")) {
 				logger.debug("Insert a new Row");
@@ -175,10 +176,12 @@ public class UpdateRecordsAction extends AbstractQbeEngineAction {
 					throw new SpagoBIRuntimeException(message);
 				}
 
-				if (tableForPkMax == null || tableForPkMax.trim().equals(""))
+				if (tableForPkMax == null || tableForPkMax.trim().equals("")) {
 					tableForPkMax = null;
-				if (columnForPkMax == null || columnForPkMax.trim().equals(""))
+				}
+				if (columnForPkMax == null || columnForPkMax.trim().equals("")) {
 					columnForPkMax = null;
+				}
 
 				Integer id = insertRecord(aRecord, qbeEngineInstance, registryConf, autoLoadPK, tableForPkMax,
 						columnForPkMax);

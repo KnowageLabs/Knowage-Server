@@ -124,7 +124,6 @@ import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
 import it.eng.spagobi.tools.objmetadata.bo.ObjMetacontent;
 import it.eng.spagobi.tools.objmetadata.dao.IObjMetacontentDAO;
 import it.eng.spagobi.utilities.assertion.Assert;
-import it.eng.spagobi.utilities.engines.AbstractEngineStartAction;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.rest.RestUtilities;
@@ -321,16 +320,16 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 				String subViewObjectVisibility = parameters.optString("subobj_visibility");
 
 				if (!StringUtils.isEmpty(subViewObjectID)) {
-					ret += "&" + AbstractEngineStartAction.SUBOBJ_ID + "=" + subViewObjectID;
+					ret += "&subobjectId=" + subViewObjectID;
 				}
 				if (!StringUtils.isEmpty(subViewObjectName)) {
-					ret += "&" + AbstractEngineStartAction.SUBOBJ_NAME + "=" + subViewObjectName;
+					ret += "&nameSubObject=" + subViewObjectName;
 				}
 				if (!StringUtils.isEmpty(subViewObjectDescription)) {
-					ret += "&" + AbstractEngineStartAction.SUBOBJ_DESCRIPTION + "=" + subViewObjectDescription;
+					ret += "&descriptionSubObject=" + subViewObjectDescription;
 				}
 				if (!StringUtils.isEmpty(subViewObjectVisibility)) {
-					ret += "&" + AbstractEngineStartAction.SUBOBJ_VISIBILITY + "=" + subViewObjectVisibility;
+					ret += "&visibilitySubObject=" + subViewObjectVisibility;
 				}
 			}
 		}
@@ -1541,7 +1540,6 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 	//
 	// }
 
-	@SuppressWarnings("resource")
 	private byte[] getFileByteArray(String filePath, String fileName) throws IOException {
 
 		filePath = filePath + "/" + fileName;

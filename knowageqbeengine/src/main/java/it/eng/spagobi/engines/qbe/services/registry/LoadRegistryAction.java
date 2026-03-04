@@ -63,7 +63,6 @@ import it.eng.spagobi.engines.qbe.registry.bo.RegistryConfiguration.Filter;
 import it.eng.spagobi.engines.qbe.registry.parser.RegistryConfigurationXMLParser;
 import it.eng.spagobi.engines.qbe.registry.serializer.RegistryJSONDataWriter;
 import it.eng.spagobi.engines.qbe.services.core.ExecuteQueryAction;
-import it.eng.spagobi.engines.qbe.services.initializers.RegistryEngineStartAction;
 import it.eng.spagobi.engines.qbe.template.QbeTemplate;
 import it.eng.spagobi.services.common.SsoServiceInterface;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
@@ -627,7 +626,7 @@ public class LoadRegistryAction extends ExecuteQueryAction {
 	private void setFieldsKeyColumnProperty(JSONObject gridDataFeed) {
 
 		QbeEngineInstance qbeEngineInstance = (QbeEngineInstance) getAttributeFromSession(
-				RegistryEngineStartAction.ENGINE_INSTANCE);
+				"REGISTRY_CONFIGURATION");
 		Assert.assertNotNull(qbeEngineInstance, "It's not possible to execute " + this.getActionName()
 				+ " service before having properly created an instance of EngineInstance class");
 		RegistryConfiguration registryConf = qbeEngineInstance.getRegistryConfiguration();
@@ -1000,7 +999,7 @@ public class LoadRegistryAction extends ExecuteQueryAction {
 			auditlogger.info("[" + userProfile.getUserId() + "]:: SQL: " + ((JPQLDataSet) dataset).getSQLQuery(true));
 		} else if (dataset instanceof HQLDataSet) {
 			auditlogger.info("[" + userProfile.getUserId() + "]:: HQL: " + dataset.getStatement().getQueryString());
-			auditlogger.info("[" + userProfile.getUserId() + "]:: SQL: " + ((HQLDataSet) dataset).getSQLQuery(true));
+			auditlogger.info("[" + userProfile.getUserId() + "]:: SQL: " + dataset.getSQLQuery(true));
 		} else {
 			auditlogger.info("[" + userProfile.getUserId() + "]:: SQL: " + dataset.getStatement().getSqlQueryString());
 		}

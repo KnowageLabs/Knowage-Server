@@ -18,18 +18,6 @@
 
 package it.eng.spagobi.utilities.engines.rest;
 
-import it.eng.spagobi.container.ContextManager;
-import it.eng.spagobi.container.IBeanContainer;
-import it.eng.spagobi.container.strategy.ExecutionContextRetrieverStrategy;
-import it.eng.spagobi.container.strategy.IContextRetrieverStrategy;
-import it.eng.spagobi.services.proxy.ContentServiceProxy;
-import it.eng.spagobi.utilities.engines.AbstractEngineAction;
-import it.eng.spagobi.utilities.engines.EngineAnalysisMetadata;
-import it.eng.spagobi.utilities.engines.EngineConstants;
-import it.eng.spagobi.utilities.engines.IEngineAnalysisState;
-import it.eng.spagobi.utilities.engines.IEngineInstance;
-import it.eng.spagobi.utilities.engines.SpagoBIEngineException;
-
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -43,8 +31,20 @@ import javax.servlet.http.HttpSession;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import it.eng.spagobi.container.ContextManager;
+import it.eng.spagobi.container.IBeanContainer;
+import it.eng.spagobi.container.strategy.ExecutionContextRetrieverStrategy;
+import it.eng.spagobi.container.strategy.IContextRetrieverStrategy;
+import it.eng.spagobi.services.proxy.ContentServiceProxy;
+import it.eng.spagobi.utilities.engines.EngineAnalysisMetadata;
+import it.eng.spagobi.utilities.engines.EngineConstants;
+import it.eng.spagobi.utilities.engines.IEngineAnalysisState;
+import it.eng.spagobi.utilities.engines.IEngineInstance;
+import it.eng.spagobi.utilities.engines.SpagoBIEngineException;
+
 public class ExecutionSession {
 
+	private static final String PUBLIC_SCOPE = "Public";
 	/**
 	 * Manager of the context: retrieves the attributes in the portion of the session assigned to the current execution instance
 	 */
@@ -118,8 +118,9 @@ public class ExecutionSession {
 		}
 
 		String isPublic = "false";
-		if (AbstractEngineAction.PUBLIC_SCOPE.equalsIgnoreCase(analysisMetadata.getScope()))
+		if (PUBLIC_SCOPE.equalsIgnoreCase(analysisMetadata.getScope())) {
 			isPublic = "true";
+		}
 
 		serviceResponse = contentServiceProxy.saveSubObject(documentId, analysisMetadata.getName(), analysisMetadata.getDescription(), isPublic, new String(
 				analysisState.store()));
@@ -175,8 +176,9 @@ public class ExecutionSession {
 	}
 
 	public boolean getAttributeAsBoolean(String attrName, boolean defaultValue) {
-		if (getAttribute(attrName) == null)
+		if (getAttribute(attrName) == null) {
 			return defaultValue;
+		}
 		return getSpagoBIRequestContainer().getBoolean(attrName).booleanValue();
 	}
 
@@ -259,8 +261,9 @@ public class ExecutionSession {
 	}
 
 	public boolean getAttributeFromSessionAsBoolean(String attrName, boolean defaultValue) {
-		if (!sessionContainsAttribute(attrName))
+		if (!sessionContainsAttribute(attrName)) {
 			return defaultValue;
+		}
 		return getSpagoBISessionContainer().getBoolean(attrName).booleanValue();
 	}
 
@@ -296,8 +299,9 @@ public class ExecutionSession {
 	}
 
 	public boolean getAttributeFromHttpSessionAsBoolean(String attrName, boolean defaultValue) {
-		if (!httpSessionContainsAttribute(attrName))
+		if (!httpSessionContainsAttribute(attrName)) {
 			return defaultValue;
+		}
 		return getSpagoBIHttpSessionContainer().getBoolean(attrName).booleanValue();
 	}
 

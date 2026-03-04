@@ -1,6 +1,5 @@
 package it.eng.spagobi.engines.qbe.api;
 
-import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -13,7 +12,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.ws.rs.*;
+import javax.ws.rs.FormParam;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 
 import org.apache.logging.log4j.LogManager;
@@ -61,7 +63,6 @@ import it.eng.qbe.statement.graph.serializer.RelationJSONSerializer;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.engines.qbe.QbeEngineConfig;
 import it.eng.spagobi.engines.qbe.QbeEngineInstance;
-import it.eng.spagobi.engines.qbe.services.core.catalogue.SetCatalogueAction;
 import it.eng.spagobi.utilities.KnowageStringUtils;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.engines.EngineConstants;
@@ -333,8 +334,9 @@ public class QbeSetCatalogueResource extends AbstractQbeEngineResource {
 			throw SpagoBIEngineServiceExceptionHandler.getInstance().getWrappedException(this.getClass().getName(),
 					getEngineInstance(), t);
 		} finally {
-			if (totalTimeMonitor != null)
+			if (totalTimeMonitor != null) {
 				totalTimeMonitor.stop();
+			}
 			logger.debug("OUT");
 		}
 		return res;

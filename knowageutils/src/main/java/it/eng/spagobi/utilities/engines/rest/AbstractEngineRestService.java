@@ -40,7 +40,6 @@ import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.user.UserProfileManager;
 import it.eng.spagobi.utilities.ParametersDecoder;
 import it.eng.spagobi.utilities.assertion.Assert;
-import it.eng.spagobi.utilities.engines.AbstractEngineAction;
 import it.eng.spagobi.utilities.engines.AuditServiceProxy;
 import it.eng.spagobi.utilities.engines.EngineAnalysisMetadata;
 import it.eng.spagobi.utilities.engines.EngineConstants;
@@ -58,6 +57,8 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 public abstract class AbstractEngineRestService extends AbstractRestService {
 
 	private static final Logger LOGGER = LogManager.getLogger(AbstractEngineRestService.class);
+
+	private static final String PUBLIC_SCOPE = "Public";
 
 	private String userId;
 	private String userUniqueIdentifier;
@@ -110,10 +111,11 @@ public abstract class AbstractEngineRestService extends AbstractRestService {
 
 	public String getTemplateAsString() {
 		byte[] temp = getTemplate();
-		if (temp != null)
+		if (temp != null) {
 			return new String(temp);
-		else
+		} else {
 			return "";
+		}
 	}
 
 	private byte[] getTemplate() {
@@ -132,9 +134,10 @@ public abstract class AbstractEngineRestService extends AbstractRestService {
 			template = contentProxy.readTemplate(getDocumentId(), requestParameters);
 		}
 		try {
-			if (template == null)
+			if (template == null) {
 				throw new SpagoBIEngineRuntimeException(
 						"There are no template associated to document [" + documentId + "]");
+			}
 			templateContent = DatatypeConverter.parseBase64Binary(template.getContent());
 		} catch (Throwable e) {
 			SpagoBIEngineStartupException engineException = new SpagoBIEngineStartupException(getEngineName(),
@@ -469,8 +472,9 @@ public abstract class AbstractEngineRestService extends AbstractRestService {
 		}
 
 		String isPublic = "false";
-		if (AbstractEngineAction.PUBLIC_SCOPE.equalsIgnoreCase(localAnalysisMetadata.getScope()))
+		if (PUBLIC_SCOPE.equalsIgnoreCase(localAnalysisMetadata.getScope())) {
 			isPublic = "true";
+		}
 
 		serviceResponse = contentServiceProxy.saveSubObject(localDocumentId, localAnalysisMetadata.getName(),
 				localAnalysisMetadata.getDescription(), isPublic, new String(analysisState.store()));

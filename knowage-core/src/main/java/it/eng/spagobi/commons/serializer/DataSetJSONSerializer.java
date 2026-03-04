@@ -46,7 +46,6 @@ import it.eng.spagobi.tools.dataset.constants.PythonDataSetConstants;
 import it.eng.spagobi.tools.dataset.constants.RESTDataSetConstants;
 import it.eng.spagobi.tools.dataset.constants.SPARQLDatasetConstants;
 import it.eng.spagobi.tools.dataset.constants.SolrDataSetConstants;
-import it.eng.spagobi.tools.dataset.service.ManageDatasets;
 import it.eng.spagobi.tools.tag.SbiTag;
 import it.eng.spagobi.user.UserProfileManager;
 import it.eng.spagobi.utilities.assertion.Assert;
@@ -58,6 +57,8 @@ import it.eng.spagobi.utilities.messages.EngineMessageBundle;
 public class DataSetJSONSerializer implements Serializer {
 
 	private static transient Logger logger = Logger.getLogger(DataSetJSONSerializer.class);
+
+	private static final String DEFAULT_VALUE_PARAM = "defaultValue";
 
 	public static final String DS_ID = "dsId";
 	public static final String VERSION_ID = "versId";
@@ -200,7 +201,7 @@ public class DataSetJSONSerializer implements Serializer {
 						Object defaultValueAsObject = ParameterManagerFactory.getInstance().defaultManager()
 								.fromBeToFe(type, defaultValue, multiValue);
 
-						jsonPar.put(ManageDatasets.DEFAULT_VALUE_PARAM, defaultValueAsObject);
+						jsonPar.put(DEFAULT_VALUE_PARAM, defaultValueAsObject);
 
 						parsListJSON.put(jsonPar);
 					}

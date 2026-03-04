@@ -55,7 +55,6 @@ import it.eng.spagobi.engines.drivers.kpi.KpiDriver;
 import it.eng.spagobi.services.content.bo.Content;
 import it.eng.spagobi.services.security.exceptions.SecurityException;
 import it.eng.spagobi.tenant.TenantManager;
-import it.eng.spagobi.utilities.engines.AbstractEngineStartAction;
 import it.eng.spagobi.utilities.engines.EngineStartServletIOManager;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
@@ -414,10 +413,11 @@ public class ContentServiceImplSupplier {
 			List<String> correctRoles = null;
 			if (engUserprofile.isAbleToExecuteAction(CommunityFunctionalityConstants.DOCUMENT_MANAGEMENT_DEV)
 					|| engUserprofile.isAbleToExecuteAction(CommunityFunctionalityConstants.DOCUMENT_MANAGEMENT_USER)
-					|| engUserprofile.isAbleToExecuteAction(CommunityFunctionalityConstants.DOCUMENT_MANAGEMENT_ADMIN))
+					|| engUserprofile.isAbleToExecuteAction(CommunityFunctionalityConstants.DOCUMENT_MANAGEMENT_ADMIN)) {
 				correctRoles = DAOFactory.getBIObjectDAO().getCorrectRolesForExecution(id, engUserprofile);
-			else
+			} else {
 				correctRoles = DAOFactory.getBIObjectDAO().getCorrectRolesForExecution(id);
+			}
 			logger.debug("Correct roles for execution retrived {}", correctRoles);
 			// at this point correctRoles must contains at least one role, since the user can execute the document
 
@@ -469,7 +469,7 @@ public class ContentServiceImplSupplier {
 	}
 
 	private boolean isOLAPSubObjectExecution(Map<String, ?> parameters) {
-		Object subObjectId = parameters.get(AbstractEngineStartAction.SUBOBJ_ID);
+		Object subObjectId = parameters.get("subobjectId");
 		// in case subobject id is there and it is an integer, then it is an OLAP subobject execution request
 		boolean toReturn = subObjectId != null && GenericValidator.isInt(subObjectId.toString());
 		logger.debug("Current request is for OLAP subobject? {}", toReturn);

@@ -57,14 +57,6 @@ public interface DataSetService {
 	 */
 	SpagoBiDataSet[] getAllDataSet(String token, String user);
 
-	/**
-	 *
-	 * @param token   String
-	 * @param user    String
-	 * @param dataset SpagoBiDataSet
-	 * @return SpagoBiDataSet
-	 */
-	SpagoBiDataSet saveDataSet(String token, String user, SpagoBiDataSet dataset);
 
 	SpagoBiDataSet getDataSetByLabelAndUserCategories(String token, String user, String label);
 }
