@@ -59,25 +59,33 @@ export default defineComponent({
       lovDialogVisible: false,
       userAttributesForm: {},
       initialSelection: null as any,
+      isUpdatingFromInput: false
     };
   },
   watch: {
     modelValue: {
       handler(model) {
+        if(!this.isUpdatingFromInput) {
         this.userAttributesForm = { ...model };
+        }
       },
       immediate: true,
       deep: true,
     },
   },
+  mounted(){
+    this.userAttributesForm = {...this.modelValue}
+  }
   methods: {
     onInputChange(attribute: iAttribute, value) {
-      const newObj = {};
-      newObj[attribute.attributeName] = value;
-      const newValue = this.modelValue ? { ...this.modelValue } : {};
-      newValue[attribute.attributeId] = newObj;
+      this.isUpdatingFromInput = true
+      const newValue = this.modelValue ? {...this.modelValue} : {}
+      newValue[attribute.attributeId][attribute.attributeName] = value
       this.$emit("update:modelValue", newValue);
       this.$emit("formDirty");
+      this.$nextTick(()=>{
+        this.isUpdatingFromInput = false
+      })
     },
     eraseAttribute(attr: iAttribute) {
       this.onInputChange(attr, "");
