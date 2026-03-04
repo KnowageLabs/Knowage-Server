@@ -133,6 +133,7 @@
 	
   
 	<!-- tools.scheduler -->
+	<CONFIGURATOR path="/WEB-INF/conf/tools/scheduler/formulas.xml" />
 	<!--
 	<CONFIGURATOR path="/WEB-INF/conf/tools/scheduler/actions.xml" />
 	<CONFIGURATOR path="/WEB-INF/conf/tools/scheduler/messages.xml" />
@@ -141,7 +142,6 @@
 	<CONFIGURATOR path="/WEB-INF/conf/tools/scheduler/presentation.xml" />
 	<CONFIGURATOR path="/WEB-INF/conf/tools/scheduler/publishers.xml" />
 	<CONFIGURATOR path="/WEB-INF/conf/tools/scheduler/validation.xml" />
-	<CONFIGURATOR path="/WEB-INF/conf/tools/scheduler/formulas.xml" />
 	<CONFIGURATOR path="/WEB-INF/conf/tools/scheduler/business_map.xml" />
 	-->
 	<!-- tools.datasource 	
