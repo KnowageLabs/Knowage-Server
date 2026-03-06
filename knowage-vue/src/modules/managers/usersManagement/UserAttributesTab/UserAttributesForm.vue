@@ -14,7 +14,7 @@
                                 </template>
                                 {{ $t('managers.usersManagement.requiredAttributeInfo', { attributeName: attribute.attributeName }) }}
                             </q-banner>
-                            <q-input dense filled class="col" v-model="userAttributesForm[attribute.attributeId][attribute.attributeName]" :label="attribute.attributeName + (attribute.required ? ' *' : '')" :maxLength="attribute.maxLength" @update:model-value="$emit('formDirty')">
+                            <q-input dense filled class="col" :model-value="userAttributesForm[attribute.attributeId][attribute.attributeName]" @update:model-value="val => { userAttributesForm[attribute.attributeId][attribute.attributeName] = val; $emit('formDirty') }" :label="attribute.attributeName + (attribute.required ? ' *' : '')" :maxLength="attribute.maxLength">`
                                 <template v-slot:before>
                                     <q-icon name="label" />
                                 </template>
