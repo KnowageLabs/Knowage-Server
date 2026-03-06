@@ -12,11 +12,10 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 
-import it.eng.spago.base.SourceBean;
-import it.eng.spago.configuration.ConfigSingleton;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
+import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.utilities.ParameterValuesEncoder;
 import it.eng.spagobi.engines.drivers.EngineURL;
 import it.eng.spagobi.engines.drivers.exceptions.InvalidOperationRequest;
@@ -85,9 +84,8 @@ public class DossierDriver extends GenericDriver {
 		pars.put("documentName", documentName);
 
 		// retrieving the date format
-		ConfigSingleton config = ConfigSingleton.getInstance();
-		SourceBean formatSB = (SourceBean) config.getAttribute("DATA-ACCESS.DATE-FORMAT");
-		String format = (formatSB == null) ? "DD-MM-YYYY" : (String) formatSB.getAttribute("format");
+		String format = SingletonConfig.getInstance().getConfigValue("SPAGOBI.DATE-FORMAT-SERVER.format");
+
 		pars.put("dateformat", format);
 		pars = addBIParameters(biobj, pars);
 		pars = addBIParameterDescriptions(biobj, pars);
