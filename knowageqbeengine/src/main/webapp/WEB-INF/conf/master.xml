@@ -24,7 +24,10 @@
   	<!-- start QBE INITILAIZERS module -->
 	<CONFIGURATOR path="/WEB-INF/conf/initializers/actions.xml" />
 	<CONFIGURATOR path="/WEB-INF/conf/initializers/presentation.xml" />
-	<CONFIGURATOR path="/WEB-INF/conf/initializers/publishers.xml" />		
+	<CONFIGURATOR path="/WEB-INF/conf/initializers/publishers.xml" />
+	
+	<!-- start QBE Data Browser (Form Viewer) configuration -->
+	<CONFIGURATOR path="/WEB-INF/conf/formviewer/actions.xml" />	
 	
 	<!-- start registry configuration -->
 	<CONFIGURATOR path="/WEB-INF/conf/registry/actions.xml" />
