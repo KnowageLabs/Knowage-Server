@@ -37,6 +37,7 @@ import it.eng.spagobi.engines.qbe.QbeEngineInstance;
 import it.eng.spagobi.engines.qbe.registry.bo.RegistryConfiguration;
 import it.eng.spagobi.engines.qbe.services.core.AbstractQbeEngineAction;
 import it.eng.spagobi.utilities.assertion.Assert;
+import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceException;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceExceptionHandler;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
@@ -124,7 +125,7 @@ public class UpdateRecordsAction extends AbstractQbeEngineAction {
 			return null;
 		}
 
-		qbeEngineInstance = (QbeEngineInstance) getAttributeFromSession("REGISTRY_CONFIGURATION");
+		qbeEngineInstance = (QbeEngineInstance) getAttributeFromSession(EngineConstants.ENGINE_INSTANCE);
 		Assert.assertNotNull(qbeEngineInstance, "It's not possible to execute " + this.getActionName()
 				+ " service before having properly created an instance of EngineInstance class");
 

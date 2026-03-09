@@ -626,7 +626,7 @@ public class LoadRegistryAction extends ExecuteQueryAction {
 	private void setFieldsKeyColumnProperty(JSONObject gridDataFeed) {
 
 		QbeEngineInstance qbeEngineInstance = (QbeEngineInstance) getAttributeFromSession(
-				"REGISTRY_CONFIGURATION");
+				EngineConstants.ENGINE_INSTANCE);
 		Assert.assertNotNull(qbeEngineInstance, "It's not possible to execute " + this.getActionName()
 				+ " service before having properly created an instance of EngineInstance class");
 		RegistryConfiguration registryConf = qbeEngineInstance.getRegistryConfiguration();
