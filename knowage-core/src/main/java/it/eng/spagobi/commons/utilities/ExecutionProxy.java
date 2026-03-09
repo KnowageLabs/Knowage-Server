@@ -20,21 +20,25 @@ package it.eng.spagobi.commons.utilities;
 import static it.eng.spagobi.commons.constants.ConfigurationConstants.SPAGOBI_SPAGOBI_SERVICE_JNDI;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
 
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import org.apache.commons.httpclient.Header;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.NameValuePair;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
+import org.apache.commons.httpclient.methods.StringRequestEntity;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -223,18 +227,64 @@ public class ExecutionProxy {
 				httpMethod.addRequestHeader("Authorization", "Direct " + encodedUserId);
 			}
 
-			// sent request to the engine
-			LOGGER.debug("Calling {} with parameters {} and headers {}", httpMethod.getURI(), httpMethod.getParams(), httpMethod.getRequestHeaders());
-			HttpClient client = new HttpClient();
-			int statusCode = client.executeMethod(httpMethod);
-			LOGGER.debug("Response status code {}", statusCode);
-			response = httpMethod.getResponseBody();
+			if (!driverClassName.equals("it.eng.spagobi.engines.drivers.dossier.DossierDriver")) {
+				// sent request to the engine
+				LOGGER.debug("Calling {} with parameters {} and headers {}", httpMethod.getURI(), httpMethod.getParams(), httpMethod.getRequestHeaders());
+				HttpClient client = new HttpClient();
+				int statusCode = client.executeMethod(httpMethod);
+				LOGGER.debug("Response status code {}", statusCode);
+				response = httpMethod.getResponseBody();
 
-			Header headContetType = httpMethod.getResponseHeader("Content-Type");
-			if (headContetType != null) {
-				returnedContentType = headContetType.getValue();
+				Header headContetType = httpMethod.getResponseHeader("Content-Type");
+				if (headContetType != null) {
+					returnedContentType = headContetType.getValue();
+				} else {
+					returnedContentType = "application/octet-stream";
+				}
 			} else {
-				returnedContentType = "application/octet-stream";
+				// DossierDriver: urlEngine is already configured to point to /dossier/syncRun
+				// Parameters are passed as query string because syncRun uses @QueryParam
+				// Content-Type must be application/json to satisfy @Consumes(APPLICATION_JSON)
+
+				// add the extra params expected by syncRun as @QueryParam
+
+				mapPars.put("activityName", biObject.getName());
+				mapPars.put("documentId", biObject.getId().toString());
+
+				StringBuilder syncRunQuery = new StringBuilder(urlEngine);
+				boolean firstParam = !urlEngine.contains("?");
+				Iterator iterSyncPars = mapPars.keySet().iterator();
+				while (iterSyncPars.hasNext()) {
+					String parName = (String) iterSyncPars.next();
+					String parValue = mapPars.get(parName) != null ? mapPars.get(parName).toString() : "";
+					syncRunQuery.append(firstParam ? "?" : "&");
+					syncRunQuery.append(java.net.URLEncoder.encode(parName, UTF_8.name()));
+					syncRunQuery.append("=");
+					syncRunQuery.append(java.net.URLEncoder.encode(parValue, UTF_8.name()));
+					firstParam = false;
+				}
+
+				String syncRunUrl = syncRunQuery.toString();
+				LOGGER.debug("DossierDriver syncRun URL with params: {}", syncRunUrl);
+
+				PostMethod syncRunMethod = new PostMethod(syncRunUrl);
+				syncRunMethod.setRequestEntity(new StringRequestEntity("{}", "application/json", UTF_8.name()));
+				syncRunMethod.addRequestHeader("Authorization", "Direct " + encodedUserId);
+
+				LOGGER.debug("Calling DossierDriver syncRun at {}", syncRunUrl);
+				HttpClient dossierClient = new HttpClient();
+				int syncStatusCode = dossierClient.executeMethod(syncRunMethod);
+				LOGGER.debug("DossierDriver syncRun response status code {}", syncStatusCode);
+
+				response = syncRunMethod.getResponseBody();
+
+				Header syncContentType = syncRunMethod.getResponseHeader("Content-Type");
+				if (syncContentType != null) {
+					returnedContentType = syncContentType.getValue();
+				} else {
+					returnedContentType = "application/octet-stream";
+				}
+				syncRunMethod.releaseConnection();
 			}
 
 			auditManager.updateAudit(auditId, null, Calendar.getInstance().getTimeInMillis(), "EXECUTION_PERFORMED", null, null);

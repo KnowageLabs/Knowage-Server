@@ -77,7 +77,8 @@ public class EngineUtilities {
 		String driverName = engine.getDriverName();
 		return !"it.eng.spagobi.engines.drivers.cockpit.CockpitDriver".equals(driverName)
 				&& !"it.eng.spagobi.engines.drivers.chart.ChartDriver".equals(driverName)
-				&& !"it.eng.spagobi.engines.drivers.dashboard.DashboardDriver".equals(driverName);
+				&& !"it.eng.spagobi.engines.drivers.dashboard.DashboardDriver".equals(driverName)
+				&& !"it.eng.spagobi.engines.drivers.dossier.DossierDriver".equals(driverName);
 	}
 
 	private EngineUtilities() {

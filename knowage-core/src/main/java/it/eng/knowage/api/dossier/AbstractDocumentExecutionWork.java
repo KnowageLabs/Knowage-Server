@@ -182,7 +182,7 @@ public class AbstractDocumentExecutionWork extends DossierExecutionClient implem
 					LOGGER.debug("Generating URL for document {}", docId);
 					LOGGER.debug("Engine label is {}", engineLabel);
 					LOGGER.debug("Parameters are {}", paramMap);
-					UserProfile userScheduler = UserProfile.createSchedulerUserProfileWithRole(Arrays.asList(executionRole));
+					UserProfile userScheduler = UserProfile.createSchedulerUserProfileWithRole(Arrays.asList(role));
 					switch (engineLabel) {
 					case "knowagecockpitengine":
 						serviceUrl = getCockpitServiceUrl(biObject, (String) userScheduler.getUserUniqueIdentifier(), jsonArray, paramMap,
