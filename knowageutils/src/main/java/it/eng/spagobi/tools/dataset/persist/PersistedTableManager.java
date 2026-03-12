@@ -1175,10 +1175,16 @@ public class PersistedTableManager implements IPersistedManager {
 			dataBase.setVarcharLength(getColumnSize().get(fieldMetaData.getName()));
 		}
 		Class type = fieldMetaData.getType();
+
+/*
+		 ACHTUNG ACHTUNG ACHTUNG ACHTUNG ACHTUNG !!!!!!!
+		 FIX FATTA ESCLUSIVAMENTE PER KNOWAGE-9727
+		 POTENZIALMENTE DISTRUTTIVA, FORSE RISOLUTIVA
 		if (fieldMetaData.getFieldType().equals(FieldType.MEASURE) && type == String.class) {
 			LOGGER.debug("Column type is string but the field is measure: converting it into a double");
 			type = Double.class;
 		}
+		*/
 
 		return dataBase.getDataBaseType(type);
 	}
