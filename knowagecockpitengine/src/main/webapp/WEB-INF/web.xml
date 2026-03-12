@@ -134,7 +134,6 @@
 
 	<filter-mapping>
 		<filter-name>EncodingFilter</filter-name>
-		<url-pattern>/servlet/AdapterHTTP</url-pattern>
 		<url-pattern>/api/*</url-pattern>
 		<dispatcher>REQUEST</dispatcher>
 		<dispatcher>FORWARD</dispatcher>
@@ -180,12 +179,6 @@
 
 	<filter-mapping>
 		<filter-name>SpagoBIAccessFilter</filter-name>
-		<url-pattern>/servlet/AdapterHTTP</url-pattern>
-		<dispatcher>REQUEST</dispatcher>
-		<dispatcher>FORWARD</dispatcher>
-	</filter-mapping>
-	<filter-mapping>
-		<filter-name>SpagoBIAccessFilter</filter-name>
 		<url-pattern>/WEB-INF/jsp/*</url-pattern>
 		<dispatcher>FORWARD</dispatcher>
 	</filter-mapping>
@@ -193,16 +186,6 @@
 	<servlet>
 		<servlet-name>EngineTestServlet</servlet-name>
 		<servlet-class>it.eng.spagobi.utilities.engines.EngineTestServlet</servlet-class>
-	</servlet>
-
-	<servlet>
-		<servlet-name>ConfigServlet</servlet-name>
-		<servlet-class>it.eng.spago.configuration.ConfigServlet</servlet-class>
-		<init-param>
-			<param-name>AF_CONFIG_FILE</param-name>
-			<param-value>/WEB-INF/conf/master.xml</param-value>
-		</init-param>
-		<load-on-startup>0</load-on-startup>
 	</servlet>
 
 	<!-- START ProxyTicketReceptor -->
