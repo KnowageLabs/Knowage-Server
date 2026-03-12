@@ -436,6 +436,35 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 			return;
 		}
 		List<String> reserverWords = getReserverWords();
+		String typeFilter = dependency.getFilterOperation();
+
+		// Handle multi-value LIKE-based filters with OR chaining
+		if (typeFilter.equalsIgnoreCase(SpagoBIConstants.START_FILTER)
+				|| typeFilter.equalsIgnoreCase(SpagoBIConstants.END_FILTER)
+				|| typeFilter.equalsIgnoreCase(SpagoBIConstants.CONTAIN_FILTER)) {
+			List values = fatherParameter != null ? fatherParameter.getParameterValues() : null;
+			if (values != null && values.size() > 1) {
+				String columnSQL = this.checkReservedWords(reserverWords, getColumnSQLName(dependency.getFilterColumn()));
+				buffer.append(" ( ");
+				for (int i = 0; i < values.size(); i++) {
+					String singleValue = (String) values.get(i);
+					String likeValue;
+					if (typeFilter.equalsIgnoreCase(SpagoBIConstants.START_FILTER)) {
+						likeValue = getSQLValue(fatherParameter, singleValue + "%");
+					} else if (typeFilter.equalsIgnoreCase(SpagoBIConstants.END_FILTER)) {
+						likeValue = getSQLValue(fatherParameter, "%" + singleValue);
+					} else {
+						likeValue = getSQLValue(fatherParameter, "%" + singleValue + "%");
+					}
+					if (i > 0) {
+						buffer.append(" OR ");
+					}
+					buffer.append(columnSQL).append(" LIKE ").append(likeValue);
+				}
+				buffer.append(" ) ");
+				return;
+			}
+		}
 
 		String operator = findOperator(dependency, drivers);
 		String value = findValue(dependency, drivers);
