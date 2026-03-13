@@ -30,20 +30,6 @@
 	</filter-mapping>
 
 
-
-	<filter>
-		<filter-name>EncodingFilter</filter-name>
-		<filter-class>it.eng.spagobi.utilities.filters.EncodingFilter</filter-class>
-		<init-param>
-			<param-name>encoding</param-name>
-			<param-value>UTF-8</param-value>
-		</init-param>
-	</filter>
-	<filter>
-		<filter-name>SpagoBIAccessFilter</filter-name>
-		<filter-class>it.eng.spagobi.utilities.filters.SpagoBIAccessFilter</filter-class>
-	</filter>
-
 	<!-- START-CAS ${enable.cas.end}
 	<filter>
 		<filter-name>CAS Authentication Filter</filter-name>
@@ -121,19 +107,6 @@
 		<url-pattern>/proxyCallback</url-pattern>
 	</filter-mapping>
  ${enable.cas.start} END-CAS -->
-
-	<filter-mapping>
-		<filter-name>EncodingFilter</filter-name>
-		<url-pattern>/servlet/AdapterHTTP</url-pattern>
-		<dispatcher>REQUEST</dispatcher>
-		<dispatcher>FORWARD</dispatcher>
-	</filter-mapping>
-	<filter-mapping>
-		<filter-name>SpagoBIAccessFilter</filter-name>
-		<url-pattern>/servlet/AdapterHTTP</url-pattern>
-		<dispatcher>REQUEST</dispatcher>
-		<dispatcher>FORWARD</dispatcher>
-	</filter-mapping>
 	
 			<!--  ANTI CSRF FILTER -->
 	<filter>
@@ -165,15 +138,6 @@
 	<servlet>
 		<servlet-name>EngineTestServlet</servlet-name>
 		<servlet-class>it.eng.spagobi.utilities.engines.EngineTestServlet</servlet-class>
-	</servlet>
-	<servlet>
-		<servlet-name>ConfigServlet</servlet-name>
-		<servlet-class>it.eng.spago.configuration.ConfigServlet</servlet-class>
-		<init-param>
-			<param-name>AF_CONFIG_FILE</param-name>
-			<param-value>/WEB-INF/conf/master.xml</param-value>
-		</init-param>
-		<load-on-startup>0</load-on-startup>
 	</servlet>
 
 	<!-- START ProxyTicketReceptor -->
