@@ -368,8 +368,8 @@ public abstract class AbstractDriverRuntime<T extends AbstractDriver> {
 							for (HashMap<String, Object> defVal : admissibleValues) {
 								if (item.has("value") && item.has("description")) {
 									if (defVal.get("value") != null && defVal.get("value").equals(item.get("value")) && !item.isNull("label")) {
-										if (defVal.get("label").equals(item.get("label")) && defVal.get("description") != null
-												&& item.opt("description") != null && defVal.get("description").equals(item.get("description"))) {
+										if (defVal.get("label") != null && defVal.get("label").equals(item.get("label")) && defVal.get("description") != null
+												&& item.opt("description") != null && defVal.get("description") != null && defVal.get("description").equals(item.get("description"))) {
 											defaultParameterAlreadyExist = true;
 											break;
 										} else {
