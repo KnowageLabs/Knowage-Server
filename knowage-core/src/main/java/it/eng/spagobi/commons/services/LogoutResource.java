@@ -22,6 +22,7 @@ import it.eng.spagobi.api.AbstractSpagoBIResource;
 import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.utilities.AuditLogUtilities;
+import it.eng.spagobi.services.rest.annotations.PublicService;
 
 @Path("/logout")
 public class LogoutResource extends AbstractSpagoBIResource {
@@ -30,6 +31,12 @@ public class LogoutResource extends AbstractSpagoBIResource {
 
 	private static String INVALIDATE_JSP = "/invalidateSession.jsp";
 
+	/**
+	 * Logs out the current authenticated user by updating the audit log, sending
+	 * the related privacy event, invalidating the current HTTP session, and
+	 * returning the configured logout redirect URL together with the list of
+	 * engine session invalidation endpoints.
+	 */
 	@POST
 	@Path("/")
 	public Response logout(@Context HttpServletRequest request, @Context HttpServletResponse response) {
@@ -50,14 +57,38 @@ public class LogoutResource extends AbstractSpagoBIResource {
 		dto.setDescription("Logout");
 		PrivacyManagerClient.getInstance().sendMessage(dto);
 
+		Map<String, Object> responseBody = buildLogoutResponseBody(request);
+
+		logger.debug("OUT");
+		return Response.ok(responseBody).build();
+	}
+
+	/**
+	 * Performs an automatic logout by invalidating the current HTTP session and
+	 * returning the configured logout redirect URL together with the list of
+	 * engine session invalidation endpoints. This endpoint is exposed as a public
+	 * service.
+	 */
+	@POST
+	@Path("/auto")
+	@PublicService
+	public Response autoLogout(@Context HttpServletRequest request) {
+		logger.debug("IN");
+
+		Map<String, Object> responseBody = buildLogoutResponseBody(request);
+
+		logger.debug("OUT");
+
+		return Response.ok(responseBody).build();
+	}
+
+	private Map<String, Object> buildLogoutResponseBody(HttpServletRequest request) {
 		request.getSession().invalidate();
 
 		Map<String, Object> responseBody = new HashMap<>();
 		responseBody.put("redirectUrl", SingletonConfig.getInstance().getConfigValue("SPAGOBI_SSO.SECURITY_LOGOUT_URL"));
 		responseBody.put("urlEnginesInvalidate", getUrlEnginesInvalidate());
-
-		logger.debug("OUT");
-		return Response.ok(responseBody).build();
+		return responseBody;
 	}
 
 	private List<String> getUrlEnginesInvalidate() {
