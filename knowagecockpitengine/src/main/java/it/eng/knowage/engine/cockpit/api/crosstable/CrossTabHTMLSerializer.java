@@ -1216,9 +1216,9 @@ public class CrossTabHTMLSerializer {
 				// normalize padding for text-align
 				if (keyStyle.equals("text-align")) {
 					if (!valueStyle.equals("center"))
-						dataStyle += " padding:0 5px 0 0 !important;";
+						dataStyle += " padding:0 5 0 0 !important;";
 					else
-						dataStyle += " padding:0 3px 0 3px !important;";
+						dataStyle += " padding:0 3 0 3 !important;";
 				}
 				// default font-style
 				if (dataStyle.indexOf("font-style") < 0)
