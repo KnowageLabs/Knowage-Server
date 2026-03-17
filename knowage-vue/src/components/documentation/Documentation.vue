@@ -221,6 +221,9 @@ function toggleDrawer() {
   color: var(--kn-documentation-drawer-color);
   font-family: var(--kn-documentation-drawer-font-family);
   font-size: var(--kn-documentation-drawer-font-size);
+  .q-tree__arrow {
+    font-size: 13px;
+  }
 }
 .logo {
   max-width: 100%;
