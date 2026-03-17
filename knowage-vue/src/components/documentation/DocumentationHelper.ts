@@ -32,7 +32,7 @@ export function findNodesByLabelPath(items: any[] | undefined, path: string[], i
 export function mapToQTreeNodes(items: any[], level = 1): any[] {
   if (!items) return [];
   return items.map((item) => {
-    const id = crypto.randomUUID();
+    const id = (crypto as any).randomUUID() as string;
     const isSection = level === 1 || item.header === true;
     return {
       id,
