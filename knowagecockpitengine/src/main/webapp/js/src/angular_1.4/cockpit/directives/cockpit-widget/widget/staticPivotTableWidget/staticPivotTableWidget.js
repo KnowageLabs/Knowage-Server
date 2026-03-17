@@ -142,13 +142,13 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 				}
 				offsetArray.splice(headerIndex, 0 , pivotedHeaders[h].offsetLeft - leftPadding);
 			}
-			pivotedHeaders[h].style.left = offsetArray[headerIndex];
+			pivotedHeaders[h].style.left = offsetArray[headerIndex] + 'px';
 		}
 		var pivotedCells = elem.querySelectorAll('td[pivot]');
 		if(pivotedCells.length > 0){
 			for(var k in pivotedCells){
 				if(pivotedCells[k] && pivotedCells[k].style){
-					pivotedCells[k].style.left = offsetArray[pivotedCells[k].getAttribute('pivot')];
+					pivotedCells[k].style.left = offsetArray[pivotedCells[k].getAttribute('pivot')] + 'px';
 					if(!pivotedCells[k].style.backgroundColor && pivotedCells[k].getAttribute('pivot')[0]!= 'h') pivotedCells[k].style.backgroundColor = 'white';
 				}
 			}
