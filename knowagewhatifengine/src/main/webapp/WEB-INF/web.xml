@@ -190,34 +190,11 @@
 	</filter-mapping>
 
 	<servlet>
-		<servlet-name>ConfigServlet</servlet-name>
-		<servlet-class>it.eng.spago.configuration.ConfigServlet</servlet-class>
-		<init-param>
-			<param-name>AF_CONFIG_FILE</param-name>
-			<param-value>/WEB-INF/conf/master.xml</param-value>
-		</init-param>
-		<load-on-startup>0</load-on-startup>
-	</servlet>
-
-	<servlet>
-		<servlet-name>AdapterHTTP</servlet-name>
-		<servlet-class>it.eng.spago.dispatching.httpchannel.AdapterHTTP</servlet-class>
-	</servlet>
-
-	<servlet>
 		<servlet-name>EngineTestServlet</servlet-name>
 		<servlet-class>it.eng.spagobi.utilities.engines.EngineTestServlet</servlet-class>
 	</servlet>
 
-	<servlet-mapping>
-		<servlet-name>AdapterHTTP</servlet-name>
-		<url-pattern>/servlet/AdapterHTTP</url-pattern>
-	</servlet-mapping>
 
-	<servlet-mapping>
-		<servlet-name>AdapterHTTP</servlet-name>
-		<url-pattern>/servlet/AdapterHTTPBackEnd</url-pattern>
-	</servlet-mapping>
 
 	<servlet-mapping>
 		<servlet-name>EngineTestServlet</servlet-name>
