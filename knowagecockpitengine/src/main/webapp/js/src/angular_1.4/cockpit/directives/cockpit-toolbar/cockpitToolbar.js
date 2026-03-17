@@ -579,7 +579,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                 exportSheetBar = true;
               } else heightToUse = element.scrollHeight;
 
-              if (sheet.index != 0) doc.addPage([element.clientWidth, heightToUse], heightToUse > element.clientWidth ? "p" : "l");
+              if (sheet.index != 0) doc.addPage([element.clientWidth / 2.835, heightToUse / 2.835], heightToUse > element.clientWidth ? "p" : "l");
               $timeout(function () {
                 html2canvas(element, {
                   allowTaint: true,
@@ -682,7 +682,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             var doc = new jsPdfConstructor({
               orientation: (heightToUse || tempElement.scrollHeight) > tempElement.clientWidth ? "p" : "l",
               unit: "mm",
-              format: [tempElement.clientWidth, heightToUse || tempElement.scrollHeight],
+              format: [tempElement.clientWidth / 2.835, (heightToUse || tempElement.scrollHeight) / 2.835],
             });
 
             getScreenshot(cockpitModule_template.sheets[s]);
