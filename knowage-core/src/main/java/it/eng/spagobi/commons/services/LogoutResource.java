@@ -85,8 +85,12 @@ public class LogoutResource extends AbstractSpagoBIResource {
 	private Map<String, Object> buildLogoutResponseBody(HttpServletRequest request) {
 		request.getSession().invalidate();
 
+		SingletonConfig config = SingletonConfig.getInstance();
+		Object ssoActiveValue = config.getConfigValue("SPAGOBI_SSO.ACTIVE");
+		boolean ssoActive = Boolean.parseBoolean(String.valueOf(ssoActiveValue));
+
 		Map<String, Object> responseBody = new HashMap<>();
-		responseBody.put("redirectUrl", SingletonConfig.getInstance().getConfigValue("SPAGOBI_SSO.SECURITY_LOGOUT_URL"));
+		responseBody.put("redirectUrl", ssoActive ? SingletonConfig.getInstance().getConfigValue("SPAGOBI_SSO.SECURITY_LOGOUT_URL") : null);
 		responseBody.put("urlEnginesInvalidate", getUrlEnginesInvalidate());
 		return responseBody;
 	}
