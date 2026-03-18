@@ -283,12 +283,17 @@ public class DashboardExcelExporter extends DashboardExporter {
                 wb = exportPivotWidget(body, null, selections, drivers, parameters);
             }
 
-            if (!selections.isEmpty()) {
+            IConfigDAO configsDao = DAOFactory.getSbiConfigDAO();
+            Optional<Config> selectionsCfg = configsDao.loadConfigParametersByLabelIfExist(CONFIG_NAME_FOR_SELECTIONS_SHEET_EXPORT);
+
+            if (selectionsCfg.isPresent() && selectionsCfg.get().isActive() && Boolean.parseBoolean(selectionsCfg.get().getValueCheck()) && !selections.isEmpty()) {
                 Sheet selectionsSheet = createUniqueSafeSheetForSelections(wb, "Active Selections");
                 fillDashboardSelectionsSheetWithData(selections, selectionsSheet);
             }
 
-            if (driversFromBody != null && driversFromBody.length() > 0) {
+            Optional<Config> driversConfig = configsDao.loadConfigParametersByLabelIfExist(CONFIG_NAME_FOR_DRIVERS_SHEET_EXPORT);
+
+            if (driversConfig.isPresent() && driversConfig.get().isActive() && Boolean.parseBoolean(driversConfig.get().getValueCheck()) && driversFromBody != null && driversFromBody.length() > 0) {
                 Sheet driversSheet = createUniqueSafeSheetForSelections(wb, "Filters");
                 fillDashboardDriversSheetWithData(driversFromBody, driversSheet);
             }
