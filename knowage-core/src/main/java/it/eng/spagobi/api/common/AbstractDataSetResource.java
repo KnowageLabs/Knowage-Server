@@ -27,7 +27,6 @@ import java.nio.file.Paths;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.*;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.naming.InitialContext;
@@ -40,7 +39,6 @@ import com.fasterxml.jackson.databind.node.DecimalNode;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
-import org.antlr.v4.runtime.TokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -131,7 +129,7 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 
 	private static final String REGEX_FIELDS_VALIDATION = "\\(([^)]{1,50})\\)";
 	private static final int SOLR_FACETS_DEFAULT_LIMIT = 10;
-	private static final String VALIDATION_OK = "OK";
+	protected static final String VALIDATION_OK = "OK";
 
 	// ===================================================================
 	// UTILITY METHODS
@@ -772,94 +770,99 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 		return projection;
 	}
 
-	public String validateFormula(String formula, List<SimpleSelectionField> columns) throws ValidationException {
+    public String validateFormula(String formula, List<SimpleSelectionField> columns) throws ValidationException {
 
-		validateBrackets(formula);
-		validateFields(formula, columns);
+        ParseTree root = parseFormula(formula);
 
-		formula = "select ".concat(formula);
-		CharStream inputStream = CharStreams.fromString(formula);
-		SQLiteLexer tokenSource = new SQLiteLexer(new CaseChangingCharStream(inputStream, true));
-		TokenStream tokenStream = new CommonTokenStream(tokenSource);
-		SQLiteParser sQLiteParser = new SQLiteParser(tokenStream);
+        Set<String> allowedFields = columns.stream()
+                .map(SimpleSelectionField::getName)
+                .collect(java.util.stream.Collectors.toSet());
 
-		sQLiteParser.addErrorListener(ThrowingErrorListener.INSTANCE);
-		try {
-			ParseTree root = sQLiteParser.select_stmt();
-			root.toStringTree();
-		} catch (Exception e) {
-			throw new ValidationException(e);
-		}
-		if (sQLiteParser.getNumberOfSyntaxErrors() > 0) {
-			throw new ValidationException();
+        validateTree(root, allowedFields);
 
-		}
+        return VALIDATION_OK;
+    }
 
-		return VALIDATION_OK;
-	}
+    private void validateTree(ParseTree node, Set<String> allowedFields) {
 
-	private void validateBrackets(String formula) {
-		int roundBrackets = 0;
-		int squareBrackets = 0;
-		int curlyBrackets = 0;
+        if (node instanceof SQLiteParser.ExprContext ctx) {
 
-		for (int i = 0; i < formula.length(); i++) {
-			switch (formula.charAt(i)) {
-			case '(':
-				roundBrackets++;
-				break;
-			case ')':
-				roundBrackets--;
-				break;
-			case '[':
-				squareBrackets++;
-				break;
-			case ']':
-				squareBrackets--;
-				break;
-			case '{':
-				curlyBrackets++;
-				break;
-			case '}':
-				curlyBrackets--;
-				break;
+            // blocca subquery
+            if (ctx.select_stmt() != null) {
+                throw new ValidationException("common.errors.formulas.subqueryNotAllowed");
+            }
 
-			default:
-				break;
-			}
-		}
+            // blocca CASE
+            if (ctx.K_CASE() != null) {
+                throw new ValidationException("common.errors.formulas.caseNotAllowed");
+            }
 
-		if (roundBrackets != 0 || squareBrackets != 0 || curlyBrackets != 0) {
-			throw new ValidationException();
-		}
+            // blocca CAST
+            if (ctx.K_CAST() != null) {
+                throw new ValidationException("common.errors.formulas.castNotAllowed");
+            }
 
-	}
+            // blocca table.column
+            if (ctx.table_name() != null) {
+                throw new ValidationException("common.errors.formulas.qualifiedNameNotAllowed");
+            }
 
-	private void validateFields(String formula, List<SimpleSelectionField> columns) {
-        Pattern p = Pattern.compile(REGEX_FIELDS_VALIDATION);
-		Matcher m = p.matcher(formula);
+            // valida campo
+            if (ctx.column_name() != null) {
+                String columnName = normalizeIdentifier(ctx.column_name().getText());
 
-		while (m.find()) {
+                if (!allowedFields.contains(columnName)) {
+                    throw new ValidationException("common.errors.formulas.unknownField");
+                }
+            }
+        }
 
-			if (!m.group(1).startsWith("\"") || !m.group(1).endsWith("\"")) {
-				throw new ValidationException("common.errors.formulas.missingQuotes");
-			}
+        // visita figli
+        for (int i = 0; i < node.getChildCount(); i++) {
+            validateTree(node.getChild(i), allowedFields);
+        }
+    }
 
-			boolean found = false;
-			for (SimpleSelectionField simpleSelectionField : columns) {
+    private String normalizeIdentifier(String text) {
+        if (text == null) return null;
 
-				if (simpleSelectionField.getName().equals(m.group(1).replace("\"", ""))) {
-					found = true;
-					break;
-				}
-			}
+        String s = text.trim();
 
-			if (!found) {
-				throw new ValidationException("common.errors.formulas.unknownField");
-			}
-		}
+        if ((s.startsWith("\"") && s.endsWith("\"")) ||
+                (s.startsWith("`") && s.endsWith("`")) ||
+                (s.startsWith("[") && s.endsWith("]"))) {
+            s = s.substring(1, s.length() - 1);
+        }
 
-	}
+        return s;
+    }
+
+    private ParseTree parseFormula(String formula) {
+        String sql = "select " + formula;
+
+        CharStream inputStream = CharStreams.fromString(sql);
+        SQLiteLexer lexer = new SQLiteLexer(new CaseChangingCharStream(inputStream, true));
+        CommonTokenStream tokenStream = new CommonTokenStream(lexer);
+        SQLiteParser parser = new SQLiteParser(tokenStream);
+
+        lexer.removeErrorListeners();
+        parser.removeErrorListeners();
+        parser.addErrorListener(ThrowingErrorListener.INSTANCE);
+
+        try {
+            ParseTree root = parser.select_stmt();
+
+            if (parser.getNumberOfSyntaxErrors() > 0) {
+                throw new ValidationException("common.errors.formulas.invalidSyntax");
+            }
+
+            return root;
+        } catch (ValidationException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new ValidationException("common.errors.formulas.invalidSyntax", e);
+        }
+    }
 
 	private AbstractSelectionField getProjection(IDataSet dataSet, JSONObject jsonObject,
 			Map<String, String> columnAliasToName) throws JSONException {
