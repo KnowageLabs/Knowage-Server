@@ -60,6 +60,24 @@ public class OrganizationImageManager {
 		}
 	}
 
+	public static final void deleteOrganizationB64Image(String organization) {
+		File organizationImageFile = PathTraversalChecker.get(SpagoBIUtilities.getRootResourcePath(), organization, ORGANIZATION_IMAGE_FILE_NAME);
+		try {
+			Files.deleteIfExists(Paths.get(organizationImageFile.getAbsolutePath()));
+		} catch (Exception e) {
+			logger.error("Cannot delete organization image", e);
+		}
+	}
+
+	public static final void deleteOrganizationB64ImageWide(String organization) {
+		File organizationImageFile = PathTraversalChecker.get(SpagoBIUtilities.getRootResourcePath(), organization, ORGANIZATION_IMAGE_WIDE_FILE_NAME);
+		try {
+			Files.deleteIfExists(Paths.get(organizationImageFile.getAbsolutePath()));
+		} catch (Exception e) {
+			logger.error("Cannot delete organization image", e);
+		}
+	}
+
 	public static final String getOrganizationB64ImageWide(String organization) {
 		File organizationImageFile = PathTraversalChecker.get(SpagoBIUtilities.getRootResourcePath(), organization, ORGANIZATION_IMAGE_WIDE_FILE_NAME);
 		if (organizationImageFile.isFile()) {
