@@ -19,7 +19,9 @@ package it.eng.spagobi.analiticalmodel.document;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
@@ -70,6 +72,7 @@ import it.eng.spagobi.utilities.cache.CacheInterface;
 import it.eng.spagobi.utilities.cache.ParameterCache;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
+import it.eng.spagobi.utilities.objects.Couple;
 
 public class DocumentExecutionUtils {
 	private static final Logger LOGGER = Logger.getLogger(DocumentExecutionUtils.class);
@@ -485,15 +488,15 @@ public class DocumentExecutionUtils {
 	 */
 	@Deprecated
 	public static Map<String, Object> getLovDefaultValues(String executionRole, BIObject biObject,
-			BIObjectParameter objParameter, JSONObject requestVal, Integer treeLovNodeLevel, String treeLovNodeValue,
+			BIObjectParameter objParameter, JSONObject requestVal, Integer treeLovNodeLevel, String treeLovNodeValue, String filterValue,
 			Locale locale) {
 		List<BIObjectParameter> drivers = biObject.getDrivers();
-		return getLovDefaultValues(executionRole, drivers, objParameter, requestVal, treeLovNodeLevel, treeLovNodeValue,
+		return getLovDefaultValues(executionRole, drivers, objParameter, requestVal, treeLovNodeLevel, treeLovNodeValue, filterValue,
 				locale);
 	}
 
 	public static Map<String, Object> getLovDefaultValues(String executionRole, List<? extends AbstractDriver> drivers,
-			AbstractDriver objParameter, JSONObject requestVal, Integer treeLovNodeLevel, String treeLovNodeValue,
+			AbstractDriver objParameter, JSONObject requestVal, Integer treeLovNodeLevel, String treeLovNodeValue, String filterValue,
 			Locale locale) {
 		ArrayList<HashMap<String, Object>> defaultValues = new ArrayList<>();
 		String lovResult = null;
@@ -546,7 +549,13 @@ public class DocumentExecutionUtils {
 			}
 
 			if (lovProvDet.getLovType() != null && lovProvDet.getLovType().contains("tree")) {
-				valuesJSONArray = getChildrenForTreeLov(lovProvDet, rows, mode, treeLovNodeLevel, treeLovNodeValue);
+				if (filterValue == null || filterValue.trim().isEmpty()) {
+					valuesJSONArray = getChildrenForTreeLov(lovProvDet, rows, mode, treeLovNodeLevel, treeLovNodeValue);
+				} else {
+					valuesJSONArray = getFilterForTreeLov(lovProvDet, rows, filterValue);
+
+				}
+
 			} else {
 				JSONObject valuesJSON = buildJSONForLOV(lovProvDet, rows, MODE_SIMPLE);
 				valuesJSONArray = valuesJSON.getJSONArray("root");
@@ -711,6 +720,238 @@ public class DocumentExecutionUtils {
 			return valuesDataJSONArray;
 		} catch (Exception e) {
 			throw new SpagoBIServiceException("Impossible to serialize response", e);
+		}
+	}
+
+	/**
+	 * Global LIKE filter (levels + leaf) with output compatible with getChildrenForTreeLov. Builds a tree made of branches (levels 0..N-1) and leaves (level
+	 * N), then produces a JSONArray in PRE-ORDER for each branch: level 0 -> level 1 -> ... -> branch leaves, then the next branch. - If the leaf matches:
+	 * adds the leaf + its parents. - If an intermediate level matches: adds that node + its parents (without creating artificial leaves). - No duplicates (dedup
+	 * by value#level). - Compatible ID: <value> + NODE_ID_SEPARATOR + <level>.
+	 */
+	private static JSONArray getFilterForTreeLov(ILovDetail lovProvDet, List rows, String filterLovNodeValue) {
+		try {
+			final JSONArray out = new JSONArray();
+			if (filterLovNodeValue == null || filterLovNodeValue.trim().isEmpty()) {
+				return out;
+			}
+
+			final String needle = filterLovNodeValue.trim().toLowerCase(Locale.ROOT);
+
+			final List<Couple<String, String>> levels = lovProvDet.getTreeLevelsColumns(); // levels 0..N-1
+			final int levelsCount = (levels != null) ? levels.size() : 0;
+
+			final String leafValueCol = lovProvDet.getValueColumnName();       // leaf: value
+			final String leafDescCol = lovProvDet.getDescriptionColumnName(); // leaf: description
+
+			// The last level may overlap with the leaf (alias); avoid duplicate values/columns
+			final boolean deepestLevelIsLeafAlias = levelsCount > 0 && equalsIgnoreCase(levels.get(levelsCount - 1).getFirst(), leafValueCol)
+					&& equalsIgnoreCase(levels.get(levelsCount - 1).getSecond(), leafDescCol);
+
+			// Tree structure: nodes for levels 0..N-1, leaves accumulated under the level N-1 node
+			final Map<String, TreeNode> roots = new LinkedHashMap<>(); // level 0 nodes (in encounter order)
+			final Set<String> dedupKeys = new HashSet<>(); // value#level
+
+			// ------------------ BUILD TREE FROM MATCHES ------------------
+			for (int r = 0; r < rows.size(); r++) {
+				final SourceBean row = (SourceBean) rows.get(r);
+
+				// 1) try LEAF match
+				final String leafVal = asString(row.getAttribute(leafValueCol));
+				final String leafDesc = asString(row.getAttribute(leafDescCol));
+				final boolean leafMatch = containsIgnoreCase(leafVal, needle) || containsIgnoreCase(leafDesc, needle);
+
+				if (leafMatch && leafVal != null) {
+					// build/retrieve the full parent path
+					TreeNode parent = ensurePath(roots, levels, row, levelsCount, deepestLevelIsLeafAlias, leafValueCol, leafDescCol, dedupKeys);
+
+					// add the leaf
+					parent.addLeaf(leafVal, defaultIfNull(leafDesc, leafVal), deepestLevelIsLeafAlias ? (levelsCount - 1) : levelsCount, dedupKeys);
+					continue;
+				}
+
+				// 2) otherwise try matching intermediate levels, from deepest to highest
+				for (int lvl = levelsCount - 1; lvl >= 0; lvl--) {
+					final Couple<String, String> c = levels.get(lvl);
+					final String valCol = c.getFirst();
+					final String descCol = c.getSecond();
+
+					final String v = asString(row.getAttribute(valCol));
+					final String d = asString(row.getAttribute(descCol));
+
+					if ((containsIgnoreCase(v, needle) || containsIgnoreCase(d, needle)) && v != null) {
+						// build parents up to lvl and add/mark the node at level lvl
+						ensurePathUpTo(roots, levels, row, lvl, dedupKeys);
+						break; // done for this row
+					}
+				}
+			}
+
+			// ------------------ PRE-ORDER TRAVERSAL BY BRANCH ------------------
+			// (level 0 -> level 1 -> ... -> branch leaves) for each branch, in first-encounter order
+			for (TreeNode root : roots.values()) {
+				root.emitPreOrder(out);
+			}
+
+			return out;
+
+		} catch (Exception e) {
+			throw new SpagoBIServiceException("Error building filtered LOV nodes", e);
+		}
+	}
+
+	/* ===================== Support structures ===================== */
+
+	private static final class TreeNode {
+		final int level; // 0..N-1
+		final String value;
+		final String description;
+
+		// children of the next level
+		final LinkedHashMap<String, TreeNode> children = new LinkedHashMap<>();
+		// leaves (level = N) directly under this node
+		final LinkedHashMap<String, JSONObject> leaves = new LinkedHashMap<>();
+
+		TreeNode(int level, String value, String description) {
+			this.level = level;
+			this.value = value;
+			this.description = description != null ? description : value;
+		}
+
+		TreeNode ensureChild(int childLevel, String childValue, String childDesc) {
+			return children.computeIfAbsent(childValue, k -> new TreeNode(childLevel, childValue, childDesc));
+		}
+
+		void addLeaf(String leafValue, String leafDesc, int leafLevelIndex, Set<String> dedup) throws JSONException {
+			final String key = leafValue + "#" + leafLevelIndex;
+			if (!dedup.add(key)) {
+				return;
+			}
+
+			final JSONObject node = new JSONObject();
+			node.put("value", leafValue);
+			node.put("id", leafValue + NODE_ID_SEPARATOR + leafLevelIndex);
+			node.put("description", leafDesc != null ? leafDesc : leafValue);
+			node.put("leaf", true);
+
+			leaves.put(leafValue, node);
+		}
+
+		void emitPreOrder(JSONArray out) throws JSONException {
+			// emit this node first (level 0..N-1)
+			final JSONObject me = new JSONObject();
+			me.put("value", value);
+			me.put("id", value + NODE_ID_SEPARATOR + level);
+			me.put("description", description);
+			me.put("leaf", false);
+			out.put(me);
+
+			// then the children, in first-encounter order
+			for (TreeNode ch : children.values()) {
+				ch.emitPreOrder(out);
+			}
+
+			// finally the leaves
+			for (JSONObject leaf : leaves.values()) {
+				out.put(leaf);
+			}
+		}
+	}
+
+	/* =============== Support/utility functions =============== */
+
+	private static boolean containsIgnoreCase(String s, String needleLower) {
+		return s != null && s.toLowerCase(Locale.ROOT).contains(needleLower);
+	}
+
+	private static String asString(Object o) {
+		return o == null ? null : o.toString();
+	}
+
+	private static String defaultIfNull(String s, String def) {
+		return (s != null) ? s : def;
+	}
+
+	private static boolean equalsIgnoreCase(String a, String b) {
+		if (a == null || b == null) {
+			return a == b;
+		}
+		return a.equalsIgnoreCase(b);
+	}
+
+	/**
+	 * Builds/retrieves the full parent path up to level N-1 for the row, handling the optional aliasing of the last level with the leaf (to be skipped). Returns
+	 * the parent node under which leaves must be added.
+	 */
+	private static TreeNode ensurePath(Map<String, TreeNode> roots, List<Couple<String, String>> levels, SourceBean row, int levelsCount,
+			boolean deepestIsAliasOfLeaf, String leafValueCol, String leafDescCol, Set<String> dedup) {
+
+		TreeNode current = null;
+
+		for (int lvl = 0; lvl < levelsCount; lvl++) {
+			if (deepestIsAliasOfLeaf && lvl == levelsCount - 1) {
+				// skip level N-1 if it overlaps with the leaf columns
+				continue;
+			}
+			final Couple<String, String> c = levels.get(lvl);
+			final String v = asString(row.getAttribute(c.getFirst()));
+			if (v == null) {
+				break;
+			}
+			final String d = defaultIfNull(asString(row.getAttribute(c.getSecond())), v);
+
+			if (lvl == 0) {
+				current = roots.computeIfAbsent(v, k -> new TreeNode(0, v, d));
+			} else {
+				current = current.ensureChild(lvl, v, d);
+			}
+
+			// dedup for the current level node
+			dedup.add(v + "#" + lvl);
+		}
+
+		// if there are no levels, or the last one is an alias of the leaf, parent may be null:
+		// in that case try at least to create the level 0 root when available.
+		if (current == null && levelsCount > 0) {
+			final Couple<String, String> c0 = levels.get(0);
+			final String v0 = asString(row.getAttribute(c0.getFirst()));
+			if (v0 != null) {
+				final String d0 = defaultIfNull(asString(row.getAttribute(c0.getSecond())), v0);
+				current = roots.computeIfAbsent(v0, k -> new TreeNode(0, v0, d0));
+				dedup.add(v0 + "#0");
+			}
+		}
+
+		// If it is still null, the structure has no levels (only leaves).
+		// Return a temporary technical node to avoid NPEs when attaching the leaf.
+		if (current == null) {
+			TreeNode temp = new TreeNode(0, "__ROOT__", "__ROOT__");
+			return temp;
+		}
+
+		return current;
+	}
+
+	/**
+	 * Builds parent nodes up to and including "toLevel" (without leaves).
+	 */
+	private static void ensurePathUpTo(Map<String, TreeNode> roots, List<Couple<String, String>> levels, SourceBean row, int toLevel, Set<String> dedup) {
+
+		TreeNode current = null;
+		for (int lvl = 0; lvl <= toLevel; lvl++) {
+			final Couple<String, String> c = levels.get(lvl);
+			final String v = asString(row.getAttribute(c.getFirst()));
+			if (v == null) {
+				break;
+			}
+			final String d = defaultIfNull(asString(row.getAttribute(c.getSecond())), v);
+
+			if (lvl == 0) {
+				current = roots.computeIfAbsent(v, k -> new TreeNode(0, v, d));
+			} else {
+				current = current.ensureChild(lvl, v, d);
+			}
+			dedup.add(v + "#" + lvl);
 		}
 	}
 

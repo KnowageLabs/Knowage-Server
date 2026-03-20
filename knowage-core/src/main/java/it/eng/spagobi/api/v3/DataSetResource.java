@@ -889,7 +889,7 @@ public class DataSetResource {
 			}
 
 			Map<String, Object> defaultValuesData = DocumentExecutionUtils.getLovDefaultValues(role, drivers,
-					biObjectParameter, requestVal, treeLovNodeLevel, treeLovNodeValue, req.getLocale());
+					biObjectParameter, requestVal, treeLovNodeLevel, treeLovNodeValue, null, req.getLocale());
 
 			ArrayList<Map<String, Object>> result = (ArrayList<Map<String, Object>>) defaultValuesData
 					.get(DocumentExecutionUtils.DEFAULT_VALUES);

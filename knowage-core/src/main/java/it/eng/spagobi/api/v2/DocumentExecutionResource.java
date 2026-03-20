@@ -1294,6 +1294,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 		String biparameterId;
 		String treeLovNode;
 		String mode;
+		String filterValue;
 		// GET PARAMETER
 
 		JSONObject requestVal = RestUtilities.readBodyAsJSONObject(req);
@@ -1302,6 +1303,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 		biparameterId = (String) requestVal.opt("parameterId");
 		treeLovNode = (String) requestVal.opt("treeLovNode");
 		mode = (String) requestVal.opt("mode");
+		filterValue = (String) requestVal.opt("filterValue");
 
 		BIObject biObject = DriversRuntimeLoaderFactory.getDriversRuntimeLoader()
 				.loadBIObjectForExecutionByLabelAndRole(label, role);
@@ -1329,7 +1331,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 		}
 
 		Map<String, Object> defaultValuesData = DocumentExecutionUtils.getLovDefaultValues(role, biObject,
-				biObjectParameter, requestVal, treeLovNodeLevel, treeLovNodeValue, req.getLocale());
+				biObjectParameter, requestVal, treeLovNodeLevel, treeLovNodeValue, filterValue, req.getLocale());
 
 		ArrayList<Map<String, Object>> result = (ArrayList<Map<String, Object>>) defaultValuesData
 				.get(DocumentExecutionUtils.DEFAULT_VALUES);
