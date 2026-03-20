@@ -105,7 +105,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.security.IEngUserProfile;
-import it.eng.spagobi.security.AuthorizationsBusinessMapper;
 import it.eng.spagobi.services.common.JWTSsoService;
 import it.eng.spagobi.services.common.SsoServiceInterface;
 import it.eng.spagobi.services.security.bo.SpagoBIUserProfile;
@@ -598,16 +597,6 @@ public class UserProfile implements IEngUserProfile {
 			if (functionalities.contains(actionName)) {
 				return true;
 			}
-
-			List<String> businessProcessNames = AuthorizationsBusinessMapper.getInstance()
-					.mapActionToBusinessProcess(actionName);
-			if (businessProcessNames != null) {
-				for (String businessProcess : businessProcessNames) {
-					if (functionalities.contains(businessProcess)) {
-						return true;
-					}
-				}
-			}
 		}
 		return false;
 	}
@@ -620,13 +609,8 @@ public class UserProfile implements IEngUserProfile {
 	 */
 	@Override
 	public boolean isAbleToExecuteModuleInPage(String pageName, String moduleName) throws EMFInternalError {
-		String functionality = AuthorizationsBusinessMapper.getInstance().mapPageModuleToBusinessProcess(pageName,
-				moduleName);
-		if (functionality != null) {
-			return this.functionalities.contains(functionality);
-		} else {
-			return false;
-		}
+
+		return true;
 	}
 
 	/*
