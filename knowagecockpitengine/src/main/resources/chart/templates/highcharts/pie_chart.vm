@@ -1071,7 +1071,7 @@
 					#set( $serieName = $escapeTool.javascript($serieName))
 					#set ($serieValue = $row.get($serieColumnsMapped))
 					{
-						drilldown: $drilldownEnabledFlag,
+						drilldown: $enableDrilldown,
 						name: "$serieName",
 						#if($serieValue!="")
 							y: $serieValue,
