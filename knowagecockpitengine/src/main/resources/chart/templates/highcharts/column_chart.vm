@@ -1522,7 +1522,7 @@
 		    
 		    #if($chartType == 'radar')
 			    #if($relatedSerieType == '')
-			    	#if($relatedSerie.serieTypeRadar!='')
+			    	#if($relatedSerie.serieTypeRadar && $relatedSerie.serieTypeRadar!='')
 				    	#set($relatedSerieType = $relatedSerie.serieTypeRadar)
 				    	type: '$relatedSerieType',
 			    	#end

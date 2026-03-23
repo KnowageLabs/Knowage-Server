@@ -158,6 +158,21 @@
         "type": "text"
       },
       {
+        "key": "--kn-documentation-drawer-header-color",
+        "label": "Drawer Header Color",
+        "type": "color"
+      },
+      {
+        "key": "--kn-documentation-drawer-header-font-family",
+        "label": "Drawer Header Font Family",
+        "type": "text"
+      },
+      {
+        "key": "--kn-documentation-drawer-header-font-size",
+        "label": "Drawer Header Font Size",
+        "type": "text"
+      },
+      {
         "key": "--kn-documentation-content-background",
         "label": "Content Background",
         "type": "text"

@@ -30,6 +30,7 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import it.eng.spagobi.tools.dataset.metasql.query.item.*;
 import org.apache.log4j.Logger;
 
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
@@ -41,12 +42,6 @@ import it.eng.spagobi.tools.dataset.common.datastore.Record;
 import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import it.eng.spagobi.tools.dataset.common.metadata.MetaData;
-import it.eng.spagobi.tools.dataset.metasql.query.item.AbstractSelectionField;
-import it.eng.spagobi.tools.dataset.metasql.query.item.DataStoreCalculatedField;
-import it.eng.spagobi.tools.dataset.metasql.query.item.Filter;
-import it.eng.spagobi.tools.dataset.metasql.query.item.Projection;
-import it.eng.spagobi.tools.dataset.metasql.query.item.Sorting;
-import it.eng.spagobi.tools.dataset.metasql.query.item.UnsatisfiedFilter;
 import it.eng.spagobi.utilities.assertion.Assert;
 
 public abstract class AbstractEvaluationStrategy implements IDatasetEvaluationStrategy {
@@ -93,14 +88,54 @@ public abstract class AbstractEvaluationStrategy implements IDatasetEvaluationSt
 			dataStore = new DataStore(newMeta);
 		} else {
 			List<AbstractSelectionField> newProjections = applyTotalsFunctionsToFormulas(dataSet, projections, filter, maxRowCount, indexes);
+
+			if (logger.isDebugEnabled()) {
+				StringBuilder projLog = new StringBuilder("execute() - projections (").append(newProjections.size()).append("): [");
+				for (AbstractSelectionField f : newProjections) projLog.append("{name=").append(f.getName()).append(", alias=").append(f.getAlias()).append("}, ");
+				projLog.append("], filter: ").append(filterToString(filter));
+				if (groups != null) { projLog.append(", groups (").append(groups.size()).append("): ["); for (AbstractSelectionField g : groups) projLog.append("{name=").append(g.getName()).append(", alias=").append(g.getAlias()).append("}, "); projLog.append("]"); }
+				if (sortings != null) { projLog.append(", sortings (").append(sortings.size()).append("): ["); for (Sorting s : sortings) projLog.append("{name=").append(s.getProjection().getName()).append(", asc=").append(s.isAscending()).append("}, "); projLog.append("]"); }
+				projLog.append(", offset: ").append(offset).append(", fetchSize: ").append(fetchSize).append(", maxRowCount: ").append(maxRowCount)
+						.append(", indexes: ").append(indexes).append(", useGroupBy: ");
+				logger.debug(projLog.toString());
+			}
+
+			logger.debug("execute() IMPLEMENTATION: " + this.getClass().getName());
 			dataStore = execute(newProjections, filter, groups, sortings, summaryRowProjections, offset, fetchSize, maxRowCount, indexes);
+
+			if (logger.isDebugEnabled()) {
+				IMetaData retMeta = dataStore.getMetaData();
+				StringBuilder retLog = new StringBuilder("execute() returned - fieldCount: ").append(retMeta.getFieldCount()).append(", recordCount: ").append(dataStore.getRecordsCount()).append(", fields: [");
+				for (int k = 0; k < retMeta.getFieldCount(); k++) retLog.append("{name=").append(retMeta.getFieldName(k)).append(", alias=").append(retMeta.getFieldAlias(k)).append("}, ");
+				retLog.append("]");
+				logger.debug(retLog.toString());
+			}
+
 			IMetaData dataStoreToUseMeta = dataStore.getMetaData();
 			if (!isSummaryRowIncluded() && summaryRowProjections != null && !summaryRowProjections.isEmpty()) {
 				int i = 0;
 				for (List<AbstractSelectionField> listProj : summaryRowProjections) {
 					List<AbstractSelectionField> replacedSelectionFieldsList = applyTotalsFunctionsToFormulas(dataSet, listProj, filter, maxRowCount, indexes);
 
+					if (logger.isDebugEnabled()) {
+						StringBuilder srLog = new StringBuilder("executeSummaryRow() [").append(i).append("] - projections (").append(replacedSelectionFieldsList.size()).append("): [");
+						for (AbstractSelectionField f : replacedSelectionFieldsList) srLog.append("{name=").append(f.getName()).append(", alias=").append(f.getAlias()).append("}, ");
+						srLog.append("], metaData fieldCount: ").append(dataStoreToUseMeta.getFieldCount()).append(", metaData fields: [");
+						for (int k = 0; k < dataStoreToUseMeta.getFieldCount(); k++) srLog.append("{name=").append(dataStoreToUseMeta.getFieldName(k)).append(", alias=").append(dataStoreToUseMeta.getFieldAlias(k)).append("}, ");
+						srLog.append("], filter: ").append(filterToString(filter)).append(", maxRowCount: ").append(maxRowCount);
+						logger.debug(srLog.toString());
+					}
+
 					IDataStore summaryRowDataStore = executeSummaryRow(replacedSelectionFieldsList, dataStoreToUseMeta, filter, maxRowCount);
+
+					if (logger.isDebugEnabled()) {
+						IMetaData srMeta = summaryRowDataStore.getMetaData();
+						StringBuilder srRetLog = new StringBuilder("executeSummaryRow() [").append(i).append("] returned - fieldCount: ").append(srMeta.getFieldCount()).append(", recordCount: ").append(summaryRowDataStore.getRecordsCount()).append(", fields: [");
+						for (int k = 0; k < srMeta.getFieldCount(); k++) srRetLog.append("{name=").append(srMeta.getFieldName(k)).append(", alias=").append(srMeta.getFieldAlias(k)).append("}, ");
+						srRetLog.append("]");
+						logger.debug(srRetLog.toString());
+					}
+
 					appendSummaryRowToPagedDataStore(newProjections, replacedSelectionFieldsList, dataStore, summaryRowDataStore, i);
 					i++;
 				}
@@ -108,6 +143,55 @@ public abstract class AbstractEvaluationStrategy implements IDatasetEvaluationSt
 		}
 		return dataStore;
 	}
+
+	private String filterToString(Filter filter) {
+		if (filter == null) return "null";
+		if (filter instanceof UnsatisfiedFilter) return "UnsatisfiedFilter";
+		if (filter instanceof CompoundFilter) {
+			CompoundFilter cf = (CompoundFilter) filter;
+			StringBuilder sb = new StringBuilder(filter.getClass().getSimpleName()).append("{operator=").append(cf.getCompositionOperator()).append(", filters=[");
+			if (cf.getFilters() != null) {
+				for (Filter f : cf.getFilters()) sb.append(filterToString(f)).append(", ");
+			}
+			return sb.append("]}").toString();
+		}
+		if (filter instanceof UnaryFilter) {
+			UnaryFilter uf = (UnaryFilter) filter;
+			return "UnaryFilter{projection={name=" + uf.getProjection().getName() + ", alias=" + uf.getProjection().getAlias() + "}, operator=" + uf.getOperator() + ", operand=" + uf.getOperand() + "}";
+		}
+		if (filter instanceof InFilter) {
+			InFilter inf = (InFilter) filter;
+			StringBuilder sb = new StringBuilder("InFilter{projections=[");
+			for (Projection p : inf.getProjections()) sb.append("{name=").append(p.getName()).append(", alias=").append(p.getAlias()).append("}, ");
+			sb.append("], operands=").append(inf.getOperands()).append("}");
+			return sb.toString();
+		}
+		if (filter instanceof BetweenFilter) {
+			BetweenFilter bf = (BetweenFilter) filter;
+			return "BetweenFilter{projection={name=" + bf.getProjection().getName() + ", alias=" + bf.getProjection().getAlias() + "}, operator=" + bf.getOperator() + "}";
+		}
+		if (filter instanceof LikeFilter) {
+			LikeFilter lf = (LikeFilter) filter;
+			return "LikeFilter{projection={name=" + lf.getProjection().getName() + ", alias=" + lf.getProjection().getAlias() + "}, operator=" + lf.getOperator() + "}";
+		}
+		if (filter instanceof NullaryFilter) {
+			NullaryFilter nf = (NullaryFilter) filter;
+			return "NullaryFilter{projection={name=" + nf.getProjection().getName() + ", alias=" + nf.getProjection().getAlias() + "}, operator=" + nf.getOperator() + "}";
+		}
+		if (filter instanceof MultipleProjectionSimpleFilter) {
+			MultipleProjectionSimpleFilter mf = (MultipleProjectionSimpleFilter) filter;
+			StringBuilder sb = new StringBuilder(filter.getClass().getSimpleName()).append("{projections=[");
+			for (Projection p : mf.getProjections()) sb.append("{name=").append(p.getName()).append(", alias=").append(p.getAlias()).append("}, ");
+			sb.append("], operator=").append(mf.getOperator()).append("}");
+			return sb.toString();
+		}
+		if (filter instanceof SingleProjectionSimpleFilter) {
+			SingleProjectionSimpleFilter sf = (SingleProjectionSimpleFilter) filter;
+			return filter.getClass().getSimpleName() + "{projection={name=" + sf.getProjection().getName() + ", alias=" + sf.getProjection().getAlias() + "}, operator=" + sf.getOperator() + "}";
+		}
+		return filter.getClass().getSimpleName();
+	}
+
 
 	private List<AbstractSelectionField> applyTotalsFunctionsToFormulas(IDataSet dataSet, List<AbstractSelectionField> projections, Filter filter,
 			int maxRowCount, Set<String> indexes) {
