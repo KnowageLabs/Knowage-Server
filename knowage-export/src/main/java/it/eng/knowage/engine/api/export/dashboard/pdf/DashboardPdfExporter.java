@@ -15,6 +15,7 @@ import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
 import org.apache.pdfbox.pdmodel.font.PDFont;
 import org.apache.pdfbox.pdmodel.font.PDType0Font;
+import org.apache.pdfbox.pdmodel.font.PDType1Font;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -25,15 +26,16 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.net.URL;
 import java.text.DateFormat;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.List;
-
-import static it.eng.spagobi.commons.utilities.UserUtilities.getUserProfile;
 
 public class DashboardPdfExporter extends DashboardExporter {
 
@@ -45,10 +47,18 @@ public class DashboardPdfExporter extends DashboardExporter {
     private static final String KN_EXPORT_EXTRA_FIELD_LABEL = "kn-export-extra-field-label";
     private static final String KN_EXPORT_EXTRA_FIELD_VALUE = "kn-export-extra-field-value";
     protected static final String DATE_FORMAT = "dd/MM/yyyy";
+    private static final int COLOR_WHITE_COMPONENT = 255;
+    private static final int COLOR_BLACK_COMPONENT = 0;
+    private static final float HEADER_FONT_SIZE = 10f;
+    private static final float HEADER_LEADING = 12f;
+    private static final float HEADER_SIDE_MARGIN = 20f;
+    private static final float HEADER_BOTTOM_GAP = 10f;
 
     private float totalColumnsWidth = 0;
     private float[] columnPercentWidths;
-    private Locale locale;
+    private final Locale locale;
+    private PDPage footerCurrentPage;
+    private float footerCurrentY;
     public DashboardPdfExporter(String userUniqueIdentifier, Locale locale) {
         super(userUniqueIdentifier, null);
         this.locale = locale;
@@ -64,14 +74,16 @@ public class DashboardPdfExporter extends DashboardExporter {
 
         Map<String, Map<String, JSONArray>> selections = getSelections(template);
 
-        JSONObject drivers = transformDriversForDatastore(getDrivers(template));
-        JSONObject parameters = transformParametersForDatastore(template, getParametersFromBody(template));
+        JSONArray driversFromBody = getDrivers(template);
+        JSONArray parametersFromBody = getParametersFromBody(template);
+        JSONObject drivers = transformDriversForDatastore(driversFromBody);
+        JSONObject parameters = transformParametersForDatastore(template, parametersFromBody);
         executionUser = UserProfileManager.getProfile().getSpagoBIUserProfile().getUserId();
 
         try (PDDocument document = new PDDocument(MemoryUsageSetting.setupTempFileOnly())) {
             String widgetId = template.getString("id");
 
-            exportTableWidget(document, template, widgetId, executionUser, selections, drivers, parameters);
+            exportTableWidget(document, template, widgetId, executionUser, selections, drivers, parameters, driversFromBody, parametersFromBody);
 
             ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
             document.save(byteArrayOutputStream);
@@ -83,7 +95,7 @@ public class DashboardPdfExporter extends DashboardExporter {
         }
     }
 
-    private void exportTableWidget(PDDocument document, JSONObject widget, String widgetId, String executionUser, Map<String, Map<String, JSONArray>> selections, JSONObject drivers, JSONObject parameters) {
+    private void exportTableWidget(PDDocument document, JSONObject widget, String widgetId, String executionUser, Map<String, Map<String, JSONArray>> selections, JSONObject drivers, JSONObject parameters, JSONArray driversFromBody, JSONArray parametersFromBody) {
         try {
             JSONObject settings = widget.optJSONObject("settings");
 
@@ -107,6 +119,19 @@ public class DashboardPdfExporter extends DashboardExporter {
             }
             File pdfFontFile = new File(resource.toURI());
             Map<String, JSONArray> columnStylesMap = Map.of();
+            JSONArray variables = widget.optJSONArray("variables");
+            String extraValueLabel = null;
+            String extraValue = null;
+            if (variables != null && variables.length() > 0) {
+                for (int i = 0; i < variables.length(); i++) {
+                    JSONObject variable = variables.getJSONObject(i);
+                    if (variable.getString("name").equals(KN_EXPORT_EXTRA_FIELD_LABEL)) {
+                        extraValueLabel = variable.getString("value");
+                    } else if (variable.getString("name").equals(KN_EXPORT_EXTRA_FIELD_VALUE)) {
+                        extraValue = variable.optString("value", "NA");
+                    }
+                }
+            }
             do {
                 dataStore = getDataStoreForDashboardWidget(widget, offset, fetchSize, selections, drivers, parameters);
 
@@ -115,7 +140,11 @@ public class DashboardPdfExporter extends DashboardExporter {
 
                 // compute how many selection lines we will draw so we can reserve space at the bottom
                 int reservedSelectionLines = getReservedSelectionLines(selections);
-                table = createBaseTable(document, newPage, reservedSelectionLines);
+                font = PDType0Font.load(document, pdfFontFile);
+                float reservedTopHeight = offset == 0
+                        ? calculateReservedTopHeightForDocumentInfo(extraValueLabel, extraValue)
+                        : 0f;
+                table = createBaseTable(document, newPage, reservedSelectionLines, reservedTopHeight);
 
                 JSONObject widgetData = dataStore.getJSONObject("widgetData");
 
@@ -136,24 +165,10 @@ public class DashboardPdfExporter extends DashboardExporter {
 
                     numberOfSummaryRows = doSummaryRowsLogic(settings, numberOfSummaryRows, summaryRowsLabels);
                     totalNumberOfRows = dataStore.getInt("results");
-                    font = PDType0Font.load(table.document, pdfFontFile);
                     replaceWithThemeSettingsIfPresent(settings);
                     columnStylesMap = getStylesMap(settings);
                     initColumnWidths(columnsOrdered, columnStylesMap);
-                    JSONArray variables = widget.optJSONArray("variables");
-                    String extraValueLabel = null;
-                    String extraValue = null;
-                    if (variables != null && variables.length() > 0) {
-                        for (int i = 0; i < variables.length(); i++) {
-                            JSONObject variable = variables.getJSONObject(i);
-                            if (variable.getString("name").equals(KN_EXPORT_EXTRA_FIELD_LABEL)) {
-                                extraValueLabel = variable.getString("value");
-                            } else if (variable.getString("name").equals(KN_EXPORT_EXTRA_FIELD_VALUE)) {
-                                extraValue = variable.optString("value", "NA");
-                            }
-                        }
-                    }
-                    buildFirstPageHeaders(table, settings, groupsAndColumnsMap, columnsOrdered, executionUser, font, extraValueLabel, extraValue);
+                    buildFirstPageHeaders(table, settings, groupsAndColumnsMap, columnsOrdered, executionUser, font, extraValueLabel, extraValue, driversFromBody, parametersFromBody);
                 }
 
                 rows = dataStore.getJSONArray("rows");
@@ -168,6 +183,7 @@ public class DashboardPdfExporter extends DashboardExporter {
 
                 if (offset >= totalNumberOfRows) {
                     createSelectionsRows(table, font, selections);
+                    createFiltersInformationRow(table, font, driversFromBody, parametersFromBody);
                 }
 
             } while (offset < totalNumberOfRows);
@@ -189,7 +205,8 @@ public class DashboardPdfExporter extends DashboardExporter {
                 selectionCount += selectionContent.size();
             }
         }
-        return selectionCount;
+        // Reserve one extra line for the localized "SELECTIONS" header.
+        return selectionCount > 0 ? selectionCount + 1 : 0;
     }
 
     private void initColumnWidths(JSONArray columnsOrdered, Map<String, JSONArray> columnStylesMap) throws JSONException {
@@ -210,7 +227,7 @@ public class DashboardPdfExporter extends DashboardExporter {
         }
     }
 
-    private void buildFirstPageHeaders(BaseTable table, JSONObject settings, Map<String, String> groupsAndColumnsMap, JSONArray columnsOrdered, String executionUser, PDFont font, String extraValueLabel, String extraValueField) throws JSONException {
+    private void buildFirstPageHeaders(BaseTable table, JSONObject settings, Map<String, String> groupsAndColumnsMap, JSONArray columnsOrdered, String executionUser, PDFont font, String extraValueLabel, String extraValueField, JSONArray driversFromBody, JSONArray parametersFromBody) throws JSONException {
         createDocumentInformationRow(table, font, executionUser, extraValueLabel, extraValueField);
 
         if (!groupsAndColumnsMap.isEmpty()) {
@@ -269,27 +286,21 @@ public class DashboardPdfExporter extends DashboardExporter {
             Style style = getStyleCustomObjFromProps(null, styleJSONObject.getJSONObject("headers"), "");
             headerCell.setFont(font);
             headerCell.setFontSize(Float.parseFloat(style.getFontSize().replace("px", "")));
-            headerCell.setFillColor(getJavaColorFromRGBA(style.getBackgroundColor()));
-            headerCell.setTextColor(getJavaColorFromRGBA(style.getColor()));
+            Color headerBackground = parseJavaColor(style.getBackgroundColor());
+            if (headerBackground != null && !isRgbColor(headerBackground, COLOR_WHITE_COMPONENT, COLOR_WHITE_COMPONENT, COLOR_WHITE_COMPONENT)) {
+                headerCell.setFillColor(headerBackground);
+            }
+            Color headerText = parseJavaColor(style.getColor());
+            if (headerText != null && !isRgbColor(headerText, COLOR_BLACK_COMPONENT, COLOR_BLACK_COMPONENT, COLOR_BLACK_COMPONENT)) {
+                headerCell.setTextColor(headerText);
+            }
         }
     }
 
     private void createDocumentInformationRow(BaseTable table, PDFont font, String executionUser, String extraValueLabel, String extraValue) {
         try {
-
-            String executionDateLabel;
-            String executionUserLabel;
-
-            if (this.locale.toString().equals("sk_SK")) {
-                executionDateLabel = "Dátum vytvorenia: ";
-                executionUserLabel = "Vytvoril: ";
-            } else if (this.locale.toString().equals("it_IT")) {
-                executionDateLabel = "Data di esecuzione: ";
-                executionUserLabel = "Utente di esecuzione: ";
-            } else {
-                executionDateLabel = "Execution Date: ";
-                executionUserLabel = "Execution User: ";
-            }
+            String executionDateLabel = getExecutionDateLabel();
+            String executionUserLabel = getExecutionUserLabel();
 
             PDPage page = table.getCurrentPage();
 
@@ -303,12 +314,10 @@ public class DashboardPdfExporter extends DashboardExporter {
                 line3 = extraValueLabel + ": " + extraValue;
             }
 
-            float fontSize = 10f;
-            float leading = 12f;
-            float margin = 20f;
+            float fontSize = HEADER_FONT_SIZE;
+            float leading = HEADER_LEADING;
 
             float pageWidth = page.getMediaBox().getWidth();
-            float pageHeight = page.getMediaBox().getHeight();
 
             float w1 = font.getStringWidth(line1) / 1000f * fontSize;
             float w2 = font.getStringWidth(line2) / 1000f * fontSize;
@@ -317,12 +326,9 @@ public class DashboardPdfExporter extends DashboardExporter {
 
             float maxW = Math.max(w1, Math.max(w2, w3));
 
-            float x = pageWidth - margin - maxW;
+            float x = pageWidth - HEADER_SIDE_MARGIN - maxW;
 
-            float yStartNewPage = pageHeight - (2 * margin);
-
-            float additionalGap = 12f;
-            float y = yStartNewPage + additionalGap + leading;
+            float y = getHeaderStartY(page);
 
             try (PDPageContentStream contentStream =
                        new PDPageContentStream(table.document, page, PDPageContentStream.AppendMode.APPEND, true)) {
@@ -346,8 +352,230 @@ public class DashboardPdfExporter extends DashboardExporter {
         }
     }
 
+    private void createFiltersInformationRow(BaseTable table, PDFont font, JSONArray driversFromBody, JSONArray parametersFromBody) {
+        try {
+            List<String> filters = extractFilters(driversFromBody, parametersFromBody);
+            if (filters.isEmpty()) {
+                return;
+            }
+
+            PDDocument document = table.document;
+            float margin = HEADER_SIDE_MARGIN;
+            float fontSize = HEADER_FONT_SIZE;
+            float leading = HEADER_LEADING;
+            float indent = margin + 10f;
+            PDPage page = footerCurrentPage != null ? footerCurrentPage : document.getPage(document.getNumberOfPages() - 1);
+            float maxTextWidth = (page.getMediaBox().getWidth() / 2f) - indent;
+            String filtersLabel = getFiltersLabel();
+            float currentY = footerCurrentY;
+            float pageTopStart = page.getMediaBox().getHeight() - margin - leading;
+            float bottomLimit = margin + leading;
+            if (currentY <= 0) {
+                currentY = getFooterStartYFromTable(table, leading);
+            }
+
+            if (currentY <= bottomLimit) {
+                page = new PDPage(page.getMediaBox());
+                document.addPage(page);
+                currentY = pageTopStart;
+            }
+
+            try (PDPageContentStream cs = new PDPageContentStream(document, page, PDPageContentStream.AppendMode.APPEND, true)) {
+                cs.setNonStrokingColor(Color.BLACK);
+                cs.setFont(PDType1Font.HELVETICA_BOLD, fontSize);
+                cs.beginText();
+                cs.newLineAtOffset(margin, currentY);
+                cs.showText(filtersLabel);
+                cs.endText();
+                currentY -= leading;
+            }
+
+            for (String filter : filters) {
+                List<String> wrapped = wrapText(font, fontSize, filter, maxTextWidth);
+                List<String> linesToPrint = wrapped.isEmpty() ? Collections.singletonList(filter) : wrapped;
+
+                for (String line : linesToPrint) {
+                    if (currentY <= bottomLimit) {
+                        page = new PDPage(page.getMediaBox());
+                        document.addPage(page);
+                        currentY = pageTopStart;
+                    }
+
+                    try (PDPageContentStream cs = new PDPageContentStream(document, page, PDPageContentStream.AppendMode.APPEND, true)) {
+                        cs.setNonStrokingColor(Color.BLACK);
+                        cs.setFont(font, fontSize);
+                        cs.beginText();
+                        cs.newLineAtOffset(indent, currentY);
+                        cs.showText(line);
+                        cs.endText();
+                    }
+                    currentY -= leading;
+                }
+            }
+
+            footerCurrentPage = page;
+            footerCurrentY = currentY;
+        } catch (Exception e) {
+            logger.warn("Cannot render filters block on PDF", e);
+        }
+    }
+
+    private List<String> extractFilters(JSONArray driversFromBody, JSONArray parametersFromBody) {
+        Set<String> filters = new LinkedHashSet<>();
+
+        if (driversFromBody != null) {
+            for (int i = 0; i < driversFromBody.length(); i++) {
+                JSONObject driver = driversFromBody.optJSONObject(i);
+                if (driver == null || !driver.optBoolean("visible", true)) {
+                    continue;
+                }
+                String name = firstNonEmpty(driver.optString("label"), driver.optString("name"), driver.optString("urlName"));
+                String value = extractFilterValue(driver);
+                if (!stringIsEmpty(name) && !stringIsEmpty(value)) {
+                    filters.add(name + ": " + value);
+                }
+            }
+        }
+
+        if (parametersFromBody != null) {
+            for (int i = 0; i < parametersFromBody.length(); i++) {
+                JSONObject parameter = parametersFromBody.optJSONObject(i);
+                if (parameter == null) {
+                    continue;
+                }
+                String name = firstNonEmpty(parameter.optString("label"), parameter.optString("name"), parameter.optString("urlName"));
+                String value = extractFilterValue(parameter);
+                if (!stringIsEmpty(name) && !stringIsEmpty(value) && !"null".equalsIgnoreCase(value)) {
+                    filters.add(name + ": " + value);
+                }
+            }
+        }
+
+        return new ArrayList<>(filters);
+    }
+
+    private String extractFilterValue(JSONObject filterObject) {
+        if (filterObject == null) {
+            return "";
+        }
+
+        String directValue = firstNonEmpty(
+                normalizeFilterValue(filterObject.opt("description")),
+                normalizeFilterValue(filterObject.opt("value"))
+        );
+        if (!stringIsEmpty(directValue)) {
+            return directValue;
+        }
+
+        JSONArray parameterValues = filterObject.optJSONArray("parameterValue");
+        if (parameterValues != null && parameterValues.length() > 0) {
+            List<String> values = new ArrayList<>();
+            for (int i = 0; i < parameterValues.length(); i++) {
+                String value = normalizeFilterValue(parameterValues.opt(i));
+                if (!stringIsEmpty(value)) {
+                    values.add(value);
+                }
+            }
+            return String.join(", ", values);
+        }
+
+        return "";
+    }
+
+    private String normalizeFilterValue(Object value) {
+        if (value == null || JSONObject.NULL.equals(value)) {
+            return "";
+        }
+        if (value instanceof JSONArray jsonArray) {
+            List<String> values = new ArrayList<>();
+            for (int i = 0; i < jsonArray.length(); i++) {
+                String currentValue = normalizeFilterValue(jsonArray.opt(i));
+                if (!stringIsEmpty(currentValue)) {
+                    values.add(currentValue);
+                }
+            }
+            return String.join(", ", values);
+        }
+        if (value instanceof JSONObject jsonObject) {
+            return firstNonEmpty(
+                    normalizeFilterValue(jsonObject.opt("description")),
+                    normalizeFilterValue(jsonObject.opt("value")),
+                    normalizeFilterValue(jsonObject.opt("label")),
+                    normalizeFilterValue(jsonObject.opt("name"))
+            );
+        }
+        return String.valueOf(value);
+    }
+
+    private String firstNonEmpty(String... values) {
+        for (String value : values) {
+            if (!stringIsEmpty(value) && !"null".equalsIgnoreCase(value)) {
+                return value;
+            }
+        }
+        return "";
+    }
+
+    private String getFiltersLabel() {
+        return switch (getEffectiveLocale().getLanguage()) {
+            case "it" -> "FILTRI";
+            case "sk" -> "FILTRE";
+            default -> "FILTERS";
+        };
+    }
+
+    private String getSelectionsLabel() {
+        return switch (getEffectiveLocale().getLanguage()) {
+            case "it" -> "SELEZIONI";
+            case "sk" -> "VYBERY";
+            default -> "SELECTIONS";
+        };
+    }
+
+
+    private String getExecutionDateLabel() {
+        return switch (getEffectiveLocale().getLanguage()) {
+            case "it" -> "Data di esecuzione: ";
+            case "sk" -> "Dátum vytvorenia: ";
+            default -> "Execution Date: ";
+        };
+    }
+
+    private String getExecutionUserLabel() {
+        return switch (getEffectiveLocale().getLanguage()) {
+            case "it" -> "Utente di esecuzione: ";
+            case "sk" -> "Vytvoril: ";
+            default -> "Execution User: ";
+        };
+    }
+
+    private float calculateReservedTopHeightForDocumentInfo(String extraValueLabel, String extraValue) {
+        int documentInfoLines = (extraValueLabel != null && !extraValueLabel.isEmpty() && extraValue != null && !extraValue.isEmpty()) ? 3 : 2;
+        return (documentInfoLines * HEADER_LEADING) + HEADER_BOTTOM_GAP;
+    }
+
+    private float getHeaderStartY(PDPage page) {
+        return page.getMediaBox().getHeight() - HEADER_SIDE_MARGIN + 4f;
+    }
+
+    private float getFooterStartYFromTable(BaseTable table, float leading) {
+        float tableStartY = 550f;
+        float tableHeight = 0f;
+        try {
+            List<Row<PDPage>> rows = table.getRows();
+            for (Row<PDPage> row : rows) {
+                tableHeight += row.getHeight();
+            }
+        } catch (Exception e) {
+            logger.warn("Could not calculate exact table bottom", e);
+        }
+        return tableStartY - tableHeight - leading;
+    }
+
     private void createSelectionsRows(BaseTable table, PDFont font, Map<String, Map<String, JSONArray>> selections) {
         try {
+            footerCurrentPage = table.getCurrentPage();
+            footerCurrentY = getFooterStartYFromTable(table, 12f);
             if (selections == null || selections.isEmpty()) {
                 return;
             }
@@ -429,7 +657,7 @@ public class DashboardPdfExporter extends DashboardExporter {
 
             float tableEndY = tableStartY - tableHeight;
 
-            float requiredHeight = totalLines * leading;
+            float requiredHeight = (totalLines + 1) * leading;
             float availableSpace = tableEndY - baseBottomMargin;
             boolean needsNewPage = availableSpace < requiredHeight;
 
@@ -449,6 +677,15 @@ public class DashboardPdfExporter extends DashboardExporter {
                          new PDPageContentStream(table.document, targetPage, PDPageContentStream.AppendMode.APPEND, true)) {
 
                 contentStream.setNonStrokingColor(Color.BLACK);
+                contentStream.setFont(font, fontSize);
+
+                // Render localized selections header before the key/value rows.
+                contentStream.setFont(PDType1Font.HELVETICA_BOLD, fontSize);
+                contentStream.beginText();
+                contentStream.newLineAtOffset(margin, currentY);
+                contentStream.showText(getSelectionsLabel());
+                contentStream.endText();
+                currentY -= leading;
                 contentStream.setFont(font, fontSize);
 
                 for (SelectionLine sl : lines) {
@@ -549,6 +786,9 @@ public class DashboardPdfExporter extends DashboardExporter {
                     }
                 }
             }
+
+            footerCurrentPage = targetPage;
+            footerCurrentY = currentY;
 
         } catch (Exception e) {
             throw new SpagoBIRuntimeException("Couldn't add selection information to the page", e);
@@ -691,22 +931,9 @@ public class DashboardPdfExporter extends DashboardExporter {
                     }
                 }
                 JSONObject style = getTheRightStyleByColumnIdAndValue(styles, valueStr, column.getString("id"), defaultRowBackgroundColor);
-                if (type.equalsIgnoreCase("float")) {
-                    int precision = style.optInt("precision");
-                    int pos = valueStr.indexOf(".");
-                    // offset = 0 se devo tagliare fuori anche la virgola ( in caso precision fosse 0 )
-                    int offset = (precision == 0 ? 0 : 1);
-                    if (pos != -1 && valueStr.length() >= pos + precision + offset) {
-                        try {
-                            valueStr = valueStr.substring(0, pos + precision + offset);
-                        } catch (Exception e) {
-                            // value stays as it is
-                            logger.error("Cannot format value according to precision", e);
-                        }
-                    } else {
-                        logger.warn("Cannot format value according to precision. Value: " + valueStr);
-                    }
-                }
+                JSONObject visualizationType = getVisualizationTypeByColumn(settings, column);
+                valueStr = applyVisualizationTypeToValueStr(type, style, visualizationType, valueStr);
+
                 if (type.equalsIgnoreCase("date")) {
                     try {
                         DateFormat outputDateFormat = new SimpleDateFormat(columnDateFormats[c], getLocale());
@@ -718,12 +945,8 @@ public class DashboardPdfExporter extends DashboardExporter {
                     }
                 }
                 valueStr = workaroundToRemoveCommonProblematicChars(valueStr);
-
-                JSONObject visualizationType = getVisualizationTypeByColumn(settings, column);
-                valueStr = applyVisualizationTypeToValueStr(visualizationType, valueStr);
-
                 Cell<PDPage> cell = row.createCell(columnPercentWidths[c], valueStr,
-                        HorizontalAlignment.get("center"), VerticalAlignment.get("top"));
+                        getDefaultHorizontalAlignmentForType(type), VerticalAlignment.get("top"));
 
                 cell.setFont(font);
                 // first of all set alternate rows color
@@ -745,7 +968,7 @@ public class DashboardPdfExporter extends DashboardExporter {
                     cellStyle = getCellStyleByStyleKey(styleKey, columnsCellStyles, style, defaultRowBackgroundColor);
                 }
 
-                applyStyleToCell(cellStyle, cell);
+                applyStyleToCell(cellStyle, cell, type);
 
                 // If summary row is enabled, add the summary label to the value
                 if (r == (rows.length() - 1) && summaryRowEnabled) {
@@ -761,40 +984,105 @@ public class DashboardPdfExporter extends DashboardExporter {
         }
     }
 
-    private String applyVisualizationTypeToValueStr(JSONObject visualizationType, String valueStr) throws JSONException {
+    private String applyVisualizationTypeToValueStr(String type, JSONObject style, JSONObject visualizationType, String valueStr) {
+        if (isNumericType(type)) {
+            valueStr = formatNumericValue(style, visualizationType, valueStr);
+        }
+        String prefix = visualizationType != null ? visualizationType.optString("prefix", "") : "";
+        String suffix = visualizationType != null ? visualizationType.optString("suffix", "") : "";
+        return prefix + valueStr + suffix;
+    }
 
-        if (visualizationType.has("precision")) {
-            int precision = visualizationType.getInt("precision");
-            try {
-                double numericValue = Double.parseDouble(valueStr);
-                String formatString = "%." + precision + "f";
-                valueStr = String.format(formatString, numericValue);
-            } catch (NumberFormatException e) {
-                logger.warn("Cannot apply precision to non-numeric value: " + valueStr, e);
+    private String formatNumericValue(JSONObject style, JSONObject visualizationType, String valueStr) {
+        try {
+            BigDecimal numericValue = new BigDecimal(valueStr);
+            int precision = resolvePrecision(style, visualizationType);
+            NumberFormat numberFormat = NumberFormat.getNumberInstance(getEffectiveLocale());
+            if (numberFormat instanceof DecimalFormat decimalFormat) {
+                decimalFormat.setGroupingUsed(true);
+                decimalFormat.setMinimumFractionDigits(precision);
+                decimalFormat.setMaximumFractionDigits(precision);
+                decimalFormat.setRoundingMode(RoundingMode.HALF_UP);
+            }
+            return numberFormat.format(numericValue);
+        } catch (Exception e) {
+            logger.warn("Cannot apply numeric formatting. Value: " + valueStr, e);
+            return valueStr;
+        }
+    }
+
+    private int resolvePrecision(JSONObject style, JSONObject visualizationType) {
+        if (visualizationType != null && visualizationType.has("precision")) {
+            return Math.max(0, visualizationType.optInt("precision", 0));
+        }
+        if (style != null && style.has("precision")) {
+            return Math.max(0, style.optInt("precision", 0));
+        }
+        // Keep default precision aligned with Excel exporter improvements.
+        return 0;
+    }
+
+    private Locale getEffectiveLocale() {
+        return locale != null ? locale : Locale.getDefault();
+    }
+
+    private boolean isNumericType(String type) {
+        return "float".equalsIgnoreCase(type) || "int".equalsIgnoreCase(type);
+    }
+
+    private HorizontalAlignment getDefaultHorizontalAlignmentForType(String type) {
+        return isNumericType(type) ? HorizontalAlignment.get("right") : HorizontalAlignment.get("left");
+    }
+
+    private HorizontalAlignment getHorizontalAlignmentFromStyle(Style style, String type) {
+        if (style != null && style.getJustifyContent() != null && !style.getJustifyContent().isEmpty()) {
+            String justifyContent = style.getJustifyContent().toUpperCase(Locale.ROOT);
+            if ("CENTER".equals(justifyContent)) {
+                return HorizontalAlignment.get("center");
+            }
+            if ("FLEX-END".equals(justifyContent) || "RIGHT".equals(justifyContent)) {
+                return HorizontalAlignment.get("right");
+            }
+            return HorizontalAlignment.get("left");
+        }
+        return getDefaultHorizontalAlignmentForType(type);
+    }
+
+    private VerticalAlignment getVerticalAlignmentFromStyle(Style style) {
+        if (style != null && style.getAlignItems() != null && !style.getAlignItems().isEmpty()) {
+            String alignItems = style.getAlignItems().toUpperCase(Locale.ROOT);
+            if ("CENTER".equals(alignItems)) {
+                return VerticalAlignment.get("middle");
+            }
+            if ("FLEX-END".equals(alignItems) || "BOTTOM".equals(alignItems)) {
+                return VerticalAlignment.get("bottom");
             }
         }
-
-        String prefix = visualizationType.optString("prefix", "");
-        String suffix = visualizationType.optString("suffix", "");
-        return prefix + valueStr + suffix;
+        return VerticalAlignment.get("top");
     }
 
     private void applyWholeRowStyle(int c, List<Boolean> styleCanBeOverriddenByWholeRowStyle, Row<PDPage> row, Style cellStyle) {
         for (int previousCell = c - 1; previousCell >= 0; previousCell--) {
             if (styleCanBeOverriddenByWholeRowStyle.get(previousCell).equals(Boolean.TRUE)) {
                 Cell<PDPage> cell = row.getCells().get(previousCell);
-                applyStyleToCell(cellStyle, cell);
+                applyStyleToCell(cellStyle, cell, null);
             }
         }
     }
 
-    private void applyStyleToCell(Style style, Cell<PDPage> cell) {
-        if (!style.getBackgroundColor().isEmpty()) {
-            cell.setFillColor(getJavaColorFromRGBA(style.getBackgroundColor()));
+    private void applyStyleToCell(Style style, Cell<PDPage> cell, String type) {
+        Color backgroundColor = parseJavaColor(style.getBackgroundColor());
+        if (backgroundColor != null && !isRgbColor(backgroundColor, COLOR_WHITE_COMPONENT, COLOR_WHITE_COMPONENT, COLOR_WHITE_COMPONENT)) {
+            cell.setFillColor(backgroundColor);
         }
-        if (!style.getColor().isEmpty()) {
-            cell.setTextColor(getJavaColorFromRGBA(style.getColor()));
+
+        Color textColor = parseJavaColor(style.getColor());
+        if (textColor != null && !isRgbColor(textColor, COLOR_BLACK_COMPONENT, COLOR_BLACK_COMPONENT, COLOR_BLACK_COMPONENT)) {
+            cell.setTextColor(textColor);
         }
+
+        cell.setAlign(getHorizontalAlignmentFromStyle(style, type));
+        cell.setValign(getVerticalAlignmentFromStyle(style));
     }
 
 
@@ -804,9 +1092,32 @@ public class DashboardPdfExporter extends DashboardExporter {
             cellStyle = columnsCellStyles.get(styleKey);
         } else {
             cellStyle = getStyleCustomObjFromProps(null, theRightStyle, defaultRowBackgroundColor);
+            Color styleBackgroundColor = parseJavaColor(cellStyle.getBackgroundColor());
+            if (styleBackgroundColor != null
+                    && isRgbColor(styleBackgroundColor, COLOR_WHITE_COMPONENT, COLOR_WHITE_COMPONENT, COLOR_WHITE_COMPONENT)
+                    && !stringIsEmpty(defaultRowBackgroundColor)) {
+                cellStyle.setBackgroundColor(defaultRowBackgroundColor);
+            }
             columnsCellStyles.put(styleKey, cellStyle);
         }
         return cellStyle;
+    }
+
+
+    private Color parseJavaColor(String colorStr) {
+        if (stringIsEmpty(colorStr)) {
+            return null;
+        }
+        try {
+            return getJavaColorFromRGBA(colorStr);
+        } catch (Exception e) {
+            logger.debug("Cannot parse style color '" + colorStr + "', skipping color override", e);
+            return null;
+        }
+    }
+
+    private boolean isRgbColor(Color color, int red, int green, int blue) {
+        return color.getRed() == red && color.getGreen() == green && color.getBlue() == blue;
     }
 
 
@@ -841,7 +1152,7 @@ public class DashboardPdfExporter extends DashboardExporter {
      * Create a BaseTable reserving space at the bottom for custom contents (like selections).
      * reservedSelectionLines is the number of text lines we'll draw below the table.
      */
-    private BaseTable createBaseTable(PDDocument doc, PDPage page, int reservedSelectionLines) {
+    private BaseTable createBaseTable(PDDocument doc, PDPage page, int reservedSelectionLines, float reservedTopHeight) {
         try {
             float margin = 20;
             // starting y position is whole page height subtracted by top and bottom margin
@@ -854,7 +1165,8 @@ public class DashboardPdfExporter extends DashboardExporter {
             float tableWidth = page.getMediaBox().getWidth() - (2 * margin);
             // y position is your coordinate of top left corner of the table
             Assert.assertTrue(tableWidth > 0, "Page dimension is too small!");
-            float yPosition = 550;
+            float computedYPosition = Math.min(550, getHeaderStartY(page) - reservedTopHeight);
+            float yPosition = Math.max(bottomMargin + HEADER_BOTTOM_GAP, computedYPosition);
             return new BaseTable(yPosition, yStartNewPage, bottomMargin, tableWidth, margin, doc, page, true, true);
         } catch (Exception e) {
             throw new SpagoBIRuntimeException("Cannot create PDF Base Table object:", e);
