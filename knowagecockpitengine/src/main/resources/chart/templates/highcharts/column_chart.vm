@@ -1558,7 +1558,7 @@
 
 						{
 							##drilldown: $enableDrilldown,
-							drilldown: $drilldownEnabledFlag,
+							drilldown: $enableDrilldown,
 							#if($relatedSerieType == 'arearange')
 								#if($chart.isCockpitEngine != 'false')
 									low: $row.get($serieColumnsMappedLow),
