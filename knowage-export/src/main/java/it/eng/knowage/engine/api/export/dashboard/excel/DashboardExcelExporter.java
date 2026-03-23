@@ -53,6 +53,8 @@ public class DashboardExcelExporter extends DashboardExporter {
     private static final String[] WIDGETS_TO_IGNORE = {"image", "text", "selector", "selection", "html", "static-pivot-table"};
     private static final int SHEET_NAME_MAX_LEN = 31;
     protected static final String DATE_FORMAT = "dd/MM/yyyy";
+    private static final int COLOR_WHITE_COMPONENT = 255;
+    private static final int COLOR_BLACK_COMPONENT = 0;
 
     // SCHEDULER
     private static final String CONFIG_NAME_FOR_EXPORT_SCRIPT_PATH = "internal.nodejs.chromium.export.path";
@@ -467,44 +469,35 @@ public class DashboardExcelExporter extends DashboardExporter {
 
     private void setFormattedCellValue(Workbook wb, JSONObject visualizationType, String type, Cell cell, String stringifiedValue) throws JSONException {
         CreationHelper creationHelper = wb.getCreationHelper();
-
         DateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT, getLocale());
 
         switch (type) {
             case "int":
                 if (!stringifiedValue.trim().isEmpty()) {
-                    cell.getCellStyle().setDataFormat(getFormat(visualizationType, creationHelper));
-                    if (visualizationType != null && (visualizationType.has("prefix") || visualizationType.has("suffix"))) {
-                        stringifiedValue = visualizationType.optString("prefix", "") + stringifiedValue;
-                        if (visualizationType.has("precision")) {
-                            int precision = visualizationType.getInt("precision");
-                            if (precision > 0) {
-                                stringifiedValue += "." + "0".repeat(precision);
-                            }
-                            stringifiedValue += visualizationType.optString("suffix", "");
+                    try {
+                        long longValue = Long.parseLong(stringifiedValue.trim());
+                        cell.getCellStyle().setDataFormat(buildNumericFormat(visualizationType, 0, creationHelper));
+                        cell.setCellValue(longValue);
+                    } catch (NumberFormatException e) {
+                        // value may arrive as a decimal string even for int columns
+                        try {
+                            double doubleValue = Double.parseDouble(stringifiedValue.trim());
+                            cell.getCellStyle().setDataFormat(buildNumericFormat(visualizationType, 0, creationHelper));
+                            cell.setCellValue(doubleValue);
+                        } catch (NumberFormatException e2) {
+                            cell.setCellValue(stringifiedValue);
                         }
-                        cell.setCellValue(stringifiedValue);
-                    } else {
-                        cell.setCellValue(Integer.parseInt(stringifiedValue));
                     }
                 }
                 break;
             case "float":
                 if (!stringifiedValue.trim().isEmpty()) {
-                    cell.getCellStyle().setDataFormat(getFormat(visualizationType, creationHelper));
-                    if (visualizationType != null && (visualizationType.has("prefix") || visualizationType.has("suffix"))) {
-                        if (visualizationType.has("precision")) {
-                            int precision = visualizationType.getInt("precision");
-                            double doubleValue = Double.parseDouble(stringifiedValue);
-                            double factor = Math.pow(10, precision);
-                            doubleValue = Math.round(doubleValue * factor) / factor;
-                            stringifiedValue = String.format(String.format("%%.%df", precision), doubleValue);
-                        }
-                        stringifiedValue = visualizationType.optString("prefix", "") + stringifiedValue;
-                        stringifiedValue = stringifiedValue + visualizationType.optString("suffix", "");
+                    try {
+                        double doubleValue = Double.parseDouble(stringifiedValue.trim());
+                        cell.getCellStyle().setDataFormat(buildNumericFormat(visualizationType, 0, creationHelper));
+                        cell.setCellValue(doubleValue);
+                    } catch (NumberFormatException e) {
                         cell.setCellValue(stringifiedValue);
-                    } else {
-                        cell.setCellValue(Double.parseDouble(stringifiedValue));
                     }
                 }
                 break;
@@ -546,8 +539,48 @@ public class DashboardExcelExporter extends DashboardExporter {
         }
     }
 
+    /**
+     * Builds an Excel format string that:
+     * <ul>
+     *   <li>Uses {@code #,##0} so Excel renders the <em>locale-aware</em> grouping (thousands) and
+     *       decimal separators – e.g. {@code 1,234.56} for en-US and {@code 1.234,56} for it-IT.</li>
+     *   <li>Applies the requested decimal precision.</li>
+     *   <li>Embeds prefix/suffix as Excel literal strings so the cell value stays numeric.</li>
+     * </ul>
+     */
+    private short buildNumericFormat(JSONObject visualizationType, int defaultPrecision, CreationHelper creationHelper) throws JSONException {
+        String prefix = visualizationType != null ? visualizationType.optString("prefix", "") : "";
+        String suffix = visualizationType != null ? visualizationType.optString("suffix", "") : "";
+        int precision = defaultPrecision;
+        if (visualizationType != null && visualizationType.has("precision")) {
+            precision = visualizationType.getInt("precision");
+        }
+
+        StringBuilder format = new StringBuilder();
+
+        // Prefix as an Excel literal (double-quotes inside are stripped to avoid breaking the format)
+        if (!prefix.isEmpty()) {
+            format.append("\"").append(prefix.replace("\"", "")).append("\"");
+        }
+
+        // #,##0 → grouping placeholder; Excel replaces , and . with the locale's actual separators
+        format.append("#,##0");
+        if (precision > 0) {
+            format.append(".");
+            format.append("0".repeat(precision));
+        }
+
+        // Suffix as an Excel literal
+        if (!suffix.isEmpty()) {
+            format.append("\"").append(suffix.replace("\"", "")).append("\"");
+        }
+
+        return creationHelper.createDataFormat().getFormat(format.toString());
+    }
+
     private short getFormat(JSONObject visualizationType, CreationHelper helper) throws JSONException {
-        String format = "0";
+        // Use #,##0 as the base so grouping separators are locale-aware in Excel
+        String format = "#,##0";
         if (visualizationType != null) {
             if (visualizationType.has("precision")) {
                 format = getNumberFormatByPrecision(visualizationType.getInt("precision"), format);
@@ -864,12 +897,18 @@ public class DashboardExcelExporter extends DashboardExporter {
         }
 
         if (!stringIsEmpty(style.getColor())) {
-            font.setColor(getXSSFColorFromRGBA(style.getColor()));
+            XSSFColor parsedFontColor = parseXSSFColor(style.getColor());
+            if (parsedFontColor != null && !isRgbColor(parsedFontColor, COLOR_BLACK_COMPONENT, COLOR_BLACK_COMPONENT, COLOR_BLACK_COMPONENT)) {
+                font.setColor(parsedFontColor);
+            }
         }
 
         if (!stringIsEmpty(style.getBackgroundColor())) {
-            cellStyle.setFillForegroundColor(getXSSFColorFromRGBA(style.getBackgroundColor()));
-            cellStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+            XSSFColor parsedBackgroundColor = parseXSSFColor(style.getBackgroundColor());
+            if (parsedBackgroundColor != null && !isRgbColor(parsedBackgroundColor, COLOR_WHITE_COMPONENT, COLOR_WHITE_COMPONENT, COLOR_WHITE_COMPONENT)) {
+                cellStyle.setFillForegroundColor(parsedBackgroundColor);
+                cellStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+            }
         }
 
         if (!stringIsEmpty(style.getFontFamily())) {
@@ -887,15 +926,15 @@ public class DashboardExcelExporter extends DashboardExporter {
         }
 
         if (!stringIsEmpty(style.getAlignItems())) {
-            cellStyle.setAlignment(getHorizontalAlignment(style.getAlignItems().toUpperCase()));
+            cellStyle.setVerticalAlignment(getVerticalAlignment(style.getAlignItems().toUpperCase()));
         } else {
-            cellStyle.setAlignment(HorizontalAlignment.CENTER);
+            cellStyle.setVerticalAlignment(VerticalAlignment.CENTER);
         }
 
         if (!stringIsEmpty(style.getJustifyContent())) {
-            cellStyle.setVerticalAlignment(getVerticalAlignment(style.getJustifyContent().toUpperCase()));
+            cellStyle.setAlignment(getHorizontalAlignment(style.getJustifyContent().toUpperCase()));
         } else {
-            cellStyle.setVerticalAlignment(VerticalAlignment.CENTER);
+            cellStyle.setAlignment(HorizontalAlignment.CENTER);
         }
 
         cellStyle.setFont(font);
@@ -930,12 +969,37 @@ public class DashboardExcelExporter extends DashboardExporter {
         return new XSSFColor(new java.awt.Color(red, green, blue), new DefaultIndexedColorMap());
     }
 
+    private XSSFColor parseXSSFColor(String colorStr) {
+        try {
+            return getXSSFColorFromRGBA(colorStr);
+        } catch (Exception e) {
+            LOGGER.debug("Cannot parse style color '{}', skipping color override", colorStr, e);
+            return null;
+        }
+    }
+
+    private boolean isRgbColor(XSSFColor color, int red, int green, int blue) {
+        byte[] rgb = color.getRGB();
+        return rgb != null
+                && rgb.length >= 3
+                && (rgb[0] & 0xFF) == red
+                && (rgb[1] & 0xFF) == green
+                && (rgb[2] & 0xFF) == blue;
+    }
+
     private CellStyle getCellStyleByStyleKey(Workbook wb, Sheet sheet, String styleKey, Map<String, CellStyle> columnsCellStyles, JSONObject theRightStyle, String defaultRowBackgroundColor) {
         CellStyle cellStyle;
         if (columnAlreadyHasTheRightStyle(styleKey, columnsCellStyles)) {
             cellStyle = columnsCellStyles.get(styleKey);
         } else {
             Style styleCustomObj = getStyleCustomObjFromProps(sheet, theRightStyle, defaultRowBackgroundColor);
+            // If a style explicitly asks for white background, preserve the existing row background fallback.
+            XSSFColor styleBackgroundColor = parseXSSFColor(styleCustomObj.getBackgroundColor());
+            if (styleBackgroundColor != null
+                    && isRgbColor(styleBackgroundColor, COLOR_WHITE_COMPONENT, COLOR_WHITE_COMPONENT, COLOR_WHITE_COMPONENT)
+                    && !stringIsEmpty(defaultRowBackgroundColor)) {
+                styleCustomObj.setBackgroundColor(defaultRowBackgroundColor);
+            }
             cellStyle = buildPoiCellStyle(styleCustomObj, (XSSFFont) wb.createFont(), wb);
             columnsCellStyles.put(styleKey, cellStyle);
         }

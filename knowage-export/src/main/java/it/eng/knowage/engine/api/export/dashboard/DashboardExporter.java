@@ -511,13 +511,15 @@ public class DashboardExporter {
 
     protected Locale getLocaleFromBody(JSONObject body) {
         try {
-            String language = body.getString(SpagoBIConstants.SBI_LANGUAGE);
-            String country = body.getString(SpagoBIConstants.SBI_COUNTRY);
-            return new Locale(language, country);
+            String localeTag = body.getString("locale").replace("_", "-");
+            Locale locale = Locale.forLanguageTag(localeTag);
+            if (locale.getLanguage().isEmpty()) {
+                return Locale.ENGLISH;
+            }
+            return locale;
         } catch (Exception e) {
             return Locale.ENGLISH;
         }
-
     }
 
 
@@ -744,16 +746,16 @@ public class DashboardExporter {
         return style;
     }
 
-    protected HorizontalAlignment getHorizontalAlignment(String alignItem) {
-        return switch (alignItem) {
+    protected HorizontalAlignment getHorizontalAlignment(String justifyContent) {
+        return switch (justifyContent) {
             case "CENTER" -> HorizontalAlignment.CENTER;
             case "FLEX-END" -> HorizontalAlignment.RIGHT;
             default -> HorizontalAlignment.LEFT;
         };
     }
 
-    protected VerticalAlignment getVerticalAlignment(String justifyContent) {
-        return switch (justifyContent) {
+    protected VerticalAlignment getVerticalAlignment(String alignItems) {
+        return switch (alignItems) {
             case "CENTER" -> VerticalAlignment.CENTER;
             case "FLEX-END" -> VerticalAlignment.BOTTOM;
             default -> VerticalAlignment.TOP;
@@ -1468,11 +1470,12 @@ public class DashboardExporter {
 
             for (int i = 0; i < drivers.length(); i++) {
                 JSONObject driver = drivers.getJSONObject(i);
-                String value = driver.getString("value");
-                if (value != null && !value.isEmpty()) {
+                String value = driver.optString("description");
+                boolean visible = driver.optBoolean("visible", true);
+                if (value != null && !value.isEmpty() && visible) {
                     Row newRow = sheet.createRow(j);
                     newRow.createCell(0).setCellValue(driver.getString("name"));
-                    newRow.createCell(1).setCellValue(driver.getString("value"));
+                    newRow.createCell(1).setCellValue(value);
                     j++;
                 }
             }

@@ -80,9 +80,9 @@ public class DashboardExportResource {
             JSONObject body = RestUtilities.readBodyAsJSONObject(req);
             String token = request.getHeader(TOKEN_HEADER);
             String userId = token.substring(7);
+            body.put("locale", req.getLocale());
             DashboardExcelExporter excelExporter = new DashboardExcelExporter(userId, body, OrganizationImageManager.getOrganizationB64ImageWide(TenantManager.getTenant().getName()));
             String mimeType = excelExporter.getMimeType();
-
             if (!MimeUtils.isValidMimeType(mimeType))
                 throw new SpagoBIRuntimeException("Invalid mime type: " + mimeType);
 
@@ -149,6 +149,8 @@ public class DashboardExportResource {
             JSONObject body = RestUtilities.readBodyAsJSONObject(req);
             String token = request.getHeader(TOKEN_HEADER);
             String userId = token.substring(7);
+            body.put("locale", req.getLocale());
+
             DashboardPdfExporter dashboardPdfExporter = new DashboardPdfExporter(userId, locale);
             String mimeType = dashboardPdfExporter.getMimeType();
 
