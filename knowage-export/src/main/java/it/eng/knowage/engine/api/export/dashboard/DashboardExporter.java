@@ -1019,14 +1019,11 @@ public class DashboardExporter {
         for (int j = 0; j < columns.length(); j++) {
             JSONObject column = columns.getJSONObject(j);
             if (column.getString("fieldType").equalsIgnoreCase("measure")) {
-                if (summaryRow.has("measures")) {
-                    measures = summaryRow.getJSONArray("measures");
-                    buildSummaryMeasure(column, listElement, measures);
-                } else {
+                if (!summaryRow.has("measures")) {
                     summaryRow.put("measures", new JSONArray());
-                    measures = summaryRow.getJSONArray("measures");
-                    buildSummaryMeasure(column, listElement, measures);
                 }
+                measures = summaryRow.getJSONArray("measures");
+                buildSummaryMeasure(column, listElement, measures);
             }
         }
     }
@@ -1098,6 +1095,10 @@ public class DashboardExporter {
         measure.put("columnName", column.getString("columnName"));
         measure.put("id", column.getString("alias"));
         measure.put("funct", listElement.getString("aggregation").equals("Columns Default Aggregation") ? column.getString("aggregation") : listElement.getString("aggregation"));
+        String formula = column.optString("formula");
+        if (!formula.isEmpty()) {
+            measure.put("formula", formula);
+        }
         measures.put(measure);
     }
 
