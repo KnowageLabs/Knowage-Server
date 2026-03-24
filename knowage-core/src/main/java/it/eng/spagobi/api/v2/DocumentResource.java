@@ -116,8 +116,9 @@ public class DocumentResource extends AbstractDocumentResource {
 		AnalyticalModelDocumentManagementAPI documentManager = new AnalyticalModelDocumentManagementAPI(
 				getUserProfile());
 		BIObject document = documentManager.getDocument(label);
-		if (document == null)
+		if (document == null) {
 			throw new SpagoBIRuntimeException("Document with label [" + label + "] doesn't exist");
+		}
 
 		List<BIObjectParameter> parameters = document.getDrivers();
 
@@ -159,7 +160,6 @@ public class DocumentResource extends AbstractDocumentResource {
 		return super.deleteDocument(label);
 	}
 
-	@SuppressWarnings("unchecked")
 	@GET
 	@Path("/{id}/roles")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
@@ -173,7 +173,6 @@ public class DocumentResource extends AbstractDocumentResource {
 		}
 	}
 
-	@SuppressWarnings("unchecked")
 	@GET
 	@Path("/{id}/userroles")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
@@ -265,8 +264,9 @@ public class DocumentResource extends AbstractDocumentResource {
 		AnalyticalModelDocumentManagementAPI documentManager = new AnalyticalModelDocumentManagementAPI(
 				getUserProfile());
 		BIObject document = documentManager.getDocument(label);
-		if (document == null)
+		if (document == null) {
 			throw new SpagoBIRuntimeException("Document with label [" + label + "] doesn't exist");
+		}
 
 		if (!parameter.getBiObjectID().equals(document.getId())) {
 			logger.error("[" + parameter.getBiObjectID() + "] is not the id of document with label [" + label
@@ -303,8 +303,9 @@ public class DocumentResource extends AbstractDocumentResource {
 		AnalyticalModelDocumentManagementAPI documentManager = new AnalyticalModelDocumentManagementAPI(
 				getUserProfile());
 		BIObject document = documentManager.getDocument(label);
-		if (document == null)
+		if (document == null) {
 			throw new SpagoBIRuntimeException("Document with label [" + label + "] doesn't exist");
+		}
 
 		if (!parameter.getBiObjectID().equals(document.getId())) {
 			logger.error("[" + parameter.getBiObjectID() + "] is not the id of document with label [" + label
@@ -364,20 +365,21 @@ public class DocumentResource extends AbstractDocumentResource {
 		return Response.ok().build();
 	}
 
-	@SuppressWarnings("unchecked")
 	@POST
 	@Path("{label}/content")
 	@Produces("application/pdf")
 	public Response execute(@PathParam("label") String label, @QueryParam("outputType") String outputType,
 			String body) {
 		SDKDocumentParameter[] parameters = null;
-		if (!body.isEmpty())
+		if (!body.isEmpty()) {
 			parameters = (SDKDocumentParameter[]) JsonConverter.jsonToValidObject(body, SDKDocumentParameter[].class);
+		}
 		AnalyticalModelDocumentManagementAPI documentManager = new AnalyticalModelDocumentManagementAPI(
 				getUserProfile());
 		BIObject document = documentManager.getDocument(label);
-		if (document == null)
+		if (document == null) {
 			throw new SpagoBIRuntimeException("Document with label [" + label + "] doesn't exist");
+		}
 
 		try {
 			if (ObjectsAccessVerifier.canExec(document, getUserProfile())) {
@@ -390,8 +392,9 @@ public class DocumentResource extends AbstractDocumentResource {
 				byte[] byteContent = null;
 				SDKExecutedDocumentContent content = null;
 
-				if (outputType == null || outputType.isEmpty())
+				if (outputType == null || outputType.isEmpty()) {
 					outputType = "HTML";
+				}
 
 				for (String role : roles) {
 					try {
@@ -410,12 +413,14 @@ public class DocumentResource extends AbstractDocumentResource {
 					ResponseBuilder rb = Response.ok(byteContent);
 					rb.header("Content-Disposition", "attachment; filename=" + content.getFileName());
 					return rb.build();
-				} else
+				} else {
 					throw new SpagoBIRuntimeException("User [" + getUserProfile().getUserName()
 							+ "] has no rights to execute document with label [" + label + "]");
-			} else
+				}
+			} else {
 				throw new SpagoBIRuntimeException("User [" + getUserProfile().getUserName()
 						+ "] has no rights to execute document with label [" + label + "]");
+			}
 
 		} catch (SpagoBIRuntimeException e) {
 			throw e;
@@ -531,7 +536,6 @@ public class DocumentResource extends AbstractDocumentResource {
 		}
 	}
 
-	@SuppressWarnings("unchecked")
 	@GET
 	@Path("/")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
@@ -612,10 +616,11 @@ public class DocumentResource extends AbstractDocumentResource {
 
 	private boolean isDeprecated(BIObject obj) {
 		String type = obj.getBiObjectTypeCode();
-		if (type.equalsIgnoreCase("CHART") || type.equalsIgnoreCase("DATA_MINING"))
+		if (type.equalsIgnoreCase("CHART") || type.equalsIgnoreCase("DATA_MINING")) {
 			return true;
-		else
+		} else {
 			return false;
+		}
 	}
 
 	@GET
@@ -675,16 +680,18 @@ public class DocumentResource extends AbstractDocumentResource {
 			@QueryParam("role") String role) {
 		logger.debug("IN");
 
-		List<String> values = new ArrayList<>();
+		JSONArray valuesWithDescription = new JSONArray();
 		String columnName = null;
+		String columnNameDesc = null;
 		boolean manualInput = false;
 
 		try {
 			IParameterUseDAO parameterUseDAO = DAOFactory.getParameterUseDAO();
 			ParameterUse parameterUse = parameterUseDAO.loadByParameterIdandRole(id, role);
 
-			values = new ArrayList<>();
+			valuesWithDescription = new JSONArray();
 			columnName = null;
+			columnNameDesc = null;
 
 			Integer manualInputInteger = parameterUse.getManualInput();
 			if (manualInputInteger != null) {
@@ -709,6 +716,7 @@ public class DocumentResource extends AbstractDocumentResource {
 					lovDetail = JavaClassDetail.fromXML(lovProvider);
 				}
 				columnName = lovDetail.getValueColumnName();
+				columnNameDesc = lovDetail.getDescriptionColumnName();
 
 				String result = lovDetail.getLovResult(getUserProfile(), null, null, null);
 				SourceBean rowsSourceBean = SourceBean.fromXMLString(result);
@@ -718,15 +726,19 @@ public class DocumentResource extends AbstractDocumentResource {
 					for (int i = 0; i < rows.size(); i++) {
 						SourceBean row = (SourceBean) rows.get(i);
 						String value = row.getAttribute(columnName).toString();
-						values.add(value);
+						String valueDesc = row.getAttribute(columnNameDesc).toString();
+
+						JSONObject valueWithDescription = new JSONObject();
+						valueWithDescription.put("value", value);
+						valueWithDescription.put("description", valueDesc);
+						valuesWithDescription.put(valueWithDescription);
 					}
 				}
 			}
 
 			JSONObject jo = new JSONObject();
-			jo.put("values", values);
+			jo.put("lov", valuesWithDescription);
 			jo.put("manualInput", manualInput);
-			jo.put("columnName", columnName);
 			return jo.toString();
 		} catch (Exception e) {
 			String error = "Error while getting the list of parameter values by document [" + label + "], parameter ["
