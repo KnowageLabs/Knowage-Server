@@ -970,8 +970,20 @@ public class DashboardPdfExporter extends DashboardExporter {
 
                 applyStyleToCell(cellStyle, cell, type);
 
-                // If summary row is enabled, add the summary label to the value
-                if (r == (rows.length() - 1) && summaryRowEnabled) {
+                // If summary row is enabled, apply summary style and add the summary label to the value
+                if (r >= rows.length() - numberOfSummaryRows && summaryRowEnabled) {
+                    // Apply summary row style (colors, alignment) if configured
+                    try {
+                        JSONObject styleObj = getJsonObjectUtils().getStyleFromSettings(settings);
+                        if (styleObj != null && styleObj.has("summary")) {
+                            Style summaryStyle = getStyleCustomObjFromProps(null, styleObj.getJSONObject("summary"), "");
+                            if (!styleIsEmpty(summaryStyle)) {
+                                applyStyleToCell(summaryStyle, cell, type);
+                            }
+                        }
+                    } catch (Exception e) {
+                        logger.warn("Cannot apply summary row style", e);
+                    }
                     if (isSummaryColumnVisible(getDashboardHiddenColumnsList(settings, "hideFromSummary"), column)) {
                         String label = "";
                         if (colIndex.equals("column_1")) {
