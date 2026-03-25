@@ -1396,15 +1396,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     }
     var chartTemplate = wconf.chartTemplate;
     if (chartTemplate.CHART.type == "WORDCLOUD") {
-      chartTemplate.CHART.sizeCriteria = "serie";
-      chartTemplate.CHART.wordLayout = "horizontal";
-      chartTemplate.CHART.preventOverlap = false;
-      chartTemplate.CHART.maxAngle = 0;
-      chartTemplate.CHART.minAngle = 0;
-      chartTemplate.CHART.maxFontSize = 10;
-      chartTemplate.CHART.minFontSize = 5;
-      chartTemplate.CHART.wordPadding = 2;
-      chartTemplate.CHART.maxWords = 10;
+      if (!chartTemplate.CHART.sizeCriteria) chartTemplate.CHART.sizeCriteria = "serie";
+      if (!chartTemplate.CHART.wordLayout) chartTemplate.CHART.wordLayout = "horizontal";
+      if (chartTemplate.CHART.preventOverlap === undefined) chartTemplate.CHART.preventOverlap = false;
+      if (chartTemplate.CHART.maxAngle === undefined) chartTemplate.CHART.maxAngle = 0;
+      if (chartTemplate.CHART.minAngle === undefined) chartTemplate.CHART.minAngle = 0;
+      if (chartTemplate.CHART.maxFontSize === undefined) chartTemplate.CHART.maxFontSize = 10;
+      if (chartTemplate.CHART.minFontSize === undefined) chartTemplate.CHART.minFontSize = 5;
+      if (chartTemplate.CHART.wordPadding === undefined) chartTemplate.CHART.wordPadding = 2;
+      if (!chartTemplate.CHART.maxWords) chartTemplate.CHART.maxWords = 10;
       chartTemplate.CHART.isCockpit = true;
     }
     if (chartTemplate && chartTemplate.CHART && chartTemplate.CHART.VALUES) {
