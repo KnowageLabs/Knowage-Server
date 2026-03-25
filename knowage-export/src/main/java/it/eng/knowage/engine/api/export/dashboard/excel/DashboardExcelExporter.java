@@ -834,7 +834,8 @@ public class DashboardExcelExporter extends DashboardExporter {
                         if (colIndex.equals("column_1")) {
                             label = summaryRowsLabels.get(r - (rows.length() - numberOfSummaryRows)).concat(" ");
                         }
-                        cell.setCellStyle(cellStyle);
+                        // Do NOT overwrite cell style here: it was already set correctly above
+                        // (either summaryCellStyle for configured summary style, or regular cellStyle).
                         setFormattedCellValue(wb, visualizationType, type, cell, label.concat(stringifiedValue));
                      }
                 }

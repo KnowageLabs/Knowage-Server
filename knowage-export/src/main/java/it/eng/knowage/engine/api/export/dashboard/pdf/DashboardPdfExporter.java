@@ -284,7 +284,7 @@ public class DashboardPdfExporter extends DashboardExporter {
         JSONObject styleJSONObject = getJsonObjectUtils().getStyleFromSettings(settings);
         if (settings != null && settings.has("style") && styleJSONObject.has("headers")) {
             Style style = getStyleCustomObjFromProps(null, styleJSONObject.getJSONObject("headers"), "");
-            headerCell.setFont(font);
+            headerCell.setFont(getFontForStyle(style, font));
             headerCell.setFontSize(Float.parseFloat(style.getFontSize().replace("px", "")));
             Color headerBackground = parseJavaColor(style.getBackgroundColor());
             if (headerBackground != null && !isRgbColor(headerBackground, COLOR_WHITE_COMPONENT, COLOR_WHITE_COMPONENT, COLOR_WHITE_COMPONENT)) {
@@ -363,9 +363,8 @@ public class DashboardPdfExporter extends DashboardExporter {
             float margin = HEADER_SIDE_MARGIN;
             float fontSize = HEADER_FONT_SIZE;
             float leading = HEADER_LEADING;
-            float indent = margin + 10f;
             PDPage page = footerCurrentPage != null ? footerCurrentPage : document.getPage(document.getNumberOfPages() - 1);
-            float maxTextWidth = (page.getMediaBox().getWidth() / 2f) - indent;
+            float maxTextWidth = page.getMediaBox().getWidth() - (2 * margin);
             String filtersLabel = getFiltersLabel();
             float currentY = footerCurrentY;
             float pageTopStart = page.getMediaBox().getHeight() - margin - leading;
@@ -373,6 +372,9 @@ public class DashboardPdfExporter extends DashboardExporter {
             if (currentY <= 0) {
                 currentY = getFooterStartYFromTable(table, leading);
             }
+
+            // Add space between selections and filters
+            currentY -= leading;
 
             if (currentY <= bottomLimit) {
                 page = new PDPage(page.getMediaBox());
@@ -391,10 +393,23 @@ public class DashboardPdfExporter extends DashboardExporter {
             }
 
             for (String filter : filters) {
-                List<String> wrapped = wrapText(font, fontSize, filter, maxTextWidth);
-                List<String> linesToPrint = wrapped.isEmpty() ? Collections.singletonList(filter) : wrapped;
+                // Split filter by ": " to separate key and value
+                String[] parts = filter.split(": ", 2);
+                String key = parts.length > 0 ? parts[0] : "";
+                String value = parts.length > 1 ? parts[1] : "";
 
-                for (String line : linesToPrint) {
+                // Calculate key width for underlining
+                float keyWidth = font.getStringWidth(key) / 1000f * fontSize;
+
+                // Wrap value if needed
+                float colonWidth = font.getStringWidth(": ") / 1000f * fontSize;
+                float valuesX = margin + keyWidth + colonWidth;
+                float maxValueWidth = maxTextWidth - keyWidth - colonWidth;
+
+                List<String> wrappedValues = maxValueWidth > 0 ? wrapText(font, fontSize, value, maxValueWidth) : Collections.singletonList(value);
+                List<String> linesToPrint = wrappedValues.isEmpty() ? Collections.singletonList(value) : wrappedValues;
+
+                for (int i = 0; i < linesToPrint.size(); i++) {
                     if (currentY <= bottomLimit) {
                         page = new PDPage(page.getMediaBox());
                         document.addPage(page);
@@ -404,10 +419,38 @@ public class DashboardPdfExporter extends DashboardExporter {
                     try (PDPageContentStream cs = new PDPageContentStream(document, page, PDPageContentStream.AppendMode.APPEND, true)) {
                         cs.setNonStrokingColor(Color.BLACK);
                         cs.setFont(font, fontSize);
-                        cs.beginText();
-                        cs.newLineAtOffset(indent, currentY);
-                        cs.showText(line);
-                        cs.endText();
+
+                        if (i == 0) {
+                            // First line: render key with underline, colon, and value
+                            cs.beginText();
+                            cs.newLineAtOffset(margin, currentY);
+                            cs.showText(key);
+                            cs.endText();
+
+                            // Draw underline under key
+                            float underlineY = currentY - 2.0f;
+                            cs.setLineWidth(0.5f);
+                            cs.moveTo(margin, underlineY);
+                            cs.lineTo(margin + keyWidth, underlineY);
+                            cs.stroke();
+
+                            // Render colon and value
+                            cs.beginText();
+                            cs.newLineAtOffset(margin + keyWidth, currentY);
+                            cs.showText(": ");
+                            cs.endText();
+
+                            cs.beginText();
+                            cs.newLineAtOffset(valuesX, currentY);
+                            cs.showText(linesToPrint.get(i));
+                            cs.endText();
+                        } else {
+                            // Continuation lines: just render the value
+                            cs.beginText();
+                            cs.newLineAtOffset(valuesX, currentY);
+                            cs.showText(linesToPrint.get(i));
+                            cs.endText();
+                        }
                     }
                     currentY -= leading;
                 }
@@ -970,8 +1013,20 @@ public class DashboardPdfExporter extends DashboardExporter {
 
                 applyStyleToCell(cellStyle, cell, type);
 
-                // If summary row is enabled, add the summary label to the value
-                if (r == (rows.length() - 1) && summaryRowEnabled) {
+                // If summary row is enabled, apply summary style and add the summary label to the value
+                if (r >= rows.length() - numberOfSummaryRows && summaryRowEnabled) {
+                    // Apply summary row style (colors, alignment) if configured
+                    try {
+                        JSONObject styleObj = getJsonObjectUtils().getStyleFromSettings(settings);
+                        if (styleObj != null && styleObj.has("summary")) {
+                            Style summaryStyle = getStyleCustomObjFromProps(null, styleObj.getJSONObject("summary"), "");
+                            if (!styleIsEmpty(summaryStyle)) {
+                                applyStyleToCell(summaryStyle, cell, type);
+                            }
+                        }
+                    } catch (Exception e) {
+                        logger.warn("Cannot apply summary row style", e);
+                    }
                     if (isSummaryColumnVisible(getDashboardHiddenColumnsList(settings, "hideFromSummary"), column)) {
                         String label = "";
                         if (colIndex.equals("column_1")) {
@@ -1081,8 +1136,34 @@ public class DashboardPdfExporter extends DashboardExporter {
             cell.setTextColor(textColor);
         }
 
+        // Boxable does not expose a font-weight flag, so switch to a bold/italic font when requested.
+        cell.setFont(getFontForStyle(style, PDType1Font.HELVETICA));
+
         cell.setAlign(getHorizontalAlignmentFromStyle(style, type));
         cell.setValign(getVerticalAlignmentFromStyle(style));
+    }
+
+    private boolean isBoldFontWeight(Style style) {
+        return style != null && !stringIsEmpty(style.getFontWeight()) && "bold".equalsIgnoreCase(style.getFontWeight());
+    }
+
+    private boolean isItalicFontStyle(Style style) {
+        return style != null && !stringIsEmpty(style.getFontStyle()) && "italic".equalsIgnoreCase(style.getFontStyle());
+    }
+
+    private PDFont getFontForStyle(Style style, PDFont defaultFont) {
+        boolean isBold = isBoldFontWeight(style);
+        boolean isItalic = isItalicFontStyle(style);
+
+        if (isBold && isItalic) {
+            return PDType1Font.HELVETICA_BOLD_OBLIQUE;
+        } else if (isBold) {
+            return PDType1Font.HELVETICA_BOLD;
+        } else if (isItalic) {
+            return PDType1Font.HELVETICA_OBLIQUE;
+        }
+
+        return defaultFont;
     }
 
 
@@ -1159,7 +1240,7 @@ public class DashboardPdfExporter extends DashboardExporter {
             float yStartNewPage = page.getMediaBox().getHeight() - (2 * margin);
             float baseBottomMargin = 20;
             float leading = 12f;
-            float extraGapFromTable = 6f; // gap between table and selections
+            float extraGapFromTable = 20f; // gap between table and selections
 
             float bottomMargin = baseBottomMargin + reservedSelectionLines * leading + extraGapFromTable;
             float tableWidth = page.getMediaBox().getWidth() - (2 * margin);

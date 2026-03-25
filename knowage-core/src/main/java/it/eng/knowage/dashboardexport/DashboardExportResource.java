@@ -44,7 +44,6 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 import static it.eng.knowage.commons.security.KnowageSystemConfiguration.getKnowageVueContext;
-import static it.eng.spagobi.commons.utilities.UserUtilities.getUserProfile;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 @Path("/1.0/dashboardExport")
@@ -80,7 +79,6 @@ public class DashboardExportResource {
             JSONObject body = RestUtilities.readBodyAsJSONObject(req);
             String token = request.getHeader(TOKEN_HEADER);
             String userId = token.substring(7);
-            body.put("locale", req.getLocale());
             DashboardExcelExporter excelExporter = new DashboardExcelExporter(userId, body, OrganizationImageManager.getOrganizationB64ImageWide(TenantManager.getTenant().getName()));
             String mimeType = excelExporter.getMimeType();
             if (!MimeUtils.isValidMimeType(mimeType))
@@ -144,12 +142,11 @@ public class DashboardExportResource {
     public void downloadPdf(@Context HttpServletRequest req) {
         logger.debug("IN");
         response.setCharacterEncoding(UTF_8.name());
-        Locale locale = req.getLocale();
         try {
             JSONObject body = RestUtilities.readBodyAsJSONObject(req);
+            Locale locale = getLocaleFromBody(body);
             String token = request.getHeader(TOKEN_HEADER);
             String userId = token.substring(7);
-            body.put("locale", req.getLocale());
 
             DashboardPdfExporter dashboardPdfExporter = new DashboardPdfExporter(userId, locale);
             String mimeType = dashboardPdfExporter.getMimeType();
@@ -570,6 +567,16 @@ public class DashboardExportResource {
                 .withDeviceScaleFactor(pdfDeviceScaleFactor).withIsMultiSheet(isMultiSheet).build();
         return defaultRenderOptions.withDimensions(dimensions).withJavaScriptExecutionDetails(pdfRenderingWaitTime,
                 5000L);
+    }
+
+    private Locale getLocaleFromBody(JSONObject body) {
+        try {
+            String localeTag = body.getString("locale").replace("_", "-");
+            Locale locale = Locale.forLanguageTag(localeTag);
+            return locale.getLanguage().isEmpty() ? Locale.ENGLISH : locale;
+        } catch (Exception e) {
+            return Locale.ENGLISH;
+        }
     }
 
 }
