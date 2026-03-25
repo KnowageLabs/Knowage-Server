@@ -48,14 +48,17 @@ public class ExecutionController {
 	 */
 	public boolean directExecution() {
 
-		if (biObject == null)
+		if (biObject == null) {
 			return false;
+		}
 
 		List<BIObjectParameter> biParameters = biObject.getDrivers();
-		if (biParameters == null)
+		if (biParameters == null) {
 			return false;
-		if (biParameters.isEmpty())
+		}
+		if (biParameters.isEmpty()) {
 			return true;
+		}
 
 		int countHidePar = 0;
 		Iterator<BIObjectParameter> iterPars = biParameters.iterator();
@@ -115,8 +118,9 @@ public class ExecutionController {
 					continue;
 				}
 				String parUrlName = chunks[0];
-				if (parUrlName == null || parUrlName.trim().equals(""))
+				if (parUrlName == null || parUrlName.trim().equals("")) {
 					continue;
+				}
 
 				String value = "";
 				// if the user specified the parameter value it is considered, elsewhere an empty String is considered
@@ -129,6 +133,59 @@ public class ExecutionController {
 					setBIObjectParameterDescriptions(biparameters, parUrlName, value);
 				} else {
 					setBIObjectParameterValues(biparameters, parUrlName, value);
+				}
+			}
+			obj.setDrivers(biparameters);
+		}
+	}
+
+	public void refreshParameters(BIObject obj, String userProvidedParametersStr, String userProvidedParametersStrDescription) {
+		if (userProvidedParametersStr != null) {
+			List<BIObjectParameter> biparameters = obj.getDrivers();
+			if (biparameters == null) {
+				try {
+					IBIObjectParameterDAO pardao = DAOFactory.getBIObjectParameterDAO();
+					biparameters = pardao.loadBIObjectParametersById(obj.getId());
+				} catch (Exception e) {
+					SpagoBITracer.major(SpagoBIConstants.NAME_MODULE, this.getClass().getName(), "refreshParameters",
+							"Error while loading biparameters of the biobject with id " + obj.getId());
+					return;
+				}
+			}
+			userProvidedParametersStr = JavaScript.unescape(userProvidedParametersStr);
+			userProvidedParametersStrDescription = JavaScript.unescape(userProvidedParametersStrDescription);
+			String[] userProvidedParameters = userProvidedParametersStr.split("&");
+			String[] userProvidedParametersDescription = userProvidedParametersStrDescription.split("&");
+			for (int i = 0; i < userProvidedParameters.length; i++) {
+				String[] chunks = userProvidedParameters[i].split("=");
+				String[] chunksDescription = userProvidedParametersDescription[i].split("=");
+				if (chunks == null || chunks.length > 2) {
+					SpagoBITracer.warning(ObjectsTreeConstants.NAME_MODULE, this.getClass().getName(), "refreshParameters", "User provided parameter ["
+							+ userProvidedParameters[i] + "] cannot be splitted in " + "[parameter url name=parameter value] by '=' characters.");
+					continue;
+				}
+				String parUrlName = chunks[0];
+				if (parUrlName == null || parUrlName.trim().equals("")) {
+					continue;
+				}
+
+				String value = "";
+				// if the user specified the parameter value it is considered, elsewhere an empty String is considered
+				if (chunks.length == 2) {
+					value = chunks[1];
+				}
+
+				String valueDescription = "";
+				if (chunksDescription.length == 2) {
+					valueDescription = chunksDescription[1];
+				}
+
+				if (parUrlName.endsWith("_field_visible_description")) {
+					parUrlName = parUrlName.substring(0, parUrlName.indexOf("_field_visible_description"));
+					setBIObjectParameterDescriptions(biparameters, parUrlName, value);
+				} else {
+					setBIObjectParameterValues(biparameters, parUrlName, value);
+					setBIObjectParameterDescriptions(biparameters, parUrlName, valueDescription);
 				}
 			}
 			obj.setDrivers(biparameters);

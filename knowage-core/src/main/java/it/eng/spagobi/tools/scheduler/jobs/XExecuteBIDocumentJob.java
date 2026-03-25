@@ -334,6 +334,7 @@ public class XExecuteBIDocumentJob extends AbstractSpagoBIJob implements Job {
 				logger.info("Processing document [" + (documentIndex + 1) + "] with label [" + documentLabel + "] ...");
 
 				inputParametersQueryString = jobDataMap.getString(documentInstanceName);
+				String inputParametersQueryDescription = jobDataMap.getString(documentInstanceName + "_description");
 				logger.debug("Input parameters query string for document [" + documentLabel + "] is equal to ["
 						+ inputParametersQueryString + "]");
 
@@ -349,7 +350,7 @@ public class XExecuteBIDocumentJob extends AbstractSpagoBIJob implements Job {
 				executionController.setBiObject(document);
 
 				// fill parameters
-				executionController.refreshParameters(document, inputParametersQueryString);
+				executionController.refreshParameters(document, inputParametersQueryString, inputParametersQueryDescription);
 
 				String iterativeParametersString = jobDataMap.getString(documentInstanceName + "_iterative");
 				logger.debug("Iterative parameter configuration for document [" + documentLabel + "] is equal to ["
