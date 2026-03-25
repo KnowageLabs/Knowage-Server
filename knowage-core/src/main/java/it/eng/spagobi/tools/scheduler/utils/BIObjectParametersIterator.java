@@ -156,8 +156,8 @@ public class BIObjectParametersIterator {
 					+ parameter.getParameterUrlName() + "]");
 		}
 		if (parameterValuesDescription == null) {
-			throw new IllegalStateException("Parameter values descriptions are missing for parameter ["
-					+ parameter.getParameterUrlName() + "]");
+			clone.setParameterValuesDescription(nextValue);
+			return;
 		}
 		if (parameterValues.size() != parameterValuesDescription.size()) {
 			throw new IllegalStateException("Parameter values and descriptions must have the same size for parameter ["
