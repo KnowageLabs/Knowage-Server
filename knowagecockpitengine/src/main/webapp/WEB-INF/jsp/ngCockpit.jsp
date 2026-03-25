@@ -24,6 +24,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html ng-app="cockpitModule">
 <head>
+<meta name="referrer" content="strict-origin-when-cross-origin">
 <%@include file="/WEB-INF/jsp/commons/angular/angularImport.jsp"%>
 <%@include file="/WEB-INF/jsp/commons/angular/cockpitImport.jsp"%>
 <%@include file="/WEB-INF/jsp/chart/designer/chartImport.jsp"%>
