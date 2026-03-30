@@ -42,11 +42,7 @@ public class PersistedTableHelper {
 		try {
 			if (fieldValue == null) {
 				insertStatement.setObject(fieldIndex + 1, null);
-			}
-/*			ACHTUNG ACHTUNG ACHTUNG ACHTUNG ACHTUNG !!!!!!!
-					FIX FATTA ESCLUSIVAMENTE PER KNOWAGE-9727
-			POTENZIALMENTE DISTRUTTIVA, FORSE RISOLUTIVA
-			else if (isfieldMetaFieldTypeMeasure && fieldMetaTypeName.contains("String")) {
+			} else if (isfieldMetaFieldTypeMeasure && fieldMetaTypeName.contains("String")) {
 				// in case of a measure with String type, convert it into a Double
 				try {
 					LOGGER.debug("Column type is string but the field is measure: converting it into a double");
@@ -76,8 +72,7 @@ public class PersistedTableHelper {
 							"An unexpected error occured while converting to double measure field [" + fieldMetaName + "] whose value is [" + fieldValue + "]",
 							t);
 				}
-			} */
-			else if (fieldMetaTypeName.contains("String")) {
+			} else if (fieldMetaTypeName.contains("String")) {
 				Integer lenValue = (fieldValue == null) ? new Integer("0") : fieldValue.toString().length();
 				Integer prevValue = columnSizes.get(fieldMetaName) == null ? 0 : columnSizes.get(fieldMetaName);
 				if (lenValue > prevValue) {
@@ -91,8 +86,7 @@ public class PersistedTableHelper {
 				} else {
 					insertStatement.setString(fieldIndex + 1, (String) fieldValue);
 				}
-			}
-			else if (fieldMetaTypeName.contains("Date")) {
+			} else if (fieldMetaTypeName.contains("Date")) {
 				if (fieldValue instanceof java.sql.Date) {
 					insertStatement.setDate(fieldIndex + 1, (Date) fieldValue);
 				} else if (fieldValue instanceof java.util.Date) {
