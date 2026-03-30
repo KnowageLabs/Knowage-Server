@@ -154,6 +154,12 @@ public class ExecutionController {
 			}
 			userProvidedParametersStr = JavaScript.unescape(userProvidedParametersStr);
 			userProvidedParametersStrDescription = JavaScript.unescape(userProvidedParametersStrDescription);
+			if (userProvidedParametersStrDescription == null) {
+				userProvidedParametersStrDescription = "";
+			}
+            if (userProvidedParametersStr == null) {
+                userProvidedParametersStr = "";
+            }
 			String[] userProvidedParameters = userProvidedParametersStr.split("&");
 			String[] userProvidedParametersDescription = userProvidedParametersStrDescription.split("&");
 			for (int i = 0; i < userProvidedParameters.length; i++) {
