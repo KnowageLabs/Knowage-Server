@@ -183,7 +183,7 @@ public class DashboardPdfExporter extends DashboardExporter {
 
                 if (offset >= totalNumberOfRows) {
                     createSelectionsRows(table, font, selections);
-                    createFiltersInformationRow(table, font, driversFromBody, parametersFromBody);
+                    createFiltersInformationRow(table, font, driversFromBody);
                 }
 
             } while (offset < totalNumberOfRows);
@@ -352,9 +352,9 @@ public class DashboardPdfExporter extends DashboardExporter {
         }
     }
 
-    private void createFiltersInformationRow(BaseTable table, PDFont font, JSONArray driversFromBody, JSONArray parametersFromBody) {
+    private void createFiltersInformationRow(BaseTable table, PDFont font, JSONArray driversFromBody) {
         try {
-            List<String> filters = extractFilters(driversFromBody, parametersFromBody);
+            List<String> filters = extractFilters(driversFromBody);
             if (filters.isEmpty()) {
                 return;
             }
@@ -463,7 +463,7 @@ public class DashboardPdfExporter extends DashboardExporter {
         }
     }
 
-    private List<String> extractFilters(JSONArray driversFromBody, JSONArray parametersFromBody) {
+    private List<String> extractFilters(JSONArray driversFromBody) {
         Set<String> filters = new LinkedHashSet<>();
 
         if (driversFromBody != null) {
@@ -475,20 +475,6 @@ public class DashboardPdfExporter extends DashboardExporter {
                 String name = firstNonEmpty(driver.optString("label"), driver.optString("name"), driver.optString("urlName"));
                 String value = extractFilterValue(driver);
                 if (!stringIsEmpty(name) && !stringIsEmpty(value)) {
-                    filters.add(name + ": " + value);
-                }
-            }
-        }
-
-        if (parametersFromBody != null) {
-            for (int i = 0; i < parametersFromBody.length(); i++) {
-                JSONObject parameter = parametersFromBody.optJSONObject(i);
-                if (parameter == null) {
-                    continue;
-                }
-                String name = firstNonEmpty(parameter.optString("label"), parameter.optString("name"), parameter.optString("urlName"));
-                String value = extractFilterValue(parameter);
-                if (!stringIsEmpty(name) && !stringIsEmpty(value) && !"null".equalsIgnoreCase(value)) {
                     filters.add(name + ": " + value);
                 }
             }
