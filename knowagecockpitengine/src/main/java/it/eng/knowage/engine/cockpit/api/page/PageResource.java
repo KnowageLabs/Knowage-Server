@@ -485,7 +485,7 @@ public class PageResource extends AbstractCockpitEngineResource {
 	private String getRequestUrlWithViewHandling(String documentLabel) {
 		URIBuilder externalUrl = getExternalUrl(documentLabel);
 
-		externalUrl.setPath(getKnowageVueContext() + "/workspace/dashboard-view/" + documentLabel);
+		externalUrl.setPath(getKnowageVueContext() + "/workspace/cockpit-view/" + documentLabel);
 
 		request.getParameterMap().forEach((k, v) -> {
 
