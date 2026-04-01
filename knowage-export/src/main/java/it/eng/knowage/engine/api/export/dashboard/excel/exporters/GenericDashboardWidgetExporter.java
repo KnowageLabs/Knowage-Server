@@ -35,7 +35,7 @@ class GenericDashboardWidgetExporter extends DashboardExporter implements IWidge
     Workbook wb;
     JSONObject widget;
     String documentName;
-    Map<String, Map<String, JSONArray>> selections;
+    Map<String, Map<String, Object>> selections;
     JSONObject drivers;
     JSONObject parameters;
 
@@ -43,7 +43,7 @@ class GenericDashboardWidgetExporter extends DashboardExporter implements IWidge
                                           Workbook wb,
                                           JSONObject widget,
                                           String documentName,
-                                          Map<String, Map<String, JSONArray>> selections,
+                                          Map<String, Map<String, Object>> selections,
                                           JSONObject drivers,
                                           JSONObject parameters,
                                           String userUniqueIdentifier,

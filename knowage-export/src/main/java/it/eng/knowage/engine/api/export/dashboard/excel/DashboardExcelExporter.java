@@ -207,7 +207,7 @@ public class DashboardExcelExporter extends DashboardExporter {
         try (Workbook wb = new SXSSFWorkbook(windowSize)) {
 
             int exportedSheets = 0;
-            Map<String, Map<String, JSONArray>> selections = getSelections(body);
+            Map<String, Map<String, Object>> selections = getSelections(body);
 
             JSONArray driversFromBody = getDrivers(body);
             JSONObject drivers = transformDriversForDatastore(driversFromBody);
@@ -229,7 +229,7 @@ public class DashboardExcelExporter extends DashboardExporter {
 
             if (selectionsCfg.isPresent() && selectionsCfg.get().isActive() && Boolean.parseBoolean(selectionsCfg.get().getValueCheck()) && !selections.isEmpty()) {
                 Sheet selectionsSheet = createUniqueSafeSheetForSelections(wb, "Active Selections");
-                fillDashboardSelectionsSheetWithData(selections, selectionsSheet);
+                fillDashboardSelectionsSheetWithData(getSelections(body), selectionsSheet);
                 exportedSheets++;
             }
 
@@ -272,7 +272,7 @@ public class DashboardExcelExporter extends DashboardExporter {
             throw new SpagoBIRuntimeException("Unable to get template for dashboard");
         }
         try {
-            Map<String, Map<String, JSONArray>> selections = getSelections(body);
+            Map<String, Map<String, Object>> selections = getSelections(body);
 
             JSONArray driversFromBody = getDrivers(body);
             JSONObject drivers = transformDriversForDatastore(driversFromBody);
@@ -290,7 +290,7 @@ public class DashboardExcelExporter extends DashboardExporter {
 
             if (selectionsCfg.isPresent() && selectionsCfg.get().isActive() && Boolean.parseBoolean(selectionsCfg.get().getValueCheck()) && !selections.isEmpty()) {
                 Sheet selectionsSheet = createUniqueSafeSheetForSelections(wb, "Active Selections");
-                fillDashboardSelectionsSheetWithData(selections, selectionsSheet);
+                fillDashboardSelectionsSheetWithData(getSelections(body), selectionsSheet);
             }
 
             Optional<Config> driversConfig = configsDao.loadConfigParametersByLabelIfExist(CONFIG_NAME_FOR_DRIVERS_SHEET_EXPORT);
@@ -334,7 +334,7 @@ public class DashboardExcelExporter extends DashboardExporter {
         }
     }
 
-    private int exportDashboard(JSONArray widgetsArray, Workbook wb, String documentName, Map<String, Map<String, JSONArray>> selections, JSONObject drivers, JSONArray parameters) {
+    private int exportDashboard(JSONArray widgetsArray, Workbook wb, String documentName, Map<String, Map<String, Object>> selections, JSONObject drivers, JSONArray parameters) {
         int exportedSheets = 0;
         for (int i = 0; i < widgetsArray.length(); i++) {
             try {
@@ -373,7 +373,7 @@ public class DashboardExcelExporter extends DashboardExporter {
         }
     }
 
-    public int exportWidget(JSONObject body, Workbook wb, String documentName, Map<String, Map<String, JSONArray>> selections, JSONObject drivers, JSONArray parameters) {
+    public int exportWidget(JSONObject body, Workbook wb, String documentName, Map<String, Map<String, Object>> selections, JSONObject drivers, JSONArray parameters) {
 
         int exportedSheets;
         try {
@@ -392,7 +392,7 @@ public class DashboardExcelExporter extends DashboardExporter {
         return exportedSheets;
     }
 
-    public Workbook exportPivotWidget(JSONObject body, String documentName, Map<String, Map<String, JSONArray>> selections, JSONObject drivers, JSONArray parameters) {
+    public Workbook exportPivotWidget(JSONObject body, String documentName, Map<String, Map<String, Object>> selections, JSONObject drivers, JSONArray parameters) {
         try {
             JSONObject parametersToSend = transformParametersForDatastore(body, parameters);
             if (excelExportIsNotEnabled(body)) {

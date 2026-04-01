@@ -29,7 +29,7 @@ public class DashboardPivotExporter extends GenericDashboardWidgetExporter imple
 
     public static Logger logger = Logger.getLogger(DashboardPivotExporter.class);
 
-    public DashboardPivotExporter(DashboardExcelExporter excelExporter, JSONObject widget, String documentName, Map<String, Map<String, JSONArray>> selections, JSONObject drivers, JSONObject parameters, String userUniqueIdentifier, String imageB64) {
+    public DashboardPivotExporter(DashboardExcelExporter excelExporter, JSONObject widget, String documentName, Map<String, Map<String, Object>> selections, JSONObject drivers, JSONObject parameters, String userUniqueIdentifier, String imageB64) {
         super(excelExporter, null, widget, documentName, selections, drivers, parameters, userUniqueIdentifier, imageB64);
     }
 
@@ -46,6 +46,9 @@ public class DashboardPivotExporter extends GenericDashboardWidgetExporter imple
                 String imageB64 = OrganizationImageManager.getOrganizationB64ImageWide(TenantManager.getTenant().getName());
 
                 int totalNumberOfRows = dataStore.getInt("results");
+                if (totalNumberOfRows == 0) {
+                    return null;
+                }
                 XSSFWorkbook xssfWorkbook = new XSSFWorkbook();
                 XSSFSheet xssfSheet = xssfWorkbook.createSheet("Source_sheet");
 

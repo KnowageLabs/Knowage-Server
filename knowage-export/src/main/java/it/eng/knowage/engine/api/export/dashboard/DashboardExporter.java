@@ -2,7 +2,6 @@ package it.eng.knowage.engine.api.export.dashboard;
 
 import it.eng.knowage.commons.multitenant.OrganizationImageManager;
 import it.eng.knowage.engine.api.export.ExporterClient;
-import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.IDashboardThemeDAO;
 import it.eng.spagobi.commons.metadata.SbiDashboardTheme;
@@ -179,17 +178,14 @@ public class DashboardExporter {
         drivers.put(urlName, values);
     }
 
-    protected Map<String, Map<String, JSONArray>> getSelections(JSONObject body) {
+    protected Map<String, Map<String, Object>> getSelections(JSONObject body) {
         try {
-            Map<String, Map<String, JSONArray>> selectionsToReturn = new HashMap<>();
+            Map<String, Map<String, Object>> selectionsToReturn = new HashMap<>();
             if (body.has("selections") && body.getJSONArray("selections").length() > 0) {
                 for (int i = 0; i < body.getJSONArray("selections").length(); i++) {
                     JSONObject selection = body.getJSONArray("selections").getJSONObject(i);
                     if (!selectionsToReturn.containsKey(selection.getString("datasetLabel"))) {
                         selectionsToReturn.put(selection.getString("datasetLabel"), new HashMap<>());
-                    }
-                    if (!selectionsToReturn.get(selection.getString("datasetLabel")).containsKey(selection.getString("columnName"))) {
-                        selectionsToReturn.get(selection.getString("datasetLabel")).put(selection.getString("columnName"), new JSONArray());
                     }
                     loopOverSelectionValues(selection, selectionsToReturn);
                 }
@@ -200,7 +196,12 @@ public class DashboardExporter {
         }
     }
 
-    private void loopOverSelectionValues(JSONObject selection, Map<String, Map<String, JSONArray>> selectionsToReturn) throws JSONException {
+    private void loopOverSelectionValues(JSONObject selection, Map<String, Map<String, Object>> selectionsToReturn) throws JSONException {
+        Map<String, Object> datasetSelections = selectionsToReturn.get(selection.getString("datasetLabel"));
+        String columnName = selection.getString("columnName");
+        Object existingSelection = datasetSelections.get(columnName);
+
+        JSONArray clickValues = new JSONArray();
         for (int j = 0; j < selection.getJSONArray("value").length(); j++) {
             String valueToInsert;
             try {
@@ -208,8 +209,59 @@ public class DashboardExporter {
             } catch (JSONException e) {
                 valueToInsert = "('" + selection.getJSONArray("value").getInt(j) + "')";
             }
-            selectionsToReturn.get(selection.getString("datasetLabel")).get(selection.getString("columnName")).put(valueToInsert);
+            clickValues.put(valueToInsert);
         }
+
+        if (existingSelection instanceof JSONObject existingFilterObject) {
+            if ("IN".equals(existingFilterObject.optString("filterOperator"))) {
+                // Existing is a click filter — merge the new values into its filterVals
+                JSONArray existingVals = existingFilterObject.optJSONArray("filterVals");
+                if (existingVals == null) {
+                    existingVals = new JSONArray();
+                    existingFilterObject.put("filterVals", existingVals);
+                }
+                for (int i = 0; i < clickValues.length(); i++) {
+                    existingVals.put(clickValues.opt(i));
+                }
+            } else {
+                // Existing is a column filter (non-IN) — combine click strings + column filter into a JSONArray
+                JSONArray mixedValues = new JSONArray();
+                for (int i = 0; i < clickValues.length(); i++) {
+                    mixedValues.put(clickValues.opt(i));
+                }
+                mixedValues.put(existingFilterObject);
+                datasetSelections.put(columnName, mixedValues);
+            }
+            return;
+        }
+
+        if (existingSelection instanceof JSONArray existingSelectionArray) {
+            // Mix of click strings and possibly an embedded column filter object
+            JSONObject embeddedFilter = null;
+            JSONArray mergedValues = new JSONArray();
+            for (int i = 0; i < existingSelectionArray.length(); i++) {
+                Object currentValue = existingSelectionArray.opt(i);
+                if (currentValue instanceof JSONObject currentObject && currentObject.has("filterVals")) {
+                    embeddedFilter = currentObject;
+                } else {
+                    mergedValues.put(currentValue);
+                }
+            }
+            for (int i = 0; i < clickValues.length(); i++) {
+                mergedValues.put(clickValues.opt(i));
+            }
+            if (embeddedFilter != null) {
+                mergedValues.put(embeddedFilter);
+            }
+            datasetSelections.put(columnName, mergedValues);
+            return;
+        }
+
+        // No existing selection — store as a filter object {filterOperator: "IN", filterVals: [...]}
+        JSONObject clickFilterObject = new JSONObject();
+        clickFilterObject.put("filterOperator", "IN");
+        clickFilterObject.put("filterVals", clickValues);
+        datasetSelections.put(columnName, clickFilterObject);
     }
 
     public JSONArray getParametersFromBody(JSONObject body) {
@@ -801,18 +853,19 @@ public class DashboardExporter {
     }
 
 
-    public JSONObject getDataStoreforDashboardSingleWidget(JSONObject singleWidget, Map<String, Map<String, JSONArray>> selections, JSONObject drivers, JSONObject parameters) {
+    public JSONObject getDataStoreforDashboardSingleWidget(JSONObject singleWidget, Map<String, Map<String, Object>> selections, JSONObject drivers, JSONObject parameters) {
         return getDataStoreForDashboardWidget(singleWidget, 0, -1, selections, drivers, parameters);
     }
 
 
-    public JSONObject getDataStoreForDashboardWidget(JSONObject widget, int offset, int fetchSize, Map<String, Map<String, JSONArray>> selections, JSONObject drivers, JSONObject parameters) {
+    public JSONObject getDataStoreForDashboardWidget(JSONObject widget, int offset, int fetchSize, Map<String, Map<String, Object>> selections, JSONObject drivers, JSONObject parameters) {
         Map<String, Object> map = new HashMap<>();
         JSONObject datastore;
         try {
             Integer datasetId = Integer.valueOf(widget.optString("dataset"));
             IDataSet dataset = DAOFactory.getDataSetDAO().loadDataSetById(datasetId);
             String datasetLabel = dataset.getLabel();
+            Map<String, Map<String, Object>> effectiveSelections = cloneSelections(selections);
 
             JSONObject dashboardSelections;
             if (widget.getString("type").equalsIgnoreCase("static-pivot-table")) {
@@ -821,7 +874,8 @@ public class DashboardExporter {
                 dashboardSelections = getDashboardAggregations(widget, datasetLabel);
             }
 
-            dashboardSelections.put("selections", selections);
+            enrichSelectionsWithColumnFilters(widget, datasetLabel, effectiveSelections);
+            dashboardSelections.put("selections", effectiveSelections);
             dashboardSelections.put("parameters", parameters);
             dashboardSelections.put("drivers", drivers);
 
@@ -843,6 +897,180 @@ public class DashboardExporter {
                     + "] [id=" + widget.optLong("id") + "]", e);
         }
         return datastore;
+    }
+
+    private Map<String, Map<String, Object>> cloneSelections(Map<String, Map<String, Object>> selections) throws JSONException {
+        Map<String, Map<String, Object>> clonedSelections = new HashMap<>();
+        if (selections == null || selections.isEmpty()) {
+            return clonedSelections;
+        }
+
+        for (Map.Entry<String, Map<String, Object>> datasetEntry : selections.entrySet()) {
+            Map<String, Object> clonedDatasetSelections = new HashMap<>();
+            Map<String, Object> datasetSelections = datasetEntry.getValue();
+            if (datasetSelections != null) {
+                for (Map.Entry<String, Object> selectionEntry : datasetSelections.entrySet()) {
+                    clonedDatasetSelections.put(selectionEntry.getKey(), cloneSelectionValue(selectionEntry.getValue()));
+                }
+            }
+            clonedSelections.put(datasetEntry.getKey(), clonedDatasetSelections);
+        }
+
+        return clonedSelections;
+    }
+
+    private Object cloneSelectionValue(Object value) throws JSONException {
+        if (value instanceof JSONObject jsonObject) {
+            return new JSONObject(jsonObject.toString());
+        }
+        if (value instanceof JSONArray jsonArray) {
+            return new JSONArray(jsonArray.toString());
+        }
+        return value;
+    }
+
+    private void enrichSelectionsWithColumnFilters(JSONObject widget, String datasetLabel, Map<String, Map<String, Object>> selections) throws JSONException {
+        Map<String, Object> datasetSelections = selections.computeIfAbsent(datasetLabel, key -> new HashMap<>());
+        if (widget.optString("type").equalsIgnoreCase("static-pivot-table")) {
+            JSONObject fields = widget.optJSONObject("fields");
+            if (fields != null) {
+                for (String fieldKey : new String[]{"columns", "rows", "data", "filters"}) {
+                    applyColumnFiltersFromArray(fields.optJSONArray(fieldKey), datasetSelections);
+                }
+            }
+        } else {
+            applyColumnFiltersFromArray(widget.optJSONArray("columns"), datasetSelections);
+        }
+    }
+
+    private void applyColumnFiltersFromArray(JSONArray columns, Map<String, Object> datasetSelections) throws JSONException {
+        if (columns == null || columns.length() == 0) {
+            return;
+        }
+
+        for (int i = 0; i < columns.length(); i++) {
+            JSONObject column = columns.optJSONObject(i);
+            if (column == null) {
+                continue;
+            }
+            JSONObject filter = column.optJSONObject("filter");
+            if (filter == null || !filter.optBoolean("enabled", false)) {
+                continue;
+            }
+
+            String columnName = column.optString("columnName");
+            if (columnName.isEmpty() || filter.isNull("value")) {
+                continue;
+            }
+
+            String operator = filter.optString("operator", "IN");
+            
+            JSONArray filterValues = new JSONArray();
+            Object filterValueObject = filter.opt("value");
+            if (filterValueObject instanceof JSONArray filterValuesArray) {
+                // Multiple values as JSON array
+                for (int j = 0; j < filterValuesArray.length(); j++) {
+                    Object currentVal = filterValuesArray.opt(j);
+                    if (currentVal == null || JSONObject.NULL.equals(currentVal)) {
+                        continue;
+                    }
+                    String valueStr = String.valueOf(currentVal).trim();
+                    if (!valueStr.isEmpty()) {
+                        filterValues.put("('" + valueStr + "')");
+                    }
+                }
+            } else {
+                // Single value or comma-separated string
+                String valueStr = String.valueOf(filterValueObject);
+                if (valueStr.contains(",")) {
+                    // Split by comma and trim each value
+                    String[] values = valueStr.split(",");
+                    for (String val : values) {
+                        String trimmedVal = val.trim();
+                        if (!trimmedVal.isEmpty()) {
+                            filterValues.put("('" + trimmedVal + "')");
+                        }
+                    }
+                } else {
+                    String trimmedVal = valueStr.trim();
+                    if (!trimmedVal.isEmpty()) {
+                        filterValues.put("('" + trimmedVal + "')");
+                    }
+                }
+            }
+
+            // Ignore empty filters to avoid overriding valid filters with defaults like IN + ('').
+            if (filterValues.length() == 0) {
+                continue;
+            }
+
+            JSONObject filterObject = new JSONObject();
+            filterObject.put("filterOperator", operator);
+            filterObject.put("filterVals", filterValues);
+
+            Object existingSelection = datasetSelections.get(columnName);
+            if (existingSelection instanceof JSONObject existingClickFilter
+                    && "IN".equals(existingClickFilter.optString("filterOperator"))) {
+                // Existing is a click filter object — unfold its filterVals as plain strings and append the column filter
+                JSONArray mergedSelection = new JSONArray();
+                JSONArray clickVals = existingClickFilter.optJSONArray("filterVals");
+                if (clickVals != null) {
+                    for (int j = 0; j < clickVals.length(); j++) {
+                        mergedSelection.put(clickVals.opt(j));
+                    }
+                }
+                mergedSelection.put(filterObject);
+                datasetSelections.put(columnName, mergedSelection);
+            } else if (existingSelection instanceof JSONArray existingSelectionArray) {
+                // Keep click values and a single embedded filter object.
+                JSONArray mergedSelection = new JSONArray();
+                for (int j = 0; j < existingSelectionArray.length(); j++) {
+                    Object currentValue = existingSelectionArray.opt(j);
+                    if (currentValue instanceof JSONObject currentObject && currentObject.has("filterVals")) {
+                        continue;
+                    }
+                    mergedSelection.put(currentValue);
+                }
+                mergedSelection.put(filterObject);
+                datasetSelections.put(columnName, mergedSelection);
+            } else {
+                datasetSelections.put(columnName, filterObject);
+            }
+        }
+    }
+
+    private JSONArray extractSelectionValuesForDisplay(Object selectionValue) {
+        JSONArray values = new JSONArray();
+        if (selectionValue == null) {
+            return values;
+        }
+
+        if (selectionValue instanceof JSONObject selectionObject) {
+            JSONArray filterValues = selectionObject.optJSONArray("filterVals");
+            if (filterValues != null) {
+                for (int i = 0; i < filterValues.length(); i++) {
+                    values.put(String.valueOf(filterValues.opt(i)));
+                }
+            }
+            return values;
+        }
+
+        if (selectionValue instanceof JSONArray selectionArray) {
+            for (int i = 0; i < selectionArray.length(); i++) {
+                Object currentValue = selectionArray.opt(i);
+                if (currentValue instanceof JSONObject currentObject && currentObject.has("filterVals")) {
+                    JSONArray filterValues = currentObject.optJSONArray("filterVals");
+                    if (filterValues != null) {
+                        for (int j = 0; j < filterValues.length(); j++) {
+                            values.put(String.valueOf(filterValues.opt(j)));
+                        }
+                    }
+                } else {
+                    values.put(String.valueOf(currentValue));
+                }
+            }
+        }
+        return values;
     }
 
     protected boolean isSolrDataset(IDataSet dataSet) {
@@ -1360,7 +1588,7 @@ public class DashboardExporter {
         }
     }
 
-    public void fillDashboardSelectionsSheetWithData(Map<String, Map<String, JSONArray>> selections, Sheet selectionsSheet) {
+    public void fillDashboardSelectionsSheetWithData(Map<String, Map<String, Object>> selections, Sheet selectionsSheet) {
         try {
             int startRow = 0;
             float rowHeight = 35; // in points
@@ -1404,17 +1632,18 @@ public class DashboardExporter {
 
             int j = headerIndex + 2;
 
-            for (Map.Entry<String, Map<String, JSONArray>> entry : selections.entrySet()) {
+            for (Map.Entry<String, Map<String, Object>> entry : selections.entrySet()) {
                 String datasetLabel = entry.getKey();
-                Map<String, JSONArray> datasetSelections = entry.getValue();
-                for (Map.Entry<String, JSONArray> datasetSelection : datasetSelections.entrySet()) {
+                Map<String, Object> datasetSelections = entry.getValue();
+                for (Map.Entry<String, Object> datasetSelection : datasetSelections.entrySet()) {
+
                     String columnName = datasetSelection.getKey();
-                    JSONArray values = datasetSelection.getValue();
+                    JSONArray values = extractSelectionValuesForDisplay(datasetSelection.getValue());
                     for (int i = 0; i < values.length(); i++) {
                         Row newRow = selectionsSheet.createRow(j);
                         newRow.createCell(0).setCellValue(datasetLabel);
                         newRow.createCell(1).setCellValue(columnName);
-                        newRow.createCell(2).setCellValue(values.getString(i));
+                        newRow.createCell(2).setCellValue(String.valueOf(values.opt(i)));
                         j++;
                     }
                 }
@@ -1523,8 +1752,6 @@ public class DashboardExporter {
             return null;
         }
     }
-
-
 
 
 }
