@@ -72,7 +72,7 @@ public class DashboardPdfExporter extends DashboardExporter {
             throw new SpagoBIRuntimeException("Unable to get template for dashboard");
         }
 
-        Map<String, Map<String, JSONArray>> selections = getSelections(template);
+        Map<String, Map<String, Object>> selections = getSelections(template);
 
         JSONArray driversFromBody = getDrivers(template);
         JSONArray parametersFromBody = getParametersFromBody(template);
@@ -95,7 +95,7 @@ public class DashboardPdfExporter extends DashboardExporter {
         }
     }
 
-    private void exportTableWidget(PDDocument document, JSONObject widget, String widgetId, String executionUser, Map<String, Map<String, JSONArray>> selections, JSONObject drivers, JSONObject parameters, JSONArray driversFromBody, JSONArray parametersFromBody) {
+    private void exportTableWidget(PDDocument document, JSONObject widget, String widgetId, String executionUser, Map<String, Map<String, Object>> selections, JSONObject drivers, JSONObject parameters, JSONArray driversFromBody, JSONArray parametersFromBody) {
         try {
             JSONObject settings = widget.optJSONObject("settings");
 
@@ -182,7 +182,7 @@ public class DashboardPdfExporter extends DashboardExporter {
                 table.draw();
 
                 if (offset >= totalNumberOfRows) {
-                    createSelectionsRows(table, font, selections);
+                    createSelectionsRows(table, font, getSelections(widget));
                     createFiltersInformationRow(table, font, driversFromBody);
                 }
 
@@ -192,15 +192,15 @@ public class DashboardPdfExporter extends DashboardExporter {
         }
     }
 
-    private static int getReservedSelectionLines(Map<String, Map<String, JSONArray>> selections) {
+    private static int getReservedSelectionLines(Map<String, Map<String, Object>> selections) {
         if (selections == null || selections.isEmpty()) {
             return 0;
         }
 
         // Count the actual number of selections
         int selectionCount = 0;
-        for (Map.Entry<String, Map<String, JSONArray>> datasetEntry : selections.entrySet()) {
-            Map<String, JSONArray> selectionContent = datasetEntry.getValue();
+        for (Map.Entry<String, Map<String, Object>> datasetEntry : selections.entrySet()) {
+            Map<String, Object> selectionContent = datasetEntry.getValue();
             if (selectionContent != null && !selectionContent.isEmpty()) {
                 selectionCount += selectionContent.size();
             }
@@ -601,7 +601,7 @@ public class DashboardPdfExporter extends DashboardExporter {
         return tableStartY - tableHeight - leading;
     }
 
-    private void createSelectionsRows(BaseTable table, PDFont font, Map<String, Map<String, JSONArray>> selections) {
+    private void createSelectionsRows(BaseTable table, PDFont font, Map<String, Map<String, Object>> selections) {
         try {
             footerCurrentPage = table.getCurrentPage();
             footerCurrentY = getFooterStartYFromTable(table, 12f);
@@ -634,13 +634,14 @@ public class DashboardPdfExporter extends DashboardExporter {
 
             java.util.List<SelectionLine> lines = new java.util.ArrayList<>();
 
-            for (Map.Entry<String, Map<String, JSONArray>> datasetEntry : selections.entrySet()) {
-                Map<String, JSONArray> selectionContent = datasetEntry.getValue();
+            for (Map.Entry<String, Map<String, Object>> datasetEntry : selections.entrySet()) {
+                Map<String, Object> selectionContent = datasetEntry.getValue();
                 if (selectionContent == null || selectionContent.isEmpty()) {
                     continue;
                 }
 
-                for (Map.Entry<String, JSONArray> columnEntry : selectionContent.entrySet()) {
+                for (Map.Entry<String, Object> columnEntry : selectionContent.entrySet()) {
+
                     String key = columnEntry.getKey();
                     key = key.replace("('", "").replace("')", "");
 
@@ -824,8 +825,8 @@ public class DashboardPdfExporter extends DashboardExporter {
         }
     }
 
-    private static @NonNull StringBuilder getValues(Map.Entry<String, JSONArray> columnEntry) {
-        JSONArray valuesArray = columnEntry.getValue();
+    private static @NonNull StringBuilder getValues(Map.Entry<String, Object> columnEntry) {
+        JSONArray valuesArray = getFilterValues(columnEntry.getValue());
 
         StringBuilder values = new StringBuilder();
         if (valuesArray != null) {
@@ -836,6 +837,30 @@ public class DashboardPdfExporter extends DashboardExporter {
             }
         }
         return values;
+    }
+
+    private static JSONArray getFilterValues(Object selectionValue) {
+        if (selectionValue instanceof JSONObject filterObject) {
+            return filterObject.optJSONArray("filterVals");
+        }
+        if (selectionValue instanceof JSONArray valuesArray) {
+            JSONArray flattenedValues = new JSONArray();
+            for (int i = 0; i < valuesArray.length(); i++) {
+                Object item = valuesArray.opt(i);
+                if (item instanceof JSONObject embeddedFilter) {
+                    JSONArray embeddedFilterValues = embeddedFilter.optJSONArray("filterVals");
+                    if (embeddedFilterValues != null) {
+                        for (int j = 0; j < embeddedFilterValues.length(); j++) {
+                            flattenedValues.put(embeddedFilterValues.opt(j));
+                        }
+                    }
+                } else {
+                    flattenedValues.put(item);
+                }
+            }
+            return flattenedValues;
+        }
+        return null;
     }
 
     /**
@@ -1297,5 +1322,6 @@ public class DashboardPdfExporter extends DashboardExporter {
         valueStr = valueStr.replace('\t', ' ');
         return valueStr;
     }
+
 
 }
