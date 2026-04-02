@@ -551,12 +551,6 @@ public class XExecuteBIDocumentJob extends AbstractSpagoBIJob implements Job {
 							} else {
 								fileExtension = MimeUtils.getFileExtension(mimeType);
 							}
-							// Dossier engine returns application/octet-stream which maps to "dms": force pptx
-							if ("dms".equals(fileExtension) && document.getEngine() != null
-									&& document.getEngine().getLabel() != null
-									&& document.getEngine().getLabel().toLowerCase().contains("dossier")) {
-								fileExtension = "pptx";
-							}
 
 							long end = System.currentTimeMillis();
 							long elapsed = (end - start) / 1000;
