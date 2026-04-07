@@ -829,7 +829,16 @@ public class ProcessKpiJob extends AbstractSuspendableJob {
 				Object theQuarter = ifNull(temporalValues.get("QUARTER"), CARDINALITY_ALL);
 				Object theYear = ifNull(temporalValues.get("YEAR"), CARDINALITY_ALL);
 
-				String evalSql = "SELECT COALESCE((" + parsedKpi.formula.replaceAll("\\bM(\\d+)\\b", ":M$1") + "), 0) AS V FROM dual";
+				// Replace measure references (M0, M1, …) with named SQL parameters (:M0, :M1, …)
+				String transformedFormula = parsedKpi.formula.replaceAll("\\bM(\\d+)\\b", ":M$1");
+				// Validate formula to prevent SQL injection (Sonar S2077):
+				// once measure parameters are removed, only arithmetic operators (+, -, *, /),
+				// numeric literals, parentheses, dots and whitespace are allowed.
+				String formulaResidue = transformedFormula.replaceAll(":M\\d+", "");
+				if (!formulaResidue.matches("[\\s\\d+\\-*/.()]*")) {
+					throw new KpiComputationException("Invalid KPI formula: contains disallowed characters: " + parsedKpi.formula);
+				}
+				String evalSql = "SELECT COALESCE((" + transformedFormula + "), 0) AS V FROM dual";
 				SQLQuery q = session.createSQLQuery(evalSql);
 
 				for (int m = 0; m < parsedKpi.measures.size(); m++) {
