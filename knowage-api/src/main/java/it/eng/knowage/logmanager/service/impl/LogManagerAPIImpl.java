@@ -283,12 +283,12 @@ public class LogManagerAPIImpl implements LogManagerAPI {
             } else {
                 File directory = Files.createTempDirectory("knowage-logmanager-").toFile();
                 File file = Files.createTempFile("knowage-logmanager-", ".zip").toFile();
-                directory.setReadable(true);
-                directory.setWritable(true);
-                directory.setExecutable(true);
-                file.setReadable(true);
-                file.setWritable(true);
-                file.setExecutable(true);
+                directory.setReadable(true, true);
+                directory.setWritable(true, true);
+                directory.setExecutable(true, true);
+                file.setReadable(true, true);
+                file.setWritable(true, true);
+                file.setExecutable(true, true);
                 tempDirectory = directory.toPath();
                 tempLog = file.toPath();
             }

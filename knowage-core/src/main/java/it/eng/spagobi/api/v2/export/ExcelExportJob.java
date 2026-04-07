@@ -22,9 +22,13 @@ import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.attribute.FileAttribute;
+import java.nio.file.attribute.PosixFilePermission;
+import java.nio.file.attribute.PosixFilePermissions;
 import java.sql.ResultSetMetaData;
 import java.sql.Timestamp;
 import java.util.*;
+import org.apache.commons.lang3.SystemUtils;
 
 public class ExcelExportJob extends AbstractExportJob {
 	private static final Logger LOGGER = Logger.getLogger(ExcelExportJob.class);
@@ -37,39 +41,45 @@ public class ExcelExportJob extends AbstractExportJob {
 
 	@Override
 	protected void export(JobExecutionContext context) throws JobExecutionException {
-		OutputStream exportFileOS = getDataOutputStream();
-		Path spillFile = null;
 
-		try {
-			IDataSet dataSet = getDataSet();
-			IMetaData dataSetMetadata = dataSet.getMetadata();
+        Path spillFile = null;
+        try (OutputStream exportFileOS = getDataOutputStream()) {
+            spillFile = null;
+            IDataSet dataSet = getDataSet();
+            IMetaData dataSetMetadata = dataSet.getMetadata();
 
-			spillFile = Files.createTempFile("excel-export-", ".tsv");
+            if (SystemUtils.IS_OS_UNIX) {
+                FileAttribute<Set<PosixFilePermission>> attr = PosixFilePermissions.asFileAttribute(PosixFilePermissions.fromString("rw-------"));
+                spillFile = Files.createTempFile("excel-export-", ".tsv", attr);
+            } else {
+                File f = Files.createTempFile("excel-export-", ".tsv").toFile();
+                f.setReadable(true, true);
+                f.setWritable(true, true);
+                spillFile = f.toPath();
+            }
 
-			// Phase 1: DB read -> TSV spill (holds pool connection only here)
-			List<IFieldMetaData> filteredMetadata;
-			filteredMetadata = spillToTsvAndCloseIterator(dataSet, dataSetMetadata, spillFile);
+            // Phase 1: DB read -> TSV spill (holds pool connection only here)
+            List<IFieldMetaData> filteredMetadata;
+            filteredMetadata = spillToTsvAndCloseIterator(dataSet, dataSetMetadata, spillFile);
 
-			// Phase 2: TSV -> XLSX (no DB connection held)
-			writeXlsxFromTsv(exportFileOS, dataSet.getLabel(), filteredMetadata, spillFile);
+            // Phase 2: TSV -> XLSX (no DB connection held)
+            writeXlsxFromTsv(exportFileOS, dataSet.getLabel(), filteredMetadata, spillFile);
 
-			exportFileOS.flush();
-		} catch (Exception e) {
-			String msg = String.format("Error writing data file `%s`\\!", getDataFile());
-			LOGGER.error(msg, e);
-			throw new JobExecutionException(msg, e);
-		} finally {
-			try {
-				if (exportFileOS != null) exportFileOS.close();
-			} catch (IOException ignored) {}
+            exportFileOS.flush();
+        } catch (Exception e) {
+            String msg = String.format("Error writing data file `%s`\\!", getDataFile());
+            LOGGER.error(msg, e);
+            throw new JobExecutionException(msg, e);
+        } finally {
 
-			if (spillFile != null) {
-				try {
-					Files.deleteIfExists(spillFile);
-				} catch (IOException ignored) {}
-			}
-		}
-	}
+            if (spillFile != null) {
+                try {
+                    Files.deleteIfExists(spillFile);
+                } catch (IOException ignored) {
+                }
+            }
+        }
+    }
 
 	private List<IFieldMetaData> spillToTsvAndCloseIterator(IDataSet dataSet, IMetaData dataSetMetadata, Path spillFile) throws Exception {
 		DataIterator iterator = null;
