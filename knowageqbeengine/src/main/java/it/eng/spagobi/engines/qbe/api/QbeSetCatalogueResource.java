@@ -276,8 +276,7 @@ public class QbeSetCatalogueResource extends AbstractQbeEngineResource {
 							try {
 								serialized = mapper.writeValueAsString(ambiguousFields);
 							} catch (JsonProcessingException e) {
-								// TODO Auto-generated catch block
-								e.printStackTrace();
+								logger.debug(e);
 							}
 						}
 						// update the roles in the query if exists ambiguous paths
@@ -305,8 +304,7 @@ public class QbeSetCatalogueResource extends AbstractQbeEngineResource {
 						try {
 							serializedQueryErrors = mapper.writeValueAsString(queryErrors);
 						} catch (JsonProcessingException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
+							logger.debug(e);
 						}
 	
 						// String queryString = buildQueryString(getDataSource(), query);
