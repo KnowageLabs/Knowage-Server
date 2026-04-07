@@ -18,6 +18,7 @@
 package it.eng.spagobi.tools.dataset.persist;
 
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -29,6 +30,9 @@ import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.attribute.FileAttribute;
+import java.nio.file.attribute.PosixFilePermission;
+import java.nio.file.attribute.PosixFilePermissions;
 import java.security.SecureRandom;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -50,6 +54,7 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.zip.GZIPOutputStream;
 
+import org.apache.commons.lang3.SystemUtils;
 import org.apache.log4j.Logger;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -172,11 +177,11 @@ public class PersistedTableManager implements IPersistedManager {
 		try (DataIterator iterator = dataSet.iterator()) {
 			createTable(iterator.getMetaData(), datasource);
 
-			tempCsv = Files.createTempFile("doris_streamload_", ".csv");
+			tempCsv = createSecureTempFile("doris_streamload_", ".csv");
 			LOGGER.debug("Serializing dataset to CSV: " + tempCsv);
 			serializeIteratorToCsvStreaming(iterator, tempCsv);
 
-			gzPath = Files.createTempFile("doris_streamload_", ".csv.gz");
+			gzPath = createSecureTempFile("doris_streamload_", ".csv.gz");
 			LOGGER.debug("Compressing CSV to GZIP: " + gzPath);
 			gzipFile(tempCsv, gzPath);
 
@@ -311,6 +316,23 @@ public class PersistedTableManager implements IPersistedManager {
 		try (var in = Files.newInputStream(src); var out = new GZIPOutputStream(Files.newOutputStream(dst))) {
 			in.transferTo(out);
 			// GZIPOutputStream chiude l'header/CRC su close()
+		}
+	}
+
+	/**
+	 * Creates a temp file with owner-only permissions (rw-------  on Unix,
+	 * owner-only read/write on Windows) to avoid publicly writable temp files.
+	 */
+	private Path createSecureTempFile(String prefix, String suffix) throws IOException {
+		if (SystemUtils.IS_OS_UNIX) {
+			FileAttribute<Set<PosixFilePermission>> attr =
+					PosixFilePermissions.asFileAttribute(PosixFilePermissions.fromString("rw-------"));
+			return Files.createTempFile(prefix, suffix, attr);
+		} else {
+			File f = Files.createTempFile(prefix, suffix).toFile();
+			f.setReadable(true, true);
+			f.setWritable(true, true);
+			return f.toPath();
 		}
 	}
 
@@ -725,11 +747,11 @@ public class PersistedTableManager implements IPersistedManager {
 			try {
 				createTable(datastore.getMetaData(), datasource);
 
-				tempCsv = Files.createTempFile("doris_streamload_", ".csv");
+				tempCsv = createSecureTempFile("doris_streamload_", ".csv");
 				LOGGER.debug("Serializing dataset to CSV: " + tempCsv);
 				serializeIteratorToCsvStreaming(datastore.getRecords(), tempCsv);
 
-				gzPath = Files.createTempFile("doris_streamload_", ".csv.gz");
+				gzPath = createSecureTempFile("doris_streamload_", ".csv.gz");
 				LOGGER.debug("Compressing CSV to GZIP: " + gzPath);
 				gzipFile(tempCsv, gzPath);
 
