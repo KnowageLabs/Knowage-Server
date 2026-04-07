@@ -60,11 +60,13 @@ public class DashboardExcelExporter extends DashboardExporter {
     private static final String CONFIG_NAME_FOR_EXPORT_SCRIPT_PATH = "internal.nodejs.chromium.export.path";
     private static final String CONFIG_NAME_FOR_DRIVERS_SHEET_EXPORT = "DASHBOARD.EXPORT.SHOW_DRIVERS_SHEET";
     private static final String CONFIG_NAME_FOR_SELECTIONS_SHEET_EXPORT = "DASHBOARD.EXPORT.SHOW_SELECTIONS_SHEET";
+    private static final String CONFIG_NAME_FOR_DISABLE_STYLE = "DASHBOARD.XLSX.EXPORT.DISABLE_STYLE";
     private static final String SCRIPT_NAME = "cockpit-export-xls.js";
     private static final String DOCUMENT_NAME = "";
     private String role;
     private String requestURL = "";
     private String organization = "";
+    private boolean disableBasicStyle = false;
 
 
     private final boolean isSingleWidgetExport;
@@ -213,6 +215,12 @@ public class DashboardExcelExporter extends DashboardExporter {
             JSONObject drivers = transformDriversForDatastore(driversFromBody);
             JSONArray parameters = getParametersFromBody(body);
 
+            IConfigDAO configsDao = DAOFactory.getSbiConfigDAO();
+            Optional<Config> disableStyleCfg = configsDao.loadConfigParametersByLabelIfExist(CONFIG_NAME_FOR_DISABLE_STYLE);
+            if (disableStyleCfg.isPresent() && disableStyleCfg.get().isActive()) {
+                this.disableBasicStyle = Boolean.parseBoolean(disableStyleCfg.get().getValueCheck());
+            }
+
             if (isDashboardSingleWidgetExport) {
                 if (body.has("datasetDrivers") && body.getJSONArray("datasetDrivers") != null && body.getJSONArray("datasetDrivers").length() > 0) {
                     exportedSheets = exportWidget(body, wb, null, selections, transformDriversForDatastore(body.getJSONArray("datasetDrivers")), parameters);
@@ -224,7 +232,7 @@ public class DashboardExcelExporter extends DashboardExporter {
                 exportedSheets += exportDashboard(widgetsJson, wb, getDocumentName(body), selections, drivers, parameters);
             }
 
-            IConfigDAO configsDao = DAOFactory.getSbiConfigDAO();
+
             Optional<Config> selectionsCfg = configsDao.loadConfigParametersByLabelIfExist(CONFIG_NAME_FOR_SELECTIONS_SHEET_EXPORT);
 
             if (selectionsCfg.isPresent() && selectionsCfg.get().isActive() && Boolean.parseBoolean(selectionsCfg.get().getValueCheck()) && !selections.isEmpty()) {
@@ -286,6 +294,7 @@ public class DashboardExcelExporter extends DashboardExporter {
             }
 
             IConfigDAO configsDao = DAOFactory.getSbiConfigDAO();
+
             Optional<Config> selectionsCfg = configsDao.loadConfigParametersByLabelIfExist(CONFIG_NAME_FOR_SELECTIONS_SHEET_EXPORT);
 
             if (selectionsCfg.isPresent() && selectionsCfg.get().isActive() && Boolean.parseBoolean(selectionsCfg.get().getValueCheck()) && !selections.isEmpty()) {
@@ -728,7 +737,12 @@ public class DashboardExcelExporter extends DashboardExporter {
         JSONObject styleJSONObject = getJsonObjectUtils().getStyleFromSettings(settings);
         if (settings != null && settings.has("style") && styleJSONObject.has("headers")) {
             Style style = getStyleCustomObjFromProps(sheet, styleJSONObject.getJSONObject("headers"), "");
-            headerCellStyle = buildPoiCellStyle(style, font, wb);
+            headerCellStyle = disableBasicStyle
+                    ? buildAlignmentOnlyCellStyle(style, wb)
+                    : buildPoiCellStyle(style, font, wb);
+        } else if (disableBasicStyle) {
+            // no configured header alignment: preserve LEFT/CENTER default without bold or font
+            headerCellStyle = buildAlignmentOnlyCellStyle(new Style(), wb);
         } else {
             headerCellStyle = buildCellStyle(sheet, true, HorizontalAlignment.LEFT, VerticalAlignment.CENTER, (short) 11);
         }
@@ -769,7 +783,7 @@ public class DashboardExcelExporter extends DashboardExporter {
         Map<String, JSONArray> columnStylesMap = getStylesMap(settings);
         Map<String, CellStyle> columnsCellStyles = new HashMap<>();
         CellStyle cellStyle = null;
-        JSONObject alternatedRows = getRowStyle(settings);
+        JSONObject alternatedRows = disableBasicStyle ? null : getRowStyle(settings);
         for (int r = 0; r < rows.length(); r++) {
             JSONObject rowObject = rows.getJSONObject(r);
             Row row;
@@ -801,7 +815,7 @@ public class DashboardExcelExporter extends DashboardExporter {
             String stringifiedValue = value != null ? value.toString() : "";
 
             String styleKey;
-            if (r >= rows.length() - numberOfSummaryRows && !styleIsEmpty(getStyleCustomObjFromProps(sheet, settings.getJSONObject("style").getJSONObject("summary"), ""))) {
+            if (!disableBasicStyle && r >= rows.length() - numberOfSummaryRows && !styleIsEmpty(getStyleCustomObjFromProps(sheet, settings.getJSONObject("style").getJSONObject("summary"), ""))) {
                 CellStyle summaryCellStyle = buildPoiCellStyle(getStyleCustomObjFromProps(sheet, settings.getJSONObject("style").getJSONObject("summary"), ""), (XSSFFont) wb.createFont(), wb);
                 cell.setCellStyle(summaryCellStyle);
             } else {
@@ -820,7 +834,12 @@ public class DashboardExcelExporter extends DashboardExporter {
                     cellStyle = columnsCellStyles.get(styleKeyToApplyToTheEntireRow);
                 } else {
                     styleKey = getStyleKey(column, theRightStyle, rawCurrentNumberType);
-                    cellStyle = getCellStyleByStyleKey(wb, sheet, styleKey, columnsCellStyles, theRightStyle, defaultRowBackgroundColor);
+                    if (disableBasicStyle && styleCanBeOverridden(theRightStyle)) {
+                        // Static style with basic-style disabled: keep only alignment, drop colors and fonts
+                        cellStyle = getAlignmentOnlyCellStyleByKey(wb, sheet, styleKey, columnsCellStyles, theRightStyle);
+                    } else {
+                        cellStyle = getCellStyleByStyleKey(wb, sheet, styleKey, columnsCellStyles, theRightStyle, defaultRowBackgroundColor);
+                    }
                 }
                 cell.setCellStyle(cellStyle);
             }
@@ -939,6 +958,36 @@ public class DashboardExcelExporter extends DashboardExporter {
         }
 
         cellStyle.setFont(font);
+        return cellStyle;
+    }
+
+    /**
+     * Builds a cell style containing only horizontal and vertical alignment – no colors, no fonts.
+     * Used when {@code disableBasicStyle} is {@code true} for static (non-conditional) styles.
+     * Alignment is set ONLY when explicitly configured; otherwise POI/Excel defaults apply
+     * (GENERAL horizontal = right for numbers, left for text; BOTTOM vertical).
+     */
+    private CellStyle buildAlignmentOnlyCellStyle(Style style, Workbook wb) {
+        CellStyle cellStyle = wb.createCellStyle();
+        if (!stringIsEmpty(style.getAlignItems())) {
+            cellStyle.setVerticalAlignment(getVerticalAlignment(style.getAlignItems().toUpperCase()));
+        }
+        if (!stringIsEmpty(style.getJustifyContent())) {
+            cellStyle.setAlignment(getHorizontalAlignment(style.getJustifyContent().toUpperCase()));
+        }
+        return cellStyle;
+    }
+
+    /** Cached lookup for alignment-only styles, keyed the same way as full styles. */
+    private CellStyle getAlignmentOnlyCellStyleByKey(Workbook wb, Sheet sheet, String styleKey,
+                                                     Map<String, CellStyle> columnsCellStyles,
+                                                     JSONObject theRightStyle) {
+        if (columnAlreadyHasTheRightStyle(styleKey, columnsCellStyles)) {
+            return columnsCellStyles.get(styleKey);
+        }
+        Style styleObj = getStyleCustomObjFromProps(sheet, theRightStyle, "");
+        CellStyle cellStyle = buildAlignmentOnlyCellStyle(styleObj, wb);
+        columnsCellStyles.put(styleKey, cellStyle);
         return cellStyle;
     }
 
