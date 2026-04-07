@@ -439,6 +439,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				$scope.addAllLayers();
 				$scope.setZoomControl();
 				$scope.setScaleControl();
+				$scope.setAttributionControl();
 				$scope.setMouseWheelZoomInteraction();
 				$scope.setMapSize();
 			}
@@ -1134,6 +1135,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 			$scope.setZoomControl();
 			$scope.setScaleControl();
+			$scope.setAttributionControl();
 			$scope.setMouseWheelZoomInteraction();
 
 			$scope.setMapView();
@@ -1949,6 +1951,17 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			} else {
 				$scope.scaleControl = undefined;
 			}
+		}
+
+		$scope.setAttributionControl = function() {
+
+			if ($scope.attributionControl) {
+				$scope.map.removeControl($scope.attributionControl);
+				$scope.attributionControl = undefined;
+			}
+
+			$scope.attributionControl = new ol.control.Attribution({ collapsible: false });
+			$scope.map.addControl($scope.attributionControl);
 		}
 
 		$scope.setMouseWheelZoomInteraction = function() {
