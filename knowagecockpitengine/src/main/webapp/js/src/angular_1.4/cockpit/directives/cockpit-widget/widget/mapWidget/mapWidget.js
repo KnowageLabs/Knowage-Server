@@ -1960,7 +1960,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				$scope.attributionControl = undefined;
 			}
 
-			$scope.attributionControl = new ol.control.Attribution({ collapsible: false });
+			var el = document.createElement('div');
+			el.style.cssText = 'position:absolute;bottom:0.4em;right:0.4em;background:rgba(255,255,255,0.8);padding:2px 6px;font-size:0.7em;border-radius:2px;z-index:100;line-height:1.5;pointer-events:auto;';
+			el.innerHTML = '\u00a9 <a href="https://www.openstreetmap.org/copyright" target="_blank" style="color:#333;text-decoration:none;">OpenStreetMap</a>';
+
+			$scope.attributionControl = new ol.control.Control({ element: el });
 			$scope.map.addControl($scope.attributionControl);
 		}
 
