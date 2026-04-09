@@ -153,11 +153,11 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 		if (role != null && !role.isEmpty()) {
             LOGGER.debug("role for document execution: {}", role);
 		} else {
-			if (userProfile.getRoles().size() == 1) {
+			if (!userProfile.getRoles().isEmpty()) {
 				role = userProfile.getRoles().iterator().next();
-                LOGGER.debug("profile role for document execution: {}", role);
+				LOGGER.debug("profile role for document execution: {}", role);
 			} else {
-                LOGGER.debug("missing role for document execution, role:{}", role);
+				LOGGER.debug("missing role for document execution, role:{}", role);
 				throw new SpagoBIRuntimeException("Missing role for document execution");
 			}
 		}
