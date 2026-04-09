@@ -17,20 +17,23 @@
  */
 package it.eng.spagobi.api.v3;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.*;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import it.eng.spagobi.analiticalmodel.document.DocumentExecutionUtils;
+import it.eng.spagobi.analiticalmodel.document.handlers.DocumentRuntime;
+import it.eng.spagobi.analiticalmodel.document.handlers.DriversRuntimeLoaderFactory;
+import it.eng.spagobi.utilities.rest.RestUtilities;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.json.JSONException;
@@ -78,10 +81,10 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 
 	private static final String SCHEDULER_USER_ID_PREFIX = "scheduler";
 
-	@GET
+	@POST
 	@Path("/{id}/templates")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-	public JSONObject getDocumentTemplates(@PathParam("id") Integer id) throws JSONException, EMFInternalError {
+	public JSONObject getDocumentTemplates(@PathParam("id") Integer id, @Context HttpServletRequest request) throws JSONException, EMFInternalError, IOException {
 		LOGGER.debug("IN");
 
 		UserProfile userProfile = getUserProfile();
@@ -90,6 +93,12 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 			LOGGER.error(message);
 			throw new SpagoBIRuntimeException(message);
 		}
+
+		JSONObject jsonRequest = RestUtilities.readBodyAsJSONObject(request);
+
+		String role = jsonRequest.getString("role");
+		String label = jsonRequest.getString("label");
+		JSONObject parameters = jsonRequest.optJSONObject("parameters");
 
 		byte[] temp;
 		JSONObject jsonTemplate;
@@ -109,12 +118,51 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 			Assert.assertNotNull(document, "Document can not be null");
 			Assert.assertNotNull(documentTemplate, "Document Template can not be null");
 			jsonTemplate = new JSONObject(new String(temp));
+
+			String executingRole = getExecutionRole(role);
+
+			BIObject obj = DriversRuntimeLoaderFactory.getDriversRuntimeLoader()
+					.loadBIObjectForExecutionByLabelAndRole(label, executingRole);
+
+			DocumentRuntime dum = new DocumentRuntime(this.getUserProfile(), getLocale());
+			if (parameters != null) {
+				dum.refreshParametersValues(parameters, false, obj);
+			}
+
+			List errorList = DocumentExecutionUtils.handleNormalExecutionError(this.getUserProfile(), obj, executingRole, getLocale());
+
+			if (!errorList.isEmpty()) {
+				String errors = ((List<EMFUserError>) errorList).stream()
+						.map(EMFUserError::getDescription)
+						.collect(Collectors.joining(", "));
+				String message = "Error(s) occurred while loading document for execution: " + errors;
+				LOGGER.error(message);
+				throw new SpagoBIRuntimeException(message);
+			}
+
 		} catch (EMFUserError e) {
 			LOGGER.debug("Could not get content from template", e);
 			throw new SpagoBIRestServiceException("Could not get content from template", buildLocaleFromSession(), e);
 		}
 		LOGGER.debug("OUT");
 		return jsonTemplate;
+	}
+
+	protected String getExecutionRole(String role) throws EMFInternalError {
+		UserProfile userProfile = getUserProfile();
+		if (role != null && !role.isEmpty()) {
+            LOGGER.debug("role for document execution: {}", role);
+		} else {
+			if (userProfile.getRoles().size() == 1) {
+				role = userProfile.getRoles().iterator().next();
+                LOGGER.debug("profile role for document execution: {}", role);
+			} else {
+                LOGGER.debug("missing role for document execution, role:{}", role);
+				throw new SpagoBIRuntimeException("Missing role for document execution");
+			}
+		}
+
+		return role;
 	}
 
 	@GET

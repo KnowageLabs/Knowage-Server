@@ -260,12 +260,23 @@ public class DocumentExecutionUtils {
 	public static <T extends IDrivableBIResource<? extends AbstractDriver>> List handleNormalExecutionError(
 			UserProfile profile, T obj, HttpServletRequest req, String env, String role, String modality,
 			JSONObject parametersJson, Locale locale) { // isFromCross,
+		return getDriversErrors(profile, obj, role, locale);
+	}
+
+	public static <T extends IDrivableBIResource<? extends AbstractDriver>> List handleNormalExecutionError(
+			UserProfile profile, T obj, String role, Locale locale) { // isFromCross,
+		return getDriversErrors(profile, obj, role, locale);
+	}
+
+
+
+	private static <T extends IDrivableBIResource<? extends AbstractDriver>> List getDriversErrors(UserProfile profile, T obj, String role, Locale locale) {
 		Monitor handleNormalExecutionErrorMonitor = MonitorFactory
 				.start("Knowage.DocumentExecutionResource.handleNormalExecutionError");
 
 		DocumentRuntime dum = new DocumentRuntime(profile, locale);
 		DriversValidationAPI validation = new DriversValidationAPI(profile, locale);
-		List errors = null;
+		List errors;
 		try {
 			errors = validation.getParametersErrors(obj, role, dum);
 		} catch (Exception e) {

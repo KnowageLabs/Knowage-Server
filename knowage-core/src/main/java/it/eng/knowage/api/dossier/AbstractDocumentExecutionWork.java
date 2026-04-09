@@ -1,50 +1,6 @@
 package it.eng.knowage.api.dossier;
 
-import static it.eng.spagobi.commons.constants.ConfigurationConstants.SPAGOBI_SPAGOBI_SERVICE_JNDI;
-import static org.apache.commons.lang3.StringUtils.isEmpty;
-
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.FileWriter;
-import java.io.FilenameFilter;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Base64;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
-
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-
-import it.eng.spagobi.engines.config.bo.Engine;
-import it.eng.spagobi.engines.config.dao.IEngineDAO;
-import it.eng.spagobi.engines.config.metadata.SbiEngines;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.http.client.utils.URIBuilder;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.owasp.esapi.Encoder;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import commonj.work.Work;
 import it.eng.knowage.api.dossier.utils.FileUtilities;
 import it.eng.knowage.commons.security.KnowageSystemConfiguration;
@@ -67,6 +23,8 @@ import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.commons.utilities.ObjectsAccessVerifier;
 import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
 import it.eng.spagobi.dossier.dao.ISbiDossierActivityDAO;
+import it.eng.spagobi.engines.config.bo.Engine;
+import it.eng.spagobi.engines.config.dao.IEngineDAO;
 import it.eng.spagobi.tenant.Tenant;
 import it.eng.spagobi.tenant.TenantManager;
 import it.eng.spagobi.tools.massiveExport.dao.IProgressThreadDAO;
@@ -75,6 +33,25 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.view.dao.ISbiViewDAO;
 import it.eng.spagobi.view.metadata.SbiView;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.http.client.utils.URIBuilder;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.owasp.esapi.Encoder;
+
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import java.io.*;
+import java.net.URISyntaxException;
+import java.util.*;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
+
+import static it.eng.spagobi.commons.constants.ConfigurationConstants.SPAGOBI_SPAGOBI_SERVICE_JNDI;
+import static org.apache.commons.lang3.StringUtils.isEmpty;
 
 public class AbstractDocumentExecutionWork extends DossierExecutionClient implements Work {
 
@@ -350,45 +327,6 @@ public class AbstractDocumentExecutionWork extends DossierExecutionClient implem
 			}
 			zis.closeEntry();
 		}
-
-//		// array of supported extensions (use a List if you prefer)
-//		String[] extensions = new String[] { "gif", "png", "bmp" // and other formats you need
-//		};
-//		// filter to identify images based on their extensions
-//		FilenameFilter imageFilter = (dir, name) -> {
-//			for (final String ext : extensions) {
-//				if (name.endsWith("." + ext) && name.startsWith("sheet")) {
-//					return (true);
-//				}
-//			}
-//			return (false);
-//		};
-//
-//		String documentLabel = reportToUse.getLabel();
-//
-//		if (outFolder.isDirectory()) {
-//			for (final File f : outFolder.listFiles(imageFilter)) {
-//
-//				try {
-//
-//					File to = FileUtilities.createFile(FilenameUtils.removeExtension(documentLabel + "_" + f.getName()),
-//							".png", randomKey, new ArrayList<>());
-//
-//					FileUtils.copyFile(f, to);
-//					if (reportToUse.getImageName().contains(FilenameUtils.removeExtension(f.getName()))) {
-//						imagesMap.put(reportToUse.getImageName(), to.getAbsolutePath());
-//					} else {
-//						imagesMap.put(reportToUse.getImageName() + "_" + f.getName(), to.getAbsolutePath());
-//					}
-//
-//					FileUtils.deleteQuietly(f);
-//
-//				} catch (final IOException e) {
-//					// handle errors here
-//				}
-//			}
-//
-//		}
 	}
 
 	public static File newFile(File destinationDir, ZipEntry zipEntry) throws IOException {

@@ -94,7 +94,7 @@ public class DriversValidationAPI {
 			logger.debug("Evaluating errors for driver " + driver.getLabel() + " ...");
 			List errorsOnChecks = getValidationErrorsOnChecks(driver);
 			List values = driver.getParameterValues();
-			if (driver.isRequired() && (values == null || values.isEmpty() || normalizeList(values).size() == 0)) {
+			if (driver.isRequired() && (values == null || values.isEmpty() || normalizeList(values).isEmpty())) {
 				EMFValidationError error = SpagoBIValidationImpl.validateField(driver.getParameterUrlName(),
 						driver.getLabel(), null, "MANDATORY", null, null, null);
 				errorsOnChecks.add(error);
