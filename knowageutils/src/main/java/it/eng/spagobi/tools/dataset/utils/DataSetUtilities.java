@@ -437,7 +437,27 @@ public class DataSetUtilities {
                                         .format(java.time.format.DateTimeFormatter.ofPattern(JSONDataWriter.CACHE_TIMESTAMP_FORMAT));
                                 result = Timestamp.valueOf(formattedValue);
                             } catch (DateTimeParseException | IllegalArgumentException ex3) {
-                                throw new SpagoBIRuntimeException(ex3);
+                                // Caused by: java.time.format.DateTimeParseException: Text '28/12/2015' could not be parsed at index 0
+                                // try dd/MM/yyyy format
+                                try {
+                                    LocalDate localDate = LocalDate.parse(value,
+                                            java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+                                    String formattedValue = localDate.atStartOfDay()
+                                            .format(java.time.format.DateTimeFormatter.ofPattern(JSONDataWriter.CACHE_TIMESTAMP_FORMAT));
+                                    result = Timestamp.valueOf(formattedValue);
+                                } catch (DateTimeParseException | IllegalArgumentException ex4) {
+                                    // Caused by: java.time.format.DateTimeParseException: Text '12/28/2015' could not be parsed
+                                    // try MM/dd/yyyy format
+                                    try {
+                                        LocalDate localDate = LocalDate.parse(value,
+                                                java.time.format.DateTimeFormatter.ofPattern("MM/dd/yyyy"));
+                                        String formattedValue = localDate.atStartOfDay()
+                                                .format(java.time.format.DateTimeFormatter.ofPattern(JSONDataWriter.CACHE_TIMESTAMP_FORMAT));
+                                        result = Timestamp.valueOf(formattedValue);
+                                    } catch (DateTimeParseException | IllegalArgumentException ex5) {
+                                        throw new SpagoBIRuntimeException(ex5);
+                                    }
+                                }
                             }}
 					}
 				}
