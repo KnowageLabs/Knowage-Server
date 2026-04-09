@@ -541,7 +541,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 	@Path("/filters")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	public Response getDocumentExecutionFilters(@Context HttpServletRequest req)
-			throws DocumentExecutionException, EMFUserError, IOException, JSONException, EncodingException {
+			throws EMFUserError, IOException, JSONException, EncodingException {
 
 		LOGGER.debug("IN");
 
@@ -557,12 +557,11 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 
 		Map<String, Object> resultAsMap = new LinkedHashMap<>();
 
-		boolean driversCacheEnabled = false;
 		Map<String, JSONObject> sessionParametersMap = new HashMap<>();
+
 		if (("true")
 				.equals(SingletonConfig.getInstance().getConfigValue("SPAGOBI.SESSION_PARAMETERS_MANAGER.enabled"))) {
 			sessionParametersMap = getSessionParameters(requestVal);
-			driversCacheEnabled = true;
 		}
 
 		// keep track of par coming from cross to get descriptions from admissible values
