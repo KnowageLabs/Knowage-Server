@@ -1065,7 +1065,7 @@ public class ExcelExporter extends AbstractFormatExporter {
             numberOfSummaryRows = list.length();
 
             for (int i = 0; i < numberOfSummaryRows; i++) {
-                summaryRowsLabels.add(list.getJSONObject(i).getString("label"));
+                summaryRowsLabels.add(list.getJSONObject(i).optString("label", ""));
             }
 
         }
