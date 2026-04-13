@@ -1552,7 +1552,9 @@ public class PersistedTableManager implements IPersistedManager {
 			}
 			try {
 				Object value = field.getValue();
-				if (value != null) {
+				if (value == null || value instanceof String stringValue && (stringValue.isBlank() || stringValue.equals("null"))) {
+					continue;
+				} else {
 					field.setValue(cons.newInstance(String.valueOf(value)));
 				}
 			} catch (InstantiationException | IllegalAccessException | IllegalArgumentException
