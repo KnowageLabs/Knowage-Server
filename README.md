@@ -1,10 +1,28 @@
 <p align="center">
-<img src="https://www.knowage-suite.com/site/wp-content/uploads/2016/03/KNOWAGE_logo_color.png">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="https://github.com//KnowageLabs/Knowage/raw/main/assets/Knowage-light.svg">
+    <source media="(prefers-color-scheme: light)" srcset="https://github.com//KnowageLabs/Knowage/raw/main/assets/Knowage-dark.svg">
+    <img alt="Knowage" src="assets/Knowage-light.svg" width="300">
+  </picture>
 </p>
+
+<p align="center">
+  <a href="https://opensource.org/licenses/AGPL-3.0"><img src="https://img.shields.io/github/license/KnowageLabs/Knowage-Server.svg" alt="License: AGPL"/></a>
+  <a href="https://hub.docker.com/r/knowagelabs/knowage-server-docker/"><img src="https://img.shields.io/docker/pulls/knowagelabs/knowage-server-docker.svg" alt="Docker Pulls"/></a>
+  <a href="https://knowage.rtfd.io/"><img src="https://img.shields.io/readthedocs/knowage.svg" alt="Documentation"/></a>
+</p>
+
+<p align="center">
+  <a href="https://www.knowage-suite.com/site/home/">🌐 Website</a> ·
+  <a href="http://knowage-suite.readthedocs.io/">📚 Docs</a> ·
+  <a href="https://hub.docker.com/r/knowagelabs/knowage-server-docker/">🐳 Docker Hub</a> ·
+  <a href="./ROADMAP.md">🗺️ Roadmap</a>
+</p>
+
+---
 
 [![License: APGL](https://img.shields.io/github/license/KnowageLabs/Knowage-Server.svg)](https://opensource.org/licenses/AGPL-3.0)
 [![Docker badge](https://img.shields.io/docker/pulls/knowagelabs/knowage-server-docker.svg)](https://hub.docker.com/r/knowagelabs/knowage-server-docker/)
-<br>
 [![Documentation badge](https://img.shields.io/readthedocs/knowage.svg)](https://knowage.rtfd.io/)
 
 KNOWAGE is an open-source analytics and business intelligence suite designed to integrate traditional and big/cloud data sources, transforming them into valuable insights.
