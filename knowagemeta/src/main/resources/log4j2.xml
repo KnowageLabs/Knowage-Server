@@ -7,7 +7,7 @@
 					<RollingFile
 						name="KNOWAGE_META_$${ctx:tenant:-global}"
 						append="true"
-						fileName="${sys:catalina.base}/logs/${ctx:tenant:-global}/knowageMeta.${date:yyyy-MM-dd}.log"
+						fileName="${sys:catalina.base}/logs/${ctx:tenant:-global}/knowageMeta.log"
 						filePattern="${sys:catalina.base}/logs/${ctx:tenant:-global}/knowageMeta.%d{yyyy-MM-dd}.log"
 						ignoreExceptions="true"
 						createOnDemand="true">

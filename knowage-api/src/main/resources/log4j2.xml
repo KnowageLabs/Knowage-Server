@@ -7,7 +7,7 @@
 					<RollingFile
 						name="KNOWAGE_API_${ctx:tenant:-global}"
 						append="true"
-						fileName="${sys:catalina.base}/logs/${ctx:tenant:-global}/knowageApi.${date:yyyy-MM-dd}.log"
+						fileName="${sys:catalina.base}/logs/${ctx:tenant:-global}/knowageApi.log"
 						filePattern="${sys:catalina.base}/logs/${ctx:tenant:-global}/knowageApi.%d{yyyy-MM-dd}.log"
 						ignoreExceptions="true"
 						createOnDemand="true">

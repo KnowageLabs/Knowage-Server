@@ -7,7 +7,7 @@
 					<RollingFile
 						name="KNOWAGE_BIRT_REPORT_ENGINE_$${ctx:tenant:-global}"
 						append="true"
-						fileName="${sys:catalina.base}/logs/${ctx:tenant:-global}/knowageBirtReportEngine.${date:yyyy-MM-dd}.log"
+						fileName="${sys:catalina.base}/logs/${ctx:tenant:-global}/knowageBirtReportEngine.log"
 						filePattern="${sys:catalina.base}/logs/${ctx:tenant:-global}/knowageBirtReportEngine.%d{yyyy-MM-dd}.log"
 						ignoreExceptions="true"
 						createOnDemand="true">
