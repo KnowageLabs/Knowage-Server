@@ -1,0 +1,83 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+	<class name="it.eng.spagobi.wapp.metadata.SbiHomepage" table="SBI_HOMEPAGE">
+		<id name="id" type="integer">
+			<column name="ID" />
+			<generator class="org.hibernate.id.enhanced.TableGenerator">
+				<param name="optimizer">none</param>
+				<param name="segment_value">SBI_HOMEPAGE</param>
+				<param name="initial_value">1</param>
+			</generator>
+		</id>
+		<component name="commonInfo" insert="true" update="true" class="it.eng.spagobi.commons.metadata.SbiCommonInfo">
+			<property name="userIn" type="string">
+				<column name="USER_IN" length="100" not-null="true" />
+			</property>
+			<property name="userUp" type="string">
+				<column name="USER_UP" length="100" not-null="false" />
+			</property>
+			<property name="userDe" type="string">
+				<column name="USER_DE" length="100" not-null="false" />
+			</property>
+			<property name="timeIn" type="timestamp">
+				<column name="TIME_IN" not-null="true" />
+			</property>
+			<property name="timeUp" type="timestamp">
+				<column name="TIME_UP" not-null="false" />
+			</property>
+			<property name="timeDe" type="timestamp">
+				<column name="TIME_DE" not-null="false" />
+			</property>
+			<property name="sbiVersionIn" type="string">
+				<column name="SBI_VERSION_IN" length="10" not-null="false" />
+			</property>
+			<property name="sbiVersionUp" type="string">
+				<column name="SBI_VERSION_UP" length="10" not-null="false" />
+			</property>
+			<property name="sbiVersionDe" type="string">
+				<column name="SBI_VERSION_DE" length="10" not-null="false" />
+			</property>
+			<property name="organization" type="string">
+				<column name="ORGANIZATION" length="20" not-null="false" />
+			</property>
+		</component>
+		<property name="type" type="string">
+			<column name="TYPE" length="20" not-null="true" />
+		</property>
+		<many-to-one name="document" class="it.eng.spagobi.analiticalmodel.document.metadata.SbiObjects">
+			<column name="DOCUMENT_ID" not-null="false" />
+		</many-to-one>
+		<property name="imageUrl" type="string">
+			<column name="IMAGE_URL" length="4000" not-null="false" />
+		</property>
+		<property name="staticPage" type="string">
+			<column name="STATIC_PAGE" length="255" not-null="false" />
+		</property>
+		<property name="html" type="text">
+			<column name="HTML" not-null="false" />
+		</property>
+		<property name="css" type="text">
+			<column name="CSS" not-null="false" />
+		</property>
+		<property name="menuPlaceholders" type="text">
+			<column name="MENU_PLACEHOLDERS" not-null="false" />
+		</property>
+		<property name="defaultHomepage" type="boolean">
+			<column name="IS_DEFAULT" not-null="true" />
+		</property>
+		<set name="sbiHomepageRoles" table="SBI_HOMEPAGE_ROLE" inverse="false" lazy="false" fetch="select">
+			<key>
+				<column name="HOMEPAGE_ID" not-null="true"></column>
+			</key>
+			<many-to-many class="it.eng.spagobi.commons.metadata.SbiExtRoles">
+				<column name="EXT_ROLE_ID" not-null="true"></column>
+			</many-to-many>
+		</set>
+		<filter name="tenantFilter" condition="organization=:tenant" />
+	</class>
+	<filter-def name="tenantFilter">
+		<filter-param name="tenant" type="string" />
+	</filter-def>
+</hibernate-mapping>

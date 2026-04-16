@@ -105,6 +105,7 @@ import it.eng.spagobi.view.dao.ISbiViewDAO;
 import it.eng.spagobi.view.dao.ISbiViewForDocDAO;
 import it.eng.spagobi.view.dao.ISbiViewHierarchyDAO;
 import it.eng.spagobi.wapp.dao.IMenuDAO;
+import it.eng.spagobi.wapp.dao.IHomepageDAO;
 import it.eng.spagobi.wapp.dao.IMenuRolesDAO;
 import it.eng.spagobi.workspace.dao.IFunctionsOrganizerDAO;
 import it.eng.spagobi.workspace.dao.IObjFuncOrganizerDAO;
@@ -464,6 +465,15 @@ public class DAOFactory {
 	 */
 	public static IMenuDAO getMenuDAO() {
 		return (IMenuDAO) createDAOInstance("MenuDAO");
+	}
+
+	/**
+	 * Gets the homepage dao.
+	 *
+	 * @return the homepage dao
+	 */
+	public static IHomepageDAO getHomepageDAO() {
+		return (IHomepageDAO) createDAOInstance("HomepageDAO");
 	}
 
 	/**

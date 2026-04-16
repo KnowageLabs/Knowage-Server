@@ -74,6 +74,8 @@
 		implementation="it.eng.spagobi.wapp.dao.MenuDAOImpl" />
 	<DAO name="MenuRolesDAO"
 		implementation="it.eng.spagobi.wapp.dao.MenuRolesDAOImpl" />
+	<DAO name="HomepageDAO"
+		implementation="it.eng.spagobi.wapp.dao.HomepageDAOImpl" />
 	<DAO name="BIObjectRatingDAO"
 		implementation="it.eng.spagobi.analiticalmodel.document.dao.BIObjectRatingDAOHibImpl" />
 	<DAO name="OldKpiDAO"

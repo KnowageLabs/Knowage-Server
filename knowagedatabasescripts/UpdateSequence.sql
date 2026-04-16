@@ -57,6 +57,7 @@ update hibernate_sequences set next_val=(select ifnull(max(DLU_ID),0)+1 from SBI
 update hibernate_sequences set next_val=(select ifnull(max(OBJ_METACONTENT_ID),0)+1 from SBI_OBJ_METACONTENTS) where sequence_name='SBI_OBJ_METACONTENTS';
 update hibernate_sequences set next_val=(select ifnull(max(OBJ_META_ID),0)+1 from SBI_OBJ_METADATA) where sequence_name='SBI_OBJ_METADATA';
 update hibernate_sequences set next_val=(select ifnull(max(MENU_ID),0)+1 from SBI_MENU) where sequence_name='SBI_MENU';
+update hibernate_sequences set next_val=(select ifnull(max(ID),0)+1 from SBI_HOMEPAGE) where sequence_name='SBI_HOMEPAGE';
 update hibernate_sequences set next_val=(select ifnull(max(PROGRESS_THREAD_ID),0)+1 from SBI_PROGRESS_THREAD) where sequence_name='SBI_PROGRESS_THREAD';
 
 update hibernate_sequences set next_val=(select ifnull(max(SOURCE_ID),0)+1 from SBI_META_SOURCE)  where sequence_name='SBI_META_SOURCE';

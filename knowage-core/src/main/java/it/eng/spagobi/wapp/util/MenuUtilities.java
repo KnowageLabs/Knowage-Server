@@ -34,6 +34,7 @@ import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.bo.Role;
+import it.eng.spagobi.commons.bo.SessionUserProfileBuilder;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.AdmintoolsConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
@@ -146,6 +147,13 @@ public class MenuUtilities {
             // call recursively for menu to set clickable also for children
             checkAndSetNotClickableMenus(menu, userProfile);
         }
+	}
+
+	public static List getMenuItemsForRole(UserProfile completeProfile, String roleName) throws EMFUserError {
+		IEngUserProfile previewProfile = SessionUserProfileBuilder.getDefaultUserProfile(completeProfile, roleName);
+		List menuItems = getMenuItems(previewProfile, true);
+		filterListForUserClickableElements(menuItems, previewProfile);
+		return menuItems;
 	}
 
 	/**
