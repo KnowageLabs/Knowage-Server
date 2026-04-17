@@ -22,6 +22,7 @@
 		<module>../knowage-core</module>
 		<module>../knowageoauth2securityprovider</module>
 		<module>../knowageldapsecurityprovider</module>
+		<module>../knowage-enhanced-ldap-security-provider</module>
 		<module>../knowagegooglesecurityprovider</module>
 		<module>../knowageazuresecurityprovider</module>
 		<module>../knowage</module>

@@ -1,0 +1,71 @@
+services:
+  openldap:
+    image: osixia/openldap:1.5.0
+    container_name: knowage-test-openldap
+    environment:
+      LDAP_ORGANISATION: Example Corp
+      LDAP_DOMAIN: example.com
+      LDAP_ADMIN_PASSWORD: adminpassword
+      LDAP_CONFIG_PASSWORD: configpass
+      LDAP_TLS: "false"
+      LDAP_BACKEND: mdb
+    ports:
+      - "389:389"
+      - "636:636"
+    volumes:
+      - ./test-ldap/bootstrap.ldif:/container/service/slapd/assets/config/bootstrap/ldif/custom/bootstrap.ldif:ro
+    command: --copy-service --loglevel warning
+    healthcheck:
+      test: ["CMD", "ldapsearch", "-H", "ldap://localhost:389", "-x",
+             "-D", "cn=admin,dc=example,dc=com", "-w", "adminpassword",
+             "-b", "dc=example,dc=com", "-s", "base"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+      start_period: 10s
+    networks:
+      - ldap-net
+
+  ldap-acl-init:
+    image: debian:bookworm-slim
+    container_name: knowage-test-ldap-acl-init
+    depends_on:
+      openldap:
+        condition: service_healthy
+    volumes:
+      - ./test-ldap/acl.ldif:/tmp/acl.ldif:ro
+      - ./test-ldap/acl-init.sh:/tmp/acl-init.sh:ro
+    command: ["bash", "/tmp/acl-init.sh"]
+    networks:
+      - ldap-net
+
+  phpldapadmin:
+    image: osixia/phpldapadmin:0.9.0
+    container_name: knowage-test-phpldapadmin
+    environment:
+      PHPLDAPADMIN_LDAP_HOSTS: openldap
+      PHPLDAPADMIN_HTTPS: "false"
+    ports:
+      - "8090:80"
+    depends_on:
+      openldap:
+        condition: service_healthy
+    networks:
+      - ldap-net
+
+  ldap-test:
+    image: eclipse-temurin:17-jdk
+    container_name: knowage-test-ldap-client
+    depends_on:
+      ldap-acl-init:
+        condition: service_completed_successfully
+    volumes:
+      - ./test-ldap:/tests
+    networks:
+      - ldap-net
+    command: >
+      bash -c "apt-get update -qq && apt-get install -y -qq ldap-utils > /dev/null 2>&1 && echo 'ldap-utils installed' && sleep infinity"
+
+networks:
+  ldap-net:
+    driver: bridge

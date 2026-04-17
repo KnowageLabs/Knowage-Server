@@ -1,0 +1,86 @@
+# =============================================================================
+# EnhancedLdapSecurityProvider - Configuration File Example
+# =============================================================================
+# Copy this file, fill in your values, and point to it at JVM startup:
+#   -Denhanced.ldap.config=/path/to/enhanced_ldap.properties
+#
+# Alternatively, insert each key into SBI_CONFIG (prefix: KNOWAGE_LDAP.)
+# SBI_CONFIG takes priority over this file.
+# =============================================================================
+
+
+# =============================================================================
+# EXAMPLE 1: Active Directory (ACME production setup)
+# =============================================================================
+
+# --- Connection ---
+HOST=ad.example.com
+PORT=389
+USE_SSL=false
+BASE_DN=DC=example,DC=com
+
+# --- Service account (full DN, no prefix/postfix manipulation) ---
+ADMIN_USER=CN=adaccess,OU=Service_Accounts,DC=example,DC=com
+# Plain text or encrypted with ENC():
+ADMIN_PSW=servicepass123
+# Encrypted example (requires -Dsymmetric_encryption_key=<key>):
+# ADMIN_PSW=ENC(base64encryptedvalue==)
+
+# --- User search ---
+# Leave empty to search from BASE_DN, or specify a subtree base:
+USER_SEARCH_PATH=
+# AD uses sAMAccountName; OpenLDAP uses uid:
+USER_ID_ATTRIBUTE=sAMAccountName
+USER_OBJECT_CLASS=person
+# Optional: override the full search filter (use {0} as userId placeholder):
+# USER_SEARCH_FILTER=(&(objectClass=user)(sAMAccountName={0})(!(userAccountControl:1.2.840.113556.1.4.803:=2)))
+USER_DISPLAYNAME_ATTR=displayName
+
+# --- Roles / Groups ---
+# LDAP: use LDAP memberOf groups as Knowage roles
+# KNOWAGE: ignore LDAP groups, use roles already in SBI_USER_ROLES
+ROLES_SOURCE=LDAP
+USER_MEMBEROF_ATTRIBUTE=memberOf
+GROUP_SEARCH_PATH=OU=Groupes_Knowage,DC=example,DC=com
+GROUP_OBJECT_CLASS=group
+GROUP_ID_ATTRIBUTE=cn
+# Regex filter: only group names matching this pattern are considered.
+# Examples:
+#   SO_BO_.*      -> all groups starting with SO_BO_
+#   (ADMIN|DEV)   -> only ADMIN or DEV
+# Leave empty to allow all groups.
+ACCESS_GROUP_FILTER=SO_BO_.*
+
+# --- Provisioning ---
+AUTO_CREATE_USER=true
+DEFAULT_ROLE=
+DEFAULT_TENANT=DEFAULT_TENANT
+
+# --- Behaviour ---
+FALLBACK_TO_INTERNAL=true
+
+
+# =============================================================================
+# EXAMPLE 2: OpenLDAP (test environment / Docker)
+# =============================================================================
+
+# HOST=openldap
+# PORT=389
+# USE_SSL=false
+# BASE_DN=DC=example,DC=com
+# ADMIN_USER=CN=adaccess,OU=Service_Accounts,DC=example,DC=com
+# ADMIN_PSW=servicepass123
+# USER_SEARCH_PATH=
+# USER_ID_ATTRIBUTE=uid
+# USER_OBJECT_CLASS=inetOrgPerson
+# USER_DISPLAYNAME_ATTR=displayName
+# ROLES_SOURCE=LDAP
+# USER_MEMBEROF_ATTRIBUTE=memberOf
+# GROUP_SEARCH_PATH=OU=Groupes_Knowage,DC=example,DC=com
+# GROUP_OBJECT_CLASS=groupOfNames
+# GROUP_ID_ATTRIBUTE=cn
+# ACCESS_GROUP_FILTER=SO_BO_.*
+# AUTO_CREATE_USER=true
+# DEFAULT_ROLE=
+# DEFAULT_TENANT=DEFAULT_TENANT
+# FALLBACK_TO_INTERNAL=true

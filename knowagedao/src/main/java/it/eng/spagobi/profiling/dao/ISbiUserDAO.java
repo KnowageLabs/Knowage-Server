@@ -74,6 +74,8 @@ public interface ISbiUserDAO extends ISpagoBIDao, EmittingEventDAO<UserEventsEme
 
 	void deleteSbiUserAttributeById(Integer id, Integer attrId);
 
+	void deleteSbiUserRoleById(Integer userId, Integer roleId);
+
 	Integer saveSbiUser(SbiUser user);
 
 	void updateSbiUserRoles(SbiExtUserRoles role);

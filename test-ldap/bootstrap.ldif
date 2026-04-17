@@ -1,0 +1,205 @@
+# ============================================================
+# Bootstrap LDIF - Structure ACME simulant un Active Directory
+# DC=example,DC=com
+# ============================================================
+
+# OU=Service_Accounts
+dn: OU=Service_Accounts,DC=example,DC=com
+objectClass: organizationalUnit
+objectClass: top
+ou: Comptes_Services_ACME
+
+# Compte de service Knowage (bind admin)
+dn: CN=adaccess,OU=Service_Accounts,DC=example,DC=com
+objectClass: inetOrgPerson
+objectClass: organizationalPerson
+objectClass: person
+objectClass: top
+cn: adaccess
+sn: adaccess
+uid: adaccess
+userPassword: servicepass123
+displayName: Knowage Service Account
+
+# OU=Utilisateurs (conteneur parent)
+dn: OU=Utilisateurs,DC=example,DC=com
+objectClass: organizationalUnit
+objectClass: top
+ou: Utilisateurs
+
+# OU=Direction
+dn: OU=Direction,OU=Utilisateurs,DC=example,DC=com
+objectClass: organizationalUnit
+objectClass: top
+ou: Direction
+
+# OU=IT
+dn: OU=IT,OU=Utilisateurs,DC=example,DC=com
+objectClass: organizationalUnit
+objectClass: top
+ou: IT
+
+# OU=Marketing
+dn: OU=Marketing,OU=Utilisateurs,DC=example,DC=com
+objectClass: organizationalUnit
+objectClass: top
+ou: Marketing
+
+# OU=Comptabilite
+dn: OU=Comptabilite,OU=Utilisateurs,DC=example,DC=com
+objectClass: organizationalUnit
+objectClass: top
+ou: Comptabilite
+
+# OU=Groupes_Knowage
+dn: OU=Groupes_Knowage,DC=example,DC=com
+objectClass: organizationalUnit
+objectClass: top
+ou: Groupes_Knowage
+
+# OU=Groupes_Autres
+dn: OU=Groupes_Autres,DC=example,DC=com
+objectClass: organizationalUnit
+objectClass: top
+ou: Groupes_Autres
+
+# ============================================================
+# Utilisateurs
+# ============================================================
+
+# John Smith - Directeur
+dn: CN=John Smith,OU=Direction,OU=Utilisateurs,DC=example,DC=com
+objectClass: inetOrgPerson
+objectClass: organizationalPerson
+objectClass: person
+objectClass: top
+cn: John Smith
+sn: Smith
+givenName: John
+uid: jsmith
+mail: jsmith@example.com
+userPassword: password123
+displayName: John Smith
+memberOf: CN=SO_BO_ADMIN,OU=Groupes_Knowage,DC=example,DC=com
+memberOf: CN=Accès Knowage,OU=Groupes_Knowage,DC=example,DC=com
+
+# Jane Doe - IT
+dn: CN=Jane Doe,OU=IT,OU=Utilisateurs,DC=example,DC=com
+objectClass: inetOrgPerson
+objectClass: organizationalPerson
+objectClass: person
+objectClass: top
+cn: Jane Doe
+sn: Doe
+givenName: Jane
+uid: jdoe
+mail: jdoe@example.com
+userPassword: password123
+displayName: Jane Doe
+memberOf: CN=SO_BO_DEV,OU=Groupes_Knowage,DC=example,DC=com
+memberOf: CN=SO_BO_USER,OU=Groupes_Knowage,DC=example,DC=com
+
+# Bob Johnson - IT
+dn: CN=Bob Johnson,OU=IT,OU=Utilisateurs,DC=example,DC=com
+objectClass: inetOrgPerson
+objectClass: organizationalPerson
+objectClass: person
+objectClass: top
+cn: Bob Johnson
+sn: Johnson
+givenName: Bob
+uid: bjohnson
+mail: bjohnson@example.com
+userPassword: password123
+displayName: Bob Johnson
+memberOf: CN=SO_BO_DEV,OU=Groupes_Knowage,DC=example,DC=com
+
+# Alice Brown - Marketing
+dn: CN=Alice Brown,OU=Marketing,OU=Utilisateurs,DC=example,DC=com
+objectClass: inetOrgPerson
+objectClass: organizationalPerson
+objectClass: person
+objectClass: top
+cn: Alice Brown
+sn: Brown
+givenName: Alice
+uid: abrown
+mail: abrown@example.com
+userPassword: password123
+displayName: Alice Brown
+memberOf: CN=SO_BO_USER,OU=Groupes_Knowage,DC=example,DC=com
+
+# Carol White - Comptabilite
+dn: CN=Carol White,OU=Comptabilite,OU=Utilisateurs,DC=example,DC=com
+objectClass: inetOrgPerson
+objectClass: organizationalPerson
+objectClass: person
+objectClass: top
+cn: Carol White
+sn: White
+givenName: Carol
+uid: cwhite
+mail: cwhite@example.com
+userPassword: password123
+displayName: Carol White
+memberOf: CN=SO_BO_USER,OU=Groupes_Knowage,DC=example,DC=com
+
+# ============================================================
+# Groupes Knowage
+# ============================================================
+
+# SO_BO_ADMIN - Rôle administrateur
+dn: CN=SO_BO_ADMIN,OU=Groupes_Knowage,DC=example,DC=com
+objectClass: groupOfNames
+objectClass: top
+cn: SO_BO_ADMIN
+description: Knowage Admin role
+member: CN=John Smith,OU=Direction,OU=Utilisateurs,DC=example,DC=com
+
+# SO_BO_DEV - Rôle développeur
+dn: CN=SO_BO_DEV,OU=Groupes_Knowage,DC=example,DC=com
+objectClass: groupOfNames
+objectClass: top
+cn: SO_BO_DEV
+description: Knowage Developer role
+member: CN=Jane Doe,OU=IT,OU=Utilisateurs,DC=example,DC=com
+member: CN=Bob Johnson,OU=IT,OU=Utilisateurs,DC=example,DC=com
+
+# SO_BO_USER - Rôle utilisateur standard
+dn: CN=SO_BO_USER,OU=Groupes_Knowage,DC=example,DC=com
+objectClass: groupOfNames
+objectClass: top
+cn: SO_BO_USER
+description: Knowage User role
+member: CN=Jane Doe,OU=IT,OU=Utilisateurs,DC=example,DC=com
+member: CN=Alice Brown,OU=Marketing,OU=Utilisateurs,DC=example,DC=com
+member: CN=Carol White,OU=Comptabilite,OU=Utilisateurs,DC=example,DC=com
+
+# Accès Knowage - Groupe avec caractères non-ASCII dans le CN (reproduit le bug byte[])
+dn: CN=Accès Knowage,OU=Groupes_Knowage,DC=example,DC=com
+objectClass: groupOfNames
+objectClass: top
+cn: Accès Knowage
+description: Groupe avec accent - reproduit le bug de lecture memberOf en byte[]
+member: CN=John Smith,OU=Direction,OU=Utilisateurs,DC=example,DC=com
+
+# SO_BO_RESTRICTED - Rôle restreint (hors filtre ACCESS_GROUP_FILTER)
+dn: CN=SO_BO_RESTRICTED,OU=Groupes_Knowage,DC=example,DC=com
+objectClass: groupOfNames
+objectClass: top
+cn: SO_BO_RESTRICTED
+description: Knowage Restricted role - not imported by provider filter
+member: CN=adaccess,OU=Service_Accounts,DC=example,DC=com
+
+# ============================================================
+# Groupes hors périmètre Knowage
+# ============================================================
+
+# GRP_VPN_USERS - Ne doit pas être importé
+dn: CN=GRP_VPN_USERS,OU=Groupes_Autres,DC=example,DC=com
+objectClass: groupOfNames
+objectClass: top
+cn: GRP_VPN_USERS
+description: VPN Users - outside Knowage scope
+member: CN=Jane Doe,OU=IT,OU=Utilisateurs,DC=example,DC=com
+member: CN=Bob Johnson,OU=IT,OU=Utilisateurs,DC=example,DC=com
