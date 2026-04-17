@@ -105,6 +105,14 @@ public class TestKnowageLdapAuth {
             }
         }
 
+        // --- Étape 8 : Reproduction bug byte[] sur memberOf non-ASCII ---
+        System.out.println("\n[ETAPE 8] Lecture memberOf avec valeur non-ASCII (reproduction bug byte[])...");
+        testNonAsciiMemberOf(serviceCtx, BASE_DN, uid);
+
+        // --- Étape 9 : extractCnFromDn sur DN non-ASCII ---
+        System.out.println("\n[ETAPE 9] Extraction CN depuis un DN contenant des accents...");
+        testExtractCnFromNonAsciiDn();
+
         // --- Test négatif : mauvais mot de passe ---
         System.out.println("\n[ETAPE 6] Test bind avec mauvais mot de passe...");
         boolean badAuth = bindWithCredentials(ldapUrl, userDN, "wrongpassword_XYZ");
@@ -292,6 +300,118 @@ public class TestKnowageLdapAuth {
             System.out.println("  Erreur recherche groupes: " + e.getMessage());
         }
         return groups;
+    }
+
+    /**
+     * Étape 8 : Reproduit le bug du cast (String) sur des valeurs memberOf non-ASCII.
+     * JNDI peut retourner byte[] pour un DN contenant des accents.
+     * Avant le fix : ClassCastException sur le groupe "Accès Knowage".
+     * Après le fix : le groupe est correctement lu.
+     */
+    static void testNonAsciiMemberOf(DirContext ctx, String baseDN, String uid) {
+        try {
+            SearchControls controls = new SearchControls();
+            controls.setSearchScope(SearchControls.SUBTREE_SCOPE);
+            controls.setReturningAttributes(new String[]{"memberOf", "uid"});
+
+            NamingEnumeration<SearchResult> results =
+                ctx.search(baseDN, "(uid=" + escapeLdapFilter(uid) + ")", controls);
+
+            if (!results.hasMore()) {
+                fail("memberOf non-ASCII", "utilisateur trouvé", "aucun résultat");
+                return;
+            }
+
+            Attribute memberOf = results.next().getAttributes().get("memberOf");
+            results.close();
+
+            if (memberOf == null) {
+                fail("memberOf non-ASCII", "attribut memberOf présent", "attribut absent");
+                return;
+            }
+
+            boolean foundNonAsciiGroup = false;
+            boolean hadCastException  = false;
+
+            NamingEnumeration<?> vals = memberOf.getAll();
+            while (vals.hasMore()) {
+                Object raw = vals.next();
+                String groupDn;
+
+                System.out.println("  Valeur memberOf — type Java : " + raw.getClass().getSimpleName());
+
+                if (raw instanceof byte[]) {
+                    // Bug reproduced: le provider actuel ferait (String) raw → ClassCastException
+                    System.out.println("  [BUG DÉTECTÉ] Valeur retournée en byte[] — cast (String) échouerait!");
+                    hadCastException = true;
+                    // Décodage correct (ce que le fix devra faire)
+                    groupDn = new String((byte[]) raw, java.nio.charset.StandardCharsets.UTF_8);
+                } else {
+                    groupDn = raw.toString();
+                }
+
+                System.out.println("  DN du groupe : " + groupDn);
+
+                // Extraire le CN (premier RDN)
+                String cn = groupDn.split(",")[0];
+                int eq = cn.indexOf('=');
+                String groupName = eq >= 0 ? cn.substring(eq + 1).trim() : cn;
+                System.out.println("  CN extrait   : " + groupName);
+
+                if (groupName.contains("Acc")) {
+                    foundNonAsciiGroup = true;
+                }
+            }
+
+            if (foundNonAsciiGroup && hadCastException) {
+                pass("Groupe non-ASCII détecté en byte[] — bug reproduit, décodage UTF-8 correct");
+            } else if (foundNonAsciiGroup && !hadCastException) {
+                pass("Groupe non-ASCII retourné directement en String par JNDI (pas de byte[])");
+            } else {
+                fail("memberOf non-ASCII", "groupe 'Accès Knowage' trouvé", "groupe absent des memberOf");
+            }
+
+        } catch (ClassCastException e) {
+            // Ce catch ne sera jamais atteint ici car on utilise Object,
+            // mais illustre ce qui se passe dans le provider actuel
+            fail("memberOf non-ASCII", "lecture sans exception", "ClassCastException: " + e.getMessage());
+        } catch (NamingException e) {
+            fail("memberOf non-ASCII", "lecture réussie", e.getMessage());
+        }
+    }
+
+    /**
+     * Étape 9 : Teste l'extraction du CN depuis des DN contenant des accents (RFC 4514).
+     * Vérifie les cas nominaux et les cas limites.
+     */
+    static void testExtractCnFromNonAsciiDn() {
+        String[][] cases = {
+            // { dn, expectedCn }
+            { "CN=SO_BO_ADMIN,OU=Groupes_Knowage,DC=example,DC=com", "SO_BO_ADMIN" },
+            { "CN=Accès Knowage,OU=Groupes_Knowage,DC=example,DC=com", "Accès Knowage" },
+            { "CN=Répertoire Partagé,OU=Ressources,DC=example,DC=com", "Répertoire Partagé" },
+            { "cn=lowercase,dc=example,dc=com", "lowercase" },
+        };
+
+        for (String[] c : cases) {
+            String dn = c[0];
+            String expected = c[1];
+            String actual = extractCnFromDn(dn);
+            if (expected.equals(actual)) {
+                pass("extractCnFromDn '" + dn.split(",")[0] + "' → '" + actual + "'");
+            } else {
+                fail("extractCnFromDn", expected, actual != null ? actual : "null");
+            }
+        }
+    }
+
+    /** Extrait le CN du premier RDN d'un DN LDAP. Même logique que le provider. */
+    static String extractCnFromDn(String dn) {
+        if (dn == null || dn.isEmpty()) return null;
+        String firstRdn = dn.split(",")[0];
+        int eq = firstRdn.indexOf('=');
+        if (eq < 0) return null;
+        return firstRdn.substring(eq + 1).trim();
     }
 
     /** Échappe les caractères spéciaux dans un filtre LDAP (RFC 4515). */

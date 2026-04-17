@@ -17,6 +17,7 @@
  */
 package it.eng.knowage.security.ldap.connector;
 
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Hashtable;
@@ -215,7 +216,10 @@ public class EnhancedLdapConnector {
 
 			NamingEnumeration<?> values = memberOf.getAll();
 			while (values.hasMore()) {
-				String groupDn = (String) values.next();
+				Object raw = values.next();
+				String groupDn = (raw instanceof byte[])
+					? new String((byte[]) raw, StandardCharsets.UTF_8)
+					: (String) raw;
 				String groupName = extractCnFromDn(groupDn);
 				if (groupName == null) {
 					LOGGER.debug("Could not extract CN from group DN: {}", groupDn);
@@ -249,8 +253,18 @@ public class EnhancedLdapConnector {
 		if (dn == null || dn.isEmpty()) {
 			return null;
 		}
-		// DN is case-insensitive for attribute names; split on first comma
-		String firstRdn = dn.split(",")[0];
+		// Find first unescaped comma per RFC 4514 (backslash escapes the next char)
+		int end = dn.length();
+		for (int i = 0; i < dn.length(); i++) {
+			char c = dn.charAt(i);
+			if (c == '\\') {
+				i++; // skip escaped character
+			} else if (c == ',') {
+				end = i;
+				break;
+			}
+		}
+		String firstRdn = dn.substring(0, end);
 		int eq = firstRdn.indexOf('=');
 		if (eq < 0) {
 			return null;
@@ -294,7 +308,10 @@ public class EnhancedLdapConnector {
 			Attribute attr = attrs.get(attrName);
 			if (attr != null && attr.size() > 0) {
 				Object value = attr.get(0);
-				return value != null ? value.toString() : null;
+				if (value == null) return null;
+				return (value instanceof byte[])
+					? new String((byte[]) value, StandardCharsets.UTF_8)
+					: value.toString();
 			}
 		} catch (NamingException e) {
 			LOGGER.debug("Could not read attribute '{}': {}", attrName, e.getMessage());
@@ -314,6 +331,7 @@ public class EnhancedLdapConnector {
 		env.put(Context.SECURITY_PRINCIPAL, principal);
 		env.put(Context.SECURITY_CREDENTIALS, credentials);
 		env.put("com.sun.jndi.ldap.connect.timeout", CONNECT_TIMEOUT_MS);
+		env.put(Context.REFERRAL, "ignore");
 		if (config.isUseSsl()) {
 			env.put(Context.SECURITY_PROTOCOL, "ssl");
 		}

@@ -81,6 +81,7 @@ mail: jsmith@example.com
 userPassword: password123
 displayName: John Smith
 memberOf: CN=SO_BO_ADMIN,OU=Groupes_Knowage,DC=example,DC=com
+memberOf: CN=Accès Knowage,OU=Groupes_Knowage,DC=example,DC=com
 
 # Jane Doe - IT
 dn: CN=Jane Doe,OU=IT,OU=Utilisateurs,DC=example,DC=com
@@ -173,6 +174,14 @@ description: Knowage User role
 member: CN=Jane Doe,OU=IT,OU=Utilisateurs,DC=example,DC=com
 member: CN=Alice Brown,OU=Marketing,OU=Utilisateurs,DC=example,DC=com
 member: CN=Carol White,OU=Comptabilite,OU=Utilisateurs,DC=example,DC=com
+
+# Accès Knowage - Groupe avec caractères non-ASCII dans le CN (reproduit le bug byte[])
+dn: CN=Accès Knowage,OU=Groupes_Knowage,DC=example,DC=com
+objectClass: groupOfNames
+objectClass: top
+cn: Accès Knowage
+description: Groupe avec accent - reproduit le bug de lecture memberOf en byte[]
+member: CN=John Smith,OU=Direction,OU=Utilisateurs,DC=example,DC=com
 
 # SO_BO_RESTRICTED - Rôle restreint (hors filtre ACCESS_GROUP_FILTER)
 dn: CN=SO_BO_RESTRICTED,OU=Groupes_Knowage,DC=example,DC=com

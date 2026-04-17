@@ -101,6 +101,16 @@ public class EnhancedLdapConfig {
 		parseProperties(props);
 	}
 
+	/** Test-only factory — bypasses DB and file loading. */
+	public static EnhancedLdapConfig fromProperties(Properties props) {
+		EnhancedLdapConfig cfg = new EnhancedLdapConfig(props);
+		return cfg;
+	}
+
+	private EnhancedLdapConfig(Properties props) {
+		parseProperties(props);
+	}
+
 	// -------------------------------------------------------------------------
 	// Loading
 	// -------------------------------------------------------------------------

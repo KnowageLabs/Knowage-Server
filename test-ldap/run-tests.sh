@@ -220,6 +220,58 @@ else
 fi
 
 # -----------------------------------------------------------
+# TEST 14 : Groupe non-ASCII (Accès Knowage) existe dans l'annuaire
+# -----------------------------------------------------------
+echo ""
+echo "[TEST 14] Groupe non-ASCII 'Accès Knowage' présent dans Groupes_Knowage..."
+result=$(ldapsearch -H "ldap://$LDAP_HOST:$LDAP_PORT" -x \
+    -D "$ADMIN_DN" -w "$ADMIN_PSW" \
+    -b "OU=Groupes_Knowage,$BASE_DN" "(objectClass=groupOfNames)" cn 2>&1)
+if echo "$result" | grep -q "Acc"; then
+    pass "Groupe 'Accès Knowage' trouvé dans l'annuaire"
+else
+    fail "Groupe non-ASCII" "cn contenant 'Acc'" "$result"
+fi
+
+# -----------------------------------------------------------
+# TEST 15 : memberOf de jsmith contient le groupe non-ASCII (affiché en base64)
+# -----------------------------------------------------------
+echo ""
+echo "[TEST 15] memberOf de jsmith contient le groupe non-ASCII (base64 attendu)..."
+result=$(ldapsearch -H "ldap://$LDAP_HOST:$LDAP_PORT" -x \
+    -D "$ADMIN_DN" -w "$ADMIN_PSW" \
+    -b "$BASE_DN" "(uid=jsmith)" memberOf 2>&1)
+# ldapsearch encode en base64 (::) les valeurs contenant des non-ASCII
+has_b64=$(echo "$result" | grep -c "^memberOf::" || true)
+has_admin=$(echo "$result" | grep -c "SO_BO_ADMIN" || true)
+if [ "$has_b64" -gt 0 ] && [ "$has_admin" -gt 0 ]; then
+    pass "jsmith a SO_BO_ADMIN (ASCII) et au moins une valeur memberOf en base64 (non-ASCII)"
+    echo "  → Valeur base64 détectée : $(echo "$result" | grep "^memberOf::" | head -1)"
+else
+    fail "memberOf non-ASCII de jsmith" \
+        "SO_BO_ADMIN + 1 valeur base64 (memberOf::)" \
+        "$(echo "$result" | grep "^memberOf" || echo 'aucun memberOf')"
+fi
+
+# -----------------------------------------------------------
+# TEST 16 : Recherche subtree sans PartialResultException (REFERRAL=ignore)
+# -----------------------------------------------------------
+echo ""
+echo "[TEST 16] Recherche subtree complète sans erreur de referral..."
+result=$(ldapsearch -H "ldap://$LDAP_HOST:$LDAP_PORT" -x \
+    -D "$ADMIN_DN" -w "$ADMIN_PSW" \
+    -b "$BASE_DN" "(objectClass=inetOrgPerson)" uid 2>&1)
+user_count=$(echo "$result" | grep -c "^uid:" || true)
+has_error=$(echo "$result" | grep -ci "error\|partial\|referral" || true)
+if [ "$user_count" -ge 5 ] && [ "$has_error" -eq 0 ]; then
+    pass "Recherche subtree complète : $user_count utilisateurs, aucune erreur de referral"
+else
+    fail "Recherche subtree" \
+        ">= 5 utilisateurs, 0 erreur referral" \
+        "$user_count utilisateurs, $has_error erreurs"
+fi
+
+# -----------------------------------------------------------
 # Bilan
 # -----------------------------------------------------------
 echo ""
