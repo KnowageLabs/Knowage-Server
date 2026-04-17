@@ -57,6 +57,7 @@ public class EnhancedLdapConnector {
 
 	private static final String JNDI_FACTORY = "com.sun.jndi.ldap.LdapCtxFactory";
 	private static final String CONNECT_TIMEOUT_MS = "5000";
+	private static final String READ_TIMEOUT_MS    = "10000";
 
 	private final EnhancedLdapConfig config;
 
@@ -331,6 +332,7 @@ public class EnhancedLdapConnector {
 		env.put(Context.SECURITY_PRINCIPAL, principal);
 		env.put(Context.SECURITY_CREDENTIALS, credentials);
 		env.put("com.sun.jndi.ldap.connect.timeout", CONNECT_TIMEOUT_MS);
+		env.put("com.sun.jndi.ldap.read.timeout",    READ_TIMEOUT_MS);
 		env.put(Context.REFERRAL, config.getLdapReferral());
 		if (config.isUseSsl()) {
 			env.put(Context.SECURITY_PROTOCOL, "ssl");

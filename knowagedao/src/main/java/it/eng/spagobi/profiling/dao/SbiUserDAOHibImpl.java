@@ -1205,6 +1205,29 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO
 	}
 
 	@Override
+	public void deleteSbiUserRoleById(Integer userId, Integer roleId) {
+		LOGGER.debug("IN");
+		Session aSession = null;
+		Transaction tx = null;
+		try {
+			aSession = getSession();
+			tx = aSession.beginTransaction();
+			SbiExtUserRolesId pk = new SbiExtUserRolesId(userId, roleId);
+			SbiExtUserRoles role = (SbiExtUserRoles) aSession.load(SbiExtUserRoles.class, pk);
+			aSession.delete(role);
+			emitUserRoleDeleted(aSession, role);
+			aSession.flush();
+			tx.commit();
+		} catch (HibernateException he) {
+			rollbackIfActive(tx);
+			throw new SpagoBIDAOException("Error while deleting role " + roleId + " of user " + userId, he);
+		} finally {
+			LOGGER.debug("OUT");
+			closeSessionIfOpen(aSession);
+		}
+	}
+
+	@Override
 	public void setEventEmittingCommand(UserEventsEmettingCommand command) {
 		this.eventEmittingCommand = command;
 	}

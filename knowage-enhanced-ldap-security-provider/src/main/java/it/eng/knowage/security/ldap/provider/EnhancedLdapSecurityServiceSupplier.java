@@ -411,22 +411,23 @@ public class EnhancedLdapSecurityServiceSupplier implements ISecurityServiceSupp
 			return loadRolesFromDb(sbiUser);
 		}
 
-		// Build a set of role IDs already in DB to avoid redundant writes
-		java.util.Set<Integer> existingRoleIds = new java.util.HashSet<>();
+		// Load current DB roles: roleId → roleName
+		java.util.Map<Integer, String> dbRoleMap = new java.util.HashMap<>();
 		try {
 			List<it.eng.spagobi.commons.metadata.SbiExtRoles> current =
 				DAOFactory.getSbiUserDAO().loadSbiUserRolesById(sbiUser.getId());
 			if (current != null) {
 				for (it.eng.spagobi.commons.metadata.SbiExtRoles r : current) {
-					existingRoleIds.add(r.getExtRoleId());
+					dbRoleMap.put(r.getExtRoleId(), r.getName());
 				}
 			}
 		} catch (Exception e) {
 			LOGGER.warn("Could not load existing roles for user '{}': {}", sbiUser.getUserId(), e.getMessage());
 		}
 
-		// For each LDAP group: find matching Knowage role, sync to DB if missing, add to profile
+		// For each LDAP group: find matching Knowage role, add if missing
 		List<String> resolvedRoles = new ArrayList<>();
+		java.util.Set<Integer> ldapRoleIds = new java.util.HashSet<>();
 		for (String groupName : ldapGroups) {
 			try {
 				Role role = DAOFactory.getRoleDAO().loadByName(groupName);
@@ -436,22 +437,32 @@ public class EnhancedLdapSecurityServiceSupplier implements ISecurityServiceSupp
 				}
 
 				resolvedRoles.add(groupName);
+				ldapRoleIds.add(role.getId());
 
-				if (!existingRoleIds.contains(role.getId())) {
-					// Persist the association so it is visible in the Knowage admin UI
+				if (!dbRoleMap.containsKey(role.getId())) {
 					SbiExtUserRolesId roleAssocId = new SbiExtUserRolesId(sbiUser.getId(), role.getId());
 					SbiExtUserRoles roleAssoc = new SbiExtUserRoles(roleAssocId, sbiUser);
 					roleAssoc.getCommonInfo().setOrganization(sbiUser.getCommonInfo().getOrganization());
 					DAOFactory.getSbiUserDAO().updateSbiUserRoles(roleAssoc);
-					LOGGER.info("Synced LDAP group '{}' → Knowage role '{}' for user '{}'",
-						groupName, groupName, sbiUser.getUserId());
-				} else {
-					LOGGER.debug("LDAP group '{}' already in DB for user '{}'", groupName, sbiUser.getUserId());
+					LOGGER.info("Added role '{}' for user '{}'", groupName, sbiUser.getUserId());
 				}
-
 			} catch (Exception e) {
 				LOGGER.warn("Could not sync role '{}' for user '{}': {}",
 					groupName, sbiUser.getUserId(), e.getMessage());
+			}
+		}
+
+		// Revoke roles that are in DB but no longer in LDAP groups
+		for (java.util.Map.Entry<Integer, String> entry : dbRoleMap.entrySet()) {
+			if (!ldapRoleIds.contains(entry.getKey())) {
+				try {
+					DAOFactory.getSbiUserDAO().deleteSbiUserRoleById(sbiUser.getId(), entry.getKey());
+					LOGGER.info("Revoked role '{}' from user '{}' (no longer in LDAP groups)",
+						entry.getValue(), sbiUser.getUserId());
+				} catch (Exception e) {
+					LOGGER.warn("Could not revoke role '{}' from user '{}': {}",
+						entry.getValue(), sbiUser.getUserId(), e.getMessage());
+				}
 			}
 		}
 
