@@ -72,6 +72,7 @@ public class EnhancedLdapConfig {
 	public static final String KEY_DEFAULT_ROLE           = "DEFAULT_ROLE";
 	public static final String KEY_DEFAULT_TENANT         = "DEFAULT_TENANT";
 	public static final String KEY_FALLBACK_TO_INTERNAL   = "FALLBACK_TO_INTERNAL";
+	public static final String KEY_LDAP_REFERRAL          = "LDAP_REFERRAL";
 
 	// Loaded values
 	private String host;
@@ -95,6 +96,7 @@ public class EnhancedLdapConfig {
 	private String defaultRole;
 	private String defaultTenant;
 	private boolean fallbackToInternal;
+	private String ldapReferral;
 
 	public EnhancedLdapConfig() {
 		Properties props = loadProperties();
@@ -197,6 +199,7 @@ public class EnhancedLdapConfig {
 		defaultRole         = p.getProperty(KEY_DEFAULT_ROLE, "");
 		defaultTenant       = p.getProperty(KEY_DEFAULT_TENANT, "DEFAULT_TENANT");
 		fallbackToInternal  = parseBoolean(p, KEY_FALLBACK_TO_INTERNAL, true);
+		ldapReferral        = parseReferral(p);
 	}
 
 	private String require(Properties p, String key) {
@@ -228,6 +231,15 @@ public class EnhancedLdapConfig {
 			return defaultValue;
 		}
 		return Boolean.parseBoolean(value.trim());
+	}
+
+	private String parseReferral(Properties p) {
+		String value = p.getProperty(KEY_LDAP_REFERRAL, "ignore").trim().toLowerCase();
+		if (!value.equals("ignore") && !value.equals("follow") && !value.equals("throw")) {
+			LOGGER.warn("Invalid LDAP_REFERRAL value '{}', defaulting to 'ignore'", value);
+			return "ignore";
+		}
+		return value;
 	}
 
 	/**
@@ -323,6 +335,7 @@ public class EnhancedLdapConfig {
 	public String getDefaultRole() { return defaultRole; }
 	public String getDefaultTenant() { return defaultTenant; }
 	public boolean isFallbackToInternal() { return fallbackToInternal; }
+	public String getLdapReferral() { return ldapReferral; }
 
 	@Override
 	public String toString() {
