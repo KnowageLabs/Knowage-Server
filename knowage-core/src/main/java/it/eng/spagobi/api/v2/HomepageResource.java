@@ -52,6 +52,7 @@ import java.util.stream.Collectors;
 
 	private static final Logger LOGGER = Logger.getLogger(HomepageResource.class);
 	private static final String CHARSET = "; charset=UTF-8";
+	private static final String DEFAULT_ROLE_TOKEN = "default";
 
 	@GET
 	@Path("/default")
@@ -75,13 +76,23 @@ import java.util.stream.Collectors;
 	@Path("/preview/{roleId}")
 	@UserConstraint(functionalities = { CommunityFunctionalityConstants.MENU_MANAGEMENT })
 	@Produces(MediaType.APPLICATION_JSON + CHARSET)
-	public Response previewHomepageByRole(@PathParam("roleId") Integer roleId) {
+	public Response previewHomepageByRole(@PathParam("roleId") String roleId) {
 		try {
-			Homepage homepage = getHomepageDAO().loadHomepageByRoleId(roleId);
+			RoleRequest roleRequest = parseRoleRequest(roleId);
+			Homepage homepage = roleRequest.isDefaultRequest()
+					? getHomepageDAO().loadDefaultHomepage()
+					: getHomepageDAO().loadHomepageByRoleId(roleRequest.getRoleId());
 			if (homepage == null) {
 				return Response.status(Response.Status.NOT_FOUND).build();
 			}
-			return Response.ok(filterHomepageForRole(homepage, roleId)).build();
+			if (roleRequest.isDefaultRequest()) {
+				return Response.ok(homepage).build();
+			}
+			return Response.ok(filterHomepageForRole(homepage, roleRequest.getRoleId())).build();
+		} catch (NotFoundException e) {
+			throw e;
+		} catch (SpagoBIRuntimeException e) {
+			throw e;
 		} catch (Exception e) {
 			String errorString = "sbi.homepage.preview.error";
 			LOGGER.error(errorString, e);
@@ -92,16 +103,23 @@ import java.util.stream.Collectors;
 	@GET
 	@Path("/{roleId}")
 	@Produces(MediaType.APPLICATION_JSON + CHARSET)
-	public Response getHomepageByRole(@PathParam("roleId") Integer roleId) {
+	public Response getHomepageByRole(@PathParam("roleId") String roleId) {
 		try {
-			if (!canReadRole(roleId)) {
+			RoleRequest roleRequest = parseRoleRequest(roleId);
+			if (!roleRequest.isDefaultRequest() && !canReadRole(roleRequest.getRoleId())) {
 				return Response.status(Response.Status.FORBIDDEN).build();
 			}
-			Homepage homepage = getHomepageDAO().loadHomepageByRoleId(roleId);
+			Homepage homepage = roleRequest.isDefaultRequest()
+					? getHomepageDAO().loadDefaultHomepage()
+					: getHomepageDAO().loadHomepageByRoleId(roleRequest.getRoleId());
 			if (homepage == null) {
 				return Response.status(Response.Status.NOT_FOUND).build();
 			}
 			return Response.ok(homepage).build();
+		} catch (NotFoundException e) {
+			throw e;
+		} catch (SpagoBIRuntimeException e) {
+			throw e;
 		} catch (Exception e) {
 			String errorString = "sbi.homepage.load.error";
 			LOGGER.error(errorString, e);
@@ -158,7 +176,8 @@ import java.util.stream.Collectors;
 	private Homepage readHomepage(HttpServletRequest request) throws Exception {
 		JSONObject body = RestUtilities.readBodyAsJSONObject(request);
 		Homepage homepage = new Homepage();
-		homepage.setDefaultHomepage(body.optBoolean("default", body.optBoolean("isDefault", false)));
+		boolean hasExplicitDefaultFlag = body.has("default") || body.has("isDefault");
+		boolean defaultHomepage = body.optBoolean("default", body.optBoolean("isDefault", false));
 		homepage.setType(body.optString("type", null));
 
 		if (body.has("documentId") && !body.isNull("documentId")) {
@@ -190,14 +209,35 @@ import java.util.stream.Collectors;
 		}
 
 		List<Integer> roleIds = new ArrayList<>();
+		boolean defaultRoleRequested = false;
 		if (body.has("roleIds") && !body.isNull("roleIds")) {
-			roleIds.addAll(readIntegerArray(body.getJSONArray("roleIds")));
+			defaultRoleRequested = readRoleArray(body.getJSONArray("roleIds"), roleIds) || defaultRoleRequested;
 		}
 		if (body.has("roleId") && !body.isNull("roleId")) {
-			roleIds.add(body.getInt("roleId"));
+			defaultRoleRequested = addRoleValue(body.get("roleId"), "roleId", roleIds) || defaultRoleRequested;
 		}
+		boolean inferDefaultHomepage = !hasExplicitDefaultFlag && !defaultRoleRequested && roleIds.isEmpty();
+		homepage.setDefaultHomepage(defaultHomepage || defaultRoleRequested || inferDefaultHomepage);
 		homepage.setRoleIds(roleIds.stream().distinct().collect(Collectors.toList()));
 		return homepage;
+	}
+
+	private RoleRequest parseRoleRequest(String roleId) {
+		if (roleId == null) {
+			throw new NotFoundException();
+		}
+		String normalizedRoleId = roleId.trim();
+		if (normalizedRoleId.isEmpty()) {
+			throw new NotFoundException();
+		}
+		if (DEFAULT_ROLE_TOKEN.equalsIgnoreCase(normalizedRoleId)) {
+			return RoleRequest.defaultRequest();
+		}
+		try {
+			return RoleRequest.forRole(Integer.valueOf(normalizedRoleId));
+		} catch (NumberFormatException e) {
+			throw new NotFoundException();
+		}
 	}
 
 	private List<MenuPlaceholder> readMenuPlaceholders(JSONArray jsonArray) throws JSONException {
@@ -223,6 +263,38 @@ import java.util.stream.Collectors;
 			integers.add(jsonArray.getInt(i));
 		}
 		return integers;
+	}
+
+	private boolean readRoleArray(JSONArray jsonArray, List<Integer> roleIds) throws JSONException {
+		boolean defaultRoleRequested = false;
+		for (int i = 0; i < jsonArray.length(); i++) {
+			defaultRoleRequested = addRoleValue(jsonArray.get(i), "roleIds[" + i + "]", roleIds) || defaultRoleRequested;
+		}
+		return defaultRoleRequested;
+	}
+
+	private boolean addRoleValue(Object rawRoleValue, String fieldName, List<Integer> roleIds) {
+		if (rawRoleValue == null || JSONObject.NULL.equals(rawRoleValue)) {
+			throw validationException(fieldName + " cannot be null");
+		}
+		if (rawRoleValue instanceof Number) {
+			roleIds.add(((Number) rawRoleValue).intValue());
+			return false;
+		}
+
+		String normalizedRoleValue = rawRoleValue.toString().trim();
+		if (normalizedRoleValue.isEmpty()) {
+			throw validationException(fieldName + " cannot be blank");
+		}
+		if (DEFAULT_ROLE_TOKEN.equalsIgnoreCase(normalizedRoleValue)) {
+			return true;
+		}
+		try {
+			roleIds.add(Integer.valueOf(normalizedRoleValue));
+			return false;
+		} catch (NumberFormatException e) {
+			throw validationException("Invalid " + fieldName + " value [" + rawRoleValue + "]", e);
+		}
 	}
 
 	private void validateHomepage(Homepage homepage) {
@@ -381,6 +453,33 @@ import java.util.stream.Collectors;
 
 	private SpagoBIRuntimeException validationException(String message, Throwable throwable) {
 		return new SpagoBIRuntimeException(message, throwable);
+	}
+
+	private static final class RoleRequest {
+
+		private final Integer roleId;
+		private final boolean defaultRequest;
+
+		private RoleRequest(Integer roleId, boolean defaultRequest) {
+			this.roleId = roleId;
+			this.defaultRequest = defaultRequest;
+		}
+
+		private static RoleRequest defaultRequest() {
+			return new RoleRequest(null, true);
+		}
+
+		private static RoleRequest forRole(Integer roleId) {
+			return new RoleRequest(roleId, false);
+		}
+
+		private Integer getRoleId() {
+			return roleId;
+		}
+
+		private boolean isDefaultRequest() {
+			return defaultRequest;
+		}
 	}
 
 }

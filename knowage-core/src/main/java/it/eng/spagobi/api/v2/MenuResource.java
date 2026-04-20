@@ -29,6 +29,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
+import javax.ws.rs.NotFoundException;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
@@ -75,6 +76,7 @@ public class MenuResource extends AbstractSpagoBIResource {
 	private static final Logger LOGGER = LogManager.getLogger(MenuResource.class);
 
 	private static final String CHARSET = "; charset=UTF-8";
+	private static final String DEFAULT_ROLE_TOKEN = "default";
 
 	/**
 	 * Getting list of all menus. Arrays of Roles that belong to one menu are implemented to be like: One Role only with id and name
@@ -113,27 +115,54 @@ public class MenuResource extends AbstractSpagoBIResource {
 	@Path("/preview/{roleId}")
 	@UserConstraint(functionalities = { CommunityFunctionalityConstants.MENU_MANAGEMENT })
 	@Produces(MediaType.APPLICATION_JSON + CHARSET)
-	public Response previewMenuByRole(@PathParam("roleId") Integer roleId) {
+	public Response previewMenuByRole(@PathParam("roleId") String roleId) {
 		LOGGER.debug("IN");
 
 		try {
 			UserProfile profile = getUserProfile();
+			Integer parsedRoleId = parseRoleId(roleId);
+			if (parsedRoleId == null) {
+				List menuItems = MenuUtilities.getMenuItems(profile, true);
+				MenuUtilities.filterListForUserClickableElements(menuItems, profile);
+				return Response.ok(menuItems).build();
+			}
+
 			IRoleDAO roleDao = DAOFactory.getRoleDAO();
 			roleDao.setUserProfile(profile);
 
-			Role role = roleDao.loadByID(roleId);
+			Role role = roleDao.loadByID(parsedRoleId);
 			if (role == null) {
 				return Response.status(Response.Status.NOT_FOUND).build();
 			}
 
 			List menuItems = MenuUtilities.getMenuItemsForRole(profile, role.getName());
 			return Response.ok(menuItems).build();
+		} catch (NotFoundException e) {
+			throw e;
 		} catch (Exception e) {
 			String errorString = "sbi.menu.load.preview.error";
 			LOGGER.error(errorString, e);
 			throw new SpagoBIRestServiceException(errorString, getLocale(), e);
 		} finally {
 			LOGGER.debug("OUT");
+		}
+	}
+
+	private Integer parseRoleId(String roleId) {
+		if (roleId == null) {
+			throw new NotFoundException();
+		}
+		String normalizedRoleId = roleId.trim();
+		if (normalizedRoleId.isEmpty()) {
+			throw new NotFoundException();
+		}
+		if (DEFAULT_ROLE_TOKEN.equalsIgnoreCase(normalizedRoleId)) {
+			return null;
+		}
+		try {
+			return Integer.valueOf(normalizedRoleId);
+		} catch (NumberFormatException e) {
+			throw new NotFoundException();
 		}
 	}
 
