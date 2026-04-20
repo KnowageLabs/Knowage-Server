@@ -18,6 +18,7 @@
 package it.eng.spagobi.wapp.dao;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -121,11 +122,8 @@ public class HomepageDAOImpl extends AbstractHibernateDAO implements IHomepageDA
 		Session session = null;
 		try {
 			session = getSession();
-			Query query = session.createQuery("select distinct h from SbiHomepage h join h.sbiHomepageRoles r "
-					+ "where r.extRoleId = :roleId and h.commonInfo.timeDe is null");
-			query.setInteger("roleId", roleId);
-			query.setMaxResults(1);
-			SbiHomepage hibHomepage = (SbiHomepage) query.uniqueResult();
+			Integer homepageId = loadHomepageIdByRoleId(session, roleId);
+			SbiHomepage hibHomepage = loadSbiHomepageById(session, homepageId);
 			if (hibHomepage != null) {
 				return toHomepage(hibHomepage);
 			}
@@ -197,10 +195,7 @@ public class HomepageDAOImpl extends AbstractHibernateDAO implements IHomepageDA
 	}
 
 	private void clearRoleAssignmentsOnOtherHomepages(Session session, List<Integer> roleIds, Integer currentHomepageId) {
-		Query query = session.createQuery("select distinct h from SbiHomepage h join h.sbiHomepageRoles r "
-				+ "where r.extRoleId in (:roleIds) and h.commonInfo.timeDe is null");
-		query.setParameterList("roleIds", roleIds);
-		List<SbiHomepage> homepages = query.list();
+		List<SbiHomepage> homepages = loadHomepagesByRoleIds(session, roleIds);
 		for (SbiHomepage homepage : homepages) {
 			if (currentHomepageId != null && currentHomepageId.equals(homepage.getId())) {
 				continue;
@@ -214,6 +209,43 @@ public class HomepageDAOImpl extends AbstractHibernateDAO implements IHomepageDA
 				session.saveOrUpdate(homepage);
 			}
 		}
+	}
+
+	private Integer loadHomepageIdByRoleId(Session session, Integer roleId) {
+		Query query = session.createQuery("select distinct h.id from SbiHomepage h join h.sbiHomepageRoles r "
+				+ "where r.extRoleId = :roleId and h.commonInfo.timeDe is null");
+		query.setInteger("roleId", roleId);
+		query.setMaxResults(1);
+		return (Integer) query.uniqueResult();
+	}
+
+	List<SbiHomepage> loadHomepagesByRoleIds(Session session, List<Integer> roleIds) {
+		if (roleIds == null || roleIds.isEmpty()) {
+			return Collections.emptyList();
+		}
+		Query query = session.createQuery("select distinct h.id from SbiHomepage h join h.sbiHomepageRoles r "
+				+ "where r.extRoleId in (:roleIds) and h.commonInfo.timeDe is null");
+		query.setParameterList("roleIds", roleIds);
+		List<Integer> homepageIds = query.list();
+		return loadHomepagesByIds(session, homepageIds);
+	}
+
+	private SbiHomepage loadSbiHomepageById(Session session, Integer homepageId) {
+		if (homepageId == null) {
+			return null;
+		}
+		Query query = session.createQuery("from SbiHomepage h where h.id = :homepageId and h.commonInfo.timeDe is null");
+		query.setInteger("homepageId", homepageId);
+		return (SbiHomepage) query.uniqueResult();
+	}
+
+	private List<SbiHomepage> loadHomepagesByIds(Session session, List<Integer> homepageIds) {
+		if (homepageIds == null || homepageIds.isEmpty()) {
+			return Collections.emptyList();
+		}
+		Query query = session.createQuery("from SbiHomepage h where h.id in (:homepageIds) and h.commonInfo.timeDe is null");
+		query.setParameterList("homepageIds", homepageIds);
+		return query.list();
 	}
 
 	private Set<SbiExtRoles> loadRoles(Session session, List<Integer> roleIds) throws EMFUserError {
