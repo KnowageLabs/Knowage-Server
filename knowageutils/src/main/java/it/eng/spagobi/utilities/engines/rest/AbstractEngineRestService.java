@@ -38,7 +38,6 @@ import it.eng.spagobi.services.proxy.DataSetServiceProxy;
 import it.eng.spagobi.services.proxy.DataSourceServiceProxy;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.user.UserProfileManager;
-import it.eng.spagobi.utilities.engines.SourceBeanParser;
 import it.eng.spagobi.utilities.ParametersDecoder;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.engines.AuditServiceProxy;
@@ -98,7 +97,7 @@ public abstract class AbstractEngineRestService extends AbstractRestService {
 	public SourceBean getTemplateAsSourceBean() {
 		SourceBean templateSB = null;
 		try {
-			templateSB = SourceBeanParser.fromXmlString(getTemplateAsString());
+			templateSB = SourceBean.fromXMLString(getTemplateAsString());
 		} catch (SourceBeanException e) {
 			SpagoBIEngineStartupException engineException = new SpagoBIEngineStartupException(getEngineName(),
 					"Impossible to parse template's content", e);
