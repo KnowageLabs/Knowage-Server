@@ -168,7 +168,7 @@ public class DashboardPdfExporter extends DashboardExporter {
                     replaceWithThemeSettingsIfPresent(settings);
                     columnStylesMap = getStylesMap(settings);
                     initColumnWidths(columnsOrdered, columnStylesMap);
-                    buildFirstPageHeaders(table, settings, groupsAndColumnsMap, columnsOrdered, executionUser, font, extraValueLabel, extraValue, driversFromBody, parametersFromBody);
+                    buildFirstPageHeaders(table, settings, groupsAndColumnsMap, columnsOrdered, executionUser, totalNumberOfRows, font, extraValueLabel, extraValue, driversFromBody, parametersFromBody);
                 }
 
                 rows = dataStore.getJSONArray("rows");
@@ -227,8 +227,8 @@ public class DashboardPdfExporter extends DashboardExporter {
         }
     }
 
-    private void buildFirstPageHeaders(BaseTable table, JSONObject settings, Map<String, String> groupsAndColumnsMap, JSONArray columnsOrdered, String executionUser, PDFont font, String extraValueLabel, String extraValueField, JSONArray driversFromBody, JSONArray parametersFromBody) throws JSONException {
-        createDocumentInformationRow(table, font, executionUser, extraValueLabel, extraValueField);
+    private void buildFirstPageHeaders(BaseTable table, JSONObject settings, Map<String, String> groupsAndColumnsMap, JSONArray columnsOrdered, String executionUser, int totalNumberOfRows, PDFont font, String extraValueLabel, String extraValueField, JSONArray driversFromBody, JSONArray parametersFromBody) throws JSONException {
+        createDocumentInformationRow(table, font, executionUser, totalNumberOfRows, extraValueLabel, extraValueField);
 
         if (!groupsAndColumnsMap.isEmpty()) {
             Row<PDPage> groupHeaderRow = table.createRow(15f);
@@ -297,10 +297,11 @@ public class DashboardPdfExporter extends DashboardExporter {
         }
     }
 
-    private void createDocumentInformationRow(BaseTable table, PDFont font, String executionUser, String extraValueLabel, String extraValue) {
+    private void createDocumentInformationRow(BaseTable table, PDFont font, String executionUser, int totalNumberOfRows, String extraValueLabel, String extraValue) {
         try {
             String executionDateLabel = getExecutionDateLabel();
             String executionUserLabel = getExecutionUserLabel();
+            String totalRecordsLabel = getTotalRecordsLabel();
 
             PDPage page = table.getCurrentPage();
 
@@ -308,23 +309,26 @@ public class DashboardPdfExporter extends DashboardExporter {
 
             String line1 = executionDateLabel + executionDate;
             String line2 = executionUserLabel + executionUser;
-            String line3 = null;
+            String line3 = totalRecordsLabel + totalNumberOfRows;
             boolean isExtraValuePresent = extraValueLabel != null && !extraValueLabel.isEmpty() && extraValue != null && !extraValue.isEmpty();
-            if (isExtraValuePresent) {
-                line3 = extraValueLabel + ": " + extraValue;
-            }
+            String line4 = isExtraValuePresent ? extraValueLabel + ": " + extraValue : null;
 
             float fontSize = HEADER_FONT_SIZE;
             float leading = HEADER_LEADING;
 
             float pageWidth = page.getMediaBox().getWidth();
+            List<String> headerLines = new ArrayList<>();
+            headerLines.add(line1);
+            headerLines.add(line2);
+            headerLines.add(line3);
+            if (isExtraValuePresent) {
+                headerLines.add(line4);
+            }
 
-            float w1 = font.getStringWidth(line1) / 1000f * fontSize;
-            float w2 = font.getStringWidth(line2) / 1000f * fontSize;
-
-            float w3 = isExtraValuePresent ? font.getStringWidth(line3) / 1000f * fontSize : 0;
-
-            float maxW = Math.max(w1, Math.max(w2, w3));
+            float maxW = 0f;
+            for (String headerLine : headerLines) {
+                maxW = Math.max(maxW, font.getStringWidth(headerLine) / 1000f * fontSize);
+            }
 
             float x = pageWidth - HEADER_SIDE_MARGIN - maxW;
 
@@ -337,12 +341,11 @@ public class DashboardPdfExporter extends DashboardExporter {
                 contentStream.setFont(font, fontSize);
                 contentStream.setNonStrokingColor(Color.BLACK);
                 contentStream.newLineAtOffset(x, y);
-                contentStream.showText(line1);
-                contentStream.newLineAtOffset(0, -leading);
-                contentStream.showText(line2);
-                if (isExtraValuePresent) {
-                    contentStream.newLineAtOffset(0, -leading);
-                    contentStream.showText(line3);
+                for (int i = 0; i < headerLines.size(); i++) {
+                    if (i > 0) {
+                        contentStream.newLineAtOffset(0, -leading);
+                    }
+                    contentStream.showText(headerLines.get(i));
                 }
                 contentStream.endText();
             }
@@ -578,8 +581,16 @@ public class DashboardPdfExporter extends DashboardExporter {
         };
     }
 
+    private String getTotalRecordsLabel() {
+        return switch (getEffectiveLocale().getLanguage()) {
+            case "it" -> "Numero totale di record: ";
+            case "sk" -> "Celkový počet záznamov: ";
+            default -> "Total Records: ";
+        };
+    }
+
     private float calculateReservedTopHeightForDocumentInfo(String extraValueLabel, String extraValue) {
-        int documentInfoLines = (extraValueLabel != null && !extraValueLabel.isEmpty() && extraValue != null && !extraValue.isEmpty()) ? 3 : 2;
+        int documentInfoLines = (extraValueLabel != null && !extraValueLabel.isEmpty() && extraValue != null && !extraValue.isEmpty()) ? 4 : 3;
         return (documentInfoLines * HEADER_LEADING) + HEADER_BOTTOM_GAP;
     }
 
