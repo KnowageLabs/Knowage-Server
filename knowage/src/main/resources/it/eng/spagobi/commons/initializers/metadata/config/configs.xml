@@ -682,8 +682,5 @@
 			description="If true, drivers and selections sheet will be included in the exported workbook (cockpit xlsx export)" isActive="true"
 			valueCheck="false" valueType="STRING" category="GENERIC_CONFIGURATION" />
 
-	<CONFIG label="DASHBOARD.XLSX.EXPORT.DISABLE_STYLE" name="Disables style in dashboard xlsx export"
-			description="If true, it disables the basic style from the xlsx export of a dashboard (this config does not affect conditional style)" isActive="true"
-			valueCheck="false" valueType="STRING" category="GENERIC_CONFIGURATION" />
 </CONFIGS>
 

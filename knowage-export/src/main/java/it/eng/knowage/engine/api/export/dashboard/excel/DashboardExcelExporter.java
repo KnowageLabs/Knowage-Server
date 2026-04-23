@@ -60,9 +60,9 @@ public class DashboardExcelExporter extends DashboardExporter {
     private static final String CONFIG_NAME_FOR_EXPORT_SCRIPT_PATH = "internal.nodejs.chromium.export.path";
     private static final String CONFIG_NAME_FOR_DRIVERS_SHEET_EXPORT = "DASHBOARD.EXPORT.SHOW_DRIVERS_SHEET";
     private static final String CONFIG_NAME_FOR_SELECTIONS_SHEET_EXPORT = "DASHBOARD.EXPORT.SHOW_SELECTIONS_SHEET";
-    private static final String CONFIG_NAME_FOR_DISABLE_STYLE = "DASHBOARD.XLSX.EXPORT.DISABLE_STYLE";
     private static final String SCRIPT_NAME = "cockpit-export-xls.js";
     private static final String DOCUMENT_NAME = "";
+    private static final String XLSX_STYLE_ENABLED = "xlsxStyleEnabled";
     private String role;
     private String requestURL = "";
     private String organization = "";
@@ -89,6 +89,24 @@ public class DashboardExcelExporter extends DashboardExporter {
         this.role = role;
         this.requestURL = requestUrl;
         this.organization = organization;
+    }
+
+    static boolean isXlsxStyleEnabled(JSONObject body, boolean isDashboardSingleWidgetExport) {
+        if (body == null) {
+            return true;
+        }
+        if (isDashboardSingleWidgetExport) {
+            return body.optBoolean(XLSX_STYLE_ENABLED, true);
+        }
+        JSONObject configuration = body.optJSONObject("configuration");
+        if (configuration == null) {
+            return true;
+        }
+        JSONObject menuWidgets = configuration.optJSONObject("menuWidgets");
+        if (menuWidgets == null) {
+            return true;
+        }
+        return menuWidgets.optBoolean(XLSX_STYLE_ENABLED, true);
     }
 
     public byte[] getScheduledBinaryData(String documentLabel) throws IOException, InterruptedException {
@@ -214,12 +232,7 @@ public class DashboardExcelExporter extends DashboardExporter {
             JSONArray driversFromBody = getDrivers(body);
             JSONObject drivers = transformDriversForDatastore(driversFromBody);
             JSONArray parameters = getParametersFromBody(body);
-
-            IConfigDAO configsDao = DAOFactory.getSbiConfigDAO();
-            Optional<Config> disableStyleCfg = configsDao.loadConfigParametersByLabelIfExist(CONFIG_NAME_FOR_DISABLE_STYLE);
-            if (disableStyleCfg.isPresent() && disableStyleCfg.get().isActive()) {
-                this.disableBasicStyle = Boolean.parseBoolean(disableStyleCfg.get().getValueCheck());
-            }
+            this.disableBasicStyle = !isXlsxStyleEnabled(body, isDashboardSingleWidgetExport);
 
             if (isDashboardSingleWidgetExport) {
                 if (body.has("datasetDrivers") && body.getJSONArray("datasetDrivers") != null && body.getJSONArray("datasetDrivers").length() > 0) {
@@ -233,6 +246,7 @@ public class DashboardExcelExporter extends DashboardExporter {
             }
 
 
+            IConfigDAO configsDao = DAOFactory.getSbiConfigDAO();
             Optional<Config> selectionsCfg = configsDao.loadConfigParametersByLabelIfExist(CONFIG_NAME_FOR_SELECTIONS_SHEET_EXPORT);
 
             if (selectionsCfg.isPresent() && selectionsCfg.get().isActive() && Boolean.parseBoolean(selectionsCfg.get().getValueCheck()) && !selections.isEmpty()) {
@@ -280,6 +294,7 @@ public class DashboardExcelExporter extends DashboardExporter {
             throw new SpagoBIRuntimeException("Unable to get template for dashboard");
         }
         try {
+            this.disableBasicStyle = !isXlsxStyleEnabled(body, true);
             Map<String, Map<String, Object>> selections = getSelections(body);
 
             JSONArray driversFromBody = getDrivers(body);
