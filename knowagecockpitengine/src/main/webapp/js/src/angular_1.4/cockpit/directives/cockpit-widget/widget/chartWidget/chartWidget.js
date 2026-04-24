@@ -1278,8 +1278,19 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
         var category = $scope.ngModel.content.chartTemplate.CHART.VALUES.CATEGORY;
         var columnName = category.name;
+        var groupedBySecondCategory =
+          !Array.isArray(category) &&
+          ($scope.ngModel.content.chartTemplate.CHART.groupSeriesCateg === true || $scope.ngModel.content.chartTemplate.CHART.groupSeriesCateg === "true") &&
+          category.groupby != undefined &&
+          category.groupby != "" &&
+          event.point &&
+          event.point.series &&
+          event.point.series.name != undefined;
         if ($scope.ngModel.cliccable && $scope.ngModel.updateble && !$scope.ngModel.drillable && !event.point.drilldown && category.column != category.groupby && category.groupby != "") {
           columnName = category.groupby;
+          if (groupedBySecondCategory) {
+            columnValue = event.point.series.name;
+          }
         }
 
         // var d3Types = ["WORDCLOUD", "PARALLEL", "SUNBURST"];
@@ -1413,6 +1424,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         CATEGORY_VALUE: $scope.ngModel.content.chartTemplate.CHART.dateTime ? date_format : event.point.name,
         CATEGORY_NAME: $scope.ngModel.content.chartTemplate.CHART.VALUES.CATEGORY.name,
       };
+      if (
+        ($scope.ngModel.content.chartTemplate.CHART.groupSeriesCateg === true || $scope.ngModel.content.chartTemplate.CHART.groupSeriesCateg === "true") &&
+        !Array.isArray($scope.ngModel.content.chartTemplate.CHART.VALUES.CATEGORY) &&
+        $scope.ngModel.content.chartTemplate.CHART.VALUES.CATEGORY.groupby != undefined &&
+        $scope.ngModel.content.chartTemplate.CHART.VALUES.CATEGORY.groupby != "" &&
+        event.point &&
+        event.point.series &&
+        event.point.series.name != undefined
+      ) {
+        parameters.GROUPING_NAME = $scope.ngModel.content.chartTemplate.CHART.VALUES.CATEGORY.groupby;
+        parameters.GROUPING_VALUE = event.point.series.name;
+      }
 
       return parameters;
     }
