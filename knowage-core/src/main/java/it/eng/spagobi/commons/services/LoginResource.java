@@ -1,14 +1,11 @@
 package it.eng.spagobi.commons.services;
 
 import java.net.URI;
+import java.net.URL;
+import java.security.interfaces.RSAPublicKey;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
@@ -23,6 +20,9 @@ import javax.ws.rs.core.Form;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import com.auth0.jwk.Jwk;
+import com.auth0.jwk.JwkProvider;
+import com.auth0.jwk.JwkProviderBuilder;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.HibernateException;
@@ -151,11 +151,9 @@ public class LoginResource extends AbstractSpagoBIResource {
 			boolean isAdminUser = isUserAdmin(user, userDao);
 
 			// Validate and update password if not admin
+			String passwordCheckResponse = "";
 			if (!isAdminUser) {
-				Response passwordCheckResponse = validateAndUpdatePassword(user, userDao);
-				if (passwordCheckResponse != null) {
-					return passwordCheckResponse;
-				}
+				passwordCheckResponse = validateAndUpdatePassword(user, userDao);
 			}
 
 			// Build user profile and session
@@ -173,7 +171,7 @@ public class LoginResource extends AbstractSpagoBIResource {
 			recordLoginEvent((UserProfile) profile);
 
 			// Complete login with tenant context
-			return completeLogin(req, profile, false);
+			return completeLogin(req, profile, false, passwordCheckResponse);
 
 		} catch (SecurityException se) {
 			logger.error("Security exception during login", se);
@@ -508,8 +506,8 @@ public class LoginResource extends AbstractSpagoBIResource {
 	 */
 	private TokenResponse exchangeCodeForToken(OAuth2Config cfg, String code, String codeVerifier) throws Exception {
 
-		Client client = ClientBuilder.newBuilder().connectTimeout(5, java.util.concurrent.TimeUnit.SECONDS)
-				.readTimeout(10, java.util.concurrent.TimeUnit.SECONDS).build();
+		Client client = ClientBuilder.newBuilder().connectTimeout(5, TimeUnit.SECONDS)
+				.readTimeout(10, TimeUnit.SECONDS).build();
 
 		Form form = new Form();
 		form.param("grant_type", "authorization_code");
@@ -619,16 +617,16 @@ public class LoginResource extends AbstractSpagoBIResource {
 	 * @return true if password change is required, false otherwise
 	 * @throws Exception if configuration lookup fails
 	 */
-	private boolean checkPwd(SbiUser user) throws Exception {
+	private String checkPwd(SbiUser user) throws Exception {
 		logger.debug("IN");
-		boolean toReturn = false;
+		String toReturn = "";
 		if (user == null) {
-			return toReturn;
+			return "";
 		}
 
 		if (encriptedBefore72(user)) {
 			logger.info("Old encrypting method. Change password required.");
-			return true;
+			return "Old encrypting method. Change password required.";
 		}
 
 		Date currentDate = new Date();
@@ -638,53 +636,53 @@ public class LoginResource extends AbstractSpagoBIResource {
 		List lstConfigChecks = configDao.loadConfigParametersByProperties(PROP_NODE);
 		logger.debug("checks found on db: " + lstConfigChecks.size());
 
-		for (int i = 0; i < lstConfigChecks.size(); i++) {
-			Config check = (Config) lstConfigChecks.get(i);
-			if ((SpagoBIConstants.CHANGEPWD_CHANGE_FIRST).equals(check.getLabel()) && new Boolean(check.getValueCheck()) == true
-					&& user.getDtLastAccess() == null) {
-				// if dtLastAccess isn't enhanced it represents the first login, so is necessary change the pwd
-				logger.info("The pwd needs to activate!");
-				toReturn = true;
-				break;
-			}
+        for (Object lstConfigCheck : lstConfigChecks) {
+            Config check = (Config) lstConfigCheck;
+            if ((SpagoBIConstants.CHANGEPWD_CHANGE_FIRST).equals(check.getLabel()) && new Boolean(check.getValueCheck()) == true
+                    && user.getDtLastAccess() == null) {
+                // if dtLastAccess isn't enhanced it represents the first login, so is necessary change the pwd
+                logger.info("The pwd needs to activate!");
+                toReturn = "The pwd needs to activate!";
+                break;
+            }
 
-			if ((SpagoBIConstants.CHANGEPWD_EXPIRED_TIME).equals(check.getLabel()) && user.getDtPwdEnd() != null
-					&& currentDate.compareTo(user.getDtPwdEnd()) >= 0) {
-				// check if the pwd is expiring, in this case it's locked.
-				logger.info("The pwd is expiring... it should be changed");
-				toReturn = true;
-				break;
-			}
-			if ((SpagoBIConstants.CHANGEPWD_DISACTIVE_TIME).equals(check.getLabel())) {
-				// defines the end date for uselessness
-				Date tmpEndForUnused = null;
-				if (user.getDtLastAccess() != null) {
-					SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT);
-					Calendar cal = Calendar.getInstance();
-					cal.set(user.getDtLastAccess().getYear() + 1900, user.getDtLastAccess().getMonth(), user.getDtLastAccess().getDate());
-					cal.add(Calendar.MONTH, 6);
-					try {
-						tmpEndForUnused = StringUtilities.stringToDate(sdf.format(cal.getTime()), DATE_FORMAT);
-						logger.debug("End Date For Unused: " + tmpEndForUnused);
-					} catch (Exception e) {
-						logger.error("The control pwd goes on error: " + e);
-					}
-				}
-				if (tmpEndForUnused != null && currentDate.compareTo(tmpEndForUnused) >= 0) {
-					// check if the pwd is unused by 6 months, in this case it's locked.
-					logger.info("The pwd is unused more than 6 months! It's locked!!");
-					toReturn = true;
-					break;
-				}
-			}
+            if ((SpagoBIConstants.CHANGEPWD_EXPIRED_TIME).equals(check.getLabel()) && user.getDtPwdEnd() != null
+                    && currentDate.compareTo(user.getDtPwdEnd()) >= 0) {
+                // check if the pwd is expiring, in this case it's locked.
+                logger.info("The pwd is expiring... it should be changed");
+                toReturn = "The pwd is expiring... it should be changed";
+                break;
+            }
+            if ((SpagoBIConstants.CHANGEPWD_DISACTIVE_TIME).equals(check.getLabel())) {
+                // defines the end date for uselessness
+                Date tmpEndForUnused = null;
+                if (user.getDtLastAccess() != null) {
+                    SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT);
+                    Calendar cal = Calendar.getInstance();
+                    cal.set(user.getDtLastAccess().getYear() + 1900, user.getDtLastAccess().getMonth(), user.getDtLastAccess().getDate());
+                    cal.add(Calendar.MONTH, 6);
+                    try {
+                        tmpEndForUnused = StringUtilities.stringToDate(sdf.format(cal.getTime()), DATE_FORMAT);
+                        logger.debug("End Date For Unused: " + tmpEndForUnused);
+                    } catch (Exception e) {
+                        logger.error("The control pwd goes on error: " + e);
+                    }
+                }
+                if (tmpEndForUnused != null && currentDate.compareTo(tmpEndForUnused) >= 0) {
+                    // check if the pwd is unused by 6 months, in this case it's locked.
+                    logger.info("The pwd is unused more than 6 months! It's locked!!");
+                    toReturn = "The pwd is unused more than 6 months! It's locked!!";
+                    break;
+                }
+            }
 
-		} // for
+        } // for
 
 		// general controls: check if the account is already blocked, otherwise update dtLastAccess field
 		if (user.getFlgPwdBlocked() != null && user.getFlgPwdBlocked()) {
 			// if flgPwdBlocked is true the user cannot goes on
 			logger.info("The pwd needs to activate!");
-			toReturn = true;
+			toReturn = "The pwd needs to activate!";
 		}
 		logger.debug("OUT");
 		return toReturn;
@@ -766,20 +764,16 @@ public class LoginResource extends AbstractSpagoBIResource {
 	/**
 	 * Validates and updates user password if needed
 	 */
-	private Response validateAndUpdatePassword(SbiUser user, ISbiUserDAO userDao) throws Exception {
+	private String validateAndUpdatePassword(SbiUser user, ISbiUserDAO userDao) throws Exception {
 		logger.debug("Validation password starting...");
-		boolean goToChangePwd = checkPwd(user);
+		String goToChangePwd = checkPwd(user);
 
-		if (goToChangePwd) {
+		if (!goToChangePwd.isEmpty()) {
 			if (user.getPassword().startsWith(Password.PREFIX_SHA_SECRETPHRASE_ENCRIPTING)) {
 				logger.info("Old encrypting method. Change password required.");
-				return Response.status(Response.Status.FORBIDDEN)
-						.entity(Map.of("error", "Password expired", "requiresPasswordChange", true, "reason", "Old encryption method"))
-						.build();
+				return "Password expired, old encrypting method";
 			}
-			return Response.status(Response.Status.FORBIDDEN)
-					.entity(Map.of("error", "Password expired", "requiresPasswordChange", true))
-					.build();
+			return "Password expired";
 		}
 
 		logger.info("The pwd is active!");
@@ -791,7 +785,7 @@ public class LoginResource extends AbstractSpagoBIResource {
 			logger.error("Non-fatal error while updating user's dtLastAccess", e);
 		}
 
-		return null;
+		return goToChangePwd;
 	}
 
 	/**
@@ -880,10 +874,60 @@ public class LoginResource extends AbstractSpagoBIResource {
 				return Response.seeOther(redirectUri).build();
 			} else {
 				Object idToken = req.getAttribute(Oauth2SsoService.ID_TOKEN);
-				Map<String, Object> responseMap = new java.util.HashMap<>();
+				Map<String, Object> responseMap = new HashMap<>();
 				responseMap.put("token", profile.getUserUniqueIdentifier());
 				if (idToken != null) {
 					responseMap.put("idToken", idToken);
+				}
+				return Response.ok(responseMap).build();
+			}
+
+		} finally {
+			TenantManager.unset();
+		}
+	}
+
+
+	/**
+	 * Completes the login process with tenant context and audit logging
+	 * If requiresRedirect is true, performs a redirect to the Knowage FE with authToken
+	 * Otherwise, returns a JSON response with the authentication token
+	 */
+	private Response completeLogin(HttpServletRequest req, IEngUserProfile profile, boolean requiresRedirect, String passwordCheck) throws Exception {
+		UserProfile userProfile = (UserProfile) profile;
+		Tenant tenant = new Tenant(userProfile.getOrganization());
+		TenantManager.setTenant(tenant);
+
+		try {
+			// Start writing log in the DB
+			Session aSession = null;
+			try {
+				aSession = HibernateSessionManager.getCurrentSession();
+				AuditLogUtilities.updateAudit(req, profile, "SPAGOBI.Login", null, "OK");
+			} catch (HibernateException he) {
+				logger.error("Error writing audit log", he);
+				throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+			} finally {
+				if (aSession != null && aSession.isOpen()) {
+					aSession.close();
+				}
+			}
+
+			if (requiresRedirect) {
+				String origin = RestUtilities.getOrigin(req);
+				URI redirectUri = URI.create(origin + "/knowage-vue/login?authToken=" + profile.getUserUniqueIdentifier());
+				return Response.seeOther(redirectUri).build();
+			} else {
+				Object idToken = req.getAttribute(Oauth2SsoService.ID_TOKEN);
+				Map<String, Object> responseMap = new HashMap<>();
+				responseMap.put("token", profile.getUserUniqueIdentifier());
+				if (idToken != null) {
+					responseMap.put("idToken", idToken);
+				}
+				if (!passwordCheck.isEmpty()) {
+					responseMap.put("message", passwordCheck);
+					responseMap.put("requiresPasswordChange", true);
+					logger.info("Password change required for user: " + userProfile.getUserId() + ". Message: " + passwordCheck);
 				}
 				return Response.ok(responseMap).build();
 			}
@@ -933,12 +977,12 @@ public class LoginResource extends AbstractSpagoBIResource {
 	 */
 	private void validateIdTokenSignature(DecodedJWT decodedJWT, String idToken) throws Exception {
 		try {
-			com.auth0.jwk.JwkProvider provider = new com.auth0.jwk.JwkProviderBuilder(
-				new java.net.URL(OAuth2Config.getInstance().getJWKSUrl())
+			JwkProvider provider = new JwkProviderBuilder(
+				new URL(OAuth2Config.getInstance().getJWKSUrl())
 			).build();
 
-			com.auth0.jwk.Jwk jwk = provider.get(decodedJWT.getKeyId());
-			Algorithm algorithm = Algorithm.RSA256((java.security.interfaces.RSAPublicKey) jwk.getPublicKey(), null);
+			Jwk jwk = provider.get(decodedJWT.getKeyId());
+			Algorithm algorithm = Algorithm.RSA256((RSAPublicKey) jwk.getPublicKey(), null);
 			JWT.require(algorithm).build().verify(idToken);
 
 			logger.debug("ID token signature verified successfully");
