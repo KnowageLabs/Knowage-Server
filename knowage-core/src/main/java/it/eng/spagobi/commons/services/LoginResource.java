@@ -773,10 +773,9 @@ public class LoginResource extends AbstractSpagoBIResource {
 				logger.info("Old encrypting method. Change password required.");
 				return "Password expired, old encrypting method";
 			}
-			return "Password expired";
+			return goToChangePwd;
 		}
 
-		logger.info("The pwd is active!");
 		// Update last access date on db with current date
 		try {
 			user.setDtLastAccess(new Date());

@@ -208,6 +208,14 @@ public class Signup {
 				user.setPassword(Password.hashPassword(password));
 			}
 
+			// Update last access date on db with current date
+			try {
+				user.setDtLastAccess(new Date());
+				userDao.updateSbiUser(user, user.getId());
+			} catch (Exception e) {
+				LOGGER.error("Non-fatal error while updating user's dtLastAccess", e);
+			}
+
 			userDao.updateSbiUser(user, userId);
 
 			SbiAttribute currEmail = attrDao.loadSbiAttributeByName("email");
