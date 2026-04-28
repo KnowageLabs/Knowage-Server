@@ -56,6 +56,13 @@ public class AbstractEngineRestServiceTest {
 		}
 	}
 
+	@Test
+	public void testGetTemplateAsSourceBeanReturnsNullWhenTemplateStringIsNull() {
+		SourceBean template = new TestEngineRestService(null).getTemplateAsSourceBean();
+
+		Assert.assertNull(template);
+	}
+
 	private static final class TestEngineRestService extends AbstractEngineRestService {
 
 		private final String templateAsString;
