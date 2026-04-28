@@ -18,6 +18,8 @@
 
 package it.eng.spagobi.utilities.engines.rest;
 
+import java.io.StringReader;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 
 import javax.xml.bind.DatatypeConverter;
@@ -26,6 +28,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.xml.sax.InputSource;
 
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.base.SourceBeanException;
@@ -97,7 +100,7 @@ public abstract class AbstractEngineRestService extends AbstractRestService {
 	public SourceBean getTemplateAsSourceBean() {
 		SourceBean templateSB = null;
 		try {
-			templateSB = SourceBean.fromXMLString(getTemplateAsString());
+			templateSB = parseTemplateAsSourceBean(getTemplateAsString());
 		} catch (SourceBeanException e) {
 			SpagoBIEngineStartupException engineException = new SpagoBIEngineStartupException(getEngineName(),
 					"Impossible to parse template's content", e);
@@ -109,10 +112,33 @@ public abstract class AbstractEngineRestService extends AbstractRestService {
 		return templateSB;
 	}
 
+	private static SourceBean parseTemplateAsSourceBean(String templateContent) throws SourceBeanException {
+		if (templateContent == null) {
+			return null;
+		}
+		String sanitizedTemplateContent = sanitizeTemplateContent(templateContent);
+		if (sanitizedTemplateContent.isEmpty()) {
+			throw new SourceBeanException("xmlSourceBean non valido");
+		}
+		return SourceBean.fromXMLStream(new InputSource(new StringReader(sanitizedTemplateContent)));
+	}
+
+	private static String sanitizeTemplateContent(String templateContent) {
+		String sanitizedTemplateContent = removeUtf8Bom(templateContent);
+		return sanitizedTemplateContent != null ? sanitizedTemplateContent.trim() : null;
+	}
+
+	private static String removeUtf8Bom(String templateContent) {
+		if (templateContent != null && !templateContent.isEmpty() && templateContent.charAt(0) == '\uFEFF') {
+			return templateContent.substring(1);
+		}
+		return templateContent;
+	}
+
 	public String getTemplateAsString() {
 		byte[] temp = getTemplate();
 		if (temp != null) {
-			return new String(temp);
+			return new String(temp, StandardCharsets.UTF_8);
 		} else {
 			return "";
 		}
