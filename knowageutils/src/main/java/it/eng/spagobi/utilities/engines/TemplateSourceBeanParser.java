@@ -23,6 +23,7 @@ import org.xml.sax.InputSource;
 
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.base.SourceBeanException;
+import it.eng.spago.util.XMLUtil;
 
 public final class TemplateSourceBeanParser {
 
@@ -30,6 +31,14 @@ public final class TemplateSourceBeanParser {
 	}
 
 	public static SourceBean parse(String templateContent) throws SourceBeanException {
+		String normalizedTemplateContent = normalizeTemplateContent(templateContent);
+		if (normalizedTemplateContent == null) {
+			return null;
+		}
+		return SourceBean.fromXMLStream(new InputSource(new StringReader(normalizedTemplateContent)));
+	}
+
+	private static String normalizeTemplateContent(String templateContent) throws SourceBeanException {
 		String sanitizedTemplateContent = sanitizeTemplateContent(templateContent);
 		if (sanitizedTemplateContent == null) {
 			return null;
@@ -37,7 +46,15 @@ public final class TemplateSourceBeanParser {
 		if (sanitizedTemplateContent.isEmpty()) {
 			throw new SourceBeanException("xmlSourceBean non valido");
 		}
-		return SourceBean.fromXMLStream(new InputSource(new StringReader(sanitizedTemplateContent)));
+		if (!sanitizedTemplateContent.startsWith("<")) {
+			String wrappedTemplateContent = getXmlHeader() + "\n<XMLSOURCEBEAN>\n" + sanitizedTemplateContent + "\n</XMLSOURCEBEAN>";
+			SourceBean wrappedTemplateSourceBean = SourceBean.fromXMLStream(new InputSource(new StringReader(wrappedTemplateContent)));
+			sanitizedTemplateContent = wrappedTemplateSourceBean.getCharacters();
+		}
+		if (!sanitizedTemplateContent.startsWith(XMLUtil.XML_HEADER_PREFIX)) {
+			sanitizedTemplateContent = getXmlHeader() + "\n" + sanitizedTemplateContent;
+		}
+		return sanitizedTemplateContent;
 	}
 
 	private static String sanitizeTemplateContent(String templateContent) {
@@ -50,5 +67,10 @@ public final class TemplateSourceBeanParser {
 			return templateContent.substring(1);
 		}
 		return templateContent;
+	}
+
+	private static String getXmlHeader() {
+		return XMLUtil.XML_HEADER_PREFIX + " version=\"" + XMLUtil.XML_HEADER_DEFAULT_VERSION + "\" "
+				+ "encoding=\"" + XMLUtil.XML_HEADER_DEFAULT_ENCODING + "\"?>";
 	}
 }

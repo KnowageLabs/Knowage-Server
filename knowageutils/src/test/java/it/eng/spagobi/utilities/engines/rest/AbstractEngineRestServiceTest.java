@@ -37,6 +37,15 @@ public class AbstractEngineRestServiceTest {
 	}
 
 	@Test
+	public void testGetTemplateAsSourceBeanParsesXmlWithDeclaration() {
+		SourceBean template = new TestEngineRestService("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?><olap><cube reference=\"FoodMartMySQL\"/></olap>")
+				.getTemplateAsSourceBean();
+
+		Assert.assertEquals("OLAP", template.getName());
+		Assert.assertNotNull(template.getAttribute("CUBE"));
+	}
+
+	@Test
 	public void testGetTemplateAsSourceBeanStripsUtf8Bom() {
 		SourceBean template = new TestEngineRestService("\uFEFF<olap><cube reference=\"FoodMartMySQL\"/></olap>")
 				.getTemplateAsSourceBean();

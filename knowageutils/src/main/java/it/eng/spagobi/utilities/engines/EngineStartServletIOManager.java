@@ -218,7 +218,7 @@ public class EngineStartServletIOManager extends BaseServletIOManager {
 			templateJSON = template != null ? new JSONObject(template) : null;
 		} catch (Throwable t) {
 			logger.error("Impossible to decode template's content\n" + t);
-			throw new SpagoBIRuntimeException("Impossible to decode template's content [" + template.getFileName() + "]", t);
+			throw new SpagoBIRuntimeException("Impossible to decode template's content [" + getCurrentTemplateName() + "]", t);
 
 		}
 
@@ -232,7 +232,7 @@ public class EngineStartServletIOManager extends BaseServletIOManager {
 			templateSB = TemplateSourceBeanParser.parse(template);
 		} catch (SourceBeanException e) {
 			logger.error("Impossible to decode template's content\n" + e);
-			throw new SpagoBIRuntimeException("Impossible to decode template's content [" + template.getFileName() + "]", e);
+			throw new SpagoBIRuntimeException("Impossible to decode template's content [" + getCurrentTemplateName() + "]", e);
 
 		}
 
@@ -286,6 +286,16 @@ public class EngineStartServletIOManager extends BaseServletIOManager {
 			}
 		}
 		return templateName;
+	}
+
+	private String getCurrentTemplateName() {
+		if (templateName != null) {
+			return templateName;
+		}
+		if (template != null) {
+			return template.getFileName();
+		}
+		return "unknown";
 	}
 
 	public IDataSource getDataSource() {
