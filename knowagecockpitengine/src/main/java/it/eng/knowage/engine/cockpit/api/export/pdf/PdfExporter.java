@@ -63,6 +63,10 @@ public class PdfExporter extends AbstractFormatExporter {
 	private static final String KN_EXPORT_EXTRA_FIELD_LABEL = "kn-export-extra-field-label";
 	private static final String KN_EXPORT_EXTRA_FIELD_VALUE = "kn-export-extra-field-value";
 
+	private static final float HEADER_FONT_SIZE = 10f;
+	private static final float HEADER_LEADING = 12f;
+	private static final float HEADER_SIDE_MARGIN = 20f;
+	private static final float HEADER_BOTTOM_GAP = 10f;
 
 	private float totalColumnsWidth = 0;
 	private float[] columnPercentWidths;
@@ -131,12 +135,24 @@ public class PdfExporter extends AbstractFormatExporter {
 			JSONArray jsonArray;
 			URL resource = getClass().getClassLoader().getResource("/fonts/DejaVuSans.ttf");
 			File pdfFontFile = new File(resource.toURI());
+			String extraValueLabel = null;
+			String extraValue = null;
+			if (variables != null && variables.length() > 0) {
+				extraValueLabel = variables.optString(KN_EXPORT_EXTRA_FIELD_LABEL);
+				extraValue = variables.optString(KN_EXPORT_EXTRA_FIELD_VALUE);
+			}
+			float reservedTopHeight = calculateReservedTopHeightForDocumentInfo(extraValueLabel, extraValue);
+
 			do {
 				dataStore = this.getDataStoreForWidget(template, widget, offset, fetchSize);
-
+				
+				if (offset == 0) {
+					totalNumberOfRows = dataStore.getInt("results");
+				}
+				
 				PDPage newPage = createPage(settings, widget);
 				document.addPage(newPage);
-				table = createBaseTable(document, newPage);
+				table = createBaseTable(document, newPage, reservedTopHeight);
 
 				JSONObject widgetData = dataStore.getJSONObject("widgetData");
 				JSONObject widgetContent = widgetData.getJSONObject("content");
@@ -158,22 +174,14 @@ public class PdfExporter extends AbstractFormatExporter {
 					columnStyles = getColumnsStyles(columnsOrdered, widgetContent);
 					initColumnWidths(columnStyles, columnsOrdered.length(), pdfHiddenColumns);
 
-					totalNumberOfRows = dataStore.getInt("results");
 				}
 
 				rows = dataStore.getJSONArray("rows");
 
 				PDFont font = PDType0Font.load(table.document, pdfFontFile);
 
-				String extraValueLabel = null;
-				String extraValue = null;
-				if (variables != null && variables.length() > 0) {
-					extraValueLabel = variables.optString(KN_EXPORT_EXTRA_FIELD_LABEL);
-					extraValue = variables.optString(KN_EXPORT_EXTRA_FIELD_VALUE);
-				}
-
 				addDataToTable(table, settings, columnsOrdered, pdfHiddenColumns, columnDateFormats, columnStyles,
-						rows, font, style, widgetData, widgetContent, creationUser, extraValueLabel, extraValue);
+						rows, font, style, widgetData, widgetContent, creationUser, totalNumberOfRows, extraValueLabel, extraValue);
 
 				offset += fetchSize;
 
@@ -192,10 +200,10 @@ public class PdfExporter extends AbstractFormatExporter {
 	}
 
 	private void addDataToTable(BaseTable table, JSONObject settings, JSONArray columnsOrdered,
-								List<Integer> pdfHiddenColumns, String[] columnDateFormats, JSONObject[] columnStyles, JSONArray rows, PDFont font, JSONObject style, JSONObject widgetData, JSONObject widgetContent, String creationUser, String extraValueLabel, String extraValue)
+								List<Integer> pdfHiddenColumns, String[] columnDateFormats, JSONObject[] columnStyles, JSONArray rows, PDFont font, JSONObject style, JSONObject widgetData, JSONObject widgetContent, String creationUser, int totalNumberOfRows, String extraValueLabel, String extraValue)
 			throws JSONException {
 
-		addHeaderToTable(table, style, widgetData, widgetContent, columnsOrdered, pdfHiddenColumns, font, creationUser, extraValueLabel, extraValue);
+		addHeaderToTable(table, style, widgetData, widgetContent, columnsOrdered, pdfHiddenColumns, font, creationUser, totalNumberOfRows, extraValueLabel, extraValue);
 
 		// Check if summary row is enabled
 		boolean summaryRowEnabled = false;
@@ -305,11 +313,11 @@ public class PdfExporter extends AbstractFormatExporter {
 	}
 
 	private void addHeaderToTable(BaseTable table, JSONObject style, JSONObject widgetData, JSONObject widgetContent,
-								  JSONArray columnsOrdered, List<Integer> pdfHiddenColumns, PDFont font, String creationUser, String extraValueLabel, String extraValueField) throws JSONException {
+									JSONArray columnsOrdered, List<Integer> pdfHiddenColumns, PDFont font, String creationUser, int totalNumberOfRows, String extraValueLabel, String extraValueField) throws JSONException {
 		JSONArray groupsFromWidgetContent = getGroupsFromWidgetContent(widgetData);
 		Map<String, String> groupsAndColumnsMap = getGroupAndColumnsMap(widgetContent, groupsFromWidgetContent);
 
-		createDocumentInformationRow(table, font, creationUser, extraValueLabel, extraValueField);
+        createDocumentInformationRow(table, font, creationUser, totalNumberOfRows, extraValueLabel, extraValueField);
 
         if (!groupsAndColumnsMap.isEmpty()) {
 			Row<PDPage> groupHeaderRow = table.createRow(15f);
@@ -735,20 +743,24 @@ public class PdfExporter extends AbstractFormatExporter {
 		return parameterKey;
 	}
 
-	private void createDocumentInformationRow(BaseTable table, PDFont font, String creationUser, String extraValueLabel, String extraValue) {
+    private void createDocumentInformationRow(BaseTable table, PDFont font, String creationUser, int totalNumberOfRows, String extraValueLabel, String extraValue) {
 		try {
 			String executionDateLabel;
 			String creationUserLabel;
+			String totalRecordsLabel;
 
 			if (getLocale().toString().equals("sk_SK")) {
 				executionDateLabel = "Dátum vytvorenia: ";
 				creationUserLabel = "Vytvoril: ";
+				totalRecordsLabel = "Celkový počet záznamov: ";
 			} else if (getLocale().toString().equals("it_IT")) {
 				executionDateLabel = "Data di esecuzione: ";
 				creationUserLabel = "Utente di esecuzione: ";
+				totalRecordsLabel = "Numero totale di record: ";
 			} else {
 				executionDateLabel = "Execution User: ";
 				creationUserLabel = "Creation User: ";
+				totalRecordsLabel = "Total Records: ";
 			}
 
 			PDPage page = table.getCurrentPage();
@@ -757,33 +769,29 @@ public class PdfExporter extends AbstractFormatExporter {
 
 			String line1 = executionDateLabel + executionDate;
 			String line2 = creationUserLabel + creationUser;
-			String line3 = null;
-			if (extraValueLabel != null && !extraValueLabel.isEmpty() && extraValue != null && !extraValue.isEmpty()) {
-				line3 = extraValueLabel + ": " + extraValue;
-			}
+			String line3 = totalRecordsLabel + totalNumberOfRows;
+			boolean isExtraValuePresent = extraValueLabel != null && !extraValueLabel.isEmpty() && extraValue != null && !extraValue.isEmpty();
+			String line4 = isExtraValuePresent ? extraValueLabel + ": " + extraValue : null;
 
-			float fontSize = 10f;
-			float leading = 12f;
-			float margin = 20f;
+			float fontSize = HEADER_FONT_SIZE;
+            float leading = HEADER_LEADING;
 
 			float pageWidth = page.getMediaBox().getWidth();
-			float pageHeight = page.getMediaBox().getHeight();
-
-			float w1 = font.getStringWidth(line1) / 1000f * fontSize;
-			float w2 = font.getStringWidth(line2) / 1000f * fontSize;
-			float w3;
-			if (line3 != null) {
-				w3 = font.getStringWidth(line3) / 1000f * fontSize;
-				w2 = Math.max(w2,  w3);
+			List<String> headerLines = new ArrayList<>();
+            headerLines.add(line1);
+            headerLines.add(line2);
+            headerLines.add(line3);
+			if (isExtraValuePresent) {
+				headerLines.add(line4);
+			}			
+			
+            float maxW = 0f;
+			for (String headerLine : headerLines) {
+				maxW = Math.max(maxW, font.getStringWidth(headerLine) / 1000f * fontSize);
 			}
-			float maxW = Math.max(w1, w2);
 
-			float x = pageWidth - margin - maxW;
-
-			float yStartNewPage = pageHeight - (2 * margin);
-
-			float additionalGap = 12f;
-			float y = yStartNewPage + additionalGap + leading;
+            float x = pageWidth - HEADER_SIDE_MARGIN - maxW;
+			float y = getHeaderStartY(page);
 
 			try (org.apache.pdfbox.pdmodel.PDPageContentStream contentStream =
 						 new org.apache.pdfbox.pdmodel.PDPageContentStream(table.document, page, org.apache.pdfbox.pdmodel.PDPageContentStream.AppendMode.APPEND, true)) {
@@ -794,17 +802,27 @@ public class PdfExporter extends AbstractFormatExporter {
 				contentStream.newLineAtOffset(x, y);
 				contentStream.showText(line1);
 				contentStream.newLineAtOffset(0, -leading);
-				contentStream.showText(line2);
-				if (line3 != null) {
-					contentStream.newLineAtOffset(0, -leading);
-					contentStream.showText(line3);
+				for (int i = 0; i < headerLines.size(); i++) {
+					if (i > 0) {
+						contentStream.newLineAtOffset(0, -leading);
+					}
+					contentStream.showText(headerLines.get(i));
 				}
-				contentStream.endText();
+                contentStream.endText();
 
 			}
 		} catch (Exception e) {
 			throw new SpagoBIRuntimeException("Couldn't add document information to the page", e);
 		}
+	}
+
+	private float calculateReservedTopHeightForDocumentInfo(String extraValueLabel, String extraValue) {
+		int documentInfoLines = (extraValueLabel != null && !extraValueLabel.isEmpty() && extraValue != null && !extraValue.isEmpty()) ? 4 : 3;
+		return (documentInfoLines * HEADER_LEADING) + HEADER_BOTTOM_GAP;
+	}
+
+	private float getHeaderStartY(PDPage page) {
+		return page.getMediaBox().getHeight() - HEADER_SIDE_MARGIN + 4f;
 	}
 
     private int getAdjacentEqualNamesAmount(Map<String, String> groupsAndColumnsMap, JSONArray columnsOrdered, int matchStartIndex, String groupNameToMatch) {
@@ -1070,7 +1088,7 @@ public class PdfExporter extends AbstractFormatExporter {
 		}
 	}
 
-	private BaseTable createBaseTable(PDDocument doc, PDPage page) {
+	private BaseTable createBaseTable(PDDocument doc, PDPage page, float reservedTopHeight) {
 		try {
 			float margin = 20;
 			// starting y position is whole page height subtracted by top and bottom margin
@@ -1080,7 +1098,8 @@ public class PdfExporter extends AbstractFormatExporter {
 //			float tableWidth = totalColumnsWidth;
 			// y position is your coordinate of top left corner of the table
 			Assert.assertTrue(tableWidth > 0, "Page dimension is too small!");
-			float yPosition = 550;
+			float computedYPosition = Math.min(550, getHeaderStartY(page) - reservedTopHeight);
+			float yPosition = Math.max(bottomMargin + HEADER_BOTTOM_GAP, computedYPosition);
 			return new BaseTable(yPosition, yStartNewPage, bottomMargin, tableWidth, margin, doc, page, true, true);
 		} catch (Exception e) {
 			throw new SpagoBIRuntimeException("Cannot create PDF Base Table object:", e);

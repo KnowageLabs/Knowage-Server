@@ -1329,9 +1329,16 @@ public class PersistedTableManager implements IPersistedManager {
 			}
 			try {
 				Object value = field.getValue();
-				if (value != null) {
-					field.setValue(cons.newInstance(String.valueOf(value)));
+				if (value == null) {
+					continue;
 				}
+				if (value instanceof String) {
+					String stringValue = (String) value;
+					if (stringValue.trim().isEmpty() || stringValue.equals("null")) {
+						continue;
+					}
+				}
+				field.setValue(cons.newInstance(String.valueOf(value)));
 			} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
 				logger.error("Error while changing field value to different type that is comming from data set wizard", e);
 				throw new SpagoBIEngineRuntimeException(

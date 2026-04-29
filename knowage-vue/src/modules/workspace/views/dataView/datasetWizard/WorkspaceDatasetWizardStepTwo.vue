@@ -7,7 +7,7 @@
                 </Column>
                 <Column field="Type" :header="$t('importExport.catalogFunction.column.type')" :sortable="true">
                     <template #body="{data}">
-                        <Dropdown class="kn-material-input" :style="wizardDescriptor.style.maxwidth" v-model="data.Type" :options="valueTypes" optionLabel="value" optionValue="name" @change="saveFieldsMetadata" :disabled="true" />
+                        <Dropdown v-model="data.Type" class="kn-material-input" :style="wizardDescriptor.style.maxwidth" :options="valueTypes" option-label="value" option-value="name" @change="saveFieldsMetadata" />
                     </template>
                 </Column>
                 <Column field="fieldType" :header="$t('managers.datasetManagement.fieldType')" :sortable="true">
