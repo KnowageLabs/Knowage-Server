@@ -62,6 +62,7 @@ import it.eng.knowage.knowageapi.error.ImpossibleToReadFolderListException;
 import it.eng.knowage.knowageapi.error.ImpossibleToReadMetadataException;
 import it.eng.knowage.knowageapi.error.ImpossibleToSaveMetadataException;
 import it.eng.knowage.knowageapi.error.ImpossibleToUploadFileException;
+import it.eng.knowage.knowageapi.utils.PathTraversalChecker;
 import it.eng.knowage.resourcemanager.resource.dto.FileDTO;
 import it.eng.knowage.resourcemanager.resource.dto.FolderDTO;
 import it.eng.knowage.resourcemanager.resource.dto.MetadataDTO;
@@ -78,7 +79,8 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 	private static final String METADATA_JSON = "metadata.json";
 	private static final String MODELS = "models";
 	private static final Logger LOGGER = Logger.getLogger(ResourceManagerAPIImpl.class);
-    private static final String DOCS_FOLDER = "docs";
+	private static final String DOCS_FOLDER = "docs";
+	private static final String EXTERNAL_LIBRARIES_FOLDER = "external-libraries";
 	private static Map<String, List<String>> foldersForDevs = new HashMap<>();
 	private final Map<String, HashMap<String, Object>> cachedNodesInfo = new HashMap<>();
 
@@ -343,6 +345,46 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 			throw new ImpossibleToDownloadFileException(e.getMessage(), e);
 		}
 		return pathToReturn;
+	}
+
+	@Override
+	public Path getExternalLibraryPath(String libraryName, SpagoBIUserProfile profile)
+			throws ImpossibleToReadFilesListException {
+		try {
+			PathTraversalChecker.isValidFileName(libraryName);
+
+			Path workDirectory = getWorkDirectory(profile).normalize();
+			Path externalLibrariesDirectory = workDirectory.resolve(EXTERNAL_LIBRARIES_FOLDER).normalize();
+			if (!Files.isDirectory(externalLibrariesDirectory)) {
+				throw new ImpossibleToReadFilesListException("External libraries folder not found");
+			}
+
+			Path realWorkDirectory = workDirectory.toRealPath();
+			Path realExternalLibrariesDirectory = externalLibrariesDirectory.toRealPath();
+			if (!realExternalLibrariesDirectory.startsWith(realWorkDirectory)) {
+				throw new ImpossibleToReadFilesListException("Invalid external libraries folder");
+			}
+			Path candidatePath = realExternalLibrariesDirectory.resolve(libraryName).normalize();
+			if (!candidatePath.startsWith(realExternalLibrariesDirectory)) {
+				throw new ImpossibleToReadFilesListException("Invalid library name");
+			}
+			if (!Files.exists(candidatePath) || !Files.isRegularFile(candidatePath)) {
+				throw new ImpossibleToReadFilesListException("External library not found: " + libraryName);
+			}
+
+			Path realCandidatePath = candidatePath.toRealPath();
+			if (!realCandidatePath.startsWith(realExternalLibrariesDirectory)) {
+				throw new ImpossibleToReadFilesListException("Invalid library name");
+			}
+
+			return realCandidatePath;
+		} catch (ImpossibleToReadFilesListException e) {
+			throw e;
+		} catch (KnowageRuntimeException e) {
+			throw new ImpossibleToReadFilesListException("Invalid library name", e);
+		} catch (IOException e) {
+			throw new ImpossibleToReadFilesListException("Error while resolving external library " + libraryName, e);
+		}
 	}
 
 	public Path getFullRootByPath(String path, SpagoBIUserProfile profile) throws IOException {
