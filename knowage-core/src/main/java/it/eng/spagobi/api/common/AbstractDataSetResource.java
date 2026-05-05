@@ -822,6 +822,49 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
         }
     }
 
+    private String normalizeFormula(String formula) {
+        if (formula == null || formula.isEmpty()) {
+            return formula;
+        }
+
+        StringBuilder normalizedFormula = new StringBuilder(formula.length());
+        boolean insideStringLiteral = false;
+
+        for (int i = 0; i < formula.length(); i++) {
+            char currentChar = formula.charAt(i);
+
+            if (currentChar == '\'') {
+                normalizedFormula.append(currentChar);
+
+                if (insideStringLiteral && i + 1 < formula.length() && formula.charAt(i + 1) == '\'') {
+                    normalizedFormula.append(formula.charAt(i + 1));
+                    i++;
+                } else {
+                    insideStringLiteral = !insideStringLiteral;
+                }
+                continue;
+            }
+
+            if (!insideStringLiteral && formula.startsWith("$F{", i)) {
+                int closingBraceIndex = formula.indexOf('}', i + 3);
+                if (closingBraceIndex > i + 3) {
+                    String fieldName = formula.substring(i + 3, closingBraceIndex).trim();
+                    if (!fieldName.isEmpty()) {
+                        normalizedFormula.append('"');
+                        normalizedFormula.append(fieldName.replace("\"", "\"\""));
+                        normalizedFormula.append('"');
+                        i = closingBraceIndex;
+                        continue;
+                    }
+                }
+            }
+
+            normalizedFormula.append(currentChar);
+        }
+
+        return normalizedFormula.toString();
+    }
+
     private String normalizeIdentifier(String text) {
         if (text == null) return null;
 
@@ -837,7 +880,7 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
     }
 
     private ParseTree parseFormula(String formula) {
-        String sql = "select " + formula;
+        String sql = "select " + normalizeFormula(formula);
 
         CharStream inputStream = CharStreams.fromString(sql);
         SQLiteLexer lexer = new SQLiteLexer(new CaseChangingCharStream(inputStream, true));
