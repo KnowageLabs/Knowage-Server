@@ -123,6 +123,7 @@ public abstract class AbstractSecurityServerInterceptor extends AbstractKnowageI
 
 			if (!authorized) {
 				try {
+					LOGGER.error("Profile [" + profile.getUserName() +": Method [" + method.getName() + "] has no constraints to invoke method [" + method.getName() + "] on class [" + resourceInfo.getResourceClass() + "]");
 					requestContext.abortWith(Response.status(400)
 							.entity(ExceptionUtilities.serializeException("not-enabled-to-call-service", null))
 							.build());
