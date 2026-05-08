@@ -277,193 +277,193 @@
 	
 	<build>
 		<plugins>
-			<plugin>
-				<groupId>com.sun.xml.ws</groupId>
-				<artifactId>jaxws-maven-plugin</artifactId>
-				<version>2.3</version>
-				<executions>
-					<!--
-						Generate WSDLs for all SOAP service implementations.
-					 -->
-					<!--					<execution>-->
-					<!--						<id>jaxws-generate-wsdl-a</id>-->
-					<!--						<goals>-->
-					<!--							<goal>wsgen</goal>-->
-					<!--						</goals>-->
-					<!--						<phase>process-classes</phase>-->
-					<!--						<configuration>-->
-					<!--							<keep>false</keep>-->
-					<!--							<sei>-->
-					<!--								it.eng.spagobi.services.artifact.service.ArtifactServiceImpl</sei>-->
-					<!--						</configuration>-->
-					<!--					</execution>-->
-					<!--					<execution>-->
-					<!--						<id>jaxws-generate-wsdl-b</id>-->
-					<!--						<goals>-->
-					<!--							<goal>wsgen</goal>-->
-					<!--						</goals>-->
-					<!--						<phase>process-classes</phase>-->
-					<!--						<configuration>-->
-					<!--							<keep>false</keep>-->
-					<!--							<sei>-->
-					<!--								it.eng.spagobi.services.audit.service.AuditServiceImpl</sei>-->
-					<!--						</configuration>-->
-					<!--					</execution>-->
-					<!--					<execution>-->
-					<!--						<id>jaxws-generate-wsdl-c</id>-->
-					<!--						<goals>-->
-					<!--							<goal>wsgen</goal>-->
-					<!--						</goals>-->
-					<!--						<phase>process-classes</phase>-->
-					<!--						<configuration>-->
-					<!--							<keep>false</keep>-->
-					<!--							<sei>-->
-					<!--								it.eng.spagobi.services.content.service.ContentServiceImpl</sei>-->
-					<!--						</configuration>-->
-					<!--					</execution>-->
-					<!--					<execution>-->
-					<!--						<id>jaxws-generate-wsdl-d</id>-->
-					<!--						<goals>-->
-					<!--							<goal>wsgen</goal>-->
-					<!--						</goals>-->
-					<!--						<phase>process-classes</phase>-->
-					<!--						<configuration>-->
-					<!--							<keep>false</keep>-->
-					<!--							<sei>-->
-					<!--								it.eng.spagobi.services.dataset.service.DataSetServiceImpl</sei>-->
-					<!--						</configuration>-->
-					<!--					</execution>-->
-					<!--					<execution>-->
-					<!--						<id>jaxws-generate-wsdl-e</id>-->
-					<!--						<goals>-->
-					<!--							<goal>wsgen</goal>-->
-					<!--						</goals>-->
-					<!--						<phase>process-classes</phase>-->
-					<!--						<configuration>-->
-					<!--							<keep>false</keep>-->
-					<!--							<sei>-->
-					<!--								it.eng.spagobi.services.datasource.service.DataSourceServiceImpl</sei>-->
-					<!--						</configuration>-->
-					<!--					</execution>-->
-					<!--					<execution>-->
-					<!--						<id>jaxws-generate-wsdl-f</id>-->
-					<!--						<goals>-->
-					<!--							<goal>wsgen</goal>-->
-					<!--						</goals>-->
-					<!--						<phase>process-classes</phase>-->
-					<!--						<configuration>-->
-					<!--							<keep>false</keep>-->
-					<!--							<sei>-->
-					<!--								it.eng.spagobi.services.event.service.EventServiceImpl</sei>-->
-					<!--						</configuration>-->
-					<!--					</execution>-->
-					<!--					<execution>-->
-					<!--						<id>jaxws-generate-wsdl-g</id>-->
-					<!--						<goals>-->
-					<!--							<goal>wsgen</goal>-->
-					<!--						</goals>-->
-					<!--						<phase>process-classes</phase>-->
-					<!--						<configuration>-->
-					<!--							<keep>false</keep>-->
-					<!--							<sei>-->
-					<!--								it.eng.spagobi.services.execute.service.DocumentExecuteServiceImpl</sei>-->
-					<!--						</configuration>-->
-					<!--					</execution>-->
-					<!--					<execution>-->
-					<!--						<id>jaxws-generate-wsdl-h</id>-->
-					<!--						<goals>-->
-					<!--							<goal>wsgen</goal>-->
-					<!--						</goals>-->
-					<!--						<phase>process-classes</phase>-->
-					<!--						<configuration>-->
-					<!--							<keep>false</keep>-->
-					<!--							<sei>-->
-					<!--								it.eng.spagobi.services.metamodel.service.MetamodelServiceImpl</sei>-->
-					<!--						</configuration>-->
-					<!--					</execution>-->
-					<!--					<execution>-->
-					<!--						<id>jaxws-generate-wsdl-i</id>-->
-					<!--						<goals>-->
-					<!--							<goal>wsgen</goal>-->
-					<!--						</goals>-->
-					<!--						<phase>process-classes</phase>-->
-					<!--						<configuration>-->
-					<!--							<keep>false</keep>-->
-					<!--							<sei>-->
-					<!--								it.eng.spagobi.services.sbidocument.service.SbiDocumentServiceImpl</sei>-->
-					<!--						</configuration>-->
-					<!--					</execution>-->
-					<!--					<execution>-->
-					<!--						<id>jaxws-generate-wsdl-j</id>-->
-					<!--						<goals>-->
-					<!--							<goal>wsgen</goal>-->
-					<!--						</goals>-->
-					<!--						<phase>process-classes</phase>-->
-					<!--						<configuration>-->
-					<!--							<keep>false</keep>-->
-					<!--							<sei>-->
-					<!--								it.eng.spagobi.services.scheduler.service.SchedulerServiceImpl</sei>-->
-					<!--						</configuration>-->
-					<!--					</execution>-->
-					<!--					<execution>-->
-					<!--						<id>jaxws-generate-wsdl-k</id>-->
-					<!--						<goals>-->
-					<!--							<goal>wsgen</goal>-->
-					<!--						</goals>-->
-					<!--						<phase>process-classes</phase>-->
-					<!--						<configuration>-->
-					<!--							<keep>false</keep>-->
-					<!--							<sei>-->
-					<!--								it.eng.spagobi.services.security.service.SecurityServiceImpl</sei>-->
-					<!--						</configuration>-->
-					<!--					</execution>-->
-					<!--
-						Generate clients for all SOAP service implementations.
-					 -->
-					<!--					<execution>-->
-					<!--						<id>jaxws-generate-client</id>-->
-					<!--						<goals>-->
-					<!--							<goal>wsimport</goal>-->
-					<!--						</goals>-->
-					<!--						<phase>process-classes</phase>-->
-					<!--						<configuration>-->
-					<!--							<destDir>${project.build.directory}/classes-ws</destDir>-->
-					<!--							<keep>true</keep>-->
-					<!--							<wsdlFiles>-->
-					<!--								<wsdlFile>-->
-					<!--									${project.build.directory}/generated-sources/wsdl/ArtifactService.wsdl</wsdlFile>-->
-					<!--								<wsdlFile>-->
-					<!--									${project.build.directory}/generated-sources/wsdl/AuditService.wsdl</wsdlFile>-->
-					<!--								<wsdlFile>-->
-					<!--									${project.build.directory}/generated-sources/wsdl/ContentService.wsdl</wsdlFile>-->
-					<!--								<wsdlFile>-->
-					<!--									${project.build.directory}/generated-sources/wsdl/DataSetService.wsdl</wsdlFile>-->
-					<!--								<wsdlFile>-->
-					<!--									${project.build.directory}/generated-sources/wsdl/DataSourceService.wsdl</wsdlFile>-->
-					<!--								<wsdlFile>-->
-					<!--									${project.build.directory}/generated-sources/wsdl/DocumentExecuteService.wsdl</wsdlFile>-->
-					<!--								<wsdlFile>-->
-					<!--									${project.build.directory}/generated-sources/wsdl/EventService.wsdl</wsdlFile>-->
-					<!--								<wsdlFile>-->
-					<!--									${project.build.directory}/generated-sources/wsdl/MetamodelService.wsdl</wsdlFile>-->
-					<!--								<wsdlFile>-->
-					<!--									${project.build.directory}/generated-sources/wsdl/SbiDocumentService.wsdl</wsdlFile>-->
-					<!--								<wsdlFile>-->
-					<!--									${project.build.directory}/generated-sources/wsdl/SchedulerService.wsdl</wsdlFile>-->
-					<!--								<wsdlFile>-->
-					<!--									${project.build.directory}/generated-sources/wsdl/SecurityService.wsdl</wsdlFile>-->
-					<!--							</wsdlFiles>-->
-					<!--							<xnocompile>false</xnocompile>-->
-					<!--						</configuration>-->
-					<!--					</execution>-->
-				</executions>
-				<configuration>
-					<genWsdl>true</genWsdl>
-					<inlineSchemas>true</inlineSchemas>
-					<useJdkToolchainExecutable>false</useJdkToolchainExecutable>
-					<verbose>true</verbose>
-				</configuration>
-			</plugin>
+<!--			<plugin>-->
+<!--				<groupId>com.sun.xml.ws</groupId>-->
+<!--				<artifactId>jaxws-maven-plugin</artifactId>-->
+<!--				<version>2.3</version>-->
+<!--				<executions>-->
+<!--					&lt;!&ndash;-->
+<!--						Generate WSDLs for all SOAP service implementations.-->
+<!--					 &ndash;&gt;-->
+<!--					&lt;!&ndash;					<execution>&ndash;&gt;-->
+<!--					&lt;!&ndash;						<id>jaxws-generate-wsdl-a</id>&ndash;&gt;-->
+<!--					&lt;!&ndash;						<goals>&ndash;&gt;-->
+<!--					&lt;!&ndash;							<goal>wsgen</goal>&ndash;&gt;-->
+<!--					&lt;!&ndash;						</goals>&ndash;&gt;-->
+<!--					&lt;!&ndash;						<phase>process-classes</phase>&ndash;&gt;-->
+<!--					&lt;!&ndash;						<configuration>&ndash;&gt;-->
+<!--					&lt;!&ndash;							<keep>false</keep>&ndash;&gt;-->
+<!--					&lt;!&ndash;							<sei>&ndash;&gt;-->
+<!--					&lt;!&ndash;								it.eng.spagobi.services.artifact.service.ArtifactServiceImpl</sei>&ndash;&gt;-->
+<!--					&lt;!&ndash;						</configuration>&ndash;&gt;-->
+<!--					&lt;!&ndash;					</execution>&ndash;&gt;-->
+<!--					&lt;!&ndash;					<execution>&ndash;&gt;-->
+<!--					&lt;!&ndash;						<id>jaxws-generate-wsdl-b</id>&ndash;&gt;-->
+<!--					&lt;!&ndash;						<goals>&ndash;&gt;-->
+<!--					&lt;!&ndash;							<goal>wsgen</goal>&ndash;&gt;-->
+<!--					&lt;!&ndash;						</goals>&ndash;&gt;-->
+<!--					&lt;!&ndash;						<phase>process-classes</phase>&ndash;&gt;-->
+<!--					&lt;!&ndash;						<configuration>&ndash;&gt;-->
+<!--					&lt;!&ndash;							<keep>false</keep>&ndash;&gt;-->
+<!--					&lt;!&ndash;							<sei>&ndash;&gt;-->
+<!--					&lt;!&ndash;								it.eng.spagobi.services.audit.service.AuditServiceImpl</sei>&ndash;&gt;-->
+<!--					&lt;!&ndash;						</configuration>&ndash;&gt;-->
+<!--					&lt;!&ndash;					</execution>&ndash;&gt;-->
+<!--					&lt;!&ndash;					<execution>&ndash;&gt;-->
+<!--					&lt;!&ndash;						<id>jaxws-generate-wsdl-c</id>&ndash;&gt;-->
+<!--					&lt;!&ndash;						<goals>&ndash;&gt;-->
+<!--					&lt;!&ndash;							<goal>wsgen</goal>&ndash;&gt;-->
+<!--					&lt;!&ndash;						</goals>&ndash;&gt;-->
+<!--					&lt;!&ndash;						<phase>process-classes</phase>&ndash;&gt;-->
+<!--					&lt;!&ndash;						<configuration>&ndash;&gt;-->
+<!--					&lt;!&ndash;							<keep>false</keep>&ndash;&gt;-->
+<!--					&lt;!&ndash;							<sei>&ndash;&gt;-->
+<!--					&lt;!&ndash;								it.eng.spagobi.services.content.service.ContentServiceImpl</sei>&ndash;&gt;-->
+<!--					&lt;!&ndash;						</configuration>&ndash;&gt;-->
+<!--					&lt;!&ndash;					</execution>&ndash;&gt;-->
+<!--					&lt;!&ndash;					<execution>&ndash;&gt;-->
+<!--					&lt;!&ndash;						<id>jaxws-generate-wsdl-d</id>&ndash;&gt;-->
+<!--					&lt;!&ndash;						<goals>&ndash;&gt;-->
+<!--					&lt;!&ndash;							<goal>wsgen</goal>&ndash;&gt;-->
+<!--					&lt;!&ndash;						</goals>&ndash;&gt;-->
+<!--					&lt;!&ndash;						<phase>process-classes</phase>&ndash;&gt;-->
+<!--					&lt;!&ndash;						<configuration>&ndash;&gt;-->
+<!--					&lt;!&ndash;							<keep>false</keep>&ndash;&gt;-->
+<!--					&lt;!&ndash;							<sei>&ndash;&gt;-->
+<!--					&lt;!&ndash;								it.eng.spagobi.services.dataset.service.DataSetServiceImpl</sei>&ndash;&gt;-->
+<!--					&lt;!&ndash;						</configuration>&ndash;&gt;-->
+<!--					&lt;!&ndash;					</execution>&ndash;&gt;-->
+<!--					&lt;!&ndash;					<execution>&ndash;&gt;-->
+<!--					&lt;!&ndash;						<id>jaxws-generate-wsdl-e</id>&ndash;&gt;-->
+<!--					&lt;!&ndash;						<goals>&ndash;&gt;-->
+<!--					&lt;!&ndash;							<goal>wsgen</goal>&ndash;&gt;-->
+<!--					&lt;!&ndash;						</goals>&ndash;&gt;-->
+<!--					&lt;!&ndash;						<phase>process-classes</phase>&ndash;&gt;-->
+<!--					&lt;!&ndash;						<configuration>&ndash;&gt;-->
+<!--					&lt;!&ndash;							<keep>false</keep>&ndash;&gt;-->
+<!--					&lt;!&ndash;							<sei>&ndash;&gt;-->
+<!--					&lt;!&ndash;								it.eng.spagobi.services.datasource.service.DataSourceServiceImpl</sei>&ndash;&gt;-->
+<!--					&lt;!&ndash;						</configuration>&ndash;&gt;-->
+<!--					&lt;!&ndash;					</execution>&ndash;&gt;-->
+<!--					&lt;!&ndash;					<execution>&ndash;&gt;-->
+<!--					&lt;!&ndash;						<id>jaxws-generate-wsdl-f</id>&ndash;&gt;-->
+<!--					&lt;!&ndash;						<goals>&ndash;&gt;-->
+<!--					&lt;!&ndash;							<goal>wsgen</goal>&ndash;&gt;-->
+<!--					&lt;!&ndash;						</goals>&ndash;&gt;-->
+<!--					&lt;!&ndash;						<phase>process-classes</phase>&ndash;&gt;-->
+<!--					&lt;!&ndash;						<configuration>&ndash;&gt;-->
+<!--					&lt;!&ndash;							<keep>false</keep>&ndash;&gt;-->
+<!--					&lt;!&ndash;							<sei>&ndash;&gt;-->
+<!--					&lt;!&ndash;								it.eng.spagobi.services.event.service.EventServiceImpl</sei>&ndash;&gt;-->
+<!--					&lt;!&ndash;						</configuration>&ndash;&gt;-->
+<!--					&lt;!&ndash;					</execution>&ndash;&gt;-->
+<!--					&lt;!&ndash;					<execution>&ndash;&gt;-->
+<!--					&lt;!&ndash;						<id>jaxws-generate-wsdl-g</id>&ndash;&gt;-->
+<!--					&lt;!&ndash;						<goals>&ndash;&gt;-->
+<!--					&lt;!&ndash;							<goal>wsgen</goal>&ndash;&gt;-->
+<!--					&lt;!&ndash;						</goals>&ndash;&gt;-->
+<!--					&lt;!&ndash;						<phase>process-classes</phase>&ndash;&gt;-->
+<!--					&lt;!&ndash;						<configuration>&ndash;&gt;-->
+<!--					&lt;!&ndash;							<keep>false</keep>&ndash;&gt;-->
+<!--					&lt;!&ndash;							<sei>&ndash;&gt;-->
+<!--					&lt;!&ndash;								it.eng.spagobi.services.execute.service.DocumentExecuteServiceImpl</sei>&ndash;&gt;-->
+<!--					&lt;!&ndash;						</configuration>&ndash;&gt;-->
+<!--					&lt;!&ndash;					</execution>&ndash;&gt;-->
+<!--					&lt;!&ndash;					<execution>&ndash;&gt;-->
+<!--					&lt;!&ndash;						<id>jaxws-generate-wsdl-h</id>&ndash;&gt;-->
+<!--					&lt;!&ndash;						<goals>&ndash;&gt;-->
+<!--					&lt;!&ndash;							<goal>wsgen</goal>&ndash;&gt;-->
+<!--					&lt;!&ndash;						</goals>&ndash;&gt;-->
+<!--					&lt;!&ndash;						<phase>process-classes</phase>&ndash;&gt;-->
+<!--					&lt;!&ndash;						<configuration>&ndash;&gt;-->
+<!--					&lt;!&ndash;							<keep>false</keep>&ndash;&gt;-->
+<!--					&lt;!&ndash;							<sei>&ndash;&gt;-->
+<!--					&lt;!&ndash;								it.eng.spagobi.services.metamodel.service.MetamodelServiceImpl</sei>&ndash;&gt;-->
+<!--					&lt;!&ndash;						</configuration>&ndash;&gt;-->
+<!--					&lt;!&ndash;					</execution>&ndash;&gt;-->
+<!--					&lt;!&ndash;					<execution>&ndash;&gt;-->
+<!--					&lt;!&ndash;						<id>jaxws-generate-wsdl-i</id>&ndash;&gt;-->
+<!--					&lt;!&ndash;						<goals>&ndash;&gt;-->
+<!--					&lt;!&ndash;							<goal>wsgen</goal>&ndash;&gt;-->
+<!--					&lt;!&ndash;						</goals>&ndash;&gt;-->
+<!--					&lt;!&ndash;						<phase>process-classes</phase>&ndash;&gt;-->
+<!--					&lt;!&ndash;						<configuration>&ndash;&gt;-->
+<!--					&lt;!&ndash;							<keep>false</keep>&ndash;&gt;-->
+<!--					&lt;!&ndash;							<sei>&ndash;&gt;-->
+<!--					&lt;!&ndash;								it.eng.spagobi.services.sbidocument.service.SbiDocumentServiceImpl</sei>&ndash;&gt;-->
+<!--					&lt;!&ndash;						</configuration>&ndash;&gt;-->
+<!--					&lt;!&ndash;					</execution>&ndash;&gt;-->
+<!--					&lt;!&ndash;					<execution>&ndash;&gt;-->
+<!--					&lt;!&ndash;						<id>jaxws-generate-wsdl-j</id>&ndash;&gt;-->
+<!--					&lt;!&ndash;						<goals>&ndash;&gt;-->
+<!--					&lt;!&ndash;							<goal>wsgen</goal>&ndash;&gt;-->
+<!--					&lt;!&ndash;						</goals>&ndash;&gt;-->
+<!--					&lt;!&ndash;						<phase>process-classes</phase>&ndash;&gt;-->
+<!--					&lt;!&ndash;						<configuration>&ndash;&gt;-->
+<!--					&lt;!&ndash;							<keep>false</keep>&ndash;&gt;-->
+<!--					&lt;!&ndash;							<sei>&ndash;&gt;-->
+<!--					&lt;!&ndash;								it.eng.spagobi.services.scheduler.service.SchedulerServiceImpl</sei>&ndash;&gt;-->
+<!--					&lt;!&ndash;						</configuration>&ndash;&gt;-->
+<!--					&lt;!&ndash;					</execution>&ndash;&gt;-->
+<!--					&lt;!&ndash;					<execution>&ndash;&gt;-->
+<!--					&lt;!&ndash;						<id>jaxws-generate-wsdl-k</id>&ndash;&gt;-->
+<!--					&lt;!&ndash;						<goals>&ndash;&gt;-->
+<!--					&lt;!&ndash;							<goal>wsgen</goal>&ndash;&gt;-->
+<!--					&lt;!&ndash;						</goals>&ndash;&gt;-->
+<!--					&lt;!&ndash;						<phase>process-classes</phase>&ndash;&gt;-->
+<!--					&lt;!&ndash;						<configuration>&ndash;&gt;-->
+<!--					&lt;!&ndash;							<keep>false</keep>&ndash;&gt;-->
+<!--					&lt;!&ndash;							<sei>&ndash;&gt;-->
+<!--					&lt;!&ndash;								it.eng.spagobi.services.security.service.SecurityServiceImpl</sei>&ndash;&gt;-->
+<!--					&lt;!&ndash;						</configuration>&ndash;&gt;-->
+<!--					&lt;!&ndash;					</execution>&ndash;&gt;-->
+<!--					&lt;!&ndash;-->
+<!--						Generate clients for all SOAP service implementations.-->
+<!--					 &ndash;&gt;-->
+<!--					&lt;!&ndash;					<execution>&ndash;&gt;-->
+<!--					&lt;!&ndash;						<id>jaxws-generate-client</id>&ndash;&gt;-->
+<!--					&lt;!&ndash;						<goals>&ndash;&gt;-->
+<!--					&lt;!&ndash;							<goal>wsimport</goal>&ndash;&gt;-->
+<!--					&lt;!&ndash;						</goals>&ndash;&gt;-->
+<!--					&lt;!&ndash;						<phase>process-classes</phase>&ndash;&gt;-->
+<!--					&lt;!&ndash;						<configuration>&ndash;&gt;-->
+<!--					&lt;!&ndash;							<destDir>${project.build.directory}/classes-ws</destDir>&ndash;&gt;-->
+<!--					&lt;!&ndash;							<keep>true</keep>&ndash;&gt;-->
+<!--					&lt;!&ndash;							<wsdlFiles>&ndash;&gt;-->
+<!--					&lt;!&ndash;								<wsdlFile>&ndash;&gt;-->
+<!--					&lt;!&ndash;									${project.build.directory}/generated-sources/wsdl/ArtifactService.wsdl</wsdlFile>&ndash;&gt;-->
+<!--					&lt;!&ndash;								<wsdlFile>&ndash;&gt;-->
+<!--					&lt;!&ndash;									${project.build.directory}/generated-sources/wsdl/AuditService.wsdl</wsdlFile>&ndash;&gt;-->
+<!--					&lt;!&ndash;								<wsdlFile>&ndash;&gt;-->
+<!--					&lt;!&ndash;									${project.build.directory}/generated-sources/wsdl/ContentService.wsdl</wsdlFile>&ndash;&gt;-->
+<!--					&lt;!&ndash;								<wsdlFile>&ndash;&gt;-->
+<!--					&lt;!&ndash;									${project.build.directory}/generated-sources/wsdl/DataSetService.wsdl</wsdlFile>&ndash;&gt;-->
+<!--					&lt;!&ndash;								<wsdlFile>&ndash;&gt;-->
+<!--					&lt;!&ndash;									${project.build.directory}/generated-sources/wsdl/DataSourceService.wsdl</wsdlFile>&ndash;&gt;-->
+<!--					&lt;!&ndash;								<wsdlFile>&ndash;&gt;-->
+<!--					&lt;!&ndash;									${project.build.directory}/generated-sources/wsdl/DocumentExecuteService.wsdl</wsdlFile>&ndash;&gt;-->
+<!--					&lt;!&ndash;								<wsdlFile>&ndash;&gt;-->
+<!--					&lt;!&ndash;									${project.build.directory}/generated-sources/wsdl/EventService.wsdl</wsdlFile>&ndash;&gt;-->
+<!--					&lt;!&ndash;								<wsdlFile>&ndash;&gt;-->
+<!--					&lt;!&ndash;									${project.build.directory}/generated-sources/wsdl/MetamodelService.wsdl</wsdlFile>&ndash;&gt;-->
+<!--					&lt;!&ndash;								<wsdlFile>&ndash;&gt;-->
+<!--					&lt;!&ndash;									${project.build.directory}/generated-sources/wsdl/SbiDocumentService.wsdl</wsdlFile>&ndash;&gt;-->
+<!--					&lt;!&ndash;								<wsdlFile>&ndash;&gt;-->
+<!--					&lt;!&ndash;									${project.build.directory}/generated-sources/wsdl/SchedulerService.wsdl</wsdlFile>&ndash;&gt;-->
+<!--					&lt;!&ndash;								<wsdlFile>&ndash;&gt;-->
+<!--					&lt;!&ndash;									${project.build.directory}/generated-sources/wsdl/SecurityService.wsdl</wsdlFile>&ndash;&gt;-->
+<!--					&lt;!&ndash;							</wsdlFiles>&ndash;&gt;-->
+<!--					&lt;!&ndash;							<xnocompile>false</xnocompile>&ndash;&gt;-->
+<!--					&lt;!&ndash;						</configuration>&ndash;&gt;-->
+<!--					&lt;!&ndash;					</execution>&ndash;&gt;-->
+<!--				</executions>-->
+<!--				<configuration>-->
+<!--					<genWsdl>true</genWsdl>-->
+<!--					<inlineSchemas>true</inlineSchemas>-->
+<!--					<useJdkToolchainExecutable>false</useJdkToolchainExecutable>-->
+<!--					<verbose>true</verbose>-->
+<!--				</configuration>-->
+<!--			</plugin>-->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-jar-plugin</artifactId>
