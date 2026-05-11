@@ -65,7 +65,7 @@ public class HomepageResourceTest {
 	}
 
 	@Test
-	public void shouldPreviewDefaultHomepageWhenRoleIdIsDefault() {
+	public void shouldPreviewDefaultHomepageWhenRoleLabelIsDefault() {
 		Homepage defaultHomepage = dynamicHomepage(true, 10, 20);
 		final int[] loadDefaultCalls = new int[1];
 
@@ -195,13 +195,46 @@ public class HomepageResourceTest {
 	}
 
 	@Test
-	public void shouldFilterFallbackHomepageForNumericRolePreview() {
+	public void shouldLoadHomepageByRoleLabelWhenRoleIsAvailableToUser() {
+		UserProfile profile = new UserProfile();
+		profile.setRoles(Collections.singletonList("ROLE_ANALYST"));
+		UserProfileManager.setProfile(profile);
+
+		Homepage roleHomepage = staticHomepage(false, Collections.singletonList(9), "landing.html");
+		Role role = new Role();
+		role.setId(9);
+		role.setName("ROLE_ANALYST");
+		final Integer[] requestedRoleId = new Integer[1];
+
+		mockDaos(createProxy(IHomepageDAO.class, (proxy, method, args) -> {
+			if ("loadHomepageByRoleId".equals(method.getName())) {
+				requestedRoleId[0] = (Integer) args[0];
+				return roleHomepage;
+			}
+			return defaultValue(method.getReturnType());
+		}), createProxy(IRoleDAO.class, (proxy, method, args) -> {
+			if ("loadByName".equals(method.getName())) {
+				return role;
+			}
+			return defaultValue(method.getReturnType());
+		}));
+
+		Response response = new HomepageResource().getHomepageByRole("ROLE_ANALYST");
+
+		assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+		assertEquals(Integer.valueOf(9), requestedRoleId[0]);
+		assertSame(roleHomepage, response.getEntity());
+	}
+
+	@Test
+	public void shouldFilterFallbackHomepageForRoleLabelPreview() {
 		UserProfile profile = new UserProfile();
 		profile.setRoles(new ArrayList<>());
 		UserProfileManager.setProfile(profile);
 
 		Homepage fallbackHomepage = dynamicHomepage(true, 10, 20);
 		Role previewRole = new Role();
+		previewRole.setId(7);
 		previewRole.setName("ROLE_PREVIEW");
 		final Integer[] requestedRoleId = new Integer[1];
 
@@ -212,14 +245,14 @@ public class HomepageResourceTest {
 			}
 			return defaultValue(method.getReturnType());
 		}), createProxy(IRoleDAO.class, (proxy, method, args) -> {
-			if ("loadByID".equals(method.getName())) {
+			if ("loadByName".equals(method.getName())) {
 				return previewRole;
 			}
 			return defaultValue(method.getReturnType());
 		}));
 		mockMenuItems(Collections.singletonList(clickableMenu(20)));
 
-		Response response = new HomepageResource().previewHomepageByRole("7");
+		Response response = new HomepageResource().previewHomepageByRole("ROLE_PREVIEW");
 		Homepage filteredHomepage = (Homepage) response.getEntity();
 
 		assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());

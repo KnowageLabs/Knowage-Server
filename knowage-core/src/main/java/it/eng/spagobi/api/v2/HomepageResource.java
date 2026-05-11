@@ -73,12 +73,11 @@ import java.util.stream.Collectors;
 	}
 
 	@GET
-	@Path("/preview/{roleId}")
-	@UserConstraint(functionalities = { CommunityFunctionalityConstants.MENU_MANAGEMENT })
+	@Path("/preview/{label}")
 	@Produces(MediaType.APPLICATION_JSON + CHARSET)
-	public Response previewHomepageByRole(@PathParam("roleId") String roleId) {
+	public Response previewHomepageByRole(@PathParam("label") String label) {
 		try {
-			RoleRequest roleRequest = parseRoleRequest(roleId);
+			RoleRequest roleRequest = parseRoleRequest(label);
 			Homepage homepage = roleRequest.isDefaultRequest()
 					? getHomepageDAO().loadDefaultHomepage()
 					: getHomepageDAO().loadHomepageByRoleId(roleRequest.getRoleId());
@@ -88,7 +87,7 @@ import java.util.stream.Collectors;
 			if (roleRequest.isDefaultRequest()) {
 				return Response.ok(homepage).build();
 			}
-			return Response.ok(filterHomepageForRole(homepage, roleRequest.getRoleId())).build();
+			return Response.ok(filterHomepageForRole(homepage, roleRequest.getRole())).build();
 		} catch (NotFoundException e) {
 			throw e;
 		} catch (SpagoBIRuntimeException e) {
@@ -101,12 +100,12 @@ import java.util.stream.Collectors;
 	}
 
 	@GET
-	@Path("/{roleId}")
+	@Path("/{label}")
 	@Produces(MediaType.APPLICATION_JSON + CHARSET)
-	public Response getHomepageByRole(@PathParam("roleId") String roleId) {
+	public Response getHomepageByRole(@PathParam("label") String label) {
 		try {
-			RoleRequest roleRequest = parseRoleRequest(roleId);
-			if (!roleRequest.isDefaultRequest() && !canReadRole(roleRequest.getRoleId())) {
+			RoleRequest roleRequest = parseRoleRequest(label);
+			if (!roleRequest.isDefaultRequest() && !canReadRole(roleRequest.getRole())) {
 				return Response.status(Response.Status.FORBIDDEN).build();
 			}
 			Homepage homepage = roleRequest.isDefaultRequest()
@@ -222,22 +221,29 @@ import java.util.stream.Collectors;
 		return homepage;
 	}
 
-	private RoleRequest parseRoleRequest(String roleId) {
-		if (roleId == null) {
+	private RoleRequest parseRoleRequest(String label) throws EMFUserError {
+		if (label == null) {
 			throw new NotFoundException();
 		}
-		String normalizedRoleId = roleId.trim();
-		if (normalizedRoleId.isEmpty()) {
+		String normalizedLabel = label.trim();
+		if (normalizedLabel.isEmpty()) {
 			throw new NotFoundException();
 		}
-		if (DEFAULT_ROLE_TOKEN.equalsIgnoreCase(normalizedRoleId)) {
+		if (DEFAULT_ROLE_TOKEN.equalsIgnoreCase(normalizedLabel)) {
 			return RoleRequest.defaultRequest();
 		}
-		try {
-			return RoleRequest.forRole(Integer.valueOf(normalizedRoleId));
-		} catch (NumberFormatException e) {
+
+		Role role = loadRoleByLabel(normalizedLabel);
+		if (role == null) {
 			throw new NotFoundException();
 		}
+		return RoleRequest.forRole(role);
+	}
+
+	private Role loadRoleByLabel(String label) throws EMFUserError {
+		IRoleDAO roleDAO = DAOFactory.getRoleDAO();
+		roleDAO.setUserProfile(getUserProfile());
+		return roleDAO.loadByName(label);
 	}
 
 	private List<MenuPlaceholder> readMenuPlaceholders(JSONArray jsonArray) throws JSONException {
@@ -344,12 +350,12 @@ import java.util.stream.Collectors;
 		}
 	}
 
-	private Homepage filterHomepageForRole(Homepage homepage, Integer roleId) throws EMFUserError {
+	private Homepage filterHomepageForRole(Homepage homepage, Role role) throws EMFUserError {
 		if (!HomepageType.DYNAMIC.getValue().equalsIgnoreCase(homepage.getType()) || homepage.getTemplate() == null) {
 			return homepage;
 		}
 
-		Set<Integer> visibleMenuIds = loadVisibleMenuIds(roleId);
+		Set<Integer> visibleMenuIds = loadVisibleMenuIds(role);
 		Homepage filteredHomepage = copyHomepage(homepage);
 		HomepageTemplate template = filteredHomepage.getTemplate();
 		for (MenuPlaceholder placeholder : template.getMenuPlaceholders()) {
@@ -360,10 +366,7 @@ import java.util.stream.Collectors;
 		return filteredHomepage;
 	}
 
-	private Set<Integer> loadVisibleMenuIds(Integer roleId) throws EMFUserError {
-		IRoleDAO roleDAO = DAOFactory.getRoleDAO();
-		roleDAO.setUserProfile(getUserProfile());
-		Role role = roleDAO.loadByID(roleId);
+	private Set<Integer> loadVisibleMenuIds(Role role) throws EMFUserError {
 		if (role == null) {
 			return new HashSet<>();
 		}
@@ -414,15 +417,11 @@ import java.util.stream.Collectors;
 		return copy;
 	}
 
-	private boolean canReadRole(Integer roleId) throws EMFUserError, EMFInternalError {
+	private boolean canReadRole(Role role) throws EMFInternalError {
 		UserProfile userProfile = getUserProfile();
 		if (userProfile.isAbleToExecuteAction(CommunityFunctionalityConstants.MENU_MANAGEMENT)) {
 			return true;
 		}
-
-		IRoleDAO roleDAO = DAOFactory.getRoleDAO();
-		roleDAO.setUserProfile(userProfile);
-		Role role = roleDAO.loadByID(roleId);
 		if (role == null) {
 			return false;
 		}
@@ -457,11 +456,11 @@ import java.util.stream.Collectors;
 
 	private static final class RoleRequest {
 
-		private final Integer roleId;
+		private final Role role;
 		private final boolean defaultRequest;
 
-		private RoleRequest(Integer roleId, boolean defaultRequest) {
-			this.roleId = roleId;
+		private RoleRequest(Role role, boolean defaultRequest) {
+			this.role = role;
 			this.defaultRequest = defaultRequest;
 		}
 
@@ -469,12 +468,16 @@ import java.util.stream.Collectors;
 			return new RoleRequest(null, true);
 		}
 
-		private static RoleRequest forRole(Integer roleId) {
-			return new RoleRequest(roleId, false);
+		private static RoleRequest forRole(Role role) {
+			return new RoleRequest(role, false);
+		}
+
+		private Role getRole() {
+			return role;
 		}
 
 		private Integer getRoleId() {
-			return roleId;
+			return role.getId();
 		}
 
 		private boolean isDefaultRequest() {
