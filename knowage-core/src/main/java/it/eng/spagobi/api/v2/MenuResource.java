@@ -113,7 +113,6 @@ public class MenuResource extends AbstractSpagoBIResource {
 
 	@GET
 	@Path("/preview/{roleId}")
-	@UserConstraint(functionalities = { CommunityFunctionalityConstants.MENU_MANAGEMENT })
 	@Produces(MediaType.APPLICATION_JSON + CHARSET)
 	public Response previewMenuByRole(@PathParam("roleId") String roleId) {
 		LOGGER.debug("IN");
