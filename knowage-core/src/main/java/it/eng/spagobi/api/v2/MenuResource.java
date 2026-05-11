@@ -46,6 +46,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import it.eng.qbe.serializer.SerializationException;
+import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.functionalitytree.bo.LowFunctionality;
 import it.eng.spagobi.analiticalmodel.functionalitytree.dao.ILowFunctionalityDAO;
@@ -112,26 +113,18 @@ public class MenuResource extends AbstractSpagoBIResource {
 	}
 
 	@GET
-	@Path("/preview/{roleId}")
+	@Path("/preview/{label}")
 	@Produces(MediaType.APPLICATION_JSON + CHARSET)
-	public Response previewMenuByRole(@PathParam("roleId") String roleId) {
+	public Response previewMenuByRole(@PathParam("label") String label) {
 		LOGGER.debug("IN");
 
 		try {
 			UserProfile profile = getUserProfile();
-			Integer parsedRoleId = parseRoleId(roleId);
-			if (parsedRoleId == null) {
+			Role role = parseRole(profile, label);
+			if (role == null) {
 				List menuItems = MenuUtilities.getMenuItems(profile, true);
 				MenuUtilities.filterListForUserClickableElements(menuItems, profile);
 				return Response.ok(menuItems).build();
-			}
-
-			IRoleDAO roleDao = DAOFactory.getRoleDAO();
-			roleDao.setUserProfile(profile);
-
-			Role role = roleDao.loadByID(parsedRoleId);
-			if (role == null) {
-				return Response.status(Response.Status.NOT_FOUND).build();
 			}
 
 			List menuItems = MenuUtilities.getMenuItemsForRole(profile, role.getName());
@@ -147,22 +140,25 @@ public class MenuResource extends AbstractSpagoBIResource {
 		}
 	}
 
-	private Integer parseRoleId(String roleId) {
-		if (roleId == null) {
+	private Role parseRole(UserProfile profile, String label) throws EMFUserError {
+		if (label == null) {
 			throw new NotFoundException();
 		}
-		String normalizedRoleId = roleId.trim();
-		if (normalizedRoleId.isEmpty()) {
+		String normalizedLabel = label.trim();
+		if (normalizedLabel.isEmpty()) {
 			throw new NotFoundException();
 		}
-		if (DEFAULT_ROLE_TOKEN.equalsIgnoreCase(normalizedRoleId)) {
+		if (DEFAULT_ROLE_TOKEN.equalsIgnoreCase(normalizedLabel)) {
 			return null;
 		}
-		try {
-			return Integer.valueOf(normalizedRoleId);
-		} catch (NumberFormatException e) {
+
+		IRoleDAO roleDao = DAOFactory.getRoleDAO();
+		roleDao.setUserProfile(profile);
+		Role role = roleDao.loadByName(normalizedLabel);
+		if (role == null) {
 			throw new NotFoundException();
 		}
+		return role;
 	}
 
 	@SuppressWarnings("unchecked")

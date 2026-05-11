@@ -65,7 +65,7 @@ public class MenuResourceTest {
 	}
 
 	@Test
-	public void shouldPreviewMenuUsingCurrentProfileWhenRoleIdIsDefault() {
+	public void shouldPreviewMenuUsingCurrentProfileWhenRoleLabelIsDefault() {
 		UserProfile profile = new UserProfile();
 		profile.setRoles(Collections.singletonList("ROLE_A"));
 		UserProfileManager.setProfile(profile);
@@ -105,7 +105,7 @@ public class MenuResourceTest {
 	}
 
 	@Test
-	public void shouldPreviewMenuForNumericRole() {
+	public void shouldPreviewMenuForRoleLabel() {
 		UserProfile profile = new UserProfile();
 		UserProfileManager.setProfile(profile);
 
@@ -113,15 +113,15 @@ public class MenuResourceTest {
 		previewRole.setName("ROLE_PREVIEW");
 		List<Menu> expectedMenuItems = new ArrayList<>();
 		expectedMenuItems.add(new Menu());
-		final Integer[] capturedRoleId = new Integer[1];
+		final String[] capturedRoleLabel = new String[1];
 		final String[] capturedRoleName = new String[1];
 
 		new MockUp<DAOFactory>() {
 			@Mock
 			public IRoleDAO getRoleDAO() {
 				return createProxy(IRoleDAO.class, (proxy, method, args) -> {
-					if ("loadByID".equals(method.getName())) {
-						capturedRoleId[0] = (Integer) args[0];
+					if ("loadByName".equals(method.getName())) {
+						capturedRoleLabel[0] = (String) args[0];
 						return previewRole;
 					}
 					return defaultValue(method.getReturnType());
@@ -138,16 +138,31 @@ public class MenuResourceTest {
 			}
 		};
 
-		Response response = new MenuResource().previewMenuByRole("7");
+		Response response = new MenuResource().previewMenuByRole("ROLE_PREVIEW");
 
 		assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
 		assertSame(expectedMenuItems, response.getEntity());
-		assertEquals(Integer.valueOf(7), capturedRoleId[0]);
+		assertEquals("ROLE_PREVIEW", capturedRoleLabel[0]);
 		assertEquals("ROLE_PREVIEW", capturedRoleName[0]);
 	}
 
 	@Test(expected = NotFoundException.class)
-	public void shouldRejectInvalidPreviewRoleId() {
+	public void shouldRejectMissingPreviewRoleLabel() {
+		UserProfile profile = new UserProfile();
+		UserProfileManager.setProfile(profile);
+
+		new MockUp<DAOFactory>() {
+			@Mock
+			public IRoleDAO getRoleDAO() {
+				return createProxy(IRoleDAO.class, (proxy, method, args) -> {
+					if ("loadByName".equals(method.getName())) {
+						return null;
+					}
+					return defaultValue(method.getReturnType());
+				});
+			}
+		};
+
 		new MenuResource().previewMenuByRole("not-a-role");
 	}
 
