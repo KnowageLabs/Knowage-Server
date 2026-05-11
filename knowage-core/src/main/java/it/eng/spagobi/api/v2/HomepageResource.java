@@ -74,6 +74,7 @@ import java.util.stream.Collectors;
 
 	@GET
 	@Path("/preview/{label}")
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.MENU_MANAGEMENT })
 	@Produces(MediaType.APPLICATION_JSON + CHARSET)
 	public Response previewHomepageByRole(@PathParam("label") String label) {
 		try {
@@ -477,7 +478,7 @@ import java.util.stream.Collectors;
 		}
 
 		private Integer getRoleId() {
-			return role.getId();
+			return role != null ? role.getId() : null;
 		}
 
 		private boolean isDefaultRequest() {
