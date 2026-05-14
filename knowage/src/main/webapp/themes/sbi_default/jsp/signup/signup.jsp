@@ -150,10 +150,22 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			    }
 			  })
 			  .then(function(response) {
-				  if(response.data.errors){
-					  var errorMsg = response.data.errors[0].message == null ? "Error" : response.data.errors[0].message;
-					  $scope.popup('error',errorMsg)
-				  }else{
+				  var data = response.data;
+				  var violationArrays = ['parameterViolations','fieldViolations','propertyViolations','classViolations','returnValueViolations'];
+				  var violations = [];
+				  violationArrays.forEach(function(key) {
+					  if (data[key] && data[key].length > 0) {
+						  data[key].forEach(function(v) {
+							  if (v.message) violations.push(v.message);
+						  });
+					  }
+				  });
+				  if (violations.length > 0) {
+					  $scope.popup('error', violations.join('\n'));
+				  } else if (data.errors) {
+					  var errorMsg = data.errors[0].message == null ? "Error" : data.errors[0].message;
+					  $scope.popup('error', errorMsg);
+				  } else {
 					  $scope.popup('message',response.data.message)
 					  $scope.newUser = {};
 					  $timeout(function(){
