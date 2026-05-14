@@ -1,21 +1,3 @@
-/*
- * Knowage, Open Source Business Intelligence suite
- * Copyright (C) 2024 Engineering Ingegneria Informatica S.p.A.
-
- * Knowage is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
-
- * Knowage is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
-
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
-
 package it.eng.knowage.encryption;
 
 import org.jasypt.encryption.pbe.PBEStringEncryptor;
@@ -27,6 +9,8 @@ import org.jasypt.salt.ZeroSaltGenerator;
  */
 public class EncryptorFactory {
 
+	public static final String ORACLE_AES_256_CBC_PKCS5 = "OracleAES256CBCPKCS5";
+
 	private static final EncryptorFactory INSTANCE = new EncryptorFactory();
 
 	public static EncryptorFactory getInstance() {
@@ -34,7 +18,6 @@ public class EncryptorFactory {
 	}
 
 	private EncryptorFactory() {
-
 	}
 
 	public PBEStringEncryptor createDefault() {
@@ -52,12 +35,19 @@ public class EncryptorFactory {
 	}
 
 	public PBEStringEncryptor create(String algorithm, String password) {
-		StandardPBEStringEncryptor encryptor = new StandardPBEStringEncryptor();
+		if (isOracleAes256CbcPkcs5(algorithm)) {
+			return new OracleAes256CbcPkcs5StringEncryptor(password);
+		}
 
+		StandardPBEStringEncryptor encryptor = new StandardPBEStringEncryptor();
 		encryptor.setAlgorithm(algorithm);
 		encryptor.setPassword(password);
 		encryptor.setSaltGenerator(new ZeroSaltGenerator());
 
 		return encryptor;
+	}
+
+	private boolean isOracleAes256CbcPkcs5(String algorithm) {
+		return ORACLE_AES_256_CBC_PKCS5.equalsIgnoreCase(algorithm);
 	}
 }
