@@ -106,12 +106,12 @@ public class HomepageResourceTest {
 	}
 
 	@Test
-	public void shouldNormalizeDefaultRoleIdInCreateHomepageRequest() throws JSONException {
+	public void shouldNormalizeDefaultRoleNameInCreateHomepageRequest() throws JSONException {
 		Homepage[] savedHomepage = new Homepage[1];
 		mockRequestBody(new JSONObject()
 				.put("type", HomepageType.STATIC.getValue())
 				.put("staticPage", "landing.html")
-				.put("roleId", "default"));
+				.put("roleName", "default"));
 
 		mockDaos(createProxy(IHomepageDAO.class, (proxy, method, args) -> {
 			if ("saveHomepage".equals(method.getName())) {
@@ -125,17 +125,17 @@ public class HomepageResourceTest {
 
 		assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
 		assertTrue(savedHomepage[0].isDefaultHomepage());
-		assertTrue(savedHomepage[0].getRoleIds().isEmpty());
+		assertTrue(savedHomepage[0].getRoleNames().isEmpty());
 		assertSame(savedHomepage[0], response.getEntity());
 	}
 
 	@Test
-	public void shouldNormalizeDefaultRoleIdsArrayInCreateHomepageRequest() throws JSONException {
+	public void shouldNormalizeDefaultRoleNamesArrayInCreateHomepageRequest() throws JSONException {
 		Homepage[] savedHomepage = new Homepage[1];
 		mockRequestBody(new JSONObject()
 				.put("type", HomepageType.STATIC.getValue())
 				.put("staticPage", "landing.html")
-				.put("roleIds", new JSONArray().put("default")));
+				.put("roleNames", new JSONArray().put("default")));
 
 		mockDaos(createProxy(IHomepageDAO.class, (proxy, method, args) -> {
 			if ("saveHomepage".equals(method.getName())) {
@@ -149,7 +149,7 @@ public class HomepageResourceTest {
 
 		assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
 		assertTrue(savedHomepage[0].isDefaultHomepage());
-		assertTrue(savedHomepage[0].getRoleIds().isEmpty());
+		assertTrue(savedHomepage[0].getRoleNames().isEmpty());
 	}
 
 	@Test
@@ -171,7 +171,7 @@ public class HomepageResourceTest {
 
 		assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
 		assertTrue(savedHomepage[0].isDefaultHomepage());
-		assertTrue(savedHomepage[0].getRoleIds().isEmpty());
+		assertTrue(savedHomepage[0].getRoleNames().isEmpty());
 	}
 
 	@Test(expected = SpagoBIRuntimeException.class)
@@ -185,11 +185,11 @@ public class HomepageResourceTest {
 	}
 
 	@Test(expected = SpagoBIRuntimeException.class)
-	public void shouldRejectMixedDefaultAndNumericRoleIdsInCreateHomepageRequest() throws JSONException {
+	public void shouldRejectMixedDefaultAndExplicitRoleNamesInCreateHomepageRequest() throws JSONException {
 		mockRequestBody(new JSONObject()
 				.put("type", HomepageType.STATIC.getValue())
 				.put("staticPage", "landing.html")
-				.put("roleIds", new JSONArray().put("default").put(10)));
+				.put("roleNames", new JSONArray().put("default").put("ROLE_ANALYST")));
 
 		new HomepageResource().createHomepage(null);
 	}
@@ -200,15 +200,15 @@ public class HomepageResourceTest {
 		profile.setRoles(Collections.singletonList("ROLE_ANALYST"));
 		UserProfileManager.setProfile(profile);
 
-		Homepage roleHomepage = staticHomepage(false, Collections.singletonList(9), "landing.html");
+		Homepage roleHomepage = staticHomepage(false, Collections.singletonList("ROLE_ANALYST"), "landing.html");
 		Role role = new Role();
 		role.setId(9);
 		role.setName("ROLE_ANALYST");
-		final Integer[] requestedRoleId = new Integer[1];
+		final String[] requestedRoleName = new String[1];
 
 		mockDaos(createProxy(IHomepageDAO.class, (proxy, method, args) -> {
-			if ("loadHomepageByRoleId".equals(method.getName())) {
-				requestedRoleId[0] = (Integer) args[0];
+			if ("loadHomepageByRoleName".equals(method.getName())) {
+				requestedRoleName[0] = (String) args[0];
 				return roleHomepage;
 			}
 			return defaultValue(method.getReturnType());
@@ -222,7 +222,7 @@ public class HomepageResourceTest {
 		Response response = new HomepageResource().getHomepageByRole("ROLE_ANALYST");
 
 		assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
-		assertEquals(Integer.valueOf(9), requestedRoleId[0]);
+		assertEquals("ROLE_ANALYST", requestedRoleName[0]);
 		assertSame(roleHomepage, response.getEntity());
 	}
 
@@ -236,11 +236,11 @@ public class HomepageResourceTest {
 		Role previewRole = new Role();
 		previewRole.setId(7);
 		previewRole.setName("ROLE_PREVIEW");
-		final Integer[] requestedRoleId = new Integer[1];
+		final String[] requestedRoleName = new String[1];
 
 		mockDaos(createProxy(IHomepageDAO.class, (proxy, method, args) -> {
-			if ("loadHomepageByRoleId".equals(method.getName())) {
-				requestedRoleId[0] = (Integer) args[0];
+			if ("loadHomepageByRoleName".equals(method.getName())) {
+				requestedRoleName[0] = (String) args[0];
 				return fallbackHomepage;
 			}
 			return defaultValue(method.getReturnType());
@@ -256,9 +256,39 @@ public class HomepageResourceTest {
 		Homepage filteredHomepage = (Homepage) response.getEntity();
 
 		assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
-		assertEquals(Integer.valueOf(7), requestedRoleId[0]);
+		assertEquals("ROLE_PREVIEW", requestedRoleName[0]);
 		assertEquals(Collections.singletonList(20), filteredHomepage.getTemplate().getMenuPlaceholders().get(0).getMenuIds());
 		assertEquals(Arrays.asList(10, 20), fallbackHomepage.getTemplate().getMenuPlaceholders().get(0).getMenuIds());
+	}
+
+	@Test(expected = SpagoBIRuntimeException.class)
+	public void shouldRejectLegacyRoleIdFieldsInCreateHomepageRequest() throws JSONException {
+		mockRequestBody(new JSONObject()
+				.put("type", HomepageType.STATIC.getValue())
+				.put("staticPage", "landing.html")
+				.put("roleId", "ROLE_ANALYST"));
+
+		new HomepageResource().createHomepage(null);
+	}
+
+	@Test(expected = SpagoBIRuntimeException.class)
+	public void shouldRejectLegacyRoleIdsFieldsInCreateHomepageRequest() throws JSONException {
+		mockRequestBody(new JSONObject()
+				.put("type", HomepageType.STATIC.getValue())
+				.put("staticPage", "landing.html")
+				.put("roleIds", new JSONArray().put("ROLE_ANALYST")));
+
+		new HomepageResource().createHomepage(null);
+	}
+
+	@Test(expected = SpagoBIRuntimeException.class)
+	public void shouldRejectNumericRoleNamesInCreateHomepageRequest() throws JSONException {
+		mockRequestBody(new JSONObject()
+				.put("type", HomepageType.STATIC.getValue())
+				.put("staticPage", "landing.html")
+				.put("roleNames", new JSONArray().put(10)));
+
+		new HomepageResource().createHomepage(null);
 	}
 
 	private void mockRequestBody(JSONObject body) {
@@ -329,10 +359,10 @@ public class HomepageResourceTest {
 		return null;
 	}
 
-	private Homepage staticHomepage(boolean defaultHomepage, List<Integer> roleIds, String staticPage) {
+	private Homepage staticHomepage(boolean defaultHomepage, List<String> roleNames, String staticPage) {
 		Homepage homepage = new Homepage();
 		homepage.setDefaultHomepage(defaultHomepage);
-		homepage.setRoleIds(new ArrayList<>(roleIds));
+		homepage.setRoleNames(new ArrayList<>(roleNames));
 		homepage.setType(HomepageType.STATIC.getValue());
 		homepage.setStaticPage(staticPage);
 		return homepage;

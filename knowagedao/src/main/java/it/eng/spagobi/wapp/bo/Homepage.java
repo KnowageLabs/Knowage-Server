@@ -34,7 +34,7 @@ public class Homepage implements Serializable {
 	private String imageUrl;
 	private String staticPage;
 	private HomepageTemplate template;
-	private List<Integer> roleIds = new ArrayList<>();
+	private List<String> roleNames = new ArrayList<>();
 
 	public Integer getId() {
 		return id;
@@ -92,12 +92,12 @@ public class Homepage implements Serializable {
 		this.template = template;
 	}
 
-	public List<Integer> getRoleIds() {
-		return roleIds;
+	public List<String> getRoleNames() {
+		return roleNames;
 	}
 
-	public void setRoleIds(List<Integer> roleIds) {
-		this.roleIds = roleIds == null ? new ArrayList<>() : roleIds;
+	public void setRoleNames(List<String> roleNames) {
+		this.roleNames = roleNames == null ? new ArrayList<>() : roleNames;
 	}
 
 }

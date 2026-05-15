@@ -81,7 +81,7 @@ import java.util.stream.Collectors;
 			RoleRequest roleRequest = parseRoleRequest(label);
 			Homepage homepage = roleRequest.isDefaultRequest()
 					? getHomepageDAO().loadDefaultHomepage()
-					: getHomepageDAO().loadHomepageByRoleId(roleRequest.getRoleId());
+					: getHomepageDAO().loadHomepageByRoleName(roleRequest.getRoleName());
 			if (homepage == null) {
 				return Response.status(Response.Status.NOT_FOUND).build();
 			}
@@ -89,9 +89,7 @@ import java.util.stream.Collectors;
 				return Response.ok(homepage).build();
 			}
 			return Response.ok(filterHomepageForRole(homepage, roleRequest.getRole())).build();
-		} catch (NotFoundException e) {
-			throw e;
-		} catch (SpagoBIRuntimeException e) {
+		} catch (NotFoundException | SpagoBIRuntimeException e) {
 			throw e;
 		} catch (Exception e) {
 			String errorString = "sbi.homepage.preview.error";
@@ -111,14 +109,12 @@ import java.util.stream.Collectors;
 			}
 			Homepage homepage = roleRequest.isDefaultRequest()
 					? getHomepageDAO().loadDefaultHomepage()
-					: getHomepageDAO().loadHomepageByRoleId(roleRequest.getRoleId());
+					: getHomepageDAO().loadHomepageByRoleName(roleRequest.getRoleName());
 			if (homepage == null) {
 				return Response.status(Response.Status.NOT_FOUND).build();
 			}
 			return Response.ok(homepage).build();
-		} catch (NotFoundException e) {
-			throw e;
-		} catch (SpagoBIRuntimeException e) {
+		} catch (NotFoundException | SpagoBIRuntimeException e) {
 			throw e;
 		} catch (Exception e) {
 			String errorString = "sbi.homepage.load.error";
@@ -167,7 +163,7 @@ import java.util.stream.Collectors;
 		}
 	}
 
-	private IHomepageDAO getHomepageDAO() throws EMFUserError {
+	private IHomepageDAO getHomepageDAO() {
 		IHomepageDAO homepageDAO = DAOFactory.getHomepageDAO();
 		homepageDAO.setUserProfile(getUserProfile());
 		return homepageDAO;
@@ -175,6 +171,9 @@ import java.util.stream.Collectors;
 
 	private Homepage readHomepage(HttpServletRequest request) throws Exception {
 		JSONObject body = RestUtilities.readBodyAsJSONObject(request);
+		if (body.has("roleIds") || body.has("roleId")) {
+			throw validationException("Use roleNames or roleName instead of roleIds or roleId");
+		}
 		Homepage homepage = new Homepage();
 		boolean hasExplicitDefaultFlag = body.has("default") || body.has("isDefault");
 		boolean defaultHomepage = body.optBoolean("default", body.optBoolean("isDefault", false));
@@ -208,17 +207,17 @@ import java.util.stream.Collectors;
 			homepage.setTemplate(template);
 		}
 
-		List<Integer> roleIds = new ArrayList<>();
+		List<String> roleNames = new ArrayList<>();
 		boolean defaultRoleRequested = false;
-		if (body.has("roleIds") && !body.isNull("roleIds")) {
-			defaultRoleRequested = readRoleArray(body.getJSONArray("roleIds"), roleIds) || defaultRoleRequested;
+		if (body.has("roleNames") && !body.isNull("roleNames")) {
+			defaultRoleRequested = readRoleArray(body.getJSONArray("roleNames"), roleNames);
 		}
-		if (body.has("roleId") && !body.isNull("roleId")) {
-			defaultRoleRequested = addRoleValue(body.get("roleId"), "roleId", roleIds) || defaultRoleRequested;
+		if (body.has("roleName") && !body.isNull("roleName")) {
+			defaultRoleRequested = addRoleValue(body.get("roleName"), "roleName", roleNames) || defaultRoleRequested;
 		}
-		boolean inferDefaultHomepage = !hasExplicitDefaultFlag && !defaultRoleRequested && roleIds.isEmpty();
+		boolean inferDefaultHomepage = !hasExplicitDefaultFlag && !defaultRoleRequested && roleNames.isEmpty();
 		homepage.setDefaultHomepage(defaultHomepage || defaultRoleRequested || inferDefaultHomepage);
-		homepage.setRoleIds(roleIds.stream().distinct().collect(Collectors.toList()));
+		homepage.setRoleNames(roleNames.stream().distinct().collect(Collectors.toList()));
 		return homepage;
 	}
 
@@ -272,36 +271,31 @@ import java.util.stream.Collectors;
 		return integers;
 	}
 
-	private boolean readRoleArray(JSONArray jsonArray, List<Integer> roleIds) throws JSONException {
+	private boolean readRoleArray(JSONArray jsonArray, List<String> roleNames) throws JSONException {
 		boolean defaultRoleRequested = false;
 		for (int i = 0; i < jsonArray.length(); i++) {
-			defaultRoleRequested = addRoleValue(jsonArray.get(i), "roleIds[" + i + "]", roleIds) || defaultRoleRequested;
+			defaultRoleRequested = addRoleValue(jsonArray.get(i), "roleNames[" + i + "]", roleNames) || defaultRoleRequested;
 		}
 		return defaultRoleRequested;
 	}
 
-	private boolean addRoleValue(Object rawRoleValue, String fieldName, List<Integer> roleIds) {
+	private boolean addRoleValue(Object rawRoleValue, String fieldName, List<String> roleNames) {
 		if (rawRoleValue == null || JSONObject.NULL.equals(rawRoleValue)) {
 			throw validationException(fieldName + " cannot be null");
 		}
-		if (rawRoleValue instanceof Number) {
-			roleIds.add(((Number) rawRoleValue).intValue());
-			return false;
+		if (!(rawRoleValue instanceof String)) {
+			throw validationException("Invalid " + fieldName + " value [" + rawRoleValue + "]");
 		}
 
-		String normalizedRoleValue = rawRoleValue.toString().trim();
+		String normalizedRoleValue = ((String) rawRoleValue).trim();
 		if (normalizedRoleValue.isEmpty()) {
 			throw validationException(fieldName + " cannot be blank");
 		}
 		if (DEFAULT_ROLE_TOKEN.equalsIgnoreCase(normalizedRoleValue)) {
 			return true;
 		}
-		try {
-			roleIds.add(Integer.valueOf(normalizedRoleValue));
-			return false;
-		} catch (NumberFormatException e) {
-			throw validationException("Invalid " + fieldName + " value [" + rawRoleValue + "]", e);
-		}
+		roleNames.add(normalizedRoleValue);
+		return false;
 	}
 
 	private void validateHomepage(Homepage homepage) {
@@ -313,10 +307,10 @@ import java.util.stream.Collectors;
 		}
 		homepage.setType(homepageType.getValue());
 
-		if (homepage.isDefaultHomepage() && !homepage.getRoleIds().isEmpty()) {
+		if (homepage.isDefaultHomepage() && !homepage.getRoleNames().isEmpty()) {
 			throw validationException("Default homepage cannot be explicitly associated to roles");
 		}
-		if (!homepage.isDefaultHomepage() && homepage.getRoleIds().isEmpty()) {
+		if (!homepage.isDefaultHomepage() && homepage.getRoleNames().isEmpty()) {
 			throw validationException("At least one role must be provided for a non-default homepage");
 		}
 
@@ -325,19 +319,19 @@ import java.util.stream.Collectors;
 			require(homepage.getDocumentId() != null, "Document homepage requires documentId");
 			require(isBlank(homepage.getImageUrl()), "Document homepage cannot define imageUrl");
 			require(isBlank(homepage.getStaticPage()), "Document homepage cannot define staticPage");
-			require(!hasTemplateContent(homepage.getTemplate()), "Document homepage cannot define template");
+			require(hasTemplateContent(homepage.getTemplate()), "Document homepage cannot define template");
 			break;
 		case IMAGE:
 			require(!isBlank(homepage.getImageUrl()), "Image homepage requires imageUrl");
 			require(homepage.getDocumentId() == null, "Image homepage cannot define documentId");
 			require(isBlank(homepage.getStaticPage()), "Image homepage cannot define staticPage");
-			require(!hasTemplateContent(homepage.getTemplate()), "Image homepage cannot define template");
+			require(hasTemplateContent(homepage.getTemplate()), "Image homepage cannot define template");
 			break;
 		case STATIC:
 			require(!isBlank(homepage.getStaticPage()), "Static homepage requires staticPage");
 			require(homepage.getDocumentId() == null, "Static homepage cannot define documentId");
 			require(isBlank(homepage.getImageUrl()), "Static homepage cannot define imageUrl");
-			require(!hasTemplateContent(homepage.getTemplate()), "Static homepage cannot define template");
+			require(hasTemplateContent(homepage.getTemplate()), "Static homepage cannot define template");
 			break;
 		case DYNAMIC:
 			require(homepage.getTemplate() != null, "Dynamic homepage requires template");
@@ -399,7 +393,7 @@ import java.util.stream.Collectors;
 		copy.setDocumentId(homepage.getDocumentId());
 		copy.setImageUrl(homepage.getImageUrl());
 		copy.setStaticPage(homepage.getStaticPage());
-		copy.setRoleIds(new ArrayList<>(homepage.getRoleIds()));
+		copy.setRoleNames(new ArrayList<>(homepage.getRoleNames()));
 
 		if (homepage.getTemplate() != null) {
 			HomepageTemplate template = new HomepageTemplate();
@@ -432,9 +426,9 @@ import java.util.stream.Collectors;
 	}
 
 	private boolean hasTemplateContent(HomepageTemplate template) {
-		return template != null && (!isBlank(template.getHtml())
-				|| !isBlank(template.getCss())
-				|| (template.getMenuPlaceholders() != null && !template.getMenuPlaceholders().isEmpty()));
+		return template == null || (isBlank(template.getHtml())
+				&& isBlank(template.getCss())
+				&& (template.getMenuPlaceholders() == null || template.getMenuPlaceholders().isEmpty()));
 	}
 
 	private boolean isBlank(String value) {
@@ -477,8 +471,8 @@ import java.util.stream.Collectors;
 			return role;
 		}
 
-		private Integer getRoleId() {
-			return role != null ? role.getId() : null;
+		private String getRoleName() {
+			return role != null ? role.getName() : null;
 		}
 
 		private boolean isDefaultRequest() {

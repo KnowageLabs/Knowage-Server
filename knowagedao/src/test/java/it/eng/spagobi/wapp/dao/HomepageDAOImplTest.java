@@ -47,30 +47,31 @@ import it.eng.spagobi.wapp.metadata.SbiHomepage;
 public class HomepageDAOImplTest {
 
 	private static final String LOAD_HOMEPAGE_ID_BY_ROLE_QUERY = "select distinct h.id from SbiHomepage h join h.sbiHomepageRoles r "
-			+ "where r.extRoleId = :roleId and h.commonInfo.timeDe is null";
+			+ "where r.name = :roleName and h.commonInfo.timeDe is null";
 	private static final String LOAD_HOMEPAGE_IDS_BY_ROLE_QUERY = "select distinct h.id from SbiHomepage h join h.sbiHomepageRoles r "
-			+ "where r.extRoleId in (:roleIds) and h.commonInfo.timeDe is null";
+			+ "where r.name in (:roleNames) and h.commonInfo.timeDe is null";
 	private static final String LOAD_HOMEPAGE_BY_ID_QUERY = "from SbiHomepage h where h.id = :homepageId and h.commonInfo.timeDe is null";
 	private static final String LOAD_HOMEPAGES_BY_IDS_QUERY = "from SbiHomepage h where h.id in (:homepageIds) and h.commonInfo.timeDe is null";
 	private static final String LOAD_DEFAULT_HOMEPAGE_QUERY = "from SbiHomepage h where h.defaultHomepage = true and h.commonInfo.timeDe is null";
+	private static final String LOAD_ROLES_BY_NAMES_QUERY = "from SbiExtRoles r where r.name in (:roleNames)";
 	private static final String ORACLE_UNSAFE_DISTINCT_ENTITY_QUERY_PREFIX = "select distinct h from SbiHomepage h join h.sbiHomepageRoles r";
 
 	@Test
 	public void shouldLoadRoleHomepageUsingScalarIdsInsteadOfDistinctEntitySelection() throws Exception {
 		RecordingSession recordingSession = new RecordingSession();
-		QueryStub roleIdQuery = recordingSession.whenQuery(LOAD_HOMEPAGE_ID_BY_ROLE_QUERY);
-		roleIdQuery.setUniqueResult(12);
+		QueryStub roleNameQuery = recordingSession.whenQuery(LOAD_HOMEPAGE_ID_BY_ROLE_QUERY);
+		roleNameQuery.setUniqueResult(12);
 		QueryStub homepageByIdQuery = recordingSession.whenQuery(LOAD_HOMEPAGE_BY_ID_QUERY);
-		homepageByIdQuery.setUniqueResult(homepageEntity(12, false, 7));
+		homepageByIdQuery.setUniqueResult(homepageEntity(12, false, "ROLE_ANALYST"));
 		TestableHomepageDAOImpl dao = new TestableHomepageDAOImpl(recordingSession.asSession());
 
-		Homepage homepage = dao.loadHomepageByRoleId(7);
+		Homepage homepage = dao.loadHomepageByRoleName("ROLE_ANALYST");
 
 		assertNotNull(homepage);
 		assertEquals(Integer.valueOf(12), homepage.getId());
-		assertEquals(Collections.singletonList(7), homepage.getRoleIds());
-		assertEquals(Integer.valueOf(7), roleIdQuery.getIntegerParameter("roleId"));
-		assertEquals(Integer.valueOf(1), roleIdQuery.getMaxResults());
+		assertEquals(Collections.singletonList("ROLE_ANALYST"), homepage.getRoleNames());
+		assertEquals("ROLE_ANALYST", roleNameQuery.getStringParameter("roleName"));
+		assertEquals(Integer.valueOf(1), roleNameQuery.getMaxResults());
 		assertEquals(Integer.valueOf(12), homepageByIdQuery.getIntegerParameter("homepageId"));
 		assertFalse(recordingSession.containsQueryStartingWith(ORACLE_UNSAFE_DISTINCT_ENTITY_QUERY_PREFIX));
 		assertTrue(recordingSession.isClosed());
@@ -79,17 +80,17 @@ public class HomepageDAOImplTest {
 	@Test
 	public void shouldFallbackToDefaultHomepageWhenNoRoleHomepageExists() throws Exception {
 		RecordingSession recordingSession = new RecordingSession();
-		QueryStub roleIdQuery = recordingSession.whenQuery(LOAD_HOMEPAGE_ID_BY_ROLE_QUERY);
-		roleIdQuery.setUniqueResult(null);
+		QueryStub roleNameQuery = recordingSession.whenQuery(LOAD_HOMEPAGE_ID_BY_ROLE_QUERY);
+		roleNameQuery.setUniqueResult(null);
 		QueryStub defaultQuery = recordingSession.whenQuery(LOAD_DEFAULT_HOMEPAGE_QUERY);
 		defaultQuery.setUniqueResult(homepageEntity(3, true));
 		TestableHomepageDAOImpl dao = new TestableHomepageDAOImpl(recordingSession.asSession());
 
-		Homepage homepage = dao.loadHomepageByRoleId(42);
+		Homepage homepage = dao.loadHomepageByRoleName("ROLE_ADMIN");
 
 		assertNotNull(homepage);
 		assertTrue(homepage.isDefaultHomepage());
-		assertEquals(Integer.valueOf(42), roleIdQuery.getIntegerParameter("roleId"));
+		assertEquals("ROLE_ADMIN", roleNameQuery.getStringParameter("roleName"));
 		assertTrue(recordingSession.getCreatedQueries().contains(LOAD_DEFAULT_HOMEPAGE_QUERY));
 		assertTrue(recordingSession.isClosed());
 	}
@@ -100,35 +101,53 @@ public class HomepageDAOImplTest {
 		QueryStub homepageIdsQuery = recordingSession.whenQuery(LOAD_HOMEPAGE_IDS_BY_ROLE_QUERY);
 		homepageIdsQuery.setListResult(Arrays.asList(5, 8));
 		QueryStub homepagesByIdsQuery = recordingSession.whenQuery(LOAD_HOMEPAGES_BY_IDS_QUERY);
-		homepagesByIdsQuery.setListResult(Arrays.asList(homepageEntity(5, false, 10), homepageEntity(8, false, 20)));
+		homepagesByIdsQuery.setListResult(Arrays.asList(homepageEntity(5, false, "ROLE_ANALYST"), homepageEntity(8, false, "ROLE_ADMIN")));
 		HomepageDAOImpl dao = new HomepageDAOImpl();
 
-		List<SbiHomepage> homepages = dao.loadHomepagesByRoleIds(recordingSession.asSession(), Arrays.asList(10, 20));
+		List<SbiHomepage> homepages = dao.loadHomepagesByRoleNames(recordingSession.asSession(), Arrays.asList("ROLE_ANALYST", "ROLE_ADMIN"));
 
 		assertEquals(2, homepages.size());
-		assertEquals(Arrays.asList(10, 20), homepageIdsQuery.getParameterList("roleIds"));
+		assertEquals(Arrays.asList("ROLE_ANALYST", "ROLE_ADMIN"), homepageIdsQuery.getParameterList("roleNames"));
 		assertEquals(Arrays.asList(5, 8), homepagesByIdsQuery.getParameterList("homepageIds"));
 		assertFalse(recordingSession.containsQueryStartingWith(ORACLE_UNSAFE_DISTINCT_ENTITY_QUERY_PREFIX));
 		assertFalse(recordingSession.isClosed());
 	}
 
-	private static SbiHomepage homepageEntity(int homepageId, boolean defaultHomepage, Integer... roleIds) {
+	@Test
+	public void shouldLoadRolesForSaveUsingRoleNames() throws Exception {
+		RecordingSession recordingSession = new RecordingSession();
+		QueryStub rolesByNamesQuery = recordingSession.whenQuery(LOAD_ROLES_BY_NAMES_QUERY);
+		rolesByNamesQuery.setListResult(Arrays.asList(roleEntity(1, "ROLE_ANALYST"), roleEntity(2, "ROLE_ADMIN")));
+		TestableHomepageDAOImpl dao = new TestableHomepageDAOImpl(recordingSession.asSession());
+
+		Set<SbiExtRoles> roles = dao.loadRoles(recordingSession.asSession(), Arrays.asList("ROLE_ANALYST", "ROLE_ADMIN"));
+
+		assertEquals(2, roles.size());
+		assertEquals(Arrays.asList("ROLE_ANALYST", "ROLE_ADMIN"), rolesByNamesQuery.getParameterList("roleNames"));
+	}
+
+	private static SbiHomepage homepageEntity(int homepageId, boolean defaultHomepage, String... roleNames) {
 		SbiHomepage homepage = new SbiHomepage();
 		homepage.changeId(homepageId);
 		homepage.setDefaultHomepage(defaultHomepage);
 		homepage.setType("static");
-		homepage.setSbiHomepageRoles(roles(roleIds));
+		homepage.setSbiHomepageRoles(roles(roleNames));
 		return homepage;
 	}
 
-	private static Set<SbiExtRoles> roles(Integer... roleIds) {
+	private static Set<SbiExtRoles> roles(String... roleNames) {
 		Set<SbiExtRoles> roles = new HashSet<>();
-		for (Integer roleId : roleIds) {
-			SbiExtRoles role = new SbiExtRoles();
-			role.changeExtRoleId(roleId);
-			roles.add(role);
+		for (int i = 0; i < roleNames.length; i++) {
+			roles.add(roleEntity(i + 1, roleNames[i]));
 		}
 		return roles;
+	}
+
+	private static SbiExtRoles roleEntity(int roleId, String roleName) {
+		SbiExtRoles role = new SbiExtRoles();
+		role.changeExtRoleId(roleId);
+		role.setName(roleName);
+		return role;
 	}
 
 	private static Object defaultValue(Class<?> returnType) {
@@ -237,6 +256,7 @@ public class HomepageDAOImplTest {
 	private static final class QueryStub implements InvocationHandler {
 
 		private final Map<String, Integer> integerParameters = new HashMap<>();
+		private final Map<String, String> stringParameters = new HashMap<>();
 		private final Map<String, List<?>> listParameters = new HashMap<>();
 		private Object uniqueResult;
 		private List<?> listResult = Collections.emptyList();
@@ -258,6 +278,10 @@ public class HomepageDAOImplTest {
 			return integerParameters.get(parameterName);
 		}
 
+		private String getStringParameter(String parameterName) {
+			return stringParameters.get(parameterName);
+		}
+
 		private List<?> getParameterList(String parameterName) {
 			return listParameters.get(parameterName);
 		}
@@ -271,6 +295,10 @@ public class HomepageDAOImplTest {
 			String methodName = method.getName();
 			if ("setInteger".equals(methodName)) {
 				integerParameters.put((String) args[0], (Integer) args[1]);
+				return proxy;
+			}
+			if ("setString".equals(methodName)) {
+				stringParameters.put((String) args[0], (String) args[1]);
 				return proxy;
 			}
 			if ("setParameterList".equals(methodName)) {

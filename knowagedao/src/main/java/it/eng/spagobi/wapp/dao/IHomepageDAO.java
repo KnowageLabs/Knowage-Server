@@ -25,9 +25,7 @@ public interface IHomepageDAO extends ISpagoBIDao {
 
 	Homepage saveHomepage(Homepage homepage) throws EMFUserError;
 
-	Homepage loadHomepageById(Integer homepageId) throws EMFUserError;
-
-	Homepage loadHomepageByRoleId(Integer roleId) throws EMFUserError;
+	Homepage loadHomepageByRoleName(String roleName) throws EMFUserError;
 
 	Homepage loadDefaultHomepage() throws EMFUserError;
 

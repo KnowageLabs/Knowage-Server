@@ -19,8 +19,10 @@ package it.eng.spagobi.wapp.dao;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
+import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -98,38 +100,19 @@ public class HomepageDAOImpl extends AbstractHibernateDAO implements IHomepageDA
 	}
 
 	@Override
-	public Homepage loadHomepageById(Integer homepageId) throws EMFUserError {
+	public Homepage loadHomepageByRoleName(String roleName) throws EMFUserError {
 		LOGGER.debug("IN");
 		Session session = null;
 		try {
 			session = getSession();
-			SbiHomepage hibHomepage = (SbiHomepage) session.get(SbiHomepage.class, homepageId);
-			return hibHomepage == null ? null : toHomepage(hibHomepage);
-		} catch (HibernateException | JSONException e) {
-			LOGGER.error("Error while loading homepage by id", e);
-			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
-		} finally {
-			if (session != null && session.isOpen()) {
-				session.close();
-			}
-			LOGGER.debug("OUT");
-		}
-	}
-
-	@Override
-	public Homepage loadHomepageByRoleId(Integer roleId) throws EMFUserError {
-		LOGGER.debug("IN");
-		Session session = null;
-		try {
-			session = getSession();
-			Integer homepageId = loadHomepageIdByRoleId(session, roleId);
+			Integer homepageId = loadHomepageIdByRoleName(session, roleName);
 			SbiHomepage hibHomepage = loadSbiHomepageById(session, homepageId);
 			if (hibHomepage != null) {
 				return toHomepage(hibHomepage);
 			}
 			return loadDefaultHomepage(session);
 		} catch (HibernateException | JSONException e) {
-			LOGGER.error("Error while loading homepage by role id", e);
+			LOGGER.error("Error while loading homepage by role name", e);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
 			if (session != null && session.isOpen()) {
@@ -174,11 +157,13 @@ public class HomepageDAOImpl extends AbstractHibernateDAO implements IHomepageDA
 		hibHomepage.setCss(trimToNull(homepage.getTemplate() != null ? homepage.getTemplate().getCss() : null));
 		hibHomepage.setMenuPlaceholders(serializeMenuPlaceholders(homepage.getTemplate()));
 
-		List<Integer> roleIds = homepage.isDefaultHomepage() ? new ArrayList<>() : new ArrayList<>(new HashSet<>(homepage.getRoleIds()));
-		if (!roleIds.isEmpty()) {
-			clearRoleAssignmentsOnOtherHomepages(session, roleIds, hibHomepage.getId());
+		List<String> roleNames = homepage.isDefaultHomepage()
+				? new ArrayList<>()
+				: homepage.getRoleNames().stream().distinct().collect(Collectors.toList());
+		if (!roleNames.isEmpty()) {
+			clearRoleAssignmentsOnOtherHomepages(session, roleNames, hibHomepage.getId());
 		}
-		hibHomepage.setSbiHomepageRoles(loadRoles(session, roleIds));
+		hibHomepage.setSbiHomepageRoles(loadRoles(session, roleNames));
 	}
 
 	private void clearExistingDefaultHomepage(Session session, Integer currentHomepageId) {
@@ -194,14 +179,14 @@ public class HomepageDAOImpl extends AbstractHibernateDAO implements IHomepageDA
 		}
 	}
 
-	private void clearRoleAssignmentsOnOtherHomepages(Session session, List<Integer> roleIds, Integer currentHomepageId) {
-		List<SbiHomepage> homepages = loadHomepagesByRoleIds(session, roleIds);
+	private void clearRoleAssignmentsOnOtherHomepages(Session session, List<String> roleNames, Integer currentHomepageId) {
+		List<SbiHomepage> homepages = loadHomepagesByRoleNames(session, roleNames);
 		for (SbiHomepage homepage : homepages) {
 			if (currentHomepageId != null && currentHomepageId.equals(homepage.getId())) {
 				continue;
 			}
 			Set<SbiExtRoles> filteredRoles = homepage.getSbiHomepageRoles().stream()
-					.filter(role -> !roleIds.contains(role.getExtRoleId()))
+					.filter(role -> !roleNames.contains(role.getName()))
 					.collect(Collectors.toSet());
 			if (filteredRoles.size() != homepage.getSbiHomepageRoles().size()) {
 				homepage.setSbiHomepageRoles(filteredRoles);
@@ -211,21 +196,21 @@ public class HomepageDAOImpl extends AbstractHibernateDAO implements IHomepageDA
 		}
 	}
 
-	private Integer loadHomepageIdByRoleId(Session session, Integer roleId) {
+	private Integer loadHomepageIdByRoleName(Session session, String roleName) {
 		Query query = session.createQuery("select distinct h.id from SbiHomepage h join h.sbiHomepageRoles r "
-				+ "where r.extRoleId = :roleId and h.commonInfo.timeDe is null");
-		query.setInteger("roleId", roleId);
+				+ "where r.name = :roleName and h.commonInfo.timeDe is null");
+		query.setString("roleName", roleName);
 		query.setMaxResults(1);
 		return (Integer) query.uniqueResult();
 	}
 
-	List<SbiHomepage> loadHomepagesByRoleIds(Session session, List<Integer> roleIds) {
-		if (roleIds == null || roleIds.isEmpty()) {
+	List<SbiHomepage> loadHomepagesByRoleNames(Session session, List<String> roleNames) {
+		if (roleNames == null || roleNames.isEmpty()) {
 			return Collections.emptyList();
 		}
 		Query query = session.createQuery("select distinct h.id from SbiHomepage h join h.sbiHomepageRoles r "
-				+ "where r.extRoleId in (:roleIds) and h.commonInfo.timeDe is null");
-		query.setParameterList("roleIds", roleIds);
+				+ "where r.name in (:roleNames) and h.commonInfo.timeDe is null");
+		query.setParameterList("roleNames", roleNames);
 		List<Integer> homepageIds = query.list();
 		return loadHomepagesByIds(session, homepageIds);
 	}
@@ -248,10 +233,23 @@ public class HomepageDAOImpl extends AbstractHibernateDAO implements IHomepageDA
 		return query.list();
 	}
 
-	private Set<SbiExtRoles> loadRoles(Session session, List<Integer> roleIds) throws EMFUserError {
-		Set<SbiExtRoles> roles = new HashSet<>();
-		for (Integer roleId : roleIds) {
-			SbiExtRoles role = (SbiExtRoles) session.get(SbiExtRoles.class, roleId);
+	Set<SbiExtRoles> loadRoles(Session session, List<String> roleNames) throws EMFUserError {
+		if (roleNames == null || roleNames.isEmpty()) {
+			return new LinkedHashSet<>();
+		}
+
+		Query query = session.createQuery("from SbiExtRoles r where r.name in (:roleNames)");
+		query.setParameterList("roleNames", roleNames);
+		List<SbiExtRoles> loadedRoles = query.list();
+
+		Map<String, SbiExtRoles> rolesByName = new HashMap<>();
+		for (SbiExtRoles role : loadedRoles) {
+			rolesByName.put(role.getName(), role);
+		}
+
+		Set<SbiExtRoles> roles = new LinkedHashSet<>();
+		for (String roleName : roleNames) {
+			SbiExtRoles role = rolesByName.get(roleName);
 			if (role == null) {
 				throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 			}
@@ -288,10 +286,10 @@ public class HomepageDAOImpl extends AbstractHibernateDAO implements IHomepageDA
 			homepage.setTemplate(template);
 		}
 
-		List<Integer> roleIds = hibHomepage.getSbiHomepageRoles().stream()
-				.map(SbiExtRoles::getExtRoleId)
+		List<String> roleNames = hibHomepage.getSbiHomepageRoles().stream()
+				.map(SbiExtRoles::getName)
 				.collect(Collectors.toList());
-		homepage.setRoleIds(roleIds);
+		homepage.setRoleNames(roleNames);
 		return homepage;
 	}
 
