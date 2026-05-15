@@ -1209,29 +1209,22 @@ public class DashboardExporter {
             JSONArray data = fields.getJSONArray("data");
             JSONArray rows = fields.getJSONArray("rows");
             JSONArray filters = fields.getJSONArray("filters");
-
-            String sortingColumnId = "";
-            String sortingOrder = "";
+            JSONObject pivotSortingInfo = getPivotSortingInfo(columns, rows, data, filters);
             for (int i = 0; i < columns.length(); i++) {
                 JSONObject column = columns.getJSONObject(i);
-                String sort = column.optString("sort");
-                if (!sort.isEmpty()) {
-                    sortingColumnId = column.getString("id");
-                    sortingOrder = sort;
-                }
-                addToCategoriesOrMeasuresArray(column, categories, sortingColumnId, sortingOrder, measures);
+                addToCategoriesOrMeasuresArray(column, categories, pivotSortingInfo, measures);
             }
             for (int i = 0; i < rows.length(); i++) {
                 JSONObject row = rows.getJSONObject(i);
-                addToCategoriesOrMeasuresArray(row, categories, sortingColumnId, sortingOrder, measures);
+                addToCategoriesOrMeasuresArray(row, categories, pivotSortingInfo, measures);
             }
             for (int i = 0; i < data.length(); i++) {
                 JSONObject datum = data.getJSONObject(i);
-                addToCategoriesOrMeasuresArray(datum, categories, sortingColumnId, sortingOrder, measures);
+                addToCategoriesOrMeasuresArray(datum, categories, pivotSortingInfo, measures);
             }
             for (int i = 0; i < filters.length(); i++) {
                 JSONObject filter = filters.getJSONObject(i);
-                addToCategoriesOrMeasuresArray(filter, categories, sortingColumnId, sortingOrder, measures);
+                addToCategoriesOrMeasuresArray(filter, categories, pivotSortingInfo, measures);
             }
             aggregations.put("dataset", datasetLabel);
         } catch (Exception e) {
@@ -1256,10 +1249,65 @@ public class DashboardExporter {
         }
     }
 
-    private void addToCategoriesOrMeasuresArray(JSONObject column, JSONArray categories, String sortingColumnId, String sortingOrder, JSONArray measures) throws JSONException {
+    private JSONObject getPivotSortingInfo(JSONArray... fieldGroups) throws JSONException {
+        JSONObject sortingInfo = null;
+        for (JSONArray fieldGroup : fieldGroups) {
+            for (int i = 0; i < fieldGroup.length(); i++) {
+                JSONObject field = fieldGroup.getJSONObject(i);
+                String sort = field.optString("sort");
+                if (sort.isEmpty()) {
+                    continue;
+                }
+
+                if (sortingInfo == null) {
+                    sortingInfo = new JSONObject();
+                }
+                sortingInfo.put("sortingColumnId", field.has("id") ? field.getString("id") : field.getString("columnName"));
+                sortingInfo.put("sortingOrder", sort);
+                JSONArray orderBySummaryPath = field.optJSONArray("orderBySummaryPath");
+                if (orderBySummaryPath != null) {
+                    sortingInfo.put("orderBySummaryPath", copyJsonArray(orderBySummaryPath));
+                } else {
+                    sortingInfo.remove("orderBySummaryPath");
+                }
+
+                String sortingColumn = resolvePivotSortingColumn(field.optString("orderColumn"), fieldGroups);
+                if (sortingColumn.isEmpty()) {
+                    sortingColumn = field.getString("columnName");
+                }
+                sortingInfo.put("sortingColumn", sortingColumn);
+            }
+        }
+        return sortingInfo;
+    }
+
+    private String resolvePivotSortingColumn(String orderColumn, JSONArray... fieldGroups) throws JSONException {
+        if (StringUtils.isBlank(orderColumn)) {
+            return "";
+        }
+
+        for (JSONArray fieldGroup : fieldGroups) {
+            for (int i = 0; i < fieldGroup.length(); i++) {
+                JSONObject field = fieldGroup.getJSONObject(i);
+                if (matchesPivotFieldIdentifier(field, orderColumn)) {
+                    return field.getString("columnName");
+                }
+            }
+        }
+
+        return orderColumn;
+    }
+
+    private boolean matchesPivotFieldIdentifier(JSONObject field, String identifier) {
+        return StringUtils.equalsIgnoreCase(identifier, field.optString("id"))
+                || StringUtils.equalsIgnoreCase(identifier, field.optString("columnName"))
+                || StringUtils.equalsIgnoreCase(identifier, field.optString("alias"));
+    }
+
+    private void addToCategoriesOrMeasuresArray(JSONObject column, JSONArray categories, JSONObject pivotSortingInfo, JSONArray measures) throws JSONException {
         boolean isCategory = column.getString("fieldType").equalsIgnoreCase("attribute");
         if (isCategory) {
-            categories.put(getCategory(column, getSortingObj(column, sortingColumnId, sortingOrder), new JSONObject()));
+            categories.put(getCategory(column, getPivotSortingObj(column, pivotSortingInfo), new JSONObject()));
         } else {
             measures.put(getMeasure(column));
         }
@@ -1271,6 +1319,30 @@ public class DashboardExporter {
             if (column.getString("id").equals(sortingColumnId)) {
                 sortingObj.put("sortingColumn", column.getString("columnName"));
                 sortingObj.put("sortingOrder", sortingOrder);
+            } else {
+                return null;
+            }
+        } catch (Exception e) {
+            LOGGER.error("Cannot check if column is sorting column", e);
+            throw new SpagoBIRuntimeException("Cannot check if column is sorting column", e);
+        }
+        return sortingObj;
+    }
+
+    private JSONObject getPivotSortingObj(JSONObject column, JSONObject pivotSortingInfo) {
+        JSONObject sortingObj = new JSONObject();
+        try {
+            if (pivotSortingInfo == null) {
+                return null;
+            }
+            String sortingColumnId = pivotSortingInfo.optString("sortingColumnId");
+            if (matchesPivotFieldIdentifier(column, sortingColumnId)) {
+                sortingObj.put("sortingColumn", pivotSortingInfo.getString("sortingColumn"));
+                sortingObj.put("sortingOrder", pivotSortingInfo.getString("sortingOrder"));
+                JSONArray orderBySummaryPath = pivotSortingInfo.optJSONArray("orderBySummaryPath");
+                if (orderBySummaryPath != null) {
+                    sortingObj.put("orderBySummaryPath", copyJsonArray(orderBySummaryPath));
+                }
             } else {
                 return null;
             }
@@ -1335,11 +1407,13 @@ public class DashboardExporter {
             case BOTH -> {
                 measure.put("orderType", sortingObj.getString("sortingOrder"));
                 measure.put("orderColumn", sortingObj.getString("sortingColumn"));
+                addOrderBySummaryPath(sortingObj, measure);
                 measure.put("drillOrder", drillSortingObj);
             }
             case SORTING_OBJ -> {
                 measure.put("orderType", sortingObj.getString("sortingOrder"));
                 measure.put("orderColumn", sortingObj.getString("sortingColumn"));
+                addOrderBySummaryPath(sortingObj, measure);
             }
             case DRILL_SORTING_OBJ -> measure.put("drillOrder", drillSortingObj);
             default -> {
@@ -1347,6 +1421,17 @@ public class DashboardExporter {
                 measure.put("orderColumn", "");
             }
         }
+    }
+
+    private static void addOrderBySummaryPath(JSONObject sortingObj, JSONObject target) throws JSONException {
+        JSONArray orderBySummaryPath = sortingObj == null ? null : sortingObj.optJSONArray("orderBySummaryPath");
+        if (orderBySummaryPath != null) {
+            target.put("orderBySummaryPath", copyJsonArray(orderBySummaryPath));
+        }
+    }
+
+    private static JSONArray copyJsonArray(JSONArray source) throws JSONException {
+        return source == null ? null : new JSONArray(source.toString());
     }
 
     private String getSortingObj(JSONObject sortingObj, JSONObject drillSortingObj) {
