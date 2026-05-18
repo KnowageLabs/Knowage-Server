@@ -538,7 +538,7 @@ public class AbstractHibernateDAO {
 			try {
 				returnObj = executeOnTransaction.execute(session);
 			} catch (Throwable t) {
-				throw new SpagoBIDAOException("Error executing on transaction ", t);
+				throw new SpagoBIDAOException(t.getMessage(), t);
 			}
 		}
 		return returnObj;
