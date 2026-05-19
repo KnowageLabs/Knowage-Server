@@ -242,6 +242,11 @@
 			<artifactId>resteasy-jackson2-provider</artifactId>
 			<version>3.6.2.Final</version>
 		</dependency>
+        <dependency>
+            <groupId>org.jboss.resteasy</groupId>
+            <artifactId>resteasy-multipart-provider</artifactId>
+            <version>3.15.6.Final</version>
+        </dependency>
 		<dependency>
 			<groupId>com.networknt</groupId>
 			<artifactId>json-schema-validator</artifactId>

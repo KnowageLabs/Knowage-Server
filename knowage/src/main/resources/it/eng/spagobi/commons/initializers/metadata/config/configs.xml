@@ -685,5 +685,9 @@
 	<CONFIG label="DASHBOARD.XLSX.EXPORT.DISABLE_STYLE" name="Disables style in dashboard xlsx export"
 			description="If true, it disables the basic style from the xlsx export of a dashboard (this config does not affect conditional style)" isActive="true"
 			valueCheck="false" valueType="STRING" category="GENERIC_CONFIGURATION" />
+
+    <CONFIG label="userDefaultPassword" name="userDefaultPassword"
+            description="Password di default del nuovo utente" isActive="true"
+            valueCheck="changemenow" valueType="STRING" category="MAIL" />
 </CONFIGS>
 

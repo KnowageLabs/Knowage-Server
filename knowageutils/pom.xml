@@ -204,6 +204,13 @@
 			<version>2.1.0</version>
 			<scope>compile</scope>
 		</dependency>
+        <!-- Source: https://mvnrepository.com/artifact/com.opencsv/opencsv -->
+        <dependency>
+            <groupId>com.opencsv</groupId>
+            <artifactId>opencsv</artifactId>
+            <version>5.12.0</version>
+            <scope>compile</scope>
+        </dependency>
 		<dependency>
 			<groupId>org.apache.poi</groupId>
 			<artifactId>poi</artifactId>
@@ -513,8 +520,21 @@
 			<artifactId>commons-io</artifactId>
 			<version>2.16.1</version>
 		</dependency>
-				
-	</dependencies>
+
+
+        <dependency>
+            <groupId>io.swagger.core.v3</groupId>
+            <artifactId>swagger-jaxrs2</artifactId>
+            <version>2.2.49</version>
+        </dependency>
+
+        <dependency>
+            <groupId>io.swagger.core.v3</groupId>
+            <artifactId>swagger-jaxrs2-servlet-initializer</artifactId>
+            <version>2.2.49</version>
+        </dependency>
+
+    </dependencies>
 	
 	<profiles>
 		<profile>

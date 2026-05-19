@@ -446,4 +446,7 @@ public class SpagoBIConstants {
 	public static final String SESSION_PARAMETERS_STORE_NAME = "sessionParameterService";
 	public static final String SESSION_PARAMETER_STATE_OBJECT_KEY = "parameterStateKey";
 
+    //Default Password User
+    public static final String KNOWAGE_USERDEFAULT_PASSWORD = "KNOWAGE.USERDEFAULT.PASSWORD";
+
 }

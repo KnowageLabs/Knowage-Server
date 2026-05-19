@@ -24,7 +24,10 @@ import java.nio.file.Files;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.apache.log4j.Logger;
+
+import javax.ws.rs.core.MultivaluedMap;
 
 /**
  *
@@ -150,5 +153,26 @@ public class FileUtilities {
 		LOGGER.debug("OUT");
 		return dir.delete();
 	}
+
+    public static String getFileName(MultivaluedMap<String, String> headers) {
+        String[] contentDisposition = headers.getFirst("Content-Disposition").split(";");
+        for (String filename : contentDisposition) {
+
+            if ((filename.trim().startsWith("filename"))) {
+                String[] name = filename.split("=");
+                return name[1].trim().replaceAll("\"", "");
+            }
+        }
+        return null;
+    }
+
+    @Schema(description = "Involucro per il caricamento del file")
+    public static class FileUploadWrapper {
+         @Schema(type = "string", format = "binary", description = "File CSV o Excel da elaborare")
+         private String file;
+
+         public String getFile() { return file; }
+         public void setFile(String file) { this.file = file; }
+    }
 
 }
