@@ -49,6 +49,8 @@ public interface ResourceManagerAPI {
 
 	java.nio.file.Path getDownloadFilePath(List<String> path, SpagoBIUserProfile profile, boolean multi) throws ImpossibleToDownloadFileException;
 
+	Path getExternalLibraryPath(String libraryName, SpagoBIUserProfile profile) throws ImpossibleToReadFilesListException;
+
 	boolean canSee(Path path, SpagoBIUserProfile profile) throws IOException;
 
 	void importFile(InputStream archiveInputStream, String path, SpagoBIUserProfile profile)

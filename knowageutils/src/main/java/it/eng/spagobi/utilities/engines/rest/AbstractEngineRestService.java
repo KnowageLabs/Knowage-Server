@@ -18,6 +18,7 @@
 
 package it.eng.spagobi.utilities.engines.rest;
 
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 
 import javax.xml.bind.DatatypeConverter;
@@ -48,6 +49,7 @@ import it.eng.spagobi.utilities.engines.IEngineInstance;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineException;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineStartupException;
+import it.eng.spagobi.utilities.engines.TemplateSourceBeanParser;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
@@ -97,7 +99,7 @@ public abstract class AbstractEngineRestService extends AbstractRestService {
 	public SourceBean getTemplateAsSourceBean() {
 		SourceBean templateSB = null;
 		try {
-			templateSB = SourceBean.fromXMLString(getTemplateAsString());
+			templateSB = TemplateSourceBeanParser.parse(getTemplateAsString());
 		} catch (SourceBeanException e) {
 			SpagoBIEngineStartupException engineException = new SpagoBIEngineStartupException(getEngineName(),
 					"Impossible to parse template's content", e);
@@ -112,7 +114,7 @@ public abstract class AbstractEngineRestService extends AbstractRestService {
 	public String getTemplateAsString() {
 		byte[] temp = getTemplate();
 		if (temp != null) {
-			return new String(temp);
+			return new String(temp, StandardCharsets.UTF_8);
 		} else {
 			return "";
 		}

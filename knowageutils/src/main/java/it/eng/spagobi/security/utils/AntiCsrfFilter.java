@@ -87,7 +87,10 @@ public class AntiCsrfFilter implements Filter {
 		urlToExclude.add("/2.0/officeContent");
 		urlToExclude.add("/login/oauth2");
 
-		return urlToExclude.contains(path) || path.startsWith("/1.0/ai/") || path.startsWith("/dossier/activity/");
+		return urlToExclude.contains(path) ||
+				path.startsWith("/1.0/ai/") ||
+				path.startsWith("/dossier/activity/") ||
+				path.startsWith("/2.0/menu/htmls/");
 	}
 
 

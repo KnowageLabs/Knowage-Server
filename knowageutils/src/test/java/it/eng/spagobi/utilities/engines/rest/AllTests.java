@@ -22,7 +22,7 @@ import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
 @RunWith(Suite.class)
-@SuiteClasses({ SimpleRestClientTest.class })
+@SuiteClasses({ SimpleRestClientTest.class, AbstractEngineRestServiceTest.class })
 public class AllTests {
 
 }

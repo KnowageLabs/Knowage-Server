@@ -1769,9 +1769,8 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 		}
 		if (sbiValue == null) {
 			sbiValue = new SbiKpiTargetValue();
-			SbiKpiTargetValueId sbiKpiTargetValueId = sbiValue.getSbiKpiTargetValueId();
-			sbiKpiTargetValueId = new SbiKpiTargetValueId(targetId,kpiId,kpiVersion);
-					}
+			sbiValue.setSbiKpiTargetValueId(new SbiKpiTargetValueId(targetId, kpiId, kpiVersion));
+		}
 		updateSbiCommonInfo4Insert(sbiValue);
 		sbiValue.setValue(targetValue.getValue());
 		return sbiValue;

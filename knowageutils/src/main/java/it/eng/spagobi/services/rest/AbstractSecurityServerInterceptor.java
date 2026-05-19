@@ -51,6 +51,10 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 public abstract class AbstractSecurityServerInterceptor extends AbstractKnowageInterceptor {
 
 	private static final Logger LOGGER = Logger.getLogger(AbstractSecurityServerInterceptor.class);
+	private static final String LICENSE_RESOURCE_CLASS_NAME = "it.eng.knowage.services.rest.license.LicenseResource";
+	private static final String LICENSE_RESOURCE_METHOD_NAME = "getLicenses";
+	private static final String GLOSSARY_SERVICE_CLASS_NAME = "it.eng.spagobi.tools.glossary.GlossaryService";
+	private static final String GLOSSARY_SERVICE_METHOD_NAME = "getDocumentInfo";
 
 	@Context
 	private ResourceInfo resourceInfo;
@@ -120,9 +124,15 @@ public abstract class AbstractSecurityServerInterceptor extends AbstractKnowageI
 			// the user is authorized for the service if it does not have a user constraint or in case the user satisfies the constraints
 			boolean authorized = !checkFunctionalitiesParser.hasUserConstraints(method)
 					|| checkFunctionalitiesParser.checkFunctionalitiesByAnnotation(method, profile);
+			if (!authorized && isSchedulerAuthorizationBypassAllowed(method, profile)) {
+				LOGGER.info("Allowing scheduler profile to invoke method [" + method.getName() + "] on class ["
+						+ resourceInfo.getResourceClass() + "]");
+				authorized = true;
+			}
 
 			if (!authorized) {
 				try {
+					LOGGER.error("Profile [" + profile.getUserName() +": Method [" + method.getName() + "] has no constraints to invoke method [" + method.getName() + "] on class [" + resourceInfo.getResourceClass() + "]");
 					requestContext.abortWith(Response.status(400)
 							.entity(ExceptionUtilities.serializeException("not-enabled-to-call-service", null))
 							.build());
@@ -230,6 +240,22 @@ public abstract class AbstractSecurityServerInterceptor extends AbstractKnowageI
 
 	protected void setUserProfileInSession(IEngUserProfile engProfile) {
 		servletRequest.getSession().setAttribute(IEngUserProfile.ENG_USER_PROFILE, engProfile);
+	}
+
+	private boolean isSchedulerAuthorizationBypassAllowed(Method method, UserProfile profile) {
+		return isSchedulerProfile(profile) && isSchedulerAllowedMethod(method);
+	}
+
+	private boolean isSchedulerAllowedMethod(Method method) {
+		String className = resourceInfo.getResourceClass().getName();
+		String methodName = method.getName();
+		return (LICENSE_RESOURCE_CLASS_NAME.equals(className) && LICENSE_RESOURCE_METHOD_NAME.equals(methodName))
+				|| (GLOSSARY_SERVICE_CLASS_NAME.equals(className) && GLOSSARY_SERVICE_METHOD_NAME.equals(methodName));
+	}
+
+	private boolean isSchedulerProfile(UserProfile profile) {
+		Object userUniqueIdentifier = profile.getUserUniqueIdentifier();
+		return userUniqueIdentifier != null && UserProfile.isSchedulerUser(userUniqueIdentifier.toString());
 	}
 
 }

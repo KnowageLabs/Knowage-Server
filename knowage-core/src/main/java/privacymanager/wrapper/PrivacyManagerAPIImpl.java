@@ -22,6 +22,7 @@ import static javax.ws.rs.core.Response.Status.OK;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
@@ -104,18 +105,19 @@ class PrivacyManagerAPIImpl implements IPrivacyManagerAPI {
 	public String retrieveKey() throws PrivacyManagerFailureException {
 		checkIfTokenIsSet();
 
-		PMServiceProviderDTO serviceProvider = new PMServiceProviderDTO(pmAppId, appDescription, appVendor, appUrl);
 
-		PMkeyDTO pMkeyDTO = new PMkeyDTO(serviceProvider, 24);
+		Map<String, String> payload = new HashMap<>();
+		payload.put("keyLength", "32");
 
-		Response response = restClient.target(pmUrl + "/api/integration/keymanagement/retrieve").request()
-				.header(HTTP_HEADER_NAME_X_CONSUMER_KEY, HTTP_HEADER_VALUE_X_CONSUMER_KEY)
+		Response response = restClient.target(pmUrl + "/api/integration/keymanagement/retrieve")
+				.request()
+				.header(HTTP_HEADER_NAME_X_CONSUMER_KEY, pmAppId)
 				.header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
-				.header(HttpHeaders.CONTENT_TYPE, "application/json").accept(MediaType.WILDCARD)
-				.post(Entity.entity(pMkeyDTO, MediaType.APPLICATION_JSON));
+				.header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+				.accept(MediaType.WILDCARD)
+				.post(Entity.entity(payload, MediaType.APPLICATION_JSON));
 
-		LOGGER.info("Response status: {}", response.getStatus());
-
+		LOGGER.info("Retrieve key response status: {}", response.getStatus());
 		checkResponseStatus(response);
 
 		Map<String, Object> bodyAsMap = response.readEntity(Map.class);

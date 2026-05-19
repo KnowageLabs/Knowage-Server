@@ -419,7 +419,8 @@ public abstract class AbstractSelectQueryVisitor extends AbstractFilterVisitor i
 			if (aggregationFunction == null || AggregationFunctions.NONE_FUNCTION.equals(aggregationFunction)) {
 				queryBuilder.append(columnName);
 			} else {
-				queryBuilder.append(aggregationFunction.apply(name));
+				String delimiter = database.getAliasDelimiter();
+				queryBuilder.append(aggregationFunction.apply(delimiter + name + delimiter));
 			}
 
 			queryBuilder.append(item.isAscending() ? " ASC" : " DESC");
