@@ -16,7 +16,6 @@ public class OracleAes256CbcPkcs5StringEncryptor implements PBEStringEncryptor {
 	private static final Logger logger = Logger.getLogger(OracleAes256CbcPkcs5StringEncryptor.class);
 
 	private static final String TRANSFORMATION = "AES/CBC/PKCS5Padding";
-    private static final String TRANSFORMATION = "AES/CBC/PKCS5Padding";
     private static final String KEY_ALGORITHM = "AES";
 
     private static final int AES_256_KEY_LENGTH_BYTES = 32;
