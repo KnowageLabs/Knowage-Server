@@ -5,16 +5,17 @@ import java.nio.charset.StandardCharsets;
 import javax.crypto.Cipher;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
-import org.apache.log4j.Logger;
 
+import org.apache.log4j.Logger;
 import org.jasypt.encryption.pbe.PBEStringEncryptor;
 import org.jasypt.exceptions.EncryptionInitializationException;
 import org.jasypt.exceptions.EncryptionOperationNotPossibleException;
 
 public class OracleAes256CbcPkcs5StringEncryptor implements PBEStringEncryptor {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(OracleAes256CbcPkcs5StringEncryptor.class);
-    
+	private static final Logger logger = Logger.getLogger(OracleAes256CbcPkcs5StringEncryptor.class);
+
+	private static final String TRANSFORMATION = "AES/CBC/PKCS5Padding";
     private static final String TRANSFORMATION = "AES/CBC/PKCS5Padding";
     private static final String KEY_ALGORITHM = "AES";
 
