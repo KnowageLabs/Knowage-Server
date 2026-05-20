@@ -12,6 +12,8 @@ import org.jasypt.exceptions.EncryptionOperationNotPossibleException;
 
 public class OracleAes256CbcPkcs5StringEncryptor implements PBEStringEncryptor {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(OracleAes256CbcPkcs5StringEncryptor.class);
+    
     private static final String TRANSFORMATION = "AES/CBC/PKCS5Padding";
     private static final String KEY_ALGORITHM = "AES";
 
@@ -43,9 +45,20 @@ public class OracleAes256CbcPkcs5StringEncryptor implements PBEStringEncryptor {
             byte[] encryptedBytes = doCipher(Cipher.ENCRYPT_MODE, plainBytes);
 
             return bytesToHex(encryptedBytes);
-        } catch (Exception e) {
-            throw new EncryptionOperationNotPossibleException();
-        }
+       } catch (Exception e) {
+            	try {
+            		logger.error(
+            				"Oracle AES decrypt failed - transformation: " + TRANSFORMATION
+            						+ ", Java version: " + System.getProperty("java.version")
+            						+ ", Max AES allowed key length: " + Cipher.getMaxAllowedKeyLength("AES"),
+            				e
+            		);
+            	} catch (Exception logException) {
+            		logger.error("Oracle AES decrypt failed and diagnostic logging also failed", e);
+            	}
+            
+            	throw new EncryptionOperationNotPossibleException();
+            }
     }
 
     @Override
@@ -59,9 +72,20 @@ public class OracleAes256CbcPkcs5StringEncryptor implements PBEStringEncryptor {
             byte[] decryptedBytes = doCipher(Cipher.DECRYPT_MODE, encryptedBytes);
 
             return new String(decryptedBytes, StandardCharsets.UTF_8);
-        } catch (Exception e) {
-            throw new EncryptionOperationNotPossibleException();
-        }
+            } catch (Exception e) {
+            	try {
+            		logger.error(
+            				"Oracle AES decrypt failed - transformation: " + TRANSFORMATION
+            						+ ", Java version: " + System.getProperty("java.version")
+            						+ ", Max AES allowed key length: " + Cipher.getMaxAllowedKeyLength("AES"),
+            				e
+            		);
+            	} catch (Exception logException) {
+            		logger.error("Oracle AES decrypt failed and diagnostic logging also failed", e);
+            	}
+            
+            	throw new EncryptionOperationNotPossibleException();
+            }    
     }
 
     private byte[] doCipher(int mode, byte[] input) throws Exception {
