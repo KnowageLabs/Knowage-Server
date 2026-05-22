@@ -684,6 +684,11 @@
 
     <CONFIG label="userDefaultPassword" name="userDefaultPassword"
             description="Password di default del nuovo utente" isActive="true"
-            valueCheck="changemenow" valueType="STRING" category="MAIL" />
+            valueCheck="changemenow" valueType="STRING" category="SECURITY" />
+
+	<CONFIG label="KNOWAGE.SESSION_TIMEOUT" name="KNOWAGE.SESSION_TIMEOUT"
+			description="enables session timeout for the application" isActive="true"
+			valueCheck="true" valueType="STRING" category="SECURITY" />
+
 </CONFIGS>
 
