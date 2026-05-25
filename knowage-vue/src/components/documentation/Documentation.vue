@@ -172,7 +172,8 @@ onMounted(async () => {
         treeNodes.value = mapToQTreeNodes(filtered.content ?? []);
       }
     })
-    .catch(() => {
+    .catch((error) => {
+      console.log(error)
       push404();
     });
 });
