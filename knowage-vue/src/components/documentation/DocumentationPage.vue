@@ -27,15 +27,18 @@ const emit = defineEmit<{
 }>();
 
 onMounted(async () => {
-  await loadMarkdown();
-});
+    if (props.path && props.path.length > 0) await loadMarkdown()
+})
 
 watch(
-  () => props.path,
-  async (newPath, oldPath) => {
-    if (newPath !== oldPath) await loadMarkdown();
-  }
-);
+   () => props.path,
+    async (newPath, oldPath) => {
+        if (newPath !== oldPath) {
+            if (newPath && newPath.length > 0) await loadMarkdown()
+            else markdown.value = null
+        }
+    }
+)
 
 async function loadMarkdown() {
   const folders = ["docs", ...(props.path ? props.path.slice(0, -1) : [])];
@@ -64,7 +67,10 @@ async function loadMarkdown() {
     )
     .then((response: any) => {
       markdown.value = response.data;
-    });
+    })
+    .catch(() => {
+      markdown.value = null
+    })
 }
 
 function copyLink() {

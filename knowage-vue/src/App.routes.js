@@ -61,6 +61,7 @@ const baseRoutes = [
   },
   {
     path: "/:catchAll(.*)",
+    name: "404",
     component: () => import("@/modules/commons/404.vue"),
   },
 ];
