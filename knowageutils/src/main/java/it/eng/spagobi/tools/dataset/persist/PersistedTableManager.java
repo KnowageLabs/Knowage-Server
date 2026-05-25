@@ -43,6 +43,7 @@ import java.sql.Statement;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Base64;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -75,6 +76,7 @@ import it.eng.spagobi.tools.dataset.common.iterator.DataIterator;
 import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
 import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData.FieldType;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
+import it.eng.spagobi.tools.dataset.utils.OracleClobHashSupport;
 import it.eng.spagobi.tools.dataset.metasql.query.DatabaseDialect;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.KnowageStringUtils;
@@ -107,6 +109,7 @@ public class PersistedTableManager implements IPersistedManager {
 	private boolean rowCountColumIncluded = false;
 	private Map<String, Integer> columnSize = new HashMap<>();
 	private int queryTimeout = -1;
+	private boolean appendOracleClobHashColumns = false;
 
 	private IEngUserProfile profile = null;
 
@@ -157,6 +160,7 @@ public class PersistedTableManager implements IPersistedManager {
 			return;
 		}
 
+		this.appendOracleClobHashColumns = OracleClobHashSupport.shouldMaterializeHashColumns(dataset);
 		dataset.setPersisted(false);
 		if (dataset.isIterable()) {
 			persist(dataset, dsPersist, tableName);
@@ -252,12 +256,13 @@ public class PersistedTableManager implements IPersistedManager {
 	}
 
 	private void serializeIteratorToCsvStreaming(DataIterator iterator, Path tempCsv) throws Exception {
+		IMetaData metadata = iterator.getMetaData();
 		try (BufferedWriter bw = Files.newBufferedWriter(tempCsv, StandardCharsets.UTF_8)) {
 			long count = 0;
 			while (iterator.hasNext()) {
 				count++;
 				IRecord r = iterator.next();
-				bw.write(toCsvLine(r, count));
+				bw.write(toCsvLine(r, metadata, count));
 				bw.write("\n");
 				if (count % 10000 == 0) {
 					LOGGER.debug("Serialized records " + count);
@@ -267,12 +272,12 @@ public class PersistedTableManager implements IPersistedManager {
 		}
 	}
 
-	private void serializeIteratorToCsvStreaming(List<IRecord> records, Path tempCsv) throws Exception {
+	private void serializeIteratorToCsvStreaming(List<IRecord> records, IMetaData metadata, Path tempCsv) throws Exception {
 		try (BufferedWriter bw = Files.newBufferedWriter(tempCsv, StandardCharsets.UTF_8)) {
 			long count = 0;
             for (IRecord r : records) {
 				count++;
-				bw.write(toCsvLine(r, count));
+				bw.write(toCsvLine(r, metadata, count));
                 bw.write("\n");
                 if (count % 10000 == 0) {
                     LOGGER.debug("Serialized records " + count);
@@ -282,7 +287,7 @@ public class PersistedTableManager implements IPersistedManager {
 		}
 	}
 
-	private String toCsvLine(IRecord record, long count) {
+	private String toCsvLine(IRecord record, IMetaData metadata, long count) {
 		StringBuilder sb = new StringBuilder();
 
 		if (this.isRowCountColumIncluded()) {
@@ -298,6 +303,15 @@ public class PersistedTableManager implements IPersistedManager {
 				sb.append(COLUMN_SEPARATOR);
 			}
 			sb.append(escapeCsv(fieldValue));
+		}
+
+		for (IFieldMetaData oracleClobField : getOracleClobSourceFields(metadata)) {
+			int sourceFieldIndex = metadata.getFieldIndex(oracleClobField.getName());
+			Object fieldValue = sourceFieldIndex >= 0 && sourceFieldIndex < record.getFields().size()
+					? record.getFieldAt(sourceFieldIndex).getValue()
+					: null;
+			sb.append(COLUMN_SEPARATOR);
+			sb.append(escapeCsv(OracleClobHashSupport.hashValue(fieldValue)));
 		}
 
 		return sb.toString();
@@ -417,13 +431,14 @@ public class PersistedTableManager implements IPersistedManager {
 		if (dataSet instanceof FileDataSet) {
 			datastore = normalizeFileDataSet(dataSet, datastore);
 		}
-
+		this.appendOracleClobHashColumns = OracleClobHashSupport.shouldMaterializeHashColumns(dataSet);
 		persistDataset(datastore, datasource);
 	}
 
 	public void updateDataset(IDataSource datasource, IDataStore datastore, String tableName) throws Exception {
 		setTableNameAndDialect(datasource, tableName);
-
+		this.appendOracleClobHashColumns = OracleClobHashSupport.hasAllHashColumns(datasource, tableName,
+				datastore.getMetaData());
 		updateDataset(datastore, datasource);
 	}
 
@@ -519,6 +534,7 @@ public class PersistedTableManager implements IPersistedManager {
 		IMetaData storeMeta = datastore.getMetaData();
 		int fieldCount = storeMeta.getFieldCount();
 		int recordCount = (int) datastore.getRecordsCount();
+		List<IFieldMetaData> oracleClobFields = getOracleClobSourceFields(storeMeta);
 
 		if (fieldCount == 0 || recordCount == 0) {
 			return new PreparedStatement[0];
@@ -584,6 +600,24 @@ public class PersistedTableManager implements IPersistedManager {
 				updateSeparator = ",";
 			}
 		}
+		for (IFieldMetaData oracleClobField : oracleClobFields) {
+			String hashColumnName = OracleClobHashSupport.getHashColumnName(oracleClobField);
+			String escapedHashColumnName = AbstractJDBCDataset.encapsulateColumnName(hashColumnName, datasource);
+
+			insertSB.append(insertSeparator);
+			insertSB.append(escapedHashColumnName);
+
+			insertValuesSB.append(insertSeparator);
+			insertValuesSB.append("?");
+
+			insertSeparator = ",";
+
+			updateSB.append(updateSeparator);
+			updateSB.append(escapedHashColumnName);
+			updateSB.append("=?");
+
+			updateSeparator = ",";
+		}
 
 		insertSB.append(") ");
 
@@ -619,6 +653,9 @@ public class PersistedTableManager implements IPersistedManager {
 						sortedIds.add(j);
 					}
 				}
+				for (int j = 0; j < oracleClobFields.size(); j++) {
+					sortedIds.add(fieldCount + j);
+				}
 				if (!doInsert) {
 					sortedIds.add(idFieldIndex);
 				}
@@ -626,29 +663,34 @@ public class PersistedTableManager implements IPersistedManager {
 				for (int j = 0; j < sortedIds.size(); j++) {
 					try {
 						int index = sortedIds.get(j);
-						IFieldMetaData fieldMeta = storeMeta.getFieldMeta(index);
-						IField field = record.getFieldAt(index);
-						Object fieldValue = field.getValue();
-						String alias = fieldMeta.getAlias();
-						String fieldMetaName = alias != null ? alias : fieldMeta.getName();
-						String fieldMetaTypeName = fieldMeta.getType().toString();
-						boolean isFieldMetaFieldTypeMeasure = fieldMeta.getFieldType().equals(FieldType.MEASURE);
-
-						Map<String, Integer> newColumnSizes = new HashMap<>();
 						int fieldIndex = isRowCountColumIncluded() ? j + 1 : j;
-						PersistedTableHelper.addField(statement, fieldIndex, fieldValue, fieldMetaName,
-								fieldMetaTypeName, isFieldMetaFieldTypeMeasure, newColumnSizes);
+						if (index < fieldCount) {
+							IFieldMetaData fieldMeta = storeMeta.getFieldMeta(index);
+							IField field = record.getFieldAt(index);
+							Object fieldValue = field.getValue();
+							String alias = fieldMeta.getAlias();
+							String fieldMetaName = alias != null ? alias : fieldMeta.getName();
+							String fieldMetaTypeName = fieldMeta.getType().toString();
+							boolean isFieldMetaFieldTypeMeasure = fieldMeta.getFieldType().equals(FieldType.MEASURE);
 
-						Integer oldColumnSize = columnSize.get(fieldMetaName);
-						Integer newColumnSize = newColumnSizes.get(fieldMetaName);
-						if (oldColumnSize != null && newColumnSize != null && newColumnSize > oldColumnSize) {
-							columnSize.remove(fieldMetaName);
-							columnSize.put(fieldMetaName, newColumnSize);
-							try (Statement stmt = connection.createStatement()) {
-								String query = String.format("ALTER TABLE %s MODIFY COLUMN %s %s",
-										tableName, AbstractJDBCDataset.encapsulateColumnName(fieldMetaName, datasource), getDBFieldTypeFromAlias(datasource, fieldMeta));
-								stmt.executeUpdate(query);
+							Map<String, Integer> newColumnSizes = new HashMap<>();
+							PersistedTableHelper.addField(statement, fieldIndex, fieldValue, fieldMetaName,
+									fieldMetaTypeName, isFieldMetaFieldTypeMeasure, newColumnSizes);
+
+							Integer oldColumnSize = columnSize.get(fieldMetaName);
+							Integer newColumnSize = newColumnSizes.get(fieldMetaName);
+							if (oldColumnSize != null && newColumnSize != null && newColumnSize > oldColumnSize) {
+								columnSize.remove(fieldMetaName);
+								columnSize.put(fieldMetaName, newColumnSize);
+								try (Statement stmt = connection.createStatement()) {
+									String query = String.format("ALTER TABLE %s MODIFY COLUMN %s %s",
+											tableName, AbstractJDBCDataset.encapsulateColumnName(fieldMetaName, datasource), getDBFieldTypeFromAlias(datasource, fieldMeta));
+									stmt.executeUpdate(query);
+								}
 							}
+						} else {
+							IFieldMetaData oracleClobField = oracleClobFields.get(index - fieldCount);
+							addOracleClobHashField(statement, fieldIndex, record, storeMeta, oracleClobField);
 						}
 					} catch (Exception e) {
 						throw new SpagoBIRuntimeException(
@@ -749,7 +791,7 @@ public class PersistedTableManager implements IPersistedManager {
 
 				tempCsv = createSecureTempFile("doris_streamload_", ".csv");
 				LOGGER.debug("Serializing dataset to CSV: " + tempCsv);
-				serializeIteratorToCsvStreaming(datastore.getRecords(), tempCsv);
+				serializeIteratorToCsvStreaming(datastore.getRecords(), datastore.getMetaData(), tempCsv);
 
 				gzPath = createSecureTempFile("doris_streamload_", ".csv.gz");
 				LOGGER.debug("Compressing CSV to GZIP: " + gzPath);
@@ -825,6 +867,7 @@ public class PersistedTableManager implements IPersistedManager {
 
 		IMetaData storeMeta = datastore.getMetaData();
 		int fieldCount = storeMeta.getFieldCount();
+		List<IFieldMetaData> oracleClobFields = getOracleClobSourceFields(storeMeta);
 
 		if (fieldCount == 0) {
 			return new PreparedStatement[0];
@@ -853,6 +896,14 @@ public class PersistedTableManager implements IPersistedManager {
 			insertQuery += separator + escapedColumnName;
 			values += separator + "?";
 			createQuery += separator + escapedColumnName + getDBFieldType(datasource, fieldMeta);
+			separator = ",";
+		}
+		for (IFieldMetaData oracleClobField : oracleClobFields) {
+			String hashColumnName = OracleClobHashSupport.getHashColumnName(oracleClobField);
+			String escapedHashColumnName = AbstractJDBCDataset.encapsulateColumnName(hashColumnName, datasource);
+			insertQuery += separator + escapedHashColumnName;
+			values += separator + "?";
+			createQuery += separator + escapedHashColumnName + getHashDBFieldType(datasource);
 			separator = ",";
 		}
 		values += ") ";
@@ -898,6 +949,21 @@ public class PersistedTableManager implements IPersistedManager {
 								e);
 					}
 				}
+				int hashFieldIndex = record.getFields().size();
+				for (IFieldMetaData oracleClobField : oracleClobFields) {
+					try {
+						if (this.isRowCountColumIncluded()) {
+							addOracleClobHashField(statement, hashFieldIndex + 1, record, storeMeta, oracleClobField);
+						} else {
+							addOracleClobHashField(statement, hashFieldIndex, record, storeMeta, oracleClobField);
+						}
+						hashFieldIndex++;
+					} catch (Exception e) {
+						throw new SpagoBIRuntimeException(
+								"An unexpecetd error occured while preparing insert statemenet for record [" + i + "]",
+								e);
+					}
+				}
 				statement.addBatch();
 			}
 		} catch (Exception e) {
@@ -933,6 +999,11 @@ public class PersistedTableManager implements IPersistedManager {
 			boolean isfieldMetaFieldTypeMeasure = fieldMeta.getFieldType().equals(FieldType.MEASURE);
 			PersistedTableHelper.addField(statement, j, fieldValue, fieldMetaName, fieldMetaTypeName,
 					isfieldMetaFieldTypeMeasure, getColumnSize());
+		}
+		int hashFieldIndex = record.getFields().size();
+		for (IFieldMetaData oracleClobField : getOracleClobSourceFields(storeMeta)) {
+			addOracleClobHashField(statement, hashFieldIndex, record, storeMeta, oracleClobField);
+			hashFieldIndex++;
 		}
 	}
 
@@ -1143,6 +1214,7 @@ public class PersistedTableManager implements IPersistedManager {
 		PreparedStatement statement;
 
 		int fieldCount = storeMeta.getFieldCount();
+		List<IFieldMetaData> oracleClobFields = getOracleClobSourceFields(storeMeta);
 
 		if (fieldCount == 0) {
 			return null;
@@ -1162,6 +1234,14 @@ public class PersistedTableManager implements IPersistedManager {
 			insertQuery += separator + escapedColumnName;
 			values += separator + "?";
 			createQuery += separator + escapedColumnName + getDBFieldType(datasource, fieldMeta);
+			separator = ",";
+		}
+		for (IFieldMetaData oracleClobField : oracleClobFields) {
+			String hashColumnName = OracleClobHashSupport.getHashColumnName(oracleClobField);
+			String escapedHashColumnName = AbstractJDBCDataset.encapsulateColumnName(hashColumnName, datasource);
+			insertQuery += separator + escapedHashColumnName;
+			values += separator + "?";
+			createQuery += separator + escapedHashColumnName + getHashDBFieldType(datasource);
 			separator = ",";
 		}
 		values += ") ";
@@ -1189,6 +1269,29 @@ public class PersistedTableManager implements IPersistedManager {
 		String columnName = fmd.getAlias() != null ? fmd.getAlias() : fmd.getName();
 		LOGGER.debug("Column name is " + columnName);
 		return columnName;
+	}
+
+	private List<IFieldMetaData> getOracleClobSourceFields(IMetaData metadata) {
+		if (!appendOracleClobHashColumns) {
+			return Collections.emptyList();
+		}
+		return OracleClobHashSupport.getClobFields(metadata);
+	}
+
+	private String getHashDBFieldType(IDataSource dataSource) throws DataBaseException {
+		CacheDataBase dataBase = DataBaseFactory.getCacheDataBase(dataSource);
+		dataBase.setVarcharLength(OracleClobHashSupport.HASH_COLUMN_LENGTH);
+		return dataBase.getDataBaseType(String.class);
+	}
+
+	private void addOracleClobHashField(PreparedStatement statement, int fieldIndex, IRecord record, IMetaData storeMeta,
+			IFieldMetaData sourceField) {
+		int sourceFieldIndex = storeMeta.getFieldIndex(sourceField.getName());
+		Object fieldValue = sourceFieldIndex >= 0 && sourceFieldIndex < record.getFields().size()
+				? record.getFieldAt(sourceFieldIndex).getValue()
+				: null;
+		PersistedTableHelper.addField(statement, fieldIndex, OracleClobHashSupport.hashValue(fieldValue),
+				OracleClobHashSupport.getHashColumnName(sourceField), String.class.toString(), false, columnSize);
 	}
 
 	private String getDBFieldType(IDataSource dataSource, IFieldMetaData fieldMetaData) throws DataBaseException {
@@ -1223,6 +1326,7 @@ public class PersistedTableManager implements IPersistedManager {
 
 	private String getCreateTableQuery(IMetaData md, IDataSource dataSource) throws DataBaseException {
 		String toReturn = null;
+		List<IFieldMetaData> oracleClobFields = getOracleClobSourceFields(md);
 
 		// creates the table only when metadata has fields
 		if (md.getFieldCount() > 0) {
@@ -1244,6 +1348,16 @@ public class PersistedTableManager implements IPersistedManager {
 						+ getDBFieldType(dataSource, fmd);
 				toReturn += " " + (md.getIdFieldIndex() == i ? "NOT NULL PRIMARY KEY" : "");
 				toReturn += ((i < l - 1) ? " , " : "");
+			}
+			if (!oracleClobFields.isEmpty()) {
+				toReturn += md.getFieldCount() > 0 ? " , " : "";
+				for (int i = 0; i < oracleClobFields.size(); i++) {
+					IFieldMetaData oracleClobField = oracleClobFields.get(i);
+					String hashColumnName = OracleClobHashSupport.getHashColumnName(oracleClobField);
+					toReturn += " " + AbstractJDBCDataset.encapsulateColumnName(hashColumnName, dataSource)
+							+ getHashDBFieldType(dataSource);
+					toReturn += ((i < oracleClobFields.size() - 1) ? " , " : "");
+				}
 			}
 			toReturn += " )";
 			if (dataSource.getDialectName().contains(DatabaseDialect.DORIS.getValue())) {
