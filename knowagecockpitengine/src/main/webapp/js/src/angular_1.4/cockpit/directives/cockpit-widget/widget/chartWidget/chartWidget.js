@@ -1415,18 +1415,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         CATEGORY_VALUE: $scope.ngModel.content.chartTemplate.CHART.dateTime ? date_format : event.point.name,
         CATEGORY_NAME: $scope.ngModel.content.chartTemplate.CHART.VALUES.CATEGORY.name,
       };
-      if (
-        ($scope.ngModel.content.chartTemplate.CHART.groupSeriesCateg === true || $scope.ngModel.content.chartTemplate.CHART.groupSeriesCateg === "true") &&
-        !Array.isArray($scope.ngModel.content.chartTemplate.CHART.VALUES.CATEGORY) &&
-        $scope.ngModel.content.chartTemplate.CHART.VALUES.CATEGORY.groupby != undefined &&
-        $scope.ngModel.content.chartTemplate.CHART.VALUES.CATEGORY.groupby != "" &&
-        event.point &&
-        event.point.series &&
-        event.point.series.name != undefined
-      ) {
-        parameters.GROUPING_NAME = $scope.ngModel.content.chartTemplate.CHART.VALUES.CATEGORY.groupby;
-        parameters.GROUPING_VALUE = event.point.series.name;
-      }
 
       return parameters;
     }
