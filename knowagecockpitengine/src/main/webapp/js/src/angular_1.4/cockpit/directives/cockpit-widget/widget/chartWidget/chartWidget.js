@@ -1276,21 +1276,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           columnValue = event.point.name;
         }
 
-        var category = $scope.ngModel.content.chartTemplate.CHART.VALUES.CATEGORY;
+        var chartTemplate = $scope.ngModel.content.chartTemplate.CHART;
+        var category = chartTemplate.VALUES.CATEGORY;
         var columnName = category.name;
-        var groupedBySecondCategory =
-          !Array.isArray(category) &&
-          ($scope.ngModel.content.chartTemplate.CHART.groupSeriesCateg === true || $scope.ngModel.content.chartTemplate.CHART.groupSeriesCateg === "true") &&
-          category.groupby != undefined &&
-          category.groupby != "" &&
-          event.point &&
-          event.point.series &&
-          event.point.series.name != undefined;
-        if ($scope.ngModel.cliccable && $scope.ngModel.updateble && !$scope.ngModel.drillable && !event.point.drilldown && category.column != category.groupby && category.groupby != "") {
+        var groupSeriesCategEnabled = chartTemplate.groupSeriesCateg === true || chartTemplate.groupSeriesCateg === "true";
+        if ($scope.ngModel.cliccable && $scope.ngModel.updateble && !$scope.ngModel.drillable && !event.point.drilldown && !groupSeriesCategEnabled && category.column != category.groupby && category.groupby != "") {
           columnName = category.groupby;
-          if (groupedBySecondCategory) {
-            columnValue = event.point.series.name;
-          }
         }
 
         // var d3Types = ["WORDCLOUD", "PARALLEL", "SUNBURST"];
