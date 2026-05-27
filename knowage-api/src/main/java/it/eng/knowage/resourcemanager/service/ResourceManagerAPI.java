@@ -22,6 +22,7 @@ import java.io.InputStream;
 import java.nio.file.Path;
 import java.util.List;
 
+import it.eng.knowage.boot.error.KnowageBusinessException;
 import it.eng.knowage.knowageapi.error.ImpossibleToCreateFileException;
 import it.eng.knowage.knowageapi.error.ImpossibleToCreateFolderException;
 import it.eng.knowage.knowageapi.error.ImpossibleToDeleteFileException;
@@ -61,6 +62,12 @@ public interface ResourceManagerAPI {
 	MetadataDTO getMetadata(String path, SpagoBIUserProfile profile) throws ImpossibleToReadMetadataException;
 
 	MetadataDTO saveMetadata(MetadataDTO fileDTO, String path, SpagoBIUserProfile profile) throws ImpossibleToSaveMetadataException;
+
+	String getEngGptData(String modelId, SpagoBIUserProfile profile) throws KnowageBusinessException;
+
+	void saveEngGptData(String modelId, String jsonContent, SpagoBIUserProfile profile) throws KnowageBusinessException;
+
+	void deleteEngGptData(String modelId, SpagoBIUserProfile profile) throws KnowageBusinessException;
 
 	/**
 	 * @param key

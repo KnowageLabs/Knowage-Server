@@ -26,9 +26,11 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -41,11 +43,14 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
 
+import javax.ws.rs.core.Response.Status;
+
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import it.eng.knowage.boot.error.KnowageBusinessException;
@@ -78,6 +83,9 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 	 */
 	private static final String METADATA_JSON = "metadata.json";
 	private static final String MODELS = "models";
+	private static final String ENG_GPT_DATA_FOLDER = "eng-gpt-data";
+	private static final String SQL_GOLD_JSON = "sqlGold.json";
+	private static final String ENG_GPT_DATA_ERROR_CODE = "KN-RM-012";
 	private static final Logger LOGGER = Logger.getLogger(ResourceManagerAPIImpl.class);
 	private static final String DOCS_FOLDER = "docs";
 	private static final String EXTERNAL_LIBRARIES_FOLDER = "external-libraries";
@@ -507,6 +515,189 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 			zipFile.delete();
 		}
 
+	}
+
+	@Override
+	public String getEngGptData(String modelId, SpagoBIUserProfile profile) throws KnowageBusinessException {
+		String normalizedModelId = normalizeEngGptModelId(modelId);
+		try {
+			Path sqlGoldPath = resolveEngGptDataFilePath(normalizedModelId, profile, false);
+			if (!Files.exists(sqlGoldPath) || !Files.isRegularFile(sqlGoldPath)) {
+				throw newEngGptDataException("sqlGold.json not found for modelId [" + normalizedModelId + "]", Status.NOT_FOUND,
+						"No sqlGold.json found for the specified model");
+			}
+			return new String(Files.readAllBytes(sqlGoldPath), StandardCharsets.UTF_8);
+		} catch (KnowageBusinessException e) {
+			throw e;
+		} catch (IOException e) {
+			throw newEngGptDataException("Error while reading sqlGold.json for modelId [" + normalizedModelId + "]", Status.INTERNAL_SERVER_ERROR,
+					"Impossible to read Eng GPT data", e);
+		}
+	}
+
+	@Override
+	public void saveEngGptData(String modelId, String jsonContent, SpagoBIUserProfile profile) throws KnowageBusinessException {
+		String normalizedModelId = normalizeEngGptModelId(modelId);
+		validateEngGptDataPayload(jsonContent);
+		try {
+			Path sqlGoldPath = resolveEngGptDataFilePath(normalizedModelId, profile, true);
+			Files.write(sqlGoldPath, jsonContent.getBytes(StandardCharsets.UTF_8), StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING,
+					StandardOpenOption.WRITE);
+		} catch (KnowageBusinessException e) {
+			throw e;
+		} catch (IOException e) {
+			throw newEngGptDataException("Error while saving sqlGold.json for modelId [" + normalizedModelId + "]", Status.INTERNAL_SERVER_ERROR,
+					"Impossible to save Eng GPT data", e);
+		}
+	}
+
+	@Override
+	public void deleteEngGptData(String modelId, SpagoBIUserProfile profile) throws KnowageBusinessException {
+		String normalizedModelId = normalizeEngGptModelId(modelId);
+		try {
+			Path modelDirectory = resolveEngGptDataModelDirectory(normalizedModelId, profile, false);
+			if (!Files.exists(modelDirectory)) {
+				throw newEngGptDataException("Eng GPT data folder not found for modelId [" + normalizedModelId + "]", Status.NOT_FOUND,
+						"No Eng GPT data found for the specified model");
+			}
+			File modelDirectoryFile = modelDirectory.toFile();
+			if (modelDirectoryFile.isDirectory()) {
+				FileUtils.deleteDirectory(modelDirectoryFile);
+			} else {
+				FileUtils.forceDelete(modelDirectoryFile);
+			}
+		} catch (KnowageBusinessException e) {
+			throw e;
+		} catch (IOException e) {
+			throw newEngGptDataException("Error while deleting Eng GPT data for modelId [" + normalizedModelId + "]", Status.INTERNAL_SERVER_ERROR,
+					"Impossible to delete Eng GPT data", e);
+		}
+	}
+
+	private Path resolveEngGptDataFilePath(String modelId, SpagoBIUserProfile profile, boolean createDirectories)
+			throws IOException, KnowageBusinessException {
+		return resolveEngGptDataModelDirectory(modelId, profile, createDirectories).resolve(SQL_GOLD_JSON);
+	}
+
+	private Path resolveEngGptDataModelDirectory(String modelId, SpagoBIUserProfile profile, boolean createDirectories)
+			throws IOException, KnowageBusinessException {
+		Path engGptDataRoot = resolveEngGptDataRoot(profile, createDirectories);
+		Path modelDirectory = engGptDataRoot.resolve(modelId).normalize();
+		if (!modelDirectory.startsWith(engGptDataRoot)) {
+			throw newEngGptDataException("Invalid modelId [" + modelId + "]", Status.BAD_REQUEST, "The provided modelId is not valid");
+		}
+		if (createDirectories && !Files.isDirectory(modelDirectory)) {
+			Files.createDirectories(modelDirectory);
+		}
+		return modelDirectory;
+	}
+
+	private Path resolveEngGptDataRoot(SpagoBIUserProfile profile, boolean createDirectories) throws IOException, KnowageBusinessException {
+		Path workDirectory = getWorkDirectory(profile);
+		Path engGptDataRoot = workDirectory.resolve(ENG_GPT_DATA_FOLDER).normalize();
+		if (!canSee(engGptDataRoot, profile)) {
+			String userId = profile != null ? profile.getUserId() : "unknown";
+			throw newEngGptDataException("User [" + userId + "] cannot access Eng GPT data root [" + engGptDataRoot + "]", Status.FORBIDDEN,
+					"User is not allowed to access Eng GPT data");
+		}
+		if (createDirectories && !Files.isDirectory(engGptDataRoot)) {
+			Files.createDirectories(engGptDataRoot);
+		}
+		return engGptDataRoot;
+	}
+
+	private String normalizeEngGptModelId(String modelId) throws KnowageBusinessException {
+		String normalizedModelId = modelId != null ? modelId.trim() : null;
+		if (normalizedModelId == null || normalizedModelId.isEmpty()) {
+			throw newEngGptDataException("Missing modelId", Status.BAD_REQUEST, "The modelId parameter is mandatory");
+		}
+		try {
+			PathTraversalChecker.isValidFileName(normalizedModelId);
+		} catch (KnowageRuntimeException e) {
+			throw newEngGptDataException("Invalid modelId [" + normalizedModelId + "]", Status.BAD_REQUEST, "The provided modelId is not valid", e);
+		}
+		return normalizedModelId;
+	}
+
+	void validateEngGptDataPayload(String jsonContent) throws KnowageBusinessException {
+		if (jsonContent == null || jsonContent.trim().isEmpty()) {
+			throw newEngGptDataException("Missing Eng GPT JSON payload", Status.BAD_REQUEST, "The request body must contain a valid JSON document");
+		}
+
+		JsonNode rootNode;
+		try {
+			rootNode = new ObjectMapper().readTree(jsonContent);
+		} catch (IOException e) {
+			throw newEngGptDataException("Invalid Eng GPT JSON payload", Status.BAD_REQUEST, "The request body must contain a valid JSON document", e);
+		}
+
+		if (rootNode == null || !rootNode.isObject()) {
+			throw newEngGptDataException("Invalid Eng GPT JSON payload root", Status.BAD_REQUEST,
+					"The request body must be a JSON object containing the sql_gold array");
+		}
+
+		JsonNode sqlGoldNode = rootNode.get("sql_gold");
+		if (sqlGoldNode == null || !sqlGoldNode.isArray()) {
+			throw newEngGptDataException("Missing or invalid sql_gold array", Status.BAD_REQUEST,
+					"The request body must contain the sql_gold array");
+		}
+
+		for (int i = 0; i < sqlGoldNode.size(); i++) {
+			validateSqlGoldEntry(sqlGoldNode.get(i), i);
+		}
+	}
+
+	private void validateSqlGoldEntry(JsonNode entryNode, int index) throws KnowageBusinessException {
+		if (entryNode == null || !entryNode.isObject()) {
+			throw newEngGptDataException("Invalid sql_gold entry at index [" + index + "]", Status.BAD_REQUEST,
+					"Each sql_gold entry must be a JSON object");
+		}
+
+		validateRequiredTextField(entryNode, "NL", index);
+		validateRequiredTextField(entryNode, "SQL", index);
+		validateRequiredStringArrayField(entryNode, "tables", index);
+		validateRequiredStringArrayField(entryNode, "columns", index);
+	}
+
+	private void validateRequiredTextField(JsonNode entryNode, String fieldName, int index) throws KnowageBusinessException {
+		JsonNode fieldNode = entryNode.get(fieldName);
+		if (fieldNode == null || !fieldNode.isTextual() || fieldNode.asText().trim().isEmpty()) {
+			throw newEngGptDataException("Invalid field [" + fieldName + "] for sql_gold entry [" + index + "]", Status.BAD_REQUEST,
+					"Each sql_gold entry must contain a non-empty " + fieldName + " string");
+		}
+	}
+
+	private void validateRequiredStringArrayField(JsonNode entryNode, String fieldName, int index) throws KnowageBusinessException {
+		JsonNode fieldNode = entryNode.get(fieldName);
+		if (fieldNode == null || !fieldNode.isArray()) {
+			throw newEngGptDataException("Invalid field [" + fieldName + "] for sql_gold entry [" + index + "]", Status.BAD_REQUEST,
+					"Each sql_gold entry must contain the " + fieldName + " array");
+		}
+
+		for (int elementIndex = 0; elementIndex < fieldNode.size(); elementIndex++) {
+			JsonNode arrayElement = fieldNode.get(elementIndex);
+			if (arrayElement == null || !arrayElement.isTextual() || arrayElement.asText().trim().isEmpty()) {
+				throw newEngGptDataException(
+						"Invalid value for field [" + fieldName + "] in sql_gold entry [" + index + "] at position [" + elementIndex + "]",
+						Status.BAD_REQUEST, "The " + fieldName + " array must contain only non-empty strings");
+			}
+		}
+	}
+
+	private KnowageBusinessException newEngGptDataException(String message, Status status, String description) {
+		KnowageBusinessException exception = new KnowageBusinessException(message);
+		exception.setStatus(status);
+		exception.setCode(ENG_GPT_DATA_ERROR_CODE);
+		exception.setDescription(description);
+		return exception;
+	}
+
+	private KnowageBusinessException newEngGptDataException(String message, Status status, String description, Throwable cause) {
+		KnowageBusinessException exception = new KnowageBusinessException(message, cause);
+		exception.setStatus(status);
+		exception.setCode(ENG_GPT_DATA_ERROR_CODE);
+		exception.setDescription(description);
+		return exception;
 	}
 
 	public Path getTotalPath(String path, SpagoBIUserProfile profile) throws IOException {
