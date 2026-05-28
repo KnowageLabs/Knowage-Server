@@ -765,7 +765,8 @@ angular.module('chartInitializer')
 			}
 		}
 		return mapAxis;
-
+	}
+	
 	this.updateData = function(widgetData){
 
 
