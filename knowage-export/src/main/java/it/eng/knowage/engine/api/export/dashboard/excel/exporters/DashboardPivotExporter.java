@@ -9,6 +9,7 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import org.apache.log4j.Logger;
 import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.usermodel.DataConsolidateFunction;
+import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.AreaReference;
 import org.apache.poi.ss.util.CellReference;
@@ -37,7 +38,35 @@ import static org.apache.poi.ss.usermodel.DataConsolidateFunction.*;
 public class DashboardPivotExporter extends GenericDashboardWidgetExporter implements IWidgetExporter {
 
     public static Logger logger = Logger.getLogger(DashboardPivotExporter.class);
+    private static final String SOURCE_SHEET_NAME = "Source_sheet";
+    private static final String PIVOT_SHEET_NAME = "Pivot_sheet";
     static final long DATA_FIELD_REFERENCE = 4294967294L; // OOXML uses unsigned -2 to point to the pivot data field.
+
+    private static final class PivotSheetContext {
+        private final SXSSFWorkbook streamingWorkbook;
+        private final XSSFWorkbook xssfWorkbook;
+        private final SXSSFSheet sourceStreamingSheet;
+        private final XSSFSheet sourceXssfSheet;
+        private final XSSFSheet pivotXssfSheet;
+        private final String sourceSheetName;
+        private final String pivotSheetName;
+
+        private PivotSheetContext(SXSSFWorkbook streamingWorkbook,
+                                  XSSFWorkbook xssfWorkbook,
+                                  SXSSFSheet sourceStreamingSheet,
+                                  XSSFSheet sourceXssfSheet,
+                                  XSSFSheet pivotXssfSheet,
+                                  String sourceSheetName,
+                                  String pivotSheetName) {
+            this.streamingWorkbook = streamingWorkbook;
+            this.xssfWorkbook = xssfWorkbook;
+            this.sourceStreamingSheet = sourceStreamingSheet;
+            this.sourceXssfSheet = sourceXssfSheet;
+            this.pivotXssfSheet = pivotXssfSheet;
+            this.sourceSheetName = sourceSheetName;
+            this.pivotSheetName = pivotSheetName;
+        }
+    }
 
     static final class PivotSortReference {
         private final long fieldIndex;
@@ -57,93 +86,155 @@ public class DashboardPivotExporter extends GenericDashboardWidgetExporter imple
         }
     }
 
-    public DashboardPivotExporter(DashboardExcelExporter excelExporter, JSONObject widget, String documentName, Map<String, Map<String, Object>> selections, JSONObject drivers, JSONObject parameters, String userUniqueIdentifier, String imageB64) {
-        super(excelExporter, null, widget, documentName, selections, drivers, parameters, userUniqueIdentifier, imageB64);
+    public DashboardPivotExporter(DashboardExcelExporter excelExporter, Workbook wb, JSONObject widget, String documentName, Map<String, Map<String, Object>> selections, JSONObject drivers, JSONObject parameters, String userUniqueIdentifier, String imageB64) {
+        super(excelExporter, wb, widget, documentName, selections, drivers, parameters, userUniqueIdentifier, imageB64);
+    }
+
+    @Override
+    public int export() {
+        String widgetId = widget.optString("id");
+        try {
+            if (!(wb instanceof SXSSFWorkbook)) {
+                throw new SpagoBIRuntimeException("Unable to export pivot widget: shared workbook is not SXSSFWorkbook");
+            }
+            return populatePivotWorkbook((SXSSFWorkbook) wb, true);
+        } catch (Exception e) {
+            throw new SpagoBIRuntimeException("Unable to export pivot widget: " + widgetId, e);
+        }
     }
 
     public Workbook exportPivot() {
         String widgetId = widget.optString("id");
+        SXSSFWorkbook streamingWorkbook = new SXSSFWorkbook(new XSSFWorkbook());
         try {
-            JSONObject settings = widget.getJSONObject("settings");
-            JSONObject fields = widget.getJSONObject("fields");
-            JSONArray columns = fields.getJSONArray("columns");
-            JSONArray rows = fields.getJSONArray("rows");
-            int trackedPathFieldCount = columns.length() + rows.length();
-            String widgetName = getJsonObjectUtils().replacePlaceholderIfPresent(getJsonObjectUtils().getDashboardWidgetName(widget), drivers);
-
-            int offset = 0;
-            int fetchSize = Integer.parseInt(SingletonConfig.getInstance().getConfigValue("SPAGOBI.API.DATASET.MAX_ROWS_NUMBER"));
-            JSONObject dataStore = getDataStoreForDashboardWidget(widget, offset, fetchSize, selections, drivers, parameters);
-            if (dataStore != null) {
-                String imageB64 = OrganizationImageManager.getOrganizationB64ImageWide(TenantManager.getTenant().getName());
-                Map<Integer, Map<String, Integer>> fieldItemIndexes = new HashMap<>();
-                updateFieldItemIndexes(dataStore, trackedPathFieldCount, fieldItemIndexes);
-
-                int totalNumberOfRows = dataStore.getInt("results");
-                if (totalNumberOfRows == 0) {
-                    return null;
-                }
-                XSSFWorkbook xssfWorkbook = new XSSFWorkbook();
-                XSSFSheet xssfSheet = xssfWorkbook.createSheet("Source_sheet");
-
-                excelExporter.fillTableSheetWithData(dataStore, xssfWorkbook, xssfSheet, widgetName, offset, settings);
-
-                XSSFSheet pivotSheet = xssfWorkbook.createSheet("Pivot_sheet");
-
-                int startRow = 0;
-                float rowHeight = 35; // in points
-                int rowspan = 2;
-                int startCol = 0;
-                int colWidth = 25;
-                int colspan = 2;
-                int namespan = 10;
-                int dataspan = 10;
-
-                createBrandedHeaderSheet(
-                        pivotSheet,
-                        imageB64,
-                        startRow,
-                        rowHeight,
-                        rowspan,
-                        startCol,
-                        colWidth,
-                        colspan,
-                        namespan,
-                        dataspan,
-                        "Dashboard",
-                        widgetName);
-
-
-                int xssfSheetLastRowNum = xssfSheet.getLastRowNum();
-                int currentPageRows = dataStore.getJSONArray("rows").length();
-                int finalSourceLastRowNum = xssfSheetLastRowNum + (totalNumberOfRows - currentPageRows);
-                int sourceSheetLastColumn = xssfSheet.getRow(xssfSheetLastRowNum).getLastCellNum();
-                String lastColLetter = CellReference.convertNumToColString(sourceSheetLastColumn - 1);
-
-                boolean isImagePresent = imageB64 != null;
-                XSSFPivotTable pivotTable = pivotSheet.createPivotTable(
-                        new AreaReference(isImagePresent? new CellReference("Source_sheet!A4") : new CellReference("Source_sheet!A2"),
-                                new CellReference("Source_sheet!" + lastColLetter + (finalSourceLastRowNum + 1)), // make the reference big enough for later data
-                                SpreadsheetVersion.EXCEL2007),
-                        new CellReference("A8"));
-
-                SXSSFWorkbook swb = new SXSSFWorkbook(xssfWorkbook);
-                SXSSFSheet ssheet = swb.getSheet("Source_sheet");
-
-                while (offset < totalNumberOfRows) {
-                    offset += fetchSize;
-                    dataStore = getDataStoreForDashboardWidget(widget, offset, fetchSize, selections, drivers, parameters);
-                    updateFieldItemIndexes(dataStore, trackedPathFieldCount, fieldItemIndexes);
-                    excelExporter.fillTableSheetWithData(dataStore, swb, ssheet, widgetName, offset, settings);
-                }
-
-                formatPivot(pivotTable, fieldItemIndexes);
-                return swb;
+            int exportedSheets = populatePivotWorkbook(streamingWorkbook, false);
+            if (exportedSheets == 0) {
+                streamingWorkbook.close();
+                return null;
             }
+            return streamingWorkbook;
         } catch (Exception e) {
-            throw new SpagoBIRuntimeException("Unable to export table widget: " + widgetId, e);
+            try {
+                streamingWorkbook.close();
+            } catch (Exception closeException) {
+                logger.warn("Unable to close temporary pivot workbook", closeException);
+            }
+            throw new SpagoBIRuntimeException("Unable to export pivot widget: " + widgetId, e);
         }
-        return null;
+    }
+
+    private int populatePivotWorkbook(SXSSFWorkbook streamingWorkbook, boolean registerAutoSizeSkip) throws JSONException {
+        JSONObject settings = getJsonObject();
+        JSONObject fields = widget.getJSONObject("fields");
+        JSONArray columns = fields.getJSONArray("columns");
+        JSONArray rows = fields.getJSONArray("rows");
+        int trackedPathFieldCount = columns.length() + rows.length();
+        String widgetName = getJsonObjectUtils().replacePlaceholderIfPresent(getJsonObjectUtils().getDashboardWidgetName(widget), drivers);
+
+        int offset = 0;
+        int fetchSize = Integer.parseInt(SingletonConfig.getInstance().getConfigValue("SPAGOBI.API.DATASET.MAX_ROWS_NUMBER"));
+        JSONObject dataStore = getDataStoreForDashboardWidget(widget, offset, fetchSize, selections, drivers, parameters);
+        if (dataStore == null) {
+            return 0;
+        }
+
+        Map<Integer, Map<String, Integer>> fieldItemIndexes = new HashMap<>();
+        updateFieldItemIndexes(dataStore, trackedPathFieldCount, fieldItemIndexes);
+
+        int totalNumberOfRows = dataStore.getInt("results");
+        if (totalNumberOfRows == 0) {
+            return 0;
+        }
+
+        PivotSheetContext pivotSheetContext = createPivotSheetContext(streamingWorkbook);
+        if (registerAutoSizeSkip) {
+            excelExporter.registerSheetToSkipAutoSize(pivotSheetContext.sourceSheetName);
+            excelExporter.registerSheetToSkipAutoSize(pivotSheetContext.pivotSheetName);
+        }
+
+        excelExporter.fillTableSheetWithData(dataStore, pivotSheetContext.xssfWorkbook, pivotSheetContext.sourceXssfSheet, widgetName, offset, settings);
+        String imageB64 = createPivotHeaderSheet(pivotSheetContext.pivotXssfSheet, widgetName);
+
+        int sourceSheetLastRowNum = pivotSheetContext.sourceXssfSheet.getLastRowNum();
+        int currentPageRows = dataStore.getJSONArray("rows").length();
+        int finalSourceLastRowNum = sourceSheetLastRowNum + (totalNumberOfRows - currentPageRows);
+        int sourceSheetLastColumn = pivotSheetContext.sourceXssfSheet.getRow(sourceSheetLastRowNum).getLastCellNum();
+        String lastColLetter = CellReference.convertNumToColString(sourceSheetLastColumn - 1);
+
+        boolean isImagePresent = imageB64 != null;
+        XSSFPivotTable pivotTable = pivotSheetContext.pivotXssfSheet.createPivotTable(
+                new AreaReference(isImagePresent ? new CellReference(pivotSheetContext.sourceSheetName + "!A4") : new CellReference(pivotSheetContext.sourceSheetName + "!A2"),
+                        new CellReference(pivotSheetContext.sourceSheetName + "!" + lastColLetter + (finalSourceLastRowNum + 1)),
+                        SpreadsheetVersion.EXCEL2007),
+                new CellReference("A8"));
+
+        while (offset + fetchSize < totalNumberOfRows) {
+            offset += fetchSize;
+            dataStore = getDataStoreForDashboardWidget(widget, offset, fetchSize, selections, drivers, parameters);
+            updateFieldItemIndexes(dataStore, trackedPathFieldCount, fieldItemIndexes);
+            excelExporter.fillTableSheetWithData(dataStore, pivotSheetContext.streamingWorkbook, pivotSheetContext.sourceStreamingSheet, widgetName, offset, settings);
+        }
+
+        formatPivot(pivotTable, fieldItemIndexes);
+        return 2;
+    }
+
+    private PivotSheetContext createPivotSheetContext(SXSSFWorkbook streamingWorkbook) {
+        XSSFWorkbook xssfWorkbook = streamingWorkbook.getXSSFWorkbook();
+        Sheet sourceSheet = excelExporter.createUniqueSafeSheet(streamingWorkbook, SOURCE_SHEET_NAME, null);
+        Sheet pivotSheet = excelExporter.createUniqueSafeSheet(streamingWorkbook, PIVOT_SHEET_NAME, null);
+
+        if (!(sourceSheet instanceof SXSSFSheet)) {
+            throw new SpagoBIRuntimeException("Unable to export pivot widget: source sheet is not SXSSFSheet");
+        }
+
+        XSSFSheet sourceXssfSheet = xssfWorkbook.getSheet(sourceSheet.getSheetName());
+        XSSFSheet pivotXssfSheet = xssfWorkbook.getSheet(pivotSheet.getSheetName());
+        if (sourceXssfSheet == null || pivotXssfSheet == null) {
+            throw new SpagoBIRuntimeException("Unable to export pivot widget: backing XSSF sheets are not available");
+        }
+
+        return new PivotSheetContext(
+                streamingWorkbook,
+                xssfWorkbook,
+                (SXSSFSheet) sourceSheet,
+                sourceXssfSheet,
+                pivotXssfSheet,
+                sourceSheet.getSheetName(),
+                pivotSheet.getSheetName()
+        );
+    }
+
+    private String createPivotHeaderSheet(XSSFSheet pivotSheet, String widgetName) {
+        String imageB64 = OrganizationImageManager.getOrganizationB64ImageWide(TenantManager.getTenant().getName());
+        int startRow = 0;
+        float rowHeight = 35; // in points
+        int rowspan = 2;
+        int startCol = 0;
+        int colWidth = 25;
+        int colspan = 2;
+        int namespan = 10;
+        int dataspan = 10;
+
+        createBrandedHeaderSheet(
+                pivotSheet,
+                imageB64,
+                startRow,
+                rowHeight,
+                rowspan,
+                startCol,
+                colWidth,
+                colspan,
+                namespan,
+                dataspan,
+                "Dashboard",
+                widgetName);
+        return imageB64;
+    }
+
+    private JSONObject getJsonObject() throws JSONException {
+        JSONObject settings = widget.getJSONObject("settings");
+        return settings;
     }
 
     private void formatPivot(XSSFPivotTable pivotTable, Map<Integer, Map<String, Integer>> fieldItemIndexes) {

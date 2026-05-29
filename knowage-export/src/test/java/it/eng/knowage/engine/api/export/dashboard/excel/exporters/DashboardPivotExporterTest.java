@@ -4,6 +4,8 @@ import org.apache.poi.ss.usermodel.DataConsolidateFunction;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.util.AreaReference;
 import org.apache.poi.ss.util.CellReference;
+import org.apache.poi.xssf.streaming.SXSSFSheet;
+import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFPivotTable;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -14,6 +16,8 @@ import org.junit.Test;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPivotAreaReference;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPivotField;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -256,6 +260,56 @@ public class DashboardPivotExporterTest {
             assertEquals(1L, references[1].getXArray(0).getV());
         } catch (Exception e) {
             throw new AssertionError("Unexpected exception while creating the pivot sort scope for columns", e);
+        }
+    }
+
+    @Test
+    public void shouldPersistPivotAndSourceSheetsWhenStreamingAdditionalSourceRows() {
+        try (SXSSFWorkbook streamingWorkbook = new SXSSFWorkbook(new XSSFWorkbook());
+             ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
+            XSSFWorkbook xssfWorkbook = streamingWorkbook.getXSSFWorkbook();
+
+            SXSSFSheet sourceStreamingSheet = streamingWorkbook.createSheet("Source_sheet");
+            XSSFSheet sourceSheet = xssfWorkbook.getSheet("Source_sheet");
+            streamingWorkbook.createSheet("Pivot_sheet");
+            XSSFSheet pivotSheet = xssfWorkbook.getSheet("Pivot_sheet");
+
+            Row headerRow = sourceSheet.createRow(0);
+            headerRow.createCell(0).setCellValue("Month");
+            headerRow.createCell(1).setCellValue("Customer");
+            headerRow.createCell(2).setCellValue("Amount");
+
+            Row firstDataRow = sourceSheet.createRow(1);
+            firstDataRow.createCell(0).setCellValue("Jan");
+            firstDataRow.createCell(1).setCellValue("John");
+            firstDataRow.createCell(2).setCellValue(5);
+
+            XSSFPivotTable pivotTable = pivotSheet.createPivotTable(
+                    new AreaReference(new CellReference("Source_sheet!A1"),
+                            new CellReference("Source_sheet!C3"),
+                            org.apache.poi.ss.SpreadsheetVersion.EXCEL2007),
+                    new CellReference("A1"));
+            pivotTable.addRowLabel(0);
+            pivotTable.addColumnLabel(DataConsolidateFunction.SUM, 2, "Amount");
+
+            Row streamedDataRow = sourceStreamingSheet.createRow(2);
+            streamedDataRow.createCell(0).setCellValue("Feb");
+            streamedDataRow.createCell(1).setCellValue("John");
+            streamedDataRow.createCell(2).setCellValue(15);
+
+            streamingWorkbook.write(outputStream);
+
+            try (XSSFWorkbook reopenedWorkbook = new XSSFWorkbook(new ByteArrayInputStream(outputStream.toByteArray()))) {
+                XSSFSheet reopenedSourceSheet = reopenedWorkbook.getSheet("Source_sheet");
+                XSSFSheet reopenedPivotSheet = reopenedWorkbook.getSheet("Pivot_sheet");
+
+                assertEquals(2, reopenedWorkbook.getNumberOfSheets());
+                assertEquals(2, reopenedSourceSheet.getLastRowNum());
+                assertEquals("Feb", reopenedSourceSheet.getRow(2).getCell(0).getStringCellValue());
+                assertEquals(1, reopenedPivotSheet.getPivotTables().size());
+            }
+        } catch (Exception e) {
+            throw new AssertionError("Unexpected exception while creating a shared streaming pivot workbook", e);
         }
     }
 }

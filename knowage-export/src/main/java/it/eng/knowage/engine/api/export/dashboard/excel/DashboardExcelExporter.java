@@ -50,7 +50,7 @@ import static org.apache.poi.xssf.usermodel.XSSFFont.DEFAULT_FONT_SIZE;
 public class DashboardExcelExporter extends DashboardExporter {
     private static final Logger LOGGER = LogManager.getLogger(DashboardExcelExporter.class);
 
-    private static final String[] WIDGETS_TO_IGNORE = {"image", "text", "selector", "selection", "html", "static-pivot-table"};
+    private static final String[] WIDGETS_TO_IGNORE = {"image", "text", "selector", "selection", "html"};
     private static final int SHEET_NAME_MAX_LEN = 31;
     protected static final String DATE_FORMAT = "dd/MM/yyyy";
     private static final int COLOR_WHITE_COMPONENT = 255;
@@ -71,6 +71,7 @@ public class DashboardExcelExporter extends DashboardExporter {
 
     private final boolean isSingleWidgetExport;
     private int uniqueId = 0;
+    private final Set<String> autoSizeSkippedSheetNames = new HashSet<>();
     @Getter
     protected final JSONObject body;
 
@@ -217,7 +218,7 @@ public class DashboardExcelExporter extends DashboardExporter {
 
     }
     public byte[] getDashboardBinaryData(JSONObject body, boolean isDashboardSingleWidgetExport) {
-
+        autoSizeSkippedSheetNames.clear();
         if (body == null) {
             throw new SpagoBIRuntimeException("Unable to get template for dashboard");
         }
@@ -267,7 +268,7 @@ public class DashboardExcelExporter extends DashboardExporter {
                 exportEmptyExcel(wb);
             } else {
                 for (Sheet sheet : wb) {
-                    if (sheet != null) {
+                    if (shouldAdjustColumnWidth(sheet)) {
                         // Adjusts the column width to fit the contents
                         adjustColumnWidth(sheet, this.getImageB64());
                     }
@@ -290,6 +291,7 @@ public class DashboardExcelExporter extends DashboardExporter {
     }
 
     public byte[] getPivotBinaryData(JSONObject body) {
+        autoSizeSkippedSheetNames.clear();
         if (body == null) {
             throw new SpagoBIRuntimeException("Unable to get template for dashboard");
         }
@@ -365,9 +367,9 @@ public class DashboardExcelExporter extends DashboardExporter {
                 JSONObject currWidget = widgetsArray.getJSONObject(i);
                 setDatasetDriversIfPresent(body, currWidget, drivers);
                 if (currWidget.has("datasetDrivers") && currWidget.getJSONArray("datasetDrivers") != null && currWidget.getJSONArray("datasetDrivers").length() > 0) {
-                    exportedSheets = exportWidget(currWidget, wb, documentName, selections, transformDriversForDatastore(currWidget.getJSONArray("datasetDrivers")), parameters);
+                    exportedSheets += exportWidget(currWidget, wb, documentName, selections, transformDriversForDatastore(currWidget.getJSONArray("datasetDrivers")), parameters);
                 } else {
-                    exportedSheets = exportWidget(currWidget, wb, documentName, selections, drivers, parameters);
+                    exportedSheets += exportWidget(currWidget, wb, documentName, selections, drivers, parameters);
                 }
             } catch (Exception e) {
                 LOGGER.error("Error while exporting widget", e);
@@ -423,7 +425,7 @@ public class DashboardExcelExporter extends DashboardExporter {
                 return null;
             }
             DashboardPivotExporter dashboardPivotExporter = new DashboardPivotExporter(
-                    this, body, documentName, selections, drivers, parametersToSend, getUserUniqueIdentifier(), getImageB64());
+                    this, null, body, documentName, selections, drivers, parametersToSend, getUserUniqueIdentifier(), getImageB64());
             return dashboardPivotExporter.exportPivot();
         } catch (Exception e) {
             LOGGER.error("Cannot export pivot data to excel", e);
@@ -474,6 +476,22 @@ public class DashboardExcelExporter extends DashboardExporter {
         } catch (Exception e) {
             throw new SpagoBIRuntimeException("Couldn't create sheet", e);
         }
+    }
+
+    public void registerSheetToSkipAutoSize(Sheet sheet) {
+        if (sheet != null) {
+            autoSizeSkippedSheetNames.add(sheet.getSheetName());
+        }
+    }
+
+    public void registerSheetToSkipAutoSize(String sheetName) {
+        if (sheetName != null && !sheetName.isEmpty()) {
+            autoSizeSkippedSheetNames.add(sheetName);
+        }
+    }
+
+    private boolean shouldAdjustColumnWidth(Sheet sheet) {
+        return sheet != null && !autoSizeSkippedSheetNames.contains(sheet.getSheetName());
     }
 
     private JSONArray getDashboardWidgetsJson(String templateString) {
