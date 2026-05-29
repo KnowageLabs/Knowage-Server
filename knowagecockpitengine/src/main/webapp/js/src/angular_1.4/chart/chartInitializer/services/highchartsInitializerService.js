@@ -202,15 +202,15 @@ angular.module('chartInitializer')
 			}
             }
 
-			// Inject underline on labels when chart is drillable
+			// Ensure the CSS rule for drillable labels is present in the page
 			if (chartConf.chart.additionalData && chartConf.chart.additionalData.drillable) {
-				applyDrillableLabelsUnderline(chartConf);
+				injectDrillLabelCSS();
 			}
 
 			this.chart =  new Highcharts.Chart(chartConf);
-			// Store the initial drillable flag so formatters can read it at render time
+			// Apply/remove underline CSS class based on initial drillable state
 			if (chartConf.chart.additionalData) {
-				this.chart._knowageDrillable = !!chartConf.chart.additionalData.drillable;
+				setDrillableLabelStyles(this.chart, !!chartConf.chart.additionalData.drillable);
 			}
 			if(isBasic){
 				this.chart.extremes = infoFroDrill;
@@ -470,61 +470,40 @@ angular.module('chartInitializer')
 	}
 
 	/**
-	 * Injects text-decoration:underline into xAxis labels (for non-pie charts) or
-	 * series dataLabels (for pie charts) when the chart has drilldown configured.
-	 * The formatter reads chart._knowageDrillable at render time so the underline
-	 * disappears automatically when there are no more drill levels.
+	 * Injects a <style> block once so that .kn-chart-drillable charts show
+	 * underlined labels. Works on both SVG <text> and HTML <span> labels,
+	 * and is unaffected by Highcharts render/animation timing.
 	 */
-	var applyDrillableLabelsUnderline = function(chartConf) {
-		var chartType = chartConf.chart.type.toLowerCase();
+	var _drillLabelStyleInjected = false;
+	var injectDrillLabelCSS = function() {
+		if (_drillLabelStyleInjected) return;
+		_drillLabelStyleInjected = true;
+		var style = document.createElement('style');
+		style.type = 'text/css';
+		style.appendChild(document.createTextNode(
+			'.kn-chart-drillable .highcharts-xaxis-labels text,' +
+			'.kn-chart-drillable .highcharts-xaxis-labels span {' +
+			'  text-decoration: underline; cursor: pointer;' +
+			'}' +
+			'.kn-chart-drillable .highcharts-data-label text,' +
+			'.kn-chart-drillable .highcharts-data-label span {' +
+			'  text-decoration: underline; cursor: pointer;' +
+			'}'
+		));
+		document.head.appendChild(style);
+	};
 
-		if (chartType !== 'pie' && chartType !== 'gauge' && chartType !== 'solidgauge') {
-			// Apply underline to xAxis category labels
-			var xAxes = Array.isArray(chartConf.xAxis)
-				? chartConf.xAxis
-				: (chartConf.xAxis ? [chartConf.xAxis] : []);
-			for (var xi = 0; xi < xAxes.length; xi++) {
-				var xAxis = xAxes[xi];
-				if (!xAxis) continue;
-				if (!xAxis.labels) xAxis.labels = {};
-				if (xAxis.labels.enabled === false) continue; // labels hidden
-				xAxis.labels.useHTML = true;
-				xAxis.labels.formatter = (function(orig) {
-					return function() {
-						var drillable = (this.axis && this.axis.chart && this.axis.chart._knowageDrillable !== undefined)
-							? this.axis.chart._knowageDrillable
-							: true; // on first render _knowageDrillable not yet set, but we only reach here if drillable=true
-						var text = orig ? orig.call(this) : ('' + this.value);
-						if (drillable) {
-							return '<span style="text-decoration:underline;cursor:pointer">' + text + '</span>';
-						}
-						return text;
-					};
-				})(xAxis.labels.formatter || null);
-			}
-		} else if (chartType === 'pie') {
-			// Apply underline to pie slice data labels
-			for (var pi = 0; pi < chartConf.series.length; pi++) {
-				var pieSeries = chartConf.series[pi];
-				if (!pieSeries.dataLabels) continue;
-				var dataLabels = Array.isArray(pieSeries.dataLabels)
-					? pieSeries.dataLabels[0]
-					: pieSeries.dataLabels;
-				if (!dataLabels || dataLabels.enabled === false) continue; // labels hidden
-				dataLabels.useHTML = true;
-				dataLabels.formatter = (function(orig) {
-					return function() {
-						var drillable = (this.series && this.series.chart && this.series.chart._knowageDrillable !== undefined)
-							? this.series.chart._knowageDrillable
-							: true;
-						var text = orig ? orig.call(this) : this.point.name;
-						if (drillable) {
-							return '<span style="text-decoration:underline;cursor:pointer">' + text + '</span>';
-						}
-						return text;
-					};
-				})(dataLabels.formatter || null);
-			}
+	/**
+	 * Adds/removes .kn-chart-drillable on the Highcharts container element.
+	 * CSS then handles underline/cursor on all visible label elements with no
+	 * timing dependency on Highcharts render cycles.
+	 */
+	var setDrillableLabelStyles = function(chart, isDrillable) {
+		if (!chart || !chart.container) return;
+		if (isDrillable) {
+			chart.container.classList.add('kn-chart-drillable');
+		} else {
+			chart.container.classList.remove('kn-chart-drillable');
 		}
 	};
 
@@ -743,8 +722,9 @@ angular.module('chartInitializer')
 								}
 						}
 						}
-						// Update drillable flag: underline labels only when a further drill level exists
-						chart._knowageDrillable = !!(series.data && series.data.length > 0 && series.data[0].drilldown === true);
+						// Update underline CSS class: show only when a further drill level exists
+						var isNextLevelAvailable = !!(series.data && series.data.length > 0 && series.data[0].drilldown === true);
+						setDrillableLabelStyles(chart, isNextLevelAvailable);
 			            chart.addSeriesAsDrilldown(e.point, series);
 
 			            if(series.firstLevelCategory){
@@ -767,7 +747,7 @@ angular.module('chartInitializer')
 
 		var chart=this;
 		// Restore underline on labels: the level we drill back to was reached via drilldown, so it is drillable
-		chart._knowageDrillable = true;
+		setDrillableLabelStyles(chart, true);
 		var axisTitle = chart.options.drilledCategories[chart.options.drilledCategories.length-2]
 		chart.options.drilledCategories.pop();
 		titleText=chart.options.drilledCategories[chart.options.drilledCategories.length-2] ? chart.options.drilledCategories[chart.options.drilledCategories.length-2] : chart.options.drilledCategories[0];
