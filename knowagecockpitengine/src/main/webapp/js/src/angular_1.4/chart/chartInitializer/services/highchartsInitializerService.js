@@ -202,15 +202,12 @@ angular.module('chartInitializer')
 			}
             }
 
-			// Ensure the CSS rule for drillable labels is present in the page
-			if (chartConf.chart.additionalData && chartConf.chart.additionalData.drillable) {
-				injectDrillLabelCSS();
-			}
-
 			this.chart =  new Highcharts.Chart(chartConf);
-			// Apply/remove underline CSS class based on initial drillable state
-			if (chartConf.chart.additionalData) {
-				setDrillableLabelStyles(this.chart, !!chartConf.chart.additionalData.drillable);
+			// Bind render event to keep underline in sync, then set initial state
+			if (chartConf.chart.additionalData && chartConf.chart.additionalData.drillable) {
+				this.chart._knowageDrillable = true;
+				bindDrillableLabelRender(this.chart);
+				applyUnderlineToChartLabels(this.chart, true);
 			}
 			if(isBasic){
 				this.chart.extremes = infoFroDrill;
@@ -470,41 +467,49 @@ angular.module('chartInitializer')
 	}
 
 	/**
-	 * Injects a <style> block once so that .kn-chart-drillable charts show
-	 * underlined labels. Works on both SVG <text> and HTML <span> labels,
-	 * and is unaffected by Highcharts render/animation timing.
+	 * Applies or removes text-decoration:underline + cursor:pointer directly on
+	 * the SVG/HTML label DOM elements of the chart.
+	 * Called from the Highcharts 'render' event so it runs after every redraw.
 	 */
-	var _drillLabelStyleInjected = false;
-	var injectDrillLabelCSS = function() {
-		if (_drillLabelStyleInjected) return;
-		_drillLabelStyleInjected = true;
-		var style = document.createElement('style');
-		style.type = 'text/css';
-		style.appendChild(document.createTextNode(
-			'.kn-chart-drillable .highcharts-xaxis-labels text,' +
-			'.kn-chart-drillable .highcharts-xaxis-labels span {' +
-			'  text-decoration: underline; cursor: pointer;' +
-			'}' +
-			'.kn-chart-drillable .highcharts-data-label text,' +
-			'.kn-chart-drillable .highcharts-data-label span {' +
-			'  text-decoration: underline; cursor: pointer;' +
-			'}'
-		));
-		document.head.appendChild(style);
+	var applyUnderlineToChartLabels = function(chart, isDrillable) {
+		if (!chart || !chart.container) return;
+		var container = chart.container;
+		var decoration = isDrillable ? 'underline' : '';
+		var cursor     = isDrillable ? 'pointer'   : '';
+
+		// xAxis labels (SVG <text> and tspan inside .highcharts-xaxis-labels)
+		var xAxisLabelGroup = container.querySelector('.highcharts-xaxis-labels');
+		if (xAxisLabelGroup) {
+			var textNodes = xAxisLabelGroup.querySelectorAll('text');
+			for (var i = 0; i < textNodes.length; i++) {
+				textNodes[i].style.textDecoration = decoration;
+				textNodes[i].style.cursor = cursor;
+				textNodes[i].setAttribute('text-decoration', decoration);
+			}
+		}
+
+		// pie / data labels (SVG <text> inside .highcharts-data-label)
+		var dataLabelGroups = container.querySelectorAll('.highcharts-data-label');
+		for (var d = 0; d < dataLabelGroups.length; d++) {
+			var dlTexts = dataLabelGroups[d].querySelectorAll('text');
+			for (var t = 0; t < dlTexts.length; t++) {
+				dlTexts[t].style.textDecoration = decoration;
+				dlTexts[t].style.cursor = cursor;
+				dlTexts[t].setAttribute('text-decoration', decoration);
+			}
+		}
 	};
 
 	/**
-	 * Adds/removes .kn-chart-drillable on the Highcharts container element.
-	 * CSS then handles underline/cursor on all visible label elements with no
-	 * timing dependency on Highcharts render cycles.
+	 * Attaches a persistent 'render' event listener on the chart that re-applies
+	 * the underline state after every Highcharts redraw/drill animation.
+	 * isDrillable is stored on chart._knowageDrillable so the listener can
+	 * always read the latest value.
 	 */
-	var setDrillableLabelStyles = function(chart, isDrillable) {
-		if (!chart || !chart.container) return;
-		if (isDrillable) {
-			chart.container.classList.add('kn-chart-drillable');
-		} else {
-			chart.container.classList.remove('kn-chart-drillable');
-		}
+	var bindDrillableLabelRender = function(chart) {
+		Highcharts.addEvent(chart, 'render', function() {
+			applyUnderlineToChartLabels(this, !!this._knowageDrillable);
+		});
 	};
 
 	this.handleCrossNavigationTo =function(e) {
@@ -722,9 +727,9 @@ angular.module('chartInitializer')
 								}
 						}
 						}
-						// Update underline CSS class: show only when a further drill level exists
+						// Update _knowageDrillable: render event will apply/remove underline after addSeriesAsDrilldown
 						var isNextLevelAvailable = !!(series.data && series.data.length > 0 && series.data[0].drilldown === true);
-						setDrillableLabelStyles(chart, isNextLevelAvailable);
+						chart._knowageDrillable = isNextLevelAvailable;
 			            chart.addSeriesAsDrilldown(e.point, series);
 
 			            if(series.firstLevelCategory){
@@ -746,8 +751,8 @@ angular.module('chartInitializer')
 	this.handleDrillup = function(){
 
 		var chart=this;
-		// Restore underline on labels: the level we drill back to was reached via drilldown, so it is drillable
-		setDrillableLabelStyles(chart, true);
+		// Restore underline: parent level is always drillable; render event will re-apply it
+		chart._knowageDrillable = true;
 		var axisTitle = chart.options.drilledCategories[chart.options.drilledCategories.length-2]
 		chart.options.drilledCategories.pop();
 		titleText=chart.options.drilledCategories[chart.options.drilledCategories.length-2] ? chart.options.drilledCategories[chart.options.drilledCategories.length-2] : chart.options.drilledCategories[0];
