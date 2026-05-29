@@ -182,9 +182,6 @@ public class PasswordChecker {
 	 */
 	public boolean isValid(final SbiUser tmpUser, String oldPwd, boolean isEncrypted, String newPwd, String newPwd2)
 			throws Exception {
-		IConfigDAO configDao = DAOFactory.getSbiConfigDAO();
-		List<Config> configChecks = configDao.loadConfigParametersByProperties(PROP_NODE);
-		logger.debug("checks found on db: " + configChecks.size());
 
 		if (isValid(newPwd, newPwd2)) {
 			if (oldPwd != null && StringUtils.isEmpty(oldPwd)) {
@@ -201,16 +198,12 @@ public class PasswordChecker {
 				throw new EMFUserError(EMFErrorSeverity.ERROR, 14010);
 			}
 
-			for (Config check : configChecks) {
-
-				if (check.getLabel().equals(SpagoBIConstants.CHANGEPWDMOD_CHANGE)) {
-					if (oldPwd != null && oldPwd.equalsIgnoreCase(newPwd)) {
-						logger.debug("The password's doesn't be equal the lastest.");
-						throw new EMFUserError(EMFErrorSeverity.ERROR, 14007, Collections.emptyList(),
+            if (oldPwd != null && oldPwd.equalsIgnoreCase(newPwd)) {
+                logger.debug("The password's doesn't be equal the lastest.");
+                throw new EMFUserError(EMFErrorSeverity.ERROR, 14007, Collections.emptyList(),
 								Collections.emptyMap());
-					}
-				}
-			}
+            }
+
 		}
 
 		return true;

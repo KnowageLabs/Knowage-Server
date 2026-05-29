@@ -21,13 +21,7 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import java.util.Base64;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
@@ -41,8 +35,14 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import it.eng.spagobi.commons.bo.Config;
+import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.commons.dao.IConfigDAO;
 import org.apache.log4j.Logger;
 import org.jboss.resteasy.plugins.providers.html.View;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -87,11 +87,11 @@ import it.eng.spagobi.utilities.themes.ThemesManager;
 import net.logicsquad.nanocaptcha.image.ImageCaptcha;
 import net.logicsquad.nanocaptcha.image.filter.FishEyeImageFilter;
 
+
 @Path("/signup")
 public class Signup {
 
 	private static final Logger LOGGER = Logger.getLogger(Signup.class);
-	private static final String DEFAULT_PASSWORD = "Password";
 	private static final String DEFAULT_TENANT = "DEFAULT_TENANT";
 
 	@Context
@@ -185,9 +185,12 @@ public class Signup {
 			ISbiAttributeDAO attrDao = DAOFactory.getSbiAttributeDAO();
 			attrDao.setUserProfile(profile);
 
+            String newPasswordHashed = Password.hashPassword(password);
+
 			SbiUser user = userDao.loadSbiUserByUserId((String) profile.getUserId());
+
 			try {
-				PasswordChecker.getInstance().isValid(user, user.getPassword(), true, password, password);
+				PasswordChecker.getInstance().isValid(user, user.getPassword(), true, newPasswordHashed, newPasswordHashed);
 			} catch (Exception e) {
 				LOGGER.error("Password is not valid", e);
 				String message = msgBuilder.getMessage("signup.check.pwdInvalid", "messages", locale);
@@ -204,10 +207,6 @@ public class Signup {
 				user.setFullName(name + " " + surname);
 			}
 
-			if (password != null && !password.equals(DEFAULT_PASSWORD)) {
-				user.setPassword(Password.hashPassword(password));
-			}
-
 			// Update last access date on db with current date
 			try {
 				user.setDtLastAccess(new Date());
@@ -215,6 +214,37 @@ public class Signup {
 			} catch (Exception e) {
 				LOGGER.error("Non-fatal error while updating user's dtLastAccess", e);
 			}
+
+
+            LocalDateTime beginDateTime = LocalDateTime.now();
+            Date beginDate = Date.from(beginDateTime.atZone(ZoneId.systemDefault()).toInstant());
+            user.setDtPwdBegin(beginDate);
+
+            IConfigDAO configDao = DAOFactory.getSbiConfigDAO();
+            List<Config> lstConfigChecks = configDao
+                    .loadConfigParametersByProperties(SpagoBIConstants.CHANGEPWD_EXPIRED_TIME);
+
+            if (lstConfigChecks != null ) {
+
+                for (Config check : lstConfigChecks) {
+
+                    if (check.getLabel().equals(SpagoBIConstants.CHANGEPWD_EXPIRED_TIME)  ) {
+
+                        try {
+                            int daysToAdds = Integer.parseInt(check.getValueCheck());
+                            LocalDateTime endDateTime = beginDateTime.plusDays(daysToAdds);
+                            Date endDate = Date.from(endDateTime.atZone(ZoneId.systemDefault()).toInstant());
+                            user.setDtPwdEnd(endDate);
+                            LOGGER.debug("Calculated expiration End Date: " + endDate);
+                        }catch (NumberFormatException e){
+                            LOGGER.error("Invalid expiration time configuration value: " + check.getValueCheck(), e);
+                            //throw new EMFUserError(EMFErrorSeverity.ERROR, 14008);
+                        }
+                    }
+                }
+            }
+
+            user.setDtPwdBegin(beginDate);
 
 			userDao.updateSbiUser(user, userId);
 
