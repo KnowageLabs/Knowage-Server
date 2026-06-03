@@ -13,7 +13,7 @@
             </div>
             <div class="buttons p-d-flex">
                 <a href="https://knowage-suite.readthedocs.io/" target="_blank">{{ $t('home.button.documentation') }}</a>
-                <a href="https://www.knowage-suite.com/qa/" target="_blank">{{ $t('home.button.qa') }}</a>
+                <a href="https://github.com/KnowageLabs/Knowage/discussions" target="_blank">{{ $t('home.button.qa') }}</a>
             </div>
         </div>
         <div class="lowerSection">
