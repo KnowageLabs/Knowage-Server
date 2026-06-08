@@ -20,9 +20,8 @@ package it.eng.spagobi.tools.dataset.persist;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -75,6 +74,7 @@ import it.eng.spagobi.tools.dataset.common.iterator.DataIterator;
 import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
 import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData.FieldType;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
+import it.eng.spagobi.tools.dataset.utils.DatasetMetadataParser;
 import it.eng.spagobi.tools.dataset.metasql.query.DatabaseDialect;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.KnowageStringUtils;
@@ -666,74 +666,7 @@ public class PersistedTableManager implements IPersistedManager {
 
 	private IDataStore normalizeFileDataSet(IDataSet dataSet, IDataStore datastore) {
 		if (dataSet instanceof FileDataSet) {
-			// Change dataStore fields type according to the metadata specified
-			// on the DataSet metadata
-			// because FileDataSet has all dataStore field set as String by
-			// default
-			IMetaData dataStoreMetaData = datastore.getMetaData();
-			IMetaData dataSetMetaData = dataSet.getMetadata();
-
-			int filedNo = dataStoreMetaData.getFieldCount();
-			for (int i = 0, l = filedNo; i < l; i++) {
-				// Apply DataSet FieldType to DataStore FieldType
-				IFieldMetaData dataStoreFieldMetaData = dataStoreMetaData.getFieldMeta(i);
-				dataStoreFieldMetaData.setFieldType(dataSetMetaData.getFieldMeta(i).getFieldType());
-				dataStoreFieldMetaData.setType(dataSetMetaData.getFieldMeta(i).getType());
-
-			}
-
-			// Change Object Type of field records according to metadata's field
-			// type
-			for (int i = 0; i < Integer.parseInt(String.valueOf(datastore.getRecordsCount())); i++) {
-				IRecord rec = datastore.getRecordAt(i);
-				for (int j = 0; j < rec.getFields().size(); j++) {
-					IFieldMetaData fmd = dataStoreMetaData.getFieldMeta(j);
-					IField field = rec.getFieldAt(j);
-					// change content type
-					if (fmd.getType().toString().contains("Integer")) {
-						try {
-							Integer intValue;
-							Object rawField = field.getValue();
-							if (rawField instanceof BigDecimal) {
-								intValue = ((BigDecimal) rawField).intValueExact();
-							} else {
-								intValue = Integer.valueOf(rawField.toString());
-							}
-							field.setValue(intValue);
-						} catch (Exception e) {
-							LOGGER.error("Error trying to convert value [" + field.getValue()
-									+ "] into an Integer value. Considering it as null...");
-							field.setValue(null);
-						}
-					} else if (fmd.getType().toString().contains("Double")) {
-						try {
-							Double doubleValue;
-							Object rawField = field.getValue();
-							if (rawField instanceof BigDecimal) {
-								doubleValue = ((BigDecimal) rawField).doubleValue();
-							} else {
-								doubleValue = Double.valueOf(rawField.toString());
-							}
-							field.setValue(doubleValue);
-
-						} catch (Exception e) {
-							LOGGER.error("Error trying to convert value [" + field.getValue()
-									+ "] into a Double value. Considering it as null...");
-							field.setValue(null);
-						}
-					} else if (fmd.getType().toString().contains("String")) {
-						try {
-							String stringValue = field.getValue().toString();
-							field.setValue(stringValue);
-						} catch (Exception e) {
-							LOGGER.error("Error trying to convert value [" + field.getValue()
-									+ "] into a String value. Considering it as null...");
-							field.setValue(null);
-						}
-					}
-
-				}
-			}
+			alignFileDatasetMetadata(datastore, dataSet);
 		}
 		return datastore;
 	}
@@ -1501,63 +1434,21 @@ public class PersistedTableManager implements IPersistedManager {
 	}
 
 	public void ajustMetaDataFromFrontend(IDataStore datastore, IDataSet dataset) {
-		IMetaData storeMeta = datastore.getMetaData();
-		IMetaData dataSetMeta = dataset.getMetadata();
-
-		for (int i = 0; i < storeMeta.getFieldCount(); i++) {
-			try {
-				IFieldMetaData storeFieldMeta = storeMeta.getFieldMeta(i);
-				String storeFieldMetaName = storeFieldMeta.getName();
-				String storeFieldMetaTypeName = storeFieldMeta.getType().toString();
-				for (int j = 0; j < dataSetMeta.getFieldCount(); j++) {
-					try {
-						IFieldMetaData dataSetFieldMeta = dataSetMeta.getFieldMeta(j);
-						String dataSetFieldMetaName = dataSetFieldMeta.getName();
-						String dataSetFieldMetaTypeName = dataSetFieldMeta.getType().toString();
-
-						if (dataSetFieldMetaName.equals(storeFieldMetaName) && !dataSetFieldMetaTypeName.equals(storeFieldMetaTypeName)) {
-							storeFieldMeta.setType(dataSetFieldMeta.getType());
-							changeFieldValueType(datastore, dataSetFieldMeta, j, dataSetFieldMeta.getType());
-						}
-
-					} catch (Exception e) {
-						LOGGER.error("An unexpecetd error occured while ajusting metadata for record [" + j + "]", e);
-						throw new SpagoBIRuntimeException(
-								"An unexpecetd error occured while ajusting metadata for record [" + j + "]", e);
-					}
-				}
-			} catch (Exception e) {
-				LOGGER.error("An unexpecetd error occured while ajusting metadata for record [" + i + "]", e);
-				throw new SpagoBIRuntimeException("An unexpecetd error occured while ajusting metadata for record [" + i + "]",
-						e);
-			}
-		}
+		alignFileDatasetMetadata(datastore, dataset);
 	}
 
-	public void changeFieldValueType(IDataStore datastore, IFieldMetaData dataSetFieldMeta, int index, Class c) {
-
+	public void changeFieldValueType(IDataStore datastore, int index, Class targetType) {
 		for (int i = 0; i < datastore.getRecordsCount(); i++) {
 			IRecord record = datastore.getRecordAt(i);
 			IField field = record.getFieldAt(index);
-			Constructor<?> cons;
-			try {
-				cons = c.getConstructor(String.class);
-			} catch (NoSuchMethodException | SecurityException e) {
-				LOGGER.error("Error while creating construnctor for dynamically instancing class type", e);
-				throw new SpagoBIEngineRuntimeException(
-						"Error while creating construnctor for dynamically instancing class type. Table name:"
-								+ tableName,
-						e);
-			}
 			try {
 				Object value = field.getValue();
 				if (value == null || value instanceof String stringValue && (stringValue.isBlank() || stringValue.equals("null"))) {
 					continue;
 				} else {
-					field.setValue(cons.newInstance(String.valueOf(value)));
+					field.setValue(convertFieldValue(value, targetType));
 				}
-			} catch (InstantiationException | IllegalAccessException | IllegalArgumentException
-					| InvocationTargetException e) {
+			} catch (Exception e) {
 				LOGGER.error("Error while changing field value to different type that is comming from data set wizard",
 						e);
 				throw new SpagoBIEngineRuntimeException(
@@ -1566,5 +1457,232 @@ public class PersistedTableManager implements IPersistedManager {
 						e);
 			}
 		}
+	}
+
+	private void alignFileDatasetMetadata(IDataStore datastore, IDataSet dataset) {
+		IMetaData storeMeta = datastore.getMetaData();
+		IMetaData dataSetMeta = dataset.getMetadata();
+		if (storeMeta == null || dataSetMeta == null) {
+			return;
+		}
+
+		boolean metadataChanged = false;
+		Map<String, IFieldMetaData> dataSetFieldsByName = new HashMap<>();
+		for (int i = 0; i < dataSetMeta.getFieldCount(); i++) {
+			IFieldMetaData dataSetFieldMeta = dataSetMeta.getFieldMeta(i);
+			dataSetFieldsByName.put(dataSetFieldMeta.getName(), dataSetFieldMeta);
+		}
+
+		for (int i = 0; i < storeMeta.getFieldCount(); i++) {
+			try {
+				IFieldMetaData storeFieldMeta = storeMeta.getFieldMeta(i);
+				IFieldMetaData dataSetFieldMeta = dataSetFieldsByName.get(storeFieldMeta.getName());
+				if (dataSetFieldMeta == null) {
+					continue;
+				}
+
+				storeFieldMeta.setFieldType(dataSetFieldMeta.getFieldType());
+				Class resolvedType = resolveFieldType(storeFieldMeta.getType(), dataSetFieldMeta.getType());
+				if (resolvedType == null) {
+					continue;
+				}
+
+				if (!sameFieldType(storeFieldMeta.getType(), resolvedType) || !sameFieldType(dataSetFieldMeta.getType(), resolvedType)) {
+					changeFieldValueType(datastore, i, resolvedType);
+					metadataChanged = true;
+				}
+
+				storeFieldMeta.setType(resolvedType);
+				dataSetFieldMeta.setType(resolvedType);
+			} catch (Exception e) {
+				LOGGER.error("An unexpecetd error occured while ajusting metadata for record [" + i + "]", e);
+				throw new SpagoBIRuntimeException("An unexpecetd error occured while ajusting metadata for record [" + i + "]",
+						e);
+			}
+		}
+		if (metadataChanged) {
+			dataset.setDsMetadata(new DatasetMetadataParser().metadataToXML(dataSetMeta));
+		}
+	}
+
+	private Class resolveFieldType(Class storeType, Class dataSetType) {
+		Class normalizedStoreType = normalizeFieldType(storeType);
+		Class normalizedDataSetType = normalizeFieldType(dataSetType);
+
+		if (normalizedStoreType == null) {
+			return normalizedDataSetType;
+		}
+		if (normalizedDataSetType == null) {
+			return normalizedStoreType;
+		}
+		if (isNumericType(normalizedStoreType) && isNumericType(normalizedDataSetType)) {
+			return resolveNumericFieldType(normalizedStoreType, normalizedDataSetType);
+		}
+		if (isDateType(normalizedStoreType) && isDateType(normalizedDataSetType)) {
+			return resolveDateFieldType(normalizedStoreType, normalizedDataSetType);
+		}
+		return normalizedDataSetType;
+	}
+
+	private boolean sameFieldType(Class leftType, Class rightType) {
+		Class normalizedLeftType = normalizeFieldType(leftType);
+		Class normalizedRightType = normalizeFieldType(rightType);
+		return normalizedLeftType == normalizedRightType;
+	}
+
+	private Class normalizeFieldType(Class type) {
+		if (type == null) {
+			return null;
+		}
+		if (!type.isPrimitive()) {
+			return type;
+		}
+		if (type == Integer.TYPE) {
+			return Integer.class;
+		}
+		if (type == Long.TYPE) {
+			return Long.class;
+		}
+		if (type == Double.TYPE) {
+			return Double.class;
+		}
+		if (type == Float.TYPE) {
+			return Float.class;
+		}
+		if (type == Short.TYPE) {
+			return Short.class;
+		}
+		if (type == Byte.TYPE) {
+			return Byte.class;
+		}
+		if (type == Boolean.TYPE) {
+			return Boolean.class;
+		}
+		return type;
+	}
+
+	private boolean isNumericType(Class type) {
+		return type == Byte.class || type == Short.class || type == Integer.class || type == Long.class
+				|| type == BigInteger.class || type == Float.class || type == Double.class || type == BigDecimal.class;
+	}
+
+	private boolean isDateType(Class type) {
+		return type == java.util.Date.class || type == java.sql.Date.class || type == java.sql.Timestamp.class;
+	}
+
+	private Class resolveNumericFieldType(Class leftType, Class rightType) {
+		if (leftType == BigDecimal.class || rightType == BigDecimal.class) {
+			return BigDecimal.class;
+		}
+		if (leftType == Double.class || rightType == Double.class) {
+			return Double.class;
+		}
+		if (leftType == Float.class || rightType == Float.class) {
+			return Float.class;
+		}
+		if (leftType == BigInteger.class || rightType == BigInteger.class) {
+			return BigInteger.class;
+		}
+		if (leftType == Long.class || rightType == Long.class) {
+			return Long.class;
+		}
+		if (leftType == Integer.class || rightType == Integer.class) {
+			return Integer.class;
+		}
+		if (leftType == Short.class || rightType == Short.class) {
+			return Short.class;
+		}
+		return Byte.class;
+	}
+
+	private Class resolveDateFieldType(Class leftType, Class rightType) {
+		if (leftType == java.sql.Timestamp.class || rightType == java.sql.Timestamp.class) {
+			return java.sql.Timestamp.class;
+		}
+		if (leftType == java.util.Date.class || rightType == java.util.Date.class) {
+			return java.util.Date.class;
+		}
+		return java.sql.Date.class;
+	}
+
+	private Object convertFieldValue(Object value, Class targetType) {
+		Class normalizedTargetType = normalizeFieldType(targetType);
+		if (normalizedTargetType == null || value == null || normalizedTargetType.isInstance(value)) {
+			return value;
+		}
+		if (normalizedTargetType == String.class) {
+			return String.valueOf(value);
+		}
+		if (normalizedTargetType == Integer.class) {
+			return toBigDecimal(value).intValueExact();
+		}
+		if (normalizedTargetType == Long.class) {
+			return toBigDecimal(value).longValueExact();
+		}
+		if (normalizedTargetType == Short.class) {
+			return toBigDecimal(value).shortValueExact();
+		}
+		if (normalizedTargetType == Byte.class) {
+			return toBigDecimal(value).byteValueExact();
+		}
+		if (normalizedTargetType == BigInteger.class) {
+			return toBigDecimal(value).toBigIntegerExact();
+		}
+		if (normalizedTargetType == Double.class) {
+			return toBigDecimal(value).doubleValue();
+		}
+		if (normalizedTargetType == Float.class) {
+			return toBigDecimal(value).floatValue();
+		}
+		if (normalizedTargetType == BigDecimal.class) {
+			return toBigDecimal(value);
+		}
+		if (normalizedTargetType == Boolean.class) {
+			return value instanceof Boolean ? value : Boolean.valueOf(String.valueOf(value));
+		}
+		if (normalizedTargetType == java.sql.Timestamp.class) {
+			if (value instanceof java.sql.Timestamp) {
+				return value;
+			}
+			if (value instanceof java.util.Date dateValue) {
+				return new java.sql.Timestamp(dateValue.getTime());
+			}
+			return java.sql.Timestamp.valueOf(String.valueOf(value));
+		}
+		if (normalizedTargetType == java.sql.Time.class) {
+			if (value instanceof java.sql.Time) {
+				return value;
+			}
+			if (value instanceof java.util.Date dateValue) {
+				return new java.sql.Time(dateValue.getTime());
+			}
+			return java.sql.Time.valueOf(String.valueOf(value));
+		}
+		if (normalizedTargetType == java.sql.Date.class) {
+			if (value instanceof java.sql.Date) {
+				return value;
+			}
+			if (value instanceof java.util.Date dateValue) {
+				return new java.sql.Date(dateValue.getTime());
+			}
+			return java.sql.Date.valueOf(String.valueOf(value));
+		}
+		if (normalizedTargetType == java.util.Date.class) {
+			if (value instanceof java.util.Date dateValue) {
+				return new java.util.Date(dateValue.getTime());
+			}
+			return new java.util.Date(String.valueOf(value));
+		}
+		throw new IllegalArgumentException("Unsupported metadata type [" + normalizedTargetType.getName() + "]");
+	}
+
+	private BigDecimal toBigDecimal(Object value) {
+		if (value instanceof BigDecimal decimalValue) {
+			return decimalValue;
+		}
+		if (value instanceof BigInteger integerValue) {
+			return new BigDecimal(integerValue);
+		}
+		return new BigDecimal(String.valueOf(value));
 	}
 }
