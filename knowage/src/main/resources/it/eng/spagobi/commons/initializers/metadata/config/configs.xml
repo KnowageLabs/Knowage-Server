@@ -687,5 +687,9 @@
 			description="If true, drivers and selections sheet will be included in the exported workbook (cockpit xlsx export)" isActive="true"
 			valueCheck="false" valueType="STRING" category="GENERIC_CONFIGURATION" />
 
+	<CONFIG label="PM.DISABLE_HOSTNAME_VERIFICATION" name="PM.DISABLE_HOSTNAME_VERIFICATION"
+			description="disables hostname verification for privacy manager" isActive="true"
+			valueCheck="false" valueType="STRING" category="SECURITY" />
+
 </CONFIGS>
 
