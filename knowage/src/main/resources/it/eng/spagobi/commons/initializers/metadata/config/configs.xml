@@ -690,5 +690,8 @@
 			description="enables session timeout for the application" isActive="true"
 			valueCheck="true" valueType="STRING" category="SECURITY" />
 
+	<CONFIG label="PM.DISABLE_HOSTNAME_VERIFICATION" name="PM.DISABLE_HOSTNAME_VERIFICATION"
+			description="disables hostname verification for privacy manager" isActive="true"
+			valueCheck="false" valueType="STRING" category="SECURITY" />
 </CONFIGS>
 
