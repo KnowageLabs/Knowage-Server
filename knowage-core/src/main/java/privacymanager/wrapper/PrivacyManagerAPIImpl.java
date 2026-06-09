@@ -22,11 +22,9 @@ import static javax.ws.rs.core.Response.Status.OK;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
+import javax.net.ssl.HostnameVerifier;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
@@ -35,6 +33,8 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.Response.StatusType;
 
+import it.eng.spagobi.commons.bo.Config;
+import it.eng.spagobi.commons.dao.DAOFactory;
 import org.apache.http.HttpHeaders;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -52,6 +52,7 @@ class PrivacyManagerAPIImpl implements IPrivacyManagerAPI {
 	private static final String DEFAULT_VALUE_DESCRIPTION = "KNOWAGE";
 	private static final String DEFAULT_VALUE_VENDOR = "Engineering";
 	private static final String DEFAULT_VALUE_URL = "www.knowage-suite.com";
+	private static final String PM_DISABLE_HOSTNAME_VERIFICATION_CONFIGURATION = "PM.DISABLE_HOSTNAME_VERIFICATION";
 
 	private final URL pmUrl;
 	private final String pmAppId;
@@ -71,7 +72,26 @@ class PrivacyManagerAPIImpl implements IPrivacyManagerAPI {
 	PrivacyManagerAPIImpl(URL pmUrl, String pmAppId) {
 		this.pmUrl = pmUrl;
 		this.pmAppId = pmAppId;
-		this.restClient = ClientBuilder.newClient();
+
+		boolean hostnameVerificationIsDisabled = false;
+		try {
+			Optional<Config> optionalConfig = DAOFactory.getSbiConfigDAO().loadConfigParametersByLabelIfExist(PM_DISABLE_HOSTNAME_VERIFICATION_CONFIGURATION);
+			if (optionalConfig.isPresent()) {
+				hostnameVerificationIsDisabled = Boolean.parseBoolean(optionalConfig.get().getValueCheck());
+			}
+		} catch (Exception e) {
+			LOGGER.error("Problem during hostnameVerification config retrieval");
+        }
+
+		if (hostnameVerificationIsDisabled) {
+			HostnameVerifier trustAllHostnames = (hostname, session) -> true;
+
+			this.restClient = ClientBuilder.newBuilder()
+					.hostnameVerifier(trustAllHostnames)
+					.build();
+		} else {
+			this.restClient = ClientBuilder.newClient();
+		}
 	}
 
 	@Override
