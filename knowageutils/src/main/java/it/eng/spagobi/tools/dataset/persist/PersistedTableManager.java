@@ -1282,7 +1282,7 @@ public class PersistedTableManager implements IPersistedManager {
 				storeFieldMeta.setType(resolvedType);
 				dataSetFieldMeta.setType(resolvedType);
 			} catch (Exception e) {
-				LOGGER.error("An unexpecetd error occured while ajusting metadata for record [" + i + "]", e);
+				logger.error("An unexpecetd error occured while ajusting metadata for record [" + i + "]", e);
 				throw new SpagoBIRuntimeException("An unexpecetd error occured while ajusting metadata for record [" + i + "]",
 						e);
 			}
@@ -1431,7 +1431,8 @@ public class PersistedTableManager implements IPersistedManager {
 			if (value instanceof java.sql.Timestamp) {
 				return value;
 			}
-			if (value instanceof java.util.Date dateValue) {
+			if (value instanceof java.util.Date) {
+				java.util.Date dateValue = (java.util.Date) value;
 				return new java.sql.Timestamp(dateValue.getTime());
 			}
 			return java.sql.Timestamp.valueOf(String.valueOf(value));
@@ -1440,7 +1441,8 @@ public class PersistedTableManager implements IPersistedManager {
 			if (value instanceof java.sql.Time) {
 				return value;
 			}
-			if (value instanceof java.util.Date dateValue) {
+			if (value instanceof java.util.Date) {
+				java.util.Date dateValue = (java.util.Date) value;
 				return new java.sql.Time(dateValue.getTime());
 			}
 			return java.sql.Time.valueOf(String.valueOf(value));
@@ -1449,13 +1451,15 @@ public class PersistedTableManager implements IPersistedManager {
 			if (value instanceof java.sql.Date) {
 				return value;
 			}
-			if (value instanceof java.util.Date dateValue) {
+			if (value instanceof java.util.Date) {
+				java.util.Date dateValue = (java.util.Date) value;
 				return new java.sql.Date(dateValue.getTime());
 			}
 			return java.sql.Date.valueOf(String.valueOf(value));
 		}
 		if (normalizedTargetType == java.util.Date.class) {
-			if (value instanceof java.util.Date dateValue) {
+			if (value instanceof java.util.Date) {
+				java.util.Date dateValue = (java.util.Date) value;
 				return new java.util.Date(dateValue.getTime());
 			}
 			return new java.util.Date(String.valueOf(value));
@@ -1464,11 +1468,11 @@ public class PersistedTableManager implements IPersistedManager {
 	}
 
 	private BigDecimal toBigDecimal(Object value) {
-		if (value instanceof BigDecimal decimalValue) {
-			return decimalValue;
+		if (value instanceof BigDecimal) {
+			return (BigDecimal) value;
 		}
-		if (value instanceof BigInteger integerValue) {
-			return new BigDecimal(integerValue);
+		if (value instanceof BigInteger) {
+			return new BigDecimal((BigInteger) value);
 		}
 		return new BigDecimal(String.valueOf(value));
 	}
