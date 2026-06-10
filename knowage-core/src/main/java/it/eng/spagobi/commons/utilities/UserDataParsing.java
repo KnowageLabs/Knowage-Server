@@ -51,13 +51,27 @@ public class UserDataParsing {
 
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8))) {
             CSVReader csvReader = new CSVReaderBuilder(reader)
-                    .withCSVParser(new CSVParserBuilder().withSeparator(';').build())
+                    .withCSVParser(new CSVParserBuilder().withSeparator(';').withIgnoreQuotations(true).build())
                     .build();
 
             String[] nextLine;
             while ((nextLine = csvReader.readNext()) != null) {
+            	
+            	if (nextLine.length > 0 && nextLine[0] != null) {         
+            		String firstCell = nextLine[0].trim();         
+            		
+            		if (!firstCell.isEmpty()) {             
+            			char firstChar = firstCell.charAt(0);             
+            			if (!Character.isLetterOrDigit(firstChar)) {                 
+            			             
+            				nextLine[0] = firstCell.substring(1).trim();            
+            			}              	
+            		}
+            	}
+            		           	
+            	
                 if (nextLine.length >= 2) {
-                    UserBO user = new UserBO();
+                	UserBO user = new UserBO();
                     user.setUserId(nextLine[0].trim());
                     user.setPassword(nextLine[1].trim());
                     user.setFullName(nextLine[2].trim());
@@ -73,7 +87,7 @@ public class UserDataParsing {
                             attributeMap.replace(label, value);
 
                         } else {
-                            Integer roleId = rolesCache.get(nextLine[i].trim());
+                            Integer roleId = rolesCache.get(nextLine[i].trim().toUpperCase());
                             if (roleId != null) {
                                 roles.add(roleId);
                             } else {
@@ -81,7 +95,6 @@ public class UserDataParsing {
                         }
                     }
                     HashMap<Integer,HashMap<String,String>> attributesMap = new HashMap<>();
-                     int counter = 1;
 
                     for (SbiAttribute a : allAttributeFromDB) {
                         HashMap<String,String> attributeMapApp = new HashMap<>();

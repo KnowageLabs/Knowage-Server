@@ -497,6 +497,26 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO
 				closeSessionIfOpen(aSession);
 		}
 	}
+	
+	@Override
+	public SbiUser loadSbiUserByUserIdAllTenants(String userId) {     
+		Session aSession = null;     
+		try {         
+			aSession = getSession();         
+			this.disableTenantFilter(aSession);      
+			String q = "from SbiUser where userId = :userId";         
+			Query query = aSession.createQuery(q);         
+			query.setString("userId", userId);         
+			query.setMaxResults(1);              
+			
+			return (SbiUser) query.uniqueResult();     
+			
+			} catch (HibernateException he) {         
+				throw new SpagoBIDAOException("Error while loading user by id across all tenants", he);     
+				} finally {        
+					closeSessionIfOpen(aSession);     }
+		}
+
 
 	@Override
 	public Integer fullSaveOrUpdateSbiUser(SbiUser user) {

@@ -199,147 +199,159 @@ public class UserResource extends AbstractSpagoBIResource {
    })
 
     public Response insertUserAll(@Parameter(description = "Lista di oggetti UserBO da processare", required = true) List <UserBO> requestDTO) {
-
+    	 
         MessageBuilder msgBuilder = new MessageBuilder();
         Locale locale = msgBuilder.getLocale(request);
-
+ 
         ISbiUserDAO usersDao = DAOFactory.getSbiUserDAO();
         usersDao.setUserProfile(getUserProfile());
         List<UserBOResult> results = new ArrayList<>();
-
+ 
         for (UserBO user : requestDTO) {
-
+ 
             UserBOResult result = new UserBOResult();
             try {
-
+ 
                 if (user.getUserId() == null || user.getUserId().isBlank()) {
                     LOGGER.error("The userid is required.");
                     throw new Exception("The userid is required.");
                 }
-
+ 
             } catch (Exception e) {
-
+ 
                 result.setSuccess(false);
                 result.setMessage(e.getMessage());
                 results.add (result);
-
+ 
                 continue;
             }
-
+         
             String userId = user.getUserId();
             boolean isAdmin = UserUtilities.userRequestDtoIsAdmin(user);
-            SbiUser existingUser = usersDao.loadSbiUserByUserId(userId);
-
-            try {
-
-                if (!userCanBeAdded(usersDao, isAdmin)) {
-                    LOGGER.error("The limit for creating {} users has been reached.", isAdmin ? "admin " : "end ");
-                    throw new Exception("The limit for creating " + (isAdmin ? "admin " : "end ") + "users has been reached.");
-
-                }
-
-            } catch (Exception e) {
+            SbiUser existingUser = usersDao.loadSbiUserByUserIdAllTenants(userId);
+            
+            if (existingUser != null) {
+            	
+                LOGGER.error("User already exists in the system");
+ 
                 result.setSuccess(false);
                 result.setUserId(user.getUserId());
-                result.setMessage(e.getMessage());
+                result.setMessage(msgBuilder.getMessage("User already exists in the system", "messages", locale));
                 results.add (result);
-
+ 
                 continue;
-            }
-
-            SbiUser sbiUser = new SbiUser();
-            sbiUser.setUserId(user.getUserId());
-            sbiUser.setFullName(user.getFullName());
-            sbiUser.setPassword(user.getPassword());
-            sbiUser.setDefaultRoleId(user.getDefaultRoleId());
-
-            List<Integer> list = user.getSbiExtUserRoleses();
-            Set<SbiExtRoles> roles = new HashSet<>(0);
-            for (Integer id : list) {
-                SbiExtRoles role = new SbiExtRoles(id);
-
-                roles.add(role);
-            }
-            sbiUser.setSbiExtUserRoleses(roles);
-
-            HashMap<Integer, HashMap<String, String>> map = user.getSbiUserAttributeses();
-            Set<SbiUserAttributes> attributes = new HashSet<>(0);
-
-            for (Entry<Integer, HashMap<String, String>> entry : map.entrySet()) {
-                SbiUserAttributes attribute = new SbiUserAttributes();
-                SbiUserAttributesId attid = new SbiUserAttributesId(entry.getKey());
-                attribute.setId(attid);
-                for (Entry<String, String> value : entry.getValue().entrySet()) {
-
-                    attribute.setAttributeValue(value.getValue());
-
-                }
-                attributes.add(attribute);
-            }
-            sbiUser.setSbiUserAttributeses(attributes);
-
-            String password;
-            if (sbiUser.getPassword() == null || sbiUser.getPassword().isBlank()) {
-                IConfigDAO configDAO = DAOFactory.getSbiConfigDAO();
-
-                try {
-                    //Config config = configDAO.loadConfigParametersById(199);
-                    Config config = configDAO.loadConfigParametersByLabel(SpagoBIConstants.KNOWAGE_USERDEFAULT_PASSWORD);
-                    password = config.getValueCheck();
-                } catch (Exception e) {
-                    LOGGER.debug("Impossible to retrive from the configuration the property ["
-                            + SpagoBIConstants.JNDI_THREAD_MANAGER + "]");
-                    throw new SpagoBIRuntimeException("Impossible to retrive from the configuration the property ["
-                            + SpagoBIConstants.JNDI_THREAD_MANAGER + "]");
-                }
-
+            	
             } else {
-                password = sbiUser.getPassword();
-
-                try {
-                    PasswordChecker.getInstance().checkPwd(password);
-                } catch (Exception e) {
-                    LOGGER.error("Password is not valid", e);
-
-                    result.setSuccess(false);
-                    result.setUserId(user.getUserId());
-                    result.setMessage(msgBuilder.getMessage("signup.check.pwdInvalid", "messages", locale));
-                    results.add (result);
-
-                    continue;
-                }
+            
+            	try {
+            			if (!userCanBeAdded(usersDao, isAdmin)) {
+            				LOGGER.error("The limit for creating {} users has been reached.", isAdmin ? "admin " : "end ");
+            				throw new Exception("The limit for creating " + (isAdmin ? "admin " : "end ") + "users has been reached.");
+            			}
+ 
+            	} catch (Exception e) {
+            			result.setSuccess(false);
+            			result.setUserId(user.getUserId());
+            			result.setMessage(e.getMessage());
+            			results.add (result);
+ 
+            			continue;
+            	}
+ 
+            	SbiUser sbiUser = new SbiUser();
+            	sbiUser.setUserId(user.getUserId());
+            	sbiUser.setFullName(user.getFullName());
+            	sbiUser.setPassword(user.getPassword());
+            	sbiUser.setDefaultRoleId(user.getDefaultRoleId());
+ 
+            	List<Integer> list = user.getSbiExtUserRoleses();
+            	Set<SbiExtRoles> roles = new HashSet<>(0);
+            	for (Integer id : list) {
+            		SbiExtRoles role = new SbiExtRoles(id);
+ 
+            		roles.add(role);
+            	}
+            	sbiUser.setSbiExtUserRoleses(roles);
+ 
+            	HashMap<Integer, HashMap<String, String>> map = user.getSbiUserAttributeses();
+            	Set<SbiUserAttributes> attributes = new HashSet<>(0);
+ 
+            	for (Entry<Integer, HashMap<String, String>> entry : map.entrySet()) {
+            		SbiUserAttributes attribute = new SbiUserAttributes();
+            		SbiUserAttributesId attid = new SbiUserAttributesId(entry.getKey());
+            		attribute.setId(attid);
+            		for (Entry<String, String> value : entry.getValue().entrySet()) {
+ 
+            			attribute.setAttributeValue(value.getValue());
+ 
+            		}
+            		attributes.add(attribute);
+            	}
+            	sbiUser.setSbiUserAttributeses(attributes);
+ 
+            	String password;
+            	if (sbiUser.getPassword() == null || sbiUser.getPassword().isBlank()) {
+            		IConfigDAO configDAO = DAOFactory.getSbiConfigDAO();
+ 
+            		try {
+            			//Config config = configDAO.loadConfigParametersById(199);
+            			Config config = configDAO.loadConfigParametersByLabel(SpagoBIConstants.KNOWAGE_USERDEFAULT_PASSWORD);
+            			password = config.getValueCheck();
+            		} catch (Exception e) {
+            			LOGGER.debug("Impossible to retrive from the configuration the property ["
+            					+ SpagoBIConstants.JNDI_THREAD_MANAGER + "]");
+            			throw new SpagoBIRuntimeException("Impossible to retrive from the configuration the property ["
+            					+ SpagoBIConstants.JNDI_THREAD_MANAGER + "]");
+            		}
+ 
+            	} else {
+            		password = sbiUser.getPassword();
+ 
+            		try {
+            			PasswordChecker.getInstance().checkPwd(password);
+            		} catch (Exception e) {
+            			LOGGER.error("Password is not valid", e);
+ 
+            			result.setSuccess(false);
+            			result.setUserId(user.getUserId());
+            			result.setMessage(msgBuilder.getMessage("signup.check.pwdInvalid", "messages", locale));
+            			results.add (result);
+ 
+            			continue;
+            		}
+            	}
+ 
+            	try {
+            		sbiUser.setPassword(Password.hashPassword(password));
+            	} catch (Exception e) {
+            		LOGGER.error("Impossible to encrypt Password", e);
+            		throw new SpagoBIServiceException("SPAGOBI_SERVICE", "Impossible to encrypt Password", e);
+            	}
+ 
+            	try {
+            		Integer id = usersDao.fullSaveOrUpdateSbiUser(sbiUser);
+            		Encoder encoder = OwaspDefaultEncoderFactory.getInstance().getEncoder();
+            		String encodedUser = encoder.encodeForURL("" + id);
+ 
+            		result.setSuccess(true);
+            		result.setUserId(user.getUserId());
+            		result.setCreatedUserId(id);
+            		result.setMessage("User processed successfully");
+            		results.add (result);
+ 
+            	} catch (Exception e) {
+            		LOGGER.error("Error while inserting resource", e);
+ 
+            		result.setSuccess(false);
+            		result.setUserId(user.getUserId());
+            		result.setMessage(e.getMessage());
+            		results.add (result);
+ 
+            	}
             }
-
-            try {
-                sbiUser.setPassword(Password.hashPassword(password));
-            } catch (Exception e) {
-                LOGGER.error("Impossible to encrypt Password", e);
-                throw new SpagoBIServiceException("SPAGOBI_SERVICE", "Impossible to encrypt Password", e);
-            }
-
-            try {
-                Integer id = usersDao.fullSaveOrUpdateSbiUser(sbiUser);
-                Encoder encoder = OwaspDefaultEncoderFactory.getInstance().getEncoder();
-                String encodedUser = encoder.encodeForURL("" + id);
-
-                result.setSuccess(true);
-                result.setUserId(user.getUserId());
-                result.setCreatedUserId(id);
-                result.setMessage("User processed successfully");
-                results.add (result);
-
-            } catch (Exception e) {
-                LOGGER.error("Error while inserting resource", e);
-
-                result.setSuccess(false);
-                result.setUserId(user.getUserId());
-                result.setMessage(e.getMessage());
-                results.add (result);
-
-            }
-
+ 
         }
-
+ 
         return Response.ok(results).build();
     }
 

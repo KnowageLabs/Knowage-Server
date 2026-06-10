@@ -93,4 +93,6 @@ public interface ISbiUserDAO extends ISpagoBIDao, EmittingEventDAO<UserEventsEme
 	ArrayList<SbiExtRoles> loadSbiUserRolesByIdAllTenants(int id);
 
 	ArrayList<SbiUser> loadSbiUserFromEmail(String email);
+
+	SbiUser loadSbiUserByUserIdAllTenants(String userId);
 }
