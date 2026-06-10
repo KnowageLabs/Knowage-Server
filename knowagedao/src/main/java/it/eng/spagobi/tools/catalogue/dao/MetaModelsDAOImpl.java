@@ -575,6 +575,9 @@ public class MetaModelsDAOImpl extends AbstractHibernateDAO implements IMetaMode
 			hibModel.setModelLocker(model.getModelLocker());
 			hibModel.setModelLocked(model.getModelLocked());
 			hibModel.setSmartView(model.getSmartView());
+			if (model.getIsForAi() != null) {
+				hibModel.setIsForAi(model.getIsForAi());
+			}
 			if (model.getDataSourceLabel() != null && !model.getDataSourceLabel().equals("")) {
 				Criterion aCriterion = Restrictions.eq("label", model.getDataSourceLabel());
 				Criteria criteria = session.createCriteria(SbiDataSource.class);
@@ -636,6 +639,7 @@ public class MetaModelsDAOImpl extends AbstractHibernateDAO implements IMetaMode
 			hibModel.setModelLocker(model.getModelLocker());
 			hibModel.setModelLocked(model.getModelLocked());
 			hibModel.setSmartView(model.getSmartView());
+			hibModel.setIsForAi(model.getIsForAi() != null ? model.getIsForAi() : Boolean.TRUE);
 			if (model.getDataSourceLabel() != null && !model.getDataSourceLabel().equals("")) {
 				// Criterion aCriterion = Expression.eq("label", model.getDataSourceLabel());
 				// Criteria criteria = session.createCriteria(SbiDataSource.class);
@@ -770,6 +774,7 @@ public class MetaModelsDAOImpl extends AbstractHibernateDAO implements IMetaMode
 			toReturn.setModelLocked(hibModel.getModelLocked());
 			toReturn.setModelLocker(hibModel.getModelLocker());
 			toReturn.setSmartView(hibModel.getSmartView());
+			toReturn.setIsForAi(hibModel.getIsForAi());
 		}
 		logger.debug("OUT");
 		return toReturn;

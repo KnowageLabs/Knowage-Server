@@ -33,4 +33,7 @@ CREATE TABLE SBI_HOMEPAGE_ROLE (
 
 insert into hibernate_sequences(next_val,sequence_name) values (ifnull((select max(ID)+1 from SBI_HOMEPAGE),1),'SBI_HOMEPAGE');
 
+ALTER TABLE SBI_META_MODELS
+ADD COLUMN IS_FOR_AI BOOLEAN DEFAULT TRUE;
+
 COMMIT;

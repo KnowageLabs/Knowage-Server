@@ -28,6 +28,9 @@
         <property name="smartView" type="boolean">
             <column name="SMART_VIEW" />
         </property>
+        <property name="isForAi" type="boolean">
+            <column name="IS_FOR_AI" />
+        </property>
         <property name="tablePrefixLike" type="string">
 			<column name="TABLE_PREFIX_LIKE" />
 		</property>

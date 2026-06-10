@@ -56,6 +56,8 @@ public class MetaModel implements IDrivableBIResource<BIMetaModelParameter> {
 
 	private Boolean smartView;
 
+	private Boolean isForAi;
+
 	private List<BIMetaModelParameter> biMetaModelParameters = null;
 
 	@ExtendedAlphanumeric
@@ -183,6 +185,14 @@ public class MetaModel implements IDrivableBIResource<BIMetaModelParameter> {
 	 */
 	public void setSmartView(Boolean smartView) {
 		this.smartView = smartView;
+	}
+
+	public Boolean getIsForAi() {
+		return isForAi;
+	}
+
+	public void setIsForAi(Boolean isForAi) {
+		this.isForAi = isForAi;
 	}
 
 	@Override

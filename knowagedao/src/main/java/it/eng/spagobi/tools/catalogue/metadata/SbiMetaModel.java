@@ -43,6 +43,8 @@ public class SbiMetaModel extends SbiHibernateModel {
 
 	private Boolean smartView;
 
+	private Boolean isForAi;
+
 	private Set<SbiMetaModelParameter> biMetaModelParameters = null;
 
 	private String tablePrefixLike;
@@ -154,6 +156,14 @@ public class SbiMetaModel extends SbiHibernateModel {
 	 */
 	public void setSmartView(Boolean smartView) {
 		this.smartView = smartView;
+	}
+
+	public Boolean getIsForAi() {
+		return isForAi;
+	}
+
+	public void setIsForAi(Boolean isForAi) {
+		this.isForAi = isForAi;
 	}
 
 	public Set<SbiMetaModelParameter> getSbiMetaModelParameters() {
