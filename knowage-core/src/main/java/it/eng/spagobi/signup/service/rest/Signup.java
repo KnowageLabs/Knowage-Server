@@ -200,6 +200,8 @@ public class Signup {
 					throw new SpagoBIServiceException(message, e);
 				}
 			}
+			
+			user.setPassword(newPasswordHashed);
 
 			int userId = user.getId();
 
