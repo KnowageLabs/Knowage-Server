@@ -67,9 +67,16 @@ public class PdfExporter extends AbstractFormatExporter {
 	private static final float HEADER_LEADING = 12f;
 	private static final float HEADER_SIDE_MARGIN = 20f;
 	private static final float HEADER_BOTTOM_GAP = 10f;
+	private static final float DEFAULT_TABLE_START_Y = 550f;
+	private static final float FOOTER_TOP_GAP = 12f;
+
 
 	private float totalColumnsWidth = 0;
 	private float[] columnPercentWidths;
+	private static PDPage currentTableFirstPage;
+	private static float currentTableFirstPageStartY;
+	private static float currentTableNextPageStartY;
+
 	private CssColorParser cssColorParser = CssColorParser.getInstance();
 
 	public PdfExporter(String userUniqueIdentifier, JSONObject body) {
@@ -397,25 +404,7 @@ public class PdfExporter extends AbstractFormatExporter {
 			float pageHeight = page.getMediaBox().getHeight();
 			float availableTextWidth = pageWidth - (2 * margin);
 
-			// Calculate where the table actually ends
-			// Table starts at y=550 (from createBaseTable)
-			float tableStartY = 550f;
-			float tableHeight = 0f;
-
-			// Sum up all row heights to get total table height
-			try {
-				List<Row<PDPage>> rows = table.getRows();
-				for (Row<PDPage> row : rows) {
-					tableHeight += row.getHeight();
-				}
-			} catch (Exception e) {
-				// If we can't get rows, use an estimate
-				LOGGER.warn("Could not calculate exact table bottom");
-				tableHeight = 0;
-			}
-
-			// Table ends at: startY - totalHeight
-			float tableEndY = tableStartY - tableHeight;
+			float tableEndY = getFooterStartYFromTable(table);
 
 			// Precompute wrapped lines so we can paginate correctly
 			final class SelectionLine {
@@ -1098,12 +1087,38 @@ public class PdfExporter extends AbstractFormatExporter {
 //			float tableWidth = totalColumnsWidth;
 			// y position is your coordinate of top left corner of the table
 			Assert.assertTrue(tableWidth > 0, "Page dimension is too small!");
-			float computedYPosition = Math.min(550, getHeaderStartY(page) - reservedTopHeight);
-			float yPosition = Math.max(bottomMargin + HEADER_BOTTOM_GAP, computedYPosition);
+			float yPosition = computeTableStartY(page, reservedTopHeight, bottomMargin);
+			rememberTableStartPositions(page, yPosition, yStartNewPage);
 			return new BaseTable(yPosition, yStartNewPage, bottomMargin, tableWidth, margin, doc, page, true, true);
 		} catch (Exception e) {
 			throw new SpagoBIRuntimeException("Cannot create PDF Base Table object:", e);
 		}
+	}
+
+	private float computeTableStartY(PDPage page, float reservedTopHeight, float bottomMargin) {
+		float computedYPosition = Math.min(DEFAULT_TABLE_START_Y, getHeaderStartY(page) - reservedTopHeight);
+		return Math.max(bottomMargin + HEADER_BOTTOM_GAP, computedYPosition);
+	}
+
+	private void rememberTableStartPositions(PDPage firstPage, float firstPageStartY, float nextPageStartY) {
+		currentTableFirstPage = firstPage;
+		currentTableFirstPageStartY = firstPageStartY;
+		currentTableNextPageStartY = nextPageStartY;
+	}
+
+	private static float getFooterStartYFromTable(BaseTable table) {
+		float tableHeight = 0f;
+		try {
+			List<Row<PDPage>> rows = table.getRows();
+			for (Row<PDPage> row : rows) {
+				tableHeight += row.getHeight();
+			}
+		} catch (Exception e) {
+			LOGGER.warn("Could not calculate exact table bottom");
+		}
+		float tableStartY = table.getCurrentPage() == currentTableFirstPage ? currentTableFirstPageStartY
+				: currentTableNextPageStartY;
+		return tableStartY - tableHeight - FOOTER_TOP_GAP;
 	}
 
 	@Override
