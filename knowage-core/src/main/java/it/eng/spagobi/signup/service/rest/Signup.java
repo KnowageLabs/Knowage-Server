@@ -177,7 +177,7 @@ public class Signup {
 		String name = signupDTO.getName() != null ? signupDTO.getName() : "";
 		String surname = signupDTO.getSurname() != null ? signupDTO.getSurname() : "";
 		String password = signupDTO.getPassword();
-		String email = signupDTO.getEmail();
+		//String email = signupDTO.getEmail();
 
 		try {
 			UserProfile profile = getUserProfile();
@@ -250,9 +250,9 @@ public class Signup {
 
 			userDao.updateSbiUser(user, userId);
 
-			SbiAttribute currEmail = attrDao.loadSbiAttributeByName("email");
+			/*SbiAttribute currEmail = attrDao.loadSbiAttributeByName("email");
 			/* email user attribute is mandatory */
-			if (email != null && currEmail == null) {
+			/*if (email != null && currEmail == null) {
 				SbiAttribute emailSbiAttribute = new SbiAttribute();
 				emailSbiAttribute.setAttributeName("email");
 				emailSbiAttribute.setDescription("AUTO GENERATED email profile attribute");
@@ -274,7 +274,7 @@ public class Signup {
 				profile.setAttributeValue("name", name);
 				profile.setAttributeValue("surname", surname);
 			}
-			profile.setAttributeValue("email", email);
+			profile.setAttributeValue("email", email);*/
 
 		} catch (Throwable t) {
 			LOGGER.error("An unexpected error occurred while executing the subscribe action", t);
