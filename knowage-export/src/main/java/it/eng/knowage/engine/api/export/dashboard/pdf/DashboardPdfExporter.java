@@ -53,12 +53,17 @@ public class DashboardPdfExporter extends DashboardExporter {
     private static final float HEADER_LEADING = 12f;
     private static final float HEADER_SIDE_MARGIN = 20f;
     private static final float HEADER_BOTTOM_GAP = 10f;
+    private static final float DEFAULT_TABLE_START_Y = 550f;
+    private static final float FOOTER_TOP_GAP = 12f;
 
     private float totalColumnsWidth = 0;
     private float[] columnPercentWidths;
     private final Locale locale;
     private PDPage footerCurrentPage;
     private float footerCurrentY;
+    private PDPage currentTableFirstPage;
+    private float currentTableFirstPageStartY;
+    private float currentTableNextPageStartY;
     public DashboardPdfExporter(String userUniqueIdentifier, Locale locale) {
         super(userUniqueIdentifier, null);
         this.locale = locale;
@@ -373,7 +378,7 @@ public class DashboardPdfExporter extends DashboardExporter {
             float pageTopStart = page.getMediaBox().getHeight() - margin - leading;
             float bottomLimit = margin + leading;
             if (currentY <= 0) {
-                currentY = getFooterStartYFromTable(table, leading);
+                currentY = getFooterStartYFromTable(table);
             }
 
             // Add space between selections and filters
@@ -598,8 +603,7 @@ public class DashboardPdfExporter extends DashboardExporter {
         return page.getMediaBox().getHeight() - HEADER_SIDE_MARGIN + 4f;
     }
 
-    private float getFooterStartYFromTable(BaseTable table, float leading) {
-        float tableStartY = 550f;
+    private float getFooterStartYFromTable(BaseTable table) {
         float tableHeight = 0f;
         try {
             List<Row<PDPage>> rows = table.getRows();
@@ -609,13 +613,13 @@ public class DashboardPdfExporter extends DashboardExporter {
         } catch (Exception e) {
             logger.warn("Could not calculate exact table bottom", e);
         }
-        return tableStartY - tableHeight - leading;
+        return getCurrentPageTableStartY(table) - tableHeight - FOOTER_TOP_GAP;
     }
 
     private void createSelectionsRows(BaseTable table, PDFont font, Map<String, Map<String, Object>> selections) {
         try {
             footerCurrentPage = table.getCurrentPage();
-            footerCurrentY = getFooterStartYFromTable(table, 12f);
+            footerCurrentY = getFooterStartYFromTable(table);
             if (selections == null || selections.isEmpty()) {
                 return;
             }
@@ -681,22 +685,7 @@ public class DashboardPdfExporter extends DashboardExporter {
                 totalLines += Math.max(1, sl.wrappedValueLines.size());
             }
 
-            // Calculate where the table actually ends
-            // Table starts at y=550 (from createBaseTable)
-            float tableStartY = 550f;
-            float tableHeight = 0f;
-
-            try {
-                List<Row<PDPage>> rows = table.getRows();
-                for (Row<PDPage> row : rows) {
-                    tableHeight += row.getHeight();
-                }
-            } catch (Exception e) {
-                logger.warn("Could not calculate exact table bottom");
-                tableHeight = 0;
-            }
-
-            float tableEndY = tableStartY - tableHeight;
+            float tableEndY = getFooterStartYFromTable(table);
 
             float requiredHeight = (totalLines + 1) * leading;
             float availableSpace = tableEndY - baseBottomMargin;
@@ -1268,12 +1257,27 @@ public class DashboardPdfExporter extends DashboardExporter {
             float tableWidth = page.getMediaBox().getWidth() - (2 * margin);
             // y position is your coordinate of top left corner of the table
             Assert.assertTrue(tableWidth > 0, "Page dimension is too small!");
-            float computedYPosition = Math.min(550, getHeaderStartY(page) - reservedTopHeight);
-            float yPosition = Math.max(bottomMargin + HEADER_BOTTOM_GAP, computedYPosition);
+            float yPosition = computeTableStartY(page, reservedTopHeight, bottomMargin);
+            rememberTableStartPositions(page, yPosition, yStartNewPage);
             return new BaseTable(yPosition, yStartNewPage, bottomMargin, tableWidth, margin, doc, page, true, true);
         } catch (Exception e) {
             throw new SpagoBIRuntimeException("Cannot create PDF Base Table object:", e);
         }
+    }
+
+    private float computeTableStartY(PDPage page, float reservedTopHeight, float bottomMargin) {
+        float computedYPosition = Math.min(DEFAULT_TABLE_START_Y, getHeaderStartY(page) - reservedTopHeight);
+        return Math.max(bottomMargin + HEADER_BOTTOM_GAP, computedYPosition);
+    }
+
+    private void rememberTableStartPositions(PDPage firstPage, float firstPageStartY, float nextPageStartY) {
+        currentTableFirstPage = firstPage;
+        currentTableFirstPageStartY = firstPageStartY;
+        currentTableNextPageStartY = nextPageStartY;
+    }
+
+    private float getCurrentPageTableStartY(BaseTable table) {
+        return table.getCurrentPage() == currentTableFirstPage ? currentTableFirstPageStartY : currentTableNextPageStartY;
     }
 
     private PDPage createPage(JSONObject widget) {
