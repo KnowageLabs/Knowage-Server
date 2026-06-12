@@ -156,7 +156,7 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 		return properties;
 	}
 
-	private static final class OracleClobHashContext {
+	protected static final class OracleClobHashContext {
 		private final IDataSet dataSet;
 		private final List<String> originalFieldNames = new ArrayList<>();
 		private final Set<String> hashableFieldNames = new HashSet<>();
@@ -208,7 +208,7 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 			return OracleClobHashSupport.getHashColumnName(sourceField);
 		}
 
-		private String resolveFilterColumnName(String columnName) {
+		public String resolveFilterColumnName(String columnName) {
 			if (!isEnabled()) {
 				return columnName;
 			}
@@ -217,7 +217,7 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 			return sourceField != null ? OracleClobHashSupport.getHashColumnName(sourceField) : columnName;
 		}
 
-		private Object resolveFilterValue(String columnName, Object value) {
+		public Object resolveFilterValue(String columnName, Object value) {
 			if (!isEnabled() || value == null) {
 				return value;
 			}

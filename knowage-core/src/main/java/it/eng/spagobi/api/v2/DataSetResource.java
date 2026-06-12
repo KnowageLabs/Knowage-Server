@@ -547,17 +547,23 @@ public class DataSetResource extends AbstractDataSetResource {
 	@Override
 	public List<Filter> getFilters(String datasetLabel, JSONObject selectionsObject,
 			Map<String, String> columnAliasToColumnName) throws JSONException {
+		IDataSet dataSet = getDataSetDAO().loadDataSetByLabel(datasetLabel);
+		return getFilters(dataSet, datasetLabel, selectionsObject, columnAliasToColumnName, null);
+	}
+
+	@Override
+	protected List<Filter> getFilters(IDataSet dataSet, String datasetLabel, JSONObject selectionsObject,
+			Map<String, String> columnAliasToColumnName, OracleClobHashContext oracleClobHashContext)
+			throws JSONException {
 		List<Filter> filters = new ArrayList<>(0);
 
 		if (selectionsObject.has(datasetLabel)) {
 			JSONObject datasetSelectionObject = selectionsObject.getJSONObject(datasetLabel);
 			Iterator<String> it = datasetSelectionObject.keys();
-
-			IDataSet dataSet = getDataSetDAO().loadDataSetByLabel(datasetLabel);
+			IMetaData metadata = dataSet.getMetadata();
 
 			boolean isAnEmptySelection = false;
 			while (!isAnEmptySelection && it.hasNext()) {
-				IMetaData metadata = dataSet.getMetadata();
 				String columns = it.next();
 
 				// check two cases: in case of click selection the contained is JSON array and operator is IN, in case of filter the contained is JSON object
@@ -594,11 +600,11 @@ public class DataSetResource extends AbstractDataSetResource {
 				}
 
 				SimpleFilter firstSimpleFilter = getFilter(firstFilterOperator, firstFilterValues, columns, dataSet,
-						columnAliasToColumnName, needEncrypt);
+						columnAliasToColumnName, needEncrypt, oracleClobHashContext);
 
 				if (firstSimpleFilter != null) {
 					SimpleFilter secondSimpleFilter = getFilter(secondFilterOperator, secondFilterValues, columns,
-							dataSet, columnAliasToColumnName, needEncrypt);
+							dataSet, columnAliasToColumnName, needEncrypt, oracleClobHashContext);
 					if (secondSimpleFilter != null) {
 						Filter compoundFilter = getComplexFilter((InFilter) firstSimpleFilter, secondSimpleFilter);
 						filters.add(compoundFilter);
@@ -654,6 +660,13 @@ public class DataSetResource extends AbstractDataSetResource {
 
 	public SimpleFilter getFilter(String operatorString, JSONArray valuesJsonArray, String columns, IDataSet dataSet,
 			Map<String, String> columnAliasToColumnName, boolean needEncrypt) throws JSONException {
+		return getFilter(operatorString, valuesJsonArray, columns, dataSet, columnAliasToColumnName, needEncrypt,
+				null);
+	}
+
+	protected SimpleFilter getFilter(String operatorString, JSONArray valuesJsonArray, String columns, IDataSet dataSet,
+			Map<String, String> columnAliasToColumnName, boolean needEncrypt,
+			OracleClobHashContext oracleClobHashContext) throws JSONException {
 		SimpleFilter filter = null;
 
 		if (operatorString != null) {
@@ -670,7 +683,10 @@ public class DataSetResource extends AbstractDataSetResource {
 
 				List<Projection> projections = new ArrayList<>(columnsList.size());
 				for (String columnName : columnsList) {
-					projections.add(new Projection(dataSet, columnName));
+					String resolvedColumnName = oracleClobHashContext != null
+							? oracleClobHashContext.resolveFilterColumnName(columnName)
+							: columnName;
+					projections.add(new Projection(dataSet, resolvedColumnName));
 				}
 
 				List<Object> valueObjects = new ArrayList<>(0);
@@ -683,6 +699,10 @@ public class DataSetResource extends AbstractDataSetResource {
 							Object currValue = DataSetUtilities.getValue(valuesArray[j], projection.getType());
 							if (needEncrypt && currValue instanceof String) {
 								currValue = encryptor.encrypt(currValue.toString());
+							}
+							if (oracleClobHashContext != null) {
+								currValue = oracleClobHashContext.resolveFilterValue(
+										columnsList.get(j % columnsList.size()), currValue);
 							}
 							valueObjects.add(currValue);
 						}
