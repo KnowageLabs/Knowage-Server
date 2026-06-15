@@ -98,6 +98,7 @@ public class DashboardExportResource {
                 } else {
                     String widgetName = body.getJSONObject("settings").getJSONObject("style").getJSONObject("title")
                             .optString("text");
+                    widgetName = replaceWidgetTitlePlaceholders(widgetName, body, isDashboardSingleWidgetExport);
                     widgetName = getWidgetName(widgetName, body);
                     response.setHeader("Content-Disposition", "attachment; fileName=" + widgetName + "." + "xlsx");
                 }
@@ -137,6 +138,48 @@ public class DashboardExportResource {
         return widgetName;
     }
 
+    private static String replaceWidgetTitlePlaceholders(String widgetName, JSONObject body, boolean isSingleWidgetExport) throws JSONException {
+        if (StringUtils.isBlank(widgetName)) {
+            return widgetName;
+        }
+
+        widgetName = replaceDriverPlaceholders(widgetName, body.optJSONArray("drivers"));
+        if (isSingleWidgetExport) {
+            widgetName = replaceVariablePlaceholders(widgetName, body.optJSONArray("variables"));
+        }
+        return widgetName;
+    }
+
+    private static String replaceDriverPlaceholders(String widgetName, JSONArray drivers) throws JSONException {
+        if (drivers == null) {
+            return widgetName;
+        }
+
+        for (int i = 0; i < drivers.length(); i++) {
+            JSONObject driver = drivers.getJSONObject(i);
+            String driverName = driver.optString("urlName");
+            if (!StringUtils.isBlank(driverName)) {
+                widgetName = widgetName.replace("$P{" + driverName + "}", driver.optString("value"));
+            }
+        }
+        return widgetName;
+    }
+
+    private static String replaceVariablePlaceholders(String widgetName, JSONArray variables) throws JSONException {
+        if (variables == null) {
+            return widgetName;
+        }
+
+        for (int i = 0; i < variables.length(); i++) {
+            JSONObject variable = variables.getJSONObject(i);
+            String variableName = variable.optString("name");
+            if (!StringUtils.isBlank(variableName)) {
+                widgetName = widgetName.replace("$V{" + variableName + "}", variable.optString("value"));
+            }
+        }
+        return widgetName;
+    }
+
     @POST
     @Path("/pdf")
     public void downloadPdf(@Context HttpServletRequest req) {
@@ -157,28 +200,10 @@ public class DashboardExportResource {
             if (mimeType != null) {
                 byte[] data;
                 data = dashboardPdfExporter.getBinaryData(body);
+                boolean isDashboardSingleWidgetExport = !body.has("widgets");
                 String widgetName = body.getJSONObject("settings").getJSONObject("style").getJSONObject("title")
                         .optString("text");
-                if (widgetName != null && widgetName.startsWith("$P{")) {
-                    // Extract the value between {} - e.g., "$P{country}" -> "country"
-                    int startIndex = widgetName.indexOf('{') + 1;
-                    int endIndex = widgetName.indexOf('}');
-                    String placeholderToReplace = (startIndex > 0 && endIndex > startIndex)
-                            ? widgetName.substring(startIndex, endIndex)
-                            : "";
-                    String remainingPart = widgetName.substring(endIndex + 1);
-                    try {
-                        for (int i = 0; i < body.optJSONArray("drivers").length(); i++) {
-                            JSONObject driver = body.optJSONArray("drivers").getJSONObject(i);
-                            if (driver.getString("urlName").equals(placeholderToReplace)) {
-                                widgetName = driver.getString("value") + remainingPart;
-                                break;
-                            }
-                        }
-                    } catch (JSONException e) {
-                        throw new RuntimeException(e);
-                    }
-                }
+                widgetName = replaceWidgetTitlePlaceholders(widgetName, body, isDashboardSingleWidgetExport);
                 response.setHeader("Content-Disposition", "attachment; fileName=" + widgetName + "." + "pdf");
                 populateResponse(mimeType, data);
             }
