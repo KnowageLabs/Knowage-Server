@@ -366,9 +366,12 @@ public class SchedulerUtilities {
 			if (couple.trim().equals("")) {
 				continue;
 			}
-			String[] couplevals = couple.split("=");
+			String[] couplevals = couple.split("=", 2);
 			String name = couplevals[0];
-			String value = couplevals[1];
+			String value = couplevals.length > 1 ? couplevals[1] : "";
+			if (couplevals.length == 1) {
+				logger.warn("Malformed dispatch context token [" + couple + "] found while decoding dispatch context");
+			}
 
 			if (name.equals("saveasfile")) {
 				dispatchContext.setFileSystemDisptachChannelEnabled(true);
