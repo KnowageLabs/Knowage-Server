@@ -510,9 +510,6 @@ public class SchedulerUtilities {
 				dispatchContext.setZipFileName(value);
 			}
 			if (name.equals("outputType")) {
-				if (value == null || value.isEmpty()) {
-					value = "HTML";
-				}
 				dispatchContext.setOutputTypeTrigger(value);
 			}
 
