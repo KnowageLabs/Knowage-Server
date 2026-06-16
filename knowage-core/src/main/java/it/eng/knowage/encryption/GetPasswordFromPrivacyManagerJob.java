@@ -20,6 +20,8 @@ package it.eng.knowage.encryption;
 
 import static it.eng.knowage.encryption.EncryptionPreferencesRegistry.DEFAULT_CFG_KEY;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
@@ -31,6 +33,8 @@ import privacymanager.wrapper.PrivacyManagerAPIBuilder;
  * @author Marco Libanori
  */
 public class GetPasswordFromPrivacyManagerJob implements Job {
+
+	private static final Logger LOGGER = LogManager.getLogger(GetPasswordFromPrivacyManagerJob.class);
 
 	public static final String PARAM_PM_URL = "PARAM_PM_URL";
 	public static final String PARAM_PM_USER = "PARAM_PM_USER";
@@ -45,26 +49,35 @@ public class GetPasswordFromPrivacyManagerJob implements Job {
 		String pmApp = (String) context.getMergedJobDataMap().get(PARAM_PM_APP);
 
 		try {
+			LOGGER.info("Starting Privacy Manager password refresh job for application {} on {}", pmApp, pmUrl);
 			IPrivacyManagerAPI api = PrivacyManagerAPIBuilder.newBuilder()
 				.withUrl(pmUrl)
 				.withAppId(pmApp)
 				.build();
 
+			LOGGER.debug("Requesting authentication token from Privacy Manager for application {}", pmApp);
 			api.getToken(pmUser, pmPwd);
+			LOGGER.debug("Authentication token retrieved from Privacy Manager for application {}", pmApp);
 
+			LOGGER.debug("Requesting encryption key from Privacy Manager for application {}", pmApp);
 			String key = api.retrieveKey();
+			LOGGER.info("Encryption key retrieved from Privacy Manager for application {}. Key length: {}", pmApp,
+					key != null ? key.length() : null);
 
 			String cfgKey = DEFAULT_CFG_KEY;
 			EncryptionConfiguration cfg = EncryptionPreferencesRegistry.getInstance()
 				.getConfiguration(cfgKey);
+			LOGGER.debug("Updating encryption configuration {} for application {}", cfgKey, pmApp);
 
 			cfg.setEncryptionPwd(key);
 
 			DataEncryptionGlobalCfg decfee = DataEncryptionGlobalCfg.getInstance();
 			decfee.setKeyTemplateForAlgorithm(cfgKey, cfg.getAlgorithm());
 			decfee.setKeyTemplateForPassword(cfgKey, key);
+			LOGGER.info("Privacy Manager password refresh job completed for application {}", pmApp);
 
 		} catch (Exception e) {
+			LOGGER.error("Privacy Manager password refresh job failed for application {} on {}", pmApp, pmUrl, e);
 
 			JobExecutionException e2 = new JobExecutionException(e);
 
