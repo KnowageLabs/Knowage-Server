@@ -10,6 +10,22 @@ import static org.junit.Assert.assertFalse;
 
 public class DashboardExporterTest {
 
+    private static class TestableDashboardExporter extends DashboardExporter {
+
+        private TestableDashboardExporter() {
+            super("test-user", null);
+        }
+
+        @Override
+        protected String getInternationalizedHeader(String columnName) {
+            return columnName;
+        }
+
+        private String resolveColumnDisplayName(JSONObject settings, JSONObject column, JSONArray variables) throws JSONException {
+            return getDashboardColumnDisplayName(settings, column, variables);
+        }
+    }
+
     @Test
     public void shouldPreserveOrderBySummaryPathInPivotAggregations() throws JSONException {
         DashboardExporter exporter = new DashboardExporter("test-user", null);
@@ -100,5 +116,55 @@ public class DashboardExporterTest {
         assertEquals("Resp 3", sortedCategory.getJSONArray("orderBySummaryPath").getString(1));
         assertFalse(categories.getJSONObject(1).has("orderBySummaryPath"));
         assertFalse(categories.getJSONObject(2).has("orderBySummaryPath"));
+    }
+
+    @Test
+    public void shouldResolveVariablePlaceholderInCustomHeaderLabel() throws JSONException {
+        TestableDashboardExporter exporter = new TestableDashboardExporter();
+
+        JSONObject settings = new JSONObject()
+                .put("configuration", new JSONObject()
+                        .put("headers", new JSONObject()
+                                .put("custom", new JSONObject()
+                                        .put("enabled", true)
+                                        .put("rules", new JSONArray()
+                                                .put(new JSONObject()
+                                                        .put("action", "setLabel")
+                                                        .put("value", "$V{QQ}")
+                                                        .put("target", new JSONArray().put("quarter-column")))))));
+        JSONObject column = new JSONObject()
+                .put("id", "quarter-column")
+                .put("alias", "Quarter");
+        JSONArray variables = new JSONArray()
+                .put(new JSONObject()
+                        .put("name", "QQ")
+                        .put("value", "Q1 2026"));
+
+        assertEquals("Q1 2026", exporter.resolveColumnDisplayName(settings, column, variables));
+    }
+
+    @Test
+    public void shouldResolveDirectVariableNameInCustomHeaderLabel() throws JSONException {
+        TestableDashboardExporter exporter = new TestableDashboardExporter();
+
+        JSONObject settings = new JSONObject()
+                .put("configuration", new JSONObject()
+                        .put("headers", new JSONObject()
+                                .put("custom", new JSONObject()
+                                        .put("enabled", true)
+                                        .put("rules", new JSONArray()
+                                                .put(new JSONObject()
+                                                        .put("action", "setLabel")
+                                                        .put("value", "QQ")
+                                                        .put("target", new JSONArray().put("quarter-column")))))));
+        JSONObject column = new JSONObject()
+                .put("id", "quarter-column")
+                .put("alias", "Quarter");
+        JSONArray variables = new JSONArray()
+                .put(new JSONObject()
+                        .put("name", "QQ")
+                        .put("value", "Q1 2026"));
+
+        assertEquals("Q1 2026", exporter.resolveColumnDisplayName(settings, column, variables));
     }
 }

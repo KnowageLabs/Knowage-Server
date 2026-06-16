@@ -561,6 +561,31 @@ public class DashboardExporter {
         return i18nMessages.getOrDefault(columnName, columnName);
     }
 
+    protected String getDashboardColumnDisplayName(JSONObject settings, JSONObject column, JSONArray variables) throws JSONException {
+        String columnName = getDashboardBaseColumnName(column);
+        columnName = getInternationalizedHeader(columnName);
+        return replaceWithCustomHeaderIfPresent(settings, columnName, column, variables);
+    }
+
+    private String getDashboardBaseColumnName(JSONObject column) {
+        String alias = column.optString("alias");
+        if (StringUtils.isNotBlank(alias)) {
+            return alias;
+        }
+
+        String header = column.optString("header");
+        if (StringUtils.isNotBlank(header)) {
+            return header;
+        }
+
+        String columnName = column.optString("columnName");
+        if (StringUtils.isNotBlank(columnName)) {
+            return columnName;
+        }
+
+        return column.optString("id");
+    }
+
     protected Locale getLocaleFromBody(JSONObject body) {
         try {
             String localeTag = body.getString("locale").replace("_", "-");
@@ -576,6 +601,10 @@ public class DashboardExporter {
 
 
     protected String replaceWithCustomHeaderIfPresent(JSONObject settings, String columnName, JSONObject column) throws JSONException {
+        return replaceWithCustomHeaderIfPresent(settings, columnName, column, null);
+    }
+
+    protected String replaceWithCustomHeaderIfPresent(JSONObject settings, String columnName, JSONObject column, JSONArray variables) throws JSONException {
         if (settings.has("configuration") && settings.getJSONObject("configuration").has("headers")) {
             JSONObject customHeader = settings.getJSONObject("configuration").getJSONObject("headers").getJSONObject("custom");
             if (customHeader.getBoolean("enabled")) {
@@ -587,7 +616,7 @@ public class DashboardExporter {
                         for (int j = 0; j < target.length(); j++) {
                             if (target.getString(j).equals(column.getString("id"))) {
                                 if (rule.getString("action").equals("setLabel")) {
-                                    columnName = rule.getString("value");
+                                    columnName = replaceVariableValueIfPresent(rule.getString("value"), variables);
                                     break;
                                 } else if (rule.getString("action").equals("hide")) {
                                     columnName = "";
@@ -600,6 +629,38 @@ public class DashboardExporter {
             }
         }
         return columnName;
+    }
+
+    private String replaceVariableValueIfPresent(String value, JSONArray variables) {
+        if (StringUtils.isBlank(value) || variables == null) {
+            return value;
+        }
+
+        String replacedValue = value;
+        String matchedVariableValue = null;
+        for (int i = 0; i < variables.length(); i++) {
+            JSONObject variable = variables.optJSONObject(i);
+            if (variable == null) {
+                continue;
+            }
+
+            String variableName = variable.optString("name");
+            if (StringUtils.isBlank(variableName)) {
+                continue;
+            }
+
+            String variableValue = getVariableValue(variable);
+            replacedValue = replacedValue.replace("$V{" + variableName + "}", variableValue);
+            if (value.equals(variableName)) {
+                matchedVariableValue = variableValue;
+            }
+        }
+        return matchedVariableValue != null ? matchedVariableValue : replacedValue;
+    }
+
+    private String getVariableValue(JSONObject variable) {
+        Object variableValue = variable.opt("value");
+        return variableValue == null || JSONObject.NULL.equals(variableValue) ? "" : String.valueOf(variableValue);
     }
 
     protected boolean isSummaryColumnVisible(List<String> columnsToHide, JSONObject column) {

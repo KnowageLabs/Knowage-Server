@@ -649,6 +649,7 @@ public class DashboardExcelExporter extends DashboardExporter {
             columns = filterDataStoreColumns(columns);
             JSONArray rows = dataStore.getJSONArray("rows");
             JSONObject widgetData = dataStore.getJSONObject("widgetData");
+            JSONArray variables = widgetData.optJSONArray("variables");
             JSONArray columnSelectedOfDataset = widgetData.getJSONArray("columns");
 
             JSONArray columnsOrdered;
@@ -678,7 +679,7 @@ public class DashboardExcelExporter extends DashboardExporter {
             int namespan = 10;
             int dataspan = 10;
 
-            buildFirstPageHeaders(wb, sheet, widgetName, offset, settings, startRow, rowHeight, rowspan, startCol, colWidth, colspan, namespan, dataspan, groupsAndColumnsMap, columnsOrdered);
+            buildFirstPageHeaders(wb, sheet, widgetName, offset, settings, startRow, rowHeight, rowspan, startCol, colWidth, colspan, namespan, dataspan, groupsAndColumnsMap, columnsOrdered, variables);
 
             int isColumnGroupingPresent = groupsAndColumnsMap.isEmpty() ? 0 : 1;
 
@@ -705,6 +706,7 @@ public class DashboardExcelExporter extends DashboardExporter {
             columns = filterDataStoreColumns(columns);
             JSONArray rows = dataStore.getJSONArray("rows");
             JSONObject widgetData = dataStore.getJSONObject("widgetData");
+            JSONArray variables = widgetData.optJSONArray("variables");
 
             JSONArray columnsOrdered = columns;
 
@@ -721,7 +723,7 @@ public class DashboardExcelExporter extends DashboardExporter {
             int namespan = 10;
             int dataspan = 10;
 
-            buildFirstPageHeaders(wb, sheet, widgetName, offset, settings, startRow, rowHeight, rowspan, startCol, colWidth, colspan, namespan, dataspan, groupsAndColumnsMap, columnsOrdered);
+            buildFirstPageHeaders(wb, sheet, widgetName, offset, settings, startRow, rowHeight, rowspan, startCol, colWidth, colspan, namespan, dataspan, groupsAndColumnsMap, columnsOrdered, variables);
             // FILL RECORDS
             int isGroup = groupsAndColumnsMap.isEmpty() ? 0 : 1;
 
@@ -733,25 +735,12 @@ public class DashboardExcelExporter extends DashboardExporter {
         }
 
     }
-    void buildFirstPageHeaders(Workbook wb, Sheet sheet, String widgetName, int offset, JSONObject settings, int startRow, float rowHeight, int rowspan, int startCol, int colWidth, int colspan, int namespan, int dataspan, Map<String, String> groupsAndColumnsMap, JSONArray columnsOrdered) throws JSONException {
+    void buildFirstPageHeaders(Workbook wb, Sheet sheet, String widgetName, int offset, JSONObject settings, int startRow, float rowHeight, int rowspan, int startCol, int colWidth, int colspan, int namespan, int dataspan, Map<String, String> groupsAndColumnsMap, JSONArray columnsOrdered, JSONArray variables) throws JSONException {
         if (offset == 0) { // if pagination is active, headers must be created only once
             Row header = createHeader(sheet, startRow, rowHeight, rowspan, startCol, colWidth, colspan, namespan, dataspan, widgetName, groupsAndColumnsMap, columnsOrdered);
             for (int i = 0; i < columnsOrdered.length(); i++) {
                 JSONObject column = columnsOrdered.getJSONObject(i);
-                String columnName;
-                try {
-                    columnName = column.getString("alias");
-                } catch (JSONException e) {
-                    try {
-                        columnName = column.getString("header");
-                    } catch(JSONException e2) {
-                        columnName = column.getString("columnName");
-                    }
-                }
-                // renaming table columns names of the excel export
-                columnName = getInternationalizedHeader(columnName);
-
-                columnName = replaceWithCustomHeaderIfPresent(settings, columnName, column);
+                String columnName = getDashboardColumnDisplayName(settings, column, variables);
 
                 Cell cell = header.createCell(i);
                 cell.setCellValue(columnName);

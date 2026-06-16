@@ -173,7 +173,7 @@ public class DashboardPdfExporter extends DashboardExporter {
                     replaceWithThemeSettingsIfPresent(settings);
                     columnStylesMap = getStylesMap(settings);
                     initColumnWidths(columnsOrdered, columnStylesMap);
-                    buildFirstPageHeaders(table, settings, groupsAndColumnsMap, columnsOrdered, executionUser, totalNumberOfRows, font, extraValueLabel, extraValue, driversFromBody, parametersFromBody);
+                    buildFirstPageHeaders(table, settings, groupsAndColumnsMap, columnsOrdered, variables, executionUser, totalNumberOfRows, font, extraValueLabel, extraValue, driversFromBody, parametersFromBody);
                 }
 
                 rows = dataStore.getJSONArray("rows");
@@ -232,7 +232,7 @@ public class DashboardPdfExporter extends DashboardExporter {
         }
     }
 
-    private void buildFirstPageHeaders(BaseTable table, JSONObject settings, Map<String, String> groupsAndColumnsMap, JSONArray columnsOrdered, String executionUser, int totalNumberOfRows, PDFont font, String extraValueLabel, String extraValueField, JSONArray driversFromBody, JSONArray parametersFromBody) throws JSONException {
+    private void buildFirstPageHeaders(BaseTable table, JSONObject settings, Map<String, String> groupsAndColumnsMap, JSONArray columnsOrdered, JSONArray variables, String executionUser, int totalNumberOfRows, PDFont font, String extraValueLabel, String extraValueField, JSONArray driversFromBody, JSONArray parametersFromBody) throws JSONException {
         createDocumentInformationRow(table, font, executionUser, totalNumberOfRows, extraValueLabel, extraValueField);
 
         if (!groupsAndColumnsMap.isEmpty()) {
@@ -275,7 +275,7 @@ public class DashboardPdfExporter extends DashboardExporter {
         for (int i = 0; i < columnsOrdered.length(); i++) {
 
             JSONObject column = columnsOrdered.getJSONObject(i);
-            String columnName = column.getString("alias");
+            String columnName = getDashboardColumnDisplayName(settings, column, variables);
 
             Cell<PDPage> cell = headerRow.createCell(columnPercentWidths[i], columnName,
                     HorizontalAlignment.get("center"), VerticalAlignment.get("top"));
