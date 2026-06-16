@@ -456,11 +456,19 @@ public class XExecuteBIDocumentJob extends AbstractSpagoBIJob implements Job {
 					dispatchContext.setGlobalUniqueMail(uniqueMailForAll);
 					dispatchContext.setDocumentLabels(documentLabelsString);
 
-					String[] outputTypeTriggerList = {};
-					if (!dispatchContext.getOutputTypeTrigger().trim().equals("")) {
-						outputTypeTriggerList = dispatchContext.getOutputTypeTrigger().split(",");
+					final String defaultOutputType = "HTML";
+					String configuredOutputTypeTrigger = StringUtils.trimToEmpty(dispatchContext.getOutputTypeTrigger());
+					boolean useDefaultOutputType = StringUtils.isEmpty(configuredOutputTypeTrigger);
+					String[] outputTypeTriggerList = useDefaultOutputType ? new String[] { null } : configuredOutputTypeTrigger.split(",");
+					if (useDefaultOutputType) {
+						logger.debug("No output type configured in dispatch context, scheduler will use default output type [" + defaultOutputType + "]");
 					}
 					for (String outputTypeTrigger : outputTypeTriggerList) {
+						String normalizedOutputTypeTrigger = StringUtils.trimToNull(outputTypeTrigger);
+						if (!useDefaultOutputType && normalizedOutputTypeTrigger == null) {
+							logger.warn("Blank output type configured in dispatch context for document [" + documentInstanceName + "] will be skipped");
+							continue;
+						}
 
 						DocumentDispatcher documentDispatcher = null;
 						if (globalDocumentDispatcher != null) {
@@ -527,11 +535,11 @@ public class XExecuteBIDocumentJob extends AbstractSpagoBIJob implements Job {
 							// TODO manage this shit
 							// executionProxy.setSplittingFilter(isSplittingFilter);
 							executionProxy.setMimeType(outputMIMEType);
-							executionProxy.setOutputTypeTrigger(outputTypeTrigger);
+							executionProxy.setOutputTypeTrigger(normalizedOutputTypeTrigger);
 
 
 							//FIIIIREEEEE!!!!!!!!!!!!!!!!!!!!!!!!
-							byte[] executionOutput = executionProxy.exec(userProfile, modality, null);
+							byte[] executionOutput = executionProxy.exec(userProfile, modality, defaultOutputType);
 							//FIIIIREEEEE!!!!!!!!!!!!!!!!!!!!!!!!
 
 
