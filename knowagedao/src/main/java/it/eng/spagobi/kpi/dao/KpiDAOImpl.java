@@ -124,6 +124,7 @@ import it.eng.spagobi.tools.alert.job.AbstractSuspendableJob.JOB_STATUS;
 import it.eng.spagobi.tools.scheduler.bo.Trigger;
 import it.eng.spagobi.tools.scheduler.dao.ISchedulerDAO;
 import it.eng.spagobi.utilities.exceptions.SpagoBIException;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.json.JSONUtils;
 
 public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
@@ -690,6 +691,7 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 		// handling Category
 		SbiCategory category = insertOrUpdateCategory(session, kpi.getCategory(), KPI_KPI_CATEGORY);
 		sbiKpi.setCategory(category);
+	
 		// Updating relations with RuleOutput and KpiScheduler
 		refreshKpiRuleOutputRel(session, sbiKpi);
 
@@ -785,40 +787,27 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 		return sbiKpiPlaceholder;
 	}
 
-	private SbiCategory insertOrUpdateCategory(Session session, Domain category, String categoryName) {
-		SbiCategory cat = null;
-		if (category != null && category.getValueCd() != null && !category.getValueCd().isEmpty()) {
-
-			String valueName = StringUtils.isNotBlank(category.getValueName()) ? category.getValueName()
-					: category.getValueCd();
-
-			Criteria criteria = session.createCriteria(SbiCategory.class);
-
-			Criterion restrictionOnName = Restrictions.eq("name", valueName);
-			Criterion restrictionOnCode = Restrictions.eq("code", category.getValueCd());
-			Criterion restrictionOnType = Restrictions.eq("type", categoryName);
-
-			Criterion andOfRestrictions = Restrictions.and(Restrictions.and(restrictionOnName, restrictionOnCode),
-					restrictionOnType);
-
-			criteria.add(andOfRestrictions);
-
-			cat = (SbiCategory) criteria.uniqueResult();
-
-			if (cat == null) {
-				cat = new SbiCategory();
-				cat.setCode(category.getValueCd());
-				cat.setName(StringUtils.isNotBlank(category.getValueName()) ? category.getValueName()
-						: category.getValueCd());
-				cat.setType(categoryName);
-
-				updateSbiCommonInfo4Insert(cat);
-				session.save(cat);
-			}
-
-		}
-		return cat;
+	private SbiCategory insertOrUpdateCategory(Session session, Domain category, String categoryName) {     
+		SbiCategory cat = null;          
+		if (category != null && (StringUtils.isNotBlank(category.getValueName()) || StringUtils.isNotBlank(category.getValueCd()))) {         
+			
+			String valueName = StringUtils.isNotBlank(category.getValueName()) ?                            
+					category.getValueName() : category.getValueCd();         
+			
+			Criteria criteria = session.createCriteria(SbiCategory.class);            
+			criteria.add(Restrictions.eq("name", valueName));         
+			criteria.add(Restrictions.eq("type", categoryName));         
+			
+			cat = (SbiCategory) criteria.uniqueResult();         
+			
+			if (cat == null) {            
+				
+				throw new SpagoBIRuntimeException("Impossibile associare la categoria: '" + valueName + "' non esiste a database.");         
+			}    
+		}          
+		return cat; 
 	}
+
 
 	@Override
 	public Integer createDomainIfNotExists(final Domain domain) {
