@@ -60,6 +60,8 @@ public class DashboardExportResource {
     private static final String PDF_DEVICE_SCALE_FACTOR = "pdfDeviceScaleFactor";
     private static final String PDF_WAIT_TIME = "pdfWaitTime";
     private static final String IS_MULTI_SHEET = "isMultiSheet";
+    private static final String EXPORT_FILE_NAME = "exportFileName";
+    private static final String DASHBOARD_VARIABLES = "dashboardVariables";
 
     @Context
     protected HttpServletRequest request;
@@ -94,7 +96,8 @@ public class DashboardExportResource {
                 }
                 if (!isDashboardSingleWidgetExport) {
                     String documentLabel = body.getJSONObject("document").getString("label");
-                    response.setHeader("Content-Disposition", "attachment; fileName=" + documentLabel + ".xlsx");
+                    String exportFileName = getDashboardExportFileName(body, documentLabel);
+                    response.setHeader("Content-Disposition", "attachment; fileName=" + exportFileName + ".xlsx");
                 } else {
                     String widgetName = body.getJSONObject("settings").getJSONObject("style").getJSONObject("title")
                             .optString("text");
@@ -150,6 +153,56 @@ public class DashboardExportResource {
         return widgetName;
     }
 
+    private static String getDashboardExportFileName(JSONObject body, String defaultFileName) throws JSONException {
+        String exportFileNameTemplate = getDashboardExportFileNameTemplate(body);
+        if (StringUtils.isBlank(exportFileNameTemplate)) {
+            return defaultFileName;
+        }
+
+        return resolveDashboardExportFileName(exportFileNameTemplate, defaultFileName, body.optJSONArray("drivers"), getDashboardVariables(body));
+    }
+
+    private String getDashboardPdfExportFileName(String defaultFileName) throws JSONException {
+        String exportFileNameTemplate = request.getParameter(EXPORT_FILE_NAME);
+        if (StringUtils.isBlank(exportFileNameTemplate)) {
+            return defaultFileName;
+        }
+
+        return resolveDashboardExportFileName(exportFileNameTemplate, defaultFileName, parseRequestArrayParameter("parameters"), parseRequestArrayParameter(DASHBOARD_VARIABLES));
+    }
+
+    private static String getDashboardExportFileNameTemplate(JSONObject body) {
+        JSONObject configuration = body.optJSONObject("configuration");
+        JSONObject menuWidgets = configuration != null ? configuration.optJSONObject("menuWidgets") : null;
+        if (menuWidgets == null) {
+            return "";
+        }
+
+        return menuWidgets.optString(EXPORT_FILE_NAME);
+    }
+
+    private static JSONArray getDashboardVariables(JSONObject body) {
+        JSONObject configuration = body.optJSONObject("configuration");
+        JSONArray variables = configuration != null ? configuration.optJSONArray("variables") : null;
+        return variables != null ? variables : new JSONArray();
+    }
+
+    private JSONArray parseRequestArrayParameter(String parameterName) throws JSONException {
+        String parameterValue = request.getParameter(parameterName);
+        return StringUtils.isBlank(parameterValue) ? new JSONArray() : new JSONArray(parameterValue);
+    }
+
+    private static String resolveDashboardExportFileName(String exportFileNameTemplate, String defaultFileName, JSONArray drivers, JSONArray variables) throws JSONException {
+        String resolvedExportFileName = replaceDriverPlaceholders(exportFileNameTemplate, drivers);
+        resolvedExportFileName = replaceVariablePlaceholders(resolvedExportFileName, variables);
+        resolvedExportFileName = sanitizeDashboardExportFileName(resolvedExportFileName);
+        return StringUtils.isBlank(resolvedExportFileName) ? defaultFileName : resolvedExportFileName;
+    }
+
+    private static String sanitizeDashboardExportFileName(String fileName) {
+        return StringUtils.trim(fileName).replaceAll("[\\\\/:*?\"<>|\\r\\n]", "_");
+    }
+
     private static String replaceDriverPlaceholders(String widgetName, JSONArray drivers) throws JSONException {
         if (drivers == null) {
             return widgetName;
@@ -159,10 +212,50 @@ public class DashboardExportResource {
             JSONObject driver = drivers.getJSONObject(i);
             String driverName = driver.optString("urlName");
             if (!StringUtils.isBlank(driverName)) {
-                widgetName = widgetName.replace("$P{" + driverName + "}", driver.optString("value"));
+                widgetName = widgetName.replace("$P{" + driverName + "}", getDriverValue(driver));
             }
         }
         return widgetName;
+    }
+
+    private static String getDriverValue(JSONObject driver) throws JSONException {
+        String driverValue = "";
+        Object rawValue = driver.opt("value");
+        if (rawValue instanceof JSONArray) {
+            driverValue = joinDriverValues((JSONArray) rawValue);
+        } else if (rawValue != null && rawValue != JSONObject.NULL) {
+            driverValue = String.valueOf(rawValue);
+        }
+
+        if (StringUtils.isBlank(driverValue)) {
+            JSONArray parameterValue = driver.optJSONArray("parameterValue");
+            if (parameterValue != null) {
+                driverValue = joinDriverValues(parameterValue);
+            }
+        }
+
+        return driverValue;
+    }
+
+    private static String joinDriverValues(JSONArray driverValues) throws JSONException {
+        List<String> resolvedValues = new ArrayList<>();
+        for (int i = 0; i < driverValues.length(); i++) {
+            Object currentValue = driverValues.get(i);
+            if (currentValue instanceof JSONObject) {
+                JSONObject currentValueAsJsonObject = (JSONObject) currentValue;
+                String nestedValue = currentValueAsJsonObject.optString("value");
+                if (StringUtils.isBlank(nestedValue)) {
+                    nestedValue = currentValueAsJsonObject.optString("description");
+                }
+                if (!StringUtils.isBlank(nestedValue)) {
+                    resolvedValues.add(nestedValue);
+                }
+            } else if (currentValue != null && currentValue != JSONObject.NULL) {
+                resolvedValues.add(String.valueOf(currentValue));
+            }
+        }
+
+        return String.join(", ", resolvedValues);
     }
 
     private static String replaceVariablePlaceholders(String widgetName, JSONArray variables) throws JSONException {
@@ -396,10 +489,11 @@ public class DashboardExportResource {
         PdfExporterV2 pdfExporter = new PdfExporterV2(documentId, userId, requestURL, renderOptions, pdfPageOrientation,
                 pdfFrontPage, pdfBackPage, role, organization, params);
         byte[] data = pdfExporter.getBinaryData();
+        String exportFileName = getDashboardPdfExportFileName(documentLabel);
 
         return Response.ok(data, "application/pdf").header("Content-Length", Integer.toString(data.length))
                 .header("Content-Disposition",
-                        "attachment; fileName=" + request.getParameter("DOCUMENT_LABEL") + ".pdf")
+                        "attachment; fileName=" + exportFileName + ".pdf")
                 .build();
     }
 
