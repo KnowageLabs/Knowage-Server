@@ -37,18 +37,67 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <meta name="apple-mobile-web-app-title" content="Knowage">
     <title>Knowage - Signup</title>
     <link rel="shortcut icon" href="<%=urlBuilder.getResourceLinkByTheme(request, "img/favicon.ico",currTheme)%>" />
-		   <!-- Bootstrap -->
-		<link rel="stylesheet" href="<%=urlBuilder.getResourceLink(request, "js/lib/bootstrap/css/bootstrap.min.css")%>">
-		<link rel="stylesheet" type="text/css"  href="<%= urlBuilder.getResourceLink(request,"/node_modules/toastify-js/src/toastify.css")%>">
+		<link rel="stylesheet" type="text/css" href="<%= urlBuilder.getResourceLink(request,"/node_modules/toastify-js/src/toastify.css")%>">
     	<link rel="stylesheet" href="<%=urlBuilder.getResourceLink(request, "themes/commons/css/customStyle.css")%>">
+    	<style>
+    	  *, *::before, *::after { box-sizing: border-box; }
+    	  body.kn-login { margin: 0; }
+    	  .signup-container {
+    	    height: 100%;
+    	    display: flex;
+    	    align-items: stretch;
+    	  }
+    	  .signup-panel {
+    	    margin-left: auto;
+    	    width: 41.6%;
+    	    min-width: 320px;
+    	    height: 100%;
+    	    background-color: white;
+    	    display: flex;
+    	    flex-direction: column;
+    	    padding: 20px;
+    	    justify-content: center;
+    	    align-items: center;
+    	  }
+    	  .signup-panel #profile-img {
+    	    width: 83%;
+    	    max-width: 100%;
+    	    display: block;
+    	    margin-bottom: 8px;
+    	  }
+    	  .signup-panel h3 {
+    	    margin: 0 0 16px 0;
+    	    font-size: 1.4rem;
+    	    font-weight: 600;
+    	    color: #262626;
+    	  }
+    	  .signup-form-wrapper {
+    	    width: 66%;
+    	    min-width: 240px;
+    	  }
+		  .btn-signup, .btn-signin {
+			color: white !important;
+			width: 100%;
+			height: 3rem;
+		  }
+    	  @media (max-width: 768px) {
+    	    .signup-panel {
+    	      margin-left: 0;
+    	      width: 100%;
+    	    }
+    	    .signup-form-wrapper {
+    	      width: 90%;
+    	    }
+    	  }
+    	</style>
   </head>
 
   <body class="kn-login" ng-app="signUp" ng-controller="signUpCtrl" ng-cloak>
- 	<div class="container-fluid signUpContainer" style="height:100%;">
-  		<div class="col-sm-5 col-sm-offset-7" style="height:100%;background-color:white;display:flex;flex-direction:column;padding:20px;justify-content:center;align-items:center">
-  			<img id="profile-img" class="col-xs-10" src='<%=urlBuilder.getResourceLinkByTheme(request, "../commons/img/defaultTheme/logoCover.svg", currTheme)%>' />
+ 	<div class="signup-container">
+  		<div class="signup-panel">
+  			<img id="profile-img" src='<%=urlBuilder.getResourceLinkByTheme(request, "../commons/img/defaultTheme/logoCover.svg", currTheme)%>' />
         	<h3><%=msgBuilder.getMessage("signup")%></h3>
-  			<div class="col-xs-8">
+  			<div class="signup-form-wrapper">
       			<form name="signUpForm" class="form-signin">
 		        	<input type="text" id="name" name="name" class="form-control smallerInput" ng-model="newUser.name" placeholder="<%=msgBuilder.getMessage("signup.form.name")%>" required autofocus>
 		        	<input type="text" id="surname" name="surname" class="form-control smallerInput" ng-model="newUser.surname" placeholder="<%=msgBuilder.getMessage("signup.form.surname")%>" required>

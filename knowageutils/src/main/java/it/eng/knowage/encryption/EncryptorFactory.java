@@ -27,6 +27,8 @@ import org.jasypt.salt.ZeroSaltGenerator;
  */
 public class EncryptorFactory {
 
+	public static final String ORACLE_AES_256_CBC_PKCS5 = "OracleAES256CBCPKCS5";
+
 	private static final EncryptorFactory INSTANCE = new EncryptorFactory();
 
 	public static EncryptorFactory getInstance() {
@@ -52,6 +54,10 @@ public class EncryptorFactory {
 	}
 
 	public PBEStringEncryptor create(String algorithm, String password) {
+		if (isOracleAes256CbcPkcs5(algorithm)) {
+			return new OracleAes256CbcPkcs5StringEncryptor(password);
+		}
+		
 		StandardPBEStringEncryptor encryptor = new StandardPBEStringEncryptor();
 
 		encryptor.setAlgorithm(algorithm);
@@ -59,5 +65,9 @@ public class EncryptorFactory {
 		encryptor.setSaltGenerator(new ZeroSaltGenerator());
 
 		return encryptor;
+	}
+	
+	private boolean isOracleAes256CbcPkcs5(String algorithm) {
+		return ORACLE_AES_256_CBC_PKCS5.equalsIgnoreCase(algorithm);
 	}
 }

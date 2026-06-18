@@ -27,6 +27,9 @@ import org.quartz.JobExecutionException;
 import privacymanager.wrapper.IPrivacyManagerAPI;
 import privacymanager.wrapper.PrivacyManagerAPIBuilder;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 /**
  * @author Marco Libanori
  */
@@ -37,6 +40,9 @@ public class GetPasswordFromPrivacyManagerJob implements Job {
 	public static final String PARAM_PM_PWD = "PARAM_PM_PWD";
 	public static final String PARAM_PM_APP = "PARAM_PM_APP";
 
+	private static final Logger LOGGER = LogManager.getLogger(GetPasswordFromPrivacyManagerJob.class);
+
+
 	@Override
 	public void execute(JobExecutionContext context) throws JobExecutionException {
 		String pmUrl = (String) context.getMergedJobDataMap().get(PARAM_PM_URL);
@@ -45,11 +51,13 @@ public class GetPasswordFromPrivacyManagerJob implements Job {
 		String pmApp = (String) context.getMergedJobDataMap().get(PARAM_PM_APP);
 
 		try {
+			LOGGER.info("Starting Privacy Manager password refresh job for application " + pmApp + " on " + pmUrl);
 			IPrivacyManagerAPI api = PrivacyManagerAPIBuilder.newBuilder()
 				.withUrl(pmUrl)
 				.withAppId(pmApp)
 				.build();
 
+			LOGGER.info("Requesting authentication token from Privacy Manager for application " + pmApp);
 			api.getToken(pmUser, pmPwd);
 
 			String key = api.retrieveKey();
@@ -65,6 +73,8 @@ public class GetPasswordFromPrivacyManagerJob implements Job {
 			decfee.setKeyTemplateForPassword(cfgKey, key);
 
 		} catch (Exception e) {
+
+			LOGGER.error("Privacy Manager password retrieval job failed", e);
 
 			JobExecutionException e2 = new JobExecutionException(e);
 

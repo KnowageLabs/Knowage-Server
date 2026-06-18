@@ -22,10 +22,9 @@ import static javax.ws.rs.core.Response.Status.OK;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
+import javax.net.ssl.HostnameVerifier;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
@@ -38,6 +37,8 @@ import org.apache.http.HttpHeaders;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import it.eng.spagobi.commons.bo.Config;
+import it.eng.spagobi.commons.dao.DAOFactory;
 import privacymanager.wrapper.exception.PrivacyManagerFailureException;
 import privacymanager.wrapper.exception.PrivacyManagerHttpFailureException;
 
@@ -51,6 +52,7 @@ class PrivacyManagerAPIImpl implements IPrivacyManagerAPI {
 	private static final String DEFAULT_VALUE_DESCRIPTION = "KNOWAGE";
 	private static final String DEFAULT_VALUE_VENDOR = "Engineering";
 	private static final String DEFAULT_VALUE_URL = "www.knowage-suite.com";
+	private static final String PM_DISABLE_HOSTNAME_VERIFICATION_CONFIGURATION = "PM.DISABLE_HOSTNAME_VERIFICATION";
 
 	private final URL pmUrl;
 	private final String pmAppId;
@@ -70,7 +72,27 @@ class PrivacyManagerAPIImpl implements IPrivacyManagerAPI {
 	PrivacyManagerAPIImpl(URL pmUrl, String pmAppId) {
 		this.pmUrl = pmUrl;
 		this.pmAppId = pmAppId;
-		this.restClient = ClientBuilder.newClient();
+
+		boolean hostnameVerificationIsDisabled = false;
+
+		try {
+			Optional<Config> optionalConfig = DAOFactory.getSbiConfigDAO().loadConfigParametersByLabelIfExist(PM_DISABLE_HOSTNAME_VERIFICATION_CONFIGURATION);
+			if (optionalConfig.isPresent()) {
+				hostnameVerificationIsDisabled = Boolean.parseBoolean(optionalConfig.get().getValueCheck());
+			}
+		} catch (Exception e) {
+			LOGGER.error("Problem during hostnameVerification config retrieval");
+		}
+
+		if (hostnameVerificationIsDisabled) {
+			HostnameVerifier trustAllHostnames = (hostname, session) -> true;
+
+			this.restClient = ClientBuilder.newBuilder()
+					.hostnameVerifier(trustAllHostnames)
+					.build();
+		} else {
+			this.restClient = ClientBuilder.newClient();
+		}
 	}
 
 	@Override
@@ -103,18 +125,19 @@ class PrivacyManagerAPIImpl implements IPrivacyManagerAPI {
 	@Override
 	public String retrieveKey() throws PrivacyManagerFailureException {
 		checkIfTokenIsSet();
+		
+		Map<String, String> payload = new HashMap<>();
+		payload.put("keyLength", "32");
 
-		PMServiceProviderDTO serviceProvider = new PMServiceProviderDTO(pmAppId, appDescription, appVendor, appUrl);
-
-		PMkeyDTO pMkeyDTO = new PMkeyDTO(serviceProvider, 24);
-
-		Response response = restClient.target(pmUrl + "/api/integration/keymanagement/retrieve").request()
-				.header(HTTP_HEADER_NAME_X_CONSUMER_KEY, HTTP_HEADER_VALUE_X_CONSUMER_KEY)
+		Response response = restClient.target(pmUrl + "/api/integration/keymanagement/retrieve")
+				.request()
+				.header(HTTP_HEADER_NAME_X_CONSUMER_KEY, pmAppId)
 				.header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
-				.header(HttpHeaders.CONTENT_TYPE, "application/json").accept(MediaType.WILDCARD)
-				.post(Entity.entity(pMkeyDTO, MediaType.APPLICATION_JSON));
+				.header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+				.accept(MediaType.WILDCARD)
+				.post(Entity.entity(payload, MediaType.APPLICATION_JSON));
 
-		LOGGER.info("Response status: {}", response.getStatus());
+		LOGGER.info("Retrieve key response status: {}", response.getStatus());
 
 		checkResponseStatus(response);
 
