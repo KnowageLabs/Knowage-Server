@@ -7,7 +7,9 @@
         </template>
         <template #end>
           <Button v-if="isParameterSidebarVisible" icon="pi pi-filter" class="p-button-text p-button-rounded p-button-plain" v-tooltip.bottom="$t('common.filter')" @click="parameterSidebarVisible = !parameterSidebarVisible" />
-          <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" v-tooltip.bottom="$t('common.save')" @click="openSavingDialog" />
+          <span v-tooltip.bottom="qbeAdvancedSaving ? $t('common.save') : $t('qbe.missingSavePermissions')">
+            <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" :disabled="!qbeAdvancedSaving" data-test="save-button" @click="openSavingDialog" />
+          </span>
           <Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" v-tooltip.bottom="$t('common.close')" @click="$emit('close')" />
         </template>
       </Toolbar>
@@ -274,6 +276,9 @@ export default defineComponent({
     };
   },
   computed: {
+    qbeAdvancedSaving(): boolean {
+      return (this.$store.state as any).user.functionalities.includes("QbeAdvancedSaving");
+    },
     isParameterSidebarVisible(): boolean {
       let parameterVisible = false;
       for (let i = 0; i < this.filtersData?.filterStatus?.length; i++) {

@@ -2510,6 +2510,7 @@
             "havings": "Havings",
             "showField": "Show field"
         },
+        "missingSavePermissions": "Missing advanced save permissions.",
         "title": "QBE",
         "viewToolbar": {
             "deleteAllFilters": "Delete all filters",
