@@ -610,7 +610,8 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 			return getSQLValue(fatherPar, firstValue + "%");
 		} else if (typeFilter.equalsIgnoreCase(SpagoBIConstants.END_FILTER)) {
 			return getSQLValue(fatherPar, "%" + firstValue);
-		} else if (typeFilter.equalsIgnoreCase(SpagoBIConstants.CONTAIN_FILTER)) {
+		} else if (typeFilter.equalsIgnoreCase(SpagoBIConstants.CONTAIN_FILTER)
+				|| typeFilter.equalsIgnoreCase(SpagoBIConstants.NOT_CONTAIN_FILTER)) {
 			return getSQLValue(fatherPar, "%" + firstValue + "%");
 		} else if (typeFilter.equalsIgnoreCase(SpagoBIConstants.EQUAL_FILTER)
 				|| typeFilter.equalsIgnoreCase(SpagoBIConstants.NOT_EQUAL_FILTER)) {
@@ -864,7 +865,9 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 		} else if (typeFilter.equalsIgnoreCase(SpagoBIConstants.END_FILTER)) {
 			return "LIKE";
 		} else if (typeFilter.equalsIgnoreCase(SpagoBIConstants.CONTAIN_FILTER)) {
-			return "LIKE";
+			return "LIKE";		
+		} else if (typeFilter.equalsIgnoreCase(SpagoBIConstants.NOT_CONTAIN_FILTER)) {
+			return "NOT LIKE";		
 		} else if (typeFilter.equalsIgnoreCase(SpagoBIConstants.EQUAL_FILTER)) {
 			AbstractDriver fatherPar = getFatherParameter(dependency, drivers);
 			Assert.assertNotNull(fatherPar, "Parent parameter cannot be null");
@@ -881,7 +884,7 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 			if (values != null && values.size() > 1) {
 				return "NOT IN";
 			} else {
-				return "=";
+				return "<>";
 			}
 		} else if (typeFilter.equalsIgnoreCase(SpagoBIConstants.LESS_FILTER)) {
 			return "<";
