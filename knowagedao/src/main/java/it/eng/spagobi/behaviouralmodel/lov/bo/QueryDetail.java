@@ -611,7 +611,7 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 		} else if (typeFilter.equalsIgnoreCase(SpagoBIConstants.END_FILTER)) {
 			return getSQLValue(fatherPar, "%" + firstValue);
 		} else if (typeFilter.equalsIgnoreCase(SpagoBIConstants.CONTAIN_FILTER)
-				|| typeFilter.equalsIgnoreCase(SpagoBIConstants.NOT_CONTAIN_FILTER)) {
+				|| typeFilter.equalsIgnoreCase(SpagoBIConstants.NOT_CONTAIN_FILTER_WITH_SPACE)) {
 			return getSQLValue(fatherPar, "%" + firstValue + "%");
 		} else if (typeFilter.equalsIgnoreCase(SpagoBIConstants.EQUAL_FILTER)
 				|| typeFilter.equalsIgnoreCase(SpagoBIConstants.NOT_EQUAL_FILTER)) {
@@ -866,7 +866,7 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 			return "LIKE";
 		} else if (typeFilter.equalsIgnoreCase(SpagoBIConstants.CONTAIN_FILTER)) {
 			return "LIKE";		
-		} else if (typeFilter.equalsIgnoreCase(SpagoBIConstants.NOT_CONTAIN_FILTER)) {
+		} else if (typeFilter.equalsIgnoreCase(SpagoBIConstants.NOT_CONTAIN_FILTER_WITH_SPACE)) {
 			return "NOT LIKE";		
 		} else if (typeFilter.equalsIgnoreCase(SpagoBIConstants.EQUAL_FILTER)) {
 			AbstractDriver fatherPar = getFatherParameter(dependency, drivers);

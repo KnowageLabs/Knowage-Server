@@ -140,6 +140,7 @@ public class SpagoBIConstants {
 	public static final String NOT_EQUAL_FILTER = "not equals";
 	public static final String CONTAIN_FILTER = "contains";
 	public static final String NOT_CONTAIN_FILTER = "notcontains";
+	public static final String NOT_CONTAIN_FILTER_WITH_SPACE= "not contains";
 	public static final String LESS_FILTER = "less";
 	public static final String LESS_OR_EQUAL_FILTER = "lessequal";
 	public static final String GREATER_FILTER = "greater";
