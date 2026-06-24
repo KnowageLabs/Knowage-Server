@@ -28,8 +28,8 @@
 					<RollingFile
 						name="KNOWAGE_QBE_ENGINE_AUDIT_$${ctx:tenant:-global}"
 						append="true"
-						fileName="${sys:catalina.base}/logs/$${ctx:tenant:-global}/knowageQbeAudit.log"
-						filePattern="${sys:catalina.base}/logs/$${ctx:tenant:-global}/knowageQbeAudit-$${ctx:tenant:-global}.%d{yyyy-MM-dd}.log"
+						fileName="${sys:catalina.base}/logs/${ctx:tenant:-global}/knowageQbeAudit.log"
+						filePattern="${sys:catalina.base}/logs/${ctx:tenant:-global}/knowageQbeAudit-${ctx:tenant:-global}.%d{yyyy-MM-dd}.log"
 						ignoreExceptions="true"
 						createOnDemand="true">
 						<PatternLayout>
