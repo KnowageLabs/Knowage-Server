@@ -200,8 +200,8 @@ public class PasswordChecker {
 
             if (oldPwd != null && oldPwd.equalsIgnoreCase(newPwd)) {
                 logger.debug("The password's doesn't be equal the lastest.");
-                throw new EMFUserError(EMFErrorSeverity.ERROR, 14007, Collections.emptyList(),
-								Collections.emptyMap());
+                throw new Exception("The new password cannot be the same as the previous one.");
+                
             }
 
 		}
