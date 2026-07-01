@@ -129,7 +129,7 @@ public class DashboardPivotExporter extends GenericDashboardWidgetExporter imple
         JSONArray columns = fields.getJSONArray("columns");
         JSONArray rows = fields.getJSONArray("rows");
         int trackedPathFieldCount = columns.length() + rows.length();
-        String widgetName = getJsonObjectUtils().replacePlaceholderIfPresent(getJsonObjectUtils().getDashboardWidgetName(widget), drivers);
+        String widgetName = getJsonObjectUtils().replacePlaceholderIfPresent(getJsonObjectUtils().getDashboardWidgetName(widget), drivers, widget.optJSONArray("variables"));
 
         int offset = 0;
         int fetchSize = Integer.parseInt(SingletonConfig.getInstance().getConfigValue("SPAGOBI.API.DATASET.MAX_ROWS_NUMBER"));
