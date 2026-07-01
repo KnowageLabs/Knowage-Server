@@ -62,6 +62,7 @@ public class DashboardExportResource {
     private static final String IS_MULTI_SHEET = "isMultiSheet";
     private static final String EXPORT_FILE_NAME = "exportFileName";
     private static final String DASHBOARD_VARIABLES = "dashboardVariables";
+    private static final String DRIVER_DESCRIPTION_SUFFIX = "_description";
 
     @Context
     protected HttpServletRequest request;
@@ -213,6 +214,7 @@ public class DashboardExportResource {
             String driverName = driver.optString("urlName");
             if (!StringUtils.isBlank(driverName)) {
                 widgetName = widgetName.replace("$P{" + driverName + "}", getDriverValue(driver));
+                widgetName = widgetName.replace("$P{" + driverName + DRIVER_DESCRIPTION_SUFFIX + "}", getDriverDescription(driver));
             }
         }
         return widgetName;
@@ -237,6 +239,27 @@ public class DashboardExportResource {
         return driverValue;
     }
 
+    private static String getDriverDescription(JSONObject driver) throws JSONException {
+        String driverDescription = driver.optString("description");
+        if (!StringUtils.isBlank(driverDescription)) {
+            return driverDescription;
+        }
+
+        JSONArray parameterValue = driver.optJSONArray("parameterValue");
+        if (parameterValue != null) {
+            driverDescription = joinDriverDescriptions(parameterValue);
+        }
+
+        if (StringUtils.isBlank(driverDescription)) {
+            Object rawValue = driver.opt("value");
+            if (rawValue instanceof JSONArray) {
+                driverDescription = joinDriverDescriptions((JSONArray) rawValue);
+            }
+        }
+
+        return driverDescription;
+    }
+
     private static String joinDriverValues(JSONArray driverValues) throws JSONException {
         List<String> resolvedValues = new ArrayList<>();
         for (int i = 0; i < driverValues.length(); i++) {
@@ -256,6 +279,27 @@ public class DashboardExportResource {
         }
 
         return String.join(", ", resolvedValues);
+    }
+
+    private static String joinDriverDescriptions(JSONArray driverValues) throws JSONException {
+        List<String> resolvedDescriptions = new ArrayList<>();
+        for (int i = 0; i < driverValues.length(); i++) {
+            Object currentValue = driverValues.get(i);
+            if (currentValue instanceof JSONObject) {
+                JSONObject currentValueAsJsonObject = (JSONObject) currentValue;
+                String nestedDescription = currentValueAsJsonObject.optString("description");
+                if (StringUtils.isBlank(nestedDescription)) {
+                    nestedDescription = currentValueAsJsonObject.optString("value");
+                }
+                if (!StringUtils.isBlank(nestedDescription)) {
+                    resolvedDescriptions.add(nestedDescription);
+                }
+            } else if (currentValue != null && currentValue != JSONObject.NULL) {
+                resolvedDescriptions.add(String.valueOf(currentValue));
+            }
+        }
+
+        return String.join(", ", resolvedDescriptions);
     }
 
     private static String replaceVariablePlaceholders(String widgetName, JSONArray variables) throws JSONException {
