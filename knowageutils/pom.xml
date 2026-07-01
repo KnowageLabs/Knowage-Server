@@ -458,6 +458,10 @@
 					<artifactId>commons-io</artifactId>
 					<groupId>commons-io</groupId>
 				</exclusion>
+				<exclusion>
+<groupId>org.glassfish</groupId>
+<artifactId>jakarta.json</artifactId>
+</exclusion>
 			</exclusions>
 		</dependency>
 		<dependency>
@@ -468,6 +472,10 @@
 				<exclusion>
 					<artifactId>commons-io</artifactId>
 					<groupId>commons-io</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>jakarta.json</artifactId>
+					<groupId>org.glassfish</groupId>
 				</exclusion>
 				<exclusion>
 					<artifactId>jetty-http</artifactId>
