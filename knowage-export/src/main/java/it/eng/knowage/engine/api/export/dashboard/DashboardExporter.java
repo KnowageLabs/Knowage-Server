@@ -939,6 +939,7 @@ public class DashboardExporter {
             dashboardSelections.put("selections", effectiveSelections);
             dashboardSelections.put("parameters", parameters);
             dashboardSelections.put("drivers", drivers);
+            addWidgetLikeSelections(dashboardSelections, widget);
 
             if (isSolrDataset(dataset) && !widget.getString("type").equalsIgnoreCase("discovery")) {
                 JSONObject jsOptions = new JSONObject();
@@ -946,7 +947,7 @@ public class DashboardExporter {
                 dashboardSelections.put("options", jsOptions);
             }
 
-            if (isSolrDataset(dataset) && widget.getString("type").equalsIgnoreCase("discovery")) {
+            if (!dashboardSelections.has("likeSelections") && isSolrDataset(dataset) && widget.getString("type").equalsIgnoreCase("discovery")) {
                 buildLikeSelections(dashboardSelections, widget);
             }
 
@@ -1139,6 +1140,13 @@ public class DashboardExporter {
             dataSet = versionedDataSet.getWrappedDataset();
         }
         return dataSet instanceof SolrDataSet;
+    }
+
+    protected void addWidgetLikeSelections(JSONObject dashboardSelections, JSONObject widget) throws JSONException {
+        JSONObject likeSelections = widget.optJSONObject("likeSelections");
+        if (likeSelections != null && likeSelections.length() > 0) {
+            dashboardSelections.put("likeSelections", new JSONObject(likeSelections.toString()));
+        }
     }
 
     private void buildLikeSelections(JSONObject dashboardSelections, JSONObject widget) {

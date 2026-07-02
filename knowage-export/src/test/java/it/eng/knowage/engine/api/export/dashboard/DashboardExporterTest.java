@@ -7,6 +7,7 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public class DashboardExporterTest {
 
@@ -23,6 +24,10 @@ public class DashboardExporterTest {
 
         private String resolveColumnDisplayName(JSONObject settings, JSONObject column, JSONArray variables) throws JSONException {
             return getDashboardColumnDisplayName(settings, column, variables);
+        }
+
+        private void copyWidgetLikeSelections(JSONObject dashboardSelections, JSONObject widget) throws JSONException {
+            addWidgetLikeSelections(dashboardSelections, widget);
         }
     }
 
@@ -166,5 +171,20 @@ public class DashboardExporterTest {
                         .put("value", "Q1 2026"));
 
         assertEquals("Q1 2026", exporter.resolveColumnDisplayName(settings, column, variables));
+    }
+
+    @Test
+    public void shouldCopyIncomingWidgetLikeSelections() throws JSONException {
+        TestableDashboardExporter exporter = new TestableDashboardExporter();
+        JSONObject dashboardSelections = new JSONObject();
+        JSONObject widget = new JSONObject()
+                .put("likeSelections", new JSONObject()
+                        .put("sales", new JSONObject()
+                                .put("COUNTRY,REGION", "it")));
+
+        exporter.copyWidgetLikeSelections(dashboardSelections, widget);
+
+        assertTrue(dashboardSelections.has("likeSelections"));
+        assertEquals("it", dashboardSelections.getJSONObject("likeSelections").getJSONObject("sales").getString("COUNTRY,REGION"));
     }
 }
