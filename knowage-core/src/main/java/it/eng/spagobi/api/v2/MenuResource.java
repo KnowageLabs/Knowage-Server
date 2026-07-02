@@ -242,7 +242,6 @@ public class MenuResource extends AbstractSpagoBIResource {
 
 	@GET
 	@Path("/htmls/{fileName}")
-	@UserConstraint(functionalities = { CommunityFunctionalityConstants.MENU_MANAGEMENT })
 	@Produces(MediaType.TEXT_HTML + CHARSET)
 	public Response getHTMLFile(@PathParam("fileName") String fileName) {
 		LOGGER.debug("IN");
