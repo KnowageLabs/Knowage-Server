@@ -7,8 +7,29 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public class DashboardExporterTest {
+
+    private static class TestableDashboardExporter extends DashboardExporter {
+
+        private TestableDashboardExporter() {
+            super("test-user", null);
+        }
+
+        @Override
+        protected String getInternationalizedHeader(String columnName) {
+            return columnName;
+        }
+
+        private String resolveColumnDisplayName(JSONObject settings, JSONObject column, JSONArray variables) throws JSONException {
+            return getDashboardColumnDisplayName(settings, column, variables);
+        }
+
+        private void copyWidgetLikeSelections(JSONObject dashboardSelections, JSONObject widget) throws JSONException {
+            addWidgetLikeSelections(dashboardSelections, widget);
+        }
+    }
 
     @Test
     public void shouldPreserveOrderBySummaryPathInPivotAggregations() throws JSONException {
@@ -100,5 +121,70 @@ public class DashboardExporterTest {
         assertEquals("Resp 3", sortedCategory.getJSONArray("orderBySummaryPath").getString(1));
         assertFalse(categories.getJSONObject(1).has("orderBySummaryPath"));
         assertFalse(categories.getJSONObject(2).has("orderBySummaryPath"));
+    }
+
+    @Test
+    public void shouldResolveVariablePlaceholderInCustomHeaderLabel() throws JSONException {
+        TestableDashboardExporter exporter = new TestableDashboardExporter();
+
+        JSONObject settings = new JSONObject()
+                .put("configuration", new JSONObject()
+                        .put("headers", new JSONObject()
+                                .put("custom", new JSONObject()
+                                        .put("enabled", true)
+                                        .put("rules", new JSONArray()
+                                                .put(new JSONObject()
+                                                        .put("action", "setLabel")
+                                                        .put("value", "$V{QQ}")
+                                                        .put("target", new JSONArray().put("quarter-column")))))));
+        JSONObject column = new JSONObject()
+                .put("id", "quarter-column")
+                .put("alias", "Quarter");
+        JSONArray variables = new JSONArray()
+                .put(new JSONObject()
+                        .put("name", "QQ")
+                        .put("value", "Q1 2026"));
+
+        assertEquals("Q1 2026", exporter.resolveColumnDisplayName(settings, column, variables));
+    }
+
+    @Test
+    public void shouldResolveDirectVariableNameInCustomHeaderLabel() throws JSONException {
+        TestableDashboardExporter exporter = new TestableDashboardExporter();
+
+        JSONObject settings = new JSONObject()
+                .put("configuration", new JSONObject()
+                        .put("headers", new JSONObject()
+                                .put("custom", new JSONObject()
+                                        .put("enabled", true)
+                                        .put("rules", new JSONArray()
+                                                .put(new JSONObject()
+                                                        .put("action", "setLabel")
+                                                        .put("value", "QQ")
+                                                        .put("target", new JSONArray().put("quarter-column")))))));
+        JSONObject column = new JSONObject()
+                .put("id", "quarter-column")
+                .put("alias", "Quarter");
+        JSONArray variables = new JSONArray()
+                .put(new JSONObject()
+                        .put("name", "QQ")
+                        .put("value", "Q1 2026"));
+
+        assertEquals("Q1 2026", exporter.resolveColumnDisplayName(settings, column, variables));
+    }
+
+    @Test
+    public void shouldCopyIncomingWidgetLikeSelections() throws JSONException {
+        TestableDashboardExporter exporter = new TestableDashboardExporter();
+        JSONObject dashboardSelections = new JSONObject();
+        JSONObject widget = new JSONObject()
+                .put("likeSelections", new JSONObject()
+                        .put("sales", new JSONObject()
+                                .put("COUNTRY,REGION", "it")));
+
+        exporter.copyWidgetLikeSelections(dashboardSelections, widget);
+
+        assertTrue(dashboardSelections.has("likeSelections"));
+        assertEquals("it", dashboardSelections.getJSONObject("likeSelections").getJSONObject("sales").getString("COUNTRY,REGION"));
     }
 }
