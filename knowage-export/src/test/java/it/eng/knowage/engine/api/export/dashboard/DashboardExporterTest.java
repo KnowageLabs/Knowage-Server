@@ -26,6 +26,7 @@ public class DashboardExporterTest {
             return getDashboardColumnDisplayName(settings, column, variables);
         }
 
+
         private void copyWidgetLikeSelections(JSONObject dashboardSelections, JSONObject widget) throws JSONException {
             addWidgetLikeSelections(dashboardSelections, widget);
         }
