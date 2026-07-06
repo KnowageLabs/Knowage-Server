@@ -173,6 +173,236 @@ public class UserResource extends AbstractSpagoBIResource {
 					getLocale(), e);
 		}
 	}
+	
+    @POST
+    @Path("/massiveUpdateAttribute")
+    @UserConstraint(functionalities = { CommunityFunctionalityConstants.PROFILE_MANAGEMENT,
+            CommunityFunctionalityConstants.FINAL_USERS_MANAGEMENT })
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    @Operation(
+            summary = "Aggiornamento massivo attributi utenti",
+            description = "Aggiorna i valori degli attributi esistenti per una lista di utenti sulla base dei dati forniti in UserBO.",
+            tags = {"Gestione Utenti"}
+    )
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Aggiornamento degli attributi completato (anche in caso di fallimenti parziali)",
+                    content = @Content(
+                            mediaType = "application_json",
+                            array = @ArraySchema(schema = @Schema(implementation = UserBOResult.class))
+                    )
+            ),
+            @ApiResponse(responseCode = "403", description = "Accesso negato: permessi insufficienti"),
+            @ApiResponse(responseCode = "500", description = "Errore generico del server")
+    })
+
+    public Response updateUserAttributesAll(@Parameter(description = "Lista di oggetti UserBO da processare", required = true) List <UserBO> requestDTO) {
+    	 
+        MessageBuilder msgBuilder = new MessageBuilder();
+        Locale locale = msgBuilder.getLocale(request);
+ 
+        ISbiUserDAO usersDao = DAOFactory.getSbiUserDAO();
+        usersDao.setUserProfile(getUserProfile());
+        List<UserBOResult> results = new ArrayList<>();
+ 
+        for (UserBO user : requestDTO) {
+ 
+            UserBOResult result = new UserBOResult();
+         
+            String userId = user.getUserId();
+  
+            SbiUser sbiUser = new SbiUser();
+            sbiUser = usersDao.loadSbiUserByUserId(userId);
+            HashMap<Integer, HashMap<String, String>> map = user.getSbiUserAttributeses();
+            
+            Set<SbiUserAttributes> currentAttributes = sbiUser.getSbiUserAttributeses(); 
+            
+            if (currentAttributes != null) {     
+            	for (SbiUserAttributes currentAttr : currentAttributes) {         
+            		Integer currentAttrId = currentAttr.getId().getAttributeId();                  
+            		if (map.containsKey(currentAttrId)) {             
+            			HashMap<String, String> incomingValues = map.get(currentAttrId);                          
+            			for (Entry<String, String> valueEntry : incomingValues.entrySet()) {                 
+            				currentAttr.setAttributeValue(valueEntry.getValue());             
+            				}         
+            			}     
+            		}     
+            	
+            	sbiUser.setSbiUserAttributeses(currentAttributes); }           
+       
+ 
+            try {
+            	Integer id = usersDao.fullSaveOrUpdateSbiUser(sbiUser);
+            	Encoder encoder = OwaspDefaultEncoderFactory.getInstance().getEncoder();
+            	String encodedUser = encoder.encodeForURL("" + id);
+ 
+            	result.setSuccess(true);
+            	result.setUserId(user.getUserId());
+            	result.setCreatedUserId(id);
+            	result.setMessage("User processed successfully");
+            	results.add (result);
+ 
+            } catch (Exception e) {
+            	LOGGER.error("Error while inserting resource", e);
+ 
+            	result.setSuccess(false);
+            	result.setUserId(user.getUserId());
+            	result.setMessage(e.getMessage());
+            	results.add (result);
+ 
+            }
+           }
+ 
+        return Response.ok(results).build();
+    }
+    
+
+    @POST
+    @Path("/massiveUpdateRoles")
+    @UserConstraint(functionalities = { CommunityFunctionalityConstants.PROFILE_MANAGEMENT,
+            CommunityFunctionalityConstants.FINAL_USERS_MANAGEMENT })
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    @Operation(
+            summary = "Aggiornamento massivo ruoli utenti",
+            description = "Sovrascrive e aggiorna la lista dei ruoli applicati per un elenco di utenti.",
+            tags = {"Gestione Utenti"}
+    )
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Aggiornamento dei ruoli completato (anche in caso di fallimenti parziali)",
+                    content = @Content(
+                            mediaType = "application_json",
+                            array = @ArraySchema(schema = @Schema(implementation = UserBOResult.class))
+                    )
+            ),
+            @ApiResponse(responseCode = "403", description = "Accesso negato: permessi insufficienti"),
+            @ApiResponse(responseCode = "500", description = "Errore generico del server")
+    })
+
+    public Response updateUserRolesAll(@Parameter(description = "Lista di oggetti UserBO da processare", required = true) List <UserBO> requestDTO) {
+    	 
+        MessageBuilder msgBuilder = new MessageBuilder();
+        Locale locale = msgBuilder.getLocale(request);
+ 
+        ISbiUserDAO usersDao = DAOFactory.getSbiUserDAO();
+        usersDao.setUserProfile(getUserProfile());
+        List<UserBOResult> results = new ArrayList<>();
+ 
+        for (UserBO user : requestDTO) {
+ 
+            UserBOResult result = new UserBOResult();
+         
+            String userId = user.getUserId();
+  
+            SbiUser sbiUser = new SbiUser();
+            sbiUser = usersDao.loadSbiUserByUserId(userId);
+ 
+            List<?> list = user.getSbiExtUserRoleses();         
+            Set<SbiExtRoles> roles = new HashSet<>(0);                  
+            if (list != null) {             
+            	for (Object item : list) {                 
+            		Integer id = Integer.valueOf(item.toString());                 
+            		SbiExtRoles role = new SbiExtRoles(id);                 
+            		roles.add(role);             
+            		}         
+            	}         
+            sbiUser.setSbiExtUserRoleses(roles);
+
+            try {
+            	Integer id = usersDao.fullSaveOrUpdateSbiUser(sbiUser);
+            	Encoder encoder = OwaspDefaultEncoderFactory.getInstance().getEncoder();
+            	String encodedUser = encoder.encodeForURL("" + id);
+ 
+            	result.setSuccess(true);
+            	result.setUserId(user.getUserId());
+            	result.setCreatedUserId(id);
+            	result.setMessage("User processed successfully");
+            	results.add (result);
+ 
+            } catch (Exception e) {
+            	LOGGER.error("Error while inserting resource", e);
+ 
+            	result.setSuccess(false);
+            	result.setUserId(user.getUserId());
+            	result.setMessage(e.getMessage());
+            	results.add (result);
+ 
+            }
+           }
+ 
+        return Response.ok(results).build();
+    }
+    
+    
+    @POST
+    @Path("/unlockedUserAll")
+    @UserConstraint(functionalities = { CommunityFunctionalityConstants.PROFILE_MANAGEMENT,
+            CommunityFunctionalityConstants.FINAL_USERS_MANAGEMENT })
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    @Operation(
+            summary = "Sblocco massivo utenze bloccate",
+            description = "Imposta il flag flgPwdBlocked a false per un elenco di utenti, riabilitando l'accesso al sistema.",
+            tags = {"Gestione Utenti"}
+    )
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Sblocco delle utenze completato (anche in caso di fallimenti parziali)",
+                    content = @Content(
+                            mediaType = "application_json",
+                            array = @ArraySchema(schema = @Schema(implementation = UserBOResult.class))
+                    )
+            ),
+            @ApiResponse(responseCode = "403", description = "Accesso negato: permessi insufficienti"),
+            @ApiResponse(responseCode = "500", description = "Errore generico del server")
+    })
+
+    public Response unlockedUserAll(@Parameter(description = "Lista di oggetti UserBO da processare", required = true) List <UserBO> requestDTO) {
+    	         
+        ISbiUserDAO usersDao = DAOFactory.getSbiUserDAO();
+        usersDao.setUserProfile(getUserProfile());
+        List<UserBOResult> results = new ArrayList<>();
+ 
+        for (UserBO user : requestDTO) {
+ 
+            UserBOResult result = new UserBOResult();
+         
+            String userId = user.getUserId();
+  
+            SbiUser sbiUser = new SbiUser();
+            sbiUser = usersDao.loadSbiUserByUserId(userId);
+            sbiUser.setFlgPwdBlocked(false);
+ 
+            try {
+            	Integer id = usersDao.fullSaveOrUpdateSbiUser(sbiUser);
+            	Encoder encoder = OwaspDefaultEncoderFactory.getInstance().getEncoder();
+            	String encodedUser = encoder.encodeForURL("" + id);
+ 
+            	result.setSuccess(true);
+            	result.setUserId(user.getUserId());
+            	result.setCreatedUserId(id);
+            	result.setMessage("User processed successfully");
+            	results.add (result);
+ 
+            } catch (Exception e) {
+            	LOGGER.error("Error while inserting resource", e);
+ 
+            	result.setSuccess(false);
+            	result.setUserId(user.getUserId());
+            	result.setMessage(e.getMessage());
+            	results.add (result);
+ 
+            }
+           }
+ 
+        return Response.ok(results).build();
+    }
+
 
     @POST
     @Path("/massive")

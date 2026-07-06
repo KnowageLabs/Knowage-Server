@@ -543,6 +543,7 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO
 				userToUpdate.setFullName(user.getFullName());
 				userToUpdate.setUserId(user.getUserId());
 				userToUpdate.changeId(id);
+				userToUpdate.setFlgPwdBlocked(user.getFlgPwdBlocked());
 				userToUpdate.setFailedLoginAttempts(user.getFailedLoginAttempts());
 				userToUpdate.setDefaultRoleId(user.getDefaultRoleId());
 				updateSbiCommonInfo4Update(userToUpdate);
