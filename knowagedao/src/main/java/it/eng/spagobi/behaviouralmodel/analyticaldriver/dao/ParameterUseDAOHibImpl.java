@@ -302,6 +302,12 @@ public class ParameterUseDAOHibImpl extends AbstractHibernateDAO implements IPar
 			} else {
 				hibParuse.setSbiLovForDefault(hibSbiLovForDefault);
 			}
+			SbiLov hibSbiLovForMin = (SbiLov) aSession.load(SbiLov.class, aParameterUse.getIdLovForMin());
+			if (hibSbiLovForMin.getLovId().intValue() == -1) {
+			    hibParuse.setSbiLovForMin(null);
+			} else {
+			    hibParuse.setSbiLovForMin(hibSbiLovForMin);
+			}
 			SbiLov hibSbiLovForMax = (SbiLov) aSession.load(SbiLov.class, aParameterUse.getIdLovForMax());
 			if (hibSbiLovForMax.getLovId().intValue() == -1) {
 				hibParuse.setSbiLovForMax(null);
@@ -412,6 +418,12 @@ public class ParameterUseDAOHibImpl extends AbstractHibernateDAO implements IPar
 				hibParuse.setSbiLovForDefault(null);
 			} else {
 				hibParuse.setSbiLovForDefault(hibSbiLovForDefault);
+			}
+			SbiLov hibSbiLovForMin = (SbiLov) aSession.load(SbiLov.class, aParameterUse.getIdLovForMin());
+			if (hibSbiLovForMin.getLovId().intValue() == -1) {
+			    hibParuse.setSbiLovForMin(null);
+			} else {
+			    hibParuse.setSbiLovForMin(hibSbiLovForMin);
 			}
 			SbiLov hibSbiLovForMax = (SbiLov) aSession.load(SbiLov.class, aParameterUse.getIdLovForMax());
 			if (hibSbiLovForMax.getLovId().intValue() == -1) {
@@ -653,6 +665,11 @@ public class ParameterUseDAOHibImpl extends AbstractHibernateDAO implements IPar
 			aParameterUse.setIdLovForDefault(null);
 		} else {
 			aParameterUse.setIdLovForDefault(hibParUse.getSbiLovForDefault().getLovId());
+		}
+		if (hibParUse.getSbiLovForMin() == null) {
+			aParameterUse.setIdLovForMin(null);
+		} else {
+			aParameterUse.setIdLovForMin(hibParUse.getSbiLovForMin().getLovId());
 		}
 		if (hibParUse.getSbiLovForMax() == null) {
 			aParameterUse.setIdLovForMax(null);

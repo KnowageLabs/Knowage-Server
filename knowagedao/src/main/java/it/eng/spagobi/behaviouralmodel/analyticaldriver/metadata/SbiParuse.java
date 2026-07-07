@@ -33,6 +33,7 @@ public class SbiParuse extends SbiHibernateModel {
 	private SbiParameters sbiParameters;
 	private SbiLov sbiLov;
 	private SbiLov sbiLovForDefault;
+	private SbiLov sbiLovForMin;
 	private SbiLov sbiLovForMax;
 	private String label;
 	private String name;
@@ -174,6 +175,14 @@ public class SbiParuse extends SbiHibernateModel {
 
 	public void setSbiLovForDefault(SbiLov sbiLovForDefault) {
 		this.sbiLovForDefault = sbiLovForDefault;
+	}
+	
+	public SbiLov getSbiLovForMin() {
+		return sbiLovForMin;
+	}
+
+	public void setSbiLovForMin(SbiLov sbiLovForMin) {
+		this.sbiLovForMin = sbiLovForMin;
 	}
 
 	public SbiLov getSbiLovForMax() {
