@@ -39,7 +39,6 @@ public class DashboardPivotExporter extends GenericDashboardWidgetExporter imple
 
     public static Logger logger = Logger.getLogger(DashboardPivotExporter.class);
     private static final String SOURCE_SHEET_NAME = "Source_sheet";
-    private static final String PIVOT_SHEET_NAME = "Pivot_sheet";
     static final long DATA_FIELD_REFERENCE = 4294967294L; // OOXML uses unsigned -2 to point to the pivot data field.
 
     private static final class PivotSheetContext {
@@ -130,6 +129,7 @@ public class DashboardPivotExporter extends GenericDashboardWidgetExporter imple
         JSONArray rows = fields.getJSONArray("rows");
         int trackedPathFieldCount = columns.length() + rows.length();
         String widgetName = getJsonObjectUtils().replacePlaceholderIfPresent(getJsonObjectUtils().getDashboardWidgetName(widget), drivers, widget.optJSONArray("variables"));
+        String xlsxSheetName = getWidgetXlsxSheetName(widget, drivers, widgetName);
 
         int offset = 0;
         int fetchSize = Integer.parseInt(SingletonConfig.getInstance().getConfigValue("SPAGOBI.API.DATASET.MAX_ROWS_NUMBER"));
@@ -146,7 +146,7 @@ public class DashboardPivotExporter extends GenericDashboardWidgetExporter imple
             return 0;
         }
 
-        PivotSheetContext pivotSheetContext = createPivotSheetContext(streamingWorkbook);
+        PivotSheetContext pivotSheetContext = createPivotSheetContext(streamingWorkbook, xlsxSheetName);
         if (registerAutoSizeSkip) {
             excelExporter.registerSheetToSkipAutoSize(pivotSheetContext.sourceSheetName);
             excelExporter.registerSheetToSkipAutoSize(pivotSheetContext.pivotSheetName);
@@ -163,8 +163,8 @@ public class DashboardPivotExporter extends GenericDashboardWidgetExporter imple
 
         boolean isImagePresent = imageB64 != null;
         XSSFPivotTable pivotTable = pivotSheetContext.pivotXssfSheet.createPivotTable(
-                new AreaReference(isImagePresent ? new CellReference(pivotSheetContext.sourceSheetName + "!A4") : new CellReference(pivotSheetContext.sourceSheetName + "!A2"),
-                        new CellReference(pivotSheetContext.sourceSheetName + "!" + lastColLetter + (finalSourceLastRowNum + 1)),
+                new AreaReference(isImagePresent ? createSheetCellReference(pivotSheetContext.sourceSheetName, "A4") : createSheetCellReference(pivotSheetContext.sourceSheetName, "A2"),
+                        createSheetCellReference(pivotSheetContext.sourceSheetName, lastColLetter + (finalSourceLastRowNum + 1)),
                         SpreadsheetVersion.EXCEL2007),
                 new CellReference("A8"));
 
@@ -179,10 +179,10 @@ public class DashboardPivotExporter extends GenericDashboardWidgetExporter imple
         return 2;
     }
 
-    private PivotSheetContext createPivotSheetContext(SXSSFWorkbook streamingWorkbook) {
+    private PivotSheetContext createPivotSheetContext(SXSSFWorkbook streamingWorkbook, String xlsxSheetName) {
         XSSFWorkbook xssfWorkbook = streamingWorkbook.getXSSFWorkbook();
-        Sheet sourceSheet = excelExporter.createUniqueSafeSheet(streamingWorkbook, SOURCE_SHEET_NAME, null);
-        Sheet pivotSheet = excelExporter.createUniqueSafeSheet(streamingWorkbook, PIVOT_SHEET_NAME, null);
+        Sheet sourceSheet = excelExporter.createUniqueSafeSheet(streamingWorkbook, SOURCE_SHEET_NAME + "_" + xlsxSheetName, null);
+        Sheet pivotSheet = excelExporter.createUniqueSafeSheet(streamingWorkbook, xlsxSheetName, null);
 
         if (!(sourceSheet instanceof SXSSFSheet)) {
             throw new SpagoBIRuntimeException("Unable to export pivot widget: source sheet is not SXSSFSheet");
@@ -203,6 +203,10 @@ public class DashboardPivotExporter extends GenericDashboardWidgetExporter imple
                 sourceSheet.getSheetName(),
                 pivotSheet.getSheetName()
         );
+    }
+
+    private CellReference createSheetCellReference(String sheetName, String reference) {
+        return new CellReference("'" + sheetName.replace("'", "''") + "'!" + reference);
     }
 
     private String createPivotHeaderSheet(XSSFSheet pivotSheet, String widgetName) {
@@ -233,8 +237,7 @@ public class DashboardPivotExporter extends GenericDashboardWidgetExporter imple
     }
 
     private JSONObject getJsonObject() throws JSONException {
-        JSONObject settings = widget.getJSONObject("settings");
-        return settings;
+        return widget.getJSONObject("settings");
     }
 
     private void formatPivot(XSSFPivotTable pivotTable, Map<Integer, Map<String, Integer>> fieldItemIndexes) {
@@ -432,8 +435,7 @@ public class DashboardPivotExporter extends GenericDashboardWidgetExporter imple
     }
 
     static List<PivotSortReference> buildSummaryPathReferences(JSONObject pivotFieldDefinition, JSONArray summaryPathFields,
-                                                               Map<String, Integer> sourceFieldIndexes, Map<Integer, Map<String, Integer>> fieldItemIndexes)
-            throws JSONException {
+                                                               Map<String, Integer> sourceFieldIndexes, Map<Integer, Map<String, Integer>> fieldItemIndexes) {
         List<PivotSortReference> references = new ArrayList<>();
         JSONArray orderBySummaryPath = pivotFieldDefinition.optJSONArray("orderBySummaryPath");
         if (orderBySummaryPath == null || orderBySummaryPath.length() == 0) {

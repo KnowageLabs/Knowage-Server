@@ -24,7 +24,6 @@ import it.eng.knowage.engine.api.export.dashboard.excel.DashboardExcelExporter;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
-import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.Map;
@@ -67,12 +66,14 @@ class GenericDashboardWidgetExporter extends DashboardExporter implements IWidge
             String widgetName = getJsonObjectUtils().replacePlaceholderIfPresent(getJsonObjectUtils().getDashboardWidgetName(widget), drivers, widget.optJSONArray("variables"));
             if (dataStore != null) {
                 String dashboardSheetName = documentName != null ? documentName : "Dashboard";
-                Sheet sheet = excelExporter.createUniqueSafeSheet(wb, widgetName, dashboardSheetName);
+                String xlsxSheetName = getWidgetXlsxSheetName(widget, drivers, widgetName);
+                Sheet sheet = excelExporter.createUniqueSafeSheet(wb, xlsxSheetName, dashboardSheetName);
                 excelExporter.fillGenericWidgetSheetWithData(dataStore, wb, sheet, widgetName, 0, settings);
                 return 1;
-                }
+            }
         } catch (Exception e) {
             throw new SpagoBIRuntimeException("Unable to export generic widget: " + widgetId, e);
         }
         return 0;
-    }}
+    }
+}
