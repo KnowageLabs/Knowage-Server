@@ -30,6 +30,11 @@ public class DashboardExporterTest {
             return getLocaleFromBody(body).toLanguageTag();
         }
 
+        private String resolveAppliedFiltersSheetName(JSONObject body) {
+            this.locale = getLocaleFromBody(body);
+            return getAppliedFiltersSheetName();
+        }
+
         private void copyWidgetLikeSelections(JSONObject dashboardSelections, JSONObject widget) throws JSONException {
             addWidgetLikeSelections(dashboardSelections, widget);
         }
@@ -207,5 +212,25 @@ public class DashboardExporterTest {
         TestableDashboardExporter exporter = new TestableDashboardExporter();
 
         assertEquals("en-US", exporter.resolveLocaleTag(new JSONObject()));
+    }
+
+    @Test
+    public void shouldUseItalianFiltersSheetNameForItalianLocale() throws JSONException {
+        TestableDashboardExporter exporter = new TestableDashboardExporter();
+
+        JSONObject body = new JSONObject()
+                .put("locale", "it-IT");
+
+        assertEquals("Filtri Applicati", exporter.resolveAppliedFiltersSheetName(body));
+    }
+
+    @Test
+    public void shouldKeepDefaultFiltersSheetNameForNonItalianLocale() throws JSONException {
+        TestableDashboardExporter exporter = new TestableDashboardExporter();
+
+        JSONObject body = new JSONObject()
+                .put("locale", "en-US");
+
+        assertEquals("Filters", exporter.resolveAppliedFiltersSheetName(body));
     }
 }
