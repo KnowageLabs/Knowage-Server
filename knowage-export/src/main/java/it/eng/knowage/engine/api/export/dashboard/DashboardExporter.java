@@ -44,6 +44,9 @@ public class DashboardExporter {
     private static final String SORTING_OBJ = "sortingObj";
     private static final String DRILL_SORTING_OBJ = "drillSortingObj";
     private static final String BOTH = "both";
+    private static final String DEFAULT_EXPORT_LOCALE_TAG = "en-US";
+    private static final Locale DEFAULT_EXPORT_LOCALE = Locale.forLanguageTag(DEFAULT_EXPORT_LOCALE_TAG);
+    private static final Map<String, String> EXPORT_LOCALE_ALIASES = createExportLocaleAliases();
 
     public DashboardExporter(String userUniqueIdentifier, String imageB64) {
         this.jsonObjectUtils = new JSONObjectUtils();
@@ -53,6 +56,66 @@ public class DashboardExporter {
 
     private static final Logger LOGGER = LogManager.getLogger(DashboardExporter.class);
 
+    private static Map<String, String> createExportLocaleAliases() {
+        Map<String, String> localeAliases = new HashMap<>();
+        localeAliases.put("ar", "ar-EG");
+        localeAliases.put("ar-eg", "ar-EG");
+        localeAliases.put("ara", "ar-EG");
+        localeAliases.put("bg", "bg-BG");
+        localeAliases.put("bg-bg", "bg-BG");
+        localeAliases.put("bul", "bg-BG");
+        localeAliases.put("da", "da-DK");
+        localeAliases.put("da-dk", "da-DK");
+        localeAliases.put("dan", "da-DK");
+        localeAliases.put("de", "de-DE");
+        localeAliases.put("de-de", "de-DE");
+        localeAliases.put("deu", "de-DE");
+        localeAliases.put("en", "en-US");
+        localeAliases.put("en-gb", "en-GB");
+        localeAliases.put("en-us", "en-US");
+        localeAliases.put("eng", "en-US");
+        localeAliases.put("es", "es-ES");
+        localeAliases.put("es-es", "es-ES");
+        localeAliases.put("spa", "es-ES");
+        localeAliases.put("fr", "fr-FR");
+        localeAliases.put("fr-fr", "fr-FR");
+        localeAliases.put("fra", "fr-FR");
+        localeAliases.put("he", "he-IL");
+        localeAliases.put("he-il", "he-IL");
+        localeAliases.put("heb", "he-IL");
+        localeAliases.put("hu", "hu-HU");
+        localeAliases.put("hu-hu", "hu-HU");
+        localeAliases.put("hun", "hu-HU");
+        localeAliases.put("it", "it-IT");
+        localeAliases.put("it-it", "it-IT");
+        localeAliases.put("ita", "it-IT");
+        localeAliases.put("ja", "ja-JP");
+        localeAliases.put("ja-jp", "ja-JP");
+        localeAliases.put("jpn", "ja-JP");
+        localeAliases.put("ko", "ko-KR");
+        localeAliases.put("ko-kr", "ko-KR");
+        localeAliases.put("kor", "ko-KR");
+        localeAliases.put("pt", "pt-BR");
+        localeAliases.put("pt-br", "pt-BR");
+        localeAliases.put("por", "pt-BR");
+        localeAliases.put("ru", "ru-RU");
+        localeAliases.put("ru-ru", "ru-RU");
+        localeAliases.put("rus", "ru-RU");
+        localeAliases.put("sk", "sk-SK");
+        localeAliases.put("sk-sk", "sk-SK");
+        localeAliases.put("slk", "sk-SK");
+        localeAliases.put("slo", "sk-SK");
+        localeAliases.put("tr", "tr-TR");
+        localeAliases.put("tr-tr", "tr-TR");
+        localeAliases.put("tur", "tr-TR");
+        localeAliases.put("zh", "zh-Hans-CN");
+        localeAliases.put("zh-cn", "zh-Hans-CN");
+        localeAliases.put("zh-cn-#hans", "zh-Hans-CN");
+        localeAliases.put("zh-hans-cn", "zh-Hans-CN");
+        localeAliases.put("zho", "zh-Hans-CN");
+        return Collections.unmodifiableMap(localeAliases);
+    }
+
     protected boolean summaryRowsEnabled(JSONObject settings) {
         try {
             JSONObjectUtils jsonObjectUtils = new JSONObjectUtils();
@@ -61,6 +124,19 @@ public class DashboardExporter {
         } catch (JSONException e) {
             return false;
         }
+    }
+
+    protected String getWidgetXlsxSheetName(JSONObject widget, JSONObject drivers, String defaultWidgetName) {
+        JSONObject settings = widget.optJSONObject("settings");
+        JSONObject configuration = settings != null ? settings.optJSONObject("configuration") : null;
+        JSONObject exports = configuration != null ? configuration.optJSONObject("exports") : null;
+        String customSheetName = exports != null ? exports.optString("xlsxSheetName") : "";
+
+        if (StringUtils.isBlank(customSheetName)) {
+            return defaultWidgetName;
+        }
+
+        return getJsonObjectUtils().replacePlaceholderIfPresent(customSheetName, drivers, widget.optJSONArray("variables"));
     }
 
     protected boolean conditionIsApplicable(String valueToCompare, String operator, String comparisonValue) {
@@ -580,23 +656,46 @@ public class DashboardExporter {
             try {
                 i18nMessages = messageDao.getAllI18NMessages(locale);
             } catch (Exception e) {
-                LOGGER.error("Error while getting i18n messages", e);
-                i18nMessages = new HashMap<>();
+                LOGGER.warn("Error while getting i18n messages for locale {}, falling back to {}", locale, DEFAULT_EXPORT_LOCALE_TAG, e);
+                try {
+                    i18nMessages = messageDao.getAllI18NMessages(DEFAULT_EXPORT_LOCALE);
+                } catch (Exception fallbackException) {
+                    LOGGER.error("Error while getting i18n messages", fallbackException);
+                    i18nMessages = new HashMap<>();
+                }
             }
         }
         return i18nMessages.getOrDefault(columnName, columnName);
     }
 
+    protected String normalizeLocaleTag(String localeTag) {
+        if (StringUtils.isBlank(localeTag)) {
+            return DEFAULT_EXPORT_LOCALE_TAG;
+        }
+
+        String normalizedLocaleTag = localeTag.replace("_", "-").trim().toLowerCase(Locale.ROOT);
+        if (EXPORT_LOCALE_ALIASES.containsKey(normalizedLocaleTag)) {
+            return EXPORT_LOCALE_ALIASES.get(normalizedLocaleTag);
+        }
+
+        String[] localeParts = normalizedLocaleTag.split("-");
+        if (localeParts.length > 0 && EXPORT_LOCALE_ALIASES.containsKey(localeParts[0])) {
+            return EXPORT_LOCALE_ALIASES.get(localeParts[0]);
+        }
+
+        return DEFAULT_EXPORT_LOCALE_TAG;
+    }
+
     protected Locale getLocaleFromBody(JSONObject body) {
         try {
-            String localeTag = body.getString("locale").replace("_", "-");
+            String localeTag = normalizeLocaleTag(body.optString("locale", null));
             Locale locale = Locale.forLanguageTag(localeTag);
             if (locale.getLanguage().isEmpty()) {
-                return Locale.ENGLISH;
+                return DEFAULT_EXPORT_LOCALE;
             }
             return locale;
         } catch (Exception e) {
-            return Locale.ENGLISH;
+            return DEFAULT_EXPORT_LOCALE;
         }
     }
 

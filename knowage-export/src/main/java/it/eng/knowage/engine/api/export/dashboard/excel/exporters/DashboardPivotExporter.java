@@ -12,6 +12,7 @@ import org.apache.poi.ss.usermodel.DataConsolidateFunction;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.AreaReference;
 import org.apache.poi.ss.util.CellReference;
+import org.apache.poi.ss.util.WorkbookUtil;
 import org.apache.poi.xssf.streaming.SXSSFSheet;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFPivotTable;
@@ -70,6 +71,9 @@ public class DashboardPivotExporter extends GenericDashboardWidgetExporter imple
             JSONArray rows = fields.getJSONArray("rows");
             int trackedPathFieldCount = columns.length() + rows.length();
             String widgetName = getJsonObjectUtils().replacePlaceholderIfPresent(getJsonObjectUtils().getDashboardWidgetName(widget), drivers, widget.optJSONArray("variables"));
+            String xlsxSheetName = getWidgetXlsxSheetName(widget, drivers, widgetName);
+            String pivotSheetName = WorkbookUtil.createSafeSheetName(xlsxSheetName);
+            String sourceSheetName = WorkbookUtil.createSafeSheetName("source_" + xlsxSheetName);
 
             int offset = 0;
             int fetchSize = Integer.parseInt(SingletonConfig.getInstance().getConfigValue("SPAGOBI.API.DATASET.MAX_ROWS_NUMBER"));
@@ -84,11 +88,11 @@ public class DashboardPivotExporter extends GenericDashboardWidgetExporter imple
                     return null;
                 }
                 XSSFWorkbook xssfWorkbook = new XSSFWorkbook();
-                XSSFSheet xssfSheet = xssfWorkbook.createSheet("Source_sheet");
+                XSSFSheet xssfSheet = xssfWorkbook.createSheet(sourceSheetName);
 
                 excelExporter.fillTableSheetWithData(dataStore, xssfWorkbook, xssfSheet, widgetName, offset, settings);
 
-                XSSFSheet pivotSheet = xssfWorkbook.createSheet("Pivot_sheet");
+                XSSFSheet pivotSheet = xssfWorkbook.createSheet(pivotSheetName);
 
                 int startRow = 0;
                 float rowHeight = 35; // in points
@@ -122,13 +126,13 @@ public class DashboardPivotExporter extends GenericDashboardWidgetExporter imple
 
                 boolean isImagePresent = imageB64 != null;
                 XSSFPivotTable pivotTable = pivotSheet.createPivotTable(
-                        new AreaReference(isImagePresent? new CellReference("Source_sheet!A4") : new CellReference("Source_sheet!A2"),
-                                new CellReference("Source_sheet!" + lastColLetter + (finalSourceLastRowNum + 1)), // make the reference big enough for later data
+                        new AreaReference(isImagePresent? createSheetCellReference(sourceSheetName, "A4") : createSheetCellReference(sourceSheetName, "A2"),
+                                createSheetCellReference(sourceSheetName, lastColLetter + (finalSourceLastRowNum + 1)), // make the reference big enough for later data
                                 SpreadsheetVersion.EXCEL2007),
                         new CellReference("A8"));
 
                 SXSSFWorkbook swb = new SXSSFWorkbook(xssfWorkbook);
-                SXSSFSheet ssheet = swb.getSheet("Source_sheet");
+                SXSSFSheet ssheet = swb.getSheet(sourceSheetName);
 
                 while (offset < totalNumberOfRows) {
                     offset += fetchSize;
@@ -144,6 +148,10 @@ public class DashboardPivotExporter extends GenericDashboardWidgetExporter imple
             throw new SpagoBIRuntimeException("Unable to export table widget: " + widgetId, e);
         }
         return null;
+    }
+
+    private CellReference createSheetCellReference(String sheetName, String reference) {
+        return new CellReference("'" + sheetName.replace("'", "''") + "'!" + reference);
     }
 
     private void formatPivot(XSSFPivotTable pivotTable, Map<Integer, Map<String, Integer>> fieldItemIndexes) {

@@ -26,6 +26,10 @@ public class DashboardExporterTest {
             return getDashboardColumnDisplayName(settings, column, variables);
         }
 
+        private String resolveLocaleTag(JSONObject body) {
+            return getLocaleFromBody(body).toLanguageTag();
+        }
+
 
         private void copyWidgetLikeSelections(JSONObject dashboardSelections, JSONObject widget) throws JSONException {
             addWidgetLikeSelections(dashboardSelections, widget);
@@ -187,5 +191,22 @@ public class DashboardExporterTest {
 
         assertTrue(dashboardSelections.has("likeSelections"));
         assertEquals("it", dashboardSelections.getJSONObject("likeSelections").getJSONObject("sales").getString("COUNTRY,REGION"));
+    }
+
+    @Test
+    public void shouldNormalizeIso3LocaleForExport() throws JSONException {
+        TestableDashboardExporter exporter = new TestableDashboardExporter();
+
+        JSONObject body = new JSONObject()
+                .put("locale", "eng");
+
+        assertEquals("en-US", exporter.resolveLocaleTag(body));
+    }
+
+    @Test
+    public void shouldFallbackToDefaultLocaleWhenLocaleIsMissing() {
+        TestableDashboardExporter exporter = new TestableDashboardExporter();
+
+        assertEquals("en-US", exporter.resolveLocaleTag(new JSONObject()));
     }
 }
