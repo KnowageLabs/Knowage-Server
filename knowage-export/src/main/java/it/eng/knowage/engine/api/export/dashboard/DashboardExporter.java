@@ -44,6 +44,8 @@ public class DashboardExporter {
     private static final String SORTING_OBJ = "sortingObj";
     private static final String DRILL_SORTING_OBJ = "drillSortingObj";
     private static final String BOTH = "both";
+    private static final String FILTERS_SHEET_NAME = "Filters";
+    private static final String ITALIAN_FILTERS_SHEET_NAME = "Filtri Applicati";
     private static final String DEFAULT_EXPORT_LOCALE_TAG = "en-US";
     private static final Locale DEFAULT_EXPORT_LOCALE = Locale.forLanguageTag(DEFAULT_EXPORT_LOCALE_TAG);
     private static final Map<String, String> EXPORT_LOCALE_ALIASES = createExportLocaleAliases();
@@ -697,6 +699,10 @@ public class DashboardExporter {
         } catch (Exception e) {
             return DEFAULT_EXPORT_LOCALE;
         }
+    }
+
+    protected String getAppliedFiltersSheetName() {
+        return locale != null && Locale.ITALIAN.getLanguage().equalsIgnoreCase(locale.getLanguage()) ? ITALIAN_FILTERS_SHEET_NAME : FILTERS_SHEET_NAME;
     }
 
 
@@ -1935,7 +1941,7 @@ public class DashboardExporter {
                     namespan,
                     dataspan,
                     DOCUMENT_NAME,
-                    sheet.getSheetName());
+                    FILTERS_SHEET_NAME);
 
             newheader = sheet.createRow((short) headerIndex + 1);
 

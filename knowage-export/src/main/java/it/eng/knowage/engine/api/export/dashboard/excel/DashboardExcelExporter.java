@@ -258,7 +258,7 @@ public class DashboardExcelExporter extends DashboardExporter {
             Optional<Config> driversConfig = configsDao.loadConfigParametersByLabelIfExist(CONFIG_NAME_FOR_DRIVERS_SHEET_EXPORT);
 
             if (driversConfig.isPresent() && driversConfig.get().isActive() && Boolean.parseBoolean(driversConfig.get().getValueCheck()) && driversFromBody != null && driversFromBody.length() > 0) {
-                Sheet driversSheet = createUniqueSafeSheetForSelections(wb, "Filters");
+                Sheet driversSheet = createUniqueSafeSheetForSelections(wb, getAppliedFiltersSheetName());
                 fillDashboardDriversSheetWithData(driversFromBody, driversSheet);
                 exportedSheets++;
             }
@@ -320,7 +320,7 @@ public class DashboardExcelExporter extends DashboardExporter {
             Optional<Config> driversConfig = configsDao.loadConfigParametersByLabelIfExist(CONFIG_NAME_FOR_DRIVERS_SHEET_EXPORT);
 
             if (driversConfig.isPresent() && driversConfig.get().isActive() && Boolean.parseBoolean(driversConfig.get().getValueCheck()) && driversFromBody != null && driversFromBody.length() > 0) {
-                Sheet driversSheet = createUniqueSafeSheetForSelections(wb, "Filters");
+                Sheet driversSheet = createUniqueSafeSheetForSelections(wb, getAppliedFiltersSheetName());
                 fillDashboardDriversSheetWithData(driversFromBody, driversSheet);
             }
 
