@@ -789,8 +789,6 @@ public class PdfExporter extends AbstractFormatExporter {
 				contentStream.setFont(font, fontSize);
 				contentStream.setNonStrokingColor(Color.BLACK);
 				contentStream.newLineAtOffset(x, y);
-				contentStream.showText(line1);
-				contentStream.newLineAtOffset(0, -leading);
 				for (int i = 0; i < headerLines.size(); i++) {
 					if (i > 0) {
 						contentStream.newLineAtOffset(0, -leading);
