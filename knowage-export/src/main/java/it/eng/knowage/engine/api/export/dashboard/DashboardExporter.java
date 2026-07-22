@@ -128,11 +128,19 @@ public class DashboardExporter {
         }
     }
 
-    protected String getWidgetXlsxSheetName(JSONObject widget, JSONObject drivers, String defaultWidgetName) {
+    private String getCustomWidgetXlsxSheetName(JSONObject widget) {
         JSONObject settings = widget.optJSONObject("settings");
         JSONObject configuration = settings != null ? settings.optJSONObject("configuration") : null;
         JSONObject exports = configuration != null ? configuration.optJSONObject("exports") : null;
-        String customSheetName = exports != null ? exports.optString("xlsxSheetName") : "";
+        return exports != null ? exports.optString("xlsxSheetName") : "";
+    }
+
+    protected boolean hasCustomWidgetXlsxSheetName(JSONObject widget) {
+        return StringUtils.isNotBlank(getCustomWidgetXlsxSheetName(widget));
+    }
+
+    protected String getWidgetXlsxSheetName(JSONObject widget, JSONObject drivers, String defaultWidgetName) {
+        String customSheetName = getCustomWidgetXlsxSheetName(widget);
 
         if (StringUtils.isBlank(customSheetName)) {
             return defaultWidgetName;

@@ -66,7 +66,7 @@ class GenericDashboardWidgetExporter extends DashboardExporter implements IWidge
             JSONObject dataStore = getDataStoreforDashboardSingleWidget(widget, selections, drivers, parameters);
             String widgetName = getJsonObjectUtils().replacePlaceholderIfPresent(getJsonObjectUtils().getDashboardWidgetName(widget), drivers, widget.optJSONArray("variables"));
             if (dataStore != null) {
-                String dashboardSheetName = documentName != null ? documentName : "Dashboard";
+                String dashboardSheetName = hasCustomWidgetXlsxSheetName(widget) ? null : documentName != null ? documentName : "Dashboard";
                 String xlsxSheetName = getWidgetXlsxSheetName(widget, drivers, widgetName);
                 Sheet sheet = excelExporter.createUniqueSafeSheet(wb, xlsxSheetName, dashboardSheetName);
                 excelExporter.fillGenericWidgetSheetWithData(dataStore, wb, sheet, widgetName, 0, settings);

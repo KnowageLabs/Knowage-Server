@@ -24,7 +24,7 @@ public class DashboardTableExporter extends GenericDashboardWidgetExporter imple
         String widgetId = widget.optString("id");
         try {
             JSONObject settings = widget.getJSONObject("settings");
-            String dashboardSheetName = documentName != null ? documentName : "Dashboard";
+            String dashboardSheetName = hasCustomWidgetXlsxSheetName(widget) ? null : documentName != null ? documentName : "Dashboard";
             String widgetName = getJsonObjectUtils().replacePlaceholderIfPresent(getJsonObjectUtils().getDashboardWidgetName(widget), drivers, widget.optJSONArray("variables"));
             String xlsxSheetName = getWidgetXlsxSheetName(widget, drivers, widgetName);
             Sheet sheet = excelExporter.createUniqueSafeSheet(wb, xlsxSheetName, dashboardSheetName);

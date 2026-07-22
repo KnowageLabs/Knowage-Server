@@ -30,6 +30,14 @@ public class DashboardExporterTest {
             return getLocaleFromBody(body).toLanguageTag();
         }
 
+        private String resolveWidgetXlsxSheetName(JSONObject widget, JSONObject drivers, String defaultWidgetName) {
+            return getWidgetXlsxSheetName(widget, drivers, defaultWidgetName);
+        }
+
+        private boolean hasConfiguredCustomWidgetXlsxSheetName(JSONObject widget) {
+            return hasCustomWidgetXlsxSheetName(widget);
+        }
+
         private String resolveAppliedFiltersSheetName(JSONObject body) {
             this.locale = getLocaleFromBody(body);
             return getAppliedFiltersSheetName();
@@ -213,6 +221,54 @@ public class DashboardExporterTest {
         TestableDashboardExporter exporter = new TestableDashboardExporter();
 
         assertEquals("en-US", exporter.resolveLocaleTag(new JSONObject()));
+    }
+
+    @Test
+    public void shouldResolveCustomXlsxSheetNamePlaceholders() throws JSONException {
+        TestableDashboardExporter exporter = new TestableDashboardExporter();
+
+        JSONObject widget = new JSONObject()
+                .put("settings", new JSONObject()
+                        .put("configuration", new JSONObject()
+                                .put("exports", new JSONObject()
+                                        .put("xlsxSheetName", "$V{Year} $P{country} $P{country_description}"))))
+                .put("variables", new JSONArray()
+                        .put(new JSONObject()
+                                .put("name", "Year")
+                                .put("value", "2024")));
+        JSONObject drivers = new JSONObject()
+                .put("country", new JSONArray()
+                        .put(new JSONObject()
+                                .put("value", "IT")
+                                .put("description", "Italy")));
+
+        assertEquals("2024 IT Italy", exporter.resolveWidgetXlsxSheetName(widget, drivers, "Default Sheet"));
+    }
+
+    @Test
+    public void shouldDetectConfiguredCustomXlsxSheetName() throws JSONException {
+        TestableDashboardExporter exporter = new TestableDashboardExporter();
+
+        JSONObject widget = new JSONObject()
+                .put("settings", new JSONObject()
+                        .put("configuration", new JSONObject()
+                                .put("exports", new JSONObject()
+                                        .put("xlsxSheetName", "$P{country}"))));
+
+        assertTrue(exporter.hasConfiguredCustomWidgetXlsxSheetName(widget));
+    }
+
+    @Test
+    public void shouldTreatBlankCustomXlsxSheetNameAsMissing() throws JSONException {
+        TestableDashboardExporter exporter = new TestableDashboardExporter();
+
+        JSONObject widget = new JSONObject()
+                .put("settings", new JSONObject()
+                        .put("configuration", new JSONObject()
+                                .put("exports", new JSONObject()
+                                        .put("xlsxSheetName", "   "))));
+
+        assertFalse(exporter.hasConfiguredCustomWidgetXlsxSheetName(widget));
     }
 
     @Test
