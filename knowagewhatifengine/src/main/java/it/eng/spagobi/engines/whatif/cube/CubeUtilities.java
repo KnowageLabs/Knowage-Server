@@ -60,16 +60,17 @@ public class CubeUtilities {
 	 */
 	public static List<Member> findMembersByName(Hierarchy hierarchy, String name, Boolean strict) throws OlapException {
 		List<Member> searchResultMembers = new ArrayList<Member>();
+		boolean strictSearch = Boolean.TRUE.equals(strict);
 		for (Level level : hierarchy.getLevels()) {// && j < nodeLimit
 
 			for (Member member : level.getMembers()) {
+				boolean partialMatch = StringUtils.containsIgnoreCase(member.getName(), name)
+						|| StringUtils.containsIgnoreCase(member.getCaption(), name);
+				boolean exactMatch = StringUtils.equalsIgnoreCase(member.getName(), name)
+						|| StringUtils.equalsIgnoreCase(member.getCaption(), name);
 
-				if (member.getName().toLowerCase().contains(name.toLowerCase()) && !strict) {
-
+				if ((!strictSearch && partialMatch) || exactMatch) {
 					searchResultMembers.add(member);
-
-				} else if (member.getName().equalsIgnoreCase(name)) {
-
 				}
 
 			}
