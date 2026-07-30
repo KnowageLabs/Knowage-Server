@@ -33,7 +33,7 @@ public class UserDataParsing {
         if (allRolesFromDb != null) {
             for (Role r : allRolesFromDb) {
                 if (r.getName() != null) {
-                    rolesCache.put(r.getName(), r.getId()); }
+                    rolesCache.put(r.getName().trim().toLowerCase(), r.getId()); }
             }
         }
 
@@ -87,7 +87,7 @@ public class UserDataParsing {
                             attributeMap.replace(label, value);
 
                         } else {
-                            Integer roleId = rolesCache.get(nextLine[i].trim().toUpperCase());
+                            Integer roleId = rolesCache.get(nextLine[i].trim().toLowerCase());
                             if (roleId != null) {
                                 roles.add(roleId);
                             } else {
