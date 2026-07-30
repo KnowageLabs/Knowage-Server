@@ -80,6 +80,7 @@ public abstract class AbstractDriver {
 	/**
 	 * Contains maximum value for the driver.
 	 */
+	private Object minValue = null;
 	private Object maxValue = null;
 
 	/* MOD_FL NUMBER Y Parameter modifiable flag. */
@@ -92,6 +93,14 @@ public abstract class AbstractDriver {
 
 	/* MULT_FL NUMBER Y Multivalue parameter. */
 	private Integer multivalue = null;
+	
+	public Object getMinValue() {
+		return minValue;
+	}
+
+	public void setMinValue(Object maxValue) {
+		this.minValue = maxValue;
+	}
 
 	public Object getMaxValue() {
 		return maxValue;

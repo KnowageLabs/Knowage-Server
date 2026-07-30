@@ -131,6 +131,32 @@ public class MinMaxValuesRetriever {
 
 		return ret;
 	}
+	
+	public LovValue getMinValueDum(AbstractDriver driver, IDrivableBIResource object, IEngUserProfile profile,
+			Locale locale, String role) {
+		LOGGER.debug("IN");
+		AbstractBIResourceRuntime dum = null;
+		if (object instanceof BIObject) {
+			dum = new DocumentRuntime(profile, locale);
+		} else if (object instanceof MetaModel) {
+			dum = new BusinessModelRuntime(profile, locale);
+		}
+		LovValue retValue = null;
+		try {
+			ILovDetail lov = dum.getLovDetailForMin(driver);
+			if (lov != null) {
+				LOGGER.debug("A LOV for min values is defined : " + lov);
+				retValue = getMinValueFromMinLovDum(object, profile, lov, locale);
+			}
+		} catch (Exception e) {
+			throw new SpagoBIRuntimeException("Impossible to get parameter's max values", e);
+		}
+		if (retValue == null) {
+			retValue = new LovValue();
+		}
+		LOGGER.debug("OUT");
+		return retValue;
+	}
 
 	public LovValue getMaxValueDum(AbstractDriver driver, IDrivableBIResource object, IEngUserProfile profile,
 			Locale locale, String role) {
@@ -153,6 +179,36 @@ public class MinMaxValuesRetriever {
 		}
 		if (retValue == null) {
 			retValue = new LovValue();
+		}
+		LOGGER.debug("OUT");
+		return retValue;
+	}
+	
+	protected LovValue getMinValueFromMinLovDum(IDrivableBIResource object, IEngUserProfile profile, ILovDetail lov,
+			Locale locale) throws Exception {
+		LOGGER.debug("IN");
+		LovValue retValue = new LovValue();
+
+		// get from cache, if available
+		LovResultCacheManager executionCacheManager = new LovResultCacheManager();
+		String lovResult = executionCacheManager.getLovResultDum(profile, lov, new ArrayList<>(), object, true,
+				locale);
+		LovResultHandler lovResultHandler = new LovResultHandler(lovResult);
+		List rows = lovResultHandler.getRows();
+		int size = rows.size();
+		LOGGER.debug("LOV result retrieved without errors");
+		LOGGER.debug("LOV contains " + size + " values");
+		if (size != 1) {
+			String msg = String.format("LOV for min and max value must provide exactly 1 value, %d founded", size);
+			throw new SpagoBIRuntimeException(msg);
+		}
+		Iterator it = rows.iterator();
+		String valueColumn = lov.getValueColumnName();
+		String descriptionColumn = lov.getDescriptionColumnName();
+		while (it.hasNext()) {
+			SourceBean row = (SourceBean) it.next();
+			retValue.setValue(row.getAttribute(valueColumn));
+			retValue.setDescription(row.getAttribute(descriptionColumn));
 		}
 		LOGGER.debug("OUT");
 		return retValue;

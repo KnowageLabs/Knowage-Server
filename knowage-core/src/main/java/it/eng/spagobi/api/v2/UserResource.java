@@ -73,6 +73,8 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.*;
 import java.net.URI;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.*;
 import java.util.Map.Entry;
 
@@ -361,49 +363,76 @@ public class UserResource extends AbstractSpagoBIResource {
             @ApiResponse(responseCode = "403", description = "Accesso negato: permessi insufficienti"),
             @ApiResponse(responseCode = "500", description = "Errore generico del server")
     })
-
     public Response unlockedUserAll(@Parameter(description = "Lista di oggetti UserBO da processare", required = true) List <UserBO> requestDTO) {
-    	         
+ 
         ISbiUserDAO usersDao = DAOFactory.getSbiUserDAO();
         usersDao.setUserProfile(getUserProfile());
         List<UserBOResult> results = new ArrayList<>();
+        IConfigDAO configDao = null;
+        try {
+            configDao = DAOFactory.getSbiConfigDAO();
+        } catch (Exception e) {
+            LOGGER.error("Error instantiating configDao", e);
+        }
  
         for (UserBO user : requestDTO) {
  
             UserBOResult result = new UserBOResult();
-         
             String userId = user.getUserId();
-  
-            SbiUser sbiUser = new SbiUser();
-            sbiUser = usersDao.loadSbiUserByUserId(userId);
+ 
+            SbiUser sbiUser = usersDao.loadSbiUserByUserId(userId);
             sbiUser.setFlgPwdBlocked(false);
  
-            try {
-            	Integer id = usersDao.fullSaveOrUpdateSbiUser(sbiUser);
-            	Encoder encoder = OwaspDefaultEncoderFactory.getInstance().getEncoder();
-            	String encodedUser = encoder.encodeForURL("" + id);
+            // Calcolo e assegnazione DT_PWD_END
+            LocalDateTime beginDateTime = LocalDateTime.now();
+            Date beginDate = Date.from(beginDateTime.atZone(ZoneId.systemDefault()).toInstant());
+            sbiUser.setDtPwdBegin(beginDate); // Aggiornamento inizio validità
  
-            	result.setSuccess(true);
-            	result.setUserId(user.getUserId());
-            	result.setCreatedUserId(id);
-            	result.setMessage("User processed successfully");
-            	results.add (result);
+            if (configDao != null) {
+                try {
+                    List<Config> lstConfigChecks = configDao.loadConfigParametersByProperties(SpagoBIConstants.CHANGEPWD_EXPIRED_TIME);
+                    if (lstConfigChecks != null) {
+                        for (Config check : lstConfigChecks) {
+                            if (check.getLabel().equals(SpagoBIConstants.CHANGEPWD_EXPIRED_TIME)) {
+                                try {
+                                    int daysToAdds = Integer.parseInt(check.getValueCheck());
+                                    LocalDateTime endDateTime = beginDateTime.plusDays(daysToAdds);
+                                    Date endDate = Date.from(endDateTime.atZone(ZoneId.systemDefault()).toInstant());
+                                    sbiUser.setDtPwdEnd(endDate);
+                                } catch (NumberFormatException e) {
+                                    LOGGER.error("Invalid expiration time configuration value: " + check.getValueCheck(), e);
+                                }
+                            }
+                        }
+                    }
+                } catch (Exception e) {
+                    LOGGER.error("Error reading configuration for password expiration", e);
+                }
+            }
+ 
+            try {
+                Integer id = usersDao.fullSaveOrUpdateSbiUser(sbiUser);
+                Encoder encoder = OwaspDefaultEncoderFactory.getInstance().getEncoder();
+                String encodedUser = encoder.encodeForURL("" + id);
+ 
+                result.setSuccess(true);
+                result.setUserId(user.getUserId());
+                result.setCreatedUserId(id);
+                result.setMessage("User processed successfully");
+                results.add(result);
  
             } catch (Exception e) {
-            	LOGGER.error("Error while inserting resource", e);
+                LOGGER.error("Error while inserting resource", e);
  
-            	result.setSuccess(false);
-            	result.setUserId(user.getUserId());
-            	result.setMessage(e.getMessage());
-            	results.add (result);
- 
+                result.setSuccess(false);
+                result.setUserId(user.getUserId());
+                result.setMessage(e.getMessage());
+                results.add(result);
             }
-           }
+        }
  
         return Response.ok(results).build();
     }
-
-
     @POST
     @Path("/massive")
     @UserConstraint(functionalities = { CommunityFunctionalityConstants.PROFILE_MANAGEMENT,
