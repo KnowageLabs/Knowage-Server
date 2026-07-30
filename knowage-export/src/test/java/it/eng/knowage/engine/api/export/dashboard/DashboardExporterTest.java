@@ -26,6 +26,23 @@ public class DashboardExporterTest {
             return getDashboardColumnDisplayName(settings, column, variables);
         }
 
+        private String resolveLocaleTag(JSONObject body) {
+            return getLocaleFromBody(body).toLanguageTag();
+        }
+
+        private String resolveWidgetXlsxSheetName(JSONObject widget, JSONObject drivers, String defaultWidgetName) {
+            return getWidgetXlsxSheetName(widget, drivers, defaultWidgetName);
+        }
+
+        private boolean hasConfiguredCustomWidgetXlsxSheetName(JSONObject widget) {
+            return hasCustomWidgetXlsxSheetName(widget);
+        }
+
+        private String resolveAppliedFiltersSheetName(JSONObject body) {
+            this.locale = getLocaleFromBody(body);
+            return getAppliedFiltersSheetName();
+        }
+
         private void copyWidgetLikeSelections(JSONObject dashboardSelections, JSONObject widget) throws JSONException {
             addWidgetLikeSelections(dashboardSelections, widget);
         }
@@ -186,5 +203,90 @@ public class DashboardExporterTest {
 
         assertTrue(dashboardSelections.has("likeSelections"));
         assertEquals("it", dashboardSelections.getJSONObject("likeSelections").getJSONObject("sales").getString("COUNTRY,REGION"));
+    }
+
+    @Test
+    public void shouldNormalizeIso3LocaleForExport() throws JSONException {
+        TestableDashboardExporter exporter = new TestableDashboardExporter();
+
+        JSONObject body = new JSONObject()
+                .put("locale", "eng");
+
+        assertEquals("en-US", exporter.resolveLocaleTag(body));
+    }
+
+    @Test
+    public void shouldFallbackToDefaultLocaleWhenLocaleIsMissing() {
+        TestableDashboardExporter exporter = new TestableDashboardExporter();
+
+        assertEquals("en-US", exporter.resolveLocaleTag(new JSONObject()));
+    }
+
+    @Test
+    public void shouldResolveCustomXlsxSheetNamePlaceholders() throws JSONException {
+        TestableDashboardExporter exporter = new TestableDashboardExporter();
+
+        JSONObject widget = new JSONObject()
+                .put("settings", new JSONObject()
+                        .put("configuration", new JSONObject()
+                                .put("exports", new JSONObject()
+                                        .put("xlsxSheetName", "$V{Year} $P{country} $P{country_description}"))))
+                .put("variables", new JSONArray()
+                        .put(new JSONObject()
+                                .put("name", "Year")
+                                .put("value", "2024")));
+        JSONObject drivers = new JSONObject()
+                .put("country", new JSONArray()
+                        .put(new JSONObject()
+                                .put("value", "IT")
+                                .put("description", "Italy")));
+
+        assertEquals("2024 IT Italy", exporter.resolveWidgetXlsxSheetName(widget, drivers, "Default Sheet"));
+    }
+
+    @Test
+    public void shouldDetectConfiguredCustomXlsxSheetName() throws JSONException {
+        TestableDashboardExporter exporter = new TestableDashboardExporter();
+
+        JSONObject widget = new JSONObject()
+                .put("settings", new JSONObject()
+                        .put("configuration", new JSONObject()
+                                .put("exports", new JSONObject()
+                                        .put("xlsxSheetName", "$P{country}"))));
+
+        assertTrue(exporter.hasConfiguredCustomWidgetXlsxSheetName(widget));
+    }
+
+    @Test
+    public void shouldTreatBlankCustomXlsxSheetNameAsMissing() throws JSONException {
+        TestableDashboardExporter exporter = new TestableDashboardExporter();
+
+        JSONObject widget = new JSONObject()
+                .put("settings", new JSONObject()
+                        .put("configuration", new JSONObject()
+                                .put("exports", new JSONObject()
+                                        .put("xlsxSheetName", "   "))));
+
+        assertFalse(exporter.hasConfiguredCustomWidgetXlsxSheetName(widget));
+    }
+
+    @Test
+    public void shouldUseItalianFiltersSheetNameForItalianLocale() throws JSONException {
+        TestableDashboardExporter exporter = new TestableDashboardExporter();
+
+        JSONObject body = new JSONObject()
+                .put("locale", "it-IT");
+
+        assertEquals("Filtri Applicati", exporter.resolveAppliedFiltersSheetName(body));
+    }
+
+    @Test
+    public void shouldKeepDefaultFiltersSheetNameForNonItalianLocale() throws JSONException {
+        TestableDashboardExporter exporter = new TestableDashboardExporter();
+
+        JSONObject body = new JSONObject()
+                .put("locale", "en-US");
+
+        assertEquals("Filters", exporter.resolveAppliedFiltersSheetName(body));
     }
 }

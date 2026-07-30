@@ -1473,4 +1473,3 @@ public class ExcelExporter extends AbstractFormatExporter {
         return getDatastore(datasetLabel, map, selections, 0, -1);
     }
 }
-

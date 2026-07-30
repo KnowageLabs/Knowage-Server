@@ -283,12 +283,12 @@ public class SpagoBIScriptManager {
 			String engVersion = factory.getEngineVersion();
 			String langName = factory.getLanguageName();
 			String langVersion = factory.getLanguageVersion();
-			System.out.printf("\tScript Engine: %s (%s)\n", engName, engVersion);
+			System.out.printf("\tScript Engine: %s (%s)%n", engName, engVersion);
 			List<String> engNames = factory.getNames();
 			for (String name : engNames) {
-				System.out.printf("\tEngine Alias: %s\n", name);
+				System.out.printf("\tEngine Alias: %s%n", name);
 			}
-			System.out.printf("\tLanguage: %s (%s)\n", langName, langVersion);
+			System.out.printf("\tLanguage: %s (%s)%n", langName, langVersion);
 		}
 	}
 }

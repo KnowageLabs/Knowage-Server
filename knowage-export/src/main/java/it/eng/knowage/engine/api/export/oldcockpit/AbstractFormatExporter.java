@@ -83,7 +83,6 @@ public abstract class AbstractFormatExporter {
 		}
 
 	}
-
 	protected Map<String, String> getMapFromGroupsArray(JSONArray groupsArray, JSONArray aggr) {
 		Map<String, String> returnMap = new HashMap<>();
 		try {

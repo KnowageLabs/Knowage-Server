@@ -7,7 +7,6 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import org.apache.log4j.Logger;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
-import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.Map;
@@ -24,9 +23,10 @@ public class DashboardTableExporter extends GenericDashboardWidgetExporter imple
         String widgetId = widget.optString("id");
         try {
             JSONObject settings = widget.getJSONObject("settings");
-            String dashboardSheetName = documentName != null ? documentName : "Dashboard";
+            String dashboardSheetName = hasCustomWidgetXlsxSheetName(widget) ? null : documentName != null ? documentName : "Dashboard";
             String widgetName = getJsonObjectUtils().replacePlaceholderIfPresent(getJsonObjectUtils().getDashboardWidgetName(widget), drivers, widget.optJSONArray("variables"));
-            Sheet sheet = excelExporter.createUniqueSafeSheet(wb, widgetName, dashboardSheetName);
+            String xlsxSheetName = getWidgetXlsxSheetName(widget, drivers, widgetName);
+            Sheet sheet = excelExporter.createUniqueSafeSheet(wb, xlsxSheetName, dashboardSheetName);
             int offset = 0;
             int fetchSize = Integer.parseInt(SingletonConfig.getInstance().getConfigValue("SPAGOBI.API.DATASET.MAX_ROWS_NUMBER"));
             JSONObject dataStore = getDataStoreForDashboardWidget(widget, offset, fetchSize, selections, drivers, parameters);
