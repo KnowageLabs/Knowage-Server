@@ -113,7 +113,7 @@ public abstract class AbstractBIResourceRuntime<T extends AbstractDriver> {
 	 */
 	public ILovDetail getLovDetailForMin(AbstractDriver driver) {
 		Parameter par = driver.getParameter();
-		ModalitiesValue lov = par.getModalityValueForMax();
+		ModalitiesValue lov = par.getModalityValueForMin();
 		if (lov == null) {
 			logger.debug("No LOV for min value defined");
 			return null;
