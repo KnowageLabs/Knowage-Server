@@ -144,9 +144,8 @@ public class LoginResource extends AbstractSpagoBIResource {
 			    logger.error("Password blocked for userID=" + userId);
 			    AuditLogUtilities.updateAudit(req, null, "SPAGOBI.Login", null, "KO");
 			    monitor.stop(new SpagoBIRuntimeException("Password blocked"));
-			    // Restituisce HTTP 403 Forbidden invece di 401 Unauthorized
 			    return Response.status(Response.Status.FORBIDDEN)
-			                   .entity(Collections.singletonMap("error", "Utenza bloccata. Contattare l'amministratore."))
+			                   .entity(Collections.singletonMap("error", "Account locked. Please contact the administrator."))
 			                   .build();
 			}
 
@@ -165,6 +164,19 @@ public class LoginResource extends AbstractSpagoBIResource {
 			 if (!isAdminUser) {
 				passwordCheckResponse = validateAndUpdatePassword(user, userDao);
 			}
+			 
+			 if (!isAdminUser) {
+			        passwordCheckResponse = validateAndUpdatePassword(user, userDao);
+			 
+			        if ("ACCOUNT_LOCKED_FOR_EXPIRATION".equals(passwordCheckResponse)) {
+			        	logger.error("Password expired. Account locked for userID=" + userId);
+			        	AuditLogUtilities.updateAudit(req, null, "SPAGOBI.Login", null, "KO");
+			        	monitor.stop(new SpagoBIRuntimeException("Password expired and account locked"));
+			        	return Response.status(Response.Status.FORBIDDEN)
+			                       	.entity(Collections.singletonMap("error", "Account locked. Please contact the administrator."))
+			                       	.build();
+			        }
+			   }
 			
 			// Validate and update password if not admin
 		    /* String passwordCheckResponse = "";
@@ -671,20 +683,21 @@ public class LoginResource extends AbstractSpagoBIResource {
             if ((SpagoBIConstants.CHANGEPWD_EXPIRED_TIME).equals(check.getLabel()) && user.getDtPwdEnd() != null
                     && currentDate.compareTo(user.getDtPwdEnd()) >= 0) {
                 // check if the pwd is expiring, in this case it's locked.
-               /* logger.info("The pwd is expiring... it should be changed");
+            	
+            	/*Old code
+                logger.info("The pwd is expiring... it should be changed");
                 toReturn = "The pwd is expiring... it should be changed";
                 break;*/
             	
-            	logger.info("Password blocked.");
+            	logger.info("Password blocked for userID=" + user.getUserId());
                 user.setFlgPwdBlocked(true);
                 try {
                     ISbiUserDAO userDao = DAOFactory.getSbiUserDAO();
                     userDao.updateSbiUser(user, user.getId());
                 } catch (Exception e) {
-                    logger.error("Errore durante l'aggiornamento del flag flgPwdBlocked", e);
+                    logger.error("Error while updating flgPwdBloched flag in DB", e);
                 }
-                // Genera un'eccezione per interrompere il flusso
-                throw new SecurityException("Utenza bloccata. Contattare l'amministratore."); 
+                return "ACCOUNT_LOCKED_FOR_EXPIRATION";
             }
             
             if ((SpagoBIConstants.CHANGEPWD_DISACTIVE_TIME).equals(check.getLabel())) {

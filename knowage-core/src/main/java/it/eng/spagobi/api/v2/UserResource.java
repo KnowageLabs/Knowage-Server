@@ -383,30 +383,26 @@ public class UserResource extends AbstractSpagoBIResource {
             SbiUser sbiUser = usersDao.loadSbiUserByUserId(userId);
             sbiUser.setFlgPwdBlocked(false);
  
-            // Calcolo e assegnazione DT_PWD_END
             LocalDateTime beginDateTime = LocalDateTime.now();
             Date beginDate = Date.from(beginDateTime.atZone(ZoneId.systemDefault()).toInstant());
-            sbiUser.setDtPwdBegin(beginDate); // Aggiornamento inizio validità
+            sbiUser.setDtPwdBegin(beginDate);
  
             if (configDao != null) {
                 try {
-                    List<Config> lstConfigChecks = configDao.loadConfigParametersByProperties(SpagoBIConstants.CHANGEPWD_EXPIRED_TIME);
-                    if (lstConfigChecks != null) {
-                        for (Config check : lstConfigChecks) {
-                            if (check.getLabel().equals(SpagoBIConstants.CHANGEPWD_EXPIRED_TIME)) {
-                                try {
-                                    int daysToAdds = Integer.parseInt(check.getValueCheck());
-                                    LocalDateTime endDateTime = beginDateTime.plusDays(daysToAdds);
-                                    Date endDate = Date.from(endDateTime.atZone(ZoneId.systemDefault()).toInstant());
-                                    sbiUser.setDtPwdEnd(endDate);
-                                } catch (NumberFormatException e) {
-                                    LOGGER.error("Invalid expiration time configuration value: " + check.getValueCheck(), e);
-                                }
-                            }
-                        }
+                    Config check = configDao.loadConfigParametersByLabel(SpagoBIConstants.CHANGEPWD_EXPIRED_TIME);
+                    if (check != null && check.getValueCheck() != null && !check.getValueCheck().trim().isEmpty()) {
+                        int daysToAdds = Integer.parseInt(check.getValueCheck().trim());
+                        LocalDateTime endDateTime = beginDateTime.plusDays(daysToAdds);
+                        Date endDate = Date.from(endDateTime.atZone(ZoneId.systemDefault()).toInstant());
+                        sbiUser.setDtPwdEnd(endDate);
+                        LOGGER.debug("DT_PWD_END impostato per userID=" + userId + " a: " + endDate);
+                    } else {
+                        LOGGER.warn("Configurazione CHANGEPWD_EXPIRED_TIME non trovata o priva di valore.");
                     }
+                } catch (NumberFormatException e) {
+                    LOGGER.error("Formato numerico non valido per CHANGEPWD_EXPIRED_TIME", e);
                 } catch (Exception e) {
-                    LOGGER.error("Error reading configuration for password expiration", e);
+                    LOGGER.error("Errore durante il recupero di CHANGEPWD_EXPIRED_TIME", e);
                 }
             }
  

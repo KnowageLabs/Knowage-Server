@@ -544,6 +544,8 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO
 				userToUpdate.setUserId(user.getUserId());
 				userToUpdate.changeId(id);
 				userToUpdate.setFlgPwdBlocked(user.getFlgPwdBlocked());
+				userToUpdate.setDtPwdBegin(user.getDtPwdBegin());
+				userToUpdate.setDtPwdEnd(user.getDtPwdEnd());
 				userToUpdate.setFailedLoginAttempts(user.getFailedLoginAttempts());
 				userToUpdate.setDefaultRoleId(user.getDefaultRoleId());
 				updateSbiCommonInfo4Update(userToUpdate);
@@ -563,6 +565,8 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO
 					newUser.getCommonInfo().setUserIn(user.getCommonInfo().getUserIn());
 				}
 				newUser.setFlgPwdBlocked(user.getFlgPwdBlocked());
+				newUser.setDtPwdBegin(user.getDtPwdBegin());
+				newUser.setDtPwdEnd(user.getDtPwdEnd());
 				updateSbiCommonInfo4Insert(newUser);
 				newUser.setIsSuperadmin(Boolean.FALSE);
 				id = (Integer) aSession.save(newUser);
