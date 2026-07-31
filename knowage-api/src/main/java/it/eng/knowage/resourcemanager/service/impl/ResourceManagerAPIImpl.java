@@ -170,6 +170,10 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 		}
 		if (nodeFile.isDirectory()) {
 			String[] subNote = nodeFile.list();
+			if (subNote == null) {
+				LOGGER.error("Cannot list resource directory: " + nodePath);
+				return parentFolder;
+			}
 			for (String fileName : subNote) {
 				Path path = nodePath.resolve(fileName);
 				if (path.getParent().equals(workDir) && !fileName.equals(DOCS_FOLDER)) {

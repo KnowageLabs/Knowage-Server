@@ -443,7 +443,7 @@ public class SQLDBCache implements ICache {
 
 					}
 				} catch (Exception e) {
-					new SpagoBIRuntimeException(e);
+                    throw new SpagoBIRuntimeException(e);
 				} finally {
 					timing.stop();
 					mapLocks.unlock(hashedSignature);
