@@ -60,7 +60,7 @@ public class LoggerSetupFilter implements Filter {
 
 	private void preDoFilterForTenant(HttpServletRequest httpRequest) {
 		String header = httpRequest.getHeader(HTTP_HEADER_X_FORWARDED_HOST);
-        ThreadContext.put("tenant", "pippo");
+        ThreadContext.put("tenant", "no_tenant");
 		if (header != null) {
 			if (header.contains(",")) {
 				int iend = header.indexOf(".");
