@@ -53,7 +53,7 @@ public class FinalUserConfigResource extends AbstractSpagoBIResource {
 			"KNOWAGE.EMBEDDING_APPLICATION_VALUE", "KNOWAGE.RESOURCE.UPLOAD.MAX_SIZE", 
 			"home.button.url","KNOWAGE.HIDE_VERSION","oidc.session.polling.interval",
 			"oidc.session.polling.url","oidc.session.polling.errorMessage","KNOWAGE.MANDATORY-ROLE","KNOWAGE.AI.URL",
-			"KNOWAGE.WATERMARK");
+			"KNOWAGE.WATERMARK","KNOWAGE.EXECUTION.SIDEBAR_BUTTON.DISABLED");
 
 	@GET
 	@Path("/")
