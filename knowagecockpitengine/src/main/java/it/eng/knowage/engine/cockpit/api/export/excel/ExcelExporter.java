@@ -666,28 +666,31 @@ public class ExcelExporter extends AbstractFormatExporter {
 
         int j = headerIndex + 2;
         Set<List<String>> renderedSelections = new HashSet<>();
-        for (String selectionskey : selectionsMap.get(key).keySet()) {
+        for (String key : selectionsMap.keySet()) {
 
-            if (selectionsMap.get(key) != null && selectionsMap.get(key).get(selectionskey) != null) {
-                Object selection = selectionsMap.get(key).get(selectionskey);
-                JSONArray selectionValues = selection instanceof JSONArray ? (JSONArray) selection : new JSONArray().put(selection);
-                for (int i = 0; i < selectionValues.length(); i++) {
-                    String value = extractSelectionValues("" + selectionValues.get(i));
-                    if (!renderedSelections.add(Arrays.asList(key, selectionskey, value))) {
-                        continue;
+            for (String selectionskey : selectionsMap.get(key).keySet()) {
+
+                if (selectionsMap.get(key) != null && selectionsMap.get(key).get(selectionskey) != null) {
+                    Object selection = selectionsMap.get(key).get(selectionskey);
+                    JSONArray selectionValues = selection instanceof JSONArray ? (JSONArray) selection : new JSONArray().put(selection);
+                    for (int i = 0; i < selectionValues.length(); i++) {
+                        String value = extractSelectionValues("" + selectionValues.get(i));
+                        if (!renderedSelections.add(Arrays.asList(key, selectionskey, value))) {
+                            continue;
+                        }
+                        Row row = sheet.createRow(j++);
+
+                        Cell cellData0 = row.createCell(0);
+                        if (key != null)
+                            cellData0.setCellValue(key.length() > EXCEL_CELL_MAX_LEN ? "the content is too big" : key);
+
+                        Cell cellData1 = row.createCell(1);
+                        if (selectionskey != null)
+                            cellData1.setCellValue(selectionskey.length() > EXCEL_CELL_MAX_LEN ? "the content is too big" : selectionskey);
+
+                        Cell cellData2 = row.createCell(2);
+                        cellData2.setCellValue(value.length() > EXCEL_CELL_MAX_LEN ? "the content is too big" : value);
                     }
-                    Row row = sheet.createRow(j++);
-
-                    Cell cellData0 = row.createCell(0);
-                    if (key != null)
-                        cellData0.setCellValue(key.length() > EXCEL_CELL_MAX_LEN ? "the content is too big" : key);
-
-                    Cell cellData1 = row.createCell(1);
-                    if (selectionskey != null)
-                        cellData1.setCellValue(selectionskey.length() > EXCEL_CELL_MAX_LEN ? "the content is too big" : selectionskey);
-
-                    Cell cellData2 = row.createCell(2);
-                    cellData2.setCellValue(value.length() > EXCEL_CELL_MAX_LEN ? "the content is too big" : value);
                 }
             }
         }
