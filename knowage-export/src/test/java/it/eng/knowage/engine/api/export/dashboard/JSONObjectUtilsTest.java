@@ -44,4 +44,25 @@ public class JSONObjectUtilsTest {
 
         assertEquals("1250", resolvedWidgetName);
     }
+
+    @Test
+    public void shouldUseReadableDefaultNameForUntitledWidget() throws JSONException {
+        JSONObject widget = new JSONObject()
+                .put("id", "7d6be251-792a-4c5f-9ee6-9e9c9330ea05")
+                .put("type", "static-pivot-table")
+                .put("settings", new JSONObject()
+                        .put("style", new JSONObject()
+                                .put("title", new JSONObject())));
+
+        assertEquals("Static Pivot Table Widget", jsonObjectUtils.getDashboardWidgetName(widget));
+    }
+
+    @Test
+    public void shouldUseReadableDefaultNameWhenWidgetSettingsAreMissing() throws JSONException {
+        JSONObject widget = new JSONObject()
+                .put("id", "f1c2f1e3-2b12-4cd5-94da-0f1c7159a89e")
+                .put("type", "table");
+
+        assertEquals("Table Widget", jsonObjectUtils.getDashboardWidgetName(widget));
+    }
 }

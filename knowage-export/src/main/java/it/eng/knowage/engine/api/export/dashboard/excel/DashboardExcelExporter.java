@@ -221,7 +221,6 @@ public class DashboardExcelExporter extends DashboardExporter {
         if (body == null) {
             throw new SpagoBIRuntimeException("Unable to get template for dashboard");
         }
-        String stringifiedBody = body.toString();
         int windowSize = Integer.parseInt(
                 SingletonConfig.getInstance().getConfigValue("KNOWAGE.DASHBOARD.EXPORT.EXCEL.STREAMING_WINDOW_SIZE"));
         try (Workbook wb = new SXSSFWorkbook(windowSize)) {
@@ -241,8 +240,12 @@ public class DashboardExcelExporter extends DashboardExporter {
                     exportedSheets = exportWidget(body, wb, null, selections, drivers, parameters);
                 }
             } else {
-                JSONArray widgetsJson = getDashboardWidgetsJson(stringifiedBody);
-                exportedSheets += exportDashboard(widgetsJson, wb, getDocumentName(body), selections, drivers, parameters);
+                JSONArray dashboardSheets = body.optJSONArray("sheets");
+                if (dashboardSheets != null) {
+                    exportedSheets += exportDashboard(dashboardSheets, getDashboardWidgetsById(body), wb, selections, drivers, parameters);
+                } else {
+                    exportedSheets += exportDashboardWidgets(getDashboardWidgetsJson(body), wb, null, selections, drivers, parameters);
+                }
             }
 
 
@@ -349,25 +352,90 @@ public class DashboardExcelExporter extends DashboardExporter {
         return "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
     }
 
-    private String getDocumentName(JSONObject template) {
+    private int exportDashboard(JSONArray dashboardSheets, Map<String, JSONObject> dashboardWidgetsById, Workbook wb, Map<String, Map<String, Object>> selections, JSONObject drivers, JSONArray parameters) {
+        int exportedSheets = 0;
+        boolean isMultiSheetDashboard = dashboardSheets.length() > 1;
+        for (int i = 0; i < dashboardSheets.length(); i++) {
+            try {
+                JSONObject dashboardSheet = dashboardSheets.getJSONObject(i);
+                String dashboardSheetName = getDashboardSheetName(dashboardSheet, isMultiSheetDashboard);
+                exportedSheets += exportDashboardWidgets(getDashboardSheetWidgets(dashboardSheet, dashboardWidgetsById), wb, dashboardSheetName, selections, drivers, parameters);
+            } catch (Exception e) {
+                LOGGER.error("Error while exporting dashboard sheet", e);
+            }
+        }
+        return exportedSheets;
+    }
+
+    static String getDashboardSheetName(JSONObject dashboardSheet, boolean isMultiSheetDashboard) {
+        return isMultiSheetDashboard ? dashboardSheet.optString("label") : "";
+    }
+
+    static Map<String, JSONObject> getDashboardWidgetsById(JSONObject dashboard) {
         try {
-            return template.getJSONObject("document").getString("label");
+            Map<String, JSONObject> widgetsById = new HashMap<>();
+            JSONArray widgets = dashboard.getJSONArray("widgets");
+            for (int i = 0; i < widgets.length(); i++) {
+                JSONObject widget = widgets.getJSONObject(i);
+                widgetsById.put(widget.getString("id"), widget);
+            }
+            return widgetsById;
         } catch (Exception e) {
-            LOGGER.info("Cannot get document name", e);
-            return null;
+            throw new SpagoBIRuntimeException("Cannot retrieve dashboard widgets", e);
         }
     }
 
-    private int exportDashboard(JSONArray widgetsArray, Workbook wb, String documentName, Map<String, Map<String, Object>> selections, JSONObject drivers, JSONArray parameters) {
+    static JSONArray getDashboardSheetWidgets(JSONObject dashboardSheet, Map<String, JSONObject> dashboardWidgetsById) {
+        try {
+            JSONArray widgetLayouts = getDashboardSheetWidgetLayouts(dashboardSheet);
+            JSONArray orderedWidgetLayouts = orderDashboardWidgetsByGridPosition(widgetLayouts);
+            JSONArray widgets = new JSONArray();
+            for (int i = 0; i < orderedWidgetLayouts.length(); i++) {
+                String widgetId = orderedWidgetLayouts.getJSONObject(i).getString("id");
+                JSONObject widget = dashboardWidgetsById.get(widgetId);
+                if (widget == null) {
+                    throw new SpagoBIRuntimeException("Cannot retrieve widget " + widgetId + " from dashboard");
+                }
+                widgets.put(widget);
+            }
+            return widgets;
+        } catch (Exception e) {
+            throw new SpagoBIRuntimeException("Cannot retrieve dashboard sheet widgets", e);
+        }
+    }
+
+    private static JSONArray getDashboardSheetWidgetLayouts(JSONObject dashboardSheet) throws JSONException {
+        Object sheetWidgets = dashboardSheet.get("widgets");
+        if (sheetWidgets instanceof JSONArray) {
+            return (JSONArray) sheetWidgets;
+        }
+
+        JSONObject responsiveLayouts = (JSONObject) sheetWidgets;
+        JSONArray largeLayout = responsiveLayouts.optJSONArray("lg");
+        if (largeLayout != null) {
+            return largeLayout;
+        }
+
+        Iterator<String> breakpoints = responsiveLayouts.keys();
+        while (breakpoints.hasNext()) {
+            JSONArray layout = responsiveLayouts.optJSONArray(breakpoints.next());
+            if (layout != null) {
+                return layout;
+            }
+        }
+        return new JSONArray();
+    }
+
+    private int exportDashboardWidgets(JSONArray widgetsArray, Workbook wb, String dashboardSheetName, Map<String, Map<String, Object>> selections, JSONObject drivers, JSONArray parameters) {
         int exportedSheets = 0;
         for (int i = 0; i < widgetsArray.length(); i++) {
             try {
                 JSONObject currWidget = widgetsArray.getJSONObject(i);
                 setDatasetDriversIfPresent(body, currWidget, drivers);
                 if (currWidget.has("datasetDrivers") && currWidget.getJSONArray("datasetDrivers") != null && currWidget.getJSONArray("datasetDrivers").length() > 0) {
-                    exportedSheets = exportWidget(currWidget, wb, documentName, selections, transformDriversForDatastore(currWidget.getJSONArray("datasetDrivers")), parameters);
+                    exportedSheets += exportWidget(currWidget, wb, dashboardSheetName, selections, transformDriversForDatastore(currWidget.getJSONArray("datasetDrivers")), parameters);
                 } else {
-                    exportedSheets = exportWidget(currWidget, wb, documentName, selections, drivers, parameters);
+                    exportedSheets += exportWidget(currWidget, wb, dashboardSheetName, selections, drivers, parameters);
                 }
             } catch (Exception e) {
                 LOGGER.error("Error while exporting widget", e);
@@ -476,18 +544,79 @@ public class DashboardExcelExporter extends DashboardExporter {
         }
     }
 
-    private JSONArray getDashboardWidgetsJson(String templateString) {
+    static JSONArray getDashboardWidgetsJson(JSONObject template) {
         try {
-            JSONArray toReturn = new JSONArray();
-            JSONObject template = new JSONObject(templateString);
             JSONArray widgets = template.getJSONArray("widgets");
-            for (int i = 0; i < widgets.length(); i++) {
-                JSONObject widget = widgets.getJSONObject(i);
-                toReturn.put(widget);
-            }
-            return toReturn;
+            return orderDashboardWidgetsByGridPosition(widgets);
         } catch (Exception e) {
             throw new SpagoBIRuntimeException("Cannot retrieve widgets list", e);
+        }
+    }
+
+    private static JSONArray orderDashboardWidgetsByGridPosition(JSONArray widgets) {
+        try {
+            List<JSONObject> orderedWidgets = new ArrayList<>();
+            for (int i = 0; i < widgets.length(); i++) {
+                orderedWidgets.add(widgets.getJSONObject(i));
+            }
+
+            if (orderedWidgets.stream().allMatch(widget -> getWidgetPosition(widget) != null)) {
+                orderedWidgets.sort(Comparator
+                        .comparingInt((JSONObject widget) -> getWidgetPosition(widget).row)
+                        .thenComparingInt(widget -> getWidgetPosition(widget).column));
+            }
+
+            return new JSONArray(orderedWidgets);
+        } catch (Exception e) {
+            throw new SpagoBIRuntimeException("Cannot order dashboard widgets", e);
+        }
+    }
+
+    private static WidgetPosition getWidgetPosition(JSONObject widget) {
+        WidgetPosition position = getWidgetPosition(widget, "row", "col");
+        if (position != null) {
+            return position;
+        }
+
+        position = getWidgetPosition(widget, "y", "x");
+        if (position != null) {
+            return position;
+        }
+
+        for (String positionContainerName : Arrays.asList("position", "layout")) {
+            JSONObject positionContainer = widget.optJSONObject(positionContainerName);
+            if (positionContainer == null) {
+                continue;
+            }
+
+            position = getWidgetPosition(positionContainer, "row", "col");
+            if (position != null) {
+                return position;
+            }
+
+            position = getWidgetPosition(positionContainer, "y", "x");
+            if (position != null) {
+                return position;
+            }
+        }
+
+        return null;
+    }
+
+    private static WidgetPosition getWidgetPosition(JSONObject widget, String rowKey, String columnKey) {
+        if (!widget.has(rowKey) || widget.isNull(rowKey) || !widget.has(columnKey) || widget.isNull(columnKey)) {
+            return null;
+        }
+        return new WidgetPosition(widget.optInt(rowKey), widget.optInt(columnKey));
+    }
+
+    private static class WidgetPosition {
+        private final int row;
+        private final int column;
+
+        private WidgetPosition(int row, int column) {
+            this.row = row;
+            this.column = column;
         }
     }
 

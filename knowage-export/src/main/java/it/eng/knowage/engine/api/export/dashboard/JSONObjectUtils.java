@@ -1,12 +1,14 @@
 package it.eng.knowage.engine.api.export.dashboard;
 
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -42,22 +44,34 @@ public class JSONObjectUtils {
     }
 
     public String getDashboardWidgetName(JSONObject widget) {
-        String widgetName = "";
         JSONObject settings = widget.optJSONObject("settings");
-        JSONObject style = settings.optJSONObject("style");
+        JSONObject style = settings != null ? settings.optJSONObject("style") : null;
         if (style != null) {
             JSONObject title = style.optJSONObject("title");
-            if (title != null && !title.optString("text").isEmpty()) {
-                widgetName = title.optString("text");
-            } else {
-                widgetName = getWidgetGenericName(widget);
+            if (title != null && StringUtils.isNotBlank(title.optString("text"))) {
+                return title.optString("text");
             }
         }
-        return widgetName;
+        return getWidgetGenericName(widget);
     }
 
     private static String getWidgetGenericName(JSONObject widget) {
-        return widget.optString("type").concat(" ").concat(widget.optString("id"));
+        String widgetType = widget.optString("type").trim();
+        if (widgetType.isEmpty()) {
+            return "Widget";
+        }
+
+        StringBuilder widgetName = new StringBuilder();
+        for (String typePart : widgetType.split("[-_\\s]+")) {
+            if (!typePart.isEmpty()) {
+                if (widgetName.length() > 0) {
+                    widgetName.append(' ');
+                }
+                widgetName.append(typePart.substring(0, 1).toUpperCase(Locale.ROOT))
+                        .append(typePart.substring(1).toLowerCase(Locale.ROOT));
+            }
+        }
+        return widgetName.length() == 0 ? "Widget" : widgetName.append(" Widget").toString();
     }
 
     public String replacePlaceholderIfPresent(String widgetName, JSONObject drivers) {
