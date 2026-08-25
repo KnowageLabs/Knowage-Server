@@ -1,0 +1,17 @@
+{
+	"groups": [
+#foreach ($jpaGroup in $jpaGroups)
+		{
+			"model": "$jpaGroup.modelName",
+			"name": "$jpaGroup.name",
+			"uniqueName": "$jpaGroup.uniqueName",
+			"description": "$!jpaGroup.description",
+			"entities": [
+#foreach ($entityType in $jpaGroup.entityTypes)
+				"$entityType"#if($foreach.hasNext),#end
+#end
+			]
+		}#if($foreach.hasNext),#end
+#end
+	]
+}

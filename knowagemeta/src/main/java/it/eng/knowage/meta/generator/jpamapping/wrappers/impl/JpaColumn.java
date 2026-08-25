@@ -129,7 +129,7 @@ public class JpaColumn implements IJpaColumn {
 				if (relationship.getSourceTable().equals(((JpaTable) jpaTable).getBusinessTable())) {
 					columns = relationship.getSourceColumns();
 				} else {
-					columns = relationship.getDestinationColumns();
+					continue;
 				}
 			}
 
