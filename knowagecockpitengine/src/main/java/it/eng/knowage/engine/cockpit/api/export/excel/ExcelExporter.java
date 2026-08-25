@@ -1384,7 +1384,7 @@ public class ExcelExporter extends AbstractFormatExporter {
                     }
                 }
             } else {
-                addUserSelectionValue(selects, selKey, selObj);
+                addUserSelectionValue(selects, selKey, select);
             }
         }
     }
