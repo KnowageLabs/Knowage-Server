@@ -130,6 +130,7 @@ public class DashboardPivotExporter extends GenericDashboardWidgetExporter imple
         int trackedPathFieldCount = columns.length() + rows.length();
         String widgetName = getJsonObjectUtils().replacePlaceholderIfPresent(getJsonObjectUtils().getDashboardWidgetName(widget), drivers, widget.optJSONArray("variables"));
         String xlsxSheetName = getWidgetXlsxSheetName(widget, drivers, widgetName);
+        String dashboardSheetName = hasCustomWidgetXlsxSheetName(widget) ? null : documentName;
 
         int offset = 0;
         int fetchSize = Integer.parseInt(SingletonConfig.getInstance().getConfigValue("SPAGOBI.API.DATASET.MAX_ROWS_NUMBER"));
@@ -146,7 +147,7 @@ public class DashboardPivotExporter extends GenericDashboardWidgetExporter imple
             return 0;
         }
 
-        PivotSheetContext pivotSheetContext = createPivotSheetContext(streamingWorkbook, xlsxSheetName);
+        PivotSheetContext pivotSheetContext = createPivotSheetContext(streamingWorkbook, xlsxSheetName, dashboardSheetName);
         if (registerAutoSizeSkip) {
             excelExporter.registerSheetToSkipAutoSize(pivotSheetContext.sourceSheetName);
             excelExporter.registerSheetToSkipAutoSize(pivotSheetContext.pivotSheetName);
@@ -179,10 +180,10 @@ public class DashboardPivotExporter extends GenericDashboardWidgetExporter imple
         return 2;
     }
 
-    private PivotSheetContext createPivotSheetContext(SXSSFWorkbook streamingWorkbook, String xlsxSheetName) {
+    private PivotSheetContext createPivotSheetContext(SXSSFWorkbook streamingWorkbook, String xlsxSheetName, String dashboardSheetName) {
         XSSFWorkbook xssfWorkbook = streamingWorkbook.getXSSFWorkbook();
-        Sheet sourceSheet = excelExporter.createUniqueSafeSheet(streamingWorkbook, SOURCE_SHEET_NAME + "_" + xlsxSheetName, null);
-        Sheet pivotSheet = excelExporter.createUniqueSafeSheet(streamingWorkbook, xlsxSheetName, null);
+        Sheet sourceSheet = excelExporter.createUniqueSafeSheet(streamingWorkbook, SOURCE_SHEET_NAME + "_" + xlsxSheetName, dashboardSheetName);
+        Sheet pivotSheet = excelExporter.createUniqueSafeSheet(streamingWorkbook, xlsxSheetName, dashboardSheetName);
 
         if (!(sourceSheet instanceof SXSSFSheet)) {
             throw new SpagoBIRuntimeException("Unable to export pivot widget: source sheet is not SXSSFSheet");
