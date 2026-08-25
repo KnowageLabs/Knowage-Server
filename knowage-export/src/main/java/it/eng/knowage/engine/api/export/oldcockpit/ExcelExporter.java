@@ -534,7 +534,7 @@ public class ExcelExporter extends AbstractFormatExporter {
     }
 
     private void fillSelectionsSheetWithData(Map<String, Map<String, Object>> selectionsMap, Workbook wb, Sheet sheet,
-                                             String widgetName) {
+                                             String widgetName) throws JSONException {
 
         // CREATE BRANDED HEADER SHEET
         this.imageB64 = OrganizationImageManager.getOrganizationB64ImageWide(TenantManager.getTenant().getName());
@@ -583,20 +583,24 @@ public class ExcelExporter extends AbstractFormatExporter {
 
             for (String selectionskey : selectionsMap.get(key).keySet()) {
 
-                Row row = sheet.createRow(j++);
-
-                Cell cellData0 = row.createCell(0);
-                if (key != null)
-                    cellData0.setCellValue(key.length() > EXCEL_CELL_MAX_LEN ? "the content is too big" : key);
-
-                Cell cellData1 = row.createCell(1);
-                if (selectionskey != null)
-                    cellData1.setCellValue(selectionskey.length() > EXCEL_CELL_MAX_LEN ? "the content is too big" : selectionskey);
-
-                Cell cellData2 = row.createCell(2);
                 if (selectionsMap.get(key) != null && selectionsMap.get(key).get(selectionskey) != null) {
-                    String selectionsValues = extractSelectionValues("" + selectionsMap.get(key).get(selectionskey));
-                    cellData2.setCellValue(selectionsValues.length() > EXCEL_CELL_MAX_LEN ? "the content is too big" : selectionsValues);
+                    Object selection = selectionsMap.get(key).get(selectionskey);
+                    JSONArray selectionValues = selection instanceof JSONArray ? (JSONArray) selection : new JSONArray().put(selection);
+                    for (int i = 0; i < selectionValues.length(); i++) {
+                        Row row = sheet.createRow(j++);
+
+                        Cell cellData0 = row.createCell(0);
+                        if (key != null)
+                            cellData0.setCellValue(key.length() > EXCEL_CELL_MAX_LEN ? "the content is too big" : key);
+
+                        Cell cellData1 = row.createCell(1);
+                        if (selectionskey != null)
+                            cellData1.setCellValue(selectionskey.length() > EXCEL_CELL_MAX_LEN ? "the content is too big" : selectionskey);
+
+                        Cell cellData2 = row.createCell(2);
+                        String selectionValue = extractSelectionValues("" + selectionValues.get(i));
+                        cellData2.setCellValue(selectionValue.length() > EXCEL_CELL_MAX_LEN ? "the content is too big" : selectionValue);
+                    }
                 }
             }
 
@@ -716,7 +720,8 @@ public class ExcelExporter extends AbstractFormatExporter {
     }
 
     private String extractSelectionValues(String selectionValues) {
-        return selectionValues.replace("[\"(", "").replace(")\"]", "");
+        String values = selectionValues.replace("[\"(", "").replace(")\"]", "");
+        return values.startsWith("('") && values.endsWith("')") ? values.substring(2, values.length() - 2) : values;
     }
 
     private JSONArray getChildFromWidgetContent(JSONObject widgetContent, String childName) {
@@ -1242,6 +1247,9 @@ public class ExcelExporter extends AbstractFormatExporter {
         JSONObject selection = (JSONObject) selections.get(key);
         Iterator<String> selectionKeys = selection.keys();
         HashMap<String, Object> selects = new HashMap<>();
+        if (selectionsMap.containsKey(key)) {
+            selects.putAll(selectionsMap.get(key));
+        }
         while (selectionKeys.hasNext()) {
             String selKey = selectionKeys.next();
             Object select = selection.get(selKey);
@@ -1269,17 +1277,27 @@ public class ExcelExporter extends AbstractFormatExporter {
                         if (((JSONObject) selObj).has("filterOperator")) {
                             // Do nothing
                         } else {
-                            selects.put(selKey, selObj);
+                            addUserSelectionValue(selects, selKey, selObj);
                         }
 
                     } else {
-                        selects.put(selKey, selObj);
+                        addUserSelectionValue(selects, selKey, selObj);
                     }
                 }
             } else {
-                selects.put(selKey, select);
+                addUserSelectionValue(selects, selKey, select);
             }
         }
+    }
+
+    private void addUserSelectionValue(HashMap<String, Object> selects, String selKey, Object select) {
+        Object existingSelection = selects.get(selKey);
+        JSONArray selectionValues = existingSelection instanceof JSONArray ? (JSONArray) existingSelection : new JSONArray();
+        if (existingSelection != null && !(existingSelection instanceof JSONArray)) {
+            selectionValues.put(existingSelection);
+        }
+        selectionValues.put(select);
+        selects.put(selKey, selectionValues);
     }
 
     private Map<String, Map<String, Object>> createDriversMap() throws JSONException {
