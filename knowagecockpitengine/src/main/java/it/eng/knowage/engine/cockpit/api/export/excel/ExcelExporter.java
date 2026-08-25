@@ -665,12 +665,17 @@ public class ExcelExporter extends AbstractFormatExporter {
         cell3.setCellStyle(headerCellStyle);
 
         int j = headerIndex + 2;
+        Set<List<String>> renderedSelections = new HashSet<>();
         for (String selectionskey : selectionsMap.get(key).keySet()) {
 
             if (selectionsMap.get(key) != null && selectionsMap.get(key).get(selectionskey) != null) {
                 Object selection = selectionsMap.get(key).get(selectionskey);
                 JSONArray selectionValues = selection instanceof JSONArray ? (JSONArray) selection : new JSONArray().put(selection);
                 for (int i = 0; i < selectionValues.length(); i++) {
+                    String value = extractSelectionValues("" + selectionValues.get(i));
+                    if (!renderedSelections.add(Arrays.asList(key, selectionskey, value))) {
+                        continue;
+                    }
                     Row row = sheet.createRow(j++);
 
                     Cell cellData0 = row.createCell(0);
@@ -682,8 +687,7 @@ public class ExcelExporter extends AbstractFormatExporter {
                         cellData1.setCellValue(selectionskey.length() > EXCEL_CELL_MAX_LEN ? "the content is too big" : selectionskey);
 
                     Cell cellData2 = row.createCell(2);
-                    String selectionValue = extractSelectionValues("" + selectionValues.get(i));
-                    cellData2.setCellValue(selectionValue.length() > EXCEL_CELL_MAX_LEN ? "the content is too big" : selectionValue);
+                    cellData2.setCellValue(value.length() > EXCEL_CELL_MAX_LEN ? "the content is too big" : value);
                 }
             }
         }
