@@ -215,7 +215,7 @@ public class ExcelExporter extends AbstractFormatExporter {
     private JSONObject buildOptionsForCrosstab(String templateString) {
         try {
             JSONObject template = new JSONObject(templateString);
-            JSONArray sheets = template.getJSONArray("sheets");
+            JSONArray sheets = getOrderedCockpitSheets(template);
             JSONObject toReturn = new JSONObject();
             for (int i = 0; i < sheets.length(); i++) {
                 JSONObject sheet = sheets.getJSONObject(i);
@@ -345,24 +345,71 @@ public class ExcelExporter extends AbstractFormatExporter {
 
     private JSONArray getWidgetsJson(String templateString) {
         try {
-            if (body != null && body.has("widget")) {
-                return body.getJSONArray("widget");
-            } else {
-                JSONArray toReturn = new JSONArray();
-                JSONObject template = new JSONObject(templateString);
-                JSONArray sheets = template.getJSONArray("sheets");
-                for (int i = 0; i < sheets.length(); i++) {
-                    JSONObject sheet = sheets.getJSONObject(i);
-                    JSONArray sheetWidgets = sheet.getJSONArray("widgets");
-                    for (int j = 0; j < sheetWidgets.length(); j++) {
-                        JSONObject widget = sheetWidgets.getJSONObject(j);
-                        toReturn.put(widget);
-                    }
-                }
-                return toReturn;
-            }
+            JSONArray requestedWidgets = body != null ? body.optJSONArray("widget") : null;
+            return getCockpitWidgetsJson(new JSONObject(templateString), requestedWidgets);
         } catch (Exception e) {
             throw new SpagoBIRuntimeException("Cannot retrieve widgets list", e);
+        }
+    }
+
+    static JSONArray getCockpitWidgetsJson(JSONObject template) {
+        return getCockpitWidgetsJson(template, null);
+    }
+
+    private static JSONArray getCockpitWidgetsJson(JSONObject template, JSONArray requestedWidgets) {
+        try {
+            JSONArray widgets = new JSONArray();
+            Map<String, JSONObject> requestedWidgetsById = new HashMap<>();
+            if (requestedWidgets != null) {
+                for (int i = 0; i < requestedWidgets.length(); i++) {
+                    JSONObject widget = requestedWidgets.getJSONObject(i);
+                    requestedWidgetsById.put(widget.getString("id"), widget);
+                }
+            }
+
+            Set<String> orderedWidgetIds = new HashSet<>();
+            JSONArray sheets = getOrderedCockpitSheets(template);
+            for (int i = 0; i < sheets.length(); i++) {
+                JSONArray sheetWidgets = sheets.getJSONObject(i).getJSONArray("widgets");
+                for (int j = 0; j < sheetWidgets.length(); j++) {
+                    JSONObject templateWidget = sheetWidgets.getJSONObject(j);
+                    String widgetId = templateWidget.getString("id");
+                    JSONObject widget = requestedWidgets == null ? templateWidget : requestedWidgetsById.get(widgetId);
+                    if (widget != null) {
+                        widgets.put(widget);
+                        orderedWidgetIds.add(widgetId);
+                    }
+                }
+            }
+
+            if (requestedWidgets != null) {
+                for (int i = 0; i < requestedWidgets.length(); i++) {
+                    JSONObject widget = requestedWidgets.getJSONObject(i);
+                    if (!orderedWidgetIds.contains(widget.getString("id"))) {
+                        widgets.put(widget);
+                    }
+                }
+            }
+            return widgets;
+        } catch (Exception e) {
+            throw new SpagoBIRuntimeException("Cannot retrieve widgets list", e);
+        }
+    }
+
+    static JSONArray getOrderedCockpitSheets(JSONObject template) {
+        try {
+            JSONArray sheets = template.getJSONArray("sheets");
+            List<JSONObject> orderedSheets = new ArrayList<>();
+            for (int i = 0; i < sheets.length(); i++) {
+                orderedSheets.add(sheets.getJSONObject(i));
+            }
+
+            if (orderedSheets.stream().allMatch(sheet -> sheet.has("index") && !sheet.isNull("index"))) {
+                orderedSheets.sort(Comparator.comparingInt(sheet -> sheet.optInt("index")));
+            }
+            return new JSONArray(orderedSheets);
+        } catch (Exception e) {
+            throw new SpagoBIRuntimeException("Cannot retrieve cockpit sheets", e);
         }
     }
 
@@ -1495,4 +1542,3 @@ public class ExcelExporter extends AbstractFormatExporter {
         return getDatastore(datasetLabel, map, selections, 0, -1);
     }
 }
-
