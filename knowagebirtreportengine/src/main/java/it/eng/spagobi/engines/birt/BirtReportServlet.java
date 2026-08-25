@@ -268,6 +268,9 @@ public class BirtReportServlet extends HttpServlet {
 
 		HashMap requestParameters = ParametersDecoder.getDecodedRequestParameters(servletRequest);
 		Content template = contentProxy.readTemplate(documentId, requestParameters);
+		if (template == null) {
+		    throw new SpagoBIRuntimeException("Template not found for document id " + documentId);
+		}
 		logger.debug("Read the template=" + template.getFileName());
 
 		InputStream is = null;
@@ -534,6 +537,22 @@ public class BirtReportServlet extends HttpServlet {
 			locale = Locale.ENGLISH;
 		}
 		String outputFormat = request.getParameter("outputType");
+		if (outputFormat == null || outputFormat.trim().isEmpty()) {
+		    outputFormat = request.getParameter("OutputType");
+		}
+		if (outputFormat == null || outputFormat.trim().isEmpty()) {
+		    // Fallback sulla mappa dei parametri della request
+		    Map<String, String[]> paramMap = request.getParameterMap();
+		    for (String key : paramMap.keySet()) {
+		        if ("outputtype".equalsIgnoreCase(key)) {
+		            String[] vals = paramMap.get(key);
+		            if (vals != null && vals.length > 0) {
+		                outputFormat = vals[0];
+		            }
+		            break;
+		        }
+		    }
+		}
 		logger.debug("outputType -- [" + outputFormat + "]");
 		String outputType = getOutputType(outputFormat);
 
