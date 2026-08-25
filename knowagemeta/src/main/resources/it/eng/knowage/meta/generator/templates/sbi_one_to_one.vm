@@ -20,7 +20,7 @@
 			#end
 			})
 		#else
-		@JoinColumn( name=$jpaRelationship.getSimpleSourceColumnName(), insertable = $isUpdatable, updatable = $isUpdatable)
+		@JoinColumn( name=$jpaRelationship.getSimpleSourceColumnName(), referencedColumnName=$jpaRelationship.getSimpleDestinationColumnName(), insertable = $isUpdatable, updatable = $isUpdatable)
 		#end		
 		##
 	#end 

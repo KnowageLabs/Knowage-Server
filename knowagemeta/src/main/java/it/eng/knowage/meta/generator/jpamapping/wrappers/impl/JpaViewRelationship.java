@@ -147,6 +147,12 @@ public class JpaViewRelationship extends AbstractJpaRelationship {
 	public String getSimpleSourceColumnName(){
 		return StringUtils.doubleQuote(businessInnerRelationship.getSourceColumns().get(0).getName());
 	}
+
+	@Override
+	public String getSimpleDestinationColumnName() {
+		return StringUtils.doubleQuote(businessInnerRelationship.getDestinationColumns().get(0).getName());
+	}
+
 	@Override
 	public String getPropertyName(){
 		if (businessInnerRelationship.getSourceColumns()!=null){

@@ -72,6 +72,8 @@ public interface IJpaRelationship {
 	List<JpaRelationshipColumnsNames> getRelationshipColumnsNames();
 	
 	public String getSimpleSourceColumnName();
+
+	public String getSimpleDestinationColumnName();
 	
 	public String getCollectionType();
 	
