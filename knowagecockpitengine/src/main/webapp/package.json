@@ -27,7 +27,7 @@
   },
   "dependencies": {
     "@fortawesome/fontawesome-free": "5.12.0",
-    "ag-grid-community": "23.1.1",
+    "ag-grid-community": "31.3.4",
     "angularjs-slider": "^7.1.0",
     "angular-tree-control": "0.2.30",
     "angular-ui-codemirror": "0.3.0",
