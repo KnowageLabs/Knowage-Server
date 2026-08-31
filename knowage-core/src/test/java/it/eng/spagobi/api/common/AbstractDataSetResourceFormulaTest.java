@@ -72,6 +72,12 @@ public class AbstractDataSetResourceFormulaTest {
 	}
 
 	@Test
+	public void shouldValidateCaseExpression() {
+		resource.validateFormula("CASE WHEN ($F{PRODUCT FAMILY} = 'Drink') THEN 'Yes' ELSE 'No' END",
+				buildColumns("PRODUCT FAMILY"));
+	}
+
+	@Test
 	public void shouldRejectUnknownPlaceholderFieldAsUnknownField() {
 		try {
 			resource.validateFormula("SUM($F{missing_field})", buildColumns("num_cars_owned", "member_card"));

@@ -1150,11 +1150,6 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
                 throw new ValidationException("common.errors.formulas.subqueryNotAllowed");
             }
 
-            // blocca CASE
-            if (ctx.K_CASE() != null) {
-                throw new ValidationException("common.errors.formulas.caseNotAllowed");
-            }
-
             // blocca CAST
             if (ctx.K_CAST() != null) {
                 throw new ValidationException("common.errors.formulas.castNotAllowed");
