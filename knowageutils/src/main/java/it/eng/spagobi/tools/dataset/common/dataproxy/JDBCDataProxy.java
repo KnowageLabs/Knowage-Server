@@ -108,6 +108,23 @@ public class JDBCDataProxy extends AbstractDataProxy {
 			String dialect = dataSource.getHibDialectClass();
 			DatabaseDialect databaseDialect = DatabaseDialect.get(dialect);
 			Assert.assertNotNull(dialect, "Database dialect cannot be null");
+
+			int resultNumber = -1;
+			boolean resultNumberCalculatedBeforeQuery = false;
+			if (isCalculateResultNumberOnLoadEnabled() && !SqlUtils.isHiveLikeDialect(dialect)
+					&& dataReader.isPaginationSupported() && dataReader.isPaginationRequested()) {
+				resultNumberCalculatedBeforeQuery = true;
+				try {
+					// The count query must complete before creating the data statement because some JDBC drivers invalidate it.
+					resultNumber = getResultNumber(connection);
+					logger.debug("Calculation of result set total number successful : resultNumber = " + resultNumber);
+					dataReader.setCalculateResultNumberEnabled(false);
+				} catch (SpagoBIRuntimeException t) {
+					logger.debug("KO Calculation of result set total number using inlineview", t);
+					dataReader.setCalculateResultNumberEnabled(true);
+				}
+			}
+
 			try {
 				// ATTENTION: For the most db sets the stmt as a scrollable
 				// stmt, only for the compatibility with Ingres sets
@@ -124,22 +141,6 @@ public class JDBCDataProxy extends AbstractDataProxy {
 				}
 			} catch (Exception t) {
 				throw new SpagoBIRuntimeException("An error occurred while creating connection steatment", t);
-			}
-
-			int resultNumber = -1;
-			boolean resultNumberCalculatedBeforeQuery = false;
-			if (isCalculateResultNumberOnLoadEnabled() && !SqlUtils.isHiveLikeDialect(dialect)
-					&& dataReader.isPaginationSupported() && dataReader.isPaginationRequested()) {
-				resultNumberCalculatedBeforeQuery = true;
-				try {
-					// The count query must run before opening the data result set because some JDBC drivers invalidate it.
-					resultNumber = getResultNumber(connection);
-					logger.debug("Calculation of result set total number successful : resultNumber = " + resultNumber);
-					dataReader.setCalculateResultNumberEnabled(false);
-				} catch (SpagoBIRuntimeException t) {
-					logger.debug("KO Calculation of result set total number using inlineview", t);
-					dataReader.setCalculateResultNumberEnabled(true);
-				}
 			}
 
 			String sqlQuery = "";
