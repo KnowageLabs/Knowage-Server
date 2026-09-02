@@ -126,6 +126,22 @@ public class JDBCDataProxy extends AbstractDataProxy {
 				throw new SpagoBIRuntimeException("An error occurred while creating connection steatment", t);
 			}
 
+			int resultNumber = -1;
+			boolean resultNumberCalculatedBeforeQuery = false;
+			if (isCalculateResultNumberOnLoadEnabled() && !SqlUtils.isHiveLikeDialect(dialect)
+					&& dataReader.isPaginationSupported() && dataReader.isPaginationRequested()) {
+				resultNumberCalculatedBeforeQuery = true;
+				try {
+					// The count query must run before opening the data result set because some JDBC drivers invalidate it.
+					resultNumber = getResultNumber(connection);
+					logger.debug("Calculation of result set total number successful : resultNumber = " + resultNumber);
+					dataReader.setCalculateResultNumberEnabled(false);
+				} catch (SpagoBIRuntimeException t) {
+					logger.debug("KO Calculation of result set total number using inlineview", t);
+					dataReader.setCalculateResultNumberEnabled(true);
+				}
+			}
+
 			String sqlQuery = "";
 			try {
 				// get max size
@@ -147,35 +163,36 @@ public class JDBCDataProxy extends AbstractDataProxy {
 				throw new SpagoBIRuntimeException("An error occurred while executing statement: " + sqlQuery, t);
 			}
 
-			int resultNumber = -1;
 			if (isCalculateResultNumberOnLoadEnabled()) {
 				logger.debug("Calculation of result set total number is enabled");
-				try {
-					// if its an hive like db the query can be very slow so it's better to execute it just once and not use the inline view tecnique
-					if (SqlUtils.isHiveLikeDialect(dialect)) {
-						logger.debug("It's a BigData datasource so count data iterating result set till max");
-						dataReader.setCalculateResultNumberEnabled(true);
-					} else if (dataReader.isPaginationSupported() && !dataReader.isPaginationRequested()) {
-						// we need to load entire resultset, therefore there is no need to use the inline view tecnique
-						logger.debug("Offset = 0, fetch size = -1: the entire resultset will be loaded, no need to use the inline view tecnique");
-						dataReader.setCalculateResultNumberEnabled(true);
-					} else {
-						// try to calculate the query total result number using inline view tecnique
-						resultNumber = getResultNumber(connection);
-						logger.debug("Calculation of result set total number successful : resultNumber = " + resultNumber);
-						// ok, no need to ask the datareader to calculate the query total result number
-						dataReader.setCalculateResultNumberEnabled(false);
-					}
-				} catch (Exception t) {
-					logger.debug("KO Calculation of result set total number using inlineview", t);
+				if (!resultNumberCalculatedBeforeQuery) {
 					try {
-						logger.debug("Loading data using scrollable resultset tecnique");
-						resultNumber = getResultNumber(resultSet);
-						logger.debug("OK data loaded using scrollable resultset tecnique : resultNumber = " + resultNumber);
-						dataReader.setCalculateResultNumberEnabled(false);
-					} catch (SQLException e) {
-						logger.debug("KO data loaded using scrollable resultset tecnique", e);
-						dataReader.setCalculateResultNumberEnabled(true);
+						// if its an hive like db the query can be very slow so it's better to execute it just once and not use the inline view tecnique
+						if (SqlUtils.isHiveLikeDialect(dialect)) {
+							logger.debug("It's a BigData datasource so count data iterating result set till max");
+							dataReader.setCalculateResultNumberEnabled(true);
+						} else if (dataReader.isPaginationSupported() && !dataReader.isPaginationRequested()) {
+							// we need to load entire resultset, therefore there is no need to use the inline view tecnique
+							logger.debug("Offset = 0, fetch size = -1: the entire resultset will be loaded, no need to use the inline view tecnique");
+							dataReader.setCalculateResultNumberEnabled(true);
+						} else {
+							// try to calculate the query total result number using inline view tecnique
+							resultNumber = getResultNumber(connection);
+							logger.debug("Calculation of result set total number successful : resultNumber = " + resultNumber);
+							// ok, no need to ask the datareader to calculate the query total result number
+							dataReader.setCalculateResultNumberEnabled(false);
+						}
+					} catch (Exception t) {
+						logger.debug("KO Calculation of result set total number using inlineview", t);
+						try {
+							logger.debug("Loading data using scrollable resultset tecnique");
+							resultNumber = getResultNumber(resultSet);
+							logger.debug("OK data loaded using scrollable resultset tecnique : resultNumber = " + resultNumber);
+							dataReader.setCalculateResultNumberEnabled(false);
+						} catch (SQLException e) {
+							logger.debug("KO data loaded using scrollable resultset tecnique", e);
+							dataReader.setCalculateResultNumberEnabled(true);
+						}
 					}
 				}
 			} else {
