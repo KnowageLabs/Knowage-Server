@@ -1,6 +1,7 @@
 package it.eng.spagobi.engines.qbe.api;
 
 import java.text.DateFormat;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -71,6 +72,9 @@ import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceException;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceExceptionHandler;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.service.JSONSuccess;
+import it.eng.knowage.parameter.ParameterManagerFactory;
+import it.eng.spagobi.tools.dataset.utils.DataSetUtilities;
+
 
 @Path("/SetCatalogue")
 public class QbeSetCatalogueResource extends AbstractQbeEngineResource {
@@ -147,13 +151,42 @@ public class QbeSetCatalogueResource extends AbstractQbeEngineResource {
 			}
 			}
 			
-			if (parsStr != null && !parsStr.isEmpty()) {
+			/*if (parsStr != null && !parsStr.isEmpty()) {
 				JSONArray parameters = new JSONArray(parsStr);
 				for (int i = 0; i < parameters.length(); i++) {
 		            JSONObject p = parameters.getJSONObject(i);
 		            getEnv().put(p.getString("name"), p.get("value"));
 		        }
+			}*/
+
+			if (parsStr != null && !parsStr.isEmpty()) {
+				JSONArray parameters = new JSONArray(parsStr);
+			 
+				for (int i = 0; i < parameters.length(); i++) {
+					JSONObject parameter = parameters.getJSONObject(i);
+			 
+					String name = parameter.getString("name");
+					String type = parameter.optString("type", DataSetUtilities.GENERIC_TYPE);
+					boolean multiValue = parameter.optBoolean("multiValue");
+					Object parameterValue = parameter.get("value");
+			 
+					if (multiValue && parameterValue instanceof JSONArray) {
+						String defaultValue = parameter.optString("defaultValue", "");
+			 
+						parameterValue = ParameterManagerFactory.getInstance()
+								.defaultManager()
+								.fromFeToBe(
+										type,
+										parameterValue.toString(),
+										defaultValue,
+										true
+								);
+					}
+			 
+					getEnv().put(name, parameterValue);
+				}
 			}
+			
 			// get the cataologue from the request
 			if (jsonEncodedCatalogue == null && qbeJSONQuery != null) {
 			    finalCatalogueForLog = qbeJSONQuery;

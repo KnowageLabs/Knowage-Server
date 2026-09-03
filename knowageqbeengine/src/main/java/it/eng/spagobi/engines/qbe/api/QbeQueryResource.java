@@ -990,7 +990,7 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 		return getEngineInstance().getDataSource().getConfiguration().getModelName();
 	}
 
-	private String getMultiValue(String value, String type) {
+/*	private String getMultiValue(String value, String type) {
 		StringBuilder toReturn = new StringBuilder("");
 
 		String[] tempArrayValues = value.split(";");
@@ -1004,7 +1004,24 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 		}
 
 		return toReturn.toString();
+	} */
+	
+	private String getMultiValue(String value, String type) {
+		StringBuilder toReturn = new StringBuilder("");
+	 
+		String[] tempArrayValues = value.split(";");
+		for (int j = 0; j < tempArrayValues.length; j++) {
+			String tempValue = tempArrayValues[j];
+			if (j == 0) {
+				toReturn.append(getSingleValue(tempValue, type));
+			} else {
+				toReturn.append(", ").append(getSingleValue(tempValue, type));
+			}
+		}
+	 
+		return toReturn.toString();
 	}
+	
 
 	/**
 	 * @param id
