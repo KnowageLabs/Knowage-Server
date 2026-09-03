@@ -94,17 +94,6 @@ public class JDBCDataProxy extends AbstractDataProxy {
 
 		try {
 
-			Monitor timeToGetConnection = MonitorFactory.start("Knowage.JDBCDataProxy.gettingJDBCConnection");
-			logger.debug("Retrieving JDBC connection...");
-			try {
-				connection = getDataSource().getConnection();
-			} catch (Exception t) {
-				throw new SpagoBIRuntimeException("An error occurred while creating connection", t);
-			} finally {
-				timeToGetConnection.stop();
-			}
-			logger.debug("Got JDBC connection.");
-
 			String dialect = dataSource.getHibDialectClass();
 			DatabaseDialect databaseDialect = DatabaseDialect.get(dialect);
 			Assert.assertNotNull(dialect, "Database dialect cannot be null");
@@ -115,8 +104,8 @@ public class JDBCDataProxy extends AbstractDataProxy {
 					&& dataReader.isPaginationSupported() && dataReader.isPaginationRequested()) {
 				resultNumberCalculatedBeforeQuery = true;
 				try {
-					// The count query must complete before creating the data statement because some JDBC drivers invalidate it.
-					resultNumber = getResultNumber(connection);
+					// Use a dedicated connection because some JDBC drivers close the connection used by the count statement.
+					resultNumber = getResultNumberOnDedicatedConnection();
 					logger.debug("Calculation of result set total number successful : resultNumber = " + resultNumber);
 					dataReader.setCalculateResultNumberEnabled(false);
 				} catch (SpagoBIRuntimeException t) {
@@ -124,6 +113,17 @@ public class JDBCDataProxy extends AbstractDataProxy {
 					dataReader.setCalculateResultNumberEnabled(true);
 				}
 			}
+
+			Monitor timeToGetConnection = MonitorFactory.start("Knowage.JDBCDataProxy.gettingJDBCConnection");
+			logger.debug("Retrieving JDBC connection...");
+			try {
+				connection = getDataSource().getConnection();
+			} catch (Exception t) {
+				throw new SpagoBIRuntimeException("An error occurred while creating connection", t);
+			} finally {
+				timeToGetConnection.stop();
+			}
+			logger.debug("Got JDBC connection.");
 
 			try {
 				// ATTENTION: For the most db sets the stmt as a scrollable
@@ -228,6 +228,18 @@ public class JDBCDataProxy extends AbstractDataProxy {
 		}
 
 		return dataStore;
+	}
+
+	private int getResultNumberOnDedicatedConnection() {
+		Connection connection = null;
+		try {
+			connection = getDataSource().getConnection();
+			return getResultNumber(connection);
+		} catch (Exception e) {
+			throw new SpagoBIRuntimeException("An error occurred while creating connection for result count", e);
+		} finally {
+			releaseResources(connection, null, null);
+		}
 	}
 
 	protected int getResultNumber(Connection connection) {
