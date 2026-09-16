@@ -383,7 +383,7 @@ public class DashboardExporter {
                 if (parameters.length() > 0) {
                     for (int i = 0; i < parameters.length(); i++) {
                         JSONObject parameter = parameters.getJSONObject(i);
-                        parameter.put("dataset", body.getInt("dataset"));
+                        parameter.put("dataset", getDatasetId(body));
                         getActualValueFromDriverPlaceholder(body, parametersToReturn, parameter);
                     }
                 }
@@ -428,7 +428,7 @@ public class DashboardExporter {
         if (parameters != null && parameters.length() > 0) {
             for (int i = 0; i < parameters.length(); i++) {
                 JSONObject parameter = parameters.getJSONObject(i);
-                if (parameter.getInt("dataset") == body.getInt("dataset")) {
+                if (getDatasetId(parameter) == getDatasetId(body)) {
                     if (parameter.get("value") != null && !parameter.getString("value").equals("null")) {
                         parametersToSend.put(parameter.getString("name"), parameter.get("value"));
                     } else {
@@ -447,6 +447,17 @@ public class DashboardExporter {
             }
         }
         return parametersToSend;
+    }
+
+    protected int getDatasetId(JSONObject object) throws JSONException {
+        Object dataset = object.get("dataset");
+        if (dataset instanceof JSONObject datasetObject) {
+            if (datasetObject.has("id")) {
+                return datasetObject.getInt("id");
+            }
+            return datasetObject.getInt("dsId");
+        }
+        return object.getInt("dataset");
     }
 
     protected JSONArray filterDataStoreColumns(JSONArray columns) {

@@ -207,6 +207,37 @@ public class DashboardExporterTest {
     }
 
     @Test
+    public void shouldTransformParametersWhenDatasetIdentifiersAreObjects() throws JSONException {
+        DashboardExporter exporter = new DashboardExporter("test-user", null);
+        JSONObject widget = new JSONObject()
+                .put("dataset", new JSONObject().put("id", 42));
+        JSONArray parameters = new JSONArray()
+                .put(new JSONObject()
+                        .put("dataset", new JSONObject().put("dsId", 42))
+                        .put("name", "country")
+                        .put("value", "IT"));
+
+        JSONObject transformedParameters = exporter.transformParametersForDatastore(widget, parameters);
+
+        assertEquals("IT", transformedParameters.getString("country"));
+    }
+
+    @Test
+    public void shouldExtractSingleWidgetParametersWhenDatasetIsAnObject() throws JSONException {
+        DashboardExporter exporter = new DashboardExporter("test-user", null);
+        JSONObject widget = new JSONObject()
+                .put("dataset", new JSONObject().put("dsId", 42))
+                .put("parameters", new JSONArray()
+                        .put(new JSONObject()
+                                .put("name", "country")
+                                .put("value", "IT")));
+
+        JSONArray parameters = exporter.getParametersFromBody(widget);
+
+        assertEquals(42, parameters.getJSONObject(0).getInt("dataset"));
+    }
+
+    @Test
     public void shouldNormalizeIso3LocaleForExport() throws JSONException {
         TestableDashboardExporter exporter = new TestableDashboardExporter();
 
