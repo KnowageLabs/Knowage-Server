@@ -49,7 +49,7 @@ public class CartoMapTileResource {
 	private static final Logger LOGGER = LogManager.getLogger(CartoMapTileResource.class);
 
 	private static final String CARTO_API_KEY_PROPERTY = "KNOWAGE_CARTO_API_KEY";
-	private static final String CARTO_TILE_URL = "https://a.basemaps.cartocdn.com/%s/%d/%d/%d.png?key=%s";
+	private static final String CARTO_TILE_URL = "https://basemaps.cartocdn.com/%s/%d/%d/%d.png?key=%s";
 	private static final int MAX_ZOOM = 20;
 	private static final HttpClient HTTP_CLIENT = HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(10))
 			.followRedirects(HttpClient.Redirect.NEVER).build();
@@ -89,7 +89,10 @@ public class CartoMapTileResource {
 			LOGGER.error("Interrupted while retrieving a CARTO tile");
 			return Response.status(Status.BAD_GATEWAY).build();
 		} catch (IOException e) {
-			LOGGER.error("Unable to retrieve a CARTO tile: {}", e.getClass().getSimpleName());
+			LOGGER.error(
+					"Unable to retrieve CARTO tile from host {} for style {}, zoom {}, x {}, y {}: {}",
+					tileUri.getHost(), style, zoom, x, y, e.getMessage(), e
+			);
 			return Response.status(Status.BAD_GATEWAY).build();
 		}
 	}
