@@ -335,7 +335,7 @@ public class Parameter implements Serializable {
 		return modalityValueForMin;
 	}
 
-	public void setModalityValueForMin(ModalitiesValue modalityValueForMax) {
+	public void setModalityValueForMin(ModalitiesValue modalityValueForMin) {
 		this.modalityValueForMin = modalityValueForMin;
 	}
 
