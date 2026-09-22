@@ -126,6 +126,22 @@ export R_HOME=/usr/lib64/R
 export LD_LIBRARY_PATH=/usr/lib64/R/library/rJava/jri
 ```
 
+## CARTO basemap API key
+
+The dashboard map widget proxies CARTO basemap tiles through Knowage so the API key is never sent to browsers. Set the key in the Tomcat environment before starting the server:
+
+```bash
+export KNOWAGE_CARTO_API_KEY='your-carto-api-key'
+```
+
+On Windows, add the following to `TOMCAT_HOME\bin\setenv.bat` instead:
+
+```bat
+set "KNOWAGE_CARTO_API_KEY=your-carto-api-key"
+```
+
+The same value can alternatively be supplied as the JVM property `-DKNOWAGE_CARTO_API_KEY=your-carto-api-key`.
+
 Integration with Python environment
 ----------------------------------
 
