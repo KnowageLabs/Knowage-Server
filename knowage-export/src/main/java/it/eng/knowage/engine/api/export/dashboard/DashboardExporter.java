@@ -1065,7 +1065,7 @@ public class DashboardExporter {
             dashboardSelections.put("drivers", drivers);
             addWidgetLikeSelections(dashboardSelections, widget);
 
-            if (isSolrDataset(dataset) && !widget.getString("type").equalsIgnoreCase("discovery")) {
+            if (isSolrDataset(dataset) && !widget.getString("type").equalsIgnoreCase("discovery") && useSolrFacetPivotForExport(widget)) {
                 JSONObject jsOptions = new JSONObject();
                 jsOptions.put("solrFacetPivot", true);
                 dashboardSelections.put("options", jsOptions);
@@ -1083,6 +1083,10 @@ public class DashboardExporter {
                     + "] [id=" + widget.optLong("id") + "]", e);
         }
         return datastore;
+    }
+
+    static boolean useSolrFacetPivotForExport(JSONObject widget) {
+        return !widget.optBoolean("exportAllDrilldownLevels");
     }
 
     private Map<String, Map<String, Object>> cloneSelections(Map<String, Map<String, Object>> selections) throws JSONException {

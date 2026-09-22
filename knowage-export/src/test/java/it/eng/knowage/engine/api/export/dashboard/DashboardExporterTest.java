@@ -46,6 +46,7 @@ public class DashboardExporterTest {
         private void copyWidgetLikeSelections(JSONObject dashboardSelections, JSONObject widget) throws JSONException {
             addWidgetLikeSelections(dashboardSelections, widget);
         }
+
     }
 
     @Test
@@ -203,6 +204,13 @@ public class DashboardExporterTest {
 
         assertTrue(dashboardSelections.has("likeSelections"));
         assertEquals("it", dashboardSelections.getJSONObject("likeSelections").getJSONObject("sales").getString("COUNTRY,REGION"));
+    }
+
+    @Test
+    public void shouldDisableSolrFacetPivotWhenExportingAllDrilldownLevels() throws JSONException {
+        JSONObject widget = new JSONObject().put("exportAllDrilldownLevels", true);
+
+        assertFalse(DashboardExporter.useSolrFacetPivotForExport(widget));
     }
 
     @Test
