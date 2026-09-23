@@ -174,6 +174,14 @@ public class MenuResourceTest {
 	}
 
 	@Test
+	public void shouldExposePreviewRoleQueryParameter() throws Exception {
+		java.lang.reflect.Method method = MenuResource.class.getMethod("previewMenuByRoleQuery", String.class);
+
+		assertEquals("/preview", method.getAnnotation(javax.ws.rs.Path.class).value());
+		assertEquals("role", method.getParameters()[0].getAnnotation(javax.ws.rs.QueryParam.class).value());
+	}
+
+	@Test
 	public void shouldReturnHtmlFileContent() throws Exception {
 		resourceRoot = Files.createTempDirectory("menu-resource-test");
 		Path staticMenuDirectory = Files.createDirectories(resourceRoot.resolve("static_menu"));
