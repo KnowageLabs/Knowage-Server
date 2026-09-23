@@ -113,7 +113,7 @@ public class MenuResource extends AbstractSpagoBIResource {
 	}
 
 	@GET
-	@Path("/preview/{label}")
+	@Path("/preview/{label: .+}")
 	@Produces(MediaType.APPLICATION_JSON + CHARSET)
 	public Response previewMenuByRole(@PathParam("label") String label) {
 		LOGGER.debug("IN");

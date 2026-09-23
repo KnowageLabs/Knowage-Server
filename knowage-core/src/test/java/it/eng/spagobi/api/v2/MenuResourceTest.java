@@ -167,6 +167,13 @@ public class MenuResourceTest {
 	}
 
 	@Test
+	public void shouldAcceptSlashInPreviewRolePath() throws Exception {
+		javax.ws.rs.Path path = MenuResource.class.getMethod("previewMenuByRole", String.class).getAnnotation(javax.ws.rs.Path.class);
+
+		assertEquals("/preview/{label: .+}", path.value());
+	}
+
+	@Test
 	public void shouldReturnHtmlFileContent() throws Exception {
 		resourceRoot = Files.createTempDirectory("menu-resource-test");
 		Path staticMenuDirectory = Files.createDirectories(resourceRoot.resolve("static_menu"));
