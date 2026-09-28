@@ -655,7 +655,7 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 
 				// check if has value, if has not a valid value then use default
 				// value
-				boolean hasVal = obj.has(PARAM_VALUE_NAME) && !obj.getString(PARAM_VALUE_NAME).isEmpty();
+				/*boolean hasVal = obj.has(PARAM_VALUE_NAME) && !obj.getString(PARAM_VALUE_NAME).isEmpty();
 				String tempVal = "";
 				if (hasVal) {
 					tempVal = obj.getString(PARAM_VALUE_NAME);
@@ -665,6 +665,24 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 						tempVal = obj.getString(DEFAULT_VALUE_PARAM);
 						LOGGER.debug("Value of param not present, use default value: " + tempVal);
 					}
+				}*/
+				
+				Object rawValue = obj.opt(PARAM_VALUE_NAME);
+				 
+				boolean hasVal = rawValue != null
+						&& (!(rawValue instanceof JSONArray) || ((JSONArray) rawValue).length() > 0)
+						&& !rawValue.toString().isEmpty();
+				 
+				String tempVal = "";
+				 
+				if (hasVal) {
+				    tempVal = rawValue.toString();
+				} else {
+				    boolean hasDefaultValue = obj.has(DEFAULT_VALUE_PARAM);
+				    if (hasDefaultValue) {
+				        tempVal = obj.getString(DEFAULT_VALUE_PARAM);
+				        LOGGER.debug("Value of param not present, use default value: " + tempVal);
+				    }
 				}
 
 				/**
@@ -677,11 +695,25 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 				boolean multivalue = obj.optBoolean(MULTI_PARAM);
 
 				String value = "";
-				if (multivalue) {
+				/*if (multivalue) {
 					value = getMultiValue(tempVal, type);
 				} else {
 					value = getSingleValue(tempVal, type);
-				}
+				}*/
+				
+				if (multivalue && rawValue instanceof JSONArray) {
+
+				    value = getMultiValue((JSONArray) rawValue, type);
+
+				} else if (multivalue) {
+
+				    value = getMultiValue(tempVal, type);
+
+				} else {
+
+				    value = getSingleValue(tempVal, type);
+
+				} 
 
 				LOGGER.debug("Parameter name: " + name + " / parameter value: " + value);
 
@@ -692,6 +724,26 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 		}
 
 		return parameters;
+	}
+	
+	private String getMultiValue(JSONArray values, String type) throws JSONException {
+
+	    StringBuilder toReturn = new StringBuilder("");
+	 
+	    for (int i = 0; i < values.length(); i++) {
+
+	        if (i > 0) {
+
+	            toReturn.append(", ");
+
+	        }
+	 
+	        toReturn.append(getSingleValue(values.get(i).toString(), type));
+
+	    }
+	 
+	    return toReturn.toString();
+
 	}
 
 	private QbeDataSet createNewQbeDataset(IDataSet dataset, String label, JSONObject jsonEncodedRequest, String schedulingCronLine, String meta,
