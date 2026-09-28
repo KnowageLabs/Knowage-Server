@@ -364,6 +364,33 @@ public class UniqueMailDocumentDispatchChannel implements IDocumentDispatchChann
 			// in this case recipients must be retrieved by the dataset (which the datastore in input belongs to)
 			// we must find the parameter value in order to filter the dataset
 			String dsParameterLabel = info.getDataSetParameterLabel();
+			// KNOWAGE-9965 - dataset parameter is no longer selected by the current scheduler UI.
+			// When it is not configured, use all dataset rows and read recipients from the second field.
+			if (dsParameterLabel == null || dsParameterLabel.trim().isEmpty()) {
+				logger.debug("No dataset parameter configured. All dataset rows will be used to retrieve recipients.");
+			 
+				Iterator<IRecord> it = dataStore.iterator();
+				while (it.hasNext()) {
+					IRecord currRecord = it.next();
+			 
+					IField recipientField = currRecord.getFieldAt(1);
+					Object recipientFieldObj = recipientField.getValue();
+			 
+					if (recipientFieldObj != null) {
+						String recipient = recipientFieldObj.toString();
+						String[] multiRecipients = recipient.split(",");
+						recipients.addAll(Arrays.asList(multiRecipients));
+			 
+						logger.debug("DataSet recipients found: " + Arrays.deepToString(multiRecipients));
+					} else {
+						logger.warn("The second field of the record is null.");
+					}
+				}
+			 
+				logger.debug("Recipients found from dataset: " + recipients.toArray());
+				logger.debug("OUT");
+				return recipients;
+			}
 			logger.debug("The dataset will be filtered using the value of the parameter " + dsParameterLabel);
 			// looking for the parameter
 			List parameters = biobj.getDrivers();
