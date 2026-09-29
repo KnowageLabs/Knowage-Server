@@ -33,6 +33,9 @@
 			<ITEM id="2005" label="menu.FunctMan"
 				requiredFunctionality="FunctionalitiesManagement"
 				to="/functionalities-management" />
+			<ITEM id="2006" label="menu.FunctMan"
+				requiredFunctionality="ProfileManagement"
+				to="/home-management" />
 		</GROUP_ITEM>
 
 		<GROUP_ITEM id="3000" label="menu.BehaviouralModelMenu"
