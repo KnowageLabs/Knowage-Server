@@ -232,7 +232,7 @@ public class EventToDatabaseEmittingCommand extends AbstractEventEmittingImpl {
 		JsonArray metaModelCategories = createMetaModelCategoriesAsJsonArray(role);
 
 		JsonObject data = createCommonDataForEvent().add("id", role.getExtRoleId()).add("code", Optional.ofNullable(role.getCode()).orElse(""))
-				.add("name", role.getName()).add("description", Optional.ofNullable(role.getDescr()).orElse("")).add("isPublic", role.getIsPublic())
+				.add("name", role.getName()).add("description", Optional.ofNullable(role.getDescr()).orElse("")).add("isPublic", Optional.ofNullable(role.getIsPublic()).orElse(false))
 				.add("roleTypeCode", role.getRoleTypeCode()).add("authorizations", authorizations).add("datasetCategories", datasetCategories)
 				.add("metaModelCategories", metaModelCategories).build();
 
