@@ -28,6 +28,7 @@ import javax.naming.NamingException;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -245,14 +246,13 @@ public class DataSource implements Serializable, IDataSource {
 				attributeValue = profile.getUserAttribute(attributeName);
 				if (attributeValue != null) {
 					schema = attributeValue.toString();
-					Assert.assertNotEmpty(schema.trim(), "Attibute value of current User profile is not provided");
 				}
 			} catch (Exception e) {
 				throw new SpagoBIRuntimeException("Cannot get attribute [" + attributeName + "] from user profile object", e);
 			}
 			logger.debug("Attribute " + attributeName + " is " + attributeValue);
 
-			jndiName = getJndi() + schema;
+			jndiName = getJndi() + (StringUtils.isNotBlank(schema) ? schema : "");
 			logger.debug("OUT: JNDI name is [" + jndiName + "]");
 
 			return jndiName;

@@ -332,8 +332,9 @@ public class AbstractEngineStartAction extends AbstractBaseHttpAction {
 						logger.debug("Datasource's schema attribute name is equals to [" + attrname + "]");
 						Assert.assertNotNull(attrname, "Datasource's schema attribute name cannot be null in order to retrive the target schema");
 						schema = (String) getUserProfile().getUserAttribute(attrname);
-						Assert.assertNotNull(schema, "Impossible to retrive the value of attribute [" + attrname + "] form user profile");
-						dataSource.setJndi(dataSource.getJndi() + schema);
+						if (schema != null && !schema.trim().isEmpty()) {
+							dataSource.setJndi(dataSource.getJndi() + schema);
+						}
 						logger.debug("Target schema for datasource  [" + dataSource.getLabel() + "] is [" + dataSource.getJndi() + "]");
 					} catch (Throwable t) {
 						throw new SpagoBIEngineRuntimeException("Impossible to retrive target schema for datasource [" + dataSource.getLabel() + "]", t);
@@ -731,8 +732,9 @@ public class AbstractEngineStartAction extends AbstractBaseHttpAction {
 					logger.debug("Datasource's schema attribute name is equals to [" + attrname + "]");
 					Assert.assertNotNull(attrname, "Datasource's schema attribute name cannot be null in order to retrive the target schema");
 					schema = (String) getUserProfile().getUserAttribute(attrname);
-					Assert.assertNotNull(schema, "Impossible to retrive the value of attribute [" + attrname + "] form user profile");
-					dataSource.setJndi(dataSource.getJndi() + schema);
+					if (schema != null && !schema.trim().isEmpty()) {
+						dataSource.setJndi(dataSource.getJndi() + schema);
+					}
 					logger.debug("Target schema for datasource  [" + dataSource.getLabel() + "] is [" + dataSource.getJndi() + "]");
 				} catch (Throwable t) {
 					throw new SpagoBIEngineRuntimeException("Impossible to retrive target schema for datasource [" + dataSource.getLabel() + "]", t);

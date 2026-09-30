@@ -608,7 +608,8 @@ public class BirtReportServlet extends HttpServlet {
 					} catch (EMFInternalError e) {
 						logger.error("Cannot retrive ENTE", e);
 					}
-					reportParams.put("connectionName", ds.getJndi() + schema);
+					reportParams.put("connectionName",
+							ds.getJndi() + (schema != null && !schema.trim().isEmpty() ? schema : ""));
 				} else {
 					reportParams.put("connectionName", ds.getJndi());
 				}

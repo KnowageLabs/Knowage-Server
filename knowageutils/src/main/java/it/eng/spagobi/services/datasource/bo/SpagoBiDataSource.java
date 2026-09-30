@@ -472,7 +472,7 @@ public class SpagoBiDataSource implements java.io.Serializable {
 		ctx = new InitialContext();
 		DataSource ds = null;
 		if (checkIsMultiSchema()) {
-			ds = (DataSource) ctx.lookup(getJndiName() + schema);
+			ds = (DataSource) ctx.lookup(getJndiName() + (schema != null && !schema.trim().isEmpty() ? schema : ""));
 		} else {
 			ds = (DataSource) ctx.lookup(getJndiName());
 		}
