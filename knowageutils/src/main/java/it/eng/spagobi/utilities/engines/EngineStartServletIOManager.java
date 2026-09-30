@@ -310,7 +310,7 @@ public class EngineStartServletIOManager extends BaseServletIOManager {
 					try {
 						schema = (String) getUserProfile().getUserAttribute(dataSource.getSchemaAttribute());
 						logger.debug("Schema profile atribute value is equals to [" + schema + "]");
-						if (schema != null) {
+						if (StringUtils.isNotBlank(schema)) {
 							dataSource.setJndi(dataSource.getJndi() + schema);
 						}
 					} catch (EMFInternalError e) {

@@ -69,10 +69,9 @@ public abstract class ExtendedAbstractEngineInstance extends AbstractEngineInsta
 							"Datasource's schema attribute name cannot be null in order to retrive the target schema");
 					IEngUserProfile profile = (IEngUserProfile) getEnv().get(EngineConstants.ENV_USER_PROFILE);
 					schema = (String) profile.getUserAttribute(attrname);
-					Assert.assertNotNull(schema,
-							"Impossible to retrive the value of attribute ["
-									+ attrname + "] form user profile");
-					dataSource.setJndi(dataSource.getJndi() + schema);
+					if (schema != null && !schema.trim().isEmpty()) {
+						dataSource.setJndi(dataSource.getJndi() + schema);
+					}
 					logger.debug("Target schema for datasource  ["
 							+ dataSource.getLabel() + "] is ["
 							+ dataSource.getJndi() + "]");

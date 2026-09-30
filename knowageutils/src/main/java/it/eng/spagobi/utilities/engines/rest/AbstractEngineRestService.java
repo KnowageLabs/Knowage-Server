@@ -308,9 +308,9 @@ public abstract class AbstractEngineRestService extends AbstractRestService {
 						Assert.assertNotNull(attrname,
 								"Datasource's schema attribute name cannot be null in order to retrive the target schema");
 						schema = (String) getUserProfile().getUserAttribute(attrname);
-						Assert.assertNotNull(schema,
-								"Impossible to retrive the value of attribute [" + attrname + "] form user profile");
-						dataSource.setJndi(dataSource.getJndi() + schema);
+						if (schema != null && !schema.trim().isEmpty()) {
+							dataSource.setJndi(dataSource.getJndi() + schema);
+						}
 						LOGGER.debug("Target schema for datasource [{}] is [{}]", dataSource.getLabel(),
 								dataSource.getJndi());
 					} catch (Throwable t) {
