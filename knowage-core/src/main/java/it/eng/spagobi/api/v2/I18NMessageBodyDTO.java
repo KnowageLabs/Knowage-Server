@@ -21,6 +21,7 @@ package it.eng.spagobi.api.v2;
 import com.google.gson.Gson;
 
 import it.eng.spagobi.services.validation.ExtendedAlphanumeric;
+import org.hibernate.validator.constraints.NotEmpty;
 
 class I18NMessageBodyDTO {
 
@@ -28,9 +29,10 @@ class I18NMessageBodyDTO {
 	private String message;
 	private String language;
 
+	@NotEmpty
 	@ExtendedAlphanumeric
 	public String getLabel() {
-		return label;
+	    return label;
 	}
 
 	public void setLabel(String label) {
