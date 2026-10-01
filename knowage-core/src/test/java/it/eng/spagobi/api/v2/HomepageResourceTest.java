@@ -291,6 +291,31 @@ public class HomepageResourceTest {
 		new HomepageResource().createHomepage(null);
 	}
 
+	@Test
+	public void shouldUpdateLegacyDefaultHomepageType() throws JSONException {
+		Homepage[] savedHomepage = new Homepage[1];
+		mockRequestBody(new JSONObject()
+				.put("type", HomepageType.DEFAULT.getValue())
+				.put("defaultHomepage", true)
+				.put("roleNames", new JSONArray()));
+
+		mockDaos(createProxy(IHomepageDAO.class, (proxy, method, args) -> {
+			if ("saveHomepage".equals(method.getName())) {
+				savedHomepage[0] = (Homepage) args[0];
+				return args[0];
+			}
+			return defaultValue(method.getReturnType());
+		}), null);
+
+		Response response = new HomepageResource().updateHomepage(10, null);
+
+		assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+		assertEquals(Integer.valueOf(10), savedHomepage[0].getId());
+		assertEquals(HomepageType.DEFAULT.getValue(), savedHomepage[0].getType());
+		assertTrue(savedHomepage[0].isDefaultHomepage());
+		assertTrue(savedHomepage[0].getRoleNames().isEmpty());
+	}
+
 	private void mockRequestBody(JSONObject body) {
 		new MockUp<RestUtilities>() {
 			@Mock

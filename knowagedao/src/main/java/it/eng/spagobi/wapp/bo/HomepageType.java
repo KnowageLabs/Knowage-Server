@@ -24,7 +24,8 @@ public enum HomepageType {
 	DOCUMENT("document"),
 	IMAGE("image"),
 	STATIC("static"),
-	DYNAMIC("dynamic");
+	DYNAMIC("dynamic"),
+	DEFAULT("default");
 
 	private final String value;
 
