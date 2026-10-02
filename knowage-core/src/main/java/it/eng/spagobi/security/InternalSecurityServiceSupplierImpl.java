@@ -42,6 +42,7 @@ public class InternalSecurityServiceSupplierImpl implements ISecurityServiceSupp
 	private static final Logger LOGGER = Logger.getLogger(InternalSecurityServiceSupplierImpl.class);
 
 	public static final int USER_JWT_TOKEN_EXPIRE_HOURS = 10; // JWT token for regular users will expire in 10 HOURS
+	private static final String MONITOR_ROLE = "MONITOR";
 
 	private SpagoBIUserProfile checkAuthentication(SbiUser user, String userId, String psw) {
 		LOGGER.debug("IN - userId: " + userId);
@@ -68,11 +69,16 @@ public class InternalSecurityServiceSupplierImpl implements ISecurityServiceSupp
 			LOGGER.debug("Logged in with SHA pass");
 			SpagoBIUserProfile obj = new SpagoBIUserProfile();
 
-			Calendar calendar = Calendar.getInstance();
-			calendar.add(Calendar.HOUR, USER_JWT_TOKEN_EXPIRE_HOURS);
-			Date expiresAt = calendar.getTime();
-
-			String jwtToken = JWTSsoService.userId2jwtToken(userId, expiresAt);
+			String jwtToken;
+			if (hasMonitorRole(user)) {
+				LOGGER.info("Generating a non-expiring JWT token for monitor user " + userId);
+				jwtToken = JWTSsoService.userId2jwtToken(userId);
+			} else {
+				Calendar calendar = Calendar.getInstance();
+				calendar.add(Calendar.HOUR, USER_JWT_TOKEN_EXPIRE_HOURS);
+				Date expiresAt = calendar.getTime();
+				jwtToken = JWTSsoService.userId2jwtToken(userId, expiresAt);
+			}
 			obj.setUniqueIdentifier(jwtToken);
 			obj.setUserId(user.getUserId());
 			obj.setUserName(user.getFullName());
@@ -86,6 +92,16 @@ public class InternalSecurityServiceSupplierImpl implements ISecurityServiceSupp
 		}
 		return null;
 
+	}
+
+	private boolean hasMonitorRole(SbiUser user) {
+		ArrayList<SbiExtRoles> roles = DAOFactory.getSbiUserDAO().loadSbiUserRolesById(user.getId());
+		for (SbiExtRoles role : roles) {
+			if (MONITOR_ROLE.equals(role.getName())) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	@Override
