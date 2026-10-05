@@ -114,6 +114,7 @@ public class JpaMappingClassesGenerator extends JpaMappingCodeGenerator {
 		}
 
 		FileUtilities.copyFile(new File(srcDir, "views.json"), binDir);
+		FileUtilities.copyFile(new File(srcDir, "groups.json"), binDir);
 		FileUtilities.copyFile(new File(srcDir, "label.properties"), binDir);
 		FileUtilities.copyFile(new File(srcDir, "qbe.properties"), binDir);
 		FileUtilities.copyFile(new File(srcDir, "relationships.json"), binDir);

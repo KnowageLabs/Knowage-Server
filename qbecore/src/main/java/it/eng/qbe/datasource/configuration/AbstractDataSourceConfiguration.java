@@ -21,6 +21,7 @@ import it.eng.qbe.datasource.configuration.dao.fileimpl.InLineFunctionsDAOFileIm
 import it.eng.qbe.model.properties.IModelProperties;
 import it.eng.qbe.model.properties.SimpleModelProperties;
 import it.eng.qbe.model.structure.HierarchicalDimensionField;
+import it.eng.qbe.model.structure.IModelGroupDescriptor;
 import it.eng.qbe.model.structure.IModelRelationshipDescriptor;
 import it.eng.qbe.model.structure.IModelViewEntityDescriptor;
 import it.eng.qbe.model.structure.ModelCalculatedField;
@@ -79,6 +80,11 @@ public class AbstractDataSourceConfiguration implements IDataSourceConfiguration
 
 	@Override
 	public List<IModelViewEntityDescriptor> loadViews() {
+		return new ArrayList<>();
+	}
+
+	@Override
+	public List<IModelGroupDescriptor> loadGroups() {
 		return new ArrayList<>();
 	}
 

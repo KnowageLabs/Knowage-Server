@@ -1003,6 +1003,189 @@ public class MetaService extends AbstractSpagoBIResource {
         return Response.ok(patch.toString()).build();
     }
 
+    @POST
+    @Path("/saveBusinessDomain")
+    public Response saveBusinessDomain(@Context HttpServletRequest req) {
+        try {
+            JSONObject jsonRoot = RestUtilities.readBodyAsJSONObject(req);
+            Model model = (Model) req.getSession().getAttribute(EMF_MODEL);
+            setProfileDialectThreadLocal(model);
+            JSONObject oldJsonModel = createJson(model);
+
+            applyDiff(jsonRoot, model);
+
+            JSONObject json = jsonRoot.getJSONObject("data");
+            upsertBusinessDomain(model, json);
+
+            JSONObject jsonModel = createJson(model);
+            return Response.ok(getPatch(oldJsonModel, jsonModel)).build();
+        } catch (IOException | JSONException | SpagoBIException e) {
+            throw new SpagoBIServiceException(req.getPathInfo(), e);
+        }
+    }
+
+    @POST
+    @Path("/deleteBusinessDomain")
+    public Response deleteBusinessDomain(@Context HttpServletRequest req) {
+        try {
+            JSONObject jsonRoot = RestUtilities.readBodyAsJSONObject(req);
+            Model model = (Model) req.getSession().getAttribute(EMF_MODEL);
+            setProfileDialectThreadLocal(model);
+            JSONObject oldJsonModel = createJson(model);
+
+            applyDiff(jsonRoot, model);
+
+            JSONObject json = jsonRoot.getJSONObject("data");
+            deleteBusinessDomainEntry(model, json);
+
+            JSONObject jsonModel = createJson(model);
+            return Response.ok(getPatch(oldJsonModel, jsonModel)).build();
+        } catch (IOException | JSONException | SpagoBIException e) {
+            throw new SpagoBIServiceException(req.getPathInfo(), e);
+        }
+    }
+
+    void upsertBusinessDomain(Model model, JSONObject json) throws JSONException, SpagoBIException {
+        BusinessModel businessModel = model.getBusinessModels().get(0);
+        String uniqueName = json.optString("uniqueName", null);
+        String name = getRequiredString(json, "name");
+
+        BusinessDomain businessDomain = findBusinessDomainForUpdate(businessModel, json);
+        BusinessDomain domainWithSameName = findBusinessDomainByName(businessModel, name);
+        if (domainWithSameName != null && domainWithSameName != businessDomain) {
+            throw new SpagoBIException("Business domain [" + name + "] already exists");
+        }
+
+        List<BusinessColumnSet> domainTables = new ArrayList<>();
+        JSONArray tables = json.getJSONArray("tables");
+        if (tables.length() == 0) {
+            throw new SpagoBIException("At least one business table/view is required for domain [" + name + "]");
+        }
+        for (int i = 0; i < tables.length(); i++) {
+            String tableUniqueName = tables.getString(i);
+            BusinessColumnSet table = businessModel.getTableByUniqueName(tableUniqueName);
+            if (table == null) {
+                throw new SpagoBIException("Cannot find business table/view [" + tableUniqueName + "] for domain [" + name + "]");
+            }
+            if (!domainTables.contains(table)) {
+                domainTables.add(table);
+            }
+        }
+
+        if (businessDomain == null) {
+            businessDomain = BusinessModelFactory.eINSTANCE.createBusinessDomain();
+            businessDomain.setId(UUID.randomUUID().toString());
+            businessDomain.setUniqueName(buildBusinessDomainUniqueName(businessModel, uniqueName, name, null));
+            businessModel.getDomains().add(businessDomain);
+        } else if (isBlank(businessDomain.getUniqueName())) {
+            businessDomain.setUniqueName(buildBusinessDomainUniqueName(businessModel, uniqueName, name, businessDomain));
+        }
+
+        businessDomain.setName(name);
+        businessDomain.setDescription(json.optString("description", null));
+        businessDomain.getTables().clear();
+        businessDomain.getTables().addAll(domainTables);
+    }
+
+    void deleteBusinessDomainEntry(Model model, JSONObject json) throws JSONException, SpagoBIException {
+        BusinessModel businessModel = model.getBusinessModels().get(0);
+        BusinessDomain businessDomain = findBusinessDomainForUpdate(businessModel, json);
+        if (businessDomain == null) {
+            String name = json.optString("name", null);
+            businessDomain = findBusinessDomainByName(businessModel, name);
+        }
+        if (businessDomain == null) {
+            throw new SpagoBIException("Cannot find business domain to delete");
+        }
+        businessModel.getDomains().remove(businessDomain);
+    }
+
+    private BusinessDomain findBusinessDomainForUpdate(BusinessModel businessModel, JSONObject json) throws SpagoBIException {
+        String uniqueName = json.optString("uniqueName", null);
+        String id = json.optString("id", null);
+        String originalName = json.optString("originalName", null);
+        if (!isBlank(uniqueName)) {
+            BusinessDomain domain = findBusinessDomain(businessModel, uniqueName);
+            if (domain != null) {
+                return domain;
+            }
+        } else if (!isBlank(id)) {
+            for (BusinessDomain domain : businessModel.getDomains()) {
+                if (id.equals(domain.getId())) {
+                    return domain;
+                }
+            }
+        } else if (!isBlank(originalName)) {
+            BusinessDomain domain = findBusinessDomainByName(businessModel, originalName);
+            if (domain != null) {
+                return domain;
+            }
+        } else {
+            return null;
+        }
+        throw new SpagoBIException("Cannot find business domain to update");
+    }
+
+    private BusinessDomain findBusinessDomain(BusinessModel businessModel, String uniqueName) {
+        if (isBlank(uniqueName)) {
+            return null;
+        }
+        for (BusinessDomain domain : businessModel.getDomains()) {
+            if (uniqueName.equals(domain.getUniqueName())) {
+                return domain;
+            }
+        }
+        return null;
+    }
+
+    private BusinessDomain findBusinessDomainByName(BusinessModel businessModel, String name) {
+        if (isBlank(name)) {
+            return null;
+        }
+        for (BusinessDomain domain : businessModel.getDomains()) {
+            if (name.equals(domain.getName())) {
+                return domain;
+            }
+        }
+        return null;
+    }
+
+    private String getRequiredString(JSONObject json, String attributeName) throws JSONException, SpagoBIException {
+        String value = json.optString(attributeName, null);
+        if (isBlank(value)) {
+            throw new SpagoBIException("Mandatory attribute [" + attributeName + "] is missing");
+        }
+        return value.trim();
+    }
+
+    private boolean isBlank(String value) {
+        return value == null || value.trim().isEmpty();
+    }
+
+    private String buildBusinessDomainUniqueName(BusinessModel businessModel, String uniqueName, String fallbackName,
+            BusinessDomain currentDomain) {
+        String baseUniqueName = isBlank(uniqueName) ? fallbackName : uniqueName;
+        baseUniqueName = baseUniqueName.replace("_", " ");
+        baseUniqueName = baseUniqueName.trim().replace(" ", "_");
+
+        String candidate = baseUniqueName;
+        int index = 1;
+        while (isBusinessDomainUniqueNameTaken(businessModel, candidate, currentDomain)) {
+            candidate = baseUniqueName + index++;
+        }
+        return candidate;
+    }
+
+    private boolean isBusinessDomainUniqueNameTaken(BusinessModel businessModel, String uniqueName,
+            BusinessDomain currentDomain) {
+        for (BusinessDomain domain : businessModel.getDomains()) {
+            if (domain != currentDomain && uniqueName.equals(domain.getUniqueName())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     @GET
     @Path("/updatePhysicalModel")
     public Response updatePhysicalModel(@Context HttpServletRequest req) throws JSONException, EMFUserError {
@@ -1546,7 +1729,7 @@ public class MetaService extends AbstractSpagoBIResource {
 
     private boolean toSkip(String path, String operation) {
         if (path.equals("/datasourceId") || path.equals("/modelName") || path.equals("/physicalModels")
-                || path.equals("/businessModels") || path.contains("/physicalColumn/")
+                || path.equals("/businessModels") || path.startsWith("/businessDomains") || path.contains("/physicalColumn/")
                 || path.contains("/simpleBusinessColumns")
                 || (path.contains("relationships") && !operation.equals("remove"))
                 || path.contains("referencedColumns")) {
@@ -1678,6 +1861,7 @@ public class MetaService extends AbstractSpagoBIResource {
     public static JSONObject createJson(Model model) throws JSONException {
         JSONObject translatedModel = new JSONObject();
         Map<String, Integer> physicalTableMap = new HashMap<>();
+        BusinessModel businessModel = model.getBusinessModels().get(0);
 
         JSONArray physicalModelJson = new JSONArray();
         EList<PhysicalTable> physicalTables = model.getPhysicalModels().get(0).getTables();
@@ -1688,8 +1872,7 @@ public class MetaService extends AbstractSpagoBIResource {
         }
 
         JSONArray businessModelJson = new JSONArray();
-        Iterator<BusinessTable> businessModelsIterator = model.getBusinessModels().get(0).getBusinessTables()
-                .iterator();
+        Iterator<BusinessTable> businessModelsIterator = businessModel.getBusinessTables().iterator();
         while (businessModelsIterator.hasNext()) {
             BusinessTable curr = businessModelsIterator.next();
             String tabelName = curr.getPhysicalTable().getName();
@@ -1699,7 +1882,7 @@ public class MetaService extends AbstractSpagoBIResource {
         }
 
         JSONArray businessViewJson = new JSONArray();
-        List<BusinessView> businessViews = model.getBusinessModels().get(0).getBusinessViews();
+        List<BusinessView> businessViews = businessModel.getBusinessViews();
         for (int j = 0; j < businessViews.size(); j++) {
             BusinessView businessView = businessViews.get(j);
             JSONObject bcJson = new JSONObject(JsonConverter.objectToJson(businessView, businessView.getClass()));
@@ -1712,6 +1895,25 @@ public class MetaService extends AbstractSpagoBIResource {
             bcJson.put("physicalTables", ptL);
             businessViewJson.put(bcJson);
         }
+
+        JSONArray businessDomainsJson = new JSONArray();
+        for (BusinessDomain businessDomain : businessModel.getDomains()) {
+            if (businessDomain != null) {
+                JSONObject domainJson = new JSONObject();
+                domainJson.put("id", businessDomain.getId());
+                domainJson.put("name", businessDomain.getName());
+                domainJson.put("uniqueName", businessDomain.getUniqueName());
+                domainJson.put("description", businessDomain.getDescription());
+
+                JSONArray domainTablesJson = new JSONArray();
+                for (BusinessColumnSet businessColumnSet : businessDomain.getTables()) {
+                    domainTablesJson.put(businessColumnSet.getUniqueName());
+                }
+                domainJson.put("tables", domainTablesJson);
+                businessDomainsJson.put(domainJson);
+            }
+        }
+
         JSONArray olapModelJson = new JSONArray();
         Iterator<OlapModel> olapIterator = model.getOlapModels().iterator();
         while (olapIterator.hasNext()) {
@@ -1736,6 +1938,7 @@ public class MetaService extends AbstractSpagoBIResource {
         translatedModel.put("physicalModels", physicalModelJson);
         translatedModel.put("businessModels", businessModelJson);
         translatedModel.put("businessViews", businessViewJson);
+        translatedModel.put("businessDomains", businessDomainsJson);
         translatedModel.put("olapModels", olapModelJson);
         return translatedModel;
     }

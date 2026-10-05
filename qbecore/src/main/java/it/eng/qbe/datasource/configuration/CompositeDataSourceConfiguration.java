@@ -34,6 +34,7 @@ import it.eng.qbe.model.properties.IModelProperties;
 import it.eng.qbe.model.properties.SimpleModelProperties;
 import it.eng.qbe.model.structure.HierarchicalDimensionField;
 import it.eng.qbe.model.structure.IModelEntity;
+import it.eng.qbe.model.structure.IModelGroupDescriptor;
 import it.eng.qbe.model.structure.IModelRelationshipDescriptor;
 import it.eng.qbe.model.structure.IModelStructure;
 import it.eng.qbe.model.structure.IModelViewEntityDescriptor;
@@ -215,6 +216,15 @@ public class CompositeDataSourceConfiguration implements IDataSourceConfiguratio
 			views.addAll(subConfiguration.loadViews());
 		}
 		return views;
+	}
+
+	@Override
+	public List<IModelGroupDescriptor> loadGroups() {
+		List<IModelGroupDescriptor> groups = new ArrayList<>();
+		for (IDataSourceConfiguration subConfiguration : subConfigurations) {
+			groups.addAll(subConfiguration.loadGroups());
+		}
+		return groups;
 	}
 
 	@Override

@@ -19,6 +19,7 @@ package it.eng.knowage.meta.generator.jpamapping.wrappers.impl;
 
 import it.eng.knowage.meta.generator.jpamapping.wrappers.IJpaTable;
 import it.eng.knowage.meta.generator.jpamapping.wrappers.IJpaView;
+import it.eng.knowage.meta.model.business.BusinessDomain;
 import it.eng.knowage.meta.model.business.BusinessModel;
 import it.eng.knowage.meta.model.business.BusinessTable;
 import it.eng.knowage.meta.model.business.BusinessView;
@@ -36,12 +37,14 @@ public class JpaModel {
 	
 	private List<IJpaTable> tables;
 	private List<IJpaView> views;
+	private List<JpaGroup> groups;
 	private String persistenceUnitName;
 	
 	public JpaModel(BusinessModel businessModel) {
 		this.businessModel = businessModel;
 		this.tables = wrapTables(businessModel.getBusinessTables());
 		this.views = wrapViews(businessModel.getBusinessViews());
+		this.groups = wrapGroups(businessModel.getDomains());
 	}
 	
 	public List<IJpaTable> getTables() {
@@ -50,6 +53,10 @@ public class JpaModel {
 	
 	public List<IJpaView> getViews() {
 		return views;
+	}
+
+	public List<JpaGroup> getGroups() {
+		return groups;
 	}
 	
 	public String getName() {
@@ -89,6 +96,16 @@ public class JpaModel {
 		}
 		
 		return jpaViews;
+	}
+
+	private List<JpaGroup> wrapGroups(List<BusinessDomain> domains) {
+		List<JpaGroup> jpaGroups = new ArrayList<>();
+
+		for (BusinessDomain domain : domains) {
+			jpaGroups.add(new JpaGroup(domain));
+		}
+
+		return jpaGroups;
 	}
 	
 }

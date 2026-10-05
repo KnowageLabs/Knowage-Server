@@ -98,4 +98,9 @@ public class MySqlJpaMappingClassesGenerationTest extends AbstractKnowageMetaTes
 		File viewFile = new File(jpaMappingClassesGenerator.getBinDir(), "views.json");
 		assertTrue("Impossible to find view.json file in folder [" + jpaMappingClassesGenerator.getBinDir() + "]", viewFile.exists());
 	}
+
+	public void testGroupsFileExistence() {
+		File groupsFile = new File(jpaMappingClassesGenerator.getBinDir(), "groups.json");
+		assertTrue("Impossible to find groups.json file in folder [" + jpaMappingClassesGenerator.getBinDir() + "]", groupsFile.exists());
+	}
 }

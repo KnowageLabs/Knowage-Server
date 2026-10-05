@@ -19,6 +19,7 @@ package it.eng.qbe.datasource.configuration;
 
 import it.eng.qbe.datasource.configuration.dao.fileimpl.InLineFunctionsDAOFileImpl.InLineFunction;
 import it.eng.qbe.model.properties.IModelProperties;
+import it.eng.qbe.model.structure.IModelGroupDescriptor;
 import it.eng.qbe.model.structure.HierarchicalDimensionField;
 import it.eng.qbe.model.structure.IModelRelationshipDescriptor;
 import it.eng.qbe.model.structure.IModelViewEntityDescriptor;
@@ -87,6 +88,7 @@ public interface IDataSourceConfiguration {
 
 
 	List<IModelViewEntityDescriptor> loadViews();
+	List<IModelGroupDescriptor> loadGroups();
 	List<IModelRelationshipDescriptor> loadRelationships();
 	Map<String, List<ModelCalculatedField>> loadCalculatedFields();
 	Map<String, HierarchicalDimensionField> loadHierarchicalDimension();
