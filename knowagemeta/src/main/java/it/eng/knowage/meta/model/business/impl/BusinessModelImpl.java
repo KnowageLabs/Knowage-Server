@@ -616,6 +616,7 @@ public class BusinessModelImpl extends ModelObjectImpl implements BusinessModel 
 			// remove relationships of this business table
 			List<BusinessRelationship> removedRelationships = targetTabe.getRelationships();
 			getRelationships().removeAll(removedRelationships);
+			cleanupDomains(targetTabe, removedRelationships);
 
 			getTables().remove(targetTabe);
 			return true;
@@ -673,6 +674,7 @@ public class BusinessModelImpl extends ModelObjectImpl implements BusinessModel 
 			// remove relationships of this business table
 			List<BusinessRelationship> removedRelationships = targetTabe.getRelationships();
 			getRelationships().removeAll(removedRelationships);
+			cleanupDomains(targetTabe, removedRelationships);
 
 			getTables().remove(targetTabe);
 			return true;
@@ -698,6 +700,15 @@ public class BusinessModelImpl extends ModelObjectImpl implements BusinessModel 
 		}
 		businessView.setUniqueName(uniqueName);
 		getBusinessViews().add(businessView);
+	}
+
+	private void cleanupDomains(BusinessColumnSet businessColumnSet, List<BusinessRelationship> removedRelationships) {
+		for (BusinessDomain businessDomain : getDomains()) {
+			businessDomain.getTables().remove(businessColumnSet);
+			if (removedRelationships != null && !removedRelationships.isEmpty()) {
+				businessDomain.getRelationships().removeAll(removedRelationships);
+			}
+		}
 	}
 
 } // BusinessModelImpl

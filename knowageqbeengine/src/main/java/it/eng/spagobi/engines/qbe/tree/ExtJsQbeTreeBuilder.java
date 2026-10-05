@@ -22,6 +22,8 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
@@ -43,6 +45,7 @@ import it.eng.qbe.model.structure.Hierarchy;
 import it.eng.qbe.model.structure.HierarchyLevel;
 import it.eng.qbe.model.structure.IModelEntity;
 import it.eng.qbe.model.structure.IModelField;
+import it.eng.qbe.model.structure.IModelGroupDescriptor;
 import it.eng.qbe.model.structure.ModelCalculatedField;
 import it.eng.qbe.model.structure.ModelCalculatedField.Slot;
 import it.eng.qbe.model.structure.filter.QbeTreeFilter;
@@ -73,6 +76,7 @@ public class ExtJsQbeTreeBuilder {
 	private IModelProperties datamartLabels;
 
 	public static final String NODE_TYPE_ENTITY = "entity";
+	public static final String NODE_TYPE_GROUP = "group";
 	public static final String NODE_TYPE_SIMPLE_FIELD = "field";
 	public static final String NODE_TYPE_CALCULATED_FIELD = "calculatedField";
 	public static final String NODE_TYPE_HIERARCHY_FIELD = "hierarchyField";
@@ -165,12 +169,84 @@ public class ExtJsQbeTreeBuilder {
 		FilteredModelStructure filteredModelStructure = new FilteredModelStructure(
 				(dataSource).getModelStructure(userProfile), getDataSource(), getQbeTreeFilter());
 		List<IModelEntity> entities = filteredModelStructure.getRootEntities(datamartName);
-
-		Iterator<IModelEntity> it = entities.iterator();
-		while (it.hasNext()) {
-			IModelEntity entity = it.next();
-			addEntityNode(nodes, entity, 1);
+		List<IModelGroupDescriptor> groups = getGroups(datamartName);
+		if (groups.isEmpty()) {
+			Iterator<IModelEntity> it = entities.iterator();
+			while (it.hasNext()) {
+				IModelEntity entity = it.next();
+				addEntityNode(nodes, entity, 1);
+			}
+			return;
 		}
+
+		Set<String> assignedEntities = new HashSet<>();
+		for (IModelGroupDescriptor group : groups) {
+			List<IModelEntity> groupedEntities = getGroupedEntities(group, entities, assignedEntities);
+			if (!groupedEntities.isEmpty()) {
+				addGroupNode(nodes, group, groupedEntities);
+			}
+		}
+
+		for (IModelEntity entity : entities) {
+			if (!assignedEntities.contains(entity.getUniqueName())) {
+				addEntityNode(nodes, entity, 1);
+			}
+		}
+	}
+
+	private List<IModelGroupDescriptor> getGroups(String datamartName) {
+		List<IModelGroupDescriptor> allGroups = getDataSource().getConfiguration().loadGroups();
+		List<IModelGroupDescriptor> groups = new ArrayList<>();
+		for (IModelGroupDescriptor group : allGroups) {
+			if (StringUtils.isBlank(datamartName) || StringUtils.isBlank(group.getModelName())
+					|| datamartName.equals(group.getModelName())) {
+				groups.add(group);
+			}
+		}
+		return groups;
+	}
+
+	private List<IModelEntity> getGroupedEntities(IModelGroupDescriptor group, List<IModelEntity> entities,
+			Set<String> assignedEntities) {
+		List<IModelEntity> groupedEntities = new ArrayList<>();
+		Set<String> entityTypes = new HashSet<>(group.getEntityTypes());
+		for (IModelEntity entity : entities) {
+			if (!assignedEntities.contains(entity.getUniqueName()) && entityTypes.contains(entity.getType())) {
+				groupedEntities.add(entity);
+				assignedEntities.add(entity.getUniqueName());
+			}
+		}
+		return groupedEntities;
+	}
+
+	private void addGroupNode(JSONArray nodes, IModelGroupDescriptor group, List<IModelEntity> entities) {
+		JSONObject groupNode = new JSONObject();
+		JSONArray childrenNodes = new JSONArray();
+
+		for (IModelEntity entity : entities) {
+			addEntityNode(childrenNodes, entity, 1);
+		}
+
+		try {
+			groupNode.put("id", "group::" + group.getModelName() + "::" + group.getUniqueName());
+			groupNode.put("text", group.getName());
+			groupNode.put("iconCls", "folder");
+			groupNode.put("qtip", group.getDescription());
+
+			JSONObject nodeAttributes = new JSONObject();
+			nodeAttributes.put("iconCls", "folder");
+			nodeAttributes.put("type", NODE_TYPE_GROUP);
+			nodeAttributes.put("longDescription", group.getDescription());
+			nodeAttributes.put("linkedToWords", false);
+
+			groupNode.put("attributes", nodeAttributes);
+			groupNode.put("children", childrenNodes);
+			groupNode.put("relation", new JSONArray());
+		} catch (JSONException e) {
+			throw new SpagoBIRuntimeException("error generating the group node", e);
+		}
+
+		nodes.put(groupNode);
 	}
 
 	/**
