@@ -19,6 +19,7 @@ package it.eng.qbe.datasource.configuration;
 
 import it.eng.qbe.datasource.configuration.dao.fileimpl.InLineFunctionsDAOFileImpl.InLineFunction;
 import it.eng.qbe.model.properties.IModelProperties;
+import it.eng.qbe.model.structure.IModelGroupDescriptor;
 import it.eng.qbe.model.structure.IModelRelationshipDescriptor;
 import it.eng.qbe.model.structure.IModelViewEntityDescriptor;
 import it.eng.qbe.model.structure.ModelCalculatedField;
@@ -45,6 +46,7 @@ public class InMemoryDataSourceConfiguration extends AbstractDataSourceConfigura
 	Map<String, Object> dataSourceProperties;
 	List<IModelRelationshipDescriptor> realtionships;
 	List<IModelViewEntityDescriptor> views;
+	List<IModelGroupDescriptor> groups;
 	Map<String, List<ModelCalculatedField>> calculatedFields;
 	
 	List inLineFunctions;
@@ -88,6 +90,12 @@ public class InMemoryDataSourceConfiguration extends AbstractDataSourceConfigura
 	public List<IModelViewEntityDescriptor> loadViews() {
 		if(views == null) views = super.loadViews();
 		return views;
+	}
+
+	@Override
+	public List<IModelGroupDescriptor> loadGroups() {
+		if(groups == null) groups = super.loadGroups();
+		return groups;
 	}
 	
 	@Override

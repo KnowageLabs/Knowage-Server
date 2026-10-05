@@ -99,6 +99,7 @@ public class MySqlJpaMappingJarGenerationTest extends AbstractKnowageMetaTest {
 			assertNotNull("Impossible to find file qbe.properties in jar file [" + jpaMappingJarGenerator.getJarFile() + "]",
 					jarFile.getJarEntry("qbe.properties"));
 			assertNotNull("Impossible to find file views.json in jar file [" + jpaMappingJarGenerator.getJarFile() + "]", jarFile.getJarEntry("views.json"));
+			assertNotNull("Impossible to find file groups.json in jar file [" + jpaMappingJarGenerator.getJarFile() + "]", jarFile.getJarEntry("groups.json"));
 
 		} catch (IOException e) {
 			e.printStackTrace();

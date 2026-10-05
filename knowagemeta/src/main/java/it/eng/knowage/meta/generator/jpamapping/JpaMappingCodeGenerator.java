@@ -20,14 +20,20 @@ package it.eng.knowage.meta.generator.jpamapping;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
-import java.io.FileWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.Velocity;
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,6 +43,7 @@ import it.eng.knowage.meta.generator.IGenerator;
 import it.eng.knowage.meta.generator.jpamapping.wrappers.IJpaTable;
 import it.eng.knowage.meta.generator.jpamapping.wrappers.IJpaView;
 import it.eng.knowage.meta.generator.jpamapping.wrappers.impl.JpaModel;
+import it.eng.knowage.meta.generator.jpamapping.wrappers.impl.JpaGroup;
 import it.eng.knowage.meta.generator.mondrianschema.wrappers.IMondrianDimension;
 import it.eng.knowage.meta.generator.mondrianschema.wrappers.MondrianModel;
 import it.eng.knowage.meta.generator.utils.StringUtils;
@@ -81,6 +88,11 @@ public class JpaMappingCodeGenerator implements IGenerator {
 	 * The template used to map business view to json mapping file
 	 */
 	private File viewTemplate;
+
+	/**
+	 * The template used to map business domains to json group file
+	 */
+	private File groupsTemplate;
 
 	/**
 	 * The template used to map business table's composed key to a java class
@@ -157,6 +169,10 @@ public class JpaMappingCodeGenerator implements IGenerator {
 			viewTemplate = new File(templateDir, "sbi_view.vm");
 			logger.trace("[View] template file is equal to [{}]", viewTemplate);
 			Assert.assertTrue(viewTemplate.exists(), "[View] template file [" + viewTemplate + "] does not exist");
+
+			groupsTemplate = new File(templateDir, "sbi_groups.vm");
+			logger.trace("[Groups] template file is equal to [{}]", groupsTemplate);
+			Assert.assertTrue(groupsTemplate.exists(), "[Groups] template file [" + groupsTemplate + "] does not exist");
 
 			keyTemplate = new File(templateDir, "sbi_pk.vm");
 			logger.trace("[Key] template file is equal to [{}]", keyTemplate);
@@ -295,6 +311,9 @@ public class JpaMappingCodeGenerator implements IGenerator {
 		generateBusinessViewMappings(jpaModel.getViews(), isUpdatableMapping);
 		logger.info("Java files for views of model [{}] succesfully created", model.getName());
 
+		createGroupsFile(jpaModel);
+		logger.info("Groups file for model [{}] succesfully created", model.getName());
+
 		createLabelsFile(labelsTemplate, jpaModel);
 		logger.info("Labels file for model [{}] succesfully created", model.getName());
 
@@ -405,7 +424,37 @@ public class JpaMappingCodeGenerator implements IGenerator {
 		} finally {
 			logger.trace("OUT");
 		}
+	}
 
+	private void createGroupsFile(JpaModel model) {
+
+		VelocityContext context;
+
+		logger.trace("IN");
+
+		try {
+			context = new VelocityContext();
+			JSONArray groups = new JSONArray();
+			for (JpaGroup group : model.getGroups()) {
+				JSONObject jsonGroup = new JSONObject();
+				jsonGroup.put("model", group.getModelName());
+				jsonGroup.put("name", group.getName());
+				jsonGroup.put("uniqueName", group.getUniqueName());
+				jsonGroup.put("description", group.getDescription());
+				jsonGroup.put("entities", new JSONArray(group.getEntityTypes()));
+				groups.put(jsonGroup);
+			}
+			context.put("groupsJson", new JSONObject().put("groups", groups).toString(2));
+
+			File outputFile = new File(srcDir, "groups.json");
+
+			createFile(groupsTemplate, outputFile, context, StandardCharsets.UTF_8);
+		} catch (IOException | JSONException t) {
+			logger.error("Impossible to create groups mapping", t);
+			throw new GenerationException("Impossible to create groups mapping", t);
+		} finally {
+			logger.trace("OUT");
+		}
 	}
 
 	/**
@@ -558,6 +607,10 @@ public class JpaMappingCodeGenerator implements IGenerator {
 	}
 
 	private void createFile(File templateFile, File outputFile, VelocityContext context) throws IOException {
+		createFile(templateFile, outputFile, context, Charset.defaultCharset());
+	}
+
+	private void createFile(File templateFile, File outputFile, VelocityContext context, Charset charset) throws IOException {
 		Template template;
 
 		try {
@@ -566,14 +619,9 @@ public class JpaMappingCodeGenerator implements IGenerator {
 			throw new GenerationException("Impossible to load template file [" + templateFile + "]", t);
 		}
 
-		FileWriter fileWriter = null;
-
-		fileWriter = new FileWriter(outputFile);
-
-		template.merge(context, fileWriter);
-
-		fileWriter.flush();
-		fileWriter.close();
+		try (Writer writer = new OutputStreamWriter(new FileOutputStream(outputFile), charset)) {
+			template.merge(context, writer);
+		}
 	}
 
 	private void generateHierarchiesFile(File templateFile, BusinessModel businessModel) {

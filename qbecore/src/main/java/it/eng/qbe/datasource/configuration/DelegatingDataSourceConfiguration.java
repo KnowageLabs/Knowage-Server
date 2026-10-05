@@ -18,6 +18,7 @@
 package it.eng.qbe.datasource.configuration;
 
 import it.eng.qbe.datasource.configuration.dao.ICalculatedFieldsDAO;
+import it.eng.qbe.datasource.configuration.dao.IGroupsDAO;
 import it.eng.qbe.datasource.configuration.dao.IHierarchiesDAO;
 import it.eng.qbe.datasource.configuration.dao.IInLineFunctionsDAO;
 import it.eng.qbe.datasource.configuration.dao.IModelI18NPropertiesDAO;
@@ -28,6 +29,7 @@ import it.eng.qbe.datasource.configuration.dao.fileimpl.InLineFunctionsDAOFileIm
 import it.eng.qbe.model.properties.IModelProperties;
 import it.eng.qbe.model.properties.SimpleModelProperties;
 import it.eng.qbe.model.structure.HierarchicalDimensionField;
+import it.eng.qbe.model.structure.IModelGroupDescriptor;
 import it.eng.qbe.model.structure.IModelRelationshipDescriptor;
 import it.eng.qbe.model.structure.IModelViewEntityDescriptor;
 import it.eng.qbe.model.structure.ModelCalculatedField;
@@ -51,6 +53,7 @@ public class DelegatingDataSourceConfiguration extends InMemoryDataSourceConfigu
 
 	IRelationshipsDAO relationshipsDAO;
 	IViewsDAO viewsDAO;
+	IGroupsDAO groupsDAO;
 
 
 
@@ -106,6 +109,11 @@ public class DelegatingDataSourceConfiguration extends InMemoryDataSourceConfigu
 	@Override
 	public List<IModelViewEntityDescriptor> loadViews() {
 		return viewsDAO.loadModelViews();
+	}
+
+	@Override
+	public List<IModelGroupDescriptor> loadGroups() {
+		return groupsDAO == null ? super.loadGroups() : groupsDAO.loadModelGroups();
 	}
 
 	@Override
@@ -173,5 +181,13 @@ public class DelegatingDataSourceConfiguration extends InMemoryDataSourceConfigu
 
 	public void setViewsDAO(IViewsDAO viewsDAO) {
 		this.viewsDAO = viewsDAO;
+	}
+
+	public IGroupsDAO getGroupsDAO() {
+		return groupsDAO;
+	}
+
+	public void setGroupsDAO(IGroupsDAO groupsDAO) {
+		this.groupsDAO = groupsDAO;
 	}
 }
