@@ -738,7 +738,7 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 
 	        }
 	 
-	        toReturn.append(getSingleValue(values.get(i).toString(), type));
+	        toReturn.append(getMultiValue(values.get(i).toString(), type));
 
 	    }
 	 
