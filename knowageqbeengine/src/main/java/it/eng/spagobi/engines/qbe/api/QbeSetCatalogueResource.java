@@ -170,7 +170,8 @@ public class QbeSetCatalogueResource extends AbstractQbeEngineResource {
 					boolean multiValue = parameter.optBoolean("multiValue");
 					Object parameterValue = parameter.get("value");
 			 
-					if (multiValue && parameterValue instanceof JSONArray) {
+					//KNOWAGE-9819 -START 
+					/*if (multiValue && parameterValue instanceof JSONArray) {
 						String defaultValue = parameter.optString("defaultValue", "");
 			 
 						parameterValue = ParameterManagerFactory.getInstance()
@@ -181,8 +182,39 @@ public class QbeSetCatalogueResource extends AbstractQbeEngineResource {
 										defaultValue,
 										true
 								);
+					}*/
+					
+					if (multiValue && parameterValue instanceof JSONArray) {
+					    JSONArray rawValues = (JSONArray) parameterValue;
+					    JSONArray normalizedValues = new JSONArray();
+					 
+					    for (int j = 0; j < rawValues.length(); j++) {
+					        Object rawValue = rawValues.get(j);
+					 
+					        if (rawValue instanceof String) {
+					            String[] splitValues = ((String) rawValue).split(";");
+					 
+					            for (String splitValue : splitValues) {
+					                normalizedValues.put(splitValue.trim());
+					            }
+					        } else {
+					            normalizedValues.put(rawValue);
+					        }
+					    }
+					 
+					    String defaultValue = parameter.optString("defaultValue", "");
+					 
+					    parameterValue = ParameterManagerFactory.getInstance()
+					            .defaultManager()
+					            .fromFeToBe(
+					                    type,
+					                    normalizedValues.toString(),
+					                    defaultValue,
+					                    true
+					            );
 					}
-			 
+					//KNOWAGE-9819 -END
+					
 					getEnv().put(name, parameterValue);
 				}
 			}
