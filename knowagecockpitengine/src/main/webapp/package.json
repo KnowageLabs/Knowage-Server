@@ -31,7 +31,7 @@
     "angularjs-slider": "^7.1.0",
     "angular-tree-control": "0.2.30",
     "angular-ui-codemirror": "0.3.0",
-    "canvg": "1.5.3",
+    "canvg": "3.0.11",
     "codemirror": "5.32.0",
     "file-saver": "2.0.0",
     "html2canvas": "1.4.1",
