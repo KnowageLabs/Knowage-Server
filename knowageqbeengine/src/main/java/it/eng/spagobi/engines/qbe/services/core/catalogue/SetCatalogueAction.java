@@ -82,6 +82,8 @@ import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceException;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceExceptionHandler;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+import it.eng.knowage.parameter.ParameterManagerFactory;
+import it.eng.spagobi.tools.dataset.utils.DataSetUtilities;
 
 /**
  * Commit all the modifications made to the catalogue on the client side
@@ -161,6 +163,52 @@ public class SetCatalogueAction extends AbstractQbeEngineAction {
 			}
 			JSONArray parameters = getAttributeAsJSONArray(PARS);
 			addParameters(parameters);
+			
+			// KNOWAGE-9819 - START
+			if (parameters != null) {
+				for (int i = 0; i < parameters.length(); i++) {
+					JSONObject parameter = parameters.getJSONObject(i);
+			 
+					String name = parameter.getString("name");
+					String type = parameter.optString("type", DataSetUtilities.GENERIC_TYPE);
+					boolean multiValue = parameter.optBoolean("multiValue");
+					Object parameterValue = parameter.has("value") ? parameter.get("value") : null;
+			 
+					if (multiValue && parameterValue instanceof JSONArray) {
+						JSONArray rawValues = (JSONArray) parameterValue;
+						JSONArray normalizedValues = new JSONArray();
+			 
+						for (int j = 0; j < rawValues.length(); j++) {
+							Object rawValue = rawValues.get(j);
+			 
+							if (rawValue instanceof String) {
+								String[] splitValues = ((String) rawValue).split(";");
+			 
+								for (String splitValue : splitValues) {
+									normalizedValues.put(splitValue.trim());
+								}
+							} else {
+								normalizedValues.put(rawValue);
+							}
+						}
+			 
+						String defaultValue = parameter.optString("defaultValue", "");
+			 
+						parameterValue = ParameterManagerFactory.getInstance()
+								.defaultManager()
+								.fromFeToBe(
+										type,
+										normalizedValues.toString(),
+										defaultValue,
+										true
+								);
+			 
+						getEnv().put(name, parameterValue);
+					}
+				}
+			}
+			// KNOWAGE-9819 - END
+			
 			// get the cataologue from the request
 			jsonEncodedCatalogue = getAttributeAsString(CATALOGUE);
 			if (jsonEncodedCatalogue == null) {
