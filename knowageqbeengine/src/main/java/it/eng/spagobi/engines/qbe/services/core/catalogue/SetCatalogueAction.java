@@ -174,36 +174,50 @@ public class SetCatalogueAction extends AbstractQbeEngineAction {
 					boolean multiValue = parameter.optBoolean("multiValue");
 					Object parameterValue = parameter.has("value") ? parameter.get("value") : null;
 			 
-					if (multiValue && parameterValue instanceof JSONArray) {
-						JSONArray rawValues = (JSONArray) parameterValue;
-						JSONArray normalizedValues = new JSONArray();
-			 
-						for (int j = 0; j < rawValues.length(); j++) {
-							Object rawValue = rawValues.get(j);
-			 
-							if (rawValue instanceof String) {
-								String[] splitValues = ((String) rawValue).split(";");
-			 
-								for (String splitValue : splitValues) {
-									normalizedValues.put(splitValue.trim());
+					if (multiValue) {
+						JSONArray normalizedValues = null;
+					 
+						if (parameterValue instanceof JSONArray) {
+							normalizedValues = new JSONArray();
+							JSONArray rawValues = (JSONArray) parameterValue;
+					 
+							for (int j = 0; j < rawValues.length(); j++) {
+								Object rawValue = rawValues.get(j);
+					 
+								if (rawValue instanceof String) {
+									String[] splitValues = ((String) rawValue).split(";");
+					 
+									for (String splitValue : splitValues) {
+										normalizedValues.put(splitValue.trim());
+									}
+								} else {
+									normalizedValues.put(rawValue);
 								}
-							} else {
-								normalizedValues.put(rawValue);
+							}
+						} else if (parameterValue instanceof String && ((String) parameterValue).contains(";")) {
+							normalizedValues = new JSONArray();
+					 
+							String[] splitValues = ((String) parameterValue).split(";");
+					 
+							for (String splitValue : splitValues) {
+								normalizedValues.put(splitValue.trim());
 							}
 						}
-			 
-						String defaultValue = parameter.optString("defaultValue", "");
-			 
-						parameterValue = ParameterManagerFactory.getInstance()
-								.defaultManager()
-								.fromFeToBe(
-										type,
-										normalizedValues.toString(),
-										defaultValue,
-										true
-								);
-			 
-						getEnv().put(name, parameterValue);
+					 
+						if (normalizedValues != null) {
+							String defaultValue = parameter.optString("defaultValue", "");
+					 
+							parameterValue = ParameterManagerFactory.getInstance()
+									.defaultManager()
+									.fromFeToBe(
+											type,
+											normalizedValues.toString(),
+											defaultValue,
+											true
+									);
+					 
+							getEnv().put(name, parameterValue);
+						}
 					}
 				}
 			}
