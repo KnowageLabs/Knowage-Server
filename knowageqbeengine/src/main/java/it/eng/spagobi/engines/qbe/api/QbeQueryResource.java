@@ -727,10 +727,20 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 
 				// check if has value, if has not a valid value then use default
 				// value
-				boolean hasVal = obj.has(PARAM_VALUE_NAME) && !obj.getString(PARAM_VALUE_NAME).isEmpty();
+				//KNOWAGE-9819
+				/*boolean hasVal = obj.has(PARAM_VALUE_NAME) && !obj.getString(PARAM_VALUE_NAME).isEmpty();
 				String tempVal = "";
 				if (hasVal) {
 					tempVal = obj.getString(PARAM_VALUE_NAME);
+				} else {*/
+				Object rawValue = obj.opt(PARAM_VALUE_NAME);
+				
+				boolean hasVal = rawValue != null && !rawValue.toString().isEmpty();
+				
+				String tempVal = "";
+				 
+				if (hasVal) {
+				    tempVal = rawValue.toString();
 				} else {
 					boolean hasDefaultValue = obj.has(DEFAULT_VALUE_PARAM);
 					if (hasDefaultValue) {
@@ -749,10 +759,18 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 				boolean multivalue = obj.optBoolean(MULTI_PARAM);
 
 				String value = "";
-				if (multivalue) {
+				//KNOWAGE-9819
+				/*if (multivalue) {
 					value = getMultiValue(tempVal, type);
 				} else {
 					value = getSingleValue(tempVal, type);
+				}*/
+				if (multivalue && rawValue instanceof JSONArray) {
+				    value = getMultiValue((JSONArray) rawValue, type);
+				} else if (multivalue) {
+				    value = getMultiValue(tempVal, type);
+				} else {
+				    value = getSingleValue(tempVal, type);
 				}
 
 				LOGGER.debug("Parameter name: " + name + " / parameter value: " + value);
@@ -1061,6 +1079,22 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 	private String getModelName() {
 		return getEngineInstance().getDataSource().getConfiguration().getModelName();
 	}
+	
+	//KNOWAGE-9819 - START
+	private String getMultiValue(JSONArray values, String type) throws JSONException {
+	    StringBuilder toReturn = new StringBuilder("");
+	 
+	    for (int i = 0; i < values.length(); i++) {
+	        if (i > 0) {
+	            toReturn.append(", ");
+	        }
+	 
+	        toReturn.append(getMultiValue(values.get(i).toString(), type));
+	    }
+	 
+	    return toReturn.toString();
+	}
+	//KNOWAGE-9819 - END
 
 	private String getMultiValue(String value, String type) {
 		StringBuilder toReturn = new StringBuilder("");
