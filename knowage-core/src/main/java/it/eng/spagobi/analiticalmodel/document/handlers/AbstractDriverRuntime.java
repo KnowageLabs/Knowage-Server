@@ -121,6 +121,7 @@ public abstract class AbstractDriverRuntime<T extends AbstractDriver> {
 	List<Integer> metaModelParameterIds;
 
 	DefaultValuesList defaultValues;
+	LovValue minValue;
 	LovValue maxValue;
 	ArrayList<HashMap<String, Object>> admissibleValues;
 
@@ -162,6 +163,7 @@ public abstract class AbstractDriverRuntime<T extends AbstractDriver> {
 		loadAdmissibleValues(driver, dum);
 
 		loadDefaultValues(driver);
+		loadMinValue(driver);
 		loadMaxValue(driver);
 		objParameterIds = new ArrayList<>();
 	}
@@ -180,6 +182,7 @@ public abstract class AbstractDriverRuntime<T extends AbstractDriver> {
 			loadAdmissibleValues(driver, dum);
 		}
 		loadDefaultValues(driver);
+		loadMinValue(driver);
 		loadMaxValue(driver);
 		objParameterIds = new ArrayList<>();
 	}
@@ -562,6 +565,35 @@ public abstract class AbstractDriverRuntime<T extends AbstractDriver> {
 		}
 		logger.debug("OUT");
 	}
+	
+	public void loadMinValue(AbstractDriver driver) {
+	    logger.debug("IN");
+	    try {
+	        MinMaxValuesRetriever retriever = new MinMaxValuesRetriever();
+	        IEngUserProfile profile = UserProfileManager.getProfile();
+	 
+	        minValue = retriever.getMinValueDum(
+	                driver,
+	                this.biResource,
+	                profile,
+	                this.locale,
+	                this.executionRole);
+	 
+	        if (driver.getMinValue() == null) {
+	            minValue = buildMinValue();
+	            if (minValue != null && minValue.getValue() != null) {
+	                driver.setMinValue(minValue.getValue().toString());
+	            }
+	        }
+	 
+	    } catch (Exception e) {
+	        throw new SpagoBIServiceException(
+	                SERVICE_NAME,
+	                "Impossible to get parameter's min values",
+	                e);
+	    }
+	    logger.debug("OUT");
+	}
 
 	public void loadMaxValue(AbstractDriver driver) {
 		logger.debug("IN");
@@ -629,6 +661,63 @@ public abstract class AbstractDriverRuntime<T extends AbstractDriver> {
 			}
 		} else {
 			return this.getDefaultValues();
+		}
+	}
+	
+	
+	/**
+	 * Parse LOV value.
+	 *
+	 * @return
+	 * @author Marco Libanori
+	 */
+	private LovValue buildMinValue() {
+		SimpleDateFormat serverDateFormat = new SimpleDateFormat(
+				SingletonConfig.getInstance().getConfigValue("SPAGOBI.DATE-FORMAT-SERVER.format"));
+
+		if (minValue.getValue() != null) {
+			if (parType != null && (parType.equals("DATE") || parType.equals("DATE_RANGE"))) {
+				String valueDate = minValue.getValue().toString();
+				String[] date = valueDate.split("#");
+				if (date.length < 2) {
+					throw new SpagoBIServiceException(SERVICE_NAME,
+							"Illegal format for Value List Date Type [" + valueDate + "], unable to find symbol [#]");
+				}
+				SimpleDateFormat format = new SimpleDateFormat(date[1]);
+				LovValue ret = new LovValue();
+
+				if (parType.equals("DATE")) {
+					try {
+						Date d = format.parse(date[0]);
+						String dateServerFormat = serverDateFormat.format(d);
+						ret.setValue(dateServerFormat);
+						ret.setDescription(this.getMinValue().getDescription());
+						return ret;
+					} catch (ParseException e) {
+						logger.error("Error while building default Value List Date Type", e);
+						return null;
+					}
+				} else {
+					try {
+						String dateRange = date[0];
+						String[] dateRangeArr = dateRange.split("_");
+						String range = dateRangeArr[dateRangeArr.length - 1];
+						dateRange = dateRange.replace("_" + range, "");
+						Date d = format.parse(dateRange);
+						String dateServerFormat = serverDateFormat.format(d);
+						ret.setValue(dateServerFormat + "_" + range);
+						ret.setDescription(this.getMinValue().getDescription());
+						return ret;
+					} catch (ParseException e) {
+						logger.error("Error while building default Value List Date Type", e);
+						return null;
+					}
+				}
+			} else {
+				return minValue;
+			}
+		} else {
+			return minValue;
 		}
 	}
 
@@ -965,6 +1054,14 @@ public abstract class AbstractDriverRuntime<T extends AbstractDriver> {
 
 	public void setDefaultValues(DefaultValuesList defaultValues) {
 		this.defaultValues = defaultValues;
+	}
+	
+	public LovValue getMinValue() {
+	    return minValue;
+	}
+	 
+	public void setMinValue(LovValue minValue) {
+	    this.minValue = minValue;
 	}
 
 	/**

@@ -208,6 +208,17 @@ public class ParameterDAOHibImpl extends AbstractHibernateDAO implements IParame
 				parameter.setModalityValueForDefault(null);
 				parameter.setDefaultFormula(hibParuse.getDefaultFormula());
 			}
+			
+			currLov = hibParuse.getSbiLovForMin();
+			 
+			if (currLov != null) {
+			    ModalitiesValue lov = DAOFactory.getModalitiesValueDAO()
+			            .loadModalitiesValueByID(currLov.getLovId());
+			 
+			    parameter.setModalityValueForMin(lov);
+			} else {
+			    parameter.setModalityValueForMin(null);
+			}
 
 			currLov = hibParuse.getSbiLovForMax();
 			if (hibParuse.getSbiLovForMax() != null) {

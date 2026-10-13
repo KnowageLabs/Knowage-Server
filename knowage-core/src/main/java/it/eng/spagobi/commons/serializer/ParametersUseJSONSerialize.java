@@ -29,6 +29,7 @@ public class ParametersUseJSONSerialize implements Serializer {
 	public static final String USEID = "USEID";
 	public static final String LOVID = "LOVID";
 	public static final String DEFAULTLOVID = "DEFAULTLOVID";
+	public static final String MINLOVID = "MINLOVID";
 	public static final String MAXLOVID = "MAXLOVID";
 	public static final String LABEL = "LABEL";
 	public static final String DESCRIPTION = "DESCRIPTION";
@@ -60,6 +61,7 @@ public class ParametersUseJSONSerialize implements Serializer {
 			result.put(USEID, parameterUse.getUseID());
 			result.put(LOVID, parameterUse.getIdLov());
 			result.put(DEFAULTLOVID, parameterUse.getIdLovForDefault());
+			result.put(MINLOVID, parameterUse.getIdLovForMin());
 			result.put(MAXLOVID, parameterUse.getIdLovForMax());
 			result.put(LABEL, parameterUse.getLabel());
 			result.put(NAME, parameterUse.getName());
