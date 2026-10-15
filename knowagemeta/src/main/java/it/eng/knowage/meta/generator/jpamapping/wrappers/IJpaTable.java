@@ -131,7 +131,8 @@ public interface IJpaTable {
 	List<IJpaColumn> getSimpleColumns();
 
 	/**
-	 * Returns the <code>IJpaColumn</code> objects for the the columns that are not part of any association.
+	 * Returns the <code>IJpaColumn</code> objects for columns that are not part of an association,
+	 * as well as association columns explicitly marked as visible.
 	 *
 	 * @param genOnly
 	 *            Whether to include only the columns marked for generation.

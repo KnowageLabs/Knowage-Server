@@ -31,3 +31,15 @@ whose entities are not visible to the current user.
 Generated model JARs include `groups.json`. Models without this resource retain
 the original flat tree. Invalid group metadata is reported as an error rather
 than silently discarding the configured domains.
+
+## QBE relationship columns
+
+Columns used by inbound or outbound relationships can also be selected as query
+fields. Set the column's **Visible** property to `true` in Metaweb, save the model,
+then regenerate the datamart and reopen the QBE. Updating visibility alone does
+not add a scalar field to an already generated model JAR.
+
+Visible relationship columns retain their configured labels, types and access
+restrictions. Their additional scalar JPA mapping is read-only; the relationship
+continues to manage writes to the join column. Technical fields reconstructed
+only for joins remain excluded from the QBE field tree.
