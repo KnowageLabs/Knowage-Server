@@ -216,7 +216,8 @@ public abstract class AbstractJpaTable implements IJpaTable {
 					continue;
 					// }
 				}
-			} else if (column.isColumnInRelationship()) {
+			} else if (column.isColumnInRelationship()
+					&& !"true".equals(column.getAttribute("structural.visible"))) {
 				continue;
 			}
 			LOGGER.debug("Added column " + column.getName() + " in getSimpleColumns for table " + this.getName());
