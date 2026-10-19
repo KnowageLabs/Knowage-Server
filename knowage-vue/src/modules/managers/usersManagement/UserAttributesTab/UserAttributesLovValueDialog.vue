@@ -111,7 +111,7 @@
                 this.$emit('closeDialog')
             },
             handleSubmit() {
-                this.$emit('saveLovValues', this.selectedLovValues)
+                this.$emit('saveLovValues', this.selectedLovValues, this.selectionMode)
             }
         }
     })
