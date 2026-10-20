@@ -145,6 +145,7 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.exceptions.ValidationServiceException;
 import it.eng.spagobi.utilities.rest.RestUtilities;
+import it.eng.spagobi.tools.dataset.cache.CacheException;
 
 /**
  * @author Alessandro Daniele (alessandro.daniele@eng.it)
@@ -951,8 +952,32 @@ public class DataSetResource extends AbstractDataSetResource {
 							e);
 				}
 			}
+			//KNOWAGE-9987 - start: Handle cache capacity errors during dataset preview
+			/*logger.error("Error while previewing dataset " + label, e);
+			throw new SpagoBIRuntimeException("Error while previewing dataset " + label + ". " + e.getMessage(), e);*/
+			Throwable cause = e;
+			 
+			while (cause != null) {
+			    if (cause instanceof CacheException
+			&& cause.getMessage() != null
+			&& cause.getMessage().contains("Store is to big to be persisted in cache.")) {
+			 
+			        logger.error("Dataset preview failed due to insufficient cache capacity: " + label, e);
+			 
+			        throw new SpagoBIRuntimeException(
+			                "Unable to preview the dataset because its size exceeds the available cache capacity. "
+			                + "Try reducing the 'Limit Rows Number' value.",
+			                e);
+			    }
+			 
+			    cause = cause.getCause();
+			}
+			 
+			// Original error handling for all other exceptions.
 			logger.error("Error while previewing dataset " + label, e);
 			throw new SpagoBIRuntimeException("Error while previewing dataset " + label + ". " + e.getMessage(), e);
+			
+			//KNOWAGE-9987 - end
 		}
 	}
 
