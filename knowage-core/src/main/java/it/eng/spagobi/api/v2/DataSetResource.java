@@ -146,6 +146,7 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.exceptions.ValidationServiceException;
 import it.eng.spagobi.utilities.rest.RestUtilities;
 import it.eng.spagobi.tools.dataset.cache.CacheException;
+import it.eng.spagobi.tools.dataset.bo.FileDataSet;
 
 /**
  * @author Alessandro Daniele (alessandro.daniele@eng.it)
@@ -971,6 +972,23 @@ public class DataSetResource extends AbstractDataSetResource {
 			    }
 			 
 			    cause = cause.getCause();
+			}
+			
+			// KNOWAGE-9987: Provide a useful fallback message for File Dataset preview errors.
+			IDataSet previewDataSet = dataSet;
+			 
+			if (previewDataSet instanceof VersionedDataSet) {
+			    previewDataSet = ((VersionedDataSet) previewDataSet).getWrappedDataset();
+			}
+			 
+			if (previewDataSet instanceof FileDataSet) {
+			    logger.error("Error while previewing file dataset " + label, e);
+			 
+			    throw new SpagoBIRuntimeException(
+			            "Unable to preview the dataset. The amount of data may be too large to process. "
+			            + "Try reducing the 'Limit Rows Number' value. "
+			            + "If the problem persists, contact your administrator.",
+			            e);
 			}
 			 
 			// Original error handling for all other exceptions.
