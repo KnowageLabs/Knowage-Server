@@ -64,7 +64,22 @@ class CachedEvaluationStrategy extends AbstractEvaluationStrategy {
 		Monitor totalCacheTiming = MonitorFactory.start("Knowage.DatasetManagementAPI.getDataStore:totalCache");
 		IDataStore dataStore;
 		try {
+			
+			// KNOWAGE-9987 START: Temporary diagnostics for dataset preview.
+			if ("ds__1089044".equals(dataSet.getLabel())) {
+			    LOGGER.info("[KNOWAGE-9987] BEFORE initial cache.get");
+			}
+			// KNOWAGE-9987 END
+			
 			dataStore = cache.get(profile, dataSet, projections, filter, groups, sortings, summaryRowProjections, offset, fetchSize, maxRowCount, indexes);
+			
+			// KNOWAGE-9987 START: Temporary diagnostics for dataset preview.
+			if ("ds__1089044".equals(dataSet.getLabel())) {
+			    LOGGER.info("[KNOWAGE-9987] AFTER initial cache.get - result null: " + (dataStore == null));
+			}
+			// KNOWAGE-9987 END
+			
+			
 			if (dataSet.isRealtime()) {
 				unsetNgsiConsumer();
 			}
@@ -72,9 +87,23 @@ class CachedEvaluationStrategy extends AbstractEvaluationStrategy {
 			if (dataStore == null) {
 				dataStore = manageDatasetNotInCache(projections, filter, groups, sortings, summaryRowProjections, offset, fetchSize, maxRowCount, indexes);
 			}
+			
+			
+			// KNOWAGE-9987 START: Temporary diagnostics.
+			if ("ds__1089044".equals(dataSet.getLabel())) {
+			    LOGGER.info("[KNOWAGE-9987] BEFORE adjustMetadata and decode");
+			}
+			// KNOWAGE-9987 END
 
 			dataStore.adjustMetadata(dataSet.getMetadata());
 			dataSet.decode(dataStore);
+			
+			// KNOWAGE-9987 START: Temporary diagnostics.
+			if ("ds__1089044".equals(dataSet.getLabel())) {
+			    LOGGER.info("[KNOWAGE-9987] AFTER adjustMetadata and decode");
+			}
+			// KNOWAGE-9987 END
+			
 		} catch (DataBaseException e) {
 			throw new RuntimeException(e);
 		} finally {
@@ -98,7 +127,20 @@ class CachedEvaluationStrategy extends AbstractEvaluationStrategy {
 			throws DataBaseException {
 		Monitor timing = MonitorFactory.start("Knowage.DatasetManagementAPI.getDataStore:putInCache");
 		DatasetManagementAPI datasetManagementAPI = new DatasetManagementAPI();
+		
+		// KNOWAGE-9987 START: Temporary diagnostics.
+		if ("ds__1089044".equals(dataSet.getLabel())) {
+		    LOGGER.info("[KNOWAGE-9987] BEFORE putDataSetInCache");
+		}
+		// KNOWAGE-9987 END 
+		
 		datasetManagementAPI.putDataSetInCache(dataSet, cache, getEvaluationStrategy(), indexes);
+		
+		// KNOWAGE-9987 START: Temporary diagnostics.
+		if ("ds__1089044".equals(dataSet.getLabel())) {
+		    LOGGER.info("[KNOWAGE-9987] AFTER putDataSetInCache");
+		}
+		// KNOWAGE-9987 END
 		timing.stop();
 
 		if (dataSet.getDataStore() != null && dataSet.getDataStore().getMetaData().getFieldCount() == 0) {
@@ -109,8 +151,22 @@ class CachedEvaluationStrategy extends AbstractEvaluationStrategy {
 		}
 
 		timing = MonitorFactory.start("Knowage.DatasetManagementAPI.getDataStore:getFromCache");
+		
+		// KNOWAGE-9987 START: Temporary diagnostics.
+		if ("ds__1089044".equals(dataSet.getLabel())) {
+		    LOGGER.info("[KNOWAGE-9987] BEFORE second cache.get");
+		}	
+		// KNOWAGE-9987 END
+		
 		IDataStore dataStore = cache.get(profile, dataSet, projections, filter, groups, sortings, summaryRowProjections, offset, fetchSize, maxRowCount,
 				indexes);
+		
+		// KNOWAGE-9987 START: Temporary diagnostics.
+		if ("ds__1089044".equals(dataSet.getLabel())) {
+		    LOGGER.info("[KNOWAGE-9987] AFTER second cache.get - result null: " + (dataStore == null));
+		}
+		// KNOWAGE-9987 END
+		
 		timing.stop();
 		if (dataStore == null) {
 			throw new CacheException("Impossible to get data of " + dataSet.getLabel() + " from cache");
