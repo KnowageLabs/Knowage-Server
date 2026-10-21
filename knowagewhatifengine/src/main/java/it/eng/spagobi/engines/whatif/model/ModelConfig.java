@@ -438,6 +438,7 @@ public class ModelConfig implements Serializable {
 		this.axisToSort = source.axisToSort;
 		this.axis = source.axis;
 		this.sortingPositionUniqueName = source.sortingPositionUniqueName;
+		this.sortMode = source.sortMode;
 		this.topBottomCount = source.topBottomCount;
 		this.status = source.status;
 		this.locker = source.locker;
