@@ -957,6 +957,9 @@ public class DataSetResource extends AbstractDataSetResource {
 			/*logger.error("Error while previewing dataset " + label, e);
 			throw new SpagoBIRuntimeException("Error while previewing dataset " + label + ". " + e.getMessage(), e);*/
 			Throwable cause = e;
+			
+			// KNOWAGE-9987 START: Detect dataset field type conversion errors.
+			boolean typeConversionError = false;
 			 
 			while (cause != null) {
 			    if (cause instanceof CacheException
@@ -970,6 +973,11 @@ public class DataSetResource extends AbstractDataSetResource {
 			                + "Try reducing the 'Limit Rows Number' value.",
 			                e);
 			    }
+			    
+			    if (cause.getMessage() != null
+			    		&& cause.getMessage().contains("Error while changing field value to different type")) {
+			    		    typeConversionError = true;
+			    }
 			 
 			    cause = cause.getCause();
 			}
@@ -979,6 +987,17 @@ public class DataSetResource extends AbstractDataSetResource {
 			 
 			if (previewDataSet instanceof VersionedDataSet) {
 			    previewDataSet = ((VersionedDataSet) previewDataSet).getWrappedDataset();
+			}
+			
+			// KNOWAGE-9987: Handle file dataset field type conversion errors.
+			if (previewDataSet instanceof FileDataSet && typeConversionError) {
+			    logger.error("File dataset preview failed due to incompatible column values: " + label, e);
+			 
+			    throw new SpagoBIRuntimeException(
+			            "Unable to preview the dataset because one or more values "
+			            + "are incompatible with the configured column data types. "
+			            + "Please check the dataset column types and the source file.",
+			            e);
 			}
 			 
 			if (previewDataSet instanceof FileDataSet) {
