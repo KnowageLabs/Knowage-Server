@@ -646,6 +646,7 @@ export default defineComponent({
         const index = this.parameters.filterStatus.findIndex((el: any) => el.urlName === key);
         if (index !== -1) {
           const parameter = this.parameters.filterStatus[index];
+          if (!parameter.multivalue && !parameter.parameterValue?.[0]) parameter.parameterValue = [{ value: "", description: "" }];
           if (parameter.type === "DATE") {
             const temp = new Date(tempParameters[key]);
             parameter.parameterValue[0].value = temp instanceof Date && !isNaN(temp as any) ? temp : this.getFormattedDate(tempParameters[key], "DD/MM/YYYY");
@@ -673,6 +674,8 @@ export default defineComponent({
         }
         this.savedParametersDialogVisible = false;
       });
+      // Recompute conditional visibility of dependent drivers after all saved values are applied
+      this.parameters.filterStatus.forEach((el: any) => this.updateVisualDependency(el));
     },
     getFormattedDate(date: any, format: any) {
       return formatDate(date, "l", format);
