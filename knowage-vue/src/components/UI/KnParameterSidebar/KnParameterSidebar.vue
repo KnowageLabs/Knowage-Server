@@ -642,40 +642,59 @@ export default defineComponent({
     fillParameterForm(viewpoint: any) {
       const tempParameters = this.decodeViewpointPrameterValues(viewpoint.vpValueParams);
 
-      Object.keys(tempParameters)?.forEach((key: any) => {
-        const index = this.parameters.filterStatus.findIndex((el: any) => el.urlName === key);
-        if (index !== -1) {
-          const parameter = this.parameters.filterStatus[index];
-          if (!parameter.multivalue && !parameter.parameterValue?.[0]) parameter.parameterValue = [{ value: "", description: "" }];
-          if (parameter.type === "DATE") {
-            const temp = new Date(tempParameters[key]);
-            parameter.parameterValue[0].value = temp instanceof Date && !isNaN(temp as any) ? temp : this.getFormattedDate(tempParameters[key], "DD/MM/YYYY");
-            parameter.parameterValue[0].value = temp as any;
-          } else if ((parameter.valueSelection === "man_in" || parameter.selectionType === "COMBOBOX") && !parameter.multivalue) {
-            parameter.parameterValue[0].value = tempParameters[key];
-            parameter.parameterValue[0].description = tempParameters[key + "_field_visible_description"];
-          } else if (parameter.selectionType === "TREE" || parameter.selectionType === "LOOKUP" || parameter.multivalue) {
-            const tempArrayValues = JSON.parse(tempParameters[key]);
-            const tempArrayDescriptions = tempParameters[key + "_field_visible_description"].split(";");
-            parameter.parameterValue = [];
-            for (let i = 0; i < tempArrayValues.length; i++) {
-              parameter.parameterValue[i] = {
-                value: tempArrayValues[i],
-                description: tempArrayDescriptions[i] ?? "",
-              };
-            }
-            if (parameter.selectionType === "LIST") {
-              this.selectedParameterCheckbox[parameter.id] = parameter.parameterValue?.map((parameterValue: any) => parameterValue.value);
-            }
-          } else {
-            parameter.parameterValue[0].value = tempParameters[key];
-            parameter.parameterValue[0].description = tempParameters[key + "_field_visible_description"];
-          }
+      this.parameters.filterStatus.forEach((parameter: any) => {
+        const value = tempParameters[parameter.urlName];
+        // Empty values (and their descriptions) are not stored in the viewpoint, so a missing key means the driver was empty when saved
+        const description = tempParameters[parameter.urlName + "_field_visible_description"] ?? "";
+        if (value === undefined) {
+          this.setEmptyParameterValue(parameter);
+          return;
         }
-        this.savedParametersDialogVisible = false;
+        if (!parameter.multivalue && !parameter.parameterValue?.[0]) parameter.parameterValue = [{ value: "", description: "" }];
+        if (parameter.type === "DATE") {
+          const temp = new Date(value);
+          parameter.parameterValue[0].value = temp instanceof Date && !isNaN(temp as any) ? temp : this.getFormattedDate(value, "DD/MM/YYYY");
+          parameter.parameterValue[0].value = temp as any;
+        } else if ((parameter.valueSelection === "man_in" || parameter.selectionType === "COMBOBOX") && !parameter.multivalue) {
+          parameter.parameterValue[0].value = value;
+          parameter.parameterValue[0].description = description;
+        } else if (parameter.selectionType === "TREE" || parameter.selectionType === "LOOKUP" || parameter.multivalue) {
+          const tempArrayValues = this.parseViewpointMultivalue(value);
+          const tempArrayDescriptions = description.split(";");
+          parameter.parameterValue = [];
+          for (let i = 0; i < tempArrayValues.length; i++) {
+            parameter.parameterValue[i] = {
+              value: tempArrayValues[i],
+              description: tempArrayDescriptions[i] ?? "",
+            };
+          }
+          if (parameter.selectionType === "LIST") {
+            this.selectedParameterCheckbox[parameter.id] = parameter.parameterValue?.map((parameterValue: any) => parameterValue.value);
+          }
+        } else {
+          parameter.parameterValue[0].value = value;
+          parameter.parameterValue[0].description = description;
+        }
       });
+      this.savedParametersDialogVisible = false;
       // Recompute conditional visibility of dependent drivers after all saved values are applied
       this.parameters.filterStatus.forEach((el: any) => this.updateVisualDependency(el));
+    },
+    setEmptyParameterValue(parameter: any) {
+      if (parameter.multivalue) {
+        parameter.parameterValue = [];
+        if (parameter.selectionType === "LIST") this.selectedParameterCheckbox[parameter.id] = [];
+      } else {
+        parameter.parameterValue = [{ value: "", description: "" }];
+      }
+    },
+    parseViewpointMultivalue(value: string) {
+      try {
+        const parsedValue = JSON.parse(value);
+        return Array.isArray(parsedValue) ? parsedValue : [parsedValue];
+      } catch (error) {
+        return value.split(";");
+      }
     },
     getFormattedDate(date: any, format: any) {
       return formatDate(date, "l", format);
