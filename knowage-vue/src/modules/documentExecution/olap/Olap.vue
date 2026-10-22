@@ -506,25 +506,30 @@ export default defineComponent({
         },
         async sortOlap(event: any) {
             this.loading = true
-            const temp = event.target.attributes[0].textContent
-            const tempString = temp.substring(temp.indexOf('(') + 1, temp.indexOf(')'))
-            const tempArray = tempString?.split(',')
-            const tempPositionUniqueName = tempArray.splice(2).join(',')
+            try {
+                const temp = event.target.attributes[0].textContent
+                const tempString = temp.substring(temp.indexOf('(') + 1, temp.indexOf(')'))
+                const tempArray = tempString?.split(',')
+                const tempPositionUniqueName = tempArray.splice(2).join(',')
 
-            const postData = {
-                axisToSort: +tempArray[0],
-                axis: +tempArray[1],
-                positionUniqueName: tempPositionUniqueName.substring(tempPositionUniqueName.indexOf("'") + 1, tempPositionUniqueName.lastIndexOf("'")),
-                sortMode: this.sort.sortingMode,
-                topBottomCount: this.sort.sortingCount
+                // Sorting may already be active from a restored custom view, without the sorting dialog having been used
+                const modelConfig = this.olap?.modelConfig
+                const postData = {
+                    axisToSort: +tempArray[0],
+                    axis: +tempArray[1],
+                    positionUniqueName: tempPositionUniqueName.substring(tempPositionUniqueName.indexOf("'") + 1, tempPositionUniqueName.lastIndexOf("'")),
+                    sortMode: this.sort?.sortingMode ?? modelConfig?.sortMode ?? 'basic',
+                    topBottomCount: this.sort?.sortingCount ?? modelConfig?.topBottomCount ?? 10
+                }
+
+                await this.$http
+                    .post(process.env.VUE_APP_OLAP_PATH + `1.0/member/sort/?SBI_EXECUTION_ID=${this.id}`, postData)
+                    .then((response: AxiosResponse<any>) => (this.olap = response.data))
+                    .catch(() => {})
+                this.formatOlapTable()
+            } finally {
+                this.loading = false
             }
-
-            await this.$http
-                .post(process.env.VUE_APP_OLAP_PATH + `1.0/member/sort/?SBI_EXECUTION_ID=${this.id}`, postData)
-                .then((response: AxiosResponse<any>) => (this.olap = response.data))
-                .catch(() => {})
-            this.formatOlapTable()
-            this.loading = false
         },
         async reloadOlap() {
             this.loading = true
