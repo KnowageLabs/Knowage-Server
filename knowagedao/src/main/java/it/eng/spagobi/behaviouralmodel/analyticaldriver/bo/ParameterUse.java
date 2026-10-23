@@ -34,7 +34,6 @@ public class ParameterUse implements Serializable {
 	Integer idLov;
 	String descLov;
 	Integer idLovForDefault;
-	Integer idLovForMin;
 	Integer idLovForMax;
 	String name = "";
 	String label = "";
@@ -127,19 +126,6 @@ public class ParameterUse implements Serializable {
 	public void setIdLovForDefault(Integer idLovForDefault) {
 		this.idLovForDefault = idLovForDefault;
 	}
-	 
-	public Integer getIdLovForMin() {
-
-	    return idLovForMin;
-
-	}
-	 
-	public void setIdLovForMin(Integer idLovForMin) {
-
-	    this.idLovForMin = idLovForMin;
-
-	}
-	 
 
 	public Integer getIdLovForMax() {
 		return idLovForMax;
