@@ -1449,8 +1449,7 @@ public class PersistedTableManager implements IPersistedManager {
 					field.setValue(convertFieldValue(value, targetType));
 				}
 			} catch (Exception e) {
-				LOGGER.error("Error while changing field value to different type that is comming from data set wizard",
-						e);
+				LOGGER.error("[KNOWAGE-9987][9.0] CONVERSION FAILED - column index: " + index + ", record index: " + i + ", target type: " + (targetType != null ? targetType.getName() : "null"), e);
 				throw new SpagoBIEngineRuntimeException(
 						"Error while changing field value to different type that is comming from data set wizard. Table name:"
 								+ tableName,
@@ -1462,6 +1461,11 @@ public class PersistedTableManager implements IPersistedManager {
 	private void alignFileDatasetMetadata(IDataStore datastore, IDataSet dataset) {
 		IMetaData storeMeta = datastore.getMetaData();
 		IMetaData dataSetMeta = dataset.getMetadata();
+		
+		LOGGER.warn("[KNOWAGE-9987][9.0] ALIGN METADATA START - dataset: " + dataset.getLabel()
+        + ", store columns: " + (storeMeta != null ? storeMeta.getFieldCount() : "null")
+        + ", dataset columns: " + (dataSetMeta != null ? dataSetMeta.getFieldCount() : "null"));
+		
 		if (storeMeta == null || dataSetMeta == null) {
 			return;
 		}
@@ -1485,17 +1489,28 @@ public class PersistedTableManager implements IPersistedManager {
 				Class resolvedType = resolveFieldType(storeFieldMeta.getType(), dataSetFieldMeta.getType());
 				if (resolvedType == null) {
 					continue;
-				}
-
+				}				
+				
 				if (!sameFieldType(storeFieldMeta.getType(), resolvedType) || !sameFieldType(dataSetFieldMeta.getType(), resolvedType)) {
-					changeFieldValueType(datastore, i, resolvedType);
-					metadataChanged = true;
+					 
+				    LOGGER.warn("[KNOWAGE-9987][9.0] FIELD CONVERSION START - column: " + storeFieldMeta.getName()
+				            + ", column index: " + i
+				            + ", store type: " + storeFieldMeta.getType()
+				            + ", configured type: " + dataSetFieldMeta.getType()
+				            + ", resolved type: " + resolvedType);
+				 
+				    changeFieldValueType(datastore, i, resolvedType);
+				 
+				    LOGGER.warn("[KNOWAGE-9987][9.0] FIELD CONVERSION END - column: " + storeFieldMeta.getName());
+				 
+				    metadataChanged = true;
 				}
 
 				storeFieldMeta.setType(resolvedType);
 				dataSetFieldMeta.setType(resolvedType);
 			} catch (Exception e) {
-				LOGGER.error("An unexpecetd error occured while ajusting metadata for record [" + i + "]", e);
+				LOGGER.error("[KNOWAGE-9987][9.0] ALIGN METADATA FAILED - column index: " + i
+				        + ", dataset: " + dataset.getLabel(), e);
 				throw new SpagoBIRuntimeException("An unexpecetd error occured while ajusting metadata for record [" + i + "]",
 						e);
 			}

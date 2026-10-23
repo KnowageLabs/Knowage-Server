@@ -503,6 +503,10 @@ public class SQLDBCache implements ICache {
 					BigDecimal maxUsableMemory = metadata.getTotalMemory().multiply(new BigDecimal(metadata.getCachePercentageToStore()))
 							.divide(new BigDecimal(100), RoundingMode.FLOOR);
 					timingMemory.stop();
+					
+					logger.warn("[KNOWAGE-9987][9.0] SQLDBCache.put - MEMORY CHECK - required: "
+					        + requiredMemory + ", maxAllowed: " + maxUsableMemory
+					        + ", available: " + metadata.getAvailableMemory());
 
 					if (requiredMemory.compareTo(maxUsableMemory) < 1) { // if requiredMemory is less or equal to maxUsableMemory
 						if (metadata.isCleaningEnabled() && !metadata.isAvailableMemoryGreaterThen(requiredMemory)) {
@@ -512,7 +516,13 @@ public class SQLDBCache implements ICache {
 						if (!metadata.isCleaningEnabled() || metadata.isAvailableMemoryGreaterThen(requiredMemory)) {
 							String name = dataSet.getName();
 							long start = System.currentTimeMillis();
+						
+							logger.warn("[KNOWAGE-9987][9.0] SQLDBCache.put - PERSIST START - dataset: " + dataSet.getLabel());
+							 
 							String tableName = persistStoreInCache(dataSet, dataStore);
+							 
+							logger.warn("[KNOWAGE-9987][9.0] SQLDBCache.put - PERSIST END - dataset: " + dataSet.getLabel());
+							
 							timeSpent = System.currentTimeMillis() - start;
 							Map<String, Object> properties = new HashMap<>();
 							if (dataSet instanceof VersionedDataSet) {
@@ -560,6 +570,7 @@ public class SQLDBCache implements ICache {
 	}
 
 	private String persistStoreInCache(IDataSet dataset, IDataStore resultset) {
+		logger.warn("[KNOWAGE-9987][9.0] SQLDBCache.persistStoreInCache - ENTER - dataset: " + dataset.getLabel());
 		logger.trace("IN");
 		try {
 			int queryTimeout;
@@ -577,10 +588,19 @@ public class SQLDBCache implements ICache {
 			}
 			String tableName = PersistedTableManager.generateRandomTableName(this.getMetadata().getTableNamePrefix());
 			Monitor monitor = MonitorFactory.start("spagobi.cache.sqldb.persistStoreInCache.persistdataset");
+					
+			logger.warn("[KNOWAGE-9987][9.0] PersistedTableManager.persistDataset - START");
+			 
 			persistedTableManager.persistDataset(dataset, resultset, getDataSource(), tableName);
+			 
+			logger.warn("[KNOWAGE-9987][9.0] PersistedTableManager.persistDataset - END");
+			
 			monitor.stop();
 			return tableName;
 		} catch (Throwable t) {
+			
+			logger.error("[KNOWAGE-9987][9.0] SQLDBCache.persistStoreInCache - FAILED - dataset: " + dataset.getLabel(), t);
+			
 			if (t instanceof CacheException) {
 				throw (CacheException) t;
 			} else {

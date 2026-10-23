@@ -793,6 +793,9 @@ public class DataSetResource extends AbstractDataSetResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	@UserConstraint(functionalities = { CommunityFunctionalityConstants.SELF_SERVICE_DATASET_MANAGEMENT })
 	public String getDataStorePreview(@PathParam("label") String label, String body) {
+    	// KNOWAGE-9987 - START temporary diagnostics
+    	logger.warn("[KNOWAGE-9987][9.0] DataSetResource.getDataStorePreview - ENTER - dataset: " + label);
+    	// KNOWAGE-9987 - END
 		IDataSet dataSet = null;
 		try {
 			Monitor timing = MonitorFactory.start("Knowage.DataSetResource.getDataStorePreview:parseInputs");
@@ -893,8 +896,16 @@ public class DataSetResource extends AbstractDataSetResource {
 			return getDataStore(label, parameters, driversRuntimeMap, null, likeSelections, -1, aggregations, null,
 					start, limit, columns, null, false);
 		} catch (JSONException e) {
+		    // KNOWAGE-9987 - START temporary diagnostics
+		    logger.error("[KNOWAGE-9987][9.0] DataSetResource.getDataStorePreview - JSON ERROR - dataset: " + label, e);
+		    // KNOWAGE-9987 - END
 			throw new SpagoBIRestServiceException(buildLocaleFromSession(), e);
 		} catch (Exception e) {
+			
+			// KNOWAGE-9987 - START temporary diagnostics
+			logger.error("[KNOWAGE-9987][9.0] DataSetResource.getDataStorePreview - FAILED - dataset: " + label, e);
+			// KNOWAGE-9987 - END
+			
 			if (isPreparedDAtaset(dataSet)) {
 				if (e.getCause() != null && e.getCause().getCause() instanceof SQLSyntaxErrorException) {
 					logger.error("Error while previewing prepared dataset " + label, e);

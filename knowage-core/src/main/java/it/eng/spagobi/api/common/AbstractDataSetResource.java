@@ -174,6 +174,7 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 	public String getDataStore(String label, String parameters, Map<String, Object> drivers, String selections,
 			String likeSelections, int maxRowCount, String aggregations, String summaryRow, int offset, int fetchSize,
 			Set<String> indexes, String widgetName, boolean useGroupBy) {
+		
 		return getDataStore(label, parameters, drivers, selections, likeSelections, null, maxRowCount, aggregations,
 				summaryRow, offset, fetchSize, null, null, indexes, widgetName, useGroupBy);
 	}
@@ -182,6 +183,9 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 			String likeSelections, String drilldown, int maxRowCount, String aggregations, String summaryRow, int offset, int fetchSize,
 			Boolean isNearRealtime, String options, Set<String> indexes, String widgetName, boolean useGroupBy) {
 		LOGGER.debug("IN");
+		// KNOWAGE-9987 - START temporary diagnostics
+		LOGGER.warn("[KNOWAGE-9987][9.0] AbstractDataSetResource.getDataStore - ENTER - dataset: " + label);
+		// KNOWAGE-9987 - END
 		DatasetManagementAPI datasetManagementAPI = getDatasetManagementAPI();
 		Monitor totalTiming = MonitorFactory.start("Knowage.AbstractDataSetResource.getDataStore");
 		try {
