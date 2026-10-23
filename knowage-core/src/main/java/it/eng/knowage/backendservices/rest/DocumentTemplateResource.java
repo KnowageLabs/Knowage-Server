@@ -18,17 +18,30 @@
 
 package it.eng.knowage.backendservices.rest;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 import org.apache.log4j.Logger;
 
+import it.eng.knowage.backendservices.utils.BirtTemplateUpgrade;
+import it.eng.spagobi.analiticalmodel.document.DocumentTemplateBuilder;
+import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
+import it.eng.spagobi.analiticalmodel.document.bo.ObjTemplate;
+import it.eng.spagobi.analiticalmodel.document.dao.IObjTemplateDAO;
 import it.eng.spagobi.commons.bo.UserProfile;
+import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.utilities.ObjectsAccessVerifier;
+import it.eng.spagobi.engines.drivers.birt.BirtReportDriver;
 import it.eng.spagobi.services.content.bo.Content;
 import it.eng.spagobi.services.content.service.ContentServiceImplSupplier;
 import it.eng.spagobi.user.UserProfileManager;
@@ -37,6 +50,63 @@ import it.eng.spagobi.user.UserProfileManager;
 public class DocumentTemplateResource {
 
 	static protected Logger logger = Logger.getLogger(DocumentTemplateResource.class);
+
+	@GET
+	@Path("/{document_id}/birt-upgrade")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Map<String, Object> checkBirtUpgrade(@PathParam("document_id") Integer documentId) throws Exception {
+		UserProfile profile = UserProfileManager.getProfile();
+		BIObject document = getAccessibleDocument(documentId, profile);
+		Map<String, Object> result = new HashMap<>();
+		boolean birt = document.getEngine() != null && BirtReportDriver.class.getName().equals(document.getEngine().getDriverName());
+		ObjTemplate template = birt ? DAOFactory.getObjTemplateDAO().getBIObjectActiveTemplate(documentId) : null;
+		result.put("needsUpgrade", template != null && BirtTemplateUpgrade.needsUpgrade(template.getContent(), template.getName()));
+		result.put("templateId", template == null ? null : template.getId());
+		result.put("canUpgrade", ObjectsAccessVerifier.canDevBIObject(document, profile));
+		return result;
+	}
+
+	@POST
+	@Path("/{document_id}/birt-upgrade")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response upgradeBirtTemplate(@PathParam("document_id") Integer documentId, Map<String, Integer> params) throws Exception {
+		UserProfile profile = UserProfileManager.getProfile();
+		BIObject document = getAccessibleDocument(documentId, profile);
+		if (!ObjectsAccessVerifier.canDevBIObject(document, profile)) {
+			throw new WebApplicationException(Response.Status.FORBIDDEN);
+		}
+		if (document.getEngine() == null || !BirtReportDriver.class.getName().equals(document.getEngine().getDriverName())) {
+			throw new WebApplicationException(Response.Status.BAD_REQUEST);
+		}
+		IObjTemplateDAO dao = DAOFactory.getObjTemplateDAO();
+		ObjTemplate current = dao.getBIObjectActiveTemplate(documentId);
+		// The confirmation applies only to the revision inspected by the user.
+		if (current == null || params == null || !current.getId().equals(params.get("templateId"))) {
+			throw new WebApplicationException(Response.Status.CONFLICT);
+		}
+		byte[] content = current.getContent();
+		if (BirtTemplateUpgrade.needsUpgrade(content, current.getName())) {
+			ObjTemplate upgraded = new DocumentTemplateBuilder().buildDocumentTemplate(current.getName(),
+					(String) profile.getUserUniqueIdentifier(), BirtTemplateUpgrade.upgrade(content, current.getName()));
+			upgraded.setBiobjId(documentId);
+			upgraded.setActive(true);
+			dao.setUserID((String) profile.getUserUniqueIdentifier());
+			dao.insertBIObjectTemplate(upgraded, document);
+		}
+		return Response.ok("{\"upgraded\":true}").build();
+	}
+
+	private BIObject getAccessibleDocument(Integer documentId, UserProfile profile) throws Exception {
+		BIObject document = DAOFactory.getBIObjectDAO().loadBIObjectById(documentId);
+		if (document == null) {
+			throw new WebApplicationException(Response.Status.NOT_FOUND);
+		}
+		if (!ObjectsAccessVerifier.canSee(document, profile)) {
+			throw new WebApplicationException(Response.Status.FORBIDDEN);
+		}
+		return document;
+	}
 
 	@POST
 	@Path("/{document_id}")

@@ -64,6 +64,13 @@
         data-test="parameter-sidebar"
       ></KnParameterSidebar>
 
+      <Dialog :visible="birtUpgradeVisible" :header="$t('documentExecution.main.birtUpgradeTitle')" :modal="true" @update:visible="resolveBirtUpgrade(false)">
+        <p>{{ $t("documentExecution.main.birtUpgradeConfirm") }}</p>
+        <template #footer>
+          <Button class="p-button-text" :label="$t('common.cancel')" @click="resolveBirtUpgrade(false)" />
+          <Button :label="$t('common.update')" @click="resolveBirtUpgrade(true)" />
+        </template>
+      </Dialog>
       <DocumentExecutionHelpDialog :visible="helpDialogVisible" :propDocument="document" @close="helpDialogVisible = false"></DocumentExecutionHelpDialog>
 
       <DocumentExecutionRankDialog :visible="rankDialogVisible" :propDocumentRank="documentRank" @close="rankDialogVisible = false" @saveRank="onSaveRank"></DocumentExecutionRankDialog>
@@ -94,6 +101,7 @@ import DocumentExecutionLinkDialog from "./dialogs/documentExecutionLinkDialog/D
 import KnParameterSidebar from "@/components/UI/KnParameterSidebar/KnParameterSidebar.vue";
 import { luxonFormatDate } from "@/helpers/commons/localeHelper";
 import TieredMenu from "primevue/tieredmenu";
+import Dialog from "primevue/dialog";
 import Registry from "../registry/Registry.vue";
 import Dossier from "../dossier/Dossier.vue";
 import Olap from "../olap/Olap.vue";
@@ -150,6 +158,7 @@ export default defineComponent({
     DocumentExecutionLinkDialog,
     KnParameterSidebar,
     TieredMenu,
+    Dialog,
     Registry,
     Dossier,
     Olap,
@@ -219,6 +228,8 @@ export default defineComponent({
       datasetPreviewShown: false as boolean,
       datasetToPreview: {} as any,
       reportRefreshInterval: null as any,
+      birtUpgradeVisible: false,
+      birtUpgradeResolver: null as ((accepted: boolean) => void) | null,
     };
   },
   watch: {
@@ -251,9 +262,13 @@ export default defineComponent({
     }
   },
   deactivated() {
+    this.resolveBirtUpgrade(false);
     this.parameterSidebarVisible = false;
     window.removeEventListener("message", this.iframeEventsListener);
     if (this.reportRefreshInterval) clearInterval(this.reportRefreshInterval);
+  },
+  beforeUnmount() {
+    this.resolveBirtUpgrade(false);
   },
   computed: {
     canEditCockpit(): boolean {
@@ -830,7 +845,47 @@ export default defineComponent({
         description: descriptionIndex ? data[descriptionIndex] : "",
       };
     },
+    resolveBirtUpgrade(accepted: boolean) {
+      this.birtUpgradeVisible = false;
+      if (this.birtUpgradeResolver) this.birtUpgradeResolver(accepted);
+      this.birtUpgradeResolver = null;
+    },
+    async checkBirtTemplateUpgrade(): Promise<boolean> {
+      if (this.document.typeCode !== "REPORT") return true;
+      const documentId = this.document.id;
+      const endpoint = process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/backendservices/documenttemplate/${documentId}/birt-upgrade`;
+      try {
+        const { data } = await this.$http.get(endpoint);
+        if (this.document.id !== documentId) return false;
+        if (!data.needsUpgrade) return true;
+        if (!data.canUpgrade) {
+          this.$store.commit("setError", {
+            title: this.$t("documentExecution.main.birtUpgradeTitle"),
+            msg: this.$t("documentExecution.main.birtUpgradePermission"),
+          });
+          return false;
+        }
+        const accepted = await new Promise<boolean>((resolve) => {
+          this.birtUpgradeResolver = resolve;
+          this.birtUpgradeVisible = true;
+        });
+        // Navigation may have changed while the confirmation was open.
+        if (!accepted || this.document.id !== documentId) return false;
+        await this.$http.post(endpoint, { templateId: data.templateId });
+        return this.document.id === documentId;
+      } catch {
+        this.$store.commit("setError", {
+          title: this.$t("documentExecution.main.birtUpgradeTitle"),
+          msg: this.$t("documentExecution.main.birtUpgradeError"),
+        });
+        return false;
+      }
+    },
     async loadURL(olapParameters: any, documentLabel: string | null = null, crossNavigationPopupMode: boolean = false) {
+      if (!(await this.checkBirtTemplateUpgrade())) {
+        this.urlData = null;
+        return;
+      }
       let error = false;
       const postData = {
         label: this.document.label,

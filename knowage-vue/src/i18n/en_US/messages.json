@@ -458,6 +458,10 @@
             "uploadTemplate": "Upload document template"
         },
         "main": {
+            "birtUpgradeTitle": "BIRT template upgrade",
+            "birtUpgradeConfirm": "This BIRT template uses the obsolete version 3.0.0. Update its version to 3.2.27 and save a new template revision before opening the report? The previous revision will be retained.",
+            "birtUpgradePermission": "This BIRT template must be upgraded from version 3.0.0 to 3.2.27. Contact a user with permission to edit the document.",
+            "birtUpgradeError": "Unable to check or upgrade the BIRT template. The report has not been started. Try again or contact your administrator.",
             "addToWorkspace": "Add to my workspace",
             "addToWorkspaceError": "This document cannot be added to Workspace. It already exists in the root folder of the Organizer",
             "closeDocumentConfirmMessage": "You are leaving edit mode. Continue?",

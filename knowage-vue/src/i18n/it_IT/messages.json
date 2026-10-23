@@ -436,6 +436,10 @@
         },
         "main": {
             "addToWorkspace": "aggiungi al mio workspace",
+            "birtUpgradeTitle": "Aggiornamento template BIRT",
+            "birtUpgradeConfirm": "Il template BIRT usa la versione obsoleta 3.0.0. Vuoi aggiornare la versione a 3.2.27 e salvare una nuova revisione del template prima di aprire il report? La revisione precedente verrà conservata.",
+            "birtUpgradePermission": "Il template BIRT deve essere aggiornato dalla versione 3.0.0 alla 3.2.27. Contatta un utente con i permessi di modifica del documento.",
+            "birtUpgradeError": "Impossibile verificare o aggiornare il template BIRT. Il report non è stato avviato. Riprova; se il problema persiste, contatta l'amministratore.",
             "addToWorkspaceError": "Il documento non può essere aggiunto nel workspace. Esiste già nella cartella padre dell'organizer.",
             "copyLink": "copia link",
             "copyLinkAndShare": "copia e condividi link",
