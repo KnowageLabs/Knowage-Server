@@ -505,8 +505,7 @@ public class SQLDBCache implements ICache {
 					timingMemory.stop();
 					
 					logger.warn("[KNOWAGE-9987][9.0] SQLDBCache.put - MEMORY CHECK - required: "
-					        + requiredMemory + ", maxAllowed: " + maxUsableMemory
-					        + ", available: " + metadata.getAvailableMemory());
+					        + requiredMemory + ", maxAllowed: " + maxUsableMemory);
 
 					if (requiredMemory.compareTo(maxUsableMemory) < 1) { // if requiredMemory is less or equal to maxUsableMemory
 						if (metadata.isCleaningEnabled() && !metadata.isAvailableMemoryGreaterThen(requiredMemory)) {
