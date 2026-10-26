@@ -167,6 +167,14 @@
       "created_at": "2026-07-30T07:40:47Z",
       "repoId": 90045866,
       "pullRequestNo": 986
+    },
+    {
+      "name": "antonella-russo",
+      "id": 276310575,
+      "comment_id": 6420857874,
+      "created_at": "2026-10-26T16:07:28Z",
+      "repoId": 90045866,
+      "pullRequestNo": 989
     }
   ]
 }
