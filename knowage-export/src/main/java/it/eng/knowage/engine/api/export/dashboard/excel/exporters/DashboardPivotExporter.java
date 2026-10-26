@@ -125,11 +125,11 @@ public class DashboardPivotExporter extends GenericDashboardWidgetExporter imple
                 String lastColLetter = CellReference.convertNumToColString(sourceSheetLastColumn - 1);
 
                 boolean isImagePresent = imageB64 != null;
-                XSSFPivotTable pivotTable = pivotSheet.createPivotTable(
+                XSSFPivotTable pivotTable = createPivotTable(pivotSheet,
                         new AreaReference(isImagePresent? createSheetCellReference(sourceSheetName, "A4") : createSheetCellReference(sourceSheetName, "A2"),
                                 createSheetCellReference(sourceSheetName, lastColLetter + (finalSourceLastRowNum + 1)), // make the reference big enough for later data
                                 SpreadsheetVersion.EXCEL2007),
-                        new CellReference("A8"));
+                        fields.getJSONArray("filters").length());
 
                 SXSSFWorkbook swb = new SXSSFWorkbook(xssfWorkbook);
                 SXSSFSheet ssheet = swb.getSheet(sourceSheetName);
@@ -148,6 +148,12 @@ public class DashboardPivotExporter extends GenericDashboardWidgetExporter imple
             throw new SpagoBIRuntimeException("Unable to export table widget: " + widgetId, e);
         }
         return null;
+    }
+
+    static XSSFPivotTable createPivotTable(XSSFSheet pivotSheet, AreaReference source, int filterCount) {
+        // Excel places report filters above the pivot, followed by a blank row.
+        int pivotRow = Math.max(7, pivotSheet.getLastRowNum() + filterCount + 2);
+        return pivotSheet.createPivotTable(source, new CellReference(pivotRow, 0));
     }
 
     private CellReference createSheetCellReference(String sheetName, String reference) {

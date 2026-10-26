@@ -14,6 +14,8 @@ import org.junit.Test;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPivotAreaReference;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPivotField;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -21,8 +23,69 @@ import java.util.List;
 import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class DashboardPivotExporterTest {
+
+    @Test
+    public void shouldKeepReportFiltersBelowWidgetTitle() throws Exception {
+        for (int filterCount : new int[]{0, 1, 5, 6, 10}) {
+            assertReportFiltersDoNotOverlapHeader(filterCount, 0);
+        }
+    }
+
+    @Test
+    public void shouldKeepReportFiltersBelowBrandedHeader() throws Exception {
+        for (int filterCount : new int[]{0, 1, 5, 6, 10}) {
+            assertReportFiltersDoNotOverlapHeader(filterCount, 2);
+        }
+    }
+
+    private void assertReportFiltersDoNotOverlapHeader(int filterCount, int titleRow) throws Exception {
+        try (XSSFWorkbook workbook = new XSSFWorkbook();
+             ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
+            XSSFSheet sourceSheet = workbook.createSheet("Source_sheet");
+            Row header = sourceSheet.createRow(0);
+            Row values = sourceSheet.createRow(1);
+            for (int i = 0; i < filterCount; i++) {
+                header.createCell(i).setCellValue("Filter " + i);
+                values.createCell(i).setCellValue("Value " + i);
+            }
+            header.createCell(filterCount).setCellValue("Amount");
+            values.createCell(filterCount).setCellValue(10);
+
+            XSSFSheet pivotSheet = workbook.createSheet("Pivot_sheet");
+            pivotSheet.createRow(titleRow).createCell(0).setCellValue("Static Pivot Table Widget");
+            AreaReference source = new AreaReference(
+                    new CellReference("Source_sheet", 0, 0, true, true),
+                    new CellReference("Source_sheet", 1, filterCount, true, true),
+                    org.apache.poi.ss.SpreadsheetVersion.EXCEL2007);
+            XSSFPivotTable pivotTable = DashboardPivotExporter.createPivotTable(pivotSheet, source, filterCount);
+            for (int i = 0; i < filterCount; i++) {
+                pivotTable.addReportFilter(i);
+            }
+            pivotTable.addColumnLabel(DataConsolidateFunction.SUM, filterCount, "Amount");
+            workbook.write(outputStream);
+
+            try (XSSFWorkbook reopened = new XSSFWorkbook(new ByteArrayInputStream(outputStream.toByteArray()))) {
+                XSSFSheet reopenedPivotSheet = reopened.getSheet("Pivot_sheet");
+                XSSFPivotTable reopenedPivot = reopenedPivotSheet.getPivotTables().get(0);
+                AreaReference destination = reopened.getCreationHelper().createAreaReference(
+                        reopenedPivot.getCTPivotTableDefinition().getLocation().getRef());
+                int pivotRow = destination.getFirstCell().getRow();
+                if (filterCount > 0) {
+                    assertEquals(filterCount, reopenedPivot.getCTPivotTableDefinition().getPageFields().getCount());
+                    assertTrue("Report filters must not overlap the widget header",
+                            pivotRow - filterCount - 1 > titleRow);
+                }
+                if (titleRow + filterCount + 2 <= 7) {
+                    assertEquals("Keep the existing position when there is enough space", 7, pivotRow);
+                }
+                assertEquals("Static Pivot Table Widget",
+                        reopenedPivotSheet.getRow(titleRow).getCell(0).getStringCellValue());
+            }
+        }
+    }
 
     @Test
     public void shouldExtractTrackedRowKeysFromMixedMetadataArray() throws JSONException {
