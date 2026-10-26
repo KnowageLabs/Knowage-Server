@@ -88,7 +88,7 @@ public class DocumentTemplateResource {
 		byte[] content = current.getContent();
 		if (BirtTemplateUpgrade.needsUpgrade(content, current.getName())) {
 			ObjTemplate upgraded = new DocumentTemplateBuilder().buildDocumentTemplate(current.getName(),
-					profile.getUserName().toString(), BirtTemplateUpgrade.upgrade(content, current.getName()));
+					profile.getUserId().toString(), BirtTemplateUpgrade.upgrade(content, current.getName()));
 			upgraded.setBiobjId(documentId);
 			upgraded.setActive(true);
 			dao.setUserProfile(profile);
