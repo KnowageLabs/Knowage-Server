@@ -163,11 +163,11 @@ public class DashboardPivotExporter extends GenericDashboardWidgetExporter imple
         String lastColLetter = CellReference.convertNumToColString(sourceSheetLastColumn - 1);
 
         boolean isImagePresent = imageB64 != null;
-        XSSFPivotTable pivotTable = pivotSheetContext.pivotXssfSheet.createPivotTable(
+        XSSFPivotTable pivotTable = createPivotTable(pivotSheetContext.pivotXssfSheet,
                 new AreaReference(isImagePresent ? createSheetCellReference(pivotSheetContext.sourceSheetName, "A4") : createSheetCellReference(pivotSheetContext.sourceSheetName, "A2"),
                         createSheetCellReference(pivotSheetContext.sourceSheetName, lastColLetter + (finalSourceLastRowNum + 1)),
                         SpreadsheetVersion.EXCEL2007),
-                new CellReference("A8"));
+                fields.getJSONArray("filters").length());
 
         while (offset + fetchSize < totalNumberOfRows) {
             offset += fetchSize;
@@ -178,6 +178,12 @@ public class DashboardPivotExporter extends GenericDashboardWidgetExporter imple
 
         formatPivot(pivotTable, fieldItemIndexes);
         return 2;
+    }
+
+    static XSSFPivotTable createPivotTable(XSSFSheet pivotSheet, AreaReference source, int filterCount) {
+        // Excel places report filters above the pivot, followed by a blank row.
+        int pivotRow = Math.max(7, pivotSheet.getLastRowNum() + filterCount + 2);
+        return pivotSheet.createPivotTable(source, new CellReference(pivotRow, 0));
     }
 
     private PivotSheetContext createPivotSheetContext(SXSSFWorkbook streamingWorkbook, String xlsxSheetName, String dashboardSheetName) {
