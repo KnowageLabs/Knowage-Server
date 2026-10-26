@@ -1239,9 +1239,23 @@ public class PersistedTableManager implements IPersistedManager {
 				}
 				field.setValue(convertFieldValue(value, targetType));
 			} catch (Exception e) {
-				logger.error("Error while changing field value to different type that is comming from data set wizard", e);
-				throw new SpagoBIEngineRuntimeException(
-						"Error while changing field value to different type that is comming from data set wizard. Table name:" + tableName, e);
+    			// KNOWAGE-9987 START: Improved diagnostics for dataset field type conversion errors.
+    			String columnName = datastore.getMetaData().getFieldName(index);
+    			Object invalidValue = field.getValue();
+ 
+    			logger.error(
+            		"[KNOWAGE-9987] Dataset field type conversion failed. "
+                    	+ "Column: " + columnName
+                    	+ ", column index: " + index
+                   	 	+ ", record index: " + i
+                    	+ ", expected type: " + targetType.getName()
+                    	+ ", actual value type: "
+                    	+ (invalidValue != null ? invalidValue.getClass().getName() : "null"), e);
+    			// KNOWAGE-9987 END
+ 
+    			throw new SpagoBIEngineRuntimeException(
+            		"Error while changing field value to different type that is comming from data set wizard. Table name:" + tableName, e
+				);
 			}
 		}
 	}
