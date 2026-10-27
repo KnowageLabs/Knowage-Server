@@ -28,6 +28,7 @@ public class BirtTemplateUpgradeTest {
 	@Test
 	public void detectsOnlyLegacyRootVersion() throws Exception {
 		assertTrue(BirtTemplateUpgrade.needsUpgrade(design("3.0.0"), "report.rptdesign"));
+		assertFalse(BirtTemplateUpgrade.needsUpgrade(design("3.2.23"), "report.rptdesign"));
 		assertFalse(BirtTemplateUpgrade.needsUpgrade(design("3.2.27"), "report.rptdesign"));
 		assertFalse(BirtTemplateUpgrade.needsUpgrade(design("3.2.26"), "report.rptdesign"));
 		assertFalse(BirtTemplateUpgrade.needsUpgrade("<other version='3.0.0'/>".getBytes(StandardCharsets.UTF_8), "report.rptdesign"));
@@ -37,7 +38,7 @@ public class BirtTemplateUpgradeTest {
 	public void upgradesVersionWithoutChangingScriptsOrText() throws Exception {
 		byte[] upgraded = BirtTemplateUpgrade.upgrade(design("3.0.0"), "report.rptdesign");
 		String xml = new String(upgraded, StandardCharsets.UTF_8);
-		assertTrue(xml.contains("version=\"3.2.27\""));
+		assertTrue(xml.contains("version=\"3.2.23\""));
 		assertTrue(xml.contains("Città &amp; attività 3.0.0"));
 		assertTrue(xml.contains("if (1 < 2) { var version = '3.0.0'; }"));
 		assertFalse(BirtTemplateUpgrade.needsUpgrade(upgraded, "report.rptdesign"));
