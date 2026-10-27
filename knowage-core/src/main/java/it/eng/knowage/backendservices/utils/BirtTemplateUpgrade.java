@@ -23,7 +23,7 @@ import org.w3c.dom.Element;
 public final class BirtTemplateUpgrade {
 
 	public static final String OLD_VERSION = "3.0.0";
-	public static final String NEW_VERSION = "3.2.27";
+	public static final String NEW_VERSION = "3.2.23";
 	private static final int MAX_UNCOMPRESSED_SIZE = 64 * 1024 * 1024;
 
 	private BirtTemplateUpgrade() {
