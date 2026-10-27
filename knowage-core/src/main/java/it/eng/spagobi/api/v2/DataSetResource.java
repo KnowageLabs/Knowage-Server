@@ -145,6 +145,8 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.exceptions.ValidationServiceException;
 import it.eng.spagobi.utilities.rest.RestUtilities;
+import it.eng.spagobi.tools.dataset.bo.FileDataSet;
+import it.eng.spagobi.tools.dataset.cache.CacheException;
 
 /**
  * @author Alessandro Daniele (alessandro.daniele@eng.it)
@@ -951,6 +953,52 @@ public class DataSetResource extends AbstractDataSetResource {
 							e);
 				}
 			}
+
+			
+            // KNOWAGE-9987 START: Handle cache capacity and field type conversion errors.
+            Throwable cause = e;
+            boolean typeConversionError = false;
+ 
+            while (cause != null) {
+                if (cause instanceof CacheException
+					&& cause.getMessage() != null
+					&& cause.getMessage().contains("Store is to big to be persisted in cache.")) {
+                    	logger.error("Dataset preview failed due to insufficient cache capacity: " + label, e);
+                    	throw new SpagoBIRuntimeException(
+                            "Unable to preview the dataset because its size exceeds the available cache capacity. "
+                                    + "Try reducing the 'Limit Rows Number' value.", e);
+                }
+ 
+                if (cause.getMessage() != null
+					&& cause.getMessage().contains("Error while changing field value to different type")) {
+                    typeConversionError = true;
+                }
+ 
+                cause = cause.getCause();
+            }
+ 
+            IDataSet previewDataSet = dataSet;
+            if (previewDataSet instanceof VersionedDataSet) {
+                previewDataSet = ((VersionedDataSet) previewDataSet).getWrappedDataset();
+            }
+ 
+            if (previewDataSet instanceof FileDataSet && typeConversionError) {
+                logger.error("File dataset preview failed due to incompatible column values: " + label, e);
+                throw new SpagoBIRuntimeException(
+                        "Unable to preview the dataset because one or more values "
+                                + "are incompatible with the configured column data types. "
+                                + "Please check the dataset column types and the source file.", e);
+            }
+ 
+            if (previewDataSet instanceof FileDataSet) {
+                logger.error("Error while previewing file dataset " + label, e);
+                throw new SpagoBIRuntimeException(
+                        "Unable to preview the dataset. The amount of data may be too large to process. "
+                                + "Try reducing the 'Limit Rows Number' value. "
+                                + "If the problem persists, contact your administrator.", e);
+            }
+            // KNOWAGE-9987 END
+
 			logger.error("Error while previewing dataset " + label, e);
 			throw new SpagoBIRuntimeException("Error while previewing dataset " + label + ". " + e.getMessage(), e);
 		}
