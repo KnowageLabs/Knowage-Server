@@ -75,7 +75,7 @@ class AsyncDownloadsFeed {
 
 			path2Listeners.computeIfAbsent(perUserExportResourcePath, p -> new HashSet<>()).add(asyncDownloadsListener);
 
-			if (!alreadyWatchedPaths.contains(perUserExportResourcePath)) {
+			if (alreadyWatchedPaths.add(perUserExportResourcePath)) {
 
 				Runnable runnable = () -> {
 					TenantManager.setTenant(tenant);
@@ -96,7 +96,7 @@ class AsyncDownloadsFeed {
 				};
 
 				executor.submit(runnable);
-				executor.scheduleAtFixedRate(runnable, 1, 1, TimeUnit.MINUTES);
+				executor.scheduleAtFixedRate(runnable, 10, 10, TimeUnit.SECONDS);
 			}
 
 		}
