@@ -290,8 +290,6 @@ public class DatasetManagementAPI {
 			List<AbstractSelectionField> projections, Filter filter, List<AbstractSelectionField> list,
 			List<Sorting> sortings, List<List<AbstractSelectionField>> summaryRowProjections, int offset, int fetchSize,
 			int maxRowCount, Set<String> indexes, boolean useGroupBy) throws JSONException {
-		
-		logger.warn("[KNOWAGE-9987][9.0] DatasetManagementAPI.getDataStore - ENTER");
 
 		Monitor totalTiming = MonitorFactory.start("Knowage.DatasetManagementAPI.getDataStore");
 		try {
@@ -315,9 +313,6 @@ public class DatasetManagementAPI {
 
 	public void putDataSetInCache(IDataSet dataSet, ICache cache, DatasetEvaluationStrategyType evaluationStrategy,
 			Set<String> columns) throws DataBaseException {
-		// KNOWAGE-9987 - START temporary diagnostics
-		logger.warn("[KNOWAGE-9987][9.0] DatasetManagementAPI.putDataSetInCache - ENTER - strategy: " + evaluationStrategy);
-		// KNOWAGE-9987 - END
 		if (dataSet.isCachingSupported()) {
 			if (dataSet instanceof VersionedDataSet) {
 				dataSet = ((VersionedDataSet) dataSet).getWrappedDataset();

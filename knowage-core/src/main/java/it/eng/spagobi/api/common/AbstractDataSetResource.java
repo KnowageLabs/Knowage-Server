@@ -183,9 +183,6 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 			String likeSelections, String drilldown, int maxRowCount, String aggregations, String summaryRow, int offset, int fetchSize,
 			Boolean isNearRealtime, String options, Set<String> indexes, String widgetName, boolean useGroupBy) {
 		LOGGER.debug("IN");
-		// KNOWAGE-9987 - START temporary diagnostics
-		LOGGER.warn("[KNOWAGE-9987][9.0] AbstractDataSetResource.getDataStore - ENTER - dataset: " + label);
-		// KNOWAGE-9987 - END
 		DatasetManagementAPI datasetManagementAPI = getDatasetManagementAPI();
 		Monitor totalTiming = MonitorFactory.start("Knowage.AbstractDataSetResource.getDataStore");
 		try {

@@ -142,6 +142,9 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.exceptions.ValidationServiceException;
 import it.eng.spagobi.utilities.rest.RestUtilities;
+import it.eng.spagobi.tools.dataset.bo.FileDataSet;
+import it.eng.spagobi.tools.dataset.cache.CacheException;
+ 
 
 /**
  * @author Alessandro Daniele (alessandro.daniele@eng.it)
@@ -793,9 +796,6 @@ public class DataSetResource extends AbstractDataSetResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	@UserConstraint(functionalities = { CommunityFunctionalityConstants.SELF_SERVICE_DATASET_MANAGEMENT })
 	public String getDataStorePreview(@PathParam("label") String label, String body) {
-    	// KNOWAGE-9987 - START temporary diagnostics
-    	logger.warn("[KNOWAGE-9987][9.0] DataSetResource.getDataStorePreview - ENTER - dataset: " + label);
-    	// KNOWAGE-9987 - END
 		IDataSet dataSet = null;
 		try {
 			Monitor timing = MonitorFactory.start("Knowage.DataSetResource.getDataStorePreview:parseInputs");
@@ -896,16 +896,8 @@ public class DataSetResource extends AbstractDataSetResource {
 			return getDataStore(label, parameters, driversRuntimeMap, null, likeSelections, -1, aggregations, null,
 					start, limit, columns, null, false);
 		} catch (JSONException e) {
-		    // KNOWAGE-9987 - START temporary diagnostics
-		    logger.error("[KNOWAGE-9987][9.0] DataSetResource.getDataStorePreview - JSON ERROR - dataset: " + label, e);
-		    // KNOWAGE-9987 - END
 			throw new SpagoBIRestServiceException(buildLocaleFromSession(), e);
-		} catch (Exception e) {
-			
-			// KNOWAGE-9987 - START temporary diagnostics
-			logger.error("[KNOWAGE-9987][9.0] DataSetResource.getDataStorePreview - FAILED - dataset: " + label, e);
-			// KNOWAGE-9987 - END
-			
+		} catch (Exception e) {	
 			if (isPreparedDAtaset(dataSet)) {
 				if (e.getCause() != null && e.getCause().getCause() instanceof SQLSyntaxErrorException) {
 					logger.error("Error while previewing prepared dataset " + label, e);
@@ -916,6 +908,48 @@ public class DataSetResource extends AbstractDataSetResource {
 							e);
 				}
 			}
+			
+			// KNOWAGE-9987 START: Handle cache capacity and field type conversion errors.
+			Throwable cause = e;
+			boolean cacheSizeExceeded = false;
+			boolean typeConversionError = false;
+			 
+			while (cause != null) {
+			    if (cause instanceof CacheException
+			&& cause.getMessage() != null
+			&& cause.getMessage().contains("Store is to big to be persisted in cache.")) {
+			        cacheSizeExceeded = true;
+			    }
+			 
+			    if (cause.getMessage() != null
+			&& cause.getMessage().contains("Error while changing field value to different type")) {
+			        typeConversionError = true;
+			    }
+			 
+			    cause = cause.getCause();
+			}
+			 
+			IDataSet underlyingDataSet = dataSet;
+			if (underlyingDataSet instanceof VersionedDataSet) {
+			    underlyingDataSet = ((VersionedDataSet) underlyingDataSet).getWrappedDataset();
+			}
+			 
+			if (underlyingDataSet instanceof FileDataSet) {
+			    if (cacheSizeExceeded) {
+			        logger.error("File dataset preview failed because cache capacity was exceeded: " + label, e);
+			        throw new SpagoBIRuntimeException(
+			                "Unable to preview the dataset because the cache capacity has been exceeded. Please contact your administrator.",
+			                e);
+			    }
+			 
+			    if (typeConversionError) {
+			        logger.error("File dataset preview failed due to incompatible column values: " + label, e);
+			        throw new SpagoBIRuntimeException(
+			                "Unable to preview the dataset because one or more values are incompatible with the configured column data types. Please check the dataset column types and the source file.",
+			                e);
+			    }
+			}
+			// KNOWAGE-9987 END
 			logger.error("Error while previewing dataset " + label, e);
 			throw new SpagoBIRuntimeException("Error while previewing dataset " + label + ". " + e.getMessage(), e);
 		}

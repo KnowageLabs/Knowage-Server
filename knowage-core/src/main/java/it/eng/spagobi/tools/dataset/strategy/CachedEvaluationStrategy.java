@@ -64,9 +64,7 @@ class CachedEvaluationStrategy extends AbstractEvaluationStrategy {
 		Monitor totalCacheTiming = MonitorFactory.start("Knowage.DatasetManagementAPI.getDataStore:totalCache");
 		IDataStore dataStore;
 		try {
-			LOGGER.warn("[KNOWAGE-9987][9.0] CACHE GET START - dataset: " + dataSet.getLabel());
 			dataStore = cache.get(profile, dataSet, projections, filter, groups, sortings, summaryRowProjections, offset, fetchSize, maxRowCount, indexes);
-			LOGGER.warn("[KNOWAGE-9987][9.0] CACHE GET END - hit: " + (dataStore != null));
 			if (dataSet.isRealtime()) {
 				unsetNgsiConsumer();
 			}
@@ -74,19 +72,12 @@ class CachedEvaluationStrategy extends AbstractEvaluationStrategy {
 			if (dataStore == null) {
 				dataStore = manageDatasetNotInCache(projections, filter, groups, sortings, summaryRowProjections, offset, fetchSize, maxRowCount, indexes);
 			}	
-			LOGGER.warn("[KNOWAGE-9987][9.0] ADJUST METADATA START");
-			dataStore.adjustMetadata(dataSet.getMetadata());
-			LOGGER.warn("[KNOWAGE-9987][9.0] ADJUST METADATA END");
-			 
-			LOGGER.warn("[KNOWAGE-9987][9.0] DECODE START");
-			dataSet.decode(dataStore);
-			LOGGER.warn("[KNOWAGE-9987][9.0] DECODE END");
+			dataStore.adjustMetadata(dataSet.getMetadata());				 
+			dataSet.decode(dataStore);			
 			
 		} catch (DataBaseException e) {
-		    LOGGER.error("[KNOWAGE-9987][9.0] CachedEvaluationStrategy.execute - DATABASE ERROR", e);
 		    throw new RuntimeException(e);
 		} catch (RuntimeException e) {
-		    LOGGER.error("[KNOWAGE-9987][9.0] CachedEvaluationStrategy.execute - RUNTIME ERROR", e);
 		    throw e;
 		} finally {
 		    totalCacheTiming.stop();
@@ -110,11 +101,7 @@ class CachedEvaluationStrategy extends AbstractEvaluationStrategy {
 			throws DataBaseException {
 		Monitor timing = MonitorFactory.start("Knowage.DatasetManagementAPI.getDataStore:putInCache");
 		DatasetManagementAPI datasetManagementAPI = new DatasetManagementAPI();
-		 
-		LOGGER.warn("[KNOWAGE-9987][9.0] CACHE PUT START - dataset: " + dataSet.getLabel());
 		datasetManagementAPI.putDataSetInCache(dataSet, cache, getEvaluationStrategy(), indexes);
-		LOGGER.warn("[KNOWAGE-9987][9.0] CACHE PUT END - dataset: " + dataSet.getLabel());
-		 
 		timing.stop();
 
 		if (dataSet.getDataStore() != null && dataSet.getDataStore().getMetaData().getFieldCount() == 0) {
@@ -125,14 +112,8 @@ class CachedEvaluationStrategy extends AbstractEvaluationStrategy {
 		}
 		
 		timing = MonitorFactory.start("Knowage.DatasetManagementAPI.getDataStore:getFromCache");
-		 
-		LOGGER.warn("[KNOWAGE-9987][9.0] CACHE RELOAD START");
-		 
 		IDataStore dataStore = cache.get(profile, dataSet, projections, filter, groups, sortings, summaryRowProjections, offset, fetchSize, maxRowCount,
 		        indexes);
-		 
-		LOGGER.warn("[KNOWAGE-9987][9.0] CACHE RELOAD END - hit: " + (dataStore != null));
-		 
 		timing.stop();
 		
 		if (dataStore == null) {
