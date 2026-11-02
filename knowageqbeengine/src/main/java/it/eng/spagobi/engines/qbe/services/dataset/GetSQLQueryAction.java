@@ -248,7 +248,8 @@ public class GetSQLQueryAction extends AbstractQbeEngineAction {
 	            : sqlQuery.length();
 	 
 	    String whereClause = sqlQuery.substring(whereStart, whereEnd).trim();
-	    String groupedWhereClause = addExplicitAndGrouping(whereClause);
+	    String cleanedWhereClause = removeRedundantPredicateParentheses(whereClause);
+	    String groupedWhereClause = addExplicitAndGrouping(cleanedWhereClause);
 	 
 	    return sqlQuery.substring(0, whereStart)
 	            + " "
@@ -351,6 +352,87 @@ public class GetSQLQueryAction extends AbstractQbeEngineAction {
 	&& text.regionMatches(true, position, word, 0, word.length())
 	&& (position == 0 || !Character.isLetterOrDigit(text.charAt(position - 1)))
 	&& (end == text.length() || !Character.isLetterOrDigit(text.charAt(end)));
+	}
+	
+	private String removeRedundantPredicateParentheses(String expression) {
+		 
+	    String value = expression.trim();
+	 
+	    if (isWrappedByParentheses(value)) {
+	 
+	        String inner = value.substring(1, value.length() - 1).trim();
+	 
+	        if (findTopLevelOperator(inner, "AND") < 0
+	&& findTopLevelOperator(inner, "OR") < 0) {
+	 
+	            return removeRedundantPredicateParentheses(inner);
+	        }
+	 
+	        return "(" + removeRedundantPredicateParentheses(inner) + ")";
+	    }
+	 
+	    int orPosition = findTopLevelOperator(value, "OR");
+	 
+	    if (orPosition >= 0) {
+	        return removeRedundantPredicateParentheses(
+	                value.substring(0, orPosition))
+	                + " OR "
+	                + removeRedundantPredicateParentheses(
+	                        value.substring(orPosition + 2));
+	    }
+	 
+	    int andPosition = findTopLevelOperator(value, "AND");
+	 
+	    if (andPosition >= 0) {
+	        return removeRedundantPredicateParentheses(
+	                value.substring(0, andPosition))
+	                + " AND "
+	                + removeRedundantPredicateParentheses(
+	                        value.substring(andPosition + 3));
+	    }
+	 
+	    return value;
+	}
+	 
+	private boolean isWrappedByParentheses(String expression) {
+	 
+	    if (expression.length() < 2
+	            || expression.charAt(0) != '('
+	            || expression.charAt(expression.length() - 1) != ')') {
+	        return false;
+	    }
+	 
+	    int depth = 0;
+	    char quote = 0;
+	 
+	    for (int i = 0; i < expression.length(); i++) {
+	 
+	        char current = expression.charAt(i);
+	 
+	        if (quote != 0) {
+	            if (current == quote) {
+	                quote = 0;
+	            }
+	            continue;
+	        }
+	 
+	        if (current == '\'' || current == '"' || current == '`') {
+	            quote = current;
+	            continue;
+	        }
+	 
+	        if (current == '(') {
+	            depth++;
+	        } else if (current == ')') {
+	            depth--;
+	 
+	            if (depth == 0 && i < expression.length() - 1) {
+	                return false;
+	            }
+	        }
+	    }
+	 
+	    return depth == 0;
 	}
 	// KNOWAGE-9981 - END
 	
