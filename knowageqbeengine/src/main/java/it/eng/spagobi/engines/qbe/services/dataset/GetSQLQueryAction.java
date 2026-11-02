@@ -32,6 +32,7 @@ import it.eng.qbe.model.accessmodality.IModelAccessModality;
 import it.eng.qbe.query.ISelectField;
 import it.eng.qbe.query.Query;
 import it.eng.qbe.statement.IStatement;
+
 import it.eng.spago.base.SourceBean;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.utilities.StringUtilities;
@@ -42,6 +43,7 @@ import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceException;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceExceptionHandler;
 import it.eng.spagobi.utilities.service.JSONSuccess;
+
 
 /**
  * The Class GetSQLQueryAction.
@@ -117,11 +119,15 @@ public class GetSQLQueryAction extends AbstractQbeEngineAction {
 				toReturn.put("sql", sqlQuery);
 				toReturn.put("sqlFormatted", sqlQueryFormatted);
 			} else {
+
 				String jpaQueryStr = statement.getQueryString();
 				String sqlQuery = statement.getSqlQueryString();
 				String jpaQueryStrFormatted = formatQueryString(addAliasInJqpl(query, jpaQueryStr));
-				String sqlQueryFormatted = formatQueryString(addAliasInSql(query, sqlQuery));
-
+				//KNOWAGE-9981 START
+				//String sqlQueryFormatted = formatQueryString(addAliasInSql(query, sqlQuery));
+				String sqlQueryFormatted = formatQueryString(
+				        preserveBooleanGroupingForDisplay(addAliasInSql(query, sqlQuery)));
+				//KNOWAGE-9981 
 				LOGGER.debug("Executable query (HQL/JPQL): [" + jpaQueryStr + "]");
 				LOGGER.debug("Executable query (SQL): [" + sqlQuery + "]");
 
@@ -217,5 +223,137 @@ public class GetSQLQueryAction extends AbstractQbeEngineAction {
 		}
 		return queryString;
 	}
+	
+	// KNOWAGE-9981 - START
+	private String preserveBooleanGroupingForDisplay(String sqlQuery) {
+	 
+	    if (sqlQuery == null) {
+	        return null;
+	    }
+	 
+	    Matcher whereMatcher = Pattern.compile("(?i)\\bWHERE\\b").matcher(sqlQuery);
+	 
+	    if (!whereMatcher.find()) {
+	        return sqlQuery;
+	    }
+	 
+	    int whereStart = whereMatcher.end();
+	 
+	    Matcher endMatcher = Pattern.compile(
+	            "(?i)\\b(GROUP\\s+BY|HAVING|ORDER\\s+BY|UNION|LIMIT|OFFSET)\\b")
+	            .matcher(sqlQuery);
+	 
+	    int whereEnd = endMatcher.find(whereStart)
+	            ? endMatcher.start()
+	            : sqlQuery.length();
+	 
+	    String whereClause = sqlQuery.substring(whereStart, whereEnd).trim();
+	    String groupedWhereClause = addExplicitAndGrouping(whereClause);
+	 
+	    return sqlQuery.substring(0, whereStart)
+	            + " "
+	            + groupedWhereClause
+	            + sqlQuery.substring(whereEnd);
+	}
+	 
+	private String addExplicitAndGrouping(String expression) {
+	 
+	    int orPosition = findTopLevelOperator(expression, "OR");
+	 
+	    if (orPosition < 0) {
+	        return expression;
+	    }
+	 
+	    String left = expression.substring(0, orPosition).trim();
+	    String right = expression.substring(orPosition + 2).trim();
+	 
+	    if (findTopLevelOperator(left, "AND") >= 0) {
+	        left = "(" + left + ")";
+	    }
+	 
+	    if (findTopLevelOperator(right, "OR") >= 0) {
+	        right = addExplicitAndGrouping(right);
+	    } else if (findTopLevelOperator(right, "AND") >= 0) {
+	        right = "(" + right + ")";
+	    }
+	 
+	    return left + " OR " + right;
+	}
+	 
+	private int findTopLevelOperator(String expression, String operator) {
+	 
+	    int depth = 0;
+	    char quote = 0;
+	    boolean between = false;
+	 
+	    for (int i = 0; i < expression.length(); i++) {
+	 
+	        char current = expression.charAt(i);
+	 
+	        if (quote != 0) {
+	            if (current == quote) {
+	                quote = 0;
+	            }
+	            continue;
+	        }
+	 
+	        if (current == '\'' || current == '"' || current == '`') {
+	            quote = current;
+	            continue;
+	        }
+	 
+	        if (current == '(') {
+	            depth++;
+	            continue;
+	        }
+	 
+	        if (current == ')') {
+	            depth--;
+	            continue;
+	        }
+	 
+	        if (depth != 0) {
+	            continue;
+	        }
+	 
+	        if (isWordAt(expression, i, "BETWEEN")) {
+	            between = true;
+	            i += 6;
+	            continue;
+	        }
+	 
+	        if (isWordAt(expression, i, "AND")) {
+	 
+	            if (between) {
+	                between = false;
+	                i += 2;
+	                continue;
+	            }
+	 
+	            if ("AND".equals(operator)) {
+	                return i;
+	            }
+	        }
+	 
+	        if ("OR".equals(operator) && isWordAt(expression, i, "OR")) {
+	            return i;
+	        }
+	    }
+	 
+	    return -1;
+	}
+	 
+	private boolean isWordAt(String text, int position, String word) {
+	 
+	    int end = position + word.length();
+	 
+	    return end <= text.length()
+	&& text.regionMatches(true, position, word, 0, word.length())
+	&& (position == 0 || !Character.isLetterOrDigit(text.charAt(position - 1)))
+	&& (end == text.length() || !Character.isLetterOrDigit(text.charAt(end)));
+	}
+	// KNOWAGE-9981 - END
+	
+
 
 }
