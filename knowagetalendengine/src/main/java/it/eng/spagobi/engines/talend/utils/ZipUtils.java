@@ -5,6 +5,7 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.engines.talend.utils;
 
+import it.eng.knowage.commons.security.PathTraversalChecker;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -65,9 +66,9 @@ public class ZipUtils {
      */
     public static void unzip(ZipFile zipFile, File destDir) {
 
-        try {
+        try (ZipFile archive = zipFile) {
 
-            Enumeration<? extends ZipEntry> entries = zipFile.entries();
+            Enumeration<? extends ZipEntry> entries = archive.entries();
 
             int totalEntryArchive = 0;
             long totalSizeArchive = 0;
@@ -84,7 +85,7 @@ public class ZipUtils {
                 int totalSizeEntry = 0;
 
                 if (!entry.isDirectory()) {
-                    File destFile = new File(destDir, entry.getName());
+                    File destFile = getDestinationFile(destDir, entry.getName());
                     File destFileDir = destFile.getParentFile();
                     if (!destFileDir.exists()) {
                         LOGGER.warn("Extracting directory: {}",
@@ -93,12 +94,11 @@ public class ZipUtils {
                     }
 
                     LOGGER.warn("Extracting file: {}", entry.getName());
-                    copyInputStream(zipFile.getInputStream(entry),
-                            new BufferedOutputStream(new FileOutputStream(new File(destDir, entry.getName()))), totalSizeEntry, totalSizeArchive, entry);
+                    copyInputStream(archive.getInputStream(entry),
+                            new BufferedOutputStream(new FileOutputStream(destFile)), totalSizeEntry, totalSizeArchive, entry);
                 }
             }
 
-            zipFile.close();
         } catch (IOException ioe) {
             LOGGER.error("Non-fatal error unzipping {} to directory {}", zipFile, destDir, ioe);
         }
@@ -111,8 +111,8 @@ public class ZipUtils {
      * @param destDir the dest dir
      */
     public static void unzipSkipFirstLevel(ZipFile zipFile, File destDir) {
-        try {
-            Enumeration<? extends ZipEntry> entries = zipFile.entries();
+        try (ZipFile archive = zipFile) {
+            Enumeration<? extends ZipEntry> entries = archive.entries();
             int totalEntryArchive = 0;
             long totalSizeArchive = 0;
             while (entries.hasMoreElements()) {
@@ -130,12 +130,13 @@ public class ZipUtils {
 
                 if (!entry.isDirectory()) {
                     String destFileStr = entry.getName();
+                    getDestinationFile(destDir, destFileStr);
 
-                    destFileStr = (destFileStr.indexOf('/') > 0) ? destFileStr.substring(destFileStr.indexOf('/'))
+                    destFileStr = (destFileStr.indexOf('/') > 0) ? destFileStr.substring(destFileStr.indexOf('/') + 1)
                             : null;
                     if (destFileStr == null)
                         continue;
-                    File destFile = new File(destDir, destFileStr);
+                    File destFile = getDestinationFile(destDir, destFileStr);
                     File destFileDir = destFile.getParentFile();
                     if (!destFileDir.exists()) {
                         LOGGER.warn("Extracting directory: {}",
@@ -144,16 +145,24 @@ public class ZipUtils {
                     }
 
                     LOGGER.warn("Extracting file: {}", entry.getName());
-                    copyInputStream(zipFile.getInputStream(entry),
-                            new BufferedOutputStream(new FileOutputStream(new File(destDir, destFileStr))), totalSizeEntry, totalSizeArchive, entry);
+                    copyInputStream(archive.getInputStream(entry),
+                            new BufferedOutputStream(new FileOutputStream(destFile)), totalSizeEntry, totalSizeArchive, entry);
 
                 }
             }
 
-            zipFile.close();
         } catch (IOException ioe) {
             LOGGER.error("Non-fatal error unzipping {} to directory {}", zipFile, destDir, ioe);
         }
+    }
+
+    private static File getDestinationFile(File destDir, String entryName) throws IOException {
+        if (new File(entryName).isAbsolute()) {
+            throw new SpagoBIRuntimeException("Error while unzipping file. Absolute ZIP entry paths are not allowed");
+        }
+        File destFile = new File(destDir, entryName).getCanonicalFile();
+        PathTraversalChecker.checkDescendentOfDirectory(destFile, destDir);
+        return destFile;
     }
 
     /**

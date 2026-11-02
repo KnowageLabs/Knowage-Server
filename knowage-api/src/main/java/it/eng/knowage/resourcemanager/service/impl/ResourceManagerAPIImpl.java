@@ -590,9 +590,9 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 		int buffer = 2048;
 		File file = new File(zipFile);
 		try (ZipFile zip = new ZipFile(file)) {
-			String newPath = extractFolder;
+			File destinationDirectory = new File(extractFolder).getCanonicalFile();
 
-			new File(newPath).mkdir();
+			destinationDirectory.mkdir();
 			Enumeration<? extends ZipEntry> zipFileEntries = zip.entries();
 
 			// Process each entry
@@ -601,7 +601,10 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 				ZipEntry entry = zipFileEntries.nextElement();
 				String currentEntry = entry.getName();
 
-				File destFile = new File(newPath, currentEntry);
+				File destFile = new File(destinationDirectory, currentEntry).getCanonicalFile();
+				if (Paths.get(currentEntry).isAbsolute() || !destFile.toPath().startsWith(destinationDirectory.toPath())) {
+					throw new IOException("ZIP entry is outside the extraction directory");
+				}
 				File destinationParent = destFile.getParentFile();
 
 				// create the parent directory structure if needed
