@@ -223,6 +223,7 @@ private String preserveBooleanGroupingForDisplay(String sqlQuery) {
     return sqlQuery.substring(0, whereStart)
             + " "
             + groupedWhereClause
+		    + " "
             + sqlQuery.substring(whereEnd);
 }
  
