@@ -224,6 +224,7 @@ public class QbeGetSQLQueryResource extends AbstractQbeEngineResource {
 	    return sqlQuery.substring(0, whereStart)
 	            + " "
 	            + groupedWhereClause
+	            + " "
 	            + sqlQuery.substring(whereEnd);
 	}
 	 
