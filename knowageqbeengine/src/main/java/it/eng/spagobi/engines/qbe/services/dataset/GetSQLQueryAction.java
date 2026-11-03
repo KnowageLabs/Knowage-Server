@@ -254,6 +254,7 @@ public class GetSQLQueryAction extends AbstractQbeEngineAction {
 	    return sqlQuery.substring(0, whereStart)
 	            + " "
 	            + groupedWhereClause
+	            + " "
 	            + sqlQuery.substring(whereEnd);
 	}
 	 
