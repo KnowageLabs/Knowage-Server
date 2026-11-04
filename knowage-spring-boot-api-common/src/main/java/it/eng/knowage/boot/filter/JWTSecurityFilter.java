@@ -83,7 +83,6 @@ public class JWTSecurityFilter implements Filter {
 			if (userToken == null) {
 				httpResponse.setStatus(401);
 			} else {
-				LOGGER.info("Header value: {}", userToken);
 				String noBearerUserToken = userToken.replace("Bearer ", "");
 				String technicalToken = getTechnicalToken();
 				try {

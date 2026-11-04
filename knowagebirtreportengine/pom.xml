@@ -16,6 +16,11 @@
 	
 	<dependencies>
 		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
 			<groupId>it.eng.knowage</groupId>
 			<artifactId>spagobi.birt.oda</artifactId>
 			<version>${project.version}</version>
