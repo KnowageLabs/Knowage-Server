@@ -23,9 +23,11 @@ import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.engines.birt.exceptions.ConnectionDefinitionException;
 import it.eng.spagobi.engines.birt.exceptions.ConnectionParameterNotValidException;
+import it.eng.spagobi.engines.birt.utilities.ExternalLibraryTemplateResolver;
 import it.eng.spagobi.engines.birt.utilities.ParameterConverter;
 import it.eng.spagobi.engines.birt.utilities.Utils;
 import it.eng.spagobi.services.common.EnginConf;
+import it.eng.spagobi.services.common.JWTSsoServiceAlgorithmFactory;
 import it.eng.spagobi.services.common.SsoServiceFactory;
 import it.eng.spagobi.services.common.SsoServiceInterface;
 import it.eng.spagobi.services.content.bo.Content;
@@ -48,6 +50,9 @@ import org.eclipse.birt.report.utility.BirtUtility;
 import org.eclipse.birt.report.utility.DataExtractionParameterUtil;
 import org.owasp.esapi.HTTPUtilities;
 import org.owasp.esapi.reference.DefaultHTTPUtilities;
+
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.interfaces.DecodedJWT;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
@@ -131,7 +136,6 @@ public class BirtReportServlet extends HttpServlet {
 		// String userId = (String) ((UserProfile)profile).getUserId();
 		String userId = (String) profile.getUserUniqueIdentifier();
 
-		logger.debug("userId=" + userId);
 		logger.debug("documentId=" + documentId);
 
 		// AUDIT UPDATE
@@ -261,7 +265,6 @@ public class BirtReportServlet extends HttpServlet {
 		String documentId = servletRequest.getParameter("document");
 		String userId = (String) profile.getUserUniqueIdentifier();
 		// String userId = (String)((UserProfile) profile).getUserId();
-		logger.debug("userId=" + userId);
 		logger.debug("documentId=" + documentId);
 
 		ContentServiceProxy contentProxy = new ContentServiceProxy(userId, servletRequest.getSession());
@@ -317,10 +320,10 @@ public class BirtReportServlet extends HttpServlet {
 						} else if (entry.getName().endsWith(".rptdesign")) {
 							// set InputStream with report
 							File birtFile = new File(getBirtExecutionTempDirName(executionId) + entry.getName());
-							InputStream isBirt = new FileInputStream(birtFile);
-							byte[] templateRptDesign = new byte[0];
-							templateRptDesign = util.getByteArrayFromInputStream(isBirt);
-							is = new java.io.ByteArrayInputStream(templateRptDesign);
+							try (InputStream isBirt = new FileInputStream(birtFile)) {
+								byte[] templateRptDesign = util.getByteArrayFromInputStream(isBirt);
+								is = new java.io.ByteArrayInputStream(templateRptDesign);
+							}
 						}
 				}
 			}
@@ -340,8 +343,40 @@ public class BirtReportServlet extends HttpServlet {
 			}
 		}
 
+		if (is != null) {
+			byte[] executionTemplate;
+			try (InputStream templateStream = is) {
+				executionTemplate = util.getByteArrayFromInputStream(templateStream);
+			}
+			if (executionTemplate == null) {
+				throw new IOException("Cannot read the BIRT execution template");
+			}
+			SourceBean apiBaseUrlConfig = (SourceBean) BirtEngineConfig.getConfigSourceBean()
+					.getAttribute("EXTERNAL_LIBRARIES_API_BASE_URL");
+			String apiBaseUrl = apiBaseUrlConfig == null ? null : apiBaseUrlConfig.getCharacters();
+			String authorizationParameter = Optional.ofNullable(System.getenv("KNOWAGE_AUTHORIZATION_HEADER_NAME"))
+					.orElse("X-Kn-Authorization");
+			executionTemplate = ExternalLibraryTemplateResolver.resolve(executionTemplate, apiBaseUrl,
+					authorizationParameter, () -> getExternalLibraryUserToken(profile));
+			is = new ByteArrayInputStream(executionTemplate);
+		}
+
 		logger.debug("OUT");
 		return is;
+	}
+
+	private String getExternalLibraryUserToken(IEngUserProfile profile) {
+		try {
+			String token = (String) profile.getUserUniqueIdentifier();
+			DecodedJWT jwt = JWT.require(JWTSsoServiceAlgorithmFactory.getInstance().getAlgorithm()).build().verify(token);
+			String userId = jwt.getClaim(SsoServiceInterface.USER_ID).asString();
+			if (userId == null || userId.trim().isEmpty() || jwt.getExpiresAt() == null) {
+				throw new IllegalArgumentException();
+			}
+			return token;
+		} catch (Exception e) {
+			throw new SpagoBIRuntimeException("BIRT external libraries require a valid, expiring user JWT in the current profile");
+		}
 	}
 
 	protected Map findReportParams(HttpServletRequest request, IReportRunnable design, IReportEngine birtReportEngine)
@@ -466,7 +501,6 @@ public class BirtReportServlet extends HttpServlet {
 		HttpSession session = request.getSession();
 		IEngUserProfile profile = (IEngUserProfile) session.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 		String userId = (String) profile.getUserUniqueIdentifier();
-		logger.debug("userId=" + userId);
 		String documentId = request.getParameter("document");
 		logger.debug("documentId=" + documentId);
 
