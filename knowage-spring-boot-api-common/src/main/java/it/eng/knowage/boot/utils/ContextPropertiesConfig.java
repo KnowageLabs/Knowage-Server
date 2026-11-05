@@ -32,6 +32,7 @@ import com.auth0.jwt.interfaces.Claim;
 import com.auth0.jwt.interfaces.DecodedJWT;
 
 import it.eng.knowage.boot.error.KnowageRuntimeException;
+import it.eng.knowage.commons.security.FederatedSessionVerifier;
 
 /**
  * @deprecated This class is simply not right. We use @Component to let Spring instantiates it as a Singleton,
@@ -62,6 +63,10 @@ public class ContextPropertiesConfig {
 			Algorithm algorithm = Algorithm.HMAC256(key);
 			JWTVerifier verifier = JWT.require(algorithm).build();
 			DecodedJWT decodedJWT = verifier.verify(jwtToken);
+			if (!decodedJWT.getClaim("kn_saml_sid").isNull()) {
+				FederatedSessionVerifier.verify(jwtToken, decodedJWT.getClaim("kn_saml_sid").asString(),
+						decodedJWT.getIssuer(), decodedJWT.getExpiresAt());
+			}
 			Claim userIdClaim = decodedJWT.getClaim("user_id");
 			userId = userIdClaim.asString();
 		} catch (Exception e) {

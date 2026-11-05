@@ -34,6 +34,7 @@ import com.auth0.jwt.exceptions.JWTVerificationException;
 import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
 import it.eng.spagobi.security.hmacfilter.HMACUtils;
+import it.eng.spagobi.security.saml.FederatedTokenGuard;
 import it.eng.spagobi.services.security.exceptions.SecurityException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
@@ -80,9 +81,9 @@ public class JWTTokenAsUserUniqueIdentifierSsoService implements SsoServiceInter
 				logger.debug("JWT token not found in request");
 				return null;
 			}
-			logger.debug("JWT token retrieved : [" + jwtToken + "]");
+			logger.debug("JWT token retrieved : [" + (FederatedTokenGuard.isFederated(jwtToken) ? "federated credential redacted" : jwtToken) + "]");
 			JWTVerifier verifier = JWT.require(algorithm).build();
-			verifier.verify(jwtToken);
+			FederatedTokenGuard.checkDecoded(verifier.verify(jwtToken));
 			logger.debug("JWT token verified properly");
 			return jwtToken; // we consider the JWT token as user unique identifier
 		} catch (JWTVerificationException e) {
@@ -105,10 +106,11 @@ public class JWTTokenAsUserUniqueIdentifierSsoService implements SsoServiceInter
 	@Override
 	public void validateTicket(String ticket, String userId) throws SecurityException {
 		try {
+			FederatedTokenGuard.check(userId);
 			String jwtToken = ticket;
-			logger.debug("JWT token in input : [" + jwtToken + "]");
+			logger.debug("JWT token in input : [" + (FederatedTokenGuard.isFederated(jwtToken) ? "federated credential redacted" : jwtToken) + "]");
 			JWTVerifier verifier = JWT.require(algorithm).withIssuer("knowage").build();
-			verifier.verify(jwtToken);
+			FederatedTokenGuard.checkDecoded(verifier.verify(jwtToken));
 			logger.debug("JWT token verified properly");
 		} catch (JWTVerificationException e) {
 			throw new SecurityException("Invalid JWT token!", e);

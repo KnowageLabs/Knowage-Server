@@ -28,6 +28,7 @@ import it.eng.spagobi.engines.birt.utilities.ParameterConverter;
 import it.eng.spagobi.engines.birt.utilities.Utils;
 import it.eng.spagobi.services.common.EnginConf;
 import it.eng.spagobi.services.common.JWTSsoServiceAlgorithmFactory;
+import it.eng.spagobi.security.saml.FederatedTokenGuard;
 import it.eng.spagobi.services.common.SsoServiceFactory;
 import it.eng.spagobi.services.common.SsoServiceInterface;
 import it.eng.spagobi.services.content.bo.Content;
@@ -372,6 +373,7 @@ public class BirtReportServlet extends HttpServlet {
 		try {
 			String token = (String) profile.getUserUniqueIdentifier();
 			DecodedJWT jwt = JWT.require(JWTSsoServiceAlgorithmFactory.getInstance().getAlgorithm()).build().verify(token);
+			FederatedTokenGuard.checkDecoded(jwt);
 			String userId = jwt.getClaim(SsoServiceInterface.USER_ID).asString();
 			if (userId == null || userId.trim().isEmpty() || jwt.getExpiresAt() == null) {
 				throw new IllegalArgumentException();

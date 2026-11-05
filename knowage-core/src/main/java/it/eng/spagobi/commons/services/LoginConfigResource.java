@@ -19,6 +19,7 @@ import it.eng.spagobi.api.AbstractSpagoBIResource;
 import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.security.OAuth2.OAuth2Config;
 import it.eng.spagobi.services.rest.annotations.PublicService;
+import it.eng.spagobi.security.saml.SamlConfiguration;
 
 @Path("/loginconfig")
 public class LoginConfigResource extends AbstractSpagoBIResource {
@@ -39,6 +40,12 @@ public class LoginConfigResource extends AbstractSpagoBIResource {
 			boolean ssoActive = Boolean.parseBoolean(String.valueOf(ssoActiveValue));
 			String oauth2FlowType = Optional.ofNullable(System.getProperty("oauth2_flow_type", System.getenv("OAUTH2_FLOW_TYPE"))).orElse("");
 			item.put("ssoActive", ssoActive);
+			item.put("samlActive", SamlConfiguration.enabled());
+			if (SamlConfiguration.enabled()) {
+				item.put("samlLoginUrl", req.getContextPath() + "/restful-services/saml/login");
+				item.put("samlExchangeUrl", req.getContextPath() + "/restful-services/saml/exchange");
+				item.put("authenticationMethod", "SAML");
+			}
 			item.put("defaultLanguage", config.getConfigValue("SPAGOBI.LANGUAGE_SUPPORTED.LANGUAGE.default"));
 			item.put("oauth2FlowType", oauth2FlowType);
 

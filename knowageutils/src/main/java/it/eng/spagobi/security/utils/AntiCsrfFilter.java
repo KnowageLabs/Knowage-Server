@@ -41,7 +41,10 @@ public class AntiCsrfFilter implements Filter {
 
 		HttpServletRequest req = ((HttpServletRequest) request);
 
-		if (req.getSession(false) != null && !this.excludeCheck(req.getPathInfo())) {
+		String path = req.getPathInfo();
+		boolean samlCallback = "POST".equals(req.getMethod())
+				&& ("/saml/acs".equals(path) || "/saml/slo".equals(path) || "/saml/exchange".equals(path));
+		if (req.getSession(false) != null && !samlCallback && !this.excludeCheck(path)) {
 
 			String cookieVal = "";
 			String paramVal;
@@ -71,6 +74,9 @@ public class AntiCsrfFilter implements Filter {
 	}
 
 	private boolean excludeCheck(String path) {
+		if (path == null) {
+			return false;
+		}
 
 		List<String> urlToExclude = new ArrayList<>();
 		urlToExclude.add("/1.0/images/getImage");

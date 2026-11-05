@@ -21,6 +21,7 @@ import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+import it.eng.spagobi.security.saml.FederatedTokenGuard;
 import it.eng.spagobi.utilities.rest.RestUtilities;
 import it.eng.spagobi.utilities.rest.RestUtilities.HttpMethod;
 import it.eng.spagobi.utilities.rest.RestUtilities.Response;
@@ -43,6 +44,10 @@ public class GenericJWTSsoService extends JWTSsoService implements SsoServiceInt
 				return super.readUserIdentifier(request);
 			}
 
+			if (FederatedTokenGuard.isFederated(jwtToken)) {
+				FederatedTokenGuard.check(jwtToken);
+				return jwtToken;
+			}
 			logger.debug("JWT token in input is " + jwtToken);
 			DecodedJWT decodedJWT = verifyToken(jwtToken);
 			return createKnowageJwtToken(decodedJWT);

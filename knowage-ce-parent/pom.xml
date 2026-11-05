@@ -19,6 +19,7 @@
 		<module>../spagobi-metamodel-core</module>
 		<module>../spagobi-metamodel-utils</module>
 		<module>../knowagedao</module>
+		<module>../knowagesamlsecurityprovider</module>
 		<module>../knowage-core</module>
 		<module>../knowageoauth2securityprovider</module>
 		<module>../knowageldapsecurityprovider</module>

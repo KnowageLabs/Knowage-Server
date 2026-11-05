@@ -1,0 +1,44 @@
+# Copy outside the WAR; replace every REPLACE_ value. No secrets belong in Git.
+provider=myid
+frontend.url=https://REPLACE_PUBLIC_HOST/knowage-vue/saml-login
+sp.entity-id=https://REPLACE_PUBLIC_HOST/knowage/restful-services/saml/metadata
+sp.acs-url=https://REPLACE_PUBLIC_HOST/knowage/restful-services/saml/acs
+sp.slo-url=https://REPLACE_PUBLIC_HOST/knowage/restful-services/saml/slo
+idp.entity-id=https://myid.collaudo.regione.veneto.it/gw/metadata
+idp.metadata-file=env:KNOWAGE_SAML_IDP_METADATA_FILE
+# The published MyID metadata has no SLO service. Obtain these from activation.
+idp.slo-url=env:KNOWAGE_SAML_IDP_SLO_URL
+idp.slo-response-url=env:KNOWAGE_SAML_IDP_SLO_RESPONSE_URL
+myid.logout-url=https://myid.collaudo.regione.veneto.it/logout/target
+# Level 1 example, not a project-level decision. Select the required MyID context.
+authn.contexts=urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport
+sp.name-id-format=urn:oasis:names:tc:SAML:2.0:nameid-format:transient
+sp.keystore-type=PKCS12
+sp.keystore-file=env:KNOWAGE_SAML_KEYSTORE_FILE
+sp.keystore-password=env:KNOWAGE_SAML_KEYSTORE_PASSWORD
+sp.key-alias=env:KNOWAGE_SAML_KEY_ALIAS
+sp.key-password=env:KNOWAGE_SAML_KEY_PASSWORD
+session.seconds=36000
+# Match the stable identity attribute and PM lookup contract agreed for this SP.
+identity.attribute=CodiceFiscale
+identity.prefix=
+pm.identity-parameter=codiceFiscale
+pm.identity-field=codiceFiscale
+pm.token-url=https://vamgateway.collaudo.regione.veneto.it/token
+pm.client-id=env:KNOWAGE_PM_CLIENT_ID
+pm.client-secret=env:KNOWAGE_PM_CLIENT_SECRET
+pm.service-user=env:KNOWAGE_PM_SERVICE_USER
+pm.service-password=env:KNOWAGE_PM_SERVICE_PASSWORD
+# Exact GET URLs must come from the subscribed PM-API Swagger, not this example.
+pm.profile-url=env:KNOWAGE_PM_PROFILE_URL
+pm.user-url=env:KNOWAGE_PM_USER_URL
+pm.authorization-url=env:KNOWAGE_PM_AUTHORIZATION_URL
+pm.procedure=REPLACE_PM_PROCEDURE
+pm.user-type=REPLACE_OIM_OR_SPID
+# One external organization must correspond to one dedicated tenant/data scope.
+pm.role-map.REPLACE_PM_ROLE=REPLACE_EXISTING_KNOWAGE_ROLE
+pm.tenant-map.REPLACE_PM_ORGANIZATION_ID=REPLACE_EXISTING_KNOWAGE_TENANT
+pm.function-map.REPLACE_PM_FUNCTION=REPLACE_KNOWAGE_FUNCTION
+pm.access-type-map.REPLACE_PM_ACCESS_TYPE=REPLACE_KNOWAGE_FUNCTION
+# Comma-separated Knowage functionalities are supported; do not include spaces.
+# Unrestricted grants require an explicit pm.tenant-map.*; never add it by default.

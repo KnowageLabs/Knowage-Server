@@ -23,6 +23,13 @@ import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.utilities.AuditLogUtilities;
 import it.eng.spagobi.services.rest.annotations.PublicService;
+import it.eng.spagobi.security.saml.FederatedSessionStore;
+import it.eng.spagobi.security.saml.FederatedTokenGuard;
+import it.eng.spagobi.security.saml.SamlConfiguration;
+import it.eng.spagobi.security.saml.SamlProtocolService;
+import it.eng.spago.security.IEngUserProfile;
+import com.auth0.jwt.JWT;
+import com.fasterxml.jackson.databind.JsonNode;
 
 @Path("/logout")
 public class LogoutResource extends AbstractSpagoBIResource {
@@ -83,7 +90,37 @@ public class LogoutResource extends AbstractSpagoBIResource {
 	}
 
 	private Map<String, Object> buildLogoutResponseBody(HttpServletRequest request) {
-		request.getSession().invalidate();
+		Map<String, Object> federatedLogout = new HashMap<>();
+		if (request.getSession(false) != null) {
+			Object profile = request.getSession(false).getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+			if (profile instanceof IEngUserProfile) {
+				String token = ((IEngUserProfile) profile).getUserUniqueIdentifier().toString();
+				if (FederatedTokenGuard.isFederated(token)) {
+					FederatedSessionStore state = FederatedSessionStore.configured();
+					String sid = JWT.decode(token).getClaim(FederatedTokenGuard.SESSION_CLAIM).asString();
+					JsonNode context = state.get(sid, "SESSION");
+					state.revoke(sid);
+					try {
+						SamlConfiguration saml = SamlConfiguration.load();
+						SamlProtocolService protocol = new SamlProtocolService(saml, state);
+						if (saml.myId()) {
+							federatedLogout.put("redirectUrl", protocol.logoutTarget().toString());
+						} else if (context != null) {
+							federatedLogout.put("samlLogoutUrl", protocol.logoutRequestUrl());
+							federatedLogout.put("samlLogoutRequest", protocol.standardLogout(context));
+							federatedLogout.put("redirectUrl", null);
+						}
+					} catch (Exception e) {
+						throw new IllegalStateException("Federated logout could not be started", e);
+					} finally {
+						request.getSession().invalidate();
+					}
+				}
+			}
+			if (request.getSession(false) != null) {
+				request.getSession(false).invalidate();
+			}
+		}
 
 		SingletonConfig config = SingletonConfig.getInstance();
 		Object ssoActiveValue = config.getConfigValue("SPAGOBI_SSO.ACTIVE");
@@ -92,6 +129,7 @@ public class LogoutResource extends AbstractSpagoBIResource {
 		Map<String, Object> responseBody = new HashMap<>();
 		responseBody.put("redirectUrl", ssoActive ? SingletonConfig.getInstance().getConfigValue("SPAGOBI_SSO.SECURITY_LOGOUT_URL") : null);
 		responseBody.put("urlEnginesInvalidate", getUrlEnginesInvalidate());
+		responseBody.putAll(federatedLogout);
 		return responseBody;
 	}
 

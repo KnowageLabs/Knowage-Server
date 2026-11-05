@@ -43,6 +43,7 @@ import com.auth0.jwt.interfaces.Claim;
 import com.auth0.jwt.interfaces.DecodedJWT;
 
 import it.eng.spagobi.services.security.bo.SpagoBIUserProfile;
+import it.eng.spagobi.security.saml.FederatedTokenGuard;
 import it.eng.spagobi.services.security.exceptions.SecurityException;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
@@ -74,9 +75,10 @@ public class JWTSsoService implements SsoServiceInterface {
 				logger.debug("JWT token not found in request");
 				return null;
 			}
-			LogMF.debug(logger, "JWT token in input is [{0}]", jwtToken);
+			LogMF.debug(logger, "JWT token in input is [{0}]", FederatedTokenGuard.isFederated(jwtToken) ? "federated credential redacted" : jwtToken);
 			JWTVerifier verifier = JWT.require(algorithm).build();
 			DecodedJWT decodedJWT = verifier.verify(jwtToken);
+			FederatedTokenGuard.checkDecoded(decodedJWT);
 			logger.debug("JWT token verified properly");
 			Claim userIdClaim = decodedJWT.getClaim(SsoServiceInterface.USER_ID);
 			LogMF.debug(logger, "User id detected is [{0}]", userIdClaim.asString());
@@ -107,11 +109,12 @@ public class JWTSsoService implements SsoServiceInterface {
 	@Override
 	public void validateTicket(String ticket, String userId) throws SecurityException {
 		try {
+			FederatedTokenGuard.check(userId);
 			Algorithm algorithm = ALGORITHM_FACTORY.getAlgorithm();
 			String jwtToken = ticket;
-			logger.debug("JWT token in input : [" + jwtToken + "]");
+			logger.debug("JWT token in input : [" + (FederatedTokenGuard.isFederated(jwtToken) ? "federated credential redacted" : jwtToken) + "]");
 			JWTVerifier verifier = JWT.require(algorithm).withIssuer(KNOWAGE_ISSUER).build();
-			verifier.verify(jwtToken);
+			FederatedTokenGuard.checkDecoded(verifier.verify(jwtToken));
 			logger.debug("JWT token verified properly");
 		} catch (JWTVerificationException e) {
 			throw new SecurityException("Invalid JWT token!", e);
@@ -229,10 +232,11 @@ public class JWTSsoService implements SsoServiceInterface {
 	}
 
 	public static DecodedJWT getDecodedJWT(String jwtToken) throws JWTVerificationException {
-		LogMF.debug(logger, "JWT token in input is [{0}]", jwtToken);
+		LogMF.debug(logger, "JWT token in input is [{0}]", FederatedTokenGuard.isFederated(jwtToken) ? "federated credential redacted" : jwtToken);
 		Algorithm algorithm = ALGORITHM_FACTORY.getAlgorithm();
 		JWTVerifier verifier = JWT.require(algorithm).build();
 		DecodedJWT decodedJWT = verifier.verify(jwtToken);
+		FederatedTokenGuard.checkDecoded(decodedJWT);
 		logger.debug("JWT token verified and decoded properly");
 		return decodedJWT;
 	}
@@ -260,9 +264,10 @@ public class JWTSsoService implements SsoServiceInterface {
 
 	public static Map<String, String> jwtToken2ldapUser(String jwtToken) throws JWTVerificationException {
 		Algorithm algorithm = ALGORITHM_FACTORY.getAlgorithm();
-		LogMF.debug(logger, "JWT token in input is [{0}]", jwtToken);
+		LogMF.debug(logger, "JWT token in input is [{0}]", FederatedTokenGuard.isFederated(jwtToken) ? "federated credential redacted" : jwtToken);
 		JWTVerifier verifier = JWT.require(algorithm).build();
 		DecodedJWT decodedJWT = verifier.verify(jwtToken);
+		FederatedTokenGuard.checkDecoded(decodedJWT);
 		logger.debug("JWT token verified properly");
 		Claim userIdClaim = decodedJWT.getClaim(SsoServiceInterface.USER_ID);
 		LogMF.debug(logger, "User id detected is [{0}]", userIdClaim.asString());
@@ -302,7 +307,7 @@ public class JWTSsoService implements SsoServiceInterface {
 	}
 
 	public static SpagoBIUserProfile fullJWTToken2UserProfile(String jwtToken) {
-		LogMF.debug(logger, "JWT token in input is [{0}]", jwtToken);
+		LogMF.debug(logger, "JWT token in input is [{0}]", FederatedTokenGuard.isFederated(jwtToken) ? "federated credential redacted" : jwtToken);
 
 		SpagoBIUserProfile profile = new SpagoBIUserProfile();
 		profile.setUniqueIdentifier(jwtToken);
@@ -310,6 +315,7 @@ public class JWTSsoService implements SsoServiceInterface {
 		Algorithm algorithm = ALGORITHM_FACTORY.getAlgorithm();
 		JWTVerifier verifier = JWT.require(algorithm).build();
 		DecodedJWT decodedJWT = verifier.verify(jwtToken);
+		FederatedTokenGuard.checkDecoded(decodedJWT);
 		logger.debug("JWT token verified properly");
 
 		Claim userIdClaim = decodedJWT.getClaim(SsoServiceInterface.USER_ID);
@@ -329,6 +335,9 @@ public class JWTSsoService implements SsoServiceInterface {
 		Claim isSuperAdminClaim = decodedJWT.getClaim(IS_SUPER_ADMIN_CLAIM);
 		LogMF.debug(logger, "Super admin flag detected is [{0}]", isSuperAdminClaim.asBoolean());
 		profile.setIsSuperadmin(isSuperAdminClaim.asBoolean());
+		if (FederatedTokenGuard.isFederated(jwtToken)) {
+			profile.setOrganization(decodedJWT.getClaim(FederatedTokenGuard.TENANT_CLAIM).asString());
+		}
 
 		// @formatter:off
 		HashMap<String, String> attributes = decodedJWT.getClaims()
