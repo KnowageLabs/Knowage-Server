@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-fragment xmlns="http://xmlns.jcp.org/xml/ns/javaee" version="3.1">
+	<name>knowage-federated-session-guard</name>
+	<ordering><before><others/></before></ordering>
+	<filter>
+		<filter-name>FederatedSessionFilter</filter-name>
+		<filter-class>it.eng.spagobi.security.saml.FederatedSessionFilter</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>FederatedSessionFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+		<dispatcher>REQUEST</dispatcher>
+		<dispatcher>FORWARD</dispatcher>
+		<dispatcher>ASYNC</dispatcher>
+	</filter-mapping>
+</web-fragment>

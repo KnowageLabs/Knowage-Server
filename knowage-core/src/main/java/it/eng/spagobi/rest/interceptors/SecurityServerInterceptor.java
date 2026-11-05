@@ -88,9 +88,10 @@ public class SecurityServerInterceptor extends AbstractSecurityServerInterceptor
 			if (servletRequest.getHeader(authorizationHeaderName) != null) {
 				String token = servletRequest.getHeader(authorizationHeaderName);
 
-				LOGGER.trace("Token is: " + token);
-
 				token = token.replaceFirst("Bearer ", "");
+				if (it.eng.spagobi.security.saml.FederatedTokenGuard.isFederated(token)) {
+					return (UserProfile) UserUtilities.getUserProfile(token);
+				}
 				ISecurityServiceSupplier supplier = SecurityServiceSupplierFactory.createISecurityServiceSupplier();
 
 				SpagoBIUserProfile spagoBIUserProfile = supplier.checkAuthenticationToken(token);
@@ -133,7 +134,9 @@ public class SecurityServerInterceptor extends AbstractSecurityServerInterceptor
 				// "X-Auth-Token chencking authorization will be by access token"
 				String token = servletRequest.getHeader("X-Auth-Token");
 
-				LOGGER.trace("Token is: " + token);
+				if (it.eng.spagobi.security.saml.FederatedTokenGuard.isFederated(token)) {
+					return (UserProfile) UserUtilities.getUserProfile(token);
+				}
 
 				ISecurityServiceSupplier supplier = SecurityServiceSupplierFactory.createISecurityServiceSupplier();
 

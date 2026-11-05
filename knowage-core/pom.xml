@@ -16,6 +16,11 @@
 	<dependencies>
 		<dependency>
 			<groupId>it.eng.knowage</groupId>
+			<artifactId>knowagesamlsecurityprovider</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>it.eng.knowage</groupId>
 			<artifactId>knowage-jdbc-core</artifactId>
 			<version>${project.version}</version>
 			<scope>compile</scope>

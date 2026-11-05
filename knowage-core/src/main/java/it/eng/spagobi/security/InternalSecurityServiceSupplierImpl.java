@@ -34,6 +34,9 @@ import it.eng.spagobi.commons.metadata.SbiExtRoles;
 import it.eng.spagobi.profiling.bean.SbiUser;
 import it.eng.spagobi.profiling.bean.SbiUserAttributes;
 import it.eng.spagobi.services.common.JWTSsoService;
+import it.eng.spagobi.security.saml.FederatedTokenGuard;
+import it.eng.spagobi.commons.bo.UserProfile;
+import it.eng.spagobi.commons.utilities.UserUtilities;
 import it.eng.spagobi.services.security.bo.SpagoBIUserProfile;
 import it.eng.spagobi.services.security.service.ISecurityServiceSupplier;
 
@@ -131,6 +134,13 @@ public class InternalSecurityServiceSupplierImpl implements ISecurityServiceSupp
 
 	@Override
 	public SpagoBIUserProfile createUserProfile(String jwtToken) {
+		if (FederatedTokenGuard.isFederated(jwtToken)) {
+			try {
+				return ((UserProfile) UserUtilities.getUserProfile(jwtToken)).getSpagoBIUserProfile();
+			} catch (Exception e) {
+				throw new it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException("Federated profile rejected", e);
+			}
+		}
 		LOGGER.debug("IN - JWT token: " + jwtToken);
 
 		String userId = JWTSsoService.jwtToken2userId(jwtToken);

@@ -80,6 +80,7 @@ import it.eng.spagobi.profiling.bean.SbiUserAttributesId;
 import it.eng.spagobi.profiling.dao.ISbiAttributeDAO;
 import it.eng.spagobi.profiling.dao.ISbiUserDAO;
 import it.eng.spagobi.services.common.JWTSsoService;
+import it.eng.spagobi.security.saml.FederatedTokenGuard;
 import it.eng.spagobi.services.common.SsoServiceFactory;
 import it.eng.spagobi.services.common.SsoServiceInterface;
 import it.eng.spagobi.services.security.bo.SpagoBIUserProfile;
@@ -147,10 +148,11 @@ public class UserUtilities {
 	}
 
 	public static IEngUserProfile getUserProfile(String userId) throws Exception {
+		FederatedTokenGuard.check(userId);
 
 		Monitor getUserProfileMonitor = MonitorFactory.start("KnowageDAO.UserUtilities.getUserProfile");
 
-		LOGGER.debug("IN.userId=" + userId);
+		LOGGER.debug("IN.userId=" + (FederatedTokenGuard.isFederated(userId) ? "federated credential redacted" : userId));
 		CacheInterface cache = UserProfileCache.getCache();
 		// Search UserProfile in cache
 		if (cache.contains(userId)) {
@@ -176,19 +178,38 @@ public class UserUtilities {
 					SpagoBIUserProfile user = PublicProfile.createPublicUserProfile(decodedUserId);
 					profile = new UserProfile(user);
 				} else {
-					ISecurityServiceSupplier supplier = createISecurityServiceSupplier();
-					SpagoBIUserProfile user = supplier.createUserProfile(userId);
+					boolean federated = FederatedTokenGuard.isFederated(userId);
+					ISecurityServiceSupplier supplier = federated ? null : createISecurityServiceSupplier();
+					SpagoBIUserProfile user = federated ? JWTSsoService.fullJWTToken2UserProfile(userId) : supplier.createUserProfile(userId);
 					if (user == null) {
 						return null;
 					}
 
+					if (federated && (user.getOrganization() == null
+							|| DAOFactory.getTenantsDAO().loadTenantByName(user.getOrganization()) == null)) {
+						throw new SecurityException("Federated tenant not found");
+					}
 					checkTenant(user);
+
+					if (federated) {
+						if (userHasNoRoles(user) || Boolean.TRUE.equals(user.getIsSuperadmin())) {
+							throw new SecurityException("Invalid federated authorization");
+						}
+						IRoleDAO roles = DAOFactory.getRoleDAO();
+						roles.setTenant(user.getOrganization());
+						for (String roleName : user.getRoles()) {
+							Role role = roles.loadByName(roleName);
+							if (role == null || !user.getOrganization().equals(role.getOrganization())) {
+								throw new SecurityException("Federated role not found in tenant");
+							}
+						}
+					}
 
 					if (userHasNoRoles(user)) {
 						setDefaultRole(user);
 					}
 
-					if (importUsersIsEnabled() && userIsNotInInternalMetadata(user)) {
+					if (!federated && importUsersIsEnabled() && userIsNotInInternalMetadata(user)) {
 						importUser(user);
 					}
 
@@ -205,9 +226,13 @@ public class UserUtilities {
 					profile.addAttributes(SpagoBIConstants.COUNTRY, defaultLocale.getCountry());
 
 					// put profile in cache
-					cache.put(userId, profile);
+					if (!FederatedTokenGuard.isFederated(userId)) {
+						cache.put(userId, profile);
+					}
 				}
-				LOGGER.debug("profile from get profile" + profile);
+				if (!FederatedTokenGuard.isFederated(userId)) {
+					LOGGER.debug("profile from get profile" + profile);
+				}
 
 				return profile;
 
@@ -619,6 +644,18 @@ public class UserUtilities {
 		functionalities.addAll(roleFunct);
 		functionalities.addAll(userFunct);
 		functionalities.addAll(licenseFunct);
+		if (FederatedTokenGuard.isFederated(user.getUniqueIdentifier())) {
+			FederatedTokenGuard.check(user.getUniqueIdentifier());
+			try {
+				String[] allowed = new ObjectMapper().readValue(user.getAttributes().get("pm_functions").toString(), String[].class);
+				functionalities.retainAll(Arrays.asList(allowed));
+				if (functionalities.isEmpty()) {
+					throw new SpagoBIRuntimeException("No federated application permissions");
+				}
+			} catch (IOException e) {
+				throw new SpagoBIRuntimeException("Invalid federated permission mapping", e);
+			}
+		}
 		String[] a = new String[] { "" };
 		LOGGER.debug("OUT");
 		return functionalities.toArray(a);

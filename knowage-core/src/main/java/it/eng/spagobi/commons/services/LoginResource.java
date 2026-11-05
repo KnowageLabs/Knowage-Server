@@ -634,9 +634,7 @@ public class LoginResource extends AbstractSpagoBIResource {
 	private void storeProfileInSession(UserProfile userProfile, HttpServletRequest req) {
 		logger.debug("IN");
 		// PM-int
-		UserProfileUtility.enrichProfile(userProfile, req, req.getSession());
-
-		req.getSession().setAttribute(IEngUserProfile.ENG_USER_PROFILE, userProfile);
+		LoginCompletionService.store(userProfile, req);
 
 		logger.debug("OUT");
 	}
@@ -881,12 +879,7 @@ public class LoginResource extends AbstractSpagoBIResource {
 	 * Records login event for privacy management
 	 */
 	private void recordLoginEvent(UserProfile userProfile) {
-		LoginEventBuilder eventBuilder = new LoginEventBuilder();
-		eventBuilder.appendSession("knowage", userProfile.getSourceIpAddress(), userProfile.getSessionId(),
-								   userProfile.getSessionStart(), userProfile.getUserId().toString());
-		eventBuilder.appendUserAgent(userProfile.getOs(), userProfile.getSourceIpAddress(),
-									  userProfile.getSourceSocketEnabled(), userProfile.getUserAgent());
-		PrivacyManagerClient.getInstance().sendMessage(eventBuilder.getDTO());
+		LoginCompletionService.record(userProfile);
 	}
 
 	/**

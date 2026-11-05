@@ -15,6 +15,7 @@ import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 
 import it.eng.spagobi.services.common.JWTSsoServiceAlgorithmFactory;
+import it.eng.spagobi.security.saml.FederatedTokenGuard;
 import it.eng.spagobi.services.rest.annotations.PublicService;
 
 @Path("/jwt")
@@ -37,6 +38,7 @@ public class JwtVerificationResource {
 			Algorithm algorithm = ALGORITHM_FACTORY.getAlgorithm();
 			JWTVerifier verifier = JWT.require(algorithm).build();
 			DecodedJWT jwt = verifier.verify(token);
+			FederatedTokenGuard.checkDecoded(jwt);
 
 			String userId = jwt.getClaim("user_id").asString();
 			return Response.ok("Valid token for user_id: " + userId).build();
