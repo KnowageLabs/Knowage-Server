@@ -1,5 +1,6 @@
 # Copy outside the WAR; replace every REPLACE_ value. No secrets belong in Git.
 provider=myid
+profiling.mode=pm
 frontend.url=https://REPLACE_PUBLIC_HOST/knowage-vue/saml-login
 sp.entity-id=https://REPLACE_PUBLIC_HOST/knowage/restful-services/saml/metadata
 sp.acs-url=https://REPLACE_PUBLIC_HOST/knowage/restful-services/saml/acs

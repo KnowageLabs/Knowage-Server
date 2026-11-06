@@ -100,6 +100,14 @@ public final class SamlConfiguration {
 		return "myid".equals(required("provider"));
 	}
 
+	public String profilingMode() {
+		String mode = optional("profiling.mode", "pm");
+		if (!"pm".equals(mode) && !"local".equals(mode)) {
+			throw new IllegalStateException("Unknown SAML profiling mode");
+		}
+		return mode;
+	}
+
 	public Saml2Settings settings() throws Exception {
 		if (!myId() && !"standard".equals(required("provider"))) {
 			throw new IllegalStateException("Unknown SAML provider");

@@ -1,6 +1,6 @@
 # Standard SAML: SHA-256, no MyID Scoping/Advice exception or regional logout.
-# The project profiling adapter remains PM-API; another project can replace it.
 provider=standard
+profiling.mode=local
 frontend.url=https://REPLACE_PUBLIC_HOST/knowage-vue/saml-login
 sp.entity-id=https://REPLACE_PUBLIC_HOST/knowage/restful-services/saml/metadata
 sp.acs-url=https://REPLACE_PUBLIC_HOST/knowage/restful-services/saml/acs
@@ -17,22 +17,5 @@ sp.keystore-password=env:KNOWAGE_SAML_KEYSTORE_PASSWORD
 sp.key-alias=env:KNOWAGE_SAML_KEY_ALIAS
 sp.key-password=env:KNOWAGE_SAML_KEY_PASSWORD
 session.seconds=36000
-identity.attribute=REPLACE_STABLE_IDENTITY_ATTRIBUTE
+identity.attribute=REPLACE_ATTRIBUTE_MATCHING_KNOWAGE_USER_ID
 identity.prefix=
-# These must match the PM API contract, not merely the SAML attribute name.
-pm.identity-parameter=REPLACE_PM_IDENTITY_PARAMETER
-pm.identity-field=REPLACE_PM_USER_IDENTITY_FIELD
-pm.token-url=env:KNOWAGE_PM_TOKEN_URL
-pm.client-id=env:KNOWAGE_PM_CLIENT_ID
-pm.client-secret=env:KNOWAGE_PM_CLIENT_SECRET
-pm.service-user=env:KNOWAGE_PM_SERVICE_USER
-pm.service-password=env:KNOWAGE_PM_SERVICE_PASSWORD
-pm.profile-url=env:KNOWAGE_PM_PROFILE_URL
-pm.user-url=env:KNOWAGE_PM_USER_URL
-pm.authorization-url=env:KNOWAGE_PM_AUTHORIZATION_URL
-pm.procedure=REPLACE_PM_PROCEDURE
-pm.user-type=REPLACE_OIM_OR_SPID
-pm.role-map.REPLACE_PM_ROLE=REPLACE_EXISTING_KNOWAGE_ROLE
-pm.tenant-map.REPLACE_PM_ORGANIZATION_ID=REPLACE_EXISTING_KNOWAGE_TENANT
-pm.function-map.REPLACE_PM_FUNCTION=REPLACE_KNOWAGE_FUNCTION
-pm.access-type-map.REPLACE_PM_ACCESS_TYPE=REPLACE_KNOWAGE_FUNCTION

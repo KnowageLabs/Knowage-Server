@@ -4,6 +4,14 @@ Destinatari: referente applicativo e gestore MyID. L'amministrazione dell'IdP
 rimane al suo gestore; noi configuriamo Knowage come Service Provider (SP).
 Preparare dati, certificati e registrazioni separati per collaudo e produzione.
 
+Questa guida descrive `profiling.mode=pm`. Con `profiling.mode=local`, PM non
+serve: concordare invece un attributo SAML stabile il cui valore normalizzato
+coincida esattamente con lo `user_id` Knowage, non modificabile liberamente dal
+titolare, e predisporre utenti/ruoli nei rispettivi tenant Knowage. Il tenant
+viene ricavato dall'account locale, non dall'asserzione o dalla configurazione SAML.
+Le richieste di certificati, metadata, autenticazione e logout restano invariate;
+le richieste al gestore PM e il punto 4 non si applicano.
+
 ## 1. Cosa fornire al gestore dell'Identity Provider
 
 Sostituire `HOST_PUBBLICO` con il DNS HTTPS definitivo. I contesti seguenti

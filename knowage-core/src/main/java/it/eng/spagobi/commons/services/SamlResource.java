@@ -25,10 +25,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import it.eng.spagobi.commons.bo.SessionUserProfile;
+import it.eng.spagobi.commons.bo.SessionUserProfileBuilder;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.utilities.UserUtilities;
 import it.eng.spagobi.security.saml.FederatedSessionStore;
 import it.eng.spagobi.security.saml.FederatedTokenGuard;
+import it.eng.spagobi.security.saml.LocalUserProfileLoader;
 import it.eng.spagobi.security.saml.PmApiProfilingService;
 import it.eng.spagobi.security.saml.SamlConfiguration;
 import it.eng.spagobi.security.saml.SamlIdentity;
@@ -78,17 +80,24 @@ public class SamlResource {
 		try {
 			JsonNode pending = state.get("login:" + relay, "LOGIN");
 			SamlIdentity identity = new SamlProtocolService(config, state).authenticate(response, relay);
-			SpagoBIUserProfile profile = new PmApiProfilingService(config).resolve(identity);
-			// PM grants are refreshed on every login and never carried beyond the Rome calendar day.
-			long midnight = LocalDate.now(ZoneId.of("Europe/Rome")).plusDays(1).atStartOfDay(ZoneId.of("Europe/Rome")).toInstant().toEpochMilli();
-			long expiresAt = Math.min(identity.expiresAt, midnight);
+			String profilingMode = config.profilingMode();
+			SpagoBIUserProfile profile = "local".equals(profilingMode)
+					? LocalUserProfileLoader.load(identity.identifier(config))
+					: new PmApiProfilingService(config).resolve(identity);
+			long expiresAt = identity.expiresAt;
+			if ("pm".equals(profilingMode)) {
+				// PM grants are refreshed on every login and never carried beyond the Rome calendar day.
+				long midnight = LocalDate.now(ZoneId.of("Europe/Rome")).plusDays(1).atStartOfDay(ZoneId.of("Europe/Rome")).toInstant().toEpochMilli();
+				expiresAt = Math.min(expiresAt, midnight);
+			}
 			sid = FederatedSessionStore.randomId();
 			Map<String, String> attributes = new HashMap<>();
 			profile.getAttributes().forEach((key, value) -> attributes.put(key, value.toString()));
 			attributes.put(FederatedTokenGuard.SESSION_CLAIM, sid);
 			attributes.put(FederatedTokenGuard.TENANT_CLAIM, profile.getOrganization());
+			attributes.put(FederatedTokenGuard.PROFILE_CLAIM, profilingMode);
 			String token = JWTSsoService.getFullJWTToken(profile.getUserId(), profile.getUserName(), profile.getRoles(),
-					attributes, false, new Date(expiresAt));
+					attributes, Boolean.TRUE.equals(profile.getIsSuperadmin()), new Date(expiresAt));
 			ObjectNode context = JSON.createObjectNode().put("issuer", identity.issuer).put("sessionIndex", identity.sessionIndex)
 					.put("authnInstant", identity.authnInstant).put("tokenHash", FederatedSessionStore.digest(token));
 			context.set("nameId", identity.nameId);
@@ -106,7 +115,7 @@ public class SamlResource {
 				state.revoke(sid);
 			}
 			// Toolkit exceptions may contain response content. Never log their message or stack.
-			LOGGER.warn("SAML login or PM profiling rejected");
+			LOGGER.warn("SAML login or application profiling rejected");
 			return noCache(Response.seeOther(URI.create(config.url("frontend.url") + "#samlError=authentication"))).build();
 		}
 	}
@@ -135,7 +144,12 @@ public class SamlResource {
 			FederatedTokenGuard.check(token);
 			UserProfile complete = (UserProfile) UserUtilities.getUserProfile(token);
 			// An internal default role must never widen/rewrite an external PM grant.
-			SessionUserProfile profile = new SessionUserProfile(UserUtilities.clone(complete.getSpagoBIUserProfile()));
+			SessionUserProfile profile = FederatedTokenGuard.isLocalProfile(token)
+					? SessionUserProfileBuilder.getDefaultUserProfile(complete)
+					: new SessionUserProfile(UserUtilities.clone(complete.getSpagoBIUserProfile()));
+			if (profile.getDefaultRole() != null && !complete.getRoles().contains(profile.getDefaultRole())) {
+				throw new java.lang.SecurityException("Default role is not assigned to the local SAML account");
+			}
 			LoginCompletionService.completeFederated(profile, request);
 			return noCache(Response.ok(Map.of("token", token))).build();
 		} catch (Exception e) {

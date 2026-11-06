@@ -1,4 +1,4 @@
-# SAML 2.0 / MyID e profilazione PM-API
+# SAML 2.0: utenti Knowage locali o profilazione PM-API
 
 Guide operative: [preparazione per il gestore IdP](GUIDA-PREPARAZIONE-IDP.md)
 e [installazione applicativa essenziale](GUIDA-INSTALLAZIONE-APPLICATIVA.md).
@@ -58,6 +58,56 @@ la firma del binding Redirect. Sono pubblicati soltanto i binding implementati.
 L'uso professionale non e stato richiesto e non viene aggiunto.
 
 ## Mapping e politica di autorizzazione
+
+La profilazione e indipendente da `provider=standard` / `provider=myid`.
+Selezionare `profiling.mode=local` per utenti Knowage esistenti, oppure
+`profiling.mode=pm` per PM-API. Se la proprieta manca, resta `pm` per
+compatibilita; valori diversi o vuoti sono rifiutati. Un errore non provoca
+mai un ripiego automatico da una modalita all'altra.
+
+### Utenti Knowage e ruoli locali
+
+L'esempio `standard.properties.example` non richiede PM:
+
+```properties
+provider=standard
+profiling.mode=local
+identity.attribute=username
+identity.prefix=
+```
+
+Il singolo valore dell'attributo SAML, dopo l'eventuale rimozione del prefisso,
+deve coincidere **esattamente, anche nelle maiuscole/minuscole**, con lo
+`user_id` di un utente gia presente in Knowage. Il tenant viene ricavato
+dall'account locale: lo stesso ambiente SAML puo autenticare utenti di tenant
+diversi, ciascuno con i propri ruoli. Non si configura `local.tenant` e non
+si accetta un tenant dall'IdP o dal browser. Non vengono usati
+NameID, email o altri attributi come ripiego; non vengono creati utenti.
+L'IdP deve garantire che quel valore identifichi soltanto il titolare
+dell'account: non deve essere un attributo liberamente modificabile dall'utente.
+
+Knowage legge dal catalogo locale nome, attributi, ruoli e flag superadmin
+gia assegnati. I ruoli nell'asserzione SAML sono ignorati. Utenti inesistenti,
+bloccati (`flgPwdBlocked=true`), senza tenant, senza ruoli assegnati o con
+ruoli di un altro tenant rispetto all'account vengono rifiutati. Viene rispettato il ruolo
+predefinito locale, che deve appartenere ai ruoli assegnati.
+Password e MFA sono responsabilita dell'IdP; non si verifica la password
+Knowage ne si applica la sua scadenza.
+
+Si applicano i normali controlli su ruoli/funzionalita/licenza, senza
+`pm_functions` e senza chiamate PM/VAM. Gli attributi locali con prefisso
+riservato `kn_` o con nomi di claim JWT (`user_id`, `iss`, `sub`, `aud`,
+`exp`, `nbf`, `iat`, `jti`) non vengono esportati nel token.
+I profili locali sono acquisiti al login: modifiche alle assegnazioni di
+ruoli/attributi o al blocco dell'account richiedono un nuovo login o la revoca
+della sessione esistente. La durata resta limitata da `session.seconds` e
+dall'IdP, senza il limite di mezzanotte specifico di PM.
+Registro condiviso, scambio monouso, revoca e logout SAML rimangono obbligatori.
+
+### Profilazione esterna PM-API
+
+Le regole seguenti riguardano soltanto `profiling.mode=pm`. Gli esempi MyID
+mantengono esplicitamente questa modalita e i suoi controlli.
 
 | Origine | Campo | Destinazione Knowage | Obbligatorio | Assenza/errore |
 | --- | --- | --- | --- | --- |
@@ -145,8 +195,9 @@ le fornisce. Non sono state inventate.
 
 1. Copiare fuori dai WAR uno degli esempi in `src\main\resources\saml`:
    `myid-collaudo.properties.example`, `myid-production.properties.example` o
-   `standard.properties.example`. Sostituire ogni `REPLACE_` e valorizzare tutte
-   le variabili `env:`; i placeholder/segreti mancanti causano un rifiuto.
+   `standard.properties.example` (utenti locali, senza PM). Sostituire ogni
+   `REPLACE_` e valorizzare tutte le variabili `env:` richieste dalla modalita
+   scelta; i placeholder/segreti mancanti causano un rifiuto.
    `authn.contexts` del profilo MyID e un esempio di livello 1: scegliere il
    livello richiesto dal servizio secondo §9.1, non assumere che sia SPID livello 2.
 2. Installare certificato e chiave RSA nel keystore PKCS12 di deployment,
@@ -328,6 +379,12 @@ Sono stati aggiunti test JUnit su:
 - risoluzione PM completa con identificativo alternativo senza codice fiscale,
   compatibilita delle chiavi legacy, encoding e rifiuto di identita mancanti,
   ambigue, vuote dopo la normalizzazione o non corrispondenti;
+- selezione locale/PM con default compatibile, identita locale senza PM,
+  caricamento di utenti/ruoli/attributi/privilegi locali, rifiuto di utenti
+  mancanti/bloccati o senza tenant, risoluzione di account in tenant diversi,
+  rifiuto di ruoli di un altro tenant e protezione dei claim JWT riservati;
+- distinzione dei token locali dai token PM preesistenti e rifiuto di modalita
+  di profilazione sconosciute;
 - stato JDBC monouso concorrente tra nodi, revoca e tombstone per SessionIndex;
 - richieste RSA-SHA1/MyID, Advice, firme/issuer/audience/recipient, scadenza,
   correlazione/replay, logout senza cookie e percorso standard SHA-256;
@@ -335,15 +392,17 @@ Sono stati aggiunti test JUnit su:
   guasto del registro e preservazione delle credenziali legacy.
 
 **Questi test JUnit non sono stati eseguiti.** Su una macchina di build
-autorizzata con Java 17/Maven, eseguire i test mirati del provider includendo
-le dipendenze reactor e disabilitando lo skip dei test del parent, quindi build
+autorizzata con Java 17/Maven, eseguire i test mirati del provider, DAO e utils
+includendo le dipendenze reactor e disabilitando lo skip dei test del parent, quindi build
 CE/EE e regressioni core/engine. Verificare separatamente tutti gli script SQL
 sul database reale e il filter mapping effettivo del container.
 
-Prima del rilascio servono: URL Swagger PM sottoscritte, chiavi VAM e credenziali
-PM di applicazione, procedura/tipo utente/mapping reali, tenant e isolamento dati,
-keystore e metadata fidati, attivazione SLO/Circle of Trust/redirect regionale.
-Collaudare login ammesso/negato, errori PM, fixation/cookie/proxy, cambio ruolo,
+Prima del rilascio servono tenant e isolamento dati, keystore e metadata fidati,
+attivazione SSO/SLO presso l'IdP. In modalita locale predisporre utenti/ruoli
+e il contratto dell'attributo identificativo. Solo per PM servono anche URL
+Swagger sottoscritte, chiavi VAM, credenziali PM, procedura/tipo utente/mapping
+reali; con MyID confermare Circle of Trust e redirect regionale.
+Collaudare login ammesso/negato, errori della profilazione scelta, fixation/cookie/proxy, cambio ruolo,
 logout locale/remoto senza cookie, replay, guasto DB, token gia in cache e
 sessione aperta su **ogni** engine/consumer, oltre alle autenticazioni legacy.
 Provare separatamente un IdP standard diverso da MyID.
