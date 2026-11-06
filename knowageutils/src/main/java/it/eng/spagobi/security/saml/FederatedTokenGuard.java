@@ -11,6 +11,7 @@ import it.eng.spagobi.services.common.JWTSsoServiceAlgorithmFactory;
 public final class FederatedTokenGuard {
 	public static final String SESSION_CLAIM = "kn_saml_sid";
 	public static final String TENANT_CLAIM = "kn_saml_tenant";
+	public static final String PROFILE_CLAIM = "kn_saml_profile";
 
 	private FederatedTokenGuard() {
 	}
@@ -33,6 +34,22 @@ public final class FederatedTokenGuard {
 		}
 	}
 
+	public static boolean isLocalProfile(String token) {
+		if (!isFederated(token)) {
+			return false;
+		}
+		com.auth0.jwt.interfaces.Claim claim = JWT.decode(token).getClaim(PROFILE_CLAIM);
+		// Tokens issued before profiling selection are PM profiles.
+		if (claim.isNull()) {
+			return false;
+		}
+		String mode = claim.asString();
+		if (!"pm".equals(mode) && !"local".equals(mode)) {
+			throw new JWTVerificationException("Invalid federated profiling mode");
+		}
+		return "local".equals(mode);
+	}
+
 	public static void checkDecoded(DecodedJWT token) {
 		String sid = token.getClaim(SESSION_CLAIM).asString();
 		if (sid == null) {
@@ -41,6 +58,7 @@ public final class FederatedTokenGuard {
 			}
 			return;
 		}
+		isLocalProfile(token.getToken());
 		try {
 			FederatedSessionVerifier.verify(token.getToken(), sid, token.getIssuer(), token.getExpiresAt());
 		} catch (IllegalStateException e) {

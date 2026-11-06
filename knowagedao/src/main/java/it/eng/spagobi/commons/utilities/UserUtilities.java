@@ -192,7 +192,7 @@ public class UserUtilities {
 					checkTenant(user);
 
 					if (federated) {
-						if (userHasNoRoles(user) || Boolean.TRUE.equals(user.getIsSuperadmin())) {
+						if (userHasNoRoles(user) || (!FederatedTokenGuard.isLocalProfile(userId) && Boolean.TRUE.equals(user.getIsSuperadmin()))) {
 							throw new SecurityException("Invalid federated authorization");
 						}
 						IRoleDAO roles = DAOFactory.getRoleDAO();
@@ -646,14 +646,16 @@ public class UserUtilities {
 		functionalities.addAll(licenseFunct);
 		if (FederatedTokenGuard.isFederated(user.getUniqueIdentifier())) {
 			FederatedTokenGuard.check(user.getUniqueIdentifier());
-			try {
-				String[] allowed = new ObjectMapper().readValue(user.getAttributes().get("pm_functions").toString(), String[].class);
-				functionalities.retainAll(Arrays.asList(allowed));
-				if (functionalities.isEmpty()) {
-					throw new SpagoBIRuntimeException("No federated application permissions");
+			if (!FederatedTokenGuard.isLocalProfile(user.getUniqueIdentifier())) {
+				try {
+					String[] allowed = new ObjectMapper().readValue(user.getAttributes().get("pm_functions").toString(), String[].class);
+					functionalities.retainAll(Arrays.asList(allowed));
+					if (functionalities.isEmpty()) {
+						throw new SpagoBIRuntimeException("No federated application permissions");
+					}
+				} catch (IOException e) {
+					throw new SpagoBIRuntimeException("Invalid federated permission mapping", e);
 				}
-			} catch (IOException e) {
-				throw new SpagoBIRuntimeException("Invalid federated permission mapping", e);
 			}
 		}
 		String[] a = new String[] { "" };

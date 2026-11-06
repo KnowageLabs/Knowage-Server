@@ -33,8 +33,6 @@ public class PmApiProfilingService implements ProjectProfilingService {
 	private static final HttpClient HTTP = HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(5))
 			.followRedirects(HttpClient.Redirect.NEVER).build();
 	private final HttpClient http;
-	private final String identityAttribute;
-	private final String identityPrefix;
 	private final String identityParameter;
 	private final String identityField;
 
@@ -45,9 +43,8 @@ public class PmApiProfilingService implements ProjectProfilingService {
 	PmApiProfilingService(SamlConfiguration config, HttpClient http) {
 		this.config = config;
 		this.http = http;
-		identityAttribute = config.required("identity.attribute", "identity.fiscal-number-attribute");
-		identityPrefix = config.optional("identity.prefix", "identity.fiscal-number-prefix", "");
-		if (identityPrefix == null) {
+		config.required("identity.attribute", "identity.fiscal-number-attribute");
+		if (config.optional("identity.prefix", "identity.fiscal-number-prefix", "") == null) {
 			throw new IllegalStateException("Missing SAML identity prefix configuration");
 		}
 		identityParameter = identityName("pm.identity-parameter");
@@ -67,13 +64,7 @@ public class PmApiProfilingService implements ProjectProfilingService {
 
 	@Override
 	public SpagoBIUserProfile resolve(SamlIdentity identity) throws Exception {
-		String identifier = identity.singleAttribute(identityAttribute);
-		if (!identityPrefix.isEmpty() && identifier.startsWith(identityPrefix)) {
-			identifier = identifier.substring(identityPrefix.length()).trim();
-		}
-		if (identifier.isEmpty()) {
-			throw new IllegalArgumentException("Empty normalized SAML identity attribute");
-		}
+		String identifier = identity.identifier(config);
 		String accessToken = token();
 		String query = encode(identityParameter) + "=" + encode(identifier)
 				+ "&codiceProcedura=" + encode(config.required("pm.procedure"));

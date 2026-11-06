@@ -30,4 +30,19 @@ public final class SamlIdentity {
 		}
 		return values.get(0).trim();
 	}
+
+	public String identifier(SamlConfiguration config) {
+		String value = singleAttribute(config.required("identity.attribute", "identity.fiscal-number-attribute"));
+		String prefix = config.optional("identity.prefix", "identity.fiscal-number-prefix", "");
+		if (prefix == null) {
+			throw new IllegalStateException("Missing SAML identity prefix configuration");
+		}
+		if (!prefix.isEmpty() && value.startsWith(prefix)) {
+			value = value.substring(prefix.length()).trim();
+		}
+		if (value.isEmpty()) {
+			throw new IllegalArgumentException("Empty normalized SAML identity attribute");
+		}
+		return value;
+	}
 }

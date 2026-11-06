@@ -1,5 +1,6 @@
 # Independent production configuration. Never reuse collaudo credentials/keys.
 provider=myid
+profiling.mode=pm
 frontend.url=https://REPLACE_PRODUCTION_HOST/knowage-vue/saml-login
 sp.entity-id=https://REPLACE_PRODUCTION_HOST/knowage/restful-services/saml/metadata
 sp.acs-url=https://REPLACE_PRODUCTION_HOST/knowage/restful-services/saml/acs

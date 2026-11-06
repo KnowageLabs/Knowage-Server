@@ -6,6 +6,21 @@ Java 17/Tomcat 9 (`javax.servlet`), properties di esempio, script SQL del DB
 e materiali concordati nella [guida preparatoria](GUIDA-PREPARAZIONE-IDP.md).
 I percorsi Windows sono esempi.
 
+**Variante senza PM:** usare `standard.properties.example` con
+`provider=standard` per un IdP standard, oppure mantenere `provider=myid` e
+i relativi endpoint per MyID. Impostare `profiling.mode=local`
+e `identity.attribute=<attributo
+SAML contenente lo user_id Knowage esatto>`, con `identity.prefix=` se non serve
+normalizzazione. Creare prima gli utenti Knowage e assegnare i ruoli nel
+tenant di ciascun account; il tenant viene ricavato automaticamente dall'utente
+locale, anche in ambienti multi-tenant. Non impostare `local.tenant`.
+Omettere tutte le proprieta e i prerequisiti PM/VAM della
+guida; rete, certificati, registro, distribuzione e logout restano necessari.
+Password/MFA sono gestiti dall'IdP. Il blocco locale nega il login;
+ruoli, attributi, ruolo predefinito e superadmin provengono dal catalogo Knowage,
+non dall'asserzione. Collaudare due utenti locali di tenant diversi e il rifiuto
+di utenti inesistenti, bloccati, senza tenant/ruoli o con ruoli di un altro tenant.
+
 ## 1. Preparare rete e HTTPS
 
 Pubblicare frontend/backend sulla **stessa origine HTTPS**, mantenendo i contesti
@@ -62,6 +77,7 @@ Copiare `myid-production.properties.example` (oppure
 | Chiavi | Valori da inserire |
 | --- | --- |
 | `provider` | `myid` |
+| `profiling.mode` | `pm` per questa guida; `local` per la variante senza PM |
 | `frontend.url` | URL HTTPS pubblico della pagina `/knowage-vue/saml-login`, **senza fragment** |
 | `sp.entity-id`, `sp.acs-url`, `sp.slo-url` | Valori esatti registrati presso MyID |
 | `authn.contexts` | Contesti concordati, separati da virgole senza spazi; non assumere il livello dell'esempio |
