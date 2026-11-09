@@ -84,6 +84,7 @@ import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.engines.birt.exceptions.ConnectionDefinitionException;
 import it.eng.spagobi.engines.birt.exceptions.ConnectionParameterNotValidException;
+import it.eng.spagobi.engines.birt.utilities.BirtDesignCompatibility;
 import it.eng.spagobi.engines.birt.utilities.ParameterConverter;
 import it.eng.spagobi.engines.birt.utilities.Utils;
 import it.eng.spagobi.services.common.EnginConf;
@@ -373,7 +374,8 @@ public class BirtReportServlet extends HttpServlet {
 		}
 
 		logger.debug("OUT");
-		return is;
+		// Adapt only the execution stream, after extracting any ZIP design.
+		return BirtDesignCompatibility.normalize(is);
 	}
 
 	protected Map findReportParams(HttpServletRequest request, IReportRunnable design) throws ConnectionDefinitionException {
