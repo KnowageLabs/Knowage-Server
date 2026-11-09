@@ -19,11 +19,56 @@ package it.eng.spagobi.commons.utilities;
 
 import static org.junit.Assert.assertEquals;
 
+import java.util.Collections;
+import java.util.Map;
+
 import org.junit.Test;
 
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 public class StringUtilitiesTest {
+
+	@Test
+	public void substituteNumericMonthParametersTest() throws Exception {
+		String statement = "where month_of_year = $P{ad_mese_tutti} or $P{ad_mese_tutti} = 0";
+		for (String type : new String[] { "NUM", "NUMBER" }) {
+			Map<String, String> types = Collections.singletonMap("ad_mese_tutti", type);
+			for (int month = 0; month <= 12; month++) {
+				Map<String, String> values = Collections.singletonMap("ad_mese_tutti",
+						StringUtilities.getSingleValue(Integer.toString(month), type));
+				assertEquals("where month_of_year = " + month + " or " + month + " = 0",
+						StringUtilities.substituteParametersInString(statement, values, types, false));
+			}
+		}
+	}
+
+	@Test
+	public void substituteNumericMultivalueParametersTest() throws Exception {
+		Map<String, String> values = Collections.singletonMap("months", StringUtilities.getMultiValue("0,1,12", "NUM"));
+		Map<String, String> types = Collections.singletonMap("months", "NUM");
+		assertEquals("where month_of_year in (0,1,12)",
+				StringUtilities.substituteParametersInString("where month_of_year in ($P{months})", values, types, false));
+	}
+
+	@Test
+	public void substituteQuotedStringParametersTest() throws Exception {
+		Map<String, String> types = Collections.singletonMap("value", "STRING");
+		String[][] cases = { { "'a'", "'a'" }, { "''", "''" }, { "'it's'", "'it''s'" },
+				{ "'it's','a',''", "'it''s','a',''" } };
+		for (String[] testCase : cases) {
+			Map<String, String> values = Collections.singletonMap("value", testCase[0]);
+			assertEquals("select " + testCase[1],
+					StringUtilities.substituteParametersInString("select $P{value}", values, types, false));
+		}
+	}
+
+	@Test
+	public void substituteRawExpressionParametersTest() throws Exception {
+		Map<String, String> values = Collections.singletonMap("expression", "COALESCE('x', 0)");
+		Map<String, String> types = Collections.singletonMap("expression", "RAW");
+		assertEquals("select COALESCE('x', 0)",
+				StringUtilities.substituteParametersInString("select $P{expression}", values, types, false));
+	}
 
 	@Test
 	public void getSubstringsBetweenTest() {

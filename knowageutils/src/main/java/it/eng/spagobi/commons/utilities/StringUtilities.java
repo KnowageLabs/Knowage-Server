@@ -507,6 +507,9 @@ public class StringUtilities {
 	}
 
 	private static String escapeInternalQuotes(String replacement) {
+		if (replacement == null || replacement.length() < 2 || !replacement.startsWith("'") || !replacement.endsWith("'")) {
+			return replacement;
+		}
 		return new StringBuilder().append(replacement.charAt(0))
 				.append(replacement.substring(1, replacement.length() - 1).replaceAll("'", "''"))
 				.append(replacement.charAt(replacement.length() - 1)).toString();
