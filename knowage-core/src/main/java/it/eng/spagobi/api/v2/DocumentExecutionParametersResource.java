@@ -43,10 +43,13 @@ import org.json.JSONObject;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
+import it.eng.spagobi.analiticalmodel.document.handlers.AbstractDriverRuntime;
 import it.eng.spagobi.analiticalmodel.document.handlers.BusinessModelRuntime;
 import it.eng.spagobi.analiticalmodel.document.handlers.DocumentRuntime;
 import it.eng.spagobi.analiticalmodel.document.handlers.DriversRuntimeLoaderFactory;
 import it.eng.spagobi.analiticalmodel.document.handlers.LovResultCacheManager;
+import it.eng.spagobi.analiticalmodel.execution.bo.LovValue;
+import it.eng.spagobi.analiticalmodel.execution.bo.minmaxvalue.MinMaxValuesRetriever;
 import it.eng.spagobi.api.AbstractSpagoBIResource;
 import it.eng.spagobi.api.common.MetaUtils;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIMetaModelParameter;
@@ -114,6 +117,35 @@ public class DocumentExecutionParametersResource extends AbstractSpagoBIResource
 	private static final String[] VISIBLE_COLUMNS = new String[] { VALUE_FIELD, LABEL_FIELD, DESCRIPTION_FIELD };
 
 	protected static Logger logger = Logger.getLogger(DocumentExecutionParametersResource.class);
+
+	@POST
+	@Path("/maxValue")
+	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	public String getMaxValue(@Context HttpServletRequest req) throws Exception {
+		JSONObject body = RestUtilities.readBodyAsJSONObject(req);
+		String label = body.getString(OBJECT_LABEL);
+		String role = body.optString(ROLE, null);
+		String parameterId = body.getString(PARAMETER_ID);
+		BIObject obj = DriversRuntimeLoaderFactory.getDriversRuntimeLoader()
+				.loadBIObjectForExecutionByLabelAndRole(label, role);
+		DocumentRuntime dum = new DocumentRuntime(getUserProfile(), req.getLocale());
+		dum.refreshParametersValues(body.getJSONArray(SELECTED_PARAMETER_VALUES), false, obj.getDrivers());
+
+		BIObjectParameter parameter = null;
+		for (Object driver : obj.getDrivers()) {
+			BIObjectParameter candidate = (BIObjectParameter) driver;
+			if (parameterId.equalsIgnoreCase(candidate.getParameterUrlName())) {
+				parameter = candidate;
+				break;
+			}
+		}
+		Assert.assertNotNull(parameter, "Impossible to find parameter [" + parameterId + "]");
+		LovValue maxValue = new MinMaxValuesRetriever().getMaxValueDum(parameter, obj, getUserProfile(),
+				req.getLocale(), role);
+		maxValue = AbstractDriverRuntime.formatMaxValue(maxValue, parameter.getParameter().getType());
+		Assert.assertNotNull(maxValue, "Impossible to parse max value for parameter [" + parameterId + "]");
+		return new JSONObject().put("maxValue", maxValue.getValue() == null ? JSONObject.NULL : maxValue.getValue()).toString();
+	}
 
 	@POST
 	@Path("/admissibleValues")

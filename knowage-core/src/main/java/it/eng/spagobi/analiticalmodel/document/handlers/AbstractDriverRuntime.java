@@ -80,6 +80,7 @@ public abstract class AbstractDriverRuntime<T extends AbstractDriver> {
 	List<? extends AbstractParuse> dataDependencies;
 	List<? extends AbstractParview> visualDependencies;
 	List lovDependencies;
+	List<String> maxValueDependencies = new ArrayList<>();
 
 	// attribute used by the serializer
 	Integer biObjectId;
@@ -234,6 +235,30 @@ public abstract class AbstractDriverRuntime<T extends AbstractDriver> {
 		initDataDependencies(driver);
 		initVisualDependencies(driver);
 		initLovDependencies(driver, objParameters);
+		initMaxValueDependencies(driver, objParameters);
+	}
+
+	private void initMaxValueDependencies(AbstractDriver driver, List<? extends AbstractDriver> objParameters) {
+		if (!(driver instanceof BIObjectParameter) || !"DATE".equals(parType)) {
+			return;
+		}
+		try {
+			DocumentRuntime dum = new DocumentRuntime(UserProfileManager.getProfile(), locale);
+			ILovDetail lovDetail = dum.getLovDetailForMax(driver);
+			Set<String> parameterNames = lovDetail == null ? null : lovDetail.getParameterNames();
+			if (parameterNames == null || parameterNames.isEmpty()) {
+				return;
+			}
+			for (AbstractDriver objParameter : objParameters) {
+				Parameter parameter = ANALYTICAL_DRIVER_DAO.loadForDetailByParameterID(objParameter.getParameter().getId());
+				if (parameter != null && parameterNames.contains(parameter.getLabel())) {
+					maxValueDependencies.add(objParameter.getParameterUrlName());
+				}
+			}
+		} catch (Exception e) {
+			throw new SpagoBIServiceException(SERVICE_NAME,
+					"Impossible to load max value dependencies for parameter [" + id + "]", e);
+		}
 	}
 
 	public abstract void initVisualDependencies(T driver);
@@ -571,7 +596,7 @@ public abstract class AbstractDriverRuntime<T extends AbstractDriver> {
 			maxValue = retriever.getMaxValueDum(driver, this.biResource, profile, this.locale, this.executionRole);
 
 			if (driver.getMaxValue() == null) {
-				maxValue = buildMaxValue();
+				maxValue = formatMaxValue(maxValue, parType);
 				if (maxValue != null && maxValue.getValue() != null) {
 					driver.setMaxValue(maxValue.getValue().toString());
 				}
@@ -638,7 +663,7 @@ public abstract class AbstractDriverRuntime<T extends AbstractDriver> {
 	 * @return
 	 * @author Marco Libanori
 	 */
-	private LovValue buildMaxValue() {
+	public static LovValue formatMaxValue(LovValue maxValue, String parType) {
 		SimpleDateFormat serverDateFormat = new SimpleDateFormat(
 				SingletonConfig.getInstance().getConfigValue("SPAGOBI.DATE-FORMAT-SERVER.format"));
 
@@ -658,7 +683,7 @@ public abstract class AbstractDriverRuntime<T extends AbstractDriver> {
 						Date d = format.parse(date[0]);
 						String dateServerFormat = serverDateFormat.format(d);
 						ret.setValue(dateServerFormat);
-						ret.setDescription(this.getMaxValue().getDescription());
+						ret.setDescription(maxValue.getDescription());
 						return ret;
 					} catch (ParseException e) {
 						logger.error("Error while building default Value List Date Type", e);
@@ -673,7 +698,7 @@ public abstract class AbstractDriverRuntime<T extends AbstractDriver> {
 						Date d = format.parse(dateRange);
 						String dateServerFormat = serverDateFormat.format(d);
 						ret.setValue(dateServerFormat + "_" + range);
-						ret.setDescription(this.getMaxValue().getDescription());
+						ret.setDescription(maxValue.getDescription());
 						return ret;
 					} catch (ParseException e) {
 						logger.error("Error while building default Value List Date Type", e);
@@ -953,6 +978,10 @@ public abstract class AbstractDriverRuntime<T extends AbstractDriver> {
 
 	public List getLovDependencies() {
 		return lovDependencies;
+	}
+
+	public List<String> getMaxValueDependencies() {
+		return maxValueDependencies;
 	}
 
 	public void setLovDependencies(List lovDependencies) {
