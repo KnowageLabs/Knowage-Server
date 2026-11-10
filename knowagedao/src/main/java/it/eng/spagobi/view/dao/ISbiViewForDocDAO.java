@@ -38,5 +38,7 @@ public interface ISbiViewForDocDAO extends ISpagoBIDao {
 	SbiViewForDoc delete(SbiViewForDoc e);
 
 	Set<SbiViewForDoc> readByViewHierarchyId(String id);
+	
+	Set<SbiViewForDoc> readAllOwned();
 
 }

@@ -151,6 +151,27 @@ public class SbiViewHIBDAOImpl extends AbstractHibernateDAO implements ISbiViewD
 
 		return ret;
 	}
+	
+	@Override
+	public Set<SbiView> readAllOwned() {
+	    Session session = null;
+	 
+	    try {
+	        session = getSession();
+	 
+	        UserProfile userProfile = (UserProfile) getUserProfile();
+	        Filter filter = session.enableFilter(FILTER_USER);
+	        filter.setParameter(FILTER_USER_PARAM_USER, userProfile.getUserId());
+	 
+	        List<SbiView> list = session
+	                .createCriteria(SbiView.class)
+	                .list();
+	 
+	        return new TreeSet<>(list);
+	    } finally {
+	        closeSessionIfOpen(session);
+	    }
+	}
 
 	@Override
 	public Set<SbiView> getOwnedAndPublicViewsOverDoc(int biObjectId) {
