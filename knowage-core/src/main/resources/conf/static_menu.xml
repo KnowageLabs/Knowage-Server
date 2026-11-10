@@ -119,6 +119,8 @@
 				to="/resource-management" toBeLicensed="KnowageSI"/>
 			<ITEM id="5010" label="menu.logManagement"
 				to="/log-management" />
+			<ITEM id="5011" label="menu.DocumentationEditor"
+				to="/documentation-management" />
 		</GROUP_ITEM>
 
 		<GROUP_ITEM id="6000" label="menu.KpiModel"
