@@ -198,8 +198,7 @@ public abstract class AbstractDriverRuntime<T extends AbstractDriver> {
 	void initAttributes(AbstractDriver driver) {
 		id = driver.getParameterUrlName();
 		biObjectId = driver.getId();
-		// label = localize( driver.getLabel() );
-		label = driver.getLabel();
+		label = localize(driver.getLabel());
 		Integer parameterId = driver.getParameter().getId();
 		analyticalDriver = driver.getParameter();
 		parType = analyticalDriver.getType();
@@ -232,6 +231,19 @@ public abstract class AbstractDriverRuntime<T extends AbstractDriver> {
 						+ "]");
 		parameterUseId = analyticalDriverExecModality.getUseID();
 		enableMaximizer = analyticalDriverExecModality.isMaximizerEnabled();
+	}
+
+	private String localize(String label) {
+		if (label == null || !label.startsWith("i18n")) {
+			return label;
+		}
+		try {
+			String message = DAOFactory.getI18NMessageDAO().getI18NMessages(locale, label);
+			return message == null || message.isEmpty() ? label : message;
+		} catch (Exception e) {
+			logger.warn("Cannot localize driver label [" + label + "]", e);
+			return label;
+		}
 	}
 
 	private void initDependencies(T driver, List<? extends AbstractDriver> objParameters) {

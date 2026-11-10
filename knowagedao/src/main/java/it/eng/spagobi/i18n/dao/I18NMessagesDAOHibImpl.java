@@ -71,7 +71,7 @@ public class I18NMessagesDAOHibImpl extends AbstractHibernateDAO implements I18N
 			}
 			Integer domId = ((SbiDomains) objDom).getValueId();
 
-			String q = "from SbiI18NMessages att where att.id.languageCd = :languageCd AND att.id.label = :label";
+			String q = "from SbiI18NMessages att where att.languageCd = :languageCd AND att.label = :label";
 			Query query = aSession.createQuery(q);
 
 			query.setInteger("languageCd", domId);
