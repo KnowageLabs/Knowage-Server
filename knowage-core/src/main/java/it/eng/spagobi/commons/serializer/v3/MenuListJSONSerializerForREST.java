@@ -577,6 +577,9 @@ public class MenuListJSONSerializerForREST implements Serializer {
 
 		if (StringUtils.isNotBlank(condition)) {
 			switch (condition) {
+			case "superadmin":
+				isSatisfied = Boolean.TRUE.equals(((UserProfile) userProfile).getIsSuperadmin());
+				break;
 			case "my_account":
 				if (!UserUtilities.isTechnicalUser(this.getUserProfile())) {
 					String strMyAccountMenu = SingletonConfig.getInstance().getConfigValue("SPAGOBI.SECURITY.MY_ACCOUNT_MENU");

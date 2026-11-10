@@ -44,7 +44,10 @@ public class AntiCsrfFilter implements Filter {
 		String path = req.getPathInfo();
 		boolean samlCallback = "POST".equals(req.getMethod())
 				&& ("/saml/acs".equals(path) || "/saml/slo".equals(path) || "/saml/exchange".equals(path));
-		if (req.getSession(false) != null && !samlCallback && !this.excludeCheck(path)) {
+		// Browser image requests cannot send a CSRF header.
+		boolean loginBrandingImage = "GET".equals(req.getMethod())
+				&& path != null && path.startsWith("/loginconfig/images/");
+		if (req.getSession(false) != null && !samlCallback && !loginBrandingImage && !this.excludeCheck(path)) {
 
 			String cookieVal = "";
 			String paramVal;

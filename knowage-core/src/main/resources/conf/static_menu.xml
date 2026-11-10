@@ -36,6 +36,9 @@
 			<ITEM id="2006" label="menu.homeManagement"
 				requiredFunctionality="ProfileManagement"
 				to="/home-management" />
+			<ITEM id="2007" label="menu.loginPageManagement"
+				condition="superadmin"
+				to="/login-page-management" />
 		</GROUP_ITEM>
 
 		<GROUP_ITEM id="3000" label="menu.BehaviouralModelMenu"
