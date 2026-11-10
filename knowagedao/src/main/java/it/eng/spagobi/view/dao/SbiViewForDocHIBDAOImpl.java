@@ -154,5 +154,26 @@ public class SbiViewForDocHIBDAOImpl extends AbstractHibernateDAO implements ISb
 
 		return ret;
 	}
+	
+	@Override
+	public Set<SbiViewForDoc> readAllOwned() {
+	    Session session = null;
+	 
+	    try {
+	        session = getSession();
+	 
+	        UserProfile userProfile = (UserProfile) getUserProfile();
+	        Filter filter = session.enableFilter(FILTER_USER);
+	        filter.setParameter(FILTER_USER_PARAM_USER, userProfile.getUserId());
+	 
+	        List<SbiViewForDoc> list = session
+	                .createCriteria(SbiViewForDoc.class)
+	                .list();
+	 
+	        return new TreeSet<>(list);
+	    } finally {
+	        closeSessionIfOpen(session);
+	    }
+	}
 
 }
