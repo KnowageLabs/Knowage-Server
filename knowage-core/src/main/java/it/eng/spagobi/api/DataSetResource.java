@@ -42,6 +42,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -863,6 +864,32 @@ public class DataSetResource extends AbstractDataSetResource {
 					"An unexpected error occured while executing service", t);
 		} finally {
 			logger.debug("OUT");
+		}
+	}
+
+	/**
+	 * Creates a caller-owned USER dataset from the authorized source snapshot.
+	 * Existing CLONE_ names and labels are rejected using the normal dataset validation.
+	 */
+	@POST
+	@Path("/{label}/clone")
+	@Produces(MediaType.APPLICATION_JSON)
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.SELF_SERVICE_DATASET_MANAGEMENT })
+	public String cloneDataSet(@PathParam("label") String label, @Context HttpServletRequest req) {
+		IDataSetDAO dsDao = getDataSetDAO();
+		dsDao.setUserProfile(getUserProfile());
+		IDataSet source = dsDao.loadDataSetByLabel(label);
+		if (source == null) {
+			throw new WebApplicationException(Response.Status.NOT_FOUND);
+		}
+		try {
+			IDataSet clone = ManageDataSetsForREST.getInstance().cloneDataset(source, dsDao, getLocale(),
+					getUserProfile(), req);
+			return serializeDataSet(clone, null);
+		} catch (ActionNotPermittedException e) {
+			throw new WebApplicationException(Response.Status.FORBIDDEN);
+		} catch (Exception e) {
+			throw new SpagoBIServiceException(this.request.getPathInfo(), "Cannot clone dataset", e);
 		}
 	}
 

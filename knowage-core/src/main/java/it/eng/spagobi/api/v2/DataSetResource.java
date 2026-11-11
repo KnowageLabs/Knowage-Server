@@ -408,14 +408,25 @@ public class DataSetResource extends AbstractDataSetResource {
 	@GET
 	@Path("/download/file")
 	@Produces(MediaType.APPLICATION_OCTET_STREAM)
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.SELF_SERVICE_DATASET_MANAGEMENT })
 	public Response downloadDataSetFile(@QueryParam("dsLabel") String dsLabel, @QueryParam("type") String type) {
 		File file = null;
 		ResponseBuilder response = null;
-		IDataSet myDataset = getDatasetManagementAPI().getDataSet(dsLabel);
-		List<IDataSet> visibleDatasets = getDatasetManagementAPI().getDataSets();
-		if (!visibleDatasets.contains(myDataset)) {
+		IDataSetDAO dsDao = getDataSetDAO();
+		dsDao.setUserProfile(getUserProfile());
+		IDataSet myDataset = dsDao.loadDataSetByLabel(dsLabel);
+		if (myDataset == null) {
+			return Response.status(Status.NOT_FOUND).build();
+		}
+		try {
+			getDatasetManagementAPI().canSee(myDataset);
+		} catch (ActionNotPermittedException e) {
 			logger.warn("User not allowed to download file from dataset: " + dsLabel);
-			return Response.status(Status.UNAUTHORIZED).build();
+			return Response.status(Status.FORBIDDEN).build();
+		}
+		IDataSet fileDataset = myDataset instanceof VersionedDataSet ? ((VersionedDataSet) myDataset).getWrappedDataset() : myDataset;
+		if (!(fileDataset instanceof FileDataSet)) {
+			return Response.status(Status.BAD_REQUEST).build();
 		}
 		try {
 			String fileName = getFileNameFromDatasetConfiguration(myDataset);

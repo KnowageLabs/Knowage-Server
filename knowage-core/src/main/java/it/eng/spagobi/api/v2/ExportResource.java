@@ -64,13 +64,17 @@ import it.eng.spagobi.api.v2.export.ExportPathBuilder;
 import it.eng.spagobi.api.v2.export.cockpit.CockpitDataExportJobBuilder;
 import it.eng.spagobi.api.v2.export.cockpit.DocumentExportConf;
 import it.eng.spagobi.commons.bo.UserProfile;
+import it.eng.spagobi.commons.constants.CommunityFunctionalityConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
+import it.eng.spagobi.services.rest.annotations.UserConstraint;
+import it.eng.spagobi.tools.dataset.DatasetManagementAPI;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
 import it.eng.spagobi.tools.dataset.resource.export.Utilities;
 import it.eng.spagobi.tools.dataset.utils.DataSetUtilities;
 import it.eng.spagobi.user.UserProfileManager;
+import it.eng.spagobi.utilities.exceptions.ActionNotPermittedException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 /**
@@ -130,6 +134,7 @@ public class ExportResource {
 	@Path("/dataset/{dataSetId}/csv")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.TEXT_PLAIN)
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.SELF_SERVICE_DATASET_MANAGEMENT })
 	public Response datasetAsCsv(@PathParam("dataSetId") Integer dataSetId, String body) {
 
 		LOGGER.debug("IN - Exporting dataset " + dataSetId + " in CSV");
@@ -151,7 +156,16 @@ public class ExportResource {
 		Locale locale = request.getLocale();
 		UserProfile userProfile = UserProfileManager.getProfile();
 		IDataSetDAO dsDAO = DAOFactory.getDataSetDAO();
+		dsDAO.setUserProfile(userProfile);
 		IDataSet dataSet = dsDAO.loadDataSetById(dataSetId);
+		if (dataSet == null) {
+			return Response.status(Status.NOT_FOUND).build();
+		}
+		try {
+			new DatasetManagementAPI(userProfile).canSee(dataSet);
+		} catch (ActionNotPermittedException e) {
+			return Response.status(Status.FORBIDDEN).build();
+		}
 		JSONObject jsonObject;
 		try {
 			jsonObject = DataSetUtilities.parametersJSONArray2JSONObject(dataSet, paramsJson);
@@ -197,6 +211,7 @@ public class ExportResource {
 	@Path("/dataset/{dataSetId}/xls")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.TEXT_PLAIN)
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.SELF_SERVICE_DATASET_MANAGEMENT })
 	public Response datasetAsXls(@PathParam("dataSetId") Integer dataSetId, String body) {
 
 		LOGGER.debug("IN");
@@ -218,7 +233,16 @@ public class ExportResource {
 		Locale locale = request.getLocale();
 		UserProfile userProfile = UserProfileManager.getProfile();
 		IDataSetDAO dsDAO = DAOFactory.getDataSetDAO();
+		dsDAO.setUserProfile(userProfile);
 		IDataSet dataSet = dsDAO.loadDataSetById(dataSetId);
+		if (dataSet == null) {
+			return Response.status(Status.NOT_FOUND).build();
+		}
+		try {
+			new DatasetManagementAPI(userProfile).canSee(dataSet);
+		} catch (ActionNotPermittedException e) {
+			return Response.status(Status.FORBIDDEN).build();
+		}
 		JSONObject jsonObject;
 		try {
 			jsonObject = DataSetUtilities.parametersJSONArray2JSONObject(dataSet, paramsJson);

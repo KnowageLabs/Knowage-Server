@@ -24,6 +24,10 @@ package it.eng.spagobi.tools.dataset.service;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.LinkOption;
+import java.nio.file.Path;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -32,6 +36,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -183,6 +188,95 @@ public class ManageDataSetsForREST {
 		JSONObject json = new JSONObject(jsonString);
 		LOGGER.debug("OUT");
 		return datasetInsert(json, dsDao, locale, userProfile, req);
+	}
+
+	public IDataSet cloneDataset(IDataSet source, IDataSetDAO dsDao, Locale locale, UserProfile userProfile,
+			HttpServletRequest req) throws ActionNotPermittedException, JSONException, IOException {
+		DatasetManagementAPI management = new DatasetManagementAPI(userProfile);
+		management.canSee(source);
+
+		String label = "CLONE_" + source.getLabel();
+		String name = "CLONE_" + source.getName();
+		validateLabelAndName("", name, label, dsDao.loadDataSetByName(name), dsDao.loadDataSetByLabel(label));
+
+		// DAO loads reconstruct detached business datasets, not Hibernate entities. Keep the
+		// full configuration and parameter XML, including fields hidden by the UI serializer.
+		IDataSet clone = source instanceof VersionedDataSet ? ((VersionedDataSet) source).getWrappedDataset() : source;
+		clone.setId(0);
+		clone.setLabel(label);
+		clone.setName(name);
+		clone.setOwner(userProfile.getUserId().toString());
+		clone.setScopeId(null);
+		clone.setScopeCd(SpagoBIConstants.DS_SCOPE_USER);
+		clone.setCategoryId(null);
+		clone.setCategoryCd(null);
+		clone.setNoActiveVersions(new ArrayList<>());
+		// A clone must never reuse the source's persistence table or scheduled refresh.
+		clone.setPersisted(false);
+		clone.setPersistedHDFS(false);
+		clone.setPersistTableName("");
+		clone.setScheduled(false);
+		clone.setSchedulingCronLine("");
+		clone.setStartDateField("");
+		clone.setEndDateField("");
+		management.canSave(clone);
+
+		if (clone instanceof FileDataSet) {
+			return cloneFileDataset((FileDataSet) clone, dsDao, locale, userProfile, req);
+		}
+		return insertClonedDataset(clone, dsDao, locale, userProfile, req);
+	}
+
+	private IDataSet insertClonedDataset(IDataSet clone, IDataSetDAO dsDao, Locale locale, UserProfile userProfile,
+			HttpServletRequest req) throws JSONException {
+		JSONObject insertion = new JSONObject();
+		insertion.put(DataSetConstants.ID, "");
+		insertion.put(DataSetConstants.IS_FROM_SAVE_NO_METADATA, true);
+		JSONObject result = new JSONObject(datasetInsert(clone, dsDao, locale, userProfile, insertion, req));
+		return dsDao.loadDataSetById(result.getInt("id"));
+	}
+
+	private IDataSet cloneFileDataset(FileDataSet clone, IDataSetDAO dsDao, Locale locale,
+			UserProfile userProfile, HttpServletRequest req) throws IOException, JSONException {
+		JSONObject configuration = new JSONObject(clone.getConfiguration());
+		String originalFileName = configuration.getString(DataSetConstants.FILE_NAME);
+		String fileType = configuration.getString(DataSetConstants.FILE_TYPE);
+		String fileName = "CLONE_" + UUID.randomUUID() + "." + fileType.toLowerCase(Locale.ROOT);
+		Path destination = PathTraversalChecker.get(clone.getResourcePath(), "dataset", "files", fileName).toPath();
+		// Each request owns a unique destination. Even conservatively retained files
+		// cannot block a retry or be reused by a concurrently committed clone.
+		copyDatasetFile(originalFileName, fileName, clone.getResourcePath(), false);
+		Object createdFileKey = Files.readAttributes(destination, BasicFileAttributes.class, LinkOption.NOFOLLOW_LINKS).fileKey();
+		boolean completed = false;
+		try {
+			configuration.put(DataSetConstants.FILE_NAME, fileName);
+			clone.setConfiguration(configuration.toString());
+			clone.setFileName(fileName);
+			clone.setUseTempFile(false);
+			IDataSet saved = insertClonedDataset(clone, dsDao, locale, userProfile, req);
+			completed = true;
+			return saved;
+		} finally {
+			if (!completed) {
+				cleanUpFailedCloneFile(destination, createdFileKey, fileName, userProfile);
+			}
+		}
+	}
+
+	private void cleanUpFailedCloneFile(Path destination, Object createdFileKey, String fileName, UserProfile profile) {
+		try {
+			// datasetInsert can throw after its transaction committed. Fail closed if the
+			// reference check fails, or if the path no longer identifies our created file.
+			if (createdFileKey == null || DAOFactory.getSbiDataSetDAO().isFileNameReferenced(fileName, profile.getOrganization())) {
+				return;
+			}
+			Object currentFileKey = Files.readAttributes(destination, BasicFileAttributes.class, LinkOption.NOFOLLOW_LINKS).fileKey();
+			if (createdFileKey.equals(currentFileKey)) {
+				Files.delete(destination);
+			}
+		} catch (Exception e) {
+			LOGGER.warn("Cannot safely clean up failed dataset clone file", e);
+		}
 	}
 
 	protected String datasetInsert(JSONObject json, IDataSetDAO dsDao, Locale locale, UserProfile userProfile,
@@ -927,9 +1021,7 @@ public class ManageDataSetsForREST {
 		File newDatasetFile = PathTraversalChecker.get(resourcePath, "dataset", "files",
 				newFileName + "." + fileType.toLowerCase());
 
-		String filePathCloning = resourcePath + File.separatorChar + "dataset" + File.separatorChar + "files"
-				+ File.separatorChar;
-		File originalDatasetFileCloning = new File(filePathCloning + originalFileName);
+		File originalDatasetFileCloning = PathTraversalChecker.get(resourcePath, "dataset", "files", originalFileName);
 
 		if (originalDatasetFile.exists()) {
 			/*
@@ -947,10 +1039,7 @@ public class ManageDataSetsForREST {
 			}
 		} else if (originalDatasetFileCloning.exists()) {
 			try {
-				boolean isTwoEqual = FileUtils.contentEquals(originalDatasetFileCloning, newDatasetFile);
-				if (!isTwoEqual) {
-					FileUtils.copyFile(originalDatasetFileCloning, newDatasetFile);
-				}
+				copyDatasetFile(originalFileName, newFileName + "." + fileType.toLowerCase(), resourcePath, true);
 
 			} catch (IOException e) {
 				LOGGER.debug("Cannot move dataset File");
@@ -958,6 +1047,20 @@ public class ManageDataSetsForREST {
 			}
 		}
 
+	}
+
+	private void copyDatasetFile(String originalFileName, String newFileName, String resourcePath, boolean overwrite)
+			throws IOException {
+		File source = PathTraversalChecker.get(resourcePath, "dataset", "files", originalFileName);
+		File destination = PathTraversalChecker.get(resourcePath, "dataset", "files", newFileName);
+		if (!source.isFile()) {
+			throw new IOException("Dataset file does not exist");
+		}
+		if (!overwrite) {
+			Files.copy(source.toPath(), destination.toPath());
+		} else if (!FileUtils.contentEquals(source, destination)) {
+			FileUtils.copyFile(source, destination);
+		}
 	}
 
 	private void deleteDatasetFile(String fileName, String resourcePath, String fileType) {

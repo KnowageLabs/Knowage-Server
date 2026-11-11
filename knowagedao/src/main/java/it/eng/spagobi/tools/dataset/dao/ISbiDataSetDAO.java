@@ -39,6 +39,9 @@ public interface ISbiDataSetDAO extends ISpagoBIDao {
 
 	List<SbiDataSet> loadSbiDataSets();
 
+	/** Checks every dataset version in the tenant before failed-clone file cleanup. */
+	boolean isFileNameReferenced(String fileName, String organization);
+
 	List<SbiDataSet> loadDataSets(String owner, Boolean includeOwned, Boolean includePublic, String scope, String type, String category,
 			String implementation, Boolean showDerivedDatasets);
 

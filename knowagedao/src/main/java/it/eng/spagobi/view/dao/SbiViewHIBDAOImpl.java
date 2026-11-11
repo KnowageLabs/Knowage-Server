@@ -23,6 +23,7 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import org.hibernate.Filter;
+import org.hibernate.FetchMode;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.criterion.Restrictions;
@@ -165,6 +166,7 @@ public class SbiViewHIBDAOImpl extends AbstractHibernateDAO implements ISbiViewD
 	 
 	        List<SbiView> list = session
 	                .createCriteria(SbiView.class)
+	                .setFetchMode("parent", FetchMode.JOIN)
 	                .list();
 	 
 	        return new TreeSet<>(list);

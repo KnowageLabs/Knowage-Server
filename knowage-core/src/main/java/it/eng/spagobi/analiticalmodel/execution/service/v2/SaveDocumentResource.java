@@ -56,6 +56,7 @@ import it.eng.spagobi.analiticalmodel.execution.service.v2.exception.InvalidHtml
 import it.eng.spagobi.analiticalmodel.functionalitytree.bo.LowFunctionality;
 import it.eng.spagobi.analiticalmodel.functionalitytree.dao.ILowFunctionalityDAO;
 import it.eng.spagobi.api.AbstractSpagoBIResource;
+import it.eng.spagobi.api.common.DocumentModificationAuthorization;
 import it.eng.spagobi.commons.bo.Domain;
 import it.eng.spagobi.commons.bo.Role;
 import it.eng.spagobi.commons.bo.UserProfile;
@@ -203,6 +204,7 @@ public class SaveDocumentResource extends AbstractSpagoBIResource {
 			String description = doc.getDescription();
 
 			BIObject biObject = ibiObjectDAO.loadBIObjectById(docId);
+			DocumentModificationAuthorization.checkCanModify(biObject, getUserProfile());
 			biObject.setName(name);
 			biObject.setLabel(label);
 			biObject.setDescription(description);

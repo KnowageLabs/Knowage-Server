@@ -60,9 +60,11 @@ import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.tenant.Tenant;
 import it.eng.spagobi.tenant.TenantManager;
+import it.eng.spagobi.tools.dataset.DatasetManagementAPI;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.bo.VersionedDataSet;
 import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
+import it.eng.spagobi.utilities.exceptions.ActionNotPermittedException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 abstract class AbstractExportJob implements Job {
@@ -197,6 +199,16 @@ abstract class AbstractExportJob implements Job {
 		IDataSetDAO dsDAO = DAOFactory.getDataSetDAO();
 		dsDAO.setUserProfile(userProfile);
 		IDataSet currDataSet = dsDAO.loadDataSetById(dataSetId);
+		// The dataset may have changed since the request enqueued this job. Authorize
+		// the exact snapshot used below before resolving parameters or creating files.
+		if (currDataSet == null) {
+			throw new JobExecutionException("Dataset no longer exists");
+		}
+		try {
+			new DatasetManagementAPI(userProfile).canSee(currDataSet);
+		} catch (ActionNotPermittedException e) {
+			throw new JobExecutionException("Dataset is not visible to the requesting user", e);
+		}
 		if (currDataSet instanceof VersionedDataSet) {
 			VersionedDataSet vds = (VersionedDataSet) currDataSet;
 			if (vds.getWrappedDataset() instanceof DerivedDataSet) {

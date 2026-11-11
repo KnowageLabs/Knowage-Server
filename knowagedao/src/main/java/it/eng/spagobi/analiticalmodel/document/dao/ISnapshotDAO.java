@@ -17,6 +17,7 @@
  */
 package it.eng.spagobi.analiticalmodel.document.dao;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -132,4 +133,6 @@ public interface ISnapshotDAO extends ISpagoBIDao {
 	List<Snapshot> getSnapshotsForSchedulationAndDocument(Integer idBIObj, String scheduler, boolean loadContent) throws EMFUserError;
 
 	String loadSnapshotSchedulation(Integer idSnap) throws EMFUserError;
+
+	List<Snapshot> getWorkspaceSnapshots(Collection<String> schedulerNames, int offset, int fetchSize) throws EMFUserError;
 }

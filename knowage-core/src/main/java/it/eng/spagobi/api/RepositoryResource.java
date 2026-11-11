@@ -320,9 +320,7 @@ public class RepositoryResource extends AbstractSpagoBIResource {
 		v.setBiObjId(document.getId());
 		v.setParent(parent);
 
-		dao.create(v);
-
-		return toViewOfImportedDoc(v);
+		return toViewOfImportedDoc(dao.create(v));
 	}
 
 	@PUT

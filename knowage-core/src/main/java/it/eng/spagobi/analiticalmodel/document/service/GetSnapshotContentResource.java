@@ -1,7 +1,5 @@
 package it.eng.spagobi.analiticalmodel.document.service;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
-
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -16,6 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -26,16 +25,15 @@ import org.apache.pdfbox.multipdf.PDFMergerUtility;
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.error.EMFUserError;
-import it.eng.spago.security.IEngUserProfile;
-import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.analiticalmodel.document.bo.Snapshot;
 import it.eng.spagobi.analiticalmodel.document.dao.ISnapshotDAO;
 import it.eng.spagobi.api.AbstractSpagoBIResource;
-import it.eng.spagobi.commons.bo.UserProfile;
+import it.eng.spagobi.commons.constants.CommunityFunctionalityConstants;
 import it.eng.spagobi.commons.constants.ObjectsTreeConstants;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.commons.utilities.ObjectsAccessVerifier;
+import it.eng.spagobi.commons.utilities.SnapshotAccessVerifier;
+import it.eng.spagobi.services.rest.annotations.UserConstraint;
 import it.eng.spagobi.services.scheduler.service.ISchedulerServiceSupplier;
 import it.eng.spagobi.services.scheduler.service.SchedulerServiceSupplierFactory;
 import it.eng.spagobi.tools.scheduler.SchedulerConstants;
@@ -50,6 +48,7 @@ public class GetSnapshotContentResource extends AbstractSpagoBIResource {
 
 	@GET
 	@Path("/")
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.SEE_SNAPSHOTS_FUNCTIONALITY })
 	@Produces(MediaType.APPLICATION_OCTET_STREAM)
 	public Response getSnapshotContent(@Context HttpServletRequest req) {
 		LOGGER.debug("IN");
@@ -86,6 +85,8 @@ public class GetSnapshotContentResource extends AbstractSpagoBIResource {
 
 			return Response.ok(content).type(contentType).header("Content-Disposition", "attachment; filename=\"export" + exportType + "\"").build();
 
+		} catch (WebApplicationException e) {
+			throw e;
 		} catch (Exception e) {
 			LOGGER.error("Error processing snapshot request", e);
 			throw new SpagoBIRuntimeException("Error processing snapshot request", e);
@@ -96,26 +97,10 @@ public class GetSnapshotContentResource extends AbstractSpagoBIResource {
 		Integer objectId = Integer.valueOf(objectIdStr);
 		Integer idSnap = Integer.valueOf(idSnapStr);
 		LOGGER.debug("Required snapshot with id = " + idSnap + " of document with id = " + objectId);
-		IEngUserProfile profile = getUserProfile();
-		BIObject obj = DAOFactory.getBIObjectDAO().loadBIObjectById(objectId);
-		// check if the user is able to see the document
-		// TODO check if the user is able to execute the document (even if it does no make sense to be able to see the document but not to execute it...)
-		byte[] content = null;
-		String contentType = "text/html";
-		if (ObjectsAccessVerifier.canSee(obj, profile)) {
-			LOGGER.debug("Current user [" + ((UserProfile) profile).getUserId().toString() + "] can see snapshot with id = " + idSnap
-					+ " of document with id = " + objectId);
-			ISnapshotDAO snapdao = DAOFactory.getSnapshotDAO();
-			Snapshot snap = snapdao.loadSnapshot(idSnap);
-			content = snap.getContent();
-			if (snap.getContentType() != null) {
-				contentType = snap.getContentType();
-			}
-		} else {
-			LOGGER.error("Current user [" + ((UserProfile) profile).getUserId().toString() + "] CANNOT see snapshot with id = " + idSnap
-					+ " of document with id = " + objectId);
-			content = "You cannot see required snapshot.".getBytes(UTF_8);
-		}
+		Snapshot snap = DAOFactory.getSnapshotDAO().loadSnapshot(idSnap);
+		SnapshotAccessVerifier.checkSnapshot(snap, objectId, getUserProfile());
+		byte[] content = snap.getContent();
+		String contentType = snap.getContentType() == null ? "text/html" : snap.getContentType();
 
 		Map<String, Object> toReturn = new HashMap<>();
 		toReturn.put("content", content);
@@ -146,6 +131,12 @@ public class GetSnapshotContentResource extends AbstractSpagoBIResource {
 		LOGGER.debug("IN");
 
 		try {
+			if (snapList == null || snapList.isEmpty()) {
+				throw new WebApplicationException(Response.Status.NOT_FOUND);
+			}
+			for (Snapshot snapshot : snapList) {
+				SnapshotAccessVerifier.checkSnapshot(snapshot, null, getUserProfile());
+			}
 
 			ISnapshotDAO snapDao = DAOFactory.getSnapshotDAO();
 			String jobName = snapDao.loadSnapshotSchedulation(snapList.get(0).getId());
