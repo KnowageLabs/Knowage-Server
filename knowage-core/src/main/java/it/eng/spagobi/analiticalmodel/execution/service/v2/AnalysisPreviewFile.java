@@ -38,6 +38,7 @@ import org.apache.log4j.Logger;
 
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.api.AbstractSpagoBIResource;
+import it.eng.spagobi.api.common.DocumentModificationAuthorization;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
@@ -62,6 +63,9 @@ public class AnalysisPreviewFile extends AbstractSpagoBIResource {
 	public Map<String, String> uploadPreviewFileAnalysis(@Context HttpServletRequest req, @PathParam("id") int documentId) {
 
 		try {
+			BIObject biObject = DAOFactory.getBIObjectDAO().loadBIObjectById(documentId);
+			DocumentModificationAuthorization.checkCanModify(biObject, getUserProfile());
+
 			FileItem uploaded = handleMultipartForm(req);
 
 			if (uploaded == null) {
@@ -79,7 +83,6 @@ public class AnalysisPreviewFile extends AbstractSpagoBIResource {
 			logger.debug("File saved");
 
 			// start uploading document with preview file name
-			BIObject biObject = DAOFactory.getBIObjectDAO().loadBIObjectById((documentId));
 			biObject.setPreviewFile(file.getName());
 			DAOFactory.getBIObjectDAO().modifyBIObject(biObject);
 			// end uploading document with preview file name

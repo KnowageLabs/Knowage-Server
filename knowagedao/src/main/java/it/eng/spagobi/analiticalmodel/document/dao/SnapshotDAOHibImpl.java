@@ -50,6 +50,51 @@ public class SnapshotDAOHibImpl extends AbstractHibernateDAO implements ISnapsho
 	public static final SimpleDateFormat DATE_FORMATTER = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 	public static final DateTimeFormatter DATE_FORMATTER_V2 = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
+	@Override
+	public List<Snapshot> getWorkspaceSnapshots(Collection<String> schedulerNames, int offset, int fetchSize) throws EMFUserError {
+		if (schedulerNames.isEmpty()) {
+			return new ArrayList<>();
+		}
+		Session session = null;
+		try {
+			session = getSession();
+			List<String> names = new ArrayList<>(schedulerNames);
+			StringBuilder hql = new StringBuilder("select s.snapId, s.sbiObject.biobjId, s.name, s.creationDate, s.contentType, s.scheduler "
+					+ "from SbiSnapshots s where (");
+			for (int index = 0; index < names.size(); index += 900) {
+				if (index > 0) {
+					hql.append(" or ");
+				}
+				hql.append("s.scheduler in (:schedulers").append(index).append(")");
+			}
+			hql.append(") order by s.creationDate desc, s.snapId desc");
+			Query query = session.createQuery(hql.toString());
+			for (int index = 0; index < names.size(); index += 900) {
+				query.setParameterList("schedulers" + index, names.subList(index, Math.min(index + 900, names.size())));
+			}
+			query.setFirstResult(offset);
+			query.setMaxResults(fetchSize);
+			List<Object[]> rows = query.list();
+			List<Snapshot> snapshots = new ArrayList<>();
+			for (Object[] row : rows) {
+				Snapshot snapshot = new Snapshot();
+				snapshot.setId((Integer) row[0]);
+				snapshot.setBiobjId((Integer) row[1]);
+				snapshot.setName((String) row[2]);
+				snapshot.setDateCreation((Date) row[3]);
+				snapshot.setContentType((String) row[4]);
+				snapshot.setScheduler((String) row[5]);
+				snapshots.add(snapshot);
+			}
+			return snapshots;
+		} catch (HibernateException e) {
+			logException(e);
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+		} finally {
+			closeSessionIfOpen(session);
+		}
+	}
+
 	/*
 	 * (non-Javadoc)
 	 *

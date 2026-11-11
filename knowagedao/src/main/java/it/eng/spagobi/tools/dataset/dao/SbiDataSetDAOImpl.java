@@ -39,6 +39,7 @@ import org.hibernate.criterion.Disjunction;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
+import org.json.JSONObject;
 
 import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFUserError;
@@ -114,6 +115,31 @@ public class SbiDataSetDAOImpl extends AbstractHibernateDAO implements ISbiDataS
 	@Override
 	public List<SbiDataSet> loadSbiDataSets() {
 		return loadDataSets(null, null, null, null, null, null, null, true);
+	}
+
+	@Override
+	public boolean isFileNameReferenced(String fileName, String organization) {
+		Session session = null;
+		try {
+			session = getSession();
+			Query query = session.createQuery("select ds.configuration from SbiDataSet ds where ds.id.organization = :organization");
+			query.setString("organization", organization);
+			// Include inactive versions and every owner: an older or differently named
+			// dataset can still reference the file. Do not construct executable datasets.
+			List<String> configurations = query.list();
+			for (String configuration : configurations) {
+				if (fileName.equalsIgnoreCase(new JSONObject(configuration).optString("fileName"))) {
+					return true;
+				}
+			}
+			return false;
+		} catch (Exception e) {
+			throw new SpagoBIDAOException("Cannot check dataset file references", e);
+		} finally {
+			if (session != null && session.isOpen()) {
+				session.close();
+			}
+		}
 	}
 
 	@Override
@@ -503,15 +529,14 @@ public class SbiDataSetDAOImpl extends AbstractHibernateDAO implements ISbiDataS
 			Set<Domain> categoryList = null;
 			List<Integer> categoryIds = null;
 
-			statement.append("from SbiDataSet ds where ds.active = :active and (ds.owner = :owner and ");
+			statement.append("from SbiDataSet ds where ds.active = :active and (ds.owner = :owner");
 			session = getSession();
 			categoryList = UserUtilities.getDataSetCategoriesByUser(userProfile);
-			if (categoryList.isEmpty()) {
-				statement.append("ds.category.id is null)");
-			} else {
+			if (!categoryList.isEmpty()) {
 				categoryIds = extractCategoryIds(categoryList);
-				statement.append("ds.category.id is null or ds.category.id in (:categories))");
+				statement.append(" or ds.category.id in (:categories)");
 			}
+			statement.append(")");
 
 			statement.append(
 					" and ds.scope.valueId in (select dom.valueId from SbiDomains dom where dom.valueCd in ('USER', 'ENTERPRISE') and dom.domainCd = 'DS_SCOPE')");

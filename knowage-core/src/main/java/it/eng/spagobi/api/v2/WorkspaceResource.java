@@ -88,10 +88,11 @@ public class WorkspaceResource extends AbstractSpagoBIResource {
                 ownedFolderIds.add(folder.getId());
             }
 
-            // Keep one entry per imported link row: BE3 will prevent duplicates.
+            // Preserve existing duplicate links so callers can still remove them.
             Map<Integer, List<SbiViewForDoc>> linksByDocument = new LinkedHashMap<>();
             Map<Integer, List<SbiView>> viewsByDocument = new LinkedHashMap<>();
             Set<Integer> candidateIds = new LinkedHashSet<>();
+            Set<Integer> documentIds = new LinkedHashSet<>();
 
             for (SbiViewForDoc link : links) {
                 Integer documentId = link.getBiObjId();
@@ -100,6 +101,7 @@ public class WorkspaceResource extends AbstractSpagoBIResource {
                     continue;
                 }
                 candidateIds.add(documentId);
+                documentIds.add(documentId);
                 linksByDocument.computeIfAbsent(documentId, id -> new ArrayList<>()).add(link);
             }
 
@@ -118,6 +120,7 @@ public class WorkspaceResource extends AbstractSpagoBIResource {
             // not necessarily every previously executed document.
             Map<Integer, Long> lastRunByDocument = loadRecentDocumentTimes(profile);
             candidateIds.addAll(lastRunByDocument.keySet());
+            documentIds.addAll(lastRunByDocument.keySet());
 
             IBIObjectDAO documentDao = DAOFactory.getBIObjectDAO();
             documentDao.setUserProfile(profile);
@@ -135,6 +138,7 @@ public class WorkspaceResource extends AbstractSpagoBIResource {
                     if (documentId != null) {
                         personalDocumentIds.add(documentId);
                         candidateIds.add(documentId);
+                        documentIds.add(documentId);
                         documentsById.put(documentId, document);
                     }
                 }
@@ -164,6 +168,9 @@ public class WorkspaceResource extends AbstractSpagoBIResource {
                     continue;
                 }
                 visibleDocumentIds.add(documentId);
+                if (!documentIds.contains(documentId)) {
+                    continue;
+                }
 
                 JSONObject item = new JSONObject();
                 item.put("kind", "DOCUMENT");

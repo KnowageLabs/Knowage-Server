@@ -49,6 +49,7 @@ import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.analiticalmodel.execution.service.ExecuteAdHocUtility;
 import it.eng.spagobi.analiticalmodel.functionalitytree.bo.LowFunctionality;
 import it.eng.spagobi.analiticalmodel.functionalitytree.dao.ILowFunctionalityDAO;
+import it.eng.spagobi.api.common.DocumentModificationAuthorization;
 import it.eng.spagobi.commons.bo.Domain;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.dao.DAOFactory;
@@ -102,6 +103,8 @@ public class DocumentCRUD extends AbstractSpagoBIResource {
 		IEngUserProfile profile = this.getUserProfile();
 
 		AnalyticalModelDocumentManagementAPI documentManagementAPI = new AnalyticalModelDocumentManagementAPI(profile);
+		BIObject document = documentManagementAPI.getDocument(id);
+		DocumentModificationAuthorization.checkCanModify(document, getUserProfile());
 		logger.debug("Execute clone");
 		BIObject cloned = documentManagementAPI.cloneDocument(id);
 		logger.debug("OUT");

@@ -24,13 +24,17 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import org.hibernate.Filter;
+import org.hibernate.FetchMode;
+import org.hibernate.LockMode;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
 import it.eng.spagobi.view.metadata.SbiViewForDoc;
+import it.eng.spagobi.view.metadata.SbiViewHierarchy;
 
 /**
  * @author Marco Libanori
@@ -47,6 +51,28 @@ public class SbiViewForDocHIBDAOImpl extends AbstractHibernateDAO implements ISb
 			session = getSession();
 			tx = session.beginTransaction();
 
+			UserProfile profile = (UserProfile) getUserProfile();
+			session.enableFilter(FILTER_USER).setParameter(FILTER_USER_PARAM_USER, profile.getUserId());
+			// Lock an existing row to serialize concurrent imports, also across server nodes.
+			SbiViewHierarchy parent = (SbiViewHierarchy) session.createCriteria(SbiViewHierarchy.class)
+					.add(Restrictions.eq("id", e.getParent().getId()))
+					.setLockMode(LockMode.PESSIMISTIC_WRITE)
+					.uniqueResult();
+			if (parent == null) {
+				throw new IllegalArgumentException("Workspace folder does not belong to the current user");
+			}
+			List<SbiViewForDoc> existing = session.createCriteria(SbiViewForDoc.class)
+					.add(Restrictions.eq("parent.id", parent.getId()))
+					.add(Restrictions.eq("biObjId", e.getBiObjId()))
+					.add(Restrictions.eq("commonInfo.userIn", profile.getUserId()))
+					.addOrder(Order.asc("id"))
+					.setMaxResults(1)
+					.list();
+			if (!existing.isEmpty()) {
+				tx.commit();
+				return existing.get(0);
+			}
+			e.setParent(parent);
 			updateSbiCommonInfo4Insert(e);
 
 			session.save(e);
@@ -168,6 +194,7 @@ public class SbiViewForDocHIBDAOImpl extends AbstractHibernateDAO implements ISb
 	 
 	        List<SbiViewForDoc> list = session
 	                .createCriteria(SbiViewForDoc.class)
+	                .setFetchMode("parent", FetchMode.JOIN)
 	                .list();
 	 
 	        return new TreeSet<>(list);
