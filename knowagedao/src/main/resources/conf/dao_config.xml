@@ -5,6 +5,8 @@
 		implementation="it.eng.spagobi.commons.dao.TenantsDAOHibImpl" />
 	<DAO name="BIObjectDAO"
 		implementation="it.eng.spagobi.analiticalmodel.document.dao.BIObjectDAOHibImpl" />
+	<DAO name="AuditDAO"
+		implementation="it.eng.spagobi.monitoring.dao.DbAuditImpl" />
 	<DAO name="ChecksDAO"
 		implementation="it.eng.spagobi.behaviouralmodel.check.dao.CheckDAOHibImpl" />
 	<DAO name="EngineDAO"

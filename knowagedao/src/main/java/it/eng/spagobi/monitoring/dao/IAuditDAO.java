@@ -19,6 +19,7 @@ package it.eng.spagobi.monitoring.dao;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.commons.dao.ISpagoBIDao;
@@ -130,6 +131,12 @@ public interface IAuditDAO extends ISpagoBIDao {
 	 * @throws EMFUserError the EMF user error
 	 */
 	public List getMyRecentlyUsed(String userId, int limit) throws EMFUserError;
+
+	/**
+	 * Last execution time per document for the user in this DAO's tenant.
+	 * Does not depend on the legacy HotLink configuration or parameter grouping.
+	 */
+	Map<Integer, Long> getLastDocumentExecutionTimes(String userId);
 
 	/**
 	 * Gets the last execution of a document with id objId.
