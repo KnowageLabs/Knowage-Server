@@ -59,6 +59,7 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-tomcat</artifactId>
+			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.logging.log4j</groupId>
@@ -97,15 +98,36 @@
 					<failOnMissingWebXml>false</failOnMissingWebXml>
 					<attachClasses>true</attachClasses>
 					<classesClassifier>classes</classesClassifier>
+					<packagingExcludes>**/*.map</packagingExcludes>
 					<webResources>
 						<resource>
 							<directory>${vue.build.dir}/target/knowage-vue</directory>
 							<includes>
 								<include>**/*</include>
 							</includes>
+							<excludes>
+								<exclude>**/*.map</exclude>
+							</excludes>
 						</resource>
 					</webResources>
 				</configuration>
+			</plugin>
+			<plugin>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>vue-sourcemaps</id>
+						<phase>package</phase>
+						<goals>
+							<goal>single</goal>
+						</goals>
+						<configuration>
+							<descriptors>
+								<descriptor>src/assembly/sourcemaps.xml</descriptor>
+							</descriptors>
+						</configuration>
+					</execution>
+				</executions>
 			</plugin>
 			<plugin>
 				<artifactId>maven-resources-plugin</artifactId>
