@@ -13,6 +13,10 @@
 	<artifactId>knowagecockpitengine</artifactId>
 	<packaging>war</packaging>
 	<name>knowagecockpitengine</name>
+
+	<properties>
+		<cockpit.war.source.excludes>node_modules/**,Gruntfile.js,karma.conf.js,package.json,package-lock.json</cockpit.war.source.excludes>
+	</properties>
 	
 	<dependencies>
 		<dependency>
@@ -144,6 +148,30 @@
 				<configuration>
 					<attachClasses>true</attachClasses>
 					<classesClassifier>classes</classesClassifier>
+					<warSourceExcludes>${cockpit.war.source.excludes}</warSourceExcludes>
+					<webResources>
+						<resource>
+							<directory>src/main/webapp/node_modules</directory>
+							<targetPath>node_modules</targetPath>
+							<filtering>false</filtering>
+							<includes>
+								<include>@fortawesome/fontawesome-free/css/all.css</include>
+								<include>@fortawesome/fontawesome-free/webfonts/**</include>
+								<include>weather-icons/css/weather-icons.min.css</include>
+								<include>weather-icons/font/**</include>
+								<include>ng-wysiwyg/dist/editor.min.css</include>
+								<include>ng-wysiwyg/dist/images/**</include>
+								<include>angularjs-slider/dist/rzslider.min.css</include>
+								<include>angularjs-slider/dist/rzslider.min.js</include>
+								<include>ol-ext/dist/ol-ext.min.css</include>
+								<include>ol-ext/dist/ol-ext.js</include>
+								<include>**/LICENSE*</include>
+								<include>**/LICENCE*</include>
+								<include>**/COPYING*</include>
+								<include>**/NOTICE*</include>
+							</includes>
+						</resource>
+					</webResources>
 				</configuration>
 			</plugin>
 			<plugin>
@@ -295,8 +323,8 @@
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-war-plugin</artifactId>
 						<configuration>
-							<warSourceExcludes>js/src/**</warSourceExcludes>
-							<webResources>
+							<warSourceExcludes>${cockpit.war.source.excludes},js/src/**</warSourceExcludes>
+							<webResources combine.children="append">
 								<resource>
 									<directory>src/main/webapp</directory>
 									<filtering>true</filtering>
