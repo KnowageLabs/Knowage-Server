@@ -32,6 +32,12 @@
 			<version>3.1.0</version>
 			<scope>provided</scope>
 		</dependency>
+		<dependency>
+			<groupId>it.eng.knowage</groupId>
+			<artifactId>knowage-dataset-sparql</artifactId>
+			<version>${project.version}</version>
+			<scope>runtime</scope>
+		</dependency>
 	</dependencies>
 	
 	<build>

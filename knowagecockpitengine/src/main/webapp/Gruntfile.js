@@ -145,23 +145,36 @@ module.exports = function (grunt) {
     uglify: {
       options: {
         mangle: false,
+        compress: false,
+        parse: {
+          module: false,
+        },
+        output: {
+          module: false,
+          comments: /^!|@license|@preserve|@cc_on|copyright/i,
+        },
       },
       target: {
         files: {
-          "dist/knowagecockpit-lib-bundle.min.js": ["dist/knowagecockpit-lib-bundle.js"],
-          "dist/knowagecockpit-modules-bundle.min.js": ["dist/knowagecockpit-modules-bundle.js"],
-          "dist/knowagecockpit-sources-bundle_<%= pkg.version %>.min.js": ["dist/knowagecockpit-sources-bundle_<%= pkg.version %>.js"],
-          "dist/knowagecockpit-sources-cockpit-bundle_<%= pkg.version %>.min.js": ["dist/knowagecockpit-sources-cockpit-bundle_<%= pkg.version %>.js"],
-          "dist/knowagecockpit-sources-widgets-bundle_<%= pkg.version %>.min.js": ["dist/knowagecockpit-sources-widgets-bundle_<%= pkg.version %>.js"],
-          "dist/knowagecockpit-sources-chart-bundle_<%= pkg.version %>.min.js": ["dist/knowagecockpit-sources-chart-bundle_<%= pkg.version %>.js"],
-          "dist/knowagecockpit-sources-chartrender-bundle_<%= pkg.version %>.min.js": ["dist/knowagecockpit-sources-chartrender-bundle_<%= pkg.version %>.js"],
+          "dist/angular-bundle.js": ["dist/angular-bundle.js"],
+          "dist/knowagecockpit-lib-bundle.js": ["dist/knowagecockpit-lib-bundle.js"],
+          "dist/knowagecockpit-modules-bundle.js": ["dist/knowagecockpit-modules-bundle.js"],
+          "dist/knowagecockpit-sources-bundle_<%= pkg.version %>.js": ["dist/knowagecockpit-sources-bundle_<%= pkg.version %>.js"],
+          "dist/knowagecockpit-sources-cockpit-bundle_<%= pkg.version %>.js": ["dist/knowagecockpit-sources-cockpit-bundle_<%= pkg.version %>.js"],
+          "dist/knowagecockpit-sources-widgets-bundle_<%= pkg.version %>.js": ["dist/knowagecockpit-sources-widgets-bundle_<%= pkg.version %>.js"],
+          "dist/knowagecockpit-sources-chart-bundle_<%= pkg.version %>.js": ["dist/knowagecockpit-sources-chart-bundle_<%= pkg.version %>.js"],
+          "dist/knowagecockpit-sources-chartrender-bundle_<%= pkg.version %>.js": ["dist/knowagecockpit-sources-chartrender-bundle_<%= pkg.version %>.js"],
         },
       },
     },
     cssmin: {
+      options: {
+        rebase: false,
+        level: 0,
+      },
       target: {
         files: {
-          "dist/knowagecockpit-modules-styles-bundle.min.css": ["dist/knowagecockpit-modules-styles-bundle.css"],
+          "dist/knowagecockpit-modules-styles-bundle.css": ["dist/knowagecockpit-modules-styles-bundle.css"],
         },
       },
     },
@@ -170,5 +183,6 @@ module.exports = function (grunt) {
   // Load the plugin that provides the "concat" task.
   grunt.loadNpmTasks("grunt-contrib-concat");
   grunt.loadNpmTasks("grunt-contrib-uglify");
-  grunt.registerTask("knowagecockpit-concat", ["concat"]);
+  grunt.loadNpmTasks("grunt-contrib-cssmin");
+  grunt.registerTask("knowagecockpit-concat", ["concat", "uglify", "cssmin"]);
 };

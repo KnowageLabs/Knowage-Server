@@ -6,6 +6,8 @@
 package it.eng.spagobi.engines.talend.services;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -20,6 +22,7 @@ import it.eng.spagobi.engines.talend.exception.JobNotFoundException;
 import it.eng.spagobi.engines.talend.runtime.Job;
 import it.eng.spagobi.engines.talend.runtime.RuntimeRepository;
 import it.eng.spagobi.utilities.engines.AbstractEngineStartServlet;
+import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.engines.EngineStartServletIOManager;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineException;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
@@ -51,7 +54,7 @@ public class JobRunService extends AbstractEngineStartServlet {
 				super.doService(servletIOManager);
 				job = new Job(servletIOManager.getTemplateAsSourceBean());
 				runtimeRepository = TalendEngine.getRuntimeRepository();
-				runtimeRepository.runJob(job, servletIOManager.getEnv());
+				runtimeRepository.runJob(job, getJobEnvironment(servletIOManager));
 			} catch (JobNotFoundException ex) {
 				LOGGER.error(ex.getMessage());
 
@@ -92,5 +95,14 @@ public class JobRunService extends AbstractEngineStartServlet {
 		} finally {
 			LOGGER.debug("OUT");
 		}
+	}
+
+	protected Map getJobEnvironment(EngineStartServletIOManager servletIOManager) {
+		Map environment = new HashMap(servletIOManager.getEnvForWidget());
+		environment.put(EngineConstants.ENV_DOCUMENT_ID, servletIOManager.getDocumentId());
+		// External jobs do not need local dataset or datasource construction.
+		environment.put(EngineConstants.ENV_DATASET, null);
+		environment.put(EngineConstants.ENV_DATASOURCE, null);
+		return environment;
 	}
 }

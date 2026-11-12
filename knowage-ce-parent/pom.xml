@@ -13,6 +13,7 @@
 		<module>../jdbccore</module>
 		<module>../knowageutilsjson</module>
 		<module>../knowageutils</module>
+		<module>../knowage-dataset-sparql</module>
 		<module>../qbecore</module>
 		<module>../spagobi-cwm</module>
 		<module>../spagobi-commons-core</module>
@@ -343,6 +344,9 @@
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-war-plugin</artifactId>
 					<version>3.3.1</version>
+					<configuration>
+						<packagingExcludes>**/*.js.map,**/*.css.map</packagingExcludes>
+					</configuration>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>

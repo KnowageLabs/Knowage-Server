@@ -283,6 +283,11 @@
 		</dependency>
 		
 		
+		<dependency>
+			<groupId>it.eng.knowage</groupId>
+			<artifactId>knowage-dataset-sparql</artifactId>
+			<version>${project.version}</version>
+		</dependency>
 	</dependencies>
 	
 	<build>

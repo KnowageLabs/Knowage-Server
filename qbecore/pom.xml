@@ -108,6 +108,12 @@
 			<version>5.1.38</version>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>it.eng.knowage</groupId>
+			<artifactId>knowage-dataset-sparql</artifactId>
+			<version>${project.version}</version>
+			<scope>runtime</scope>
+		</dependency>
 	</dependencies>
 	
 </project>

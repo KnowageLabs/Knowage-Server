@@ -15,7 +15,7 @@
 	<name>knowagecockpitengine</name>
 
 	<properties>
-		<cockpit.war.source.excludes>node_modules/**,Gruntfile.js,karma.conf.js,package.json,package-lock.json</cockpit.war.source.excludes>
+		<cockpit.war.source.excludes>node_modules/**,Gruntfile.js,karma.conf.js,package.json,package-lock.json,js/lib/openlayers/openlayers/**,js/lib/openlayers/3.x.x/**,js/lib/openlayers/4.6.4/**</cockpit.war.source.excludes>
 	</properties>
 	
 	<dependencies>
@@ -148,6 +148,7 @@
 				<configuration>
 					<attachClasses>true</attachClasses>
 					<classesClassifier>classes</classesClassifier>
+					<packagingExcludes>**/*.js.map,**/*.css.map,js/lib/openlayers/openlayers/**,js/lib/openlayers/3.x.x/**,js/lib/openlayers/4.6.4/**</packagingExcludes>
 					<warSourceExcludes>${cockpit.war.source.excludes}</warSourceExcludes>
 					<webResources>
 						<resource>
@@ -194,6 +195,24 @@
 									</includes>
 								</fileset>
 							</filesets>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>attach-sourcemaps</id>
+						<phase>package</phase>
+						<goals>
+							<goal>single</goal>
+						</goals>
+						<configuration>
+							<descriptors>
+								<descriptor>${project.basedir}/src/assembly/sourcemaps.xml</descriptor>
+							</descriptors>
 						</configuration>
 					</execution>
 				</executions>

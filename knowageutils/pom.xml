@@ -450,25 +450,15 @@
 			<version>2.9.0</version>
 		</dependency>
 		<dependency>
-			<groupId>org.apache.jena</groupId>
-			<artifactId>jena-arq</artifactId>
-			<version>5.0.0</version>
-			<exclusions>
-				<exclusion>
-					<artifactId>commons-io</artifactId>
-					<groupId>commons-io</groupId>
-				</exclusion>
-				<exclusion>
-<groupId>org.glassfish</groupId>
-<artifactId>jakarta.json</artifactId>
-</exclusion>
-			</exclusions>
-		</dependency>
-		<dependency>
 			<groupId>org.apache.solr</groupId>
 			<artifactId>solr-solrj</artifactId>
 			<version>9.7.0</version>
 			<exclusions>
+				<!-- Netty uses the JDK TLS provider when the optional native accelerator is absent. -->
+				<exclusion>
+					<groupId>io.netty</groupId>
+					<artifactId>netty-tcnative-boringssl-static</artifactId>
+				</exclusion>
 				<exclusion>
 					<artifactId>commons-io</artifactId>
 					<groupId>commons-io</groupId>
@@ -478,12 +468,13 @@
 					<groupId>org.glassfish</groupId>
 				</exclusion>
 				<exclusion>
-					<artifactId>jetty-http</artifactId>
+					<!-- Solr calls use HttpSolrClient; exclude the entire unused HTTP/2 transport. -->
 					<groupId>org.eclipse.jetty</groupId>
+					<artifactId>*</artifactId>
 				</exclusion>
 				<exclusion>
-					<artifactId>jetty-client</artifactId>
-					<groupId>org.eclipse.jetty</groupId>
+					<groupId>org.eclipse.jetty.http2</groupId>
+					<artifactId>*</artifactId>
 				</exclusion>
 			</exclusions>
 		</dependency>
