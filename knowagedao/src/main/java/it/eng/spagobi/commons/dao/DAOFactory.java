@@ -24,6 +24,7 @@ import org.apache.logging.log4j.Logger;
 import org.hibernate.HibernateException;
 
 import it.eng.spago.error.EMFUserError;
+import it.eng.spagobi.monitoring.dao.IAuditDAO;
 import it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO;
 import it.eng.spagobi.analiticalmodel.document.dao.IBIObjectRating;
 import it.eng.spagobi.analiticalmodel.document.dao.IObjNoteDAO;
@@ -151,6 +152,10 @@ public class DAOFactory {
 	 */
 	public static IBIObjectDAO getBIObjectDAO() {
 		return (IBIObjectDAO) createDAOInstance("BIObjectDAO");
+	}
+
+	public static IAuditDAO getAuditDAO() {
+		return (IAuditDAO) createDAOInstance("AuditDAO");
 	}
 
 	/**

@@ -22,8 +22,11 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.hibernate.HibernateException;
@@ -36,6 +39,7 @@ import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.analiticalmodel.document.metadata.SbiObjects;
 import it.eng.spagobi.analiticalmodel.document.metadata.SbiSubObjects;
 import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
+import it.eng.spagobi.commons.dao.SpagoBIDAOException;
 import it.eng.spagobi.engines.config.metadata.SbiEngines;
 import it.eng.spagobi.hotlink.rememberme.bo.HotLink;
 import it.eng.spagobi.monitoring.metadata.SbiAudit;
@@ -430,6 +434,36 @@ public class DbAuditImpl extends AbstractHibernateDAO implements IAuditDAO {
 			LOGGER.debug("OUT");
 		}
 		return toReturn;
+	}
+
+	@Override
+	public Map<Integer, Long> getLastDocumentExecutionTimes(String userId) {
+		String tenant = getTenant();
+		if (userId == null || userId.trim().isEmpty() || tenant == null || tenant.trim().isEmpty()) {
+			throw new IllegalArgumentException("User and tenant are required to read recent document executions");
+		}
+		Session session = null;
+		try {
+			session = getSession();
+			Query query = session.createQuery("select a.documentId, max(a.requestTime) from SbiAudit a "
+					+ "where a.userName = :userId and a.commonInfo.organization = :tenant "
+					+ "and a.documentLabel not like 'SBI_%' "
+					+ "group by a.documentId order by max(a.requestTime) desc");
+			query.setString("userId", userId);
+			query.setString("tenant", tenant);
+			List<Object[]> rows = query.list();
+			Map<Integer, Long> times = new LinkedHashMap<>();
+			for (Object[] row : rows) {
+				if (row[0] != null && row[1] != null) {
+					times.put((Integer) row[0], ((Date) row[1]).getTime());
+				}
+			}
+			return times;
+		} catch (HibernateException e) {
+			throw new SpagoBIDAOException("Cannot read recent document executions", e);
+		} finally {
+			closeSessionIfOpen(session);
+		}
 	}
 
 	private HotLink toHotLink(Object[] row) {

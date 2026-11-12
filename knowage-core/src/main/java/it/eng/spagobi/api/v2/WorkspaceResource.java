@@ -19,8 +19,6 @@ import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import it.eng.spago.base.SourceBean;
-import it.eng.spago.configuration.ConfigSingleton;
 import it.eng.spago.error.EMFInternalError;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO;
@@ -34,9 +32,7 @@ import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.metadata.SbiCommonInfo;
 import it.eng.spagobi.commons.utilities.ObjectsAccessVerifier;
 import it.eng.spagobi.commons.utilities.UserUtilities;
-import it.eng.spagobi.hotlink.constants.HotLinkConstants;
-import it.eng.spagobi.hotlink.rememberme.bo.HotLink;
-import it.eng.spagobi.monitoring.dao.AuditManager;
+import it.eng.spagobi.monitoring.dao.IAuditDAO;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.view.dao.ISbiViewDAO;
 import it.eng.spagobi.view.dao.ISbiViewForDocDAO;
@@ -115,9 +111,7 @@ public class WorkspaceResource extends AbstractSpagoBIResource {
                 viewsByDocument.computeIfAbsent(documentId, id -> new ArrayList<>()).add(view);
             }
 
-            // Recents, using the existing audit and configured hotlink limit.
-            // Q2 remains open: timestamps currently cover the configured recents,
-            // not necessarily every previously executed document.
+            // Read document execution times independently of the legacy HotLink menu.
             Map<Integer, Long> lastRunByDocument = loadRecentDocumentTimes(profile);
             candidateIds.addAll(lastRunByDocument.keySet());
             documentIds.addAll(lastRunByDocument.keySet());
@@ -244,46 +238,9 @@ public class WorkspaceResource extends AbstractSpagoBIResource {
     }
 
     private Map<Integer, Long> loadRecentDocumentTimes(UserProfile profile) {
-        Map<Integer, Long> lastRunByDocument = new LinkedHashMap<>();
-        try {
-            SourceBean hotlinkConfig = (SourceBean) ConfigSingleton.getInstance()
-                    .getAttribute(HotLinkConstants.HOTLINK);
-            if (hotlinkConfig == null) {
-                LOGGER.warn("HotLink configuration missing: recent documents not included");
-                return lastRunByDocument;
-            }
-            SourceBean recentSection = (SourceBean) hotlinkConfig.getFilteredSourceBeanAttribute(
-                    "SECTION", "name", HotLinkConstants.MY_RECENTLY_USED);
-            if (recentSection == null) {
-                LOGGER.warn("MY_RECENTLY_USED configuration missing: recent documents not included");
-                return lastRunByDocument;
-            }
-            int limit = Integer.parseInt((String) recentSection.getAttribute(HotLinkConstants.ROWS_NUMBER));
-            if (limit <= 0) {
-                return lastRunByDocument;
-            }
-            List<?> recentEntries = AuditManager.getInstance().getMyRecentlyUsed(profile, limit);
-            if (recentEntries != null) {
-                for (Object entry : recentEntries) {
-                    if (!(entry instanceof HotLink)) {
-                        continue;
-                    }
-                    HotLink recent = (HotLink) entry;
-                    Integer documentId = recent.getObjId();
-                    if (documentId == null) {
-                        continue;
-                    }
-                    long lastRun = recent.getRequestTime();
-                    Long previous = lastRunByDocument.get(documentId);
-                    if (previous == null || lastRun > previous) {
-                        lastRunByDocument.put(documentId, lastRun);
-                    }
-                }
-            }
-        } catch (Exception ex) {
-            LOGGER.warn("Recent document retrieval failed; proceeding without recents", ex);
-        }
-        return lastRunByDocument;
+        IAuditDAO auditDao = DAOFactory.getAuditDAO();
+        auditDao.setUserProfile(profile);
+        return auditDao.getLastDocumentExecutionTimes(profile.getUserId().toString());
     }
 
     private static Object asJsonValue(Object value) {

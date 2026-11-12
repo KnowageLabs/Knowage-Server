@@ -50,10 +50,12 @@ import it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO;
 import it.eng.spagobi.api.AbstractSpagoBIResource;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIMetaModelParameter;
 import it.eng.spagobi.commons.bo.UserProfile;
+import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.ICategoryDAO;
 import it.eng.spagobi.commons.metadata.SbiExtRoles;
 import it.eng.spagobi.commons.utilities.ObjectsAccessVerifier;
+import it.eng.spagobi.monitoring.dao.AuditManager;
 import it.eng.spagobi.tools.catalogue.bo.MetaModel;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.federation.FederationDefinition;
@@ -138,6 +140,14 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 				String message = "Error(s) occurred while loading document for execution: " + errors;
 				LOGGER.error(message);
 				throw new SpagoBIRuntimeException(message);
+			}
+
+			// Vue dashboards do not request an execution URL, which records audit for external engines.
+			try {
+				AuditManager.getInstance().insertAudit(obj, null, userProfile, executingRole,
+						SpagoBIConstants.NORMAL_EXECUTION_MODALITY);
+			} catch (Exception e) {
+				LOGGER.warn("Could not record dashboard execution in audit for document {}", obj.getId(), e);
 			}
 
 		} catch (EMFUserError e) {
