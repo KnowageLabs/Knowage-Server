@@ -8,6 +8,15 @@
 	<includeBaseDirectory>false</includeBaseDirectory>
 	<fileSets>
 		<fileSet>
+			<directory>${project.build.directory}/frontend</directory>
+			<outputDirectory>/</outputDirectory>
+			<includes>
+				<include>dist/*.js.map</include>
+				<include>dist/*.css.map</include>
+				<include>asset-manifest.json</include>
+			</includes>
+		</fileSet>
+		<fileSet>
 			<directory>${project.basedir}/src/main/webapp</directory>
 			<outputDirectory>/</outputDirectory>
 			<includes>

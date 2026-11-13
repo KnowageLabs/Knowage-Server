@@ -15,7 +15,7 @@
 	<name>knowagecockpitengine</name>
 
 	<properties>
-		<cockpit.war.source.excludes>node_modules/**,Gruntfile.js,karma.conf.js,package.json,package-lock.json,js/lib/openlayers/openlayers/**,js/lib/openlayers/3.x.x/**,js/lib/openlayers/4.6.4/**</cockpit.war.source.excludes>
+		<cockpit.war.source.excludes>dist/**,node_modules/**,Gruntfile.js,karma.conf.js,package.json,package-lock.json,js/lib/openlayers/openlayers/**,js/lib/openlayers/3.x.x/**,js/lib/openlayers/4.6.4/**</cockpit.war.source.excludes>
 	</properties>
 	
 	<dependencies>
@@ -152,6 +152,14 @@
 					<warSourceExcludes>${cockpit.war.source.excludes}</warSourceExcludes>
 					<webResources>
 						<resource>
+							<directory>${project.build.directory}/frontend</directory>
+							<filtering>false</filtering>
+							<includes>
+								<include>dist/*.js</include>
+								<include>dist/*.css</include>
+							</includes>
+						</resource>
+						<resource>
 							<directory>src/main/webapp/node_modules</directory>
 							<targetPath>node_modules</targetPath>
 							<filtering>false</filtering>
@@ -231,23 +239,8 @@
 						<configuration>
 							<executable>npm</executable>
 							<arguments>
-								<argument>install</argument>
-							</arguments>
-							<workingDirectory>${basedir}/src/main/webapp</workingDirectory>
-						</configuration>
-					</execution>
-					<execution>
-						<id>npm-update-version</id>
-						<phase>process-sources</phase>
-						<goals>
-							<goal>exec</goal>
-						</goals>
-						<configuration>
-							<executable>npm</executable>
-							<arguments>
-								<argument>version</argument>
-								<argument>${project.version}</argument>
-								<argument>--allow-same-version</argument>
+								<argument>ci</argument>
+								<argument>--include=dev</argument>
 							</arguments>
 							<workingDirectory>${basedir}/src/main/webapp</workingDirectory>
 						</configuration>
@@ -259,9 +252,13 @@
 							<goal>exec</goal>
 						</goals>
 						<configuration>
-							<executable>grunt</executable>
+							<executable>npm</executable>
 							<arguments>
-								<argument>knowagecockpit-concat</argument>
+								<argument>run</argument>
+								<argument>build</argument>
+								<argument>--</argument>
+								<argument>--asset-version=${project.version}</argument>
+								<argument>--output-dir=${project.build.directory}/frontend</argument>
 							</arguments>
 							<workingDirectory>${basedir}/src/main/webapp</workingDirectory>
 						</configuration>

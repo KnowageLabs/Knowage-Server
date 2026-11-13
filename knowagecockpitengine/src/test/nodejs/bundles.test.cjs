@@ -3,6 +3,8 @@ const { execFileSync } = require("node:child_process");
 const fs = require("node:fs");
 const http = require("node:http");
 const path = require("node:path");
+const os = require("node:os");
+const crypto = require("node:crypto");
 const test = require("node:test");
 const zlib = require("node:zlib");
 
@@ -10,12 +12,18 @@ const webapp = path.resolve(__dirname, "..", "..", "main", "webapp");
 const grunt = require(require.resolve("grunt", { paths: [webapp] }));
 const uglify = require(require.resolve("uglify-js", { paths: [webapp] }));
 const CleanCSS = require(require.resolve("clean-css", { paths: [webapp] }));
+const SourceMapConsumer = require(require.resolve("source-map", { paths: [webapp] })).SourceMapConsumer;
+const output = fs.mkdtempSync(path.join(os.tmpdir(), "knowage-bundles-"));
+test.after(() => fs.rmSync(output, { recursive: true, force: true }));
 grunt.file.setBase(webapp);
+grunt.option("output-dir", output);
 require(path.join(webapp, "Gruntfile.js"))(grunt);
 
 function runGrunt(task) {
 	try {
-		execFileSync(process.execPath, ["-e", `require("grunt").tasks([${JSON.stringify(task)}]);`], {
+		execFileSync(process.execPath, [
+			require.resolve("grunt-cli/bin/grunt", { paths: [webapp] }), task, "--output-dir=" + output,
+		], {
 			cwd: webapp,
 			stdio: "pipe",
 		});
@@ -84,9 +92,9 @@ async function browserSmoke(original) {
 			if (["before", "after"].includes(variant) && original.has(filename)) {
 				response.setHeader("Content-Type", "application/javascript");
 				response.end(variant === "before" ? original.get(filename)
-					: fs.readFileSync(path.join(webapp, filename)));
+					: fs.readFileSync(path.join(output, filename)));
 			} else {
-				response.writeHead(204).end();
+				response.writeHead(filename === "" && variant === "favicon.ico" ? 204 : 404).end();
 			}
 		}
 	});
@@ -103,6 +111,13 @@ async function browserSmoke(original) {
 			const page = await browser.newPage();
 			const errors = [];
 			page.on("pageerror", error => errors.push(error.message));
+			page.on("console", message => {
+				if (message.type() === "error") errors.push(message.text());
+			});
+			page.on("requestfailed", request => errors.push("Failed request: " + request.url()));
+			page.on("response", response => {
+				if (response.status() >= 400) errors.push("HTTP " + response.status() + ": " + response.url());
+			});
 			await page.setRequestInterception(true);
 			page.on("request", request => {
 				const url = new URL(request.url());
@@ -129,6 +144,9 @@ async function browserSmoke(original) {
 		}
 		assert(results[0].pdfBytes > 1000, "PDF generation failed");
 		assert.deepEqual(results[0].mapCoordinates, [1, 2]);
+		assert.equal(results[0].editor, "function");
+		assert.equal(results[0].grid, "function");
+		assert.equal(results[0].date, "2026-11-12");
 		assert.deepEqual(results[1], results[0], "Browser behavior changed after minification");
 		console.log("Offline browser smoke passed: Angular binding, map parsing, editor, grid and PDF generation.");
 	} finally {
@@ -143,9 +161,9 @@ async function browserSmoke(original) {
 test("production bundles preserve JavaScript semantics, CSS URLs and license banners", async t => {
 	runGrunt("concat");
 	const files = Object.keys(grunt.config.get("concat.basic_and_extras.files"))
-		.map(filename => grunt.template.process(filename));
+		.map(filename => path.relative(output, grunt.template.process(filename)).split(path.sep).join("/"));
 	const original = new Map(files.map(filename => [
-		filename, fs.readFileSync(path.join(webapp, filename), "utf8"),
+		filename, fs.readFileSync(path.join(output, filename), "utf8"),
 	]));
 
 	runGrunt("knowagecockpit-concat");
@@ -155,18 +173,20 @@ test("production bundles preserve JavaScript semantics, CSS URLs and license ban
 	let beforeDeflated = 0;
 	let afterDeflated = 0;
 	for (const [filename, before] of original) {
-		const after = fs.readFileSync(path.join(webapp, filename), "utf8");
+		const after = fs.readFileSync(path.join(output, filename), "utf8");
 		beforeBytes += Buffer.byteLength(before);
 		afterBytes += Buffer.byteLength(after);
 		beforeDeflated += zlib.deflateRawSync(before, { level: 9 }).length;
 		afterDeflated += zlib.deflateRawSync(after, { level: 9 }).length;
 		if (filename.endsWith(".js")) {
-			assert.equal(uglify.parse(after).print_to_string(), uglify.parse(before).print_to_string(),
+			assert(uglify.parse(after, { module: false }).print_to_string() ===
+				uglify.parse(before, { module: false }).print_to_string(),
 				`JavaScript changed beyond formatting: ${filename}`);
 		} else {
-			const expected = new CleanCSS(grunt.config.get("cssmin.options")).minify(before);
+			const expected = new CleanCSS({ ...grunt.config.get("cssmin.options"), sourceMap: false })
+				.minify(before.replace(/\/\*# sourceMappingURL=[\s\S]*?\*\//g, ""));
 			assert.deepEqual(expected.errors, []);
-			assert.equal(after, expected.styles, filename);
+			assert(after === expected.styles, "CSS changed beyond formatting: " + filename);
 			assert.deepEqual(urls(after), urls(before), `CSS asset URLs changed: ${filename}`);
 		}
 		for (const banner of before.match(/\/\*![\s\S]*?\*\//g) || []) {
@@ -177,6 +197,49 @@ test("production bundles preserve JavaScript semantics, CSS URLs and license ban
 	assert(afterBytes < beforeBytes, "Production bundles did not shrink");
 	assert(afterDeflated < beforeDeflated, "Compressed production bundles did not shrink");
 	console.log(JSON.stringify({ files: files.length, beforeBytes, afterBytes, beforeDeflated, afterDeflated }));
+	const manifest = JSON.parse(fs.readFileSync(path.join(output, "asset-manifest.json"), "utf8"));
+	assert.equal(manifest.assets.length, files.length);
+	for (const asset of manifest.assets) {
+		const content = fs.readFileSync(path.join(output, asset.path));
+		const mapContent = fs.readFileSync(path.join(output, asset.path + ".map"));
+		assert.equal(crypto.createHash("sha256").update(content).digest("hex"), asset.sha256);
+		assert.equal(crypto.createHash("sha256").update(mapContent).digest("hex"), asset.mapSha256);
+		assert(!/(?:^|\n)\s*(?:\/\/[#@]|\/\*[#@])\s*sourceMappingURL=/.test(content.toString()),
+			"Runtime bundle links to excluded maps: " + asset.path);
+		const consumer = new SourceMapConsumer(JSON.parse(mapContent));
+		let position;
+		let tokenVerified = false;
+		const generatedLines = content.toString().split("\n");
+		const sources = new Map(consumer.sources.map(source => [source, consumer.sourceContentFor(source).split("\n")]));
+		consumer.eachMapping(mapping => {
+			if (!position && mapping.originalLine !== null) position = mapping;
+			if (!tokenVerified && mapping.name && mapping.originalLine !== null) {
+				const sourceLine = sources.get(mapping.source)[mapping.originalLine - 1] || "";
+				const generatedLine = generatedLines[mapping.generatedLine - 1] || "";
+				tokenVerified = sourceLine.slice(mapping.originalColumn).startsWith(mapping.name) &&
+					generatedLine.slice(mapping.generatedColumn).startsWith(mapping.name);
+			}
+			if (!tokenVerified && asset.path.endsWith(".css") && mapping.originalLine !== null) {
+				const sourceLine = sources.get(mapping.source)[mapping.originalLine - 1] || "";
+				const sourceToken = /^[.#@]?[-\w]+/.exec(sourceLine.slice(mapping.originalColumn));
+				const generatedLine = generatedLines[mapping.generatedLine - 1] || "";
+				tokenVerified = sourceToken !== null &&
+					generatedLine.slice(mapping.generatedColumn).startsWith(sourceToken[0]);
+			}
+		});
+		assert(position, "Missing source mapping: " + asset.path);
+		const originalPosition = consumer.originalPositionFor({
+			line: position.generatedLine, column: position.generatedColumn,
+		});
+		assert.equal(originalPosition.source, position.source);
+		assert.equal(originalPosition.line, position.originalLine);
+		assert(consumer.sourceContentFor(position.source), "Debug archive must contain original source content");
+		assert(tokenVerified, "No generated token maps to the matching original token: " + asset.path);
+	}
+	if (process.env.KNOWAGE_REQUIRE_BROWSER === "1") {
+		assert(process.env.KNOWAGE_TEST_CHROMIUM && process.env.KNOWAGE_TEST_PUPPETEER,
+			"Mandatory browser validation requires an explicitly configured local Chromium and Puppeteer");
+	}
 	await t.test("browser behavior matches before and after minification", {
 		skip: !process.env.KNOWAGE_TEST_CHROMIUM || !process.env.KNOWAGE_TEST_PUPPETEER,
 	}, () => browserSmoke(original));

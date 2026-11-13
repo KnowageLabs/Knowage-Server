@@ -4,7 +4,9 @@
   "description": "Knowage Cockpit Engine",
   "main": "index.js",
   "scripts": {
-    "test": "karma start"
+    "test": "karma start",
+    "build": "grunt knowagecockpit-concat",
+    "test:bundles": "node --test ../../test/nodejs/bundles.test.cjs"
   },
   "repository": {
     "type": "git",
@@ -48,6 +50,7 @@
     "angular": "^1.7.9",
     "angular-mocks": "^1.7.9",
     "grunt": "^1.3.0",
+    "grunt-cli": "1.4.3",
     "grunt-contrib-concat": "^1.0.1",
     "grunt-contrib-cssmin": "^3.0.0",
     "grunt-contrib-uglify": "^5.0.0",
@@ -57,6 +60,7 @@
     "karma-chrome-launcher": "^3.1.0",
     "karma-firefox-launcher": "^1.3.0",
     "karma-ie-launcher": "^1.0.0",
-    "karma-jasmine": "^3.1.1"
+    "karma-jasmine": "^3.1.1",
+    "source-map": "0.5.7"
   }
 }

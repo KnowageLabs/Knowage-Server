@@ -1,10 +1,14 @@
 module.exports = function (grunt) {
+  const path = require("path");
+  const crypto = require("crypto");
+  const output = path.resolve(grunt.option("output-dir") || path.join(__dirname, "../../../target/frontend"));
+  const version = String(grunt.option("asset-version") || grunt.file.readJSON("package.json").version).trim();
   grunt.initConfig({
     pkg: grunt.file.readJSON("package.json"),
     concat: {
       options: {
-        banner: "/*! <%= pkg.name %> - v<%= pkg.version %> - " + '<%= grunt.template.today("yyyy-mm-dd") %> */',
-        stripBanners: true,
+        banner: "/*! <%= pkg.name %> - v<%= pkg.version %> */\n",
+        stripBanners: false,
         nonull: true,
       },
       basic_and_extras: {
@@ -146,6 +150,9 @@ module.exports = function (grunt) {
       options: {
         mangle: false,
         compress: false,
+        sourceMap: {
+          includeSources: true,
+        },
         parse: {
           module: false,
         },
@@ -171,6 +178,8 @@ module.exports = function (grunt) {
       options: {
         rebase: false,
         level: 0,
+        sourceMap: true,
+        sourceMapInlineSources: true,
       },
       target: {
         files: {
@@ -180,9 +189,99 @@ module.exports = function (grunt) {
     },
   });
 
+  grunt.config.set("pkg.version", version);
+  ["concat.basic_and_extras.files", "uglify.target.files", "cssmin.target.files"].forEach(function (key) {
+    const files = grunt.config.get(key);
+    const generated = {};
+    Object.keys(files).forEach(function (destination) {
+      generated[path.join(output, destination)] = key === "concat.basic_and_extras.files"
+        ? files[destination] : files[destination].map(function (source) { return path.join(output, source); });
+    });
+    grunt.config.set(key, generated);
+  });
+
+  grunt.registerTask("link-debug-sources", function () {
+    const sourceMap = require("source-map");
+    const files = grunt.config.get("concat.basic_and_extras.files");
+    Object.keys(files).forEach(function (template) {
+      const filename = grunt.template.process(template);
+      const segments = [];
+      let line = grunt.template.process(grunt.config.get("concat.options.banner")).split("\n").length;
+      grunt.file.expand({ filter: "isFile" }, files[template]).forEach(function (source) {
+        const content = grunt.file.read(source);
+        const lines = content.split("\n").length;
+        segments.push({
+          path: path.relative(path.dirname(filename), source).split(path.sep).join("/"),
+          content: content, line: line, lines: lines,
+        });
+        line += lines;
+      });
+      const consumer = new sourceMap.SourceMapConsumer(grunt.file.readJSON(filename + ".map"));
+      const generator = new sourceMap.SourceMapGenerator({ file: path.basename(filename) });
+      segments.forEach(function (segment) { generator.setSourceContent(segment.path, segment.content); });
+      consumer.eachMapping(function (mapping) {
+        if (mapping.originalLine === null) return;
+        let index = segments.length - 1;
+        while (index >= 0 && segments[index].line > mapping.originalLine) index--;
+        if (index < 0) return;
+        const segment = segments[index];
+        const originalLine = mapping.originalLine - segment.line + 1;
+        if (originalLine > segment.lines) return;
+        const linked = {
+          generated: { line: mapping.generatedLine, column: mapping.generatedColumn },
+          original: { line: originalLine, column: mapping.originalColumn },
+          source: segment.path,
+        };
+        if (mapping.name) linked.name = mapping.name;
+        generator.addMapping(linked);
+      });
+      grunt.file.write(filename + ".map", generator.toString());
+    });
+  });
+
+  grunt.registerTask("verify-debug-assets", function () {
+    const SourceMapConsumer = require("source-map").SourceMapConsumer;
+    const files = Object.keys(grunt.config.get("concat.basic_and_extras.files"))
+      .map(function (filename) { return grunt.template.process(filename); });
+    let revision = "unknown";
+    try {
+      revision = require("child_process").execFileSync("git", ["rev-parse", "HEAD"], {
+        cwd: __dirname, encoding: "utf8", stdio: ["ignore", "pipe", "ignore"],
+      }).trim();
+    } catch (error) {
+      grunt.verbose.writeln("Git revision unavailable; asset hashes still identify this build.");
+    }
+    const manifest = { version: version, revision: revision, assets: [] };
+    files.forEach(function (filename) {
+      const mapName = filename + ".map";
+      const map = grunt.file.readJSON(mapName);
+      const consumer = new SourceMapConsumer(map);
+      let verified = false;
+      consumer.eachMapping(function (mapping) {
+        if (verified || mapping.source === null || mapping.originalLine === null) return;
+        const source = consumer.sourceContentFor(mapping.source, true);
+        const position = consumer.originalPositionFor({
+          line: mapping.generatedLine, column: mapping.generatedColumn,
+        });
+        if (source && position.source !== null && position.line > 0) verified = true;
+      });
+      if (!verified) grunt.fail.fatal("No usable embedded source mapping: " + mapName);
+      const content = grunt.file.read(filename)
+        .replace(/\n?\/\/# sourceMappingURL=[^\r\n]*\s*$/, "")
+        .replace(/\n?\/\*# sourceMappingURL=[\s\S]*?\*\/\s*$/, "");
+      grunt.file.write(filename, content);
+      manifest.assets.push({
+        path: path.relative(output, filename).split(path.sep).join("/"),
+        sha256: crypto.createHash("sha256").update(content).digest("hex"),
+        mapSha256: crypto.createHash("sha256").update(grunt.file.read(mapName)).digest("hex"),
+      });
+    });
+    grunt.file.write(path.join(output, "asset-manifest.json"), JSON.stringify(manifest, null, 2) + "\n");
+  });
+
   // Load the plugin that provides the "concat" task.
   grunt.loadNpmTasks("grunt-contrib-concat");
   grunt.loadNpmTasks("grunt-contrib-uglify");
   grunt.loadNpmTasks("grunt-contrib-cssmin");
-  grunt.registerTask("knowagecockpit-concat", ["concat", "uglify", "cssmin"]);
+  grunt.registerTask("knowagecockpit-concat", ["concat", "uglify", "cssmin", "link-debug-sources", "verify-debug-assets"]);
 };
