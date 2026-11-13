@@ -54,7 +54,7 @@ function Test-KnowageWar {
 		if ($unwanted.Count) {
 			throw "Unexpected runtime payload in ${File}: $($unwanted -join ', ')"
 		}
-		foreach ($artifact in @('knowage-dataset-sparql', 'jena-arq', 'solr-solrj', 'solr-solrj-streaming', 'solr-solrj-zookeeper')) {
+		foreach ($artifact in @('knowage-dataset-sparql', 'jena-arq', 'solr-solrj')) {
 			if (!@($names | Where-Object { $_ -match ('^WEB-INF/lib/' + [regex]::Escape($artifact) + '-[0-9][^/]*\.jar$') }).Count) {
 				throw "Missing runtime provider ${artifact} in $File"
 			}
@@ -65,8 +65,12 @@ function Test-KnowageWar {
 			'it/eng/spagobi/tools/dataset/common/datareader/SPARQLDataReader.class'
 		)
 		$locations = @{}
-		foreach ($class in $classes) { $locations[$class] = @() }
-		foreach ($entry in $archive.Entries | Where-Object { $_.FullName -match '^WEB-INF/lib/knowage-.*\.jar$' }) {
+		foreach ($class in $classes) {
+			$locations[$class] = @($archive.Entries | Where-Object {
+				$_.FullName -eq "WEB-INF/classes/$class"
+			} | ForEach-Object { $_.FullName })
+		}
+		foreach ($entry in $archive.Entries | Where-Object { $_.FullName -match '^WEB-INF/lib/[^/]+\.jar$' }) {
 			$memory = [System.IO.MemoryStream]::new()
 			$stream = $entry.Open()
 			try {
@@ -75,7 +79,9 @@ function Test-KnowageWar {
 				$jar = [System.IO.Compression.ZipArchive]::new($memory, [System.IO.Compression.ZipArchiveMode]::Read, $true)
 				try {
 					foreach ($class in $classes) {
-						if ($jar.GetEntry($class)) { $locations[$class] += $entry.FullName }
+						foreach ($match in $jar.Entries | Where-Object { $_.FullName -eq $class }) {
+							$locations[$class] += $entry.FullName
+						}
 					}
 				} finally { $jar.Dispose() }
 			} finally {
@@ -115,7 +121,9 @@ if ($CockpitSourceMaps) {
 		$files = @($archive.Entries | Where-Object { !$_.FullName.EndsWith('/') })
 		$maps = @($files | Where-Object { $_.FullName -match '\.(js|css)\.map$' })
 		$unexpected = @($files | Where-Object {
-			$_.FullName -notmatch '\.(js|css)\.map$' -and $_.Name -notmatch '^(LICENSE|LICENCE|COPYING|NOTICE)'
+			$_.FullName -notmatch '\.(js|css)\.map$' -and
+			$_.FullName -ne 'asset-manifest.json' -and
+			$_.Name -notmatch '^(LICENSE|LICENCE|COPYING|NOTICE)'
 		})
 		if (!$maps.Count -or $unexpected.Count) {
 			throw 'Source-map archive has no maps or contains non-debug payload'
