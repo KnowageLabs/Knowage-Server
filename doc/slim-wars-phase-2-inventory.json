@@ -1,0 +1,652 @@
+{
+  "Evidence": "Historical local artifacts only, not rebuilt A/B/C WARs. Class and JAR duplicates are observations, not safe removal decisions.",
+  "FullInventoryScript": "knowage-ce-parent/src/test/powershell/inventory-wars.ps1",
+  "Archives": [
+    {
+      "Edition": "CE",
+      "Module": "knowage",
+      "WarSha256": "29cf20504094898bb416480c0617a5fc896a534523738d5cb8001e1b65b9f2e5",
+      "WarBytes": 198239366,
+      "UncompressedEntryBytes": 263862859,
+      "EntryCount": 715,
+      "JarCount": 319,
+      "LibraryCompressedBytes": 193994389,
+      "StaticCompressedBytes": 3298747,
+      "SourceMapCompressedBytes": 750167,
+      "DuplicateClassPaths": 1099,
+      "DifferentDuplicateClassPaths": 1033,
+      "DuplicateJars": [],
+      "VersionConflicts": [
+        {
+          "Coordinate": "com.fasterxml.jackson.core:jackson-core",
+          "Versions": [
+            "2.15.2",
+            "2.17.1"
+          ]
+        }
+      ]
+    },
+    {
+      "Edition": "CE",
+      "Module": "knowage-api",
+      "WarSha256": "6d501eff6ac24c59c7335d581e257b570677e73fd6d53f1213f3fb440a8c4cf0",
+      "WarBytes": 71773309,
+      "UncompressedEntryBytes": 80804423,
+      "EntryCount": 310,
+      "JarCount": 171,
+      "LibraryCompressedBytes": 71571732,
+      "StaticCompressedBytes": 0,
+      "SourceMapCompressedBytes": 0,
+      "DuplicateClassPaths": 1969,
+      "DifferentDuplicateClassPaths": 758,
+      "DuplicateJars": [],
+      "VersionConflicts": [
+        {
+          "Coordinate": "org.glassfish.jaxb:jaxb-runtime",
+          "Versions": [
+            "2.3.8",
+            "2.3.9"
+          ]
+        },
+        {
+          "Coordinate": "org.glassfish.jaxb:txw2",
+          "Versions": [
+            "2.3.8",
+            "2.3.9"
+          ]
+        }
+      ]
+    },
+    {
+      "Edition": "CE",
+      "Module": "knowagebirtreportengine",
+      "WarSha256": "1acb1d072b6ae47f69e379a6eb6cc7c30b82235f334bd1ceb71dea0a3f5a9d1a",
+      "WarBytes": 147648828,
+      "UncompressedEntryBytes": 164033414,
+      "EntryCount": 342,
+      "JarCount": 265,
+      "LibraryCompressedBytes": 147475441,
+      "StaticCompressedBytes": 27527,
+      "SourceMapCompressedBytes": 0,
+      "DuplicateClassPaths": 2109,
+      "DifferentDuplicateClassPaths": 2047,
+      "DuplicateJars": [],
+      "VersionConflicts": [
+        {
+          "Coordinate": "com.fasterxml.jackson.core:jackson-core",
+          "Versions": [
+            "2.15.2",
+            "2.17.1"
+          ]
+        }
+      ]
+    },
+    {
+      "Edition": "CE",
+      "Module": "knowagecockpitengine",
+      "WarSha256": "b99793364e56ccb45363dce37b206950fe2a58847edad6b6311e1ea23d9e9938",
+      "WarBytes": 197060039,
+      "UncompressedEntryBytes": 354158269,
+      "EntryCount": 20686,
+      "JarCount": 237,
+      "LibraryCompressedBytes": 139374218,
+      "StaticCompressedBytes": 53271263,
+      "SourceMapCompressedBytes": 8554804,
+      "DuplicateClassPaths": 316,
+      "DifferentDuplicateClassPaths": 254,
+      "DuplicateJars": [],
+      "VersionConflicts": [
+        {
+          "Coordinate": "com.fasterxml.jackson.core:jackson-core",
+          "Versions": [
+            "2.15.2",
+            "2.17.1"
+          ]
+        },
+        {
+          "Coordinate": "commons-io:commons-io",
+          "Versions": [
+            "2.16.1",
+            "2.8.0"
+          ]
+        }
+      ]
+    },
+    {
+      "Edition": "CE",
+      "Module": "knowagejasperreportengine",
+      "WarSha256": "56775de0c571c6c828c0dab57651d21b5bdf62ecf5f7424d137c162f90106de4",
+      "WarBytes": 134702765,
+      "UncompressedEntryBytes": 148951784,
+      "EntryCount": 251,
+      "JarCount": 204,
+      "LibraryCompressedBytes": 134613301,
+      "StaticCompressedBytes": 4874,
+      "SourceMapCompressedBytes": 0,
+      "DuplicateClassPaths": 1102,
+      "DifferentDuplicateClassPaths": 1040,
+      "DuplicateJars": [],
+      "VersionConflicts": [
+        {
+          "Coordinate": "com.fasterxml.jackson.core:jackson-core",
+          "Versions": [
+            "2.15.2",
+            "2.17.1"
+          ]
+        }
+      ]
+    },
+    {
+      "Edition": "CE",
+      "Module": "knowagekpiengine",
+      "WarSha256": "075cd5c0d542a5e68e8668d50c986d6c696cbe94cf2780455ca64c088d51d8a2",
+      "WarBytes": 116301745,
+      "UncompressedEntryBytes": 129358351,
+      "EntryCount": 274,
+      "JarCount": 193,
+      "LibraryCompressedBytes": 116195367,
+      "StaticCompressedBytes": 12968,
+      "SourceMapCompressedBytes": 0,
+      "DuplicateClassPaths": 316,
+      "DifferentDuplicateClassPaths": 254,
+      "DuplicateJars": [],
+      "VersionConflicts": [
+        {
+          "Coordinate": "com.fasterxml.jackson.core:jackson-core",
+          "Versions": [
+            "2.15.2",
+            "2.17.1"
+          ]
+        }
+      ]
+    },
+    {
+      "Edition": "CE",
+      "Module": "knowagemeta",
+      "WarSha256": "41145eb80a295b7e35709dc31269ea8af24445c6f10cb2590db38bb9fe0689d8",
+      "WarBytes": 121778487,
+      "UncompressedEntryBytes": 135852680,
+      "EntryCount": 531,
+      "JarCount": 207,
+      "LibraryCompressedBytes": 121212361,
+      "StaticCompressedBytes": 12968,
+      "SourceMapCompressedBytes": 0,
+      "DuplicateClassPaths": 407,
+      "DifferentDuplicateClassPaths": 345,
+      "DuplicateJars": [],
+      "VersionConflicts": [
+        {
+          "Coordinate": "com.fasterxml.jackson.core:jackson-core",
+          "Versions": [
+            "2.15.2",
+            "2.17.1"
+          ]
+        },
+        {
+          "Coordinate": "commons-io:commons-io",
+          "Versions": [
+            "2.16.1",
+            "2.8.0"
+          ]
+        }
+      ]
+    },
+    {
+      "Edition": "CE",
+      "Module": "knowageqbeengine",
+      "WarSha256": "f4c026cd2cc93fc6e268f5b638b8f491fc846899e3c49812ed1a7b3176812a60",
+      "WarBytes": 133888625,
+      "UncompressedEntryBytes": 148853396,
+      "EntryCount": 473,
+      "JarCount": 209,
+      "LibraryCompressedBytes": 133374997,
+      "StaticCompressedBytes": 13285,
+      "SourceMapCompressedBytes": 0,
+      "DuplicateClassPaths": 2183,
+      "DifferentDuplicateClassPaths": 680,
+      "DuplicateJars": [
+        {
+          "Sha256": "389f405cfa66b26004484733937a22624782a5d86456e0c35e007b60ebc8e359",
+          "Paths": [
+            "WEB-INF/lib/bcmail-jdk14-1.38.jar",
+            "WEB-INF/lib/bcmail-jdk14-138.jar"
+          ]
+        },
+        {
+          "Sha256": "d60b88c5d1932de8d98edd5a3ae2d5d5647793de3eb6157015807ee523cd2bee",
+          "Paths": [
+            "WEB-INF/lib/bcprov-jdk14-1.38.jar",
+            "WEB-INF/lib/bcprov-jdk14-138.jar"
+          ]
+        }
+      ],
+      "VersionConflicts": [
+        {
+          "Coordinate": "com.fasterxml.jackson.core:jackson-core",
+          "Versions": [
+            "2.15.2",
+            "2.17.1"
+          ]
+        }
+      ]
+    },
+    {
+      "Edition": "CE",
+      "Module": "knowagetalendengine",
+      "WarSha256": "5c5f00ec6671954a55e85f80887b4bc42411af9b1cd9c5fb88e60c41bcb5765f",
+      "WarBytes": 98560148,
+      "UncompressedEntryBytes": 109865658,
+      "EntryCount": 232,
+      "JarCount": 165,
+      "LibraryCompressedBytes": 98456270,
+      "StaticCompressedBytes": 15212,
+      "SourceMapCompressedBytes": 0,
+      "DuplicateClassPaths": 61,
+      "DifferentDuplicateClassPaths": 45,
+      "DuplicateJars": [],
+      "VersionConflicts": [
+        {
+          "Coordinate": "com.fasterxml.jackson.core:jackson-core",
+          "Versions": [
+            "2.15.2",
+            "2.17.1"
+          ]
+        }
+      ]
+    },
+    {
+      "Edition": "CE",
+      "Module": "knowagewhatifengine",
+      "WarSha256": "e34b2b5a514cce9d13bf1b73f23c31551de1e4554baaf93913fa9fac19b7291d",
+      "WarBytes": 113106897,
+      "UncompressedEntryBytes": 126598989,
+      "EntryCount": 527,
+      "JarCount": 211,
+      "LibraryCompressedBytes": 112510093,
+      "StaticCompressedBytes": 48671,
+      "SourceMapCompressedBytes": 0,
+      "DuplicateClassPaths": 456,
+      "DifferentDuplicateClassPaths": 390,
+      "DuplicateJars": [],
+      "VersionConflicts": [
+        {
+          "Coordinate": "com.fasterxml.jackson.core:jackson-core",
+          "Versions": [
+            "2.15.2",
+            "2.17.1"
+          ]
+        }
+      ]
+    },
+    {
+      "Edition": "EE",
+      "Module": "knowage-api-ee",
+      "WarSha256": "019dcb5e2e59a06faf07c7cd19e56346a02a241f9dc95d62fc2cf66692387674",
+      "WarBytes": 72000379,
+      "UncompressedEntryBytes": 81108414,
+      "EntryCount": 352,
+      "JarCount": 173,
+      "LibraryCompressedBytes": 71741968,
+      "StaticCompressedBytes": 0,
+      "SourceMapCompressedBytes": 0,
+      "DuplicateClassPaths": 2062,
+      "DifferentDuplicateClassPaths": 777,
+      "DuplicateJars": [],
+      "VersionConflicts": [
+        {
+          "Coordinate": "org.glassfish.jaxb:jaxb-runtime",
+          "Versions": [
+            "2.3.8",
+            "2.3.9"
+          ]
+        },
+        {
+          "Coordinate": "org.glassfish.jaxb:txw2",
+          "Versions": [
+            "2.3.8",
+            "2.3.9"
+          ]
+        }
+      ]
+    },
+    {
+      "Edition": "EE",
+      "Module": "knowage-data-preparation",
+      "WarSha256": "a81dd0e1ed7cd97f6043be8ed2ff85b61e7f5572e600d8a0d44060c5542e41f5",
+      "WarBytes": 176055681,
+      "UncompressedEntryBytes": 196110835,
+      "EntryCount": 424,
+      "JarCount": 320,
+      "LibraryCompressedBytes": 175872676,
+      "StaticCompressedBytes": 0,
+      "SourceMapCompressedBytes": 0,
+      "DuplicateClassPaths": 2817,
+      "DifferentDuplicateClassPaths": 1440,
+      "DuplicateJars": [],
+      "VersionConflicts": [
+        {
+          "Coordinate": "com.google.guava:guava",
+          "Versions": [
+            "14.0.1",
+            "33.2.1-jre"
+          ]
+        },
+        {
+          "Coordinate": "org.glassfish.jaxb:jaxb-runtime",
+          "Versions": [
+            "2.3.8",
+            "2.3.9"
+          ]
+        },
+        {
+          "Coordinate": "org.glassfish.jaxb:txw2",
+          "Versions": [
+            "2.3.8",
+            "2.3.9"
+          ]
+        }
+      ]
+    },
+    {
+      "Edition": "EE",
+      "Module": "knowage-ee",
+      "WarSha256": "b1335356fbaae147272c5e4c00e47defaadf434b5bfae9ad55b1564cecd41e3d",
+      "WarBytes": 198858245,
+      "UncompressedEntryBytes": 255675019,
+      "EntryCount": 648,
+      "JarCount": 332,
+      "LibraryCompressedBytes": 197544000,
+      "StaticCompressedBytes": 375835,
+      "SourceMapCompressedBytes": 0,
+      "DuplicateClassPaths": 1675,
+      "DifferentDuplicateClassPaths": 1560,
+      "DuplicateJars": [],
+      "VersionConflicts": [
+        {
+          "Coordinate": "com.fasterxml.jackson.core:jackson-core",
+          "Versions": [
+            "2.15.2",
+            "2.17.1"
+          ]
+        },
+        {
+          "Coordinate": "org.apache.commons:commons-collections4",
+          "Versions": [
+            "4.4",
+            "4.5.0-M1"
+          ]
+        }
+      ]
+    },
+    {
+      "Edition": "EE",
+      "Module": "knowagebirtreportengine-ee",
+      "WarSha256": "9dab7e7b7f68fe2a66c63551b8cfba1a9137884fe83821deae26a8dfd4fc05ce",
+      "WarBytes": 148466867,
+      "UncompressedEntryBytes": 164958549,
+      "EntryCount": 351,
+      "JarCount": 269,
+      "LibraryCompressedBytes": 148291505,
+      "StaticCompressedBytes": 27182,
+      "SourceMapCompressedBytes": 0,
+      "DuplicateClassPaths": 2633,
+      "DifferentDuplicateClassPaths": 2558,
+      "DuplicateJars": [],
+      "VersionConflicts": [
+        {
+          "Coordinate": "com.fasterxml.jackson.core:jackson-core",
+          "Versions": [
+            "2.15.2",
+            "2.17.1"
+          ]
+        },
+        {
+          "Coordinate": "org.apache.commons:commons-collections4",
+          "Versions": [
+            "4.4",
+            "4.5.0-M1"
+          ]
+        }
+      ]
+    },
+    {
+      "Edition": "EE",
+      "Module": "knowagecockpitengine-ee",
+      "WarSha256": "b28cd4803fa1cc8783fede4825ecab191eff6de289c4a2f6d85693685a79dd93",
+      "WarBytes": 199709778,
+      "UncompressedEntryBytes": 360130329,
+      "EntryCount": 20790,
+      "JarCount": 243,
+      "LibraryCompressedBytes": 141028899,
+      "StaticCompressedBytes": 54230172,
+      "SourceMapCompressedBytes": 8554804,
+      "DuplicateClassPaths": 970,
+      "DifferentDuplicateClassPaths": 820,
+      "DuplicateJars": [],
+      "VersionConflicts": [
+        {
+          "Coordinate": "com.fasterxml.jackson.core:jackson-core",
+          "Versions": [
+            "2.15.2",
+            "2.17.1"
+          ]
+        },
+        {
+          "Coordinate": "commons-io:commons-io",
+          "Versions": [
+            "2.16.1",
+            "2.8.0"
+          ]
+        },
+        {
+          "Coordinate": "org.apache.commons:commons-collections4",
+          "Versions": [
+            "4.4",
+            "4.5.0-M1"
+          ]
+        },
+        {
+          "Coordinate": "org.slf4j:slf4j-api",
+          "Versions": [
+            "1.7.30",
+            "2.0.13"
+          ]
+        }
+      ]
+    },
+    {
+      "Edition": "EE",
+      "Module": "knowagedossierengine-ee",
+      "WarSha256": "839146805b51d00fe6c0aeb22f282bc05d4fdad6f65da8eead8d71909a549656",
+      "WarBytes": 121795388,
+      "UncompressedEntryBytes": 138353377,
+      "EntryCount": 384,
+      "JarCount": 206,
+      "LibraryCompressedBytes": 120279528,
+      "StaticCompressedBytes": 1326164,
+      "SourceMapCompressedBytes": 0,
+      "DuplicateClassPaths": 647,
+      "DifferentDuplicateClassPaths": 581,
+      "DuplicateJars": [],
+      "VersionConflicts": [
+        {
+          "Coordinate": "com.fasterxml.jackson.core:jackson-core",
+          "Versions": [
+            "2.15.2",
+            "2.17.1"
+          ]
+        }
+      ]
+    },
+    {
+      "Edition": "EE",
+      "Module": "knowagejasperreportengine-ee",
+      "WarSha256": "bb7f6fc42eb5b1bc41ba8919d94d462df1ee55204215b61120ff3b3b31395e06",
+      "WarBytes": 135486226,
+      "UncompressedEntryBytes": 149846403,
+      "EntryCount": 260,
+      "JarCount": 208,
+      "LibraryCompressedBytes": 135394437,
+      "StaticCompressedBytes": 4801,
+      "SourceMapCompressedBytes": 0,
+      "DuplicateClassPaths": 1630,
+      "DifferentDuplicateClassPaths": 1551,
+      "DuplicateJars": [],
+      "VersionConflicts": [
+        {
+          "Coordinate": "com.fasterxml.jackson.core:jackson-core",
+          "Versions": [
+            "2.15.2",
+            "2.17.1"
+          ]
+        },
+        {
+          "Coordinate": "org.apache.commons:commons-collections4",
+          "Versions": [
+            "4.4",
+            "4.5.0-M1"
+          ]
+        }
+      ]
+    },
+    {
+      "Edition": "EE",
+      "Module": "knowagekpiengine-ee",
+      "WarSha256": "b3e3155dc1d6fd06bcc16aa929d57d9bec329d628db0a5615b85c911144974d3",
+      "WarBytes": 116414921,
+      "UncompressedEntryBytes": 129493905,
+      "EntryCount": 283,
+      "JarCount": 197,
+      "LibraryCompressedBytes": 116306462,
+      "StaticCompressedBytes": 12768,
+      "SourceMapCompressedBytes": 0,
+      "DuplicateClassPaths": 353,
+      "DifferentDuplicateClassPaths": 276,
+      "DuplicateJars": [],
+      "VersionConflicts": [
+        {
+          "Coordinate": "com.fasterxml.jackson.core:jackson-core",
+          "Versions": [
+            "2.15.2",
+            "2.17.1"
+          ]
+        }
+      ]
+    },
+    {
+      "Edition": "EE",
+      "Module": "knowagemeta-ee",
+      "WarSha256": "d92878a9991f4b8503fbcb105ce7ef50852b50a920d7bdd1da7f3894daf6dd42",
+      "WarBytes": 123096822,
+      "UncompressedEntryBytes": 137336138,
+      "EntryCount": 542,
+      "JarCount": 213,
+      "LibraryCompressedBytes": 122528635,
+      "StaticCompressedBytes": 12768,
+      "SourceMapCompressedBytes": 0,
+      "DuplicateClassPaths": 1179,
+      "DifferentDuplicateClassPaths": 911,
+      "DuplicateJars": [],
+      "VersionConflicts": [
+        {
+          "Coordinate": "com.fasterxml.jackson.core:jackson-core",
+          "Versions": [
+            "2.15.2",
+            "2.17.1"
+          ]
+        },
+        {
+          "Coordinate": "commons-io:commons-io",
+          "Versions": [
+            "2.16.1",
+            "2.8.0"
+          ]
+        },
+        {
+          "Coordinate": "org.apache.commons:commons-collections4",
+          "Versions": [
+            "4.4",
+            "4.5.0-M1"
+          ]
+        },
+        {
+          "Coordinate": "org.slf4j:slf4j-api",
+          "Versions": [
+            "1.7.30",
+            "2.0.13"
+          ]
+        }
+      ]
+    },
+    {
+      "Edition": "EE",
+      "Module": "knowageqbeengine-ee",
+      "WarSha256": "af6d78180f16702923aff2baf00a467f929184401b9e06bef0027a31d0afbe03",
+      "WarBytes": 135096082,
+      "UncompressedEntryBytes": 150198183,
+      "EntryCount": 483,
+      "JarCount": 214,
+      "LibraryCompressedBytes": 134580754,
+      "StaticCompressedBytes": 13080,
+      "SourceMapCompressedBytes": 0,
+      "DuplicateClassPaths": 2826,
+      "DifferentDuplicateClassPaths": 1213,
+      "DuplicateJars": [
+        {
+          "Sha256": "389f405cfa66b26004484733937a22624782a5d86456e0c35e007b60ebc8e359",
+          "Paths": [
+            "WEB-INF/lib/bcmail-jdk14-1.38.jar",
+            "WEB-INF/lib/bcmail-jdk14-138.jar"
+          ]
+        },
+        {
+          "Sha256": "d60b88c5d1932de8d98edd5a3ae2d5d5647793de3eb6157015807ee523cd2bee",
+          "Paths": [
+            "WEB-INF/lib/bcprov-jdk14-1.38.jar",
+            "WEB-INF/lib/bcprov-jdk14-138.jar"
+          ]
+        }
+      ],
+      "VersionConflicts": [
+        {
+          "Coordinate": "com.fasterxml.jackson.core:jackson-core",
+          "Versions": [
+            "2.15.2",
+            "2.17.1"
+          ]
+        },
+        {
+          "Coordinate": "org.apache.commons:commons-collections4",
+          "Versions": [
+            "4.4",
+            "4.5.0-M1"
+          ]
+        }
+      ]
+    },
+    {
+      "Edition": "EE",
+      "Module": "knowagewhatifengine-ee",
+      "WarSha256": "98ab42649b2a516cccb11601a1229bf6a899cdac3365d34134e07a58c845c909",
+      "WarBytes": 113878350,
+      "UncompressedEntryBytes": 127474918,
+      "EntryCount": 570,
+      "JarCount": 214,
+      "LibraryCompressedBytes": 113253476,
+      "StaticCompressedBytes": 48334,
+      "SourceMapCompressedBytes": 0,
+      "DuplicateClassPaths": 613,
+      "DifferentDuplicateClassPaths": 390,
+      "DuplicateJars": [],
+      "VersionConflicts": [
+        {
+          "Coordinate": "com.fasterxml.jackson.core:jackson-core",
+          "Versions": [
+            "2.15.2",
+            "2.17.1"
+          ]
+        }
+      ]
+    }
+  ]
+}

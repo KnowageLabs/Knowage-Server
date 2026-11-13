@@ -1,0 +1,202 @@
+{
+  "limitation": "Bundle content only; DEFLATE level 9 is a normalized proxy, not a measured WAR size.",
+  "snapshots": [
+    {
+      "label": "A",
+      "files": [
+        {
+          "name": "angular-bundle.js",
+          "bytes": 198366,
+          "deflatedBytes": 69545,
+          "sha256": "2b22aef0b09e4beaf0e9b9f06c21aa03b910b292b7516f4e8cff5c3662ccab4f"
+        },
+        {
+          "name": "knowagecockpit-lib-bundle.js",
+          "bytes": 2022216,
+          "deflatedBytes": 514100,
+          "sha256": "f2e835934acf741e552093585267a48f13970c41536492fca69f5657e432ca80"
+        },
+        {
+          "name": "knowagecockpit-modules-bundle.js",
+          "bytes": 3310901,
+          "deflatedBytes": 782248,
+          "sha256": "281bd21242ddd95488b5634341a27f0bc08cc2190fe5af2b68dc01ceace21b6f"
+        },
+        {
+          "name": "knowagecockpit-modules-styles-bundle.css",
+          "bytes": 472161,
+          "deflatedBytes": 137239,
+          "sha256": "8fde4a206885dcc422b674cb3f21a634bc23bc23cb4188148572e53667332b1f"
+        },
+        {
+          "name": "knowagecockpit-sources-bundle_9.0.0-SNAPSHOT.js",
+          "bytes": 144392,
+          "deflatedBytes": 26234,
+          "sha256": "bd5e1868ab418eae3da17e593f945cc6f106eeafd1aeec7abffc1ac518b03401"
+        },
+        {
+          "name": "knowagecockpit-sources-chart-bundle_9.0.0-SNAPSHOT.js",
+          "bytes": 243115,
+          "deflatedBytes": 34299,
+          "sha256": "15d88544ba7b20eb0c9462dc851964f1c6cd6d61bb8912f67fd09ab03f1feb44"
+        },
+        {
+          "name": "knowagecockpit-sources-chartrender-bundle_9.0.0-SNAPSHOT.js",
+          "bytes": 838217,
+          "deflatedBytes": 169329,
+          "sha256": "ecbfb045da79ba0121568aea789d0d4e4ffd3c5db621bb6770c2f052686e531e"
+        },
+        {
+          "name": "knowagecockpit-sources-cockpit-bundle_9.0.0-SNAPSHOT.js",
+          "bytes": 935271,
+          "deflatedBytes": 150396,
+          "sha256": "cb3f704a1a135b3540b2447d6dab1efa48b32f2c59f995259a1027ecc0812070"
+        },
+        {
+          "name": "knowagecockpit-sources-widgets-bundle_9.0.0-SNAPSHOT.js",
+          "bytes": 524936,
+          "deflatedBytes": 105731,
+          "sha256": "46a3d50a62e66c81dc22e07eab5221a030eb870522a3c5f09936bdadc3b68ebb"
+        }
+      ],
+      "bytes": 8689575,
+      "deflatedBytes": 1989121
+    },
+    {
+      "label": "B",
+      "files": [
+        {
+          "name": "angular-bundle.js",
+          "bytes": 189477,
+          "deflatedBytes": 66583,
+          "sha256": "c6e81735d88b577b2820cc572d4d71217aac3433953b6e6125ba466c9044cbfc"
+        },
+        {
+          "name": "knowagecockpit-lib-bundle.js",
+          "bytes": 1936395,
+          "deflatedBytes": 498842,
+          "sha256": "e76245259c7e868ef12f3222ef18f64719327f1fc32aa8f5386c68f0840ad21a"
+        },
+        {
+          "name": "knowagecockpit-modules-bundle.js",
+          "bytes": 3076622,
+          "deflatedBytes": 742357,
+          "sha256": "99ff1c21409dfa566877e0964d76762dcc9c367452ef93d521b9d7c766374b00"
+        },
+        {
+          "name": "knowagecockpit-modules-styles-bundle.css",
+          "bytes": 469553,
+          "deflatedBytes": 136595,
+          "sha256": "b1464248db2c09c8a9a3215f98edbe586a4837d940f46d19ccee831cc6432583"
+        },
+        {
+          "name": "knowagecockpit-sources-bundle_9.0.0-SNAPSHOT.js",
+          "bytes": 83738,
+          "deflatedBytes": 12572,
+          "sha256": "b7888eb8b4342a8450b26d5a451db907a64cf8419329885f3f0a5447b3d45535"
+        },
+        {
+          "name": "knowagecockpit-sources-chart-bundle_9.0.0-SNAPSHOT.js",
+          "bytes": 151980,
+          "deflatedBytes": 21718,
+          "sha256": "a2ce84f36cb548420545e7a9ad29537c960f29f4e4b253403a9bd0311f0af000"
+        },
+        {
+          "name": "knowagecockpit-sources-chartrender-bundle_9.0.0-SNAPSHOT.js",
+          "bytes": 518767,
+          "deflatedBytes": 115541,
+          "sha256": "241ee30ffff25ff5b0f83fe3ba27008ed625f9c54e941a148418d3cd8f503086"
+        },
+        {
+          "name": "knowagecockpit-sources-cockpit-bundle_9.0.0-SNAPSHOT.js",
+          "bytes": 725772,
+          "deflatedBytes": 118836,
+          "sha256": "36392144f8b54dbbaab5f326fec92c5f520269cf199e65c3e33375a77224cf01"
+        },
+        {
+          "name": "knowagecockpit-sources-widgets-bundle_9.0.0-SNAPSHOT.js",
+          "bytes": 392755,
+          "deflatedBytes": 77825,
+          "sha256": "1b7270baa801d3e8bec95f5fe67c090cd9aca7cc61d9a7455a36799c8ab5a914"
+        }
+      ],
+      "bytes": 7545059,
+      "deflatedBytes": 1790869
+    },
+    {
+      "label": "C",
+      "files": [
+        {
+          "name": "angular-bundle.js",
+          "bytes": 189570,
+          "deflatedBytes": 66659,
+          "sha256": "3ae06b78fa7743839afc00965cc9adb8e10faa5e334b63003f578136f444331d"
+        },
+        {
+          "name": "knowagecockpit-lib-bundle.js",
+          "bytes": 1938322,
+          "deflatedBytes": 499961,
+          "sha256": "0a2b4fbec4e902d8780bec9fd361d19dc4ccac10cc97975ca6d20aed13e7a518"
+        },
+        {
+          "name": "knowagecockpit-modules-bundle.js",
+          "bytes": 3079515,
+          "deflatedBytes": 743802,
+          "sha256": "b95e894677a4a9360438fccc3fdecfe13938db5628e8136712692667ebbc9190"
+        },
+        {
+          "name": "knowagecockpit-modules-styles-bundle.css",
+          "bytes": 469533,
+          "deflatedBytes": 136573,
+          "sha256": "caf23a03db6ef6e3c3a250a1fbdff8216108e2cf5aab3f69e676988a1278c239"
+        },
+        {
+          "name": "knowagecockpit-sources-bundle_9.0.0-SNAPSHOT.js",
+          "bytes": 83726,
+          "deflatedBytes": 12563,
+          "sha256": "48418bd6ad0c27fc50b1f7128805c3746c20568dc5756cd4c0b741cf03d7f12b"
+        },
+        {
+          "name": "knowagecockpit-sources-chart-bundle_9.0.0-SNAPSHOT.js",
+          "bytes": 169574,
+          "deflatedBytes": 23191,
+          "sha256": "9448c94f7f7e6d875c0758851c6c765c1eda6d1d036901e12fd9b9f99a36641d"
+        },
+        {
+          "name": "knowagecockpit-sources-chartrender-bundle_9.0.0-SNAPSHOT.js",
+          "bytes": 531898,
+          "deflatedBytes": 118525,
+          "sha256": "4787672a2a61b9b7cb223ec78b3af97510e8934a02018ebb2a2519e598907cc3"
+        },
+        {
+          "name": "knowagecockpit-sources-cockpit-bundle_9.0.0-SNAPSHOT.js",
+          "bytes": 745139,
+          "deflatedBytes": 122987,
+          "sha256": "ef2d21a857d93b7a9c33d4b4032f69d7f4901245e88b225c702fc6a30830d4af"
+        },
+        {
+          "name": "knowagecockpit-sources-widgets-bundle_9.0.0-SNAPSHOT.js",
+          "bytes": 406843,
+          "deflatedBytes": 80791,
+          "sha256": "4d030476e7998065e21a3f39bded441ce37b49b979d97ee0c19ef38b0812f339"
+        }
+      ],
+      "bytes": 7614120,
+      "deflatedBytes": 1805052
+    }
+  ],
+  "deltas": [
+    {
+      "from": "A",
+      "to": "B",
+      "bytesSaved": 1144516,
+      "deflatedBytesSaved": 198252
+    },
+    {
+      "from": "B",
+      "to": "C",
+      "bytesSaved": -69061,
+      "deflatedBytesSaved": -14183
+    }
+  ]
+}
