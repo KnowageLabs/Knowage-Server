@@ -1,6 +1,8 @@
 package it.eng.spagobi.analiticalmodel.document.handlers;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
@@ -26,7 +28,6 @@ import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ObjParuse;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ParameterUse;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IObjParuseDAO;
-import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IParameterUseDAO;
 import it.eng.spagobi.commons.bo.Domain;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.ObjectsTreeConstants;
@@ -45,6 +46,7 @@ public class DocumentRuntime extends AbstractBIResourceRuntime<BIObjectParameter
 	private static final Logger LOGGER = Logger.getLogger(DocumentRuntime.class);
 
 	private final List<DocumentDriverRuntime> drivers = null;
+	private final Map<List<Object>, List<ObjParuse>> dependencies = new HashMap<>();
 
 	public DocumentRuntime(IEngUserProfile userProfile, Locale locale) {
 		super(userProfile, locale);
@@ -180,18 +182,26 @@ public class DocumentRuntime extends AbstractBIResourceRuntime<BIObjectParameter
 
 	@Override
 	public List<ObjParuse> getDependencies(AbstractDriver driver, String role) {
-
-		List<ObjParuse> biParameterExecDependencies = new ArrayList<>();
 		try {
-			IParameterUseDAO parusedao = DAOFactory.getParameterUseDAO();
-			ParameterUse biParameterExecModality = parusedao.loadByParameterIdandRole(driver.getParID(), role);
-			IObjParuseDAO objParuseDAO = DAOFactory.getObjParuseDAO();
-			biParameterExecDependencies
-					.addAll(objParuseDAO.loadObjParuse(driver.getId(), biParameterExecModality.getUseID()));
+			ParameterUse biParameterExecModality = getParameterUse(driver, role);
+			List<Object> key = Arrays.asList(driver.getId(), biParameterExecModality.getUseID());
+			List<ObjParuse> biParameterExecDependencies = dependencies.get(key);
+			if (biParameterExecDependencies == null) {
+				IObjParuseDAO objParuseDAO = DAOFactory.getObjParuseDAO();
+				biParameterExecDependencies = new ArrayList<>(
+						objParuseDAO.loadObjParuse(driver.getId(), biParameterExecModality.getUseID()));
+				dependencies.put(key, biParameterExecDependencies);
+			}
+			return biParameterExecDependencies;
 		} catch (Exception e) {
 			throw new SpagoBIRuntimeException("Impossible to get dependencies", e);
 		}
-		return biParameterExecDependencies;
+	}
+
+	@Override
+	protected void clearMetadataCaches() {
+		super.clearMetadataCaches();
+		dependencies.clear();
 	}
 
 }

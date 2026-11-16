@@ -4,10 +4,15 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
 import java.util.StringTokenizer;
 
 import org.apache.log4j.Logger;
@@ -18,14 +23,18 @@ import org.json.JSONObject;
 import com.jamonapi.Monitor;
 import com.jamonapi.MonitorFactory;
 
+import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.execution.bo.defaultvalues.DefaultValuesList;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.AbstractDriver;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.AbstractParuse;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.Parameter;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ParameterUse;
 import it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail;
 import it.eng.spagobi.behaviouralmodel.lov.bo.LovDetailFactory;
 import it.eng.spagobi.behaviouralmodel.lov.bo.ModalitiesValue;
+import it.eng.spagobi.behaviouralmodel.lov.bo.QueryDetail;
+import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.tools.catalogue.metadata.IDrivableBIResource;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
@@ -38,6 +47,11 @@ public abstract class AbstractBIResourceRuntime<T extends AbstractDriver> {
 
 	private IEngUserProfile userProfile = null;
 	private Locale locale = null;
+	// Runtime-local metadata only: evaluated LOV results must still use current parameter values.
+	private final Map<List<Object>, ParameterUse> parameterUses = new HashMap<>();
+	private final Map<String, ILovDetail> queryLovDetails = new HashMap<>();
+	private List<? extends AbstractDriver> resourceDrivers;
+	private final Map<Integer, AbstractDriver> driversById = new HashMap<>();
 
 	public IEngUserProfile getUserProfile() {
 		return userProfile;
@@ -45,6 +59,7 @@ public abstract class AbstractBIResourceRuntime<T extends AbstractDriver> {
 
 	public void setUserProfile(IEngUserProfile userProfile) {
 		this.userProfile = userProfile;
+		clearMetadataCaches();
 	}
 
 	public Locale getLocale() {
@@ -53,6 +68,62 @@ public abstract class AbstractBIResourceRuntime<T extends AbstractDriver> {
 
 	public void setLocale(Locale locale) {
 		this.locale = locale;
+		clearMetadataCaches();
+	}
+
+	protected void clearMetadataCaches() {
+		parameterUses.clear();
+		queryLovDetails.clear();
+		resourceDrivers = null;
+		driversById.clear();
+	}
+
+	public void registerDrivers(List<? extends AbstractDriver> drivers) {
+		if (resourceDrivers == drivers) {
+			return;
+		}
+		resourceDrivers = drivers;
+		driversById.clear();
+		Set<Integer> duplicateIds = new HashSet<>();
+		if (drivers != null) {
+			for (AbstractDriver driver : drivers) {
+				Integer driverId = driver.getId();
+				if (driverId != null && !duplicateIds.contains(driverId)
+						&& driversById.putIfAbsent(driverId, driver) != null) {
+					// Inherited drivers can share synthetic IDs; keep the DAO fallback for ambiguous parents.
+					driversById.remove(driverId);
+					duplicateIds.add(driverId);
+				}
+			}
+		}
+	}
+
+	public AbstractDriver getDriverById(Integer driverId) {
+		return driversById.get(driverId);
+	}
+
+	public ParameterUse getParameterUse(AbstractDriver driver, String role) throws EMFUserError {
+		List<Object> key = Arrays.asList(driver.getParID(), role);
+		ParameterUse parameterUse = parameterUses.get(key);
+		if (parameterUse == null) {
+			parameterUse = DAOFactory.getParameterUseDAO().loadByParameterIdandRole(driver.getParID(), role);
+			if (parameterUse != null) {
+				parameterUses.put(key, parameterUse);
+			}
+		}
+		return parameterUse;
+	}
+
+	private ILovDetail parseLovDetail(String definition) throws Exception {
+		ILovDetail detail = queryLovDetails.get(definition);
+		if (detail == null) {
+			detail = LovDetailFactory.getLovFromXML(definition);
+			// Cache query metadata only; scripts and Java LOVs may keep execution state.
+			if (detail instanceof QueryDetail) {
+				queryLovDetails.put(definition, detail);
+			}
+		}
+		return detail;
 	}
 
 	DefaultValuesList defaultValues;
@@ -75,7 +146,7 @@ public abstract class AbstractBIResourceRuntime<T extends AbstractDriver> {
 		String lovProv = lov.getLovProvider();
 		ILovDetail lovProvDet = null;
 		try {
-			lovProvDet = LovDetailFactory.getLovFromXML(lovProv);
+			lovProvDet = parseLovDetail(lovProv);
 		} catch (Exception e) {
 			throw new SpagoBIRuntimeException("Impossible to get lov detail associated to input BIObjectParameter", e);
 		}
@@ -96,7 +167,7 @@ public abstract class AbstractBIResourceRuntime<T extends AbstractDriver> {
 		String lovProv = lov.getLovProvider();
 		ILovDetail lovProvDet = null;
 		try {
-			lovProvDet = LovDetailFactory.getLovFromXML(lovProv);
+			lovProvDet = parseLovDetail(lovProv);
 		} catch (Exception e) {
 			throw new SpagoBIRuntimeException(
 					"Impossible to get LOV detail associated to the analytical driver for default values", e);
@@ -123,7 +194,7 @@ public abstract class AbstractBIResourceRuntime<T extends AbstractDriver> {
 		String lovProv = lov.getLovProvider();
 		ILovDetail lovProvDet = null;
 		try {
-			lovProvDet = LovDetailFactory.getLovFromXML(lovProv);
+			lovProvDet = parseLovDetail(lovProv);
 		} catch (Exception e) {
 			throw new SpagoBIRuntimeException(
 					"Impossible to get LOV detail associated to the analytical driver for min value", e);
@@ -149,7 +220,7 @@ public abstract class AbstractBIResourceRuntime<T extends AbstractDriver> {
 		String lovProv = lov.getLovProvider();
 		ILovDetail lovProvDet = null;
 		try {
-			lovProvDet = LovDetailFactory.getLovFromXML(lovProv);
+			lovProvDet = parseLovDetail(lovProv);
 		} catch (Exception e) {
 			throw new SpagoBIRuntimeException(
 					"Impossible to get LOV detail associated to the analytical driver for max value", e);

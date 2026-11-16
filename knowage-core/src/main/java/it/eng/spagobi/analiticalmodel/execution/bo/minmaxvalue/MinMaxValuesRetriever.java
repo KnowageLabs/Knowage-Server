@@ -134,13 +134,18 @@ public class MinMaxValuesRetriever {
 	
 	public LovValue getMinValueDum(AbstractDriver driver, IDrivableBIResource object, IEngUserProfile profile,
 			Locale locale, String role) {
-		LOGGER.debug("IN");
 		AbstractBIResourceRuntime dum = null;
 		if (object instanceof BIObject) {
 			dum = new DocumentRuntime(profile, locale);
 		} else if (object instanceof MetaModel) {
 			dum = new BusinessModelRuntime(profile, locale);
 		}
+		return getMinValueDum(driver, object, profile, locale, role, dum);
+	}
+
+	public LovValue getMinValueDum(AbstractDriver driver, IDrivableBIResource object, IEngUserProfile profile,
+			Locale locale, String role, AbstractBIResourceRuntime dum) {
+		LOGGER.debug("IN");
 		LovValue retValue = null;
 		try {
 			ILovDetail lov = dum.getLovDetailForMin(driver);
@@ -160,13 +165,18 @@ public class MinMaxValuesRetriever {
 
 	public LovValue getMaxValueDum(AbstractDriver driver, IDrivableBIResource object, IEngUserProfile profile,
 			Locale locale, String role) {
-		LOGGER.debug("IN");
 		AbstractBIResourceRuntime dum = null;
 		if (object instanceof BIObject) {
 			dum = new DocumentRuntime(profile, locale);
 		} else if (object instanceof MetaModel) {
 			dum = new BusinessModelRuntime(profile, locale);
 		}
+		return getMaxValueDum(driver, object, profile, locale, role, dum);
+	}
+
+	public LovValue getMaxValueDum(AbstractDriver driver, IDrivableBIResource object, IEngUserProfile profile,
+			Locale locale, String role, AbstractBIResourceRuntime dum) {
+		LOGGER.debug("IN");
 		LovValue retValue = null;
 		try {
 			ILovDetail lov = dum.getLovDetailForMax(driver);

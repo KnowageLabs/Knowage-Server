@@ -147,13 +147,18 @@ public class DefaultValuesRetriever {
 
 	public DefaultValuesList getDefaultValuesDum(AbstractDriver driver, IDrivableBIResource object,
 			IEngUserProfile profile, Locale locale, String role) {
-		LOGGER.debug("IN");
 		AbstractBIResourceRuntime dum = null;
 		if (object instanceof BIObject) {
 			dum = new DocumentRuntime(profile, locale);
 		} else if (object instanceof MetaModel) {
 			dum = new BusinessModelRuntime(profile, locale);
 		}
+		return getDefaultValuesDum(driver, object, profile, locale, role, dum);
+	}
+
+	public DefaultValuesList getDefaultValuesDum(AbstractDriver driver, IDrivableBIResource object,
+			IEngUserProfile profile, Locale locale, String role, AbstractBIResourceRuntime dum) {
+		LOGGER.debug("IN");
 		DefaultValuesList defaultValues = null;
 		try {
 			ILovDetail lovForDefault = dum.getLovDetailForDefault(driver);

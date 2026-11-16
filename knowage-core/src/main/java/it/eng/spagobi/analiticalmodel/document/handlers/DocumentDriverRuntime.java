@@ -16,7 +16,6 @@ import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.AbstractParuse;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.AbstractParview;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IBIObjectParameterDAO;
-import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IObjParuseDAO;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IObjParviewDAO;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
@@ -26,7 +25,6 @@ public class DocumentDriverRuntime extends AbstractDriverRuntime<BIObjectParamet
 	private static final Logger LOGGER = LogManager.getLogger(DocumentDriverRuntime.class);
 
 	// DAOs
-	private IObjParuseDAO dataDependenciesDocDao;
 	private IObjParviewDAO visualDependenciesDocDao;
 	private IBIObjectParameterDAO driverDocDao;
 
@@ -44,7 +42,6 @@ public class DocumentDriverRuntime extends AbstractDriverRuntime<BIObjectParamet
 	@Override
 	public void initDAO() {
 		super.initDAO();
-		dataDependenciesDocDao = DAOFactory.getObjParuseDAO();
 		visualDependenciesDocDao = DAOFactory.getObjParviewDAO();
 
 		try {
@@ -71,7 +68,10 @@ public class DocumentDriverRuntime extends AbstractDriverRuntime<BIObjectParamet
 			AbstractParview dependency = it.next();
 			Integer objParFatherId = dependency.getParFatherId();
 			try {
-				BIObjectParameter objParFather = driverDocDao.loadForDetailByObjParId(objParFatherId);
+				BIObjectParameter objParFather = (BIObjectParameter) getLoadedDriver(objParFatherId);
+				if (objParFather == null) {
+					objParFather = driverDocDao.loadForDetailByObjParId(objParFatherId);
+				}
 				VisualDependencyRuntime visualDependency = new VisualDependencyRuntime();
 				visualDependency.urlName = objParFather.getParameterUrlName();
 				visualDependency.condition = dependency;
@@ -92,19 +92,16 @@ public class DocumentDriverRuntime extends AbstractDriverRuntime<BIObjectParamet
 		if (dependencies == null) {
 			dependencies = new HashMap<>();
 		}
-		try {
-			dataDependencies = dataDependenciesDocDao.loadObjParuse(driver.getId(),
-					analyticalDriverExecModality.getUseID());
-		} catch (EMFUserError e) {
-			throw new SpagoBIServiceException(
-					"An error occurred while loading parameter data dependecies for parameter [" + id + "]", e);
-		}
+		dataDependencies = getResourceRuntime(driver).getDependencies(driver, executionRole);
 		Iterator<? extends AbstractParuse> it = dataDependencies.iterator();
 		while (it.hasNext()) {
 			AbstractParuse dependency = it.next();
 			Integer objParFatherId = dependency.getParFatherId();
 			try {
-				BIObjectParameter objParFather = driverDocDao.loadForDetailByObjParId(objParFatherId);
+				BIObjectParameter objParFather = (BIObjectParameter) getLoadedDriver(objParFatherId);
+				if (objParFather == null) {
+					objParFather = driverDocDao.loadForDetailByObjParId(objParFatherId);
+				}
 				DataDependencyRuntime dataDependency = new DataDependencyRuntime();
 				dataDependency.urlName = objParFather.getParameterUrlName();
 				if (!dependencies.containsKey(dataDependency.urlName)) {

@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
@@ -20,6 +21,8 @@ import org.json.JSONObject;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
+import com.jamonapi.Monitor;
+import com.jamonapi.MonitorFactory;
 
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.security.IEngUserProfile;
@@ -31,7 +34,6 @@ import it.eng.spagobi.analiticalmodel.execution.bo.minmaxvalue.MinMaxValuesRetri
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.AbstractDriver;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.AbstractParuse;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.AbstractParview;
-import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIMetaModelParameter;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.Parameter;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ParameterUse;
@@ -41,13 +43,10 @@ import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IMetaModelParuseDAO;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IMetaModelParviewDAO;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IObjParuseDAO;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IObjParviewDAO;
-import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IParameterDAO;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IParameterUseDAO;
 import it.eng.spagobi.behaviouralmodel.lov.bo.DependenciesPostProcessingLov;
 import it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail;
-import it.eng.spagobi.behaviouralmodel.lov.bo.LovDetailFactory;
 import it.eng.spagobi.behaviouralmodel.lov.bo.LovResultHandler;
-import it.eng.spagobi.behaviouralmodel.lov.bo.ModalitiesValue;
 import it.eng.spagobi.behaviouralmodel.lov.exceptions.MissingLOVDependencyException;
 import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.dao.DAOFactory;
@@ -70,8 +69,6 @@ public abstract class AbstractDriverRuntime<T extends AbstractDriver> {
 	private IMetaModelParuseDAO DATA_DEPENDENCIES_BM_DAO;
 	private IMetaModelParviewDAO VISUAL_DEPENDENCIES_BM_DAO;
 	private IBIMetaModelParameterDAO DRIVER_BM_DAO;
-
-	private IParameterDAO ANALYTICAL_DRIVER_DAO;
 
 	// attribute loaded from spagobi's metadata
 	T driver;
@@ -150,12 +147,31 @@ public abstract class AbstractDriverRuntime<T extends AbstractDriver> {
 	public AbstractDriverRuntime() {
 	}
 
+	private AbstractBIResourceRuntime resourceRuntime;
+
+	protected AbstractBIResourceRuntime getResourceRuntime(AbstractDriver driver) {
+		if (resourceRuntime == null) {
+			resourceRuntime = driver instanceof BIObjectParameter
+					? new DocumentRuntime(UserProfileManager.getProfile(), locale)
+					: new BusinessModelRuntime(UserProfileManager.getProfile(), locale);
+		}
+		return resourceRuntime;
+	}
+
+	protected AbstractDriver getLoadedDriver(Integer driverId) {
+		return resourceRuntime == null ? null : resourceRuntime.getDriverById(driverId);
+	}
+
 	public AbstractDriverRuntime(T driver2, String exeRole, Locale loc, IDrivableBIResource doc,
 			AbstractBIResourceRuntime dum, List<? extends AbstractDriver> objParameters) {
 		driver = driver2;
 		executionRole = exeRole;
 		biResource = doc;
 		locale = loc;
+		resourceRuntime = dum;
+		if (dum != null) {
+			dum.registerDrivers(objParameters);
+		}
 
 		initDAO();
 		initAttributes(driver);
@@ -175,6 +191,10 @@ public abstract class AbstractDriverRuntime<T extends AbstractDriver> {
 		executionRole = exeRole;
 		biResource = doc;
 		locale = loc;
+		resourceRuntime = dum;
+		if (dum != null) {
+			dum.registerDrivers(objParameters);
+		}
 		isFromCross = _isFromCross;
 		initDAO();
 		initAttributes(driver);
@@ -190,9 +210,6 @@ public abstract class AbstractDriverRuntime<T extends AbstractDriver> {
 
 	public void initDAO() {
 		ANALYTICAL_DRIVER_USE_MODALITY_DAO = DAOFactory.getParameterUseDAO();
-
-		ANALYTICAL_DRIVER_DAO = DAOFactory.getParameterDAO();
-
 	}
 
 	void initAttributes(AbstractDriver driver) {
@@ -218,8 +235,9 @@ public abstract class AbstractDriverRuntime<T extends AbstractDriver> {
 		thickPerc = driver.getThickPerc() != null ? driver.getThickPerc() : 0;
 
 		try {
-			analyticalDriverExecModality = ANALYTICAL_DRIVER_USE_MODALITY_DAO
-					.loadByParameterIdandRole(driver.getParID(), executionRole);
+			analyticalDriverExecModality = resourceRuntime == null
+					? ANALYTICAL_DRIVER_USE_MODALITY_DAO.loadByParameterIdandRole(driver.getParID(), executionRole)
+					: resourceRuntime.getParameterUse(driver, executionRole);
 		} catch (Exception e) {
 			throw new SpagoBIServiceException(SERVICE_NAME,
 					"Impossible to find any valid execution modality for parameter [" + id + "] and role ["
@@ -258,14 +276,14 @@ public abstract class AbstractDriverRuntime<T extends AbstractDriver> {
 			return;
 		}
 		try {
-			DocumentRuntime dum = new DocumentRuntime(UserProfileManager.getProfile(), locale);
+			AbstractBIResourceRuntime dum = getResourceRuntime(driver);
 			ILovDetail lovDetail = dum.getLovDetailForMax(driver);
 			Set<String> parameterNames = lovDetail == null ? null : lovDetail.getParameterNames();
 			if (parameterNames == null || parameterNames.isEmpty()) {
 				return;
 			}
 			for (AbstractDriver objParameter : objParameters) {
-				Parameter parameter = ANALYTICAL_DRIVER_DAO.loadForDetailByParameterID(objParameter.getParameter().getId());
+				Parameter parameter = objParameter.getParameter();
 				if (parameter != null && parameterNames.contains(parameter.getLabel())) {
 					maxValueDependencies.add(objParameter.getParameterUrlName());
 				}
@@ -282,12 +300,7 @@ public abstract class AbstractDriverRuntime<T extends AbstractDriver> {
 		if (dependencies == null) {
 			dependencies = new HashMap<>();
 		}
-		AbstractBIResourceRuntime dum = null;
-		if (driver instanceof BIObjectParameter) {
-			dum = new DocumentRuntime(UserProfileManager.getProfile(), locale);
-		} else if (driver instanceof BIMetaModelParameter) {
-			dum = new BusinessModelRuntime(UserProfileManager.getProfile(), locale);
-		}
+		AbstractBIResourceRuntime dum = getResourceRuntime(driver);
 		ILovDetail lovDetail = dum.getLovDetail(driver);
 		Set<String> lovParameters = null;
 		try {
@@ -298,8 +311,7 @@ public abstract class AbstractDriverRuntime<T extends AbstractDriver> {
 					LovDependencyRuntime lovDependency = new LovDependencyRuntime();
 					lovDependencies = new ArrayList<>();
 					for (AbstractDriver objParameter : objParameters) {
-						Parameter objAnalyticalDriver = ANALYTICAL_DRIVER_DAO
-								.loadForDetailByParameterID(objParameter.getParameter().getId());
+						Parameter objAnalyticalDriver = objParameter.getParameter();
 						if (objAnalyticalDriver != null && lovParameters.contains(objAnalyticalDriver.getLabel())) {
 							logger.debug("Found the analytical driver [" + objAnalyticalDriver.getLabel()
 									+ "] associated to the placeholder in the LOV");
@@ -334,13 +346,13 @@ public abstract class AbstractDriverRuntime<T extends AbstractDriver> {
 
 	protected void loadAdmissibleValues(AbstractDriver driver, AbstractBIResourceRuntime dum) {
 		logger.debug("IN");
+		Monitor monitor = MonitorFactory.start("Knowage.DriverRuntime.admissibleValues");
 		try {
 
 			// DocumentRuntime dum = new DocumentRuntime(UserProfileManager.getProfile(), locale);
 
 			// get LOV info
-			Integer paruseId = analyticalDriverExecModality.getUseID();
-			ParameterUse parameterUse = DAOFactory.getParameterUseDAO().loadByUseID(paruseId);
+			ParameterUse parameterUse = analyticalDriverExecModality;
 			// get admissible values metadata (i.e. LOV metadata, in case AD has LOV)
 			if ("lov".equalsIgnoreCase(parameterUse.getValueSelection())) {
 				// get LOV metadata
@@ -399,44 +411,11 @@ public abstract class AbstractDriverRuntime<T extends AbstractDriver> {
 						DocumentExecutionUtils.MODE_SIMPLE);
 				JSONArray valuesJSONArray = valuesJSON.getJSONArray("root");
 
-				for (int i = 0; i < valuesJSONArray.length(); i++) {
-					// System.out.println(i);
-					JSONObject item = valuesJSONArray.getJSONObject(i);
-
-					if (item.length() > 0) {
-
-						HashMap<String, Object> itemAsMap = fromJSONtoMap(item);
-
-						ArrayList<HashMap<String, Object>> defaultErrorValues = new ArrayList<>();
-						boolean defaultParameterAlreadyExist = false;
-						// if it is a LOOKUP
-						if (driver.getParameter() != null && driver.getParameter().getModalityValue() != null
-								&& driver.getParameter().getModalityValue().getSelectionType() != null
-								&& !driver.getParameter().getModalityValue().getSelectionType().equals("LOOKUP")) {
-
-							for (HashMap<String, Object> defVal : admissibleValues) {
-								if (item.has("value") && item.has("description")) {
-									if (defVal.get("value") != null && defVal.get("value").equals(item.get("value"))
-											&& !item.isNull("label")) {
-										if (defVal.get("label") != null && defVal.get("label").equals(item.get("label"))
-												&& defVal.get("description") != null && item.opt("description") != null
-												&& defVal.get("description").equals(item.get("description"))) {
-											defaultParameterAlreadyExist = true;
-											break;
-										}
-									}
-								} else {
-									defaultParameterAlreadyExist = true;
-									continue;
-								}
-							}
-						}
-
-						if (!defaultParameterAlreadyExist) {
-							admissibleValues.add(itemAsMap);
-						}
-					}
-				}
+				boolean deduplicate = driver.getParameter() != null
+						&& driver.getParameter().getModalityValue() != null
+						&& driver.getParameter().getModalityValue().getSelectionType() != null
+						&& !driver.getParameter().getModalityValue().getSelectionType().equals("LOOKUP");
+				appendAdmissibleValues(valuesJSONArray, deduplicate);
 
 				// retrieve description for cross case
 				if (isFromCross) {
@@ -446,41 +425,7 @@ public abstract class AbstractDriverRuntime<T extends AbstractDriver> {
 						driver.setParameterValues(new ArrayList());
 					}
 					// add values description search for description
-					List<String> descriptions = new ArrayList<>();
-					for (Iterator iterator = driver.getParameterValues().iterator(); iterator.hasNext();) {
-						Object parameterValue = iterator.next();
-						String value = parameterValue != null && parameterValue instanceof String
-								? parameterValue.toString()
-								: null;
-						if (value != null) {
-							boolean found = false;
-							for (Iterator iterator2 = admissibleValues.iterator(); iterator2.hasNext() && !found;) {
-								Map map = (Map) iterator2.next();
-								String valueD = map.get("value") != null && map.get("value") instanceof String
-										? map.get("value").toString()
-										: null;
-								if (valueD != null && valueD.equals(value)) {
-									String description = map.get("description") != null
-											&& map.get("description") instanceof String
-													? map.get("description").toString()
-													: null;
-									if (description != null) {
-										logger.debug(
-												"Description found for cross navigation parameter: " + description);
-										descriptions.add(description);
-									} else {
-										logger.debug(
-												"No description found for cross navigation parameter use value as default: "
-														+ value);
-										descriptions.add(value);
-									}
-									found = true;
-								}
-
-							}
-						}
-					}
-					driver.setParameterValuesDescription(descriptions);
+					driver.setParameterValuesDescription(getCrossDescriptions(driver.getParameterValues()));
 
 					// if parameter is of type lookup empty admissible values
 					if (isFromCross && "LOOKUP".equalsIgnoreCase(selectionType)) {
@@ -496,9 +441,72 @@ public abstract class AbstractDriverRuntime<T extends AbstractDriver> {
 		} catch (Exception e) {
 			logger.error("Errpr in retrieving admissible values");
 			throw new SpagoBIRuntimeException(e);
+		} finally {
+			monitor.stop();
 		}
 		logger.debug("OUT");
 
+	}
+
+	void appendAdmissibleValues(JSONArray rows, boolean deduplicate) throws JSONException {
+		Set<List<Object>> seen = new HashSet<>();
+		if (deduplicate) {
+			for (HashMap<String, Object> row : admissibleValues) {
+				indexAdmissibleValue(seen, row);
+			}
+		}
+		for (int i = 0; i < rows.length(); i++) {
+			JSONObject item = rows.getJSONObject(i);
+			if (item.length() == 0) {
+				continue;
+			}
+			HashMap<String, Object> row = fromJSONtoMap(item);
+			if (deduplicate) {
+				if (!item.has("value") || !item.has("description")) {
+					if (!admissibleValues.isEmpty()) {
+						continue;
+					}
+				} else if (!item.isNull("label") && seen.contains(Arrays.asList(
+						item.get("value"), item.get("label"), item.get("description")))) {
+					continue;
+				}
+			}
+			admissibleValues.add(row);
+			if (deduplicate) {
+				indexAdmissibleValue(seen, row);
+			}
+		}
+	}
+
+	private void indexAdmissibleValue(Set<List<Object>> seen, Map<String, Object> row) {
+		Object value = row.get("value");
+		Object label = row.get("label");
+		Object description = row.get("description");
+		if (value != null && label != null && description != null) {
+			seen.add(Arrays.asList(value, label, description));
+		}
+	}
+
+	List<String> getCrossDescriptions(List<?> values) {
+		if (values.isEmpty()) {
+			return new ArrayList<>();
+		}
+		Map<String, String> descriptionsByValue = new HashMap<>();
+		for (Map<String, Object> row : admissibleValues) {
+			Object value = row.get("value");
+			if (value instanceof String) {
+				Object description = row.get("description");
+				descriptionsByValue.putIfAbsent((String) value,
+						description instanceof String ? (String) description : (String) value);
+			}
+		}
+		List<String> descriptions = new ArrayList<>();
+		for (Object value : values) {
+			if (value instanceof String && descriptionsByValue.containsKey(value)) {
+				descriptions.add(descriptionsByValue.get(value));
+			}
+		}
+		return descriptions;
 	}
 
 	public boolean areAdmissibleValuesToBePreloaded(AbstractDriver driver) {
@@ -581,11 +589,12 @@ public abstract class AbstractDriverRuntime<T extends AbstractDriver> {
 
 	public void loadDefaultValues(AbstractDriver driver) {
 		logger.debug("IN");
+		Monitor monitor = MonitorFactory.start("Knowage.DriverRuntime.defaultValues");
 		try {
 			DefaultValuesRetriever retriever = new DefaultValuesRetriever();
 			IEngUserProfile profile = UserProfileManager.getProfile();
 			defaultValues = retriever.getDefaultValuesDum(driver, this.biResource, profile, this.locale,
-					this.executionRole);
+					this.executionRole, getResourceRuntime(driver));
 
 			if (defaultValues.size() > 0
 					&& (driver.getParameterValues() == null || driver.getParameterValues().isEmpty())) {
@@ -599,17 +608,21 @@ public abstract class AbstractDriverRuntime<T extends AbstractDriver> {
 
 		} catch (Exception e) {
 			throw new SpagoBIServiceException(SERVICE_NAME, "Impossible to get parameter's default values", e);
+		} finally {
+			monitor.stop();
 		}
 		logger.debug("OUT");
 	}
 	
 	public void loadMinValue(AbstractDriver driver) {
 	    logger.debug("IN");
+	    Monitor monitor = MonitorFactory.start("Knowage.DriverRuntime.minValue");
 	    try {
 	        MinMaxValuesRetriever retriever = new MinMaxValuesRetriever();
 	        IEngUserProfile profile = UserProfileManager.getProfile();
 	        // Chiamata al retriever per ottenere il LovValue del minimo
-	        minValue = retriever.getMinValueDum(driver, this.biResource, profile, this.locale, this.executionRole);
+	        minValue = retriever.getMinValueDum(driver, this.biResource, profile, this.locale, this.executionRole,
+	                getResourceRuntime(driver));
 	 
 	        if (driver.getMinValue() == null) {
 	            minValue = buildMinValue();
@@ -620,16 +633,20 @@ public abstract class AbstractDriverRuntime<T extends AbstractDriver> {
 	 
 	    } catch (Exception e) {
 	        throw new SpagoBIServiceException(SERVICE_NAME, "Impossible to get parameter's min values", e);
+	    } finally {
+	        monitor.stop();
 	    }
 	    logger.debug("OUT");
 	}
 
 	public void loadMaxValue(AbstractDriver driver) {
 		logger.debug("IN");
+		Monitor monitor = MonitorFactory.start("Knowage.DriverRuntime.maxValue");
 		try {
 			MinMaxValuesRetriever retriever = new MinMaxValuesRetriever();
 			IEngUserProfile profile = UserProfileManager.getProfile();
-			maxValue = retriever.getMaxValueDum(driver, this.biResource, profile, this.locale, this.executionRole);
+			maxValue = retriever.getMaxValueDum(driver, this.biResource, profile, this.locale, this.executionRole,
+					getResourceRuntime(driver));
 
 			if (driver.getMaxValue() == null) {
 				maxValue = formatMaxValue(maxValue, parType);
@@ -640,6 +657,8 @@ public abstract class AbstractDriverRuntime<T extends AbstractDriver> {
 
 		} catch (Exception e) {
 			throw new SpagoBIServiceException(SERVICE_NAME, "Impossible to get parameter's default values", e);
+		} finally {
+			monitor.stop();
 		}
 		logger.debug("OUT");
 	}
@@ -868,11 +887,7 @@ public abstract class AbstractDriverRuntime<T extends AbstractDriver> {
 	private ILovDetail getLovProvider() {
 		ILovDetail lovProvDet = null;
 		try {
-			Parameter par = driver.getParameter();
-			ModalitiesValue lov = par.getModalityValue();
-			// build the ILovDetail object associated to the lov
-			String lovProv = lov.getLovProvider();
-			lovProvDet = LovDetailFactory.getLovFromXML(lovProv);
+			lovProvDet = getResourceRuntime(driver).getLovDetail(driver);
 		} catch (Exception e) {
 			throw new SpagoBIServiceException(SERVICE_NAME, "Impossible to get lov provider", e);
 		}

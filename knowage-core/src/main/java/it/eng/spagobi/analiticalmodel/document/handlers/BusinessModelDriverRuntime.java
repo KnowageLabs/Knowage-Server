@@ -67,8 +67,10 @@ public class BusinessModelDriverRuntime extends AbstractDriverRuntime<BIMetaMode
 			AbstractParview dependency = it.next();
 			Integer metaModelParFatherId = dependency.getParFatherId();
 			try {
-				BIMetaModelParameter metaModelParFather = DRIVER_BM_DAO
-						.loadBIMetaModelParameterById(metaModelParFatherId);
+				BIMetaModelParameter metaModelParFather = (BIMetaModelParameter) getLoadedDriver(metaModelParFatherId);
+				if (metaModelParFather == null) {
+					metaModelParFather = DRIVER_BM_DAO.loadBIMetaModelParameterById(metaModelParFatherId);
+				}
 				VisualDependencyRuntime visualDependency = new VisualDependencyRuntime();
 				visualDependency.urlName = metaModelParFather.getParameterUrlName();
 				visualDependency.condition = dependency;
@@ -100,7 +102,10 @@ public class BusinessModelDriverRuntime extends AbstractDriverRuntime<BIMetaMode
 			AbstractParuse dependency = it.next();
 			Integer objParFatherId = dependency.getParFatherId();
 			try {
-				BIMetaModelParameter objParFather = DRIVER_BM_DAO.loadBIMetaModelParameterById(objParFatherId);
+				BIMetaModelParameter objParFather = (BIMetaModelParameter) getLoadedDriver(objParFatherId);
+				if (objParFather == null) {
+					objParFather = DRIVER_BM_DAO.loadBIMetaModelParameterById(objParFatherId);
+				}
 				DataDependencyRuntime dataDependency = new DataDependencyRuntime();
 				dataDependency.urlName = objParFather.getParameterUrlName();
 				if (!dependencies.containsKey(dataDependency.urlName)) {

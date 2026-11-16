@@ -1,9 +1,13 @@
 package it.eng.spagobi.analiticalmodel.document.handlers;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 
 import org.apache.log4j.Logger;
 import org.owasp.esapi.Encoder;
@@ -22,7 +26,6 @@ import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ObjParuse;
 import it.eng.spagobi.behaviouralmodel.check.bo.Check;
 import it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail;
-import it.eng.spagobi.behaviouralmodel.lov.bo.LovDetailFactory;
 import it.eng.spagobi.behaviouralmodel.lov.bo.LovResultHandler;
 import it.eng.spagobi.behaviouralmodel.lov.bo.ModalitiesValue;
 import it.eng.spagobi.behaviouralmodel.lov.bo.QueryDetail;
@@ -270,7 +273,7 @@ public class DriversValidationAPI {
 		// non-default values instead require validation
 		DefaultValuesRetriever retriever = new DefaultValuesRetriever();
 		DefaultValuesList allDefaultValues = retriever.getDefaultValuesDum(driver, object, this.userProfile,
-				this.locale, role);
+				this.locale, role, dum);
 		// from the complete list of values, get the values that are default values
 		DefaultValuesList selectedDefaultValue = this.getSelectedDefaultValues(driver, allDefaultValues);
 		// validation must proceed only with non-default values
@@ -299,8 +302,7 @@ public class DriversValidationAPI {
 		// BIObjectParameter clone = driver.clone();
 		clone.setParameterValues(driver.getParameterValues());
 		// get the lov provider detail
-		String lovProv = lov.getLovProvider();
-		ILovDetail lovProvDet = LovDetailFactory.getLovFromXML(lovProv);
+		ILovDetail lovProvDet = dum.getLovDetail(driver);
 		// get lov result
 		String lovResult = null;
 		List toReturn = null;
@@ -351,6 +353,7 @@ public class DriversValidationAPI {
 		List parameterValuesDescription = new ArrayList();
 		// get lov result handler
 		LovResultHandler lovResultHandler = new LovResultHandler(lovResult);
+		Set<String> admissibleValues = null;
 		List values = driver.getParameterValues();
 		if (values != null && values.size() > 0) {
 			for (int i = 0; i < values.size(); i++) {
@@ -383,8 +386,18 @@ public class DriversValidationAPI {
 							}
 						}
 					}
-				} else if (lovResultHandler.containsValue(value, lovProvDet.getValueColumnName())) {
-					valueFound = true;
+				} else {
+					if (admissibleValues == null) {
+						admissibleValues = new TreeSet<>(String.CASE_INSENSITIVE_ORDER);
+						for (Object lovValue : lovResultHandler.getValues(lovProvDet.getValueColumnName())) {
+							if (lovValue != null) {
+								admissibleValues.add(lovValue.toString().trim());
+							}
+						}
+					}
+					if (admissibleValues.contains(value)) {
+						valueFound = true;
+					}
 				}
 				if (valueFound) {
 					description = lovResultHandler.getValueDescription(value, lovProvDet.getValueColumnName(),
@@ -480,16 +493,19 @@ public class DriversValidationAPI {
 
 	private void mergeDescriptions(AbstractDriver driver, DefaultValuesList selectedDefaultValue,
 			AbstractDriver cloned) {
-		int valuePosition;
 		List nonDefaultValues = cloned.getParameterValues();
 		List nonDefaultDescriptions = cloned.getParameterValuesDescription();
 		List parameterValues = driver.getParameterValues();
 		List parameterDescriptions = new ArrayList<String>();
-		if (parameterValues != null) {
+		if (parameterValues != null && !parameterValues.isEmpty()) {
+			Map<Object, Integer> positions = new HashMap<>();
+			for (int i = 0; i < nonDefaultValues.size(); i++) {
+				positions.putIfAbsent(nonDefaultValues.get(i), i);
+			}
 			for (int i = 0; i < parameterValues.size(); i++) {
 				Object aValue = parameterValues.get(i);
-				valuePosition = nonDefaultValues.indexOf(aValue);
-				if (valuePosition >= 0) {
+				Integer valuePosition = positions.get(aValue);
+				if (valuePosition != null) {
 					// this means that the value IS NOT a default value
 					parameterDescriptions.add(nonDefaultDescriptions.get(valuePosition));
 				} else {
