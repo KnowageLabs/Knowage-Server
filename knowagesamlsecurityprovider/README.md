@@ -1,6 +1,7 @@
 # SAML 2.0: utenti Knowage locali o profilazione PM-API
 
-Guide operative: [preparazione per il gestore IdP](GUIDA-PREPARAZIONE-IDP.md)
+Guide operative: [configurazione da zero, passo per passo](GUIDA-SAML-PASSO-PASSO.md),
+[preparazione per il gestore IdP](GUIDA-PREPARAZIONE-IDP.md)
 e [installazione applicativa essenziale](GUIDA-INSTALLAZIONE-APPLICATIVA.md).
 
 ## Stato della consegna

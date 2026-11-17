@@ -45,17 +45,6 @@ public class SamlResource {
 	private static final ObjectMapper JSON = new ObjectMapper();
 
 	@GET
-	@Path("/metadata")
-	@PublicService
-	public Response metadata() throws Exception {
-		if (!SamlConfiguration.enabled()) {
-			return Response.status(404).build();
-		}
-		SamlConfiguration config = SamlConfiguration.load();
-		return Response.ok(new SamlProtocolService(config, FederatedSessionStore.configured()).metadata(), MediaType.APPLICATION_XML).build();
-	}
-
-	@GET
 	@Path("/login")
 	@PublicService
 	public Response login(@QueryParam("challenge") String challenge) throws Exception {
