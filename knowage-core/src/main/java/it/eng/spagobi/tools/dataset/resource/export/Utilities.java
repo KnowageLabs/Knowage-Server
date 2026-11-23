@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
 import com.jamonapi.Monitor;
@@ -104,7 +105,8 @@ public class Utilities {
 
 						ExportMetadata metadata = ExportMetadata.readFromJsonFile(metadataPath);
 
-						Entry entry = new Entry(metadata.getDataSetName(), metadata.getStartDate(), metadata.getId().toString(), downloadPlaceholderExist);
+						String fileName = StringUtils.defaultIfBlank(metadata.getFileName(), metadata.getDataSetName());
+						Entry entry = new Entry(fileName, metadata.getStartDate(), metadata.getId().toString(), downloadPlaceholderExist);
 
 						ret.add(entry);
 					}
