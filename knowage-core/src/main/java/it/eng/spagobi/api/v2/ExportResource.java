@@ -141,11 +141,13 @@ public class ExportResource {
 
 		JSONObject driversJson = null;
 		JSONArray paramsJson = null;
+		String fileName = null;
 
 		try {
 			JSONObject data = new JSONObject(body);
 			driversJson = data.has(BODY_ATTR_DRIVERS) ? data.getJSONObject(BODY_ATTR_DRIVERS) : null;
 			paramsJson = data.has(BODY_ATTR_PARAMETERS) ? data.getJSONArray(BODY_ATTR_PARAMETERS) : null;
+			fileName = data.isNull("fileName") ? null : data.optString("fileName", null);
 		} catch (JSONException e) {
 			String msg = String.format("Body data is invalid: %s", body);
 			LOGGER.error(msg, e);
@@ -179,7 +181,7 @@ public class ExportResource {
 			Scheduler scheduler = StdSchedulerFactory.getDefaultScheduler();
 
 			JobDetail exportJob = ExportJobBuilder.fromDataSetIdAndUserProfile(dataSetId, userProfile).withTypeOfCsv().withDrivers(drivers)
-					.withParameters(params).withLocale(locale).build();
+					.withParameters(params).withLocale(locale).withFileName(fileName).build();
 
 			scheduler.addJob(exportJob, true);
 			JobKey key = exportJob.getKey();
@@ -218,11 +220,13 @@ public class ExportResource {
 
 		JSONObject driversJson = null;
 		JSONArray paramsJson = null;
+		String fileName = null;
 
 		try {
 			JSONObject data = new JSONObject(body);
 			driversJson = data.has(BODY_ATTR_DRIVERS) ? data.getJSONObject(BODY_ATTR_DRIVERS) : null;
 			paramsJson = data.has(BODY_ATTR_PARAMETERS) ? data.getJSONArray(BODY_ATTR_PARAMETERS) : null;
+			fileName = data.isNull("fileName") ? null : data.optString("fileName", null);
 		} catch (JSONException e) {
 			String msg = String.format("Body data is invalid: %s", body);
 			LOGGER.error(msg, e);
@@ -256,7 +260,7 @@ public class ExportResource {
 			Scheduler scheduler = StdSchedulerFactory.getDefaultScheduler();
 
 			JobDetail exportJob = ExportJobBuilder.fromDataSetIdAndUserProfile(dataSetId, userProfile).withTypeOfXlsx().withDrivers(drivers)
-					.withParameters(params).withLocale(locale).build();
+					.withParameters(params).withLocale(locale).withFileName(fileName).build();
 
 			scheduler.addJob(exportJob, true);
 			JobKey key = exportJob.getKey();

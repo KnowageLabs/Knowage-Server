@@ -75,6 +75,8 @@ abstract class AbstractExportJob implements Job {
 
 	public static final String MAP_KEY_DRIVERS = "drivers";
 
+	public static final String MAP_KEY_FILE_NAME = "fileName";
+
 	public static final String MAP_KEY_ID = "id";
 
 	public static final String MAP_KEY_LOCALE = "locale";
@@ -93,6 +95,7 @@ abstract class AbstractExportJob implements Job {
 	private UUID id = null;
 	private Locale locale = null;
 	private Map<String, String> parameters = null;
+	private String exportFileName = null;
 	Path resourcePath = null;
 	String resourcePathAsStr = null;
 	UserProfile userProfile = null;
@@ -117,6 +120,7 @@ abstract class AbstractExportJob implements Job {
 		id = getJobId(mergedJobDataMap);
 		locale = getLocale(mergedJobDataMap);
 		parameters = getParametersData(mergedJobDataMap);
+		exportFileName = normalizeFileName(mergedJobDataMap.getString(MAP_KEY_FILE_NAME));
 		resourcePathAsStr = getResourcePathString(mergedJobDataMap);
 		userProfile = getUserProfile(mergedJobDataMap);
 
@@ -160,7 +164,7 @@ abstract class AbstractExportJob implements Job {
 			ExportMetadata exportMetadata = new ExportMetadata();
 			exportMetadata.setId(id);
 			exportMetadata.setDataSetName(dataSetName);
-			exportMetadata.setFileName(dataSetName + "." + extension());
+			exportMetadata.setFileName(getExportFileName() + "." + extension());
 			exportMetadata.setMimeType(mime());
 			exportMetadata.setStartDate(Calendar.getInstance(getLocale()).getTime());
 
@@ -192,6 +196,29 @@ abstract class AbstractExportJob implements Job {
 
 	protected final IDataSet getDataSet() {
 		return dataSet;
+	}
+
+	protected final String getExportFileName() {
+		return StringUtils.defaultIfBlank(exportFileName, dataSet.getName());
+	}
+
+	protected final String getExportTitle() {
+		return StringUtils.defaultIfBlank(exportFileName, dataSet.getLabel());
+	}
+
+	protected final boolean hasCustomExportFileName() {
+		return exportFileName != null;
+	}
+
+	static String normalizeFileName(String fileName) {
+		if (StringUtils.isBlank(fileName)) {
+			return null;
+		}
+		String normalized = fileName.trim().replaceAll("[\\\\/:*?\"<>|\\[\\]\\p{Cntrl}]", "_").replaceAll("[. ]+$", "").replaceAll("^'|'$", "_");
+		if (normalized.matches("(?i)(CON|PRN|AUX|NUL|COM[1-9]|LPT[1-9])(?:\\..*)?")) {
+			normalized = "_" + normalized;
+		}
+		return StringUtils.isBlank(normalized) ? null : normalized;
 	}
 
 	private IDataSet getDataSet(Integer dataSetId, Map<String, Object> drivers, Map<String, String> parameters, UserProfile userProfile)
@@ -387,9 +414,17 @@ abstract class AbstractExportJob implements Job {
 	
 	public int createBrandedHeaderSheet(Sheet sheet, String imageB64, 
 			int startRow, float rowHeight, int rowspan, int startCol, int colWidth, int colspan, int namespan, int dataspan, 
-			String documentName, String widgetName) {				
+			String documentName, String widgetName) {
+		return createBrandedHeaderSheet(sheet, imageB64, startRow, rowHeight, rowspan, startCol, colWidth, colspan, namespan, dataspan,
+				documentName, widgetName, false);
+	}
+
+	protected int createBrandedHeaderSheet(Sheet sheet, String imageB64,
+			int startRow, float rowHeight, int rowspan, int startCol, int colWidth, int colspan, int namespan, int dataspan,
+			String documentName, String widgetName, boolean titleFirst) {
+		int brandingStartRow = titleFirst ? startRow + 1 : startRow;
 		if (StringUtils.isNotEmpty(imageB64)) {			
-			for (int r = startRow; r < startRow+rowspan; r++) {
+			for (int r = brandingStartRow; r < brandingStartRow+rowspan; r++) {
 				   sheet.createRow(r).setHeightInPoints(rowHeight);
 				   for (int c = startCol; c < startCol+colspan; c++) {
 					   sheet.getRow(r).createCell(c);
@@ -398,28 +433,28 @@ abstract class AbstractExportJob implements Job {
 			}
 			
 			// set brandend header image
-			sheet.addMergedRegion(new CellRangeAddress(startRow, startRow+rowspan-1, startCol, startCol+colspan-1));
-			drawBrandendHeaderImage(sheet, imageB64, Workbook.PICTURE_TYPE_PNG, startCol, startRow, colspan, rowspan);				
+			sheet.addMergedRegion(new CellRangeAddress(brandingStartRow, brandingStartRow+rowspan-1, startCol, startCol+colspan-1));
+			drawBrandendHeaderImage(sheet, imageB64, Workbook.PICTURE_TYPE_PNG, startCol, brandingStartRow, colspan, rowspan);
 			
 			// set document name
-			sheet.getRow(startRow).createCell(startCol+colspan).setCellValue(documentName);
-			sheet.addMergedRegion(new CellRangeAddress(startRow, startRow, startCol+colspan, namespan));
+			sheet.getRow(brandingStartRow).createCell(startCol+colspan).setCellValue(documentName);
+			sheet.addMergedRegion(new CellRangeAddress(brandingStartRow, brandingStartRow, startCol+colspan, namespan));
 			// set cell style
 			CellStyle documentNameCellStyle = buildCellStyle(sheet, true, HorizontalAlignment.LEFT, VerticalAlignment.CENTER, (short) 16);
-			sheet.getRow(startRow).getCell(startCol+colspan).setCellStyle(documentNameCellStyle);
+			sheet.getRow(brandingStartRow).getCell(startCol+colspan).setCellStyle(documentNameCellStyle);
 			
 			// set date 
 			DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
 			Date date = new Date();
-			sheet.getRow(startRow+1).createCell(startCol+colspan).setCellValue("Data di generazione: " + dateFormat.format(date));
-			sheet.addMergedRegion(new CellRangeAddress(startRow+1, startRow+1, startCol+colspan, dataspan));
+			sheet.getRow(brandingStartRow+1).createCell(startCol+colspan).setCellValue("Data di generazione: " + dateFormat.format(date));
+			sheet.addMergedRegion(new CellRangeAddress(brandingStartRow+1, brandingStartRow+1, startCol+colspan, dataspan));
 			// set cell style
 			CellStyle dateCellStyle = buildCellStyle(sheet, false, HorizontalAlignment.LEFT, VerticalAlignment.CENTER, (short) 8);
-			sheet.getRow(startRow+1).getCell(startCol+colspan).setCellStyle(dateCellStyle);
+			sheet.getRow(brandingStartRow+1).getCell(startCol+colspan).setCellStyle(dateCellStyle);
 		}
 		
 		int headerIndex = (StringUtils.isNotEmpty(imageB64)) ? (startRow+rowspan) : 0;
-		Row widgetNameRow = sheet.createRow((short) headerIndex);
+		Row widgetNameRow = sheet.createRow(titleFirst ? startRow : headerIndex);
 		Cell widgetNameCell = widgetNameRow.createCell(0);
 		widgetNameCell.setCellValue(widgetName);
 		// set cell style

@@ -12,6 +12,7 @@ import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import org.apache.log4j.Logger;
 import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.util.WorkbookUtil;
 import org.apache.poi.xssf.streaming.SXSSFSheet;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.quartz.JobExecutionContext;
@@ -63,7 +64,8 @@ public class ExcelExportJob extends AbstractExportJob {
             filteredMetadata = spillToTsvAndCloseIterator(dataSet, dataSetMetadata, spillFile);
 
             // Phase 2: TSV -> XLSX (no DB connection held)
-            writeXlsxFromTsv(exportFileOS, dataSet.getLabel(), filteredMetadata, spillFile);
+            this.imageB64 = OrganizationImageManager.getOrganizationB64ImageWide(TenantManager.getTenant().getName());
+            writeXlsxFromTsv(exportFileOS, getExportTitle(), filteredMetadata, spillFile);
 
             exportFileOS.flush();
         } catch (Exception e) {
@@ -126,11 +128,11 @@ public class ExcelExportJob extends AbstractExportJob {
 		}
 	}
 
-	private void writeXlsxFromTsv(OutputStream out, String sheetName, List<IFieldMetaData> meta, Path spillFile) throws Exception {
+	private void writeXlsxFromTsv(OutputStream out, String exportTitle, List<IFieldMetaData> meta, Path spillFile) throws Exception {
 		try (SXSSFWorkbook wb = new SXSSFWorkbook(100)) {
 			wb.setCompressTempFiles(true);
 
-			Sheet sheet = wb.createSheet(sheetName);
+			Sheet sheet = wb.createSheet(WorkbookUtil.createSafeSheetName(exportTitle));
 			if (sheet instanceof SXSSFSheet s) s.setRandomAccessWindowSize(100);
 
 			CreationHelper createHelper = wb.getCreationHelper();
@@ -147,8 +149,6 @@ public class ExcelExportJob extends AbstractExportJob {
 			CellStyle decimalCellStyle = wb.createCellStyle();
 			decimalCellStyle.setDataFormat(createHelper.createDataFormat().getFormat("#,##0.00"));
 
-			this.imageB64 = OrganizationImageManager.getOrganizationB64ImageWide(TenantManager.getTenant().getName());
-
 			int headerIndex = createBrandedHeaderSheet(
 					sheet,
 					this.imageB64,
@@ -161,7 +161,8 @@ public class ExcelExportJob extends AbstractExportJob {
 					10,
 					10,
 					this.documentName,
-					sheet.getSheetName()
+					exportTitle,
+					hasCustomExportFileName()
 			);
 
 			// Header

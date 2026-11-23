@@ -19,6 +19,7 @@ package it.eng.spagobi.api.v2.export;
 
 import static it.eng.spagobi.api.v2.export.AbstractExportJob.MAP_KEY_DATA_SET_ID;
 import static it.eng.spagobi.api.v2.export.AbstractExportJob.MAP_KEY_DRIVERS;
+import static it.eng.spagobi.api.v2.export.AbstractExportJob.MAP_KEY_FILE_NAME;
 import static it.eng.spagobi.api.v2.export.AbstractExportJob.MAP_KEY_ID;
 import static it.eng.spagobi.api.v2.export.AbstractExportJob.MAP_KEY_LOCALE;
 import static it.eng.spagobi.api.v2.export.AbstractExportJob.MAP_KEY_PARAMETERS;
@@ -112,6 +113,7 @@ public class ExportJobBuilder {
 	 * Default locale.
 	 */
 	private Locale locale = Locale.getDefault();
+	private String fileName;
 
 	private ExportJobBuilder(final Integer dataSetId, final UserProfile userProfile) {
 		this.dataSetId = dataSetId;
@@ -145,6 +147,9 @@ public class ExportJobBuilder {
 		jobDataMap.put(MAP_KEY_PARAMETERS, parameters);
 		jobDataMap.put(MAP_KEY_RESOURCE_PATH, resoursePath);
 		jobDataMap.put(MAP_KEY_USER_PROFILE, userProfile);
+		if (fileName != null) {
+			jobDataMap.put(MAP_KEY_FILE_NAME, fileName);
+		}
 
 		LOGGER.debug("\t- Dataset id: " + dataSetId);
 		LOGGER.debug("\t- UUID: " + randomUUID);
@@ -199,6 +204,11 @@ public class ExportJobBuilder {
 		if (parameters != null) {
 			this.parameters.putAll(parameters);
 		}
+		return this;
+	}
+
+	public ExportJobBuilder withFileName(final String fileName) {
+		this.fileName = fileName;
 		return this;
 	}
 
