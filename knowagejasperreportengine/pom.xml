@@ -36,7 +36,7 @@
 		<dependency>
 			<groupId>net.sf.jasperreports</groupId>
 			<artifactId>jasperreports</artifactId>
-			<version>6.21.3</version>
+			<version>7.0.4</version>
 			<scope>compile</scope>
 			<exclusions>
 				<exclusion>
