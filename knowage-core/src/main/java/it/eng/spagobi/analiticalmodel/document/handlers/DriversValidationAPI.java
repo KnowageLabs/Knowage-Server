@@ -349,7 +349,6 @@ public class DriversValidationAPI {
 			String role) throws Exception {
 		logger.debug("IN");
 		List toReturn = new ArrayList();
-		boolean valueFound = false;
 		List parameterValuesDescription = new ArrayList();
 		// get lov result handler
 		LovResultHandler lovResultHandler = new LovResultHandler(lovResult);
@@ -357,6 +356,7 @@ public class DriversValidationAPI {
 		List values = driver.getParameterValues();
 		if (values != null && values.size() > 0) {
 			for (int i = 0; i < values.size(); i++) {
+				boolean valueFound = false;
 				// String value = values.get(i).toString();
 				String value = null;
 				String val = values.get(i).toString();

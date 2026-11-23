@@ -295,6 +295,32 @@ public class DriverRuntimeMetadataTest {
 
 	@Test
 	public void validationIndexPreservesCaseInsensitiveTrimmedLovMembership() throws Exception {
+		BIObjectParameter driver = driver("CITY", "city");
+		driver.setParameterValues(Arrays.asList("i", "I"));
+
+		List<?> errors = validateLovValues(driver, "<ROWS><ROW CODE=\" I \" DESCRIPTION=\"Letter\"/></ROWS>");
+
+		assertTrue(errors.isEmpty());
+	}
+
+	@Test
+	public void validationChecksEachSelectedValueIndependently() throws Exception {
+		for (List<String> values : Arrays.asList(
+				Arrays.asList("A", "invalid"),
+				Arrays.asList("invalid", "A"),
+				Arrays.asList("", "invalid"),
+				Arrays.asList("A", "invalid", "invalid"))) {
+			BIObjectParameter driver = driver("CITY", "city");
+			driver.setParameterValues(values);
+
+			List<?> errors = validateLovValues(driver, "<ROWS><ROW CODE=\"A\" DESCRIPTION=\"City A\"/></ROWS>");
+
+			assertEquals(values.toString(), Collections.frequency(values, "invalid"), errors.size());
+			assertEquals("NOT ADMISSIBLE", driver.getParameterValuesDescription().get(values.indexOf("invalid")));
+		}
+	}
+
+	private List<?> validateLovValues(BIObjectParameter driver, String lovResult) throws Exception {
 		ILovDetail lov = (ILovDetail) Proxy.newProxyInstance(ILovDetail.class.getClassLoader(),
 				new Class<?>[] { ILovDetail.class }, (proxy, method, args) -> {
 					switch (method.getName()) {
@@ -308,16 +334,12 @@ public class DriverRuntimeMetadataTest {
 						throw new AssertionError("Unexpected LOV call: " + method.getName());
 					}
 				});
-		BIObjectParameter driver = driver("CITY", "city");
-		driver.setParameterValues(Arrays.asList("i", "I"));
 		Method validate = DriversValidationAPI.class.getDeclaredMethod("getValidationErrorsOnValuesByLovResult",
 				String.class, AbstractDriver.class, ILovDetail.class, String.class);
 		validate.setAccessible(true);
 
-		List<?> errors = (List<?>) validate.invoke(new DriversValidationAPI(),
-				"<ROWS><ROW CODE=\" I \" DESCRIPTION=\"Letter\"/></ROWS>", driver, lov, "analyst");
-
-		assertTrue(errors.isEmpty());
+		return (List<?>) validate.invoke(new DriversValidationAPI(new UserProfile("alice", "tenant"), Locale.ENGLISH),
+				lovResult, driver, lov, "analyst");
 	}
 
 	private JSONObject lovRow(Object value, Object label, Object description) throws Exception {
