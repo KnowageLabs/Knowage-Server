@@ -115,6 +115,46 @@ public class DriverRuntimeMetadataTest {
 	}
 
 	@Test
+	public void resolvesDefaultLovDependenciesSeparatelyFromAdmissibleValues() {
+		new MockUp<UserProfileManager>() {
+			@Mock
+			public UserProfile getProfile() {
+				return new UserProfile("alice", "tenant");
+			}
+		};
+		ILovDetail[] defaultLov = { (ILovDetail) Proxy.newProxyInstance(ILovDetail.class.getClassLoader(),
+				new Class<?>[] { ILovDetail.class }, (proxy, method, args) -> {
+					if ("getParameterNames".equals(method.getName())) {
+						return Collections.singleton("YEAR");
+					}
+					throw new AssertionError("Unexpected LOV call: " + method.getName());
+				}) };
+		new MockUp<AbstractBIResourceRuntime>() {
+			@Mock
+			public ILovDetail getLovDetailForDefault(AbstractDriver driver) {
+				return defaultLov[0];
+			}
+		};
+		BIObjectParameter comparison = driver("COMPARISON_YEAR", "comparison_year");
+		List<BIObjectParameter> drivers = Arrays.asList(
+				driver("YEAR", "year"), driver("YEAR", "other_year"), driver("COUNTRY", "country"));
+		AbstractDriverRuntime<BIObjectParameter> runtime = runtime();
+		runtime.initDefaultValueDependencies(comparison, drivers);
+
+		assertEquals(Arrays.asList("year", "other_year"), runtime.getDefaultValueDependencies());
+		assertNull(runtime.getLovDependencies());
+
+		AbstractDriverRuntime<BIObjectParameter> selfReference = runtime();
+		selfReference.initDefaultValueDependencies(drivers.get(0), drivers);
+		assertEquals(Collections.singletonList("other_year"), selfReference.getDefaultValueDependencies());
+
+		defaultLov[0] = null;
+		AbstractDriverRuntime<BIObjectParameter> withoutDefaultLov = runtime();
+		withoutDefaultLov.initDefaultValueDependencies(comparison, drivers);
+		assertTrue(withoutDefaultLov.getDefaultValueDependencies().isEmpty());
+	}
+
+	@Test
 	public void reusesDependenciesWithoutSharingRoleOrRequestMetadata() throws Exception {
 		int[] modalityLookups = { 0 };
 		int[] dependencyLookups = { 0 };

@@ -2069,6 +2069,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 		dependencies.put("data", objParameter.getDataDependencies());
 		dependencies.put("visual", objParameter.getVisualDependencies());
 		dependencies.put("lov", Optional.ofNullable(objParameter.getLovDependencies()).orElse(Collections.emptyList()));
+		dependencies.put("defaultValue", objParameter.getDefaultValueDependencies());
 		dependencies.put("maxValue", objParameter.getMaxValueDependencies());
 	}
 

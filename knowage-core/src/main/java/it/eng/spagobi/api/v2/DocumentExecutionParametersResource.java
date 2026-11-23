@@ -49,6 +49,8 @@ import it.eng.spagobi.analiticalmodel.document.handlers.DocumentRuntime;
 import it.eng.spagobi.analiticalmodel.document.handlers.DriversRuntimeLoaderFactory;
 import it.eng.spagobi.analiticalmodel.document.handlers.LovResultCacheManager;
 import it.eng.spagobi.analiticalmodel.execution.bo.LovValue;
+import it.eng.spagobi.analiticalmodel.execution.bo.defaultvalues.DefaultValuesList;
+import it.eng.spagobi.analiticalmodel.execution.bo.defaultvalues.DefaultValuesRetriever;
 import it.eng.spagobi.analiticalmodel.execution.bo.minmaxvalue.MinMaxValuesRetriever;
 import it.eng.spagobi.api.AbstractSpagoBIResource;
 import it.eng.spagobi.api.common.MetaUtils;
@@ -117,6 +119,39 @@ public class DocumentExecutionParametersResource extends AbstractSpagoBIResource
 	private static final String[] VISIBLE_COLUMNS = new String[] { VALUE_FIELD, LABEL_FIELD, DESCRIPTION_FIELD };
 
 	protected static Logger logger = Logger.getLogger(DocumentExecutionParametersResource.class);
+
+	@POST
+	@Path("/defaultValues")
+	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	public String getDefaultValues(@Context HttpServletRequest req) throws Exception {
+		JSONObject body = RestUtilities.readBodyAsJSONObject(req);
+		String label = body.getString(OBJECT_LABEL);
+		String role = body.optString(ROLE, null);
+		String parameterId = body.getString(PARAMETER_ID);
+		BIObject obj = DriversRuntimeLoaderFactory.getDriversRuntimeLoader()
+				.loadBIObjectForExecutionByLabelAndRole(label, role);
+		DocumentRuntime dum = new DocumentRuntime(getUserProfile(), req.getLocale());
+		dum.refreshParametersValues(body.getJSONArray(SELECTED_PARAMETER_VALUES), false, obj.getDrivers());
+
+		BIObjectParameter parameter = null;
+		for (Object driver : obj.getDrivers()) {
+			BIObjectParameter candidate = (BIObjectParameter) driver;
+			if (parameterId.equalsIgnoreCase(candidate.getParameterUrlName())) {
+				parameter = candidate;
+				break;
+			}
+		}
+		Assert.assertNotNull(parameter, "Impossible to find parameter [" + parameterId + "]");
+		DefaultValuesList defaultValues = new DefaultValuesRetriever().getDefaultValuesDum(parameter, obj,
+				getUserProfile(), req.getLocale(), role, dum);
+		JSONArray values = new JSONArray();
+		for (LovValue value : defaultValues) {
+			values.put(new JSONObject()
+					.put("value", value.getValue() == null ? JSONObject.NULL : value.getValue())
+					.put("description", value.getDescription() == null ? JSONObject.NULL : value.getDescription()));
+		}
+		return new JSONObject().put("defaultValues", values).toString();
+	}
 
 	@POST
 	@Path("/maxValue")

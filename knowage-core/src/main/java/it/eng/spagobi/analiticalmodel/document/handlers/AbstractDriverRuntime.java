@@ -77,6 +77,7 @@ public abstract class AbstractDriverRuntime<T extends AbstractDriver> {
 	List<? extends AbstractParuse> dataDependencies;
 	List<? extends AbstractParview> visualDependencies;
 	List lovDependencies;
+	List<String> defaultValueDependencies = new ArrayList<>();
 	List<String> maxValueDependencies = new ArrayList<>();
 
 	// attribute used by the serializer
@@ -268,7 +269,27 @@ public abstract class AbstractDriverRuntime<T extends AbstractDriver> {
 		initDataDependencies(driver);
 		initVisualDependencies(driver);
 		initLovDependencies(driver, objParameters);
+		initDefaultValueDependencies(driver, objParameters);
 		initMaxValueDependencies(driver, objParameters);
+	}
+
+	protected void initDefaultValueDependencies(AbstractDriver driver, List<? extends AbstractDriver> objParameters) {
+		try {
+			ILovDetail lovDetail = getResourceRuntime(driver).getLovDetailForDefault(driver);
+			Set<String> parameterNames = lovDetail == null ? null : lovDetail.getParameterNames();
+			if (parameterNames == null || parameterNames.isEmpty()) {
+				return;
+			}
+			for (AbstractDriver objParameter : objParameters) {
+				Parameter parameter = objParameter.getParameter();
+				if (objParameter != driver && parameter != null && parameterNames.contains(parameter.getLabel())) {
+					defaultValueDependencies.add(objParameter.getParameterUrlName());
+				}
+			}
+		} catch (Exception e) {
+			throw new SpagoBIServiceException(SERVICE_NAME,
+					"Impossible to load default value dependencies for parameter [" + id + "]", e);
+		}
 	}
 
 	private void initMaxValueDependencies(AbstractDriver driver, List<? extends AbstractDriver> objParameters) {
@@ -1084,6 +1105,10 @@ public abstract class AbstractDriverRuntime<T extends AbstractDriver> {
 
 	public List<String> getMaxValueDependencies() {
 		return maxValueDependencies;
+	}
+
+	public List<String> getDefaultValueDependencies() {
+		return defaultValueDependencies;
 	}
 
 	public void setLovDependencies(List lovDependencies) {
