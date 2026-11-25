@@ -20,6 +20,10 @@ package it.eng.spagobi.engines.birt;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.LinkOption;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Properties;
 import java.util.logging.Level;
@@ -41,6 +45,8 @@ import org.mozilla.javascript.PolicySecurityController;
 import org.mozilla.javascript.SecurityController;
 
 import it.eng.spagobi.engines.birt.utilities.Utils;
+import it.eng.spagobi.utilities.fonts.BirtFonts;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 public class BirtEngine {
 
@@ -120,6 +126,7 @@ public class BirtEngine {
 			IPlatformContext context = new PlatformServletContext(sc);
 			config.setPlatformContext(context);
 			config.setTempDir(System.getProperty("java.io.tmpdir") + "/birt/");
+			configureFonts(config);
 
 			// ParameterAccessor.initParameters(sc);
 			// config.setResourcePath(ParameterAccessor.getResourceFolder(request));
@@ -190,6 +197,23 @@ public class BirtEngine {
 				} catch (IOException e) {
 					logger.error("Error during closing input stream", e);
 				}
+
+		}
+	}
+
+	private static void configureFonts(EngineConfig config) {
+		String root = BirtEngineConfig.getEngineConfig().getRootResourcePath();
+		if (root == null || root.trim().isEmpty()) {
+			return;
+		}
+		Path configuration = new BirtFonts(Paths.get(root)).getConfigurationPath();
+		if (Files.isRegularFile(configuration, LinkOption.NOFOLLOW_LINKS)) {
+			try {
+				// The custom configuration supplements BIRT's bundled aliases and system fonts.
+				config.setFontConfig(configuration.toUri().toURL());
+			} catch (IOException e) {
+				throw new SpagoBIRuntimeException("Unable to configure global BIRT fonts", e);
+			}
 		}
 	}
 
