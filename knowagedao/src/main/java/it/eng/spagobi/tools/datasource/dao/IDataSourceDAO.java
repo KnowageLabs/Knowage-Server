@@ -39,8 +39,15 @@ public interface IDataSourceDAO extends ISpagoBIDao {
 	 * @param dsID The id for the datasource to load
 	 * @return A <code>datasource</code> object containing all loaded information
 	 * @throws EMFUserError If an Exception occurred
+	 * @throws DataSourceNotFoundException If the data source does not exist or is not accessible to the caller
 	 */
 	IDataSource loadDataSourceByID(Integer dsID) throws EMFUserError;
+
+	/**
+	 * Loads a data source only for its owning tenant or an explicit superadmin.
+	 * Sharing a data source with a tenant does not grant management rights.
+	 */
+	IDataSource loadDataSourceForModification(Integer dsID) throws EMFUserError;
 
 	/**
 	 * Loads all detail information for data source whose label is equal to <code>label</code>.

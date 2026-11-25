@@ -138,9 +138,12 @@ public class DataSourceCRUD extends AbstractSpagoBIResource {
 			String id = ((Integer) requestBodyJSON.opt("DATASOURCE_ID")).toString();
 
 			Assert.assertNotNull(id, deleteNullIdDataSourceError);
+			IDataSourceDAO dao = DAOFactory.getDataSourceDAO();
+			dao.setUserProfile(profile);
+			IDataSource ds = dao.loadDataSourceForModification(Integer.valueOf(id));
 			// if the ds is associated with any BIEngine or BIObjects, creates
 			// an error
-			boolean bObjects = DAOFactory.getDataSourceDAO().hasBIObjAssociated(id);
+			boolean bObjects = dao.hasBIObjAssociated(id);
 			// boolean bEngines =
 			// DAOFactory.getDataSourceDAO().hasBIEngineAssociated(id);
 			if (bObjects) { // || bEngines) {
@@ -150,8 +153,6 @@ public class DataSourceCRUD extends AbstractSpagoBIResource {
 				return (ExceptionUtilities.serializeException(deleteInUseDSError, null));
 			}
 
-			IDataSource ds = DAOFactory.getDataSourceDAO().loadDataSourceByID(new Integer(id));
-
 			// it is necessary to clean the cache otherwise SpagoBI will look
 			// for dataset that are
 			// not in cache anymore since the caching db is changed
@@ -160,7 +161,7 @@ public class DataSourceCRUD extends AbstractSpagoBIResource {
 				// unset the cache
 				cache.deleteAll();
 			}
-			DAOFactory.getDataSourceDAO().eraseDataSource(ds);
+			dao.eraseDataSource(ds);
 			logParam.put("TYPE", ds.getJndi());
 			logParam.put("NAME", ds.getLabel());
 			updateAudit(req, profile, "DATA_SOURCE.DELETE", null, "OK");
@@ -188,12 +189,10 @@ public class DataSourceCRUD extends AbstractSpagoBIResource {
 
 			JSONObject requestBodyJSON = RestUtilities.readBodyAsJSONObject(req);
 			IDataSourceDAO dao = DAOFactory.getDataSourceDAO();
+			dao.setUserProfile(profile);
 
 			if (profile.getIsSuperadmin()) {
 				TenantManager.unset();
-				dao.setUserID(profile.getUserId().toString());
-			} else {
-				dao.setUserProfile(profile);
 			}
 
 			IDataSource dsNew = recoverDataSourceDetails(requestBodyJSON);
@@ -221,7 +220,7 @@ public class DataSourceCRUD extends AbstractSpagoBIResource {
 				}
 				updateAudit(req, profile, "DATA_SOURCE.ADD", logParam, "OK");
 			} else {
-				IDataSource dsOld = DAOFactory.getDataSourceDAO().loadDataSourceByID(dsNew.getDsId());
+				IDataSource dsOld = dao.loadDataSourceForModification(dsNew.getDsId());
 				// update ds
 				dao.modifyDataSource(dsNew);
 

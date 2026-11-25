@@ -38,7 +38,6 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.criterion.Criterion;
-import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -58,6 +57,7 @@ import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.SpagoBIDAOException;
 import it.eng.spagobi.commons.metadata.SbiDomains;
+import it.eng.spagobi.commons.metadata.SbiHibernateModel;
 import it.eng.spagobi.commons.metadata.SbiOrganizationDatasource;
 import it.eng.spagobi.commons.metadata.SbiOrganizationDatasourceId;
 import it.eng.spagobi.commons.metadata.SbiTenant;
@@ -91,6 +91,15 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 	 */
 	@Override
 	public IDataSource loadDataSourceByID(Integer dsID) throws EMFUserError {
+		return loadDataSourceByID(dsID, false);
+	}
+
+	@Override
+	public IDataSource loadDataSourceForModification(Integer dsID) throws EMFUserError {
+		return loadDataSourceByID(dsID, true);
+	}
+
+	private IDataSource loadDataSourceByID(Integer dsID, boolean forModification) throws EMFUserError {
 		logger.debug("IN");
 		IDataSource toReturn = null;
 		Session aSession = null;
@@ -99,10 +108,13 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 		try {
 			aSession = getSession();
 			tx = aSession.beginTransaction();
-			SbiDataSource hibDataSource = (SbiDataSource) aSession.load(SbiDataSource.class, dsID);
+			SbiDataSource hibDataSource = loadAccessibleDataSource(aSession, dsID, forModification);
 			toReturn = toDataSource(hibDataSource);
 			tx.commit();
 
+		} catch (DataSourceNotFoundException e) {
+			rollbackIfActive(tx);
+			throw e;
 		} catch (HibernateException he) {
 			rollbackIfActive(tx);
 			logger.error("Error while loading the data source with id " + dsID.toString(), he);
@@ -113,6 +125,38 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 		}
 		logger.debug("OUT");
 		return toReturn;
+	}
+
+	private boolean isSuperAdmin() {
+		return getUserProfile() instanceof UserProfile && Boolean.TRUE.equals(((UserProfile) getUserProfile()).getIsSuperadmin());
+	}
+
+	private SbiDataSource loadAccessibleDataSource(Session session, Integer dsID, boolean forModification) {
+		if (dsID == null) {
+			throw new DataSourceNotFoundException();
+		}
+		Criteria criteria = session.createCriteria(SbiDataSource.class);
+		criteria.add(Restrictions.eq("dsId", dsID));
+		if (!isSuperAdmin()) {
+			String tenant = getTenant();
+			if (StringUtils.isEmpty(tenant)) {
+				throw new DataSourceNotFoundException();
+			}
+			if (forModification) {
+				criteria.add(Restrictions.eq("commonInfo.organization", tenant));
+			} else {
+				// Association audit ownership can differ from the recipient tenant.
+				session.disableFilter(FILTER_TENANT);
+				criteria.createAlias("sbiOrganizationDatasources", "tenantAssociation");
+				criteria.createAlias("tenantAssociation.sbiOrganizations", "organization");
+				criteria.add(Restrictions.eq("organization.name", tenant));
+			}
+		}
+		SbiDataSource dataSource = (SbiDataSource) criteria.uniqueResult();
+		if (dataSource == null || (forModification && Boolean.TRUE.equals(dataSource.getWriteDefault()) && !isSuperAdmin())) {
+			throw new DataSourceNotFoundException();
+		}
+		return dataSource;
 	}
 
 	/**
@@ -398,6 +442,10 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 			aSession = getSession();
 			tx = aSession.beginTransaction();
 
+			SbiDataSource hibDataSource = loadAccessibleDataSource(aSession, aDataSource.getDsId(), true);
+			if (!isSuperAdmin() && aDataSource.checkIsWriteDefault()) {
+				throw new DataSourceNotFoundException();
+			}
 			Criterion aCriterion = Restrictions.and(Restrictions.eq("domainCd", "DIALECT_HIB"), Restrictions.eq("valueCd", aDataSource.getDialectName()));
 			Criteria criteria = aSession.createCriteria(SbiDomains.class);
 			criteria.add(aCriterion);
@@ -409,9 +457,8 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 				throw new EMFUserError(EMFErrorSeverity.ERROR, 1035);
 			}
 
-			// If DataSource Label has changed all LOVS with that DS need to be
-			// changed
-			SbiDataSource hibDataSource = (SbiDataSource) aSession.load(SbiDataSource.class, aDataSource.getDsId());
+			// Authorized changes affect the global record and references in every sharing tenant.
+			aSession.disableFilter(FILTER_TENANT);
 
 			// If datasource has a null pwd, get the old value from DB
 			if (StringUtils.isEmpty(aDataSource.getPwd())) {
@@ -548,6 +595,9 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 
 			aSession.update(hibDataSource);
 			tx.commit();
+		} catch (DataSourceNotFoundException e) {
+			rollbackIfActive(tx);
+			throw e;
 		} catch (HibernateException he) {
 			rollbackIfActive(tx);
 			logger.error("Error while modifing the data source with id " + ((aDataSource == null) ? "" : String.valueOf(aDataSource.getDsId())), he);
@@ -704,6 +754,9 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 			aSession = getSession();
 			tx = aSession.beginTransaction();
 
+			SbiDataSource hibDataSource = loadAccessibleDataSource(aSession, aDataSource.getDsId(), true);
+			aSession.disableFilter(FILTER_TENANT);
+
 			// delete first all associations with tenants
 			Query hibQuery2 = aSession.createQuery("from SbiOrganizationDatasource ds where ds.id.datasourceId = :dsId");
 			hibQuery2.setInteger("dsId", aDataSource.getDsId());
@@ -714,9 +767,11 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 				aSession.flush();
 			}
 
-			SbiDataSource hibDataSource = (SbiDataSource) aSession.load(SbiDataSource.class, aDataSource.getDsId());
 			aSession.delete(hibDataSource);
 			tx.commit();
+		} catch (DataSourceNotFoundException e) {
+			rollbackIfActive(tx);
+			throw e;
 		} catch (HibernateException he) {
 			rollbackIfActive(tx);
 			logger.error("Error while erasing the data source with id " + ((aDataSource == null) ? "" : String.valueOf(aDataSource.getDsId())), he);
@@ -884,7 +939,6 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 		// map to return
 		Map<String, List<String>> mapToReturn = new HashMap<>();
 
-		List<String> objectNamesAssociatedWithDS = new ArrayList<>();
 		logger.debug("Check for BIObject associated to datasource");
 
 		Session aSession = null;
@@ -896,6 +950,8 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 				// check if there are objects using datasource
 				aSession = getSession();
 				tx = aSession.beginTransaction();
+				SbiDataSource dSource = loadAccessibleDataSource(aSession, dsId, true);
+				aSession.disableFilter(FILTER_TENANT);
 				logger.debug("Check for Objects associated to datasource");
 
 				String hql = " from SbiObjects s where s.dataSource.dsId = :dsId";
@@ -905,36 +961,23 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 				List<SbiObjects> biObjectsAssocitedWithDs = aQuery.list();
 				for (Iterator<SbiObjects> iterator = biObjectsAssocitedWithDs.iterator(); iterator.hasNext();) {
 					SbiObjects sbiObj = iterator.next();
-					objectNamesAssociatedWithDS.add(sbiObj.getName() != null ? sbiObj.getName() : sbiObj.getLabel());
-				}
-
-				if (!objectNamesAssociatedWithDS.isEmpty()) {
-					mapToReturn.put("sbi.datasource.usedby.biobject", objectNamesAssociatedWithDS);
-					logger.debug("there are objects using datasource, return them");
+					addAssociatedEntity(mapToReturn, "sbi.datasource.usedby.biobject", sbiObj,
+							sbiObj.getName() != null ? sbiObj.getName() : sbiObj.getLabel());
 				}
 
 				logger.debug("Check for Meta Model associated to datasource");
-				List<String> metaModelNamesAssociatedWithDS = new ArrayList<>();
 				hql = " from SbiMetaModel s where s.dataSource.dsId = :dsId";
 				aQuery = aSession.createQuery(hql);
 				aQuery.setInteger("dsId", dsId.intValue());
 				List<SbiMetaModel> metaModelsAssocitedWithDs = aQuery.list();
 				for (Iterator<SbiMetaModel> iterator = metaModelsAssocitedWithDs.iterator(); iterator.hasNext();) {
 					SbiMetaModel sbiMetaModel = iterator.next();
-					metaModelNamesAssociatedWithDS.add(sbiMetaModel.getName());
-				}
-
-				if (!metaModelNamesAssociatedWithDS.isEmpty()) {
-					mapToReturn.put("sbi.datasource.usedby.metamodel", metaModelNamesAssociatedWithDS);
-					logger.debug("there are meta models using datasource, return them");
+					addAssociatedEntity(mapToReturn, "sbi.datasource.usedby.metamodel", sbiMetaModel, sbiMetaModel.getName());
 				}
 
 				logger.debug("Check for DataSet associated to datasource");
 				String dataSourceLabel = null;
 
-				List<String> dataSetNamesAssociatedWithDS = new ArrayList<>();
-
-				SbiDataSource dSource = (SbiDataSource) aSession.load(SbiDataSource.class, dsId);
 				dataSourceLabel = dSource.getLabel();
 
 				hql = " from SbiDataSet s where s.active = :active AND s.type IN (:types)";
@@ -952,7 +995,8 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 						if (ds == null || ds.equals(""))
 							ds = configurationJSON.optString("qbeDataSource");
 						if (ds != null && ds.equals(dataSourceLabel)) {
-							dataSetNamesAssociatedWithDS.add(sbiDataSet.getName() != null ? sbiDataSet.getName() : sbiDataSet.getLabel());
+							addAssociatedEntity(mapToReturn, "sbi.datasource.usedby.dataset", sbiDataSet,
+									sbiDataSet.getName() != null ? sbiDataSet.getName() : sbiDataSet.getLabel());
 						}
 					}
 				} catch (JSONException he) {
@@ -961,12 +1005,6 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 					throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 				}
 
-				if (!dataSetNamesAssociatedWithDS.isEmpty()) {
-					mapToReturn.put("sbi.datasource.usedby.dataset", dataSetNamesAssociatedWithDS);
-					logger.debug("there are datasets using datasource, return them");
-				}
-
-				List<String> lovNamesAssociatedWithDS = new ArrayList<>();
 				logger.debug("Check for Lov associated to datasource");
 
 				hql = " from SbiLov s where inputTypeCd = :inputTypeCd";
@@ -990,12 +1028,8 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 						String conne = connectionObject.getString("CONNECTION");
 
 						if (conne.equals(dataSourceLabel)) {
-							lovNamesAssociatedWithDS.add(sbiLov.getName() != null ? sbiLov.getName() : sbiLov.getLabel());
-						}
-
-						if (!lovNamesAssociatedWithDS.isEmpty()) {
-							mapToReturn.put("sbi.datasource.usedby.lov", lovNamesAssociatedWithDS);
-							logger.debug("there are lovs using datasource, return them");
+							addAssociatedEntity(mapToReturn, "sbi.datasource.usedby.lov", sbiLov,
+									sbiLov.getName() != null ? sbiLov.getName() : sbiLov.getLabel());
 						}
 
 					} catch (TransformerFactoryConfigurationError e) {
@@ -1012,6 +1046,9 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 
 				rollbackIfActive(tx);
 
+			} catch (DataSourceNotFoundException e) {
+				rollbackIfActive(tx);
+				throw e;
 			} catch (HibernateException he) {
 				rollbackIfActive(tx);
 				logger.error("Error while getting the entities associated with the data source with id " + dsId, he);
@@ -1026,6 +1063,14 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 
 		return mapToReturn;
 
+	}
+
+	private void addAssociatedEntity(Map<String, List<String>> entities, String type, SbiHibernateModel entity, String name) {
+		// Foreign references must block deletion without disclosing their names.
+		List<String> names = entities.computeIfAbsent(type, key -> new ArrayList<>());
+		if (isSuperAdmin() || Objects.equals(getTenant(), entity.getCommonInfo().getOrganization())) {
+			names.add(name);
+		}
 	}
 
 	@Override
@@ -1067,14 +1112,9 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 		try {
 			aSession = getSession();
 
-			// @formatter:off
-			Criteria criteria = aSession.createCriteria(SbiDataSource.class)
-					.setProjection(Projections.projectionList()
-							.add(Projections.property("pwd"), "pwd"))
-					.add(Restrictions.eq("dsId", dataSource.getDsId()));
-			// @formatter:on
-
-			String pwd = (String) criteria.uniqueResult();
+			// Only a manager may reuse stored credentials with a client-supplied connection.
+			SbiDataSource storedDataSource = loadAccessibleDataSource(aSession, dataSource.getDsId(), true);
+			String pwd = storedDataSource.getPwd();
 
 			if (Objects.nonNull(pwd)) {
 				String decPassword = EncryptionPBEWithMD5AndDESManager.decrypt(pwd);

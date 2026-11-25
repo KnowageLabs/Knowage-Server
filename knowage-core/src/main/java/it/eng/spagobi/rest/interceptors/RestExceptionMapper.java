@@ -31,6 +31,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import it.eng.knowage.functionscatalog.utils.CatalogFunctionException;
+import it.eng.spagobi.tools.datasource.dao.DataSourceNotFoundException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 
 /**
@@ -57,6 +58,9 @@ public class RestExceptionMapper implements ExceptionMapper<RuntimeException> {
 
 	@Override
 	public Response toResponse(RuntimeException t) {
+		if (t instanceof DataSourceNotFoundException) {
+			return Response.status(Response.Status.NOT_FOUND).build();
+		}
 		logger.error("Catched service error: ", t);
 		return toResponseFromGenericException(t);
 	}

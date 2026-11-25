@@ -68,9 +68,9 @@ import it.eng.spagobi.services.datasource.bo.SpagoBiDataSource;
 import it.eng.spagobi.services.rest.annotations.UserConstraint;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.metasql.query.SelectQuery;
-import it.eng.spagobi.tools.datasource.bo.DataSourceFactory;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.tools.datasource.bo.JDBCDataSourcePoolConfiguration;
+import it.eng.spagobi.tools.datasource.dao.DataSourceNotFoundException;
 import it.eng.spagobi.tools.datasource.dao.IDataSourceDAO;
 import it.eng.spagobi.utilities.database.DataBaseException;
 import it.eng.spagobi.utilities.database.DataBaseFactory;
@@ -123,7 +123,9 @@ public class DataSourceResource extends AbstractSpagoBIResource {
 
 			checkAuthorizationToManageCacheDataSource(dataSource);
 
-			return dataSource;
+			return Boolean.TRUE.equals(getUserProfile().getIsSuperadmin()) ? dataSource : toOwnedOrNotOwned(dataSource);
+		} catch (DataSourceNotFoundException e) {
+			throw e;
 		} catch (Exception e) {
 			LOGGER.error("Error while loading a single data source", e);
 			throw new SpagoBIRestServiceException("Error while loading a single data source", getLocale(), e);
@@ -182,14 +184,15 @@ public class DataSourceResource extends AbstractSpagoBIResource {
 	public List<IDataSource> putDataSource(IDataSource dataSource) {
 		LOGGER.debug("IN");
 		try {
+			IDataSourceDAO dataSourceDAO = DAOFactory.getDataSourceDAO();
+			dataSourceDAO.setUserProfile(getUserProfile());
+			IDataSource persistedDataSource = dataSourceDAO.loadDataSourceForModification(dataSource.getDsId());
+			checkAuthorizationToManageCacheDataSource(persistedDataSource);
 
 			this.checkJNDIName(dataSource);
 
 			checkAuthorizationToManageCacheDataSource(dataSource);
 
-			IDataSourceDAO dataSourceDAO = DAOFactory.getDataSourceDAO();
-
-			dataSourceDAO.setUserProfile(getUserProfile());
 			IDataSource oldDataSource = dataSourceDAO.loadDataSourceWriteDefault();
 
 			if (oldDataSource != null && dataSource.checkIsWriteDefault() && oldDataSource.getDsId() != dataSource.getDsId()) {
@@ -202,6 +205,8 @@ public class DataSourceResource extends AbstractSpagoBIResource {
 			}
 			dataSourceDAO.modifyDataSource(dataSource);
 			return getDataSources();
+		} catch (DataSourceNotFoundException e) {
+			throw e;
 		} catch (SpagoBIRestServiceException e) {
 			throw e;
 		} catch (Exception e) {
@@ -220,56 +225,59 @@ public class DataSourceResource extends AbstractSpagoBIResource {
 
 		LOGGER.debug("IN");
 
-		// if the ds is associated with any BIEngine or BIObjects, creates an error
-		Map<String, List<String>> objNames = DAOFactory.getDataSourceDAO().returnEntitiesAssociated(dsId);
-
-		if (objNames.size() > 0) {
-			LOGGER.warn("datasource is in use, build message");
-
-			String[] dependsBy = new String[] { "sbi.datasource.usedby.biobject", "sbi.datasource.usedby.metamodel", "sbi.datasource.usedby.dataset",
-					"sbi.datasource.usedby.lov" };
-
-			String message = "";
-			MessageBuilder msgBuild = new MessageBuilder();
-			Locale locale = getLocale();
-
-			for (int j = 0; j < dependsBy.length; j++) {
-				String key = dependsBy[j];
-				String translatedKey = msgBuild.getMessage(key, locale);
-				if (objNames.get(key) != null) {
-					int i = 0;
-					for (Iterator iterator = objNames.get(key).iterator(); iterator.hasNext();) {
-						String objName = (String) iterator.next();
-						if (i == 0) {
-							message += translatedKey + " ( " + objName;
-						} else {
-							message += ", " + objName;
-						}
-						if (i == objNames.get(key).size() - 1) {
-							message += ") ";
-						}
-						i++;
-					}
-
-					message += "\n";
-				}
-			}
-
-			throw new SpagoBIRestServiceException(msgBuild.getMessage("sbi.datasource.usedby", locale) + message, locale, new Exception());
-		}
-
 		try {
-			IDataSource dataSource = DataSourceFactory.getDataSource();
-			dataSource.setDsId(dsId);
 			IDataSourceDAO dataSourceDAO = DAOFactory.getDataSourceDAO();
 			dataSourceDAO.setUserProfile(getUserProfile());
-
+			IDataSource dataSource = dataSourceDAO.loadDataSourceForModification(dsId);
 			checkAuthorizationToManageCacheDataSource(dataSource);
+
+			// if the ds is associated with any BIEngine or BIObjects, creates an error
+			Map<String, List<String>> objNames = dataSourceDAO.returnEntitiesAssociated(dsId);
+
+			if (objNames.size() > 0) {
+				LOGGER.warn("datasource is in use, build message");
+
+				String[] dependsBy = new String[] { "sbi.datasource.usedby.biobject", "sbi.datasource.usedby.metamodel", "sbi.datasource.usedby.dataset",
+						"sbi.datasource.usedby.lov" };
+
+				String message = "";
+				MessageBuilder msgBuild = new MessageBuilder();
+				Locale locale = getLocale();
+
+				for (int j = 0; j < dependsBy.length; j++) {
+					String key = dependsBy[j];
+					String translatedKey = msgBuild.getMessage(key, locale);
+					if (objNames.get(key) != null) {
+						if (objNames.get(key).isEmpty()) {
+							message += translatedKey;
+						}
+						int i = 0;
+						for (Iterator iterator = objNames.get(key).iterator(); iterator.hasNext();) {
+							String objName = (String) iterator.next();
+							if (i == 0) {
+								message += translatedKey + " ( " + objName;
+							} else {
+								message += ", " + objName;
+							}
+							if (i == objNames.get(key).size() - 1) {
+								message += ") ";
+							}
+							i++;
+						}
+
+						message += "\n";
+					}
+				}
+
+				throw new SpagoBIRestServiceException(msgBuild.getMessage("sbi.datasource.usedby", locale) + message, locale, new Exception());
+			}
 
 			dataSourceDAO.eraseDataSource(dataSource);
 
 			return getDataSources();
 
+		} catch (DataSourceNotFoundException e) {
+			throw e;
 		} catch (Exception e) {
 
 			LOGGER.error("Error while deleting data source", e);
@@ -293,14 +301,15 @@ public class DataSourceResource extends AbstractSpagoBIResource {
 			dataSourceDAO.setUserProfile(getUserProfile());
 
 			for (int i = 0; i < ids.size(); i++) {
-				IDataSource ds = DataSourceFactory.getDataSource();
-				ds.setDsId(ids.get(i));
-
+				IDataSource ds = dataSourceDAO.loadDataSourceForModification(ids.get(i));
 				checkAuthorizationToManageCacheDataSource(ds);
-
-				dataSourceDAO.eraseDataSource(ds);
+			}
+			for (Integer id : ids) {
+				deleteDataSourceById(id);
 			}
 			return getDataSources();
+		} catch (DataSourceNotFoundException e) {
+			throw e;
 		} catch (Exception e) {
 			LOGGER.error("Error while deleting multiple data sources", e);
 			throw new SpagoBIRestServiceException("Error while deleting multiple data sources", getLocale(), e);
@@ -331,6 +340,8 @@ public class DataSourceResource extends AbstractSpagoBIResource {
 
 			tableContent = new JSONObject(structure);
 
+		} catch (DataSourceNotFoundException e) {
+			throw e;
 		} catch (Exception e) {
 			LOGGER.error("Error while getting structure of data source by id", e);
 			throw new SpagoBIRestServiceException("Error while getting structure of data source by id", getLocale(), e);
@@ -387,8 +398,9 @@ public class DataSourceResource extends AbstractSpagoBIResource {
 		} else {
 
 			// Except for non saved datasource, the password is not present during test
-			if (Objects.isNull(pwd)) {
+			if (Objects.isNull(pwd) && dataSource.getDsId() > 0) {
 				IDataSourceDAO dao = DAOFactory.getDataSourceDAO();
+				dao.setUserProfile(getUserProfile());
 				dao.setCurrentPassword(dataSource);
 			}
 
@@ -480,7 +492,7 @@ public class DataSourceResource extends AbstractSpagoBIResource {
 	private void checkAuthorizationToManageCacheDataSource(IDataSource dataSource) {
 		UserProfile userProfile = getUserProfile();
 
-		if (!userProfile.getIsSuperadmin() && Boolean.TRUE.equals(dataSource.checkIsWriteDefault())) {
+		if (!Boolean.TRUE.equals(userProfile.getIsSuperadmin()) && Boolean.TRUE.equals(dataSource.checkIsWriteDefault())) {
 			MessageBuilder msgBuilder = new MessageBuilder();
 			throw new SpagoBIRestServiceException(msgBuilder.getMessage("sbi.datasource.notAuthorizedToManageCacheDataSource"), getLocale(),
 					new Throwable());
