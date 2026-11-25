@@ -20,6 +20,8 @@ package it.eng.knowage.meta.service;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.NullNode;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.TextNode;
 import com.flipkart.zjsonpatch.JsonDiff;
 import it.eng.knowage.meta.exception.KnowageMetaException;
@@ -1010,14 +1012,19 @@ public class MetaService extends AbstractSpagoBIResource {
             JSONObject jsonRoot = RestUtilities.readBodyAsJSONObject(req);
             Model model = (Model) req.getSession().getAttribute(EMF_MODEL);
             setProfileDialectThreadLocal(model);
-            JSONObject oldJsonModel = createJson(model);
+            // A Business Domain update only touches /businessDomains. Avoid serializing
+            // the entire model when the client has no pending changes to apply.
+            boolean domainOnlyPatch = hasEmptyDiff(jsonRoot);
+            JSONObject oldJsonModel = domainOnlyPatch ? createBusinessDomainsSnapshot(model) : createJson(model);
 
-            applyDiff(jsonRoot, model);
+            if (!domainOnlyPatch) {
+                applyDiff(jsonRoot, model);
+            }
 
             JSONObject json = jsonRoot.getJSONObject("data");
             upsertBusinessDomain(model, json);
 
-            JSONObject jsonModel = createJson(model);
+            JSONObject jsonModel = domainOnlyPatch ? createBusinessDomainsSnapshot(model) : createJson(model);
             return Response.ok(getPatch(oldJsonModel, jsonModel)).build();
         } catch (IOException | JSONException | SpagoBIException e) {
             throw new SpagoBIServiceException(req.getPathInfo(), e);
@@ -1315,16 +1322,63 @@ public class MetaService extends AbstractSpagoBIResource {
     }
 
     /**
-     * @param oldJsonModel
-     * @param jsonModel
-     * @return
-     * @throws IOException
+     * Compute the patch without creating full-size intermediate JSON strings.
+     * This is shared by multiple Metaweb operations, not just Business Domains.
      */
     private String getPatch(JSONObject oldJsonModel, JSONObject jsonModel) throws IOException {
         ObjectMapper mapper = new ObjectMapper();
-        JsonNode patch = JsonDiff.asJson(mapper.readTree(oldJsonModel.toString()),
-                mapper.readTree(jsonModel.toString()));
+        JsonNode patch = JsonDiff.asJson(toJacksonNode(oldJsonModel, mapper),
+                toJacksonNode(jsonModel, mapper));
         return patch.toString();
+    }
+
+    // Keep the JSON value types and structure produced by JSONObject.toString()
+    // while avoiding the expensive String -> Jackson tree round-trip.
+    static JsonNode toJacksonNode(Object value, ObjectMapper mapper) {
+        if (value == null || value == JSONObject.NULL) {
+            return NullNode.getInstance();
+        }
+        if (value instanceof JSONObject) {
+            JSONObject object = (JSONObject) value;
+            ObjectNode result = mapper.createObjectNode();
+            Iterator<String> keys = object.keys();
+            while (keys.hasNext()) {
+                String key = keys.next();
+                result.set(key, toJacksonNode(object.opt(key), mapper));
+            }
+            return result;
+        }
+        if (value instanceof JSONArray) {
+            JSONArray array = (JSONArray) value;
+            ArrayNode result = mapper.createArrayNode();
+            for (int i = 0; i < array.length(); i++) {
+                result.add(toJacksonNode(array.opt(i), mapper));
+            }
+            return result;
+        }
+        return mapper.valueToTree(value);
+    }
+
+    // Only skip the full model snapshot when no other frontend changes are pending.
+    // Unknown diff formats are deliberately handled by the legacy path.
+    private static boolean hasEmptyDiff(JSONObject jsonRoot) {
+        if (!jsonRoot.has("diff") || jsonRoot.isNull("diff")) {
+            return true;
+        }
+        Object diff = jsonRoot.opt("diff");
+        if (diff instanceof JSONArray) {
+            return ((JSONArray) diff).length() == 0;
+        }
+        if (diff instanceof String) {
+            String value = ((String) diff).trim();
+            return value.isEmpty() || "[]".equals(value);
+        }
+        return false;
+    }
+
+    private static JSONObject createBusinessDomainsSnapshot(Model model) throws JSONException {
+        BusinessModel businessModel = model.getBusinessModels().get(0);
+        return new JSONObject().put("businessDomains", createBusinessDomainsJson(businessModel));
     }
 
     @POST
@@ -1858,6 +1912,29 @@ public class MetaService extends AbstractSpagoBIResource {
         return s.toString();
     }
 
+    // Shared serializer: the same /businessDomains representation is used by
+    // the complete model JSON and by the lightweight saveBusinessDomain path.
+    private static JSONArray createBusinessDomainsJson(BusinessModel businessModel) throws JSONException {
+        JSONArray businessDomainsJson = new JSONArray();
+        for (BusinessDomain businessDomain : businessModel.getDomains()) {
+            if (businessDomain != null) {
+                JSONObject domainJson = new JSONObject();
+                domainJson.put("id", businessDomain.getId());
+                domainJson.put("name", businessDomain.getName());
+                domainJson.put("uniqueName", businessDomain.getUniqueName());
+                domainJson.put("description", businessDomain.getDescription());
+
+                JSONArray domainTablesJson = new JSONArray();
+                for (BusinessColumnSet businessColumnSet : businessDomain.getTables()) {
+                    domainTablesJson.put(businessColumnSet.getUniqueName());
+                }
+                domainJson.put("tables", domainTablesJson);
+                businessDomainsJson.put(domainJson);
+            }
+        }
+        return businessDomainsJson;
+    }
+
     public static JSONObject createJson(Model model) throws JSONException {
         JSONObject translatedModel = new JSONObject();
         Map<String, Integer> physicalTableMap = new HashMap<>();
@@ -1896,23 +1973,7 @@ public class MetaService extends AbstractSpagoBIResource {
             businessViewJson.put(bcJson);
         }
 
-        JSONArray businessDomainsJson = new JSONArray();
-        for (BusinessDomain businessDomain : businessModel.getDomains()) {
-            if (businessDomain != null) {
-                JSONObject domainJson = new JSONObject();
-                domainJson.put("id", businessDomain.getId());
-                domainJson.put("name", businessDomain.getName());
-                domainJson.put("uniqueName", businessDomain.getUniqueName());
-                domainJson.put("description", businessDomain.getDescription());
-
-                JSONArray domainTablesJson = new JSONArray();
-                for (BusinessColumnSet businessColumnSet : businessDomain.getTables()) {
-                    domainTablesJson.put(businessColumnSet.getUniqueName());
-                }
-                domainJson.put("tables", domainTablesJson);
-                businessDomainsJson.put(domainJson);
-            }
-        }
+        JSONArray businessDomainsJson = createBusinessDomainsJson(businessModel);
 
         JSONArray olapModelJson = new JSONArray();
         Iterator<OlapModel> olapIterator = model.getOlapModels().iterator();
