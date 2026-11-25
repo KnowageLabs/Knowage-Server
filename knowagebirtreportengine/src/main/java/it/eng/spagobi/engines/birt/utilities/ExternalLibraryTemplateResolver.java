@@ -52,6 +52,11 @@ public final class ExternalLibraryTemplateResolver {
 
 	public static byte[] resolve(byte[] template, String apiBaseUrl, String authorizationParameter,
 			Supplier<String> userToken) throws IOException {
+		return resolve(template, apiBaseUrl, null, authorizationParameter, userToken);
+	}
+
+	public static byte[] resolve(byte[] template, String apiBaseUrl, String internalApiBaseUrl,
+			String authorizationParameter, Supplier<String> userToken) throws IOException {
 		if (!containsPlaceholder(template)) {
 			return template;
 		}
@@ -76,7 +81,12 @@ public final class ExternalLibraryTemplateResolver {
 			return template;
 		}
 
-		String endpoint = getEndpoint(apiBaseUrl);
+		String endpoint = getEndpoint(apiBaseUrl, false);
+		String backgroundEndpoint = endpoint;
+		if (internalApiBaseUrl != null && !internalApiBaseUrl.trim().isEmpty()
+				&& nodes.stream().anyMatch(ExternalLibraryTemplateResolver::isBackgroundImage)) {
+			backgroundEndpoint = getEndpoint(internalApiBaseUrl, true);
+		}
 		if (authorizationParameter == null || authorizationParameter.trim().isEmpty()) {
 			throw new IOException("Missing external-library authorization parameter name");
 		}
@@ -86,6 +96,7 @@ public final class ExternalLibraryTemplateResolver {
 		}
 		String authorization = "&" + encode(authorizationParameter) + "=" + encode(token);
 		for (Node node : nodes) {
+			String resourceEndpoint = isBackgroundImage(node) ? backgroundEndpoint : endpoint;
 			Matcher matcher = PLACEHOLDER.matcher(node.getNodeValue());
 			StringBuffer value = new StringBuffer();
 			while (matcher.find()) {
@@ -94,7 +105,7 @@ public final class ExternalLibraryTemplateResolver {
 						|| ".".equals(libraryName) || "..".equals(libraryName)) {
 					throw new IOException("Invalid file name in a BIRT external-library placeholder");
 				}
-				String url = endpoint + "?libraryName=" + encode(libraryName) + authorization;
+				String url = resourceEndpoint + "?libraryName=" + encode(libraryName) + authorization;
 				matcher.appendReplacement(value, Matcher.quoteReplacement(url));
 			}
 			matcher.appendTail(value);
@@ -145,16 +156,33 @@ public final class ExternalLibraryTemplateResolver {
 		}
 	}
 
-	private static String getEndpoint(String apiBaseUrl) throws IOException {
+	private static boolean isBackgroundImage(Node node) {
+		for (Node current = node; current != null; current = current.getParentNode()) {
+			if (current.getNodeType() == Node.ELEMENT_NODE && "property".equals(current.getLocalName())) {
+				Node name = current.getAttributes().getNamedItem("name");
+				return name != null && "backgroundImage".equals(name.getNodeValue());
+			}
+		}
+		return false;
+	}
+
+	private static String getEndpoint(String apiBaseUrl, boolean internal) throws IOException {
 		try {
 			URI base = new URI(apiBaseUrl);
-			if (!"https".equalsIgnoreCase(base.getScheme()) || base.getHost() == null
+			String host = base.getHost();
+			boolean loopback = "localhost".equalsIgnoreCase(host) || "127.0.0.1".equals(host)
+					|| "[::1]".equals(host);
+			boolean allowedScheme = "https".equalsIgnoreCase(base.getScheme())
+					|| (internal && loopback && "http".equalsIgnoreCase(base.getScheme()));
+			if (!allowedScheme || host == null
 					|| base.getRawUserInfo() != null || base.getRawQuery() != null || base.getRawFragment() != null) {
 				throw new IllegalArgumentException();
 			}
 			return base.toASCIIString().replaceAll("/+$", "") + RESOURCE_PATH;
 		} catch (Exception e) {
-			throw new IOException("Configure BIRT EXTERNAL_LIBRARIES_API_BASE_URL with an absolute HTTPS API base URL");
+			throw new IOException(internal
+					? "Configure BIRT EXTERNAL_LIBRARIES_INTERNAL_API_BASE_URL with an absolute HTTPS API base URL or HTTP loopback URL"
+					: "Configure BIRT EXTERNAL_LIBRARIES_API_BASE_URL with an absolute HTTPS API base URL");
 		}
 	}
 

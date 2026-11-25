@@ -9,13 +9,21 @@
 	<!--  SPAGOBI_SERVER_URL Address for invoking WebService, if empty use the request parameters -->
 	<SPAGOBI_SERVER_URL></SPAGOBI_SERVER_URL>
 	<SPAGOBI_SERVER_URL_JNDI_NAME>java:comp/env/service_url</SPAGOBI_SERVER_URL_JNDI_NAME>	
-	<!-- HTTPS API base URL, including its context (e.g. https://host/knowage-api).
+	<!-- Public HTTPS API base URL, including its REST application path
+	     (e.g. https://host/knowage-api/api).
 	     Required only by ${KNOWAGE_EXTERNAL_LIBRARY:filename} in report templates.
 	     Resolved in memory at execution time using the current user's expiring JWT.
 	     Intended for URL resources such as images, not BIRT .rptlibrary resolution.
 	     The JWT must remain valid until BIRT downloads the resource.
 	     Exclude authorization query parameters from proxy and access logs. -->
 	<EXTERNAL_LIBRARIES_API_BASE_URL></EXTERNAL_LIBRARIES_API_BASE_URL>
+	<!-- Optional server-side API base URL for BIRT backgroundImage properties only.
+	     Other placeholders keep the public URL above. Empty means use the public URL.
+	     HTTPS is required except for HTTP loopback (localhost, 127.0.0.1, [::1]).
+	     Example for an API in the same Tomcat: http://127.0.0.1:8080/knowage-api/api
+	     Authentication is unchanged; exclude authorization query parameters from local access logs too.
+	     Other server-rendered formats may download ordinary images using the public URL. -->
+	<EXTERNAL_LIBRARIES_INTERNAL_API_BASE_URL></EXTERNAL_LIBRARIES_INTERNAL_API_BASE_URL>
 	<!--  THE JNDI RESOURCE NAME FOR RETRIVE THE RESOURCE PATH -->
 	<RESOURCE_PATH_JNDI_NAME>java:comp/env/resource_path</RESOURCE_PATH_JNDI_NAME>
 	<!--  THE JNDI NAME FOR SPAGOBI DOMAIN -->

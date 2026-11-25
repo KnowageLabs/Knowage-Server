@@ -112,6 +112,73 @@ public class ExternalLibraryTemplateResolverTest {
 	}
 
 	@Test
+	public void routesOnlyBackgroundImagesToInternalApi() throws Exception {
+		byte[] template = bytes("<report xmlns=\"http://www.eclipse.org/birt/2005/design\">"
+				+ "<property name=\"backgroundImage\"><![CDATA[" + PLACEHOLDER + "]]></property>"
+				+ "<text-property name=\"content\"><![CDATA[<img src=\"" + PLACEHOLDER + "\">]]></text-property>"
+				+ "<expression>\"" + PLACEHOLDER + "\"</expression></report>");
+		byte[] original = template.clone();
+		AtomicInteger tokenReads = new AtomicInteger();
+		Document resolved = parse(ExternalLibraryTemplateResolver.resolve(template, BASE,
+				"http://127.0.0.1:8080/knowage-api/api/", "X-Kn-Authorization", () -> {
+					tokenReads.incrementAndGet();
+					return "test.jwt.value";
+				}));
+		String query = "?libraryName=logo.png&X-Kn-Authorization=test.jwt.value";
+		assertEquals("http://127.0.0.1:8080/knowage-api/api/2.0/resources/external-libraries" + query,
+				resolved.getElementsByTagName("property").item(0).getTextContent());
+		assertEquals("<img src=\"" + ENDPOINT + query + "\">",
+				resolved.getElementsByTagName("text-property").item(0).getTextContent());
+		assertEquals("\"" + ENDPOINT + query + "\"",
+				resolved.getElementsByTagName("expression").item(0).getTextContent());
+		assertEquals(1, tokenReads.get());
+		assertArrayEquals(original, template);
+	}
+
+	@Test
+	public void defaultsBackgroundImagesToPublicApiWhenInternalUrlIsAbsent() throws Exception {
+		byte[] template = bytes("<report><property name=\"backgroundImage\">" + PLACEHOLDER + "</property></report>");
+		for (String internal : new String[] { null, "", "  " }) {
+			Document resolved = parse(ExternalLibraryTemplateResolver.resolve(template, BASE, internal,
+					"X-Kn-Authorization", () -> "test.jwt.value"));
+			assertEquals(ENDPOINT + "?libraryName=logo.png&X-Kn-Authorization=test.jwt.value",
+					resolved.getElementsByTagName("property").item(0).getTextContent());
+		}
+	}
+
+	@Test
+	public void permitsInternalHttpsAndHttpOnlyOnLoopback() throws Exception {
+		byte[] template = bytes("<report><property name=\"backgroundImage\">" + PLACEHOLDER + "</property></report>");
+		for (String internal : new String[] { "https://internal.example/knowage-api/api",
+				"http://localhost:8080/knowage-api/api", "http://127.0.0.1:8080/knowage-api/api",
+				"http://[::1]:8080/knowage-api/api" }) {
+			Document resolved = parse(ExternalLibraryTemplateResolver.resolve(template, BASE, internal,
+					"X-Kn-Authorization", () -> "test.jwt.value"));
+			assertEquals(internal + "/2.0/resources/external-libraries?libraryName=logo.png&X-Kn-Authorization=test.jwt.value",
+					resolved.getElementsByTagName("property").item(0).getTextContent());
+		}
+		for (String internal : new String[] { "/knowage-api/api", "http://internal.example/api",
+				"http://127.0.0.1.example/api", "http://localhost@external.example/api",
+				"https://user:password@internal.example/api", "https://internal.example/api?other=1",
+				"https://internal.example/api#fragment", "file:///image" }) {
+			assertThrows(IOException.class, () -> ExternalLibraryTemplateResolver.resolve(template, BASE, internal,
+					"X-Kn-Authorization", () -> {
+						throw new AssertionError("Invalid internal configuration must not acquire credentials");
+					}));
+		}
+	}
+
+	@Test
+	public void ignoresInternalConfigurationWithoutBackgroundPlaceholders() throws Exception {
+		byte[] template = bytes("<report><text-property name=\"content\">" + PLACEHOLDER
+				+ "</text-property><!-- <property name=\"backgroundImage\">" + PLACEHOLDER + "</property> --></report>");
+		Document resolved = parse(ExternalLibraryTemplateResolver.resolve(template, BASE, "not-an-url",
+				"X-Kn-Authorization", () -> "test.jwt.value"));
+		assertEquals(ENDPOINT + "?libraryName=logo.png&X-Kn-Authorization=test.jwt.value",
+				resolved.getElementsByTagName("text-property").item(0).getTextContent());
+	}
+
+	@Test
 	public void rejectsUnsafeOrMissingApiConfigurationBeforeReadingCredentials() {
 		for (String base : new String[] { null, "", "/knowage-api", "http://reports.example/api",
 				"https://user:password@reports.example/api", "https://reports.example/api?other=1",

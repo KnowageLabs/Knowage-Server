@@ -359,9 +359,12 @@ public class BirtReportServlet extends HttpServlet {
 			SourceBean apiBaseUrlConfig = (SourceBean) BirtEngineConfig.getConfigSourceBean()
 					.getAttribute("EXTERNAL_LIBRARIES_API_BASE_URL");
 			String apiBaseUrl = apiBaseUrlConfig == null ? null : apiBaseUrlConfig.getCharacters();
+			SourceBean internalApiBaseUrlConfig = (SourceBean) BirtEngineConfig.getConfigSourceBean()
+					.getAttribute("EXTERNAL_LIBRARIES_INTERNAL_API_BASE_URL");
+			String internalApiBaseUrl = internalApiBaseUrlConfig == null ? null : internalApiBaseUrlConfig.getCharacters();
 			String authorizationParameter = Optional.ofNullable(System.getenv("KNOWAGE_AUTHORIZATION_HEADER_NAME"))
 					.orElse("X-Kn-Authorization");
-			executionTemplate = ExternalLibraryTemplateResolver.resolve(executionTemplate, apiBaseUrl,
+			executionTemplate = ExternalLibraryTemplateResolver.resolve(executionTemplate, apiBaseUrl, internalApiBaseUrl,
 					authorizationParameter, () -> getExternalLibraryUserToken(profile));
 			is = new ByteArrayInputStream(executionTemplate);
 		}
