@@ -365,7 +365,7 @@ public class BirtReportServlet extends HttpServlet {
 			String authorizationParameter = Optional.ofNullable(System.getenv("KNOWAGE_AUTHORIZATION_HEADER_NAME"))
 					.orElse("X-Kn-Authorization");
 			executionTemplate = ExternalLibraryTemplateResolver.resolve(executionTemplate, apiBaseUrl, internalApiBaseUrl,
-					authorizationParameter, () -> getExternalLibraryUserToken(profile));
+					getRequestedOutputFormat(servletRequest), authorizationParameter, () -> getExternalLibraryUserToken(profile));
 			is = new ByteArrayInputStream(executionTemplate);
 		}
 
@@ -577,23 +577,7 @@ public class BirtReportServlet extends HttpServlet {
 		} else {
 			locale = Locale.ENGLISH;
 		}
-		String outputFormat = request.getParameter("outputType");
-		if (outputFormat == null || outputFormat.trim().isEmpty()) {
-		    outputFormat = request.getParameter("OutputType");
-		}
-		if (outputFormat == null || outputFormat.trim().isEmpty()) {
-		    // Fallback sulla mappa dei parametri della request
-		    Map<String, String[]> paramMap = request.getParameterMap();
-		    for (String key : paramMap.keySet()) {
-		        if ("outputtype".equalsIgnoreCase(key)) {
-		            String[] vals = paramMap.get(key);
-		            if (vals != null && vals.length > 0) {
-		                outputFormat = vals[0];
-		            }
-		            break;
-		        }
-		    }
-		}
+		String outputFormat = getRequestedOutputFormat(request);
 		logger.debug("outputType -- [" + outputFormat + "]");
 		String outputType = getOutputType(outputFormat);
 
@@ -1113,6 +1097,26 @@ public class BirtReportServlet extends HttpServlet {
 		String executionId = uuid.toString();
 		executionId = executionId.replace("-", "");
 		return executionId;
+	}
+
+	private String getRequestedOutputFormat(HttpServletRequest request) {
+		String outputFormat = request.getParameter("outputType");
+		if (outputFormat == null || outputFormat.trim().isEmpty()) {
+			outputFormat = request.getParameter("OutputType");
+		}
+		if (outputFormat == null || outputFormat.trim().isEmpty()) {
+			Map<String, String[]> paramMap = request.getParameterMap();
+			for (String key : paramMap.keySet()) {
+				if ("outputtype".equalsIgnoreCase(key)) {
+					String[] vals = paramMap.get(key);
+					if (vals != null && vals.length > 0) {
+						outputFormat = vals[0];
+					}
+					break;
+				}
+			}
+		}
+		return outputFormat;
 	}
 
 	private String getOutputType(String outputFormat) {

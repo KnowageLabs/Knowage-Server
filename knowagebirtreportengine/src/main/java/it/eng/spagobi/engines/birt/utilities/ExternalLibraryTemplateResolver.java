@@ -57,6 +57,11 @@ public final class ExternalLibraryTemplateResolver {
 
 	public static byte[] resolve(byte[] template, String apiBaseUrl, String internalApiBaseUrl,
 			String authorizationParameter, Supplier<String> userToken) throws IOException {
+		return resolve(template, apiBaseUrl, internalApiBaseUrl, null, authorizationParameter, userToken);
+	}
+
+	public static byte[] resolve(byte[] template, String apiBaseUrl, String internalApiBaseUrl,
+			String outputFormat, String authorizationParameter, Supplier<String> userToken) throws IOException {
 		if (!containsPlaceholder(template)) {
 			return template;
 		}
@@ -82,10 +87,11 @@ public final class ExternalLibraryTemplateResolver {
 		}
 
 		String endpoint = getEndpoint(apiBaseUrl, false);
-		String backgroundEndpoint = endpoint;
+		boolean serverSideOutput = "pdf".equalsIgnoreCase(outputFormat);
+		String internalEndpoint = endpoint;
 		if (internalApiBaseUrl != null && !internalApiBaseUrl.trim().isEmpty()
-				&& nodes.stream().anyMatch(ExternalLibraryTemplateResolver::isBackgroundImage)) {
-			backgroundEndpoint = getEndpoint(internalApiBaseUrl, true);
+				&& (serverSideOutput || nodes.stream().anyMatch(ExternalLibraryTemplateResolver::isBackgroundImage))) {
+			internalEndpoint = getEndpoint(internalApiBaseUrl, true);
 		}
 		if (authorizationParameter == null || authorizationParameter.trim().isEmpty()) {
 			throw new IOException("Missing external-library authorization parameter name");
@@ -96,7 +102,7 @@ public final class ExternalLibraryTemplateResolver {
 		}
 		String authorization = "&" + encode(authorizationParameter) + "=" + encode(token);
 		for (Node node : nodes) {
-			String resourceEndpoint = isBackgroundImage(node) ? backgroundEndpoint : endpoint;
+			String resourceEndpoint = serverSideOutput || isBackgroundImage(node) ? internalEndpoint : endpoint;
 			Matcher matcher = PLACEHOLDER.matcher(node.getNodeValue());
 			StringBuffer value = new StringBuffer();
 			while (matcher.find()) {

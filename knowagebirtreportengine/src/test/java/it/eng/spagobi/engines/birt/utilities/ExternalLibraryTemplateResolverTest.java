@@ -136,6 +136,61 @@ public class ExternalLibraryTemplateResolverTest {
 	}
 
 	@Test
+	public void routesAllPdfResourcesInternallyButPreservesHtmlRouting() throws Exception {
+		byte[] template = bytes("<report xmlns=\"http://www.eclipse.org/birt/2005/design\">"
+				+ "<property name=\"backgroundImage\">" + PLACEHOLDER + "</property>"
+				+ "<text-property name=\"content\"><![CDATA[<img src=\"" + PLACEHOLDER + "\">]]></text-property>"
+				+ "<image><expression name=\"uri\">\"" + PLACEHOLDER + "\"</expression></image></report>");
+		byte[] original = template.clone();
+		String internalBase = "http://127.0.0.1:8080/knowage-api/api";
+		String query = "?libraryName=logo.png&X-Kn-Authorization=test.jwt.value";
+		String internalUrl = internalBase + "/2.0/resources/external-libraries" + query;
+		for (String format : new String[] { "pdf", "PDF", null, "", "html", "unknown" }) {
+			AtomicInteger tokenReads = new AtomicInteger();
+			Document resolved = parse(ExternalLibraryTemplateResolver.resolve(template, BASE, internalBase, format,
+					"X-Kn-Authorization", () -> {
+						tokenReads.incrementAndGet();
+						return "test.jwt.value";
+					}));
+			String imageUrl = "pdf".equalsIgnoreCase(format) ? internalUrl : ENDPOINT + query;
+			assertEquals(internalUrl, resolved.getElementsByTagName("property").item(0).getTextContent());
+			assertEquals("<img src=\"" + imageUrl + "\">",
+					resolved.getElementsByTagName("text-property").item(0).getTextContent());
+			assertEquals("\"" + imageUrl + "\"",
+					resolved.getElementsByTagName("expression").item(0).getTextContent());
+			assertEquals(1, tokenReads.get());
+			assertArrayEquals(original, template);
+		}
+	}
+
+	@Test
+	public void pdfWithoutBackgroundUsesInternalConfigurationAndValidatesItBeforeCredentials() throws Exception {
+		byte[] template = bytes("<report><text-property name=\"content\"><![CDATA[<img src=\""
+				+ PLACEHOLDER + "\">]]></text-property></report>");
+		String internalBase = "http://localhost:8080/knowage-api/api";
+		Document resolved = parse(ExternalLibraryTemplateResolver.resolve(template, BASE, internalBase, "pdf",
+				"X-Kn-Authorization", () -> "test.jwt.value"));
+		assertEquals("<img src=\"" + internalBase
+				+ "/2.0/resources/external-libraries?libraryName=logo.png&X-Kn-Authorization=test.jwt.value\">",
+				resolved.getElementsByTagName("text-property").item(0).getTextContent());
+		assertThrows(IOException.class, () -> ExternalLibraryTemplateResolver.resolve(template, BASE,
+				"http://remote.example/api", "pdf", "X-Kn-Authorization", () -> {
+					throw new AssertionError("Invalid PDF configuration must not acquire credentials");
+				}));
+	}
+
+	@Test
+	public void pdfWithoutInternalConfigurationKeepsPublicUrls() throws Exception {
+		byte[] template = bytes("<report><expression>\"" + PLACEHOLDER + "\"</expression></report>");
+		for (String internal : new String[] { null, "", "  " }) {
+			Document resolved = parse(ExternalLibraryTemplateResolver.resolve(template, BASE, internal, "pdf",
+					"X-Kn-Authorization", () -> "test.jwt.value"));
+			assertEquals("\"" + ENDPOINT + "?libraryName=logo.png&X-Kn-Authorization=test.jwt.value\"",
+					resolved.getElementsByTagName("expression").item(0).getTextContent());
+		}
+	}
+
+	@Test
 	public void defaultsBackgroundImagesToPublicApiWhenInternalUrlIsAbsent() throws Exception {
 		byte[] template = bytes("<report><property name=\"backgroundImage\">" + PLACEHOLDER + "</property></report>");
 		for (String internal : new String[] { null, "", "  " }) {

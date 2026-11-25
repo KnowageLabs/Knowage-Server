@@ -17,12 +17,13 @@
 	     The JWT must remain valid until BIRT downloads the resource.
 	     Exclude authorization query parameters from proxy and access logs. -->
 	<EXTERNAL_LIBRARIES_API_BASE_URL></EXTERNAL_LIBRARIES_API_BASE_URL>
-	<!-- Optional server-side API base URL for BIRT backgroundImage properties only.
+	<!-- Optional server-side API base URL for all placeholders in PDF output,
+	     and backgroundImage properties in other outputs.
 	     Other placeholders keep the public URL above. Empty means use the public URL.
 	     HTTPS is required except for HTTP loopback (localhost, 127.0.0.1, [::1]).
 	     Example for an API in the same Tomcat: http://127.0.0.1:8080/knowage-api/api
 	     Authentication is unchanged; exclude authorization query parameters from local access logs too.
-	     Other server-rendered formats may download ordinary images using the public URL. -->
+	     Server-rendered formats other than PDF may still download ordinary images using the public URL. -->
 	<EXTERNAL_LIBRARIES_INTERNAL_API_BASE_URL></EXTERNAL_LIBRARIES_INTERNAL_API_BASE_URL>
 	<!--  THE JNDI RESOURCE NAME FOR RETRIVE THE RESOURCE PATH -->
 	<RESOURCE_PATH_JNDI_NAME>java:comp/env/resource_path</RESOURCE_PATH_JNDI_NAME>
