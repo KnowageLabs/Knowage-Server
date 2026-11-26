@@ -1,8 +1,9 @@
 <template>
     <DataTable
         v-if="!loading"
-        class="p-datatable-sm kn-table"
+        class="p-datatable-sm kn-table registry-datatable"
         :scrollable="true"
+        :tableStyle="{ minWidth: `${minimumTableWidth}px` }"
         v-model:first="first"
         :value="rows"
         dataKey="id"
@@ -26,10 +27,10 @@
         @sort="onSort"
     >
         <template #empty>{{ $t('common.info.noDataFound') }}</template>
-        <Column class="kn-truncated" :style="registryDatatableDescriptor.numerationColumn.style" :headerStyle="registryDatatableDescriptor.numerationColumn.style" :field="columns[0].field" :header="columns[0].title"></Column>
+        <Column class="kn-truncated" :style="getColumnStyle(numerationColumnWidth)" :field="columns[0].field" :header="columns[0].title"></Column>
 
-        <template v-for="col of columns.slice(1)" :key="col.field">
-            <Column class="kn-truncated" :field="col.field" :style="`min-width:${col.size}px; padding:0;`" :sortable="col.columnInfo?.type !== 'timestamp' && col.columnInfo?.type !== 'date'">
+        <template v-for="(col, index) of columns.slice(1)" :key="col.field">
+            <Column class="kn-truncated" :field="col.field" :style="{ ...getColumnStyle(configuredWidths[index]), padding: '0' }" :sortable="col.columnInfo?.type !== 'timestamp' && col.columnInfo?.type !== 'date'">
                 <template #header>
                     <div class="table-header">
                         <i v-if="showDefaultNumberFormatIcon(col)" v-tooltip.top="$t('documentExecution.registry.numberFormatNotSupported')" class="pi pi-exclamation-triangle kn-cursor-pointer"></i>
@@ -60,7 +61,7 @@
                 </template>
             </Column>
         </template>
-        <Column :style="registryDatatableDescriptor.iconColumn.style" :headerStyle="registryDatatableDescriptor.iconColumn.style">
+        <Column :style="{ ...getColumnStyle(iconColumnWidth), justifyContent: 'center' }">
             <template #header>
                 <Button class="kn-button" :label="$t('managers.businessModelManager.add')" v-if="buttons.enableButtons || buttons.enableAddRecords" @click="addNewRow" data-test="new-row-button" />
             </template>
@@ -90,6 +91,7 @@ import RegistryDatatableEditableField from './RegistryDatatableEditableField.vue
 import RegistryDatatableWarningDialog from './RegistryDatatableWarningDialog.vue'
 
 const deepcopy = require('deepcopy')
+const DEFAULT_MIN_COLUMN_WIDTH = 100
 
 export default defineComponent({
     name: 'registry-datatable',
@@ -115,6 +117,8 @@ export default defineComponent({
         return {
             registryDescriptor,
             registryDatatableDescriptor,
+            numerationColumnWidth: 40,
+            iconColumnWidth: 130,
             columns: [] as any[],
             rows: [] as any[],
             configuration: {} as any,
@@ -165,11 +169,24 @@ export default defineComponent({
         this.loadWarningState()
     },
     computed: {
+        configuredWidths(): (number | null)[] {
+            return this.columns.slice(1).map((column) => {
+                const width = Number(column.size)
+                return Number.isFinite(width) && width > 0 ? width : null
+            })
+        },
+        minimumTableWidth(): number {
+            return this.configuredWidths.reduce<number>((total, width) => total + (width ?? DEFAULT_MIN_COLUMN_WIDTH), this.numerationColumnWidth + this.iconColumnWidth)
+        },
         getCurrentLocaleDefaultDateFormat() {
             return (column) => (column.isEditable ? column.format || primeVueDate() : localeDate())
         }
     },
     methods: {
+        getColumnStyle(width: number | null) {
+            const minWidth = `${width ?? DEFAULT_MIN_COLUMN_WIDTH}px`
+            return { boxSizing: 'border-box', minWidth, flex: width === null ? '1 1 0' : `0 0 ${minWidth}` }
+        },
         async loadColumns() {
             this.loading = true
             this.columns = [
@@ -406,12 +423,9 @@ export default defineComponent({
 .flag-hidden {
     opacity: 0;
 }
-.scrollable-table .p-datatable-wrapper {
-    max-width: 93vw;
+.registry-datatable > .p-datatable-wrapper {
+    max-width: 100%;
     overflow-x: auto;
-}
-.scrollable-table .p-datatable {
-    max-width: 93vw;
 }
 .editableField {
     width: 100%;

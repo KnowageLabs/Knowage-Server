@@ -1,6 +1,6 @@
 import { mount } from '@vue/test-utils'
+import flushPromises from 'flush-promises'
 import Button from 'primevue/button'
-import Calendar from 'primevue/calendar'
 import Card from 'primevue/card'
 import Checkbox from 'primevue/checkbox'
 import Column from 'primevue/column'
@@ -284,10 +284,10 @@ const mockedConfiguration = [
     }
 ]
 
-const factory = (rows) => {
+const factory = (rows, columns = mockedColumns) => {
     return mount(RegistryDatatable, {
         props: {
-            propColumns: mockedColumns,
+            propColumns: columns,
             propRows: rows,
             columnMap: mockedColumnMap,
             propConfiguration: mockedConfiguration,
@@ -316,6 +316,25 @@ const factory = (rows) => {
 }
 
 describe('Registry loading', () => {
+    it('sets the same fixed and flexible widths on headers and cells', async () => {
+        const columns = [
+            { ...mockedColumns[2], size: 150 },
+            { ...mockedColumns[3] }
+        ]
+        const wrapper = factory(mockedRows.slice(0, 1), columns)
+        await flushPromises()
+
+        const headers = wrapper.findAll('thead th')
+        const cells = wrapper.findAll('tbody td')
+        for (const row of [headers, cells]) {
+            expect(row[1].element.style.flexGrow).toBe('0')
+            expect(row[1].element.style.flexBasis).toBe('150px')
+            expect(row[2].element.style.flexGrow).toBe('1')
+            expect(row[2].element.style.minWidth).toBe('100px')
+        }
+        expect(wrapper.get('table').element.style.minWidth).toBe('420px')
+    })
+
     it('the entries list shows an hint when loaded empty', () => {
         const wrapper = factory([])
 
