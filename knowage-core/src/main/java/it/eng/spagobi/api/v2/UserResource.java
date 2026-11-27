@@ -58,6 +58,7 @@ import it.eng.spagobi.profiling.dao.filters.FinalUsersFilter;
 import it.eng.spagobi.security.Password;
 import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
 import it.eng.spagobi.services.rest.annotations.UserConstraint;
+import it.eng.spagobi.services.exceptions.ExceptionUtilities;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
@@ -838,7 +839,11 @@ public class UserResource extends AbstractSpagoBIResource {
 		                           getUserProfile().getUserId())) {
 		 
 		    LOGGER.warn("Unauthorized attempt to modify a superadmin user");
-		    return Response.status(Response.Status.FORBIDDEN).build();
+		    return Response.status(Response.Status.BAD_REQUEST)
+		            .type(MediaType.APPLICATION_JSON)
+		            .entity(ExceptionUtilities.serializeException(
+		                    "common.error.saving", null))
+		            .build();
 		}
 
 		/* KNOWAGE-8687: CheckPassword if changed */
