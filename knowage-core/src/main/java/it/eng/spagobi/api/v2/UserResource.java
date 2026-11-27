@@ -828,6 +828,18 @@ public class UserResource extends AbstractSpagoBIResource {
 		} catch (EMFUserError e1) {
 			LOGGER.error("Impossible get attributes", e1);
 		}
+		
+		if (sbiUserOriginal == null) {
+		    return Response.status(Response.Status.NOT_FOUND).build();
+		}
+		 
+		if (Boolean.TRUE.equals(sbiUserOriginal.getIsSuperadmin())
+		&& !Objects.equals(sbiUserOriginal.getUserId(),
+		                           getUserProfile().getUserId())) {
+		 
+		    LOGGER.warn("Unauthorized attempt to modify a superadmin user");
+		    return Response.status(Response.Status.FORBIDDEN).build();
+		}
 
 		/* KNOWAGE-8687: CheckPassword if changed */
 		if (requestDTO.getPassword() != null) {
